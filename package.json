@@ -1,0 +1,41 @@
+{
+  "name": "animalese-gpt",
+  "displayName": "Animalese GPT",
+  "version": "0.0.0",
+  "description": "A simple Chrome extension featuring Animal Crossing characters for ChatGPT interactions.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rokrok/animalese-gpt.git"
+  },
+  "author": "rokrokss",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "watch": "vite build --watch",
+    "lint:fix": "pnpm lint --apply"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "webextension-polyfill": "^0.12.0"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "2.0.0-beta.33",
+    "@types/chrome": "^0.0.323",
+    "@types/node": "^22.15.21",
+    "@types/react": "^19.1.4",
+    "@types/react-dom": "^19.1.5",
+    "@types/react-syntax-highlighter": "^15.5.13",
+    "@vitejs/plugin-react": "^4.4.1",
+    "dotenv-cli": "^8.0.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.7",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vite-plugin-zip-pack": "^1.2.4"
+  }
+}
