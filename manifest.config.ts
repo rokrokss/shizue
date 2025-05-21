@@ -6,7 +6,7 @@ const [major, minor, patch, label = '0'] = version.replace(/[^\d.-]+/g, '').spli
 
 export default defineManifest(async (env) => {
   return {
-    name: env.mode === 'development' ? '[DEV] Animalese GPT' : 'Animalese GPT',
+    name: env.mode === 'development' ? '[DEV] Animal Crossing GPT' : 'Animal Crossing GPT',
     description: description,
     version: `${major}.${minor}.${patch}.${label}`,
     version_name: version,
@@ -37,6 +37,7 @@ export default defineManifest(async (env) => {
       {
         matches: ['http://*/*', 'https://*/*', '<all_urls>'],
         js: ['src/content.ts'],
+        run_at: 'document_idle',
       },
     ],
   };

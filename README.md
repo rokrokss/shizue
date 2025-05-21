@@ -1,1 +1,1 @@
-# animalese-gpt
+# animal-crossing-gpt-extension

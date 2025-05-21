@@ -1,11 +1,11 @@
 {
-  "name": "animalese-gpt",
-  "displayName": "Animalese GPT",
+  "name": "animal-crossing-gpt-extension",
+  "displayName": "Animal Crossing GPT",
   "version": "0.0.0",
   "description": "A simple Chrome extension featuring Animal Crossing characters for ChatGPT interactions.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rokrok/animalese-gpt.git"
+    "url": "https://github.com/rokrok/animal-crossing-gpt-extension.git"
   },
   "author": "rokrokss",
   "private": true,
