@@ -16,6 +16,7 @@ dist-ssr
 .env
 .env.development
 .env.production
+.env.publish
 
 # Editor directories and files
 .vscode/*
@@ -27,4 +28,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-web-ext.config.ts

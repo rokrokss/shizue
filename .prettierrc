@@ -6,5 +6,11 @@
   "trailingComma": "es5",
   "printWidth": 100,
   "bracketSpacing": true,
-  "arrowParens": "always"
+  "arrowParens": "always",
+  "ignoreUnusedImports": true,
+  "ignoreUnusedLabels": true,
+  "ignoreUnusedFunctions": true,
+  "ignoreUnusedClasses": true,
+  "ignoreUnusedConstants": true,
+  "ignoreUnusedVariables": true
 }
