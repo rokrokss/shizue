@@ -16,13 +16,15 @@ export default defineConfig({
       action: {
         default_title: 'Animal Crossing GPT',
       },
+      author: { email: 'q0115643@gmail.com' },
+      permissions: ['storage', 'tabs', 'sidePanel', 'activeTab'],
     };
     return manifest;
   },
   hooks: {
     'build:manifestGenerated': (wxt, manifest) => {
       if (wxt.config.mode === 'development') {
-        manifest.title += ' [DEV]';
+        manifest.action.default_title += ' [DEV]';
       }
     },
   },
