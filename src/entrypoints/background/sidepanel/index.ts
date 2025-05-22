@@ -5,6 +5,7 @@ import {
   MESSAGE_UPDATE_PANEL_INIT_DATA,
   PORT_LISTEN_PANEL_CLOSED_KEY,
 } from '@/config';
+import { errorLog } from '@/logs';
 
 let panelOpened = false;
 let currentWindowId: number | undefined;
@@ -43,7 +44,7 @@ export const sidebarToggleListners = () => {
 
   chrome.sidePanel
     .setPanelBehavior({ openPanelOnActionClick: true })
-    .catch((error) => console.error(error));
+    .catch((error) => errorLog(error));
 
   updateCurrentWindowId();
 
@@ -71,7 +72,7 @@ export const sidebarToggleListners = () => {
     } else if (message.action === MESSAGE_ACTION_OPEN_PANEL) {
       chrome.runtime.sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA }).catch((error) => {
         panelOpened = false;
-        console.error(error);
+        errorLog(error);
       });
       if (!panelOpened) {
         changePanelShowStatus();

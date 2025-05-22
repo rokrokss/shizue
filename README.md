@@ -1,1 +1,1 @@
-# animal-crossing-gpt-extension
+# shizue

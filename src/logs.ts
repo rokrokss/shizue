@@ -15,3 +15,15 @@ export const contentScriptLog = (item: string) => {
 export const backgroundLog = () => {
   console.log(logoText, msgText('Background Loaded'));
 };
+
+export const debugLog = (...args: any[]) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[ROKROKSS DEBUG]', ...args);
+  }
+};
+
+export const errorLog = (...args: any[]) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.error('[ROKROKSS ERROR]', ...args);
+  }
+};

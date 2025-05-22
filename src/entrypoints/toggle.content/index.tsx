@@ -1,11 +1,11 @@
 import Toggle from '@/components/Toggle';
-import { contentScriptLog } from '@/logs';
+import { contentScriptLog, debugLog } from '@/logs';
 import { EventEmitterProvider } from '@/providers/EventEmitterProvider';
 import { createRoot } from 'react-dom/client';
 
 const setupMessageListener = () => {
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log('Message received:', message);
+    debugLog('Message received:', message);
   });
 };
 

@@ -3,6 +3,7 @@ import {
   MESSAGE_UPDATE_PANEL_INIT_DATA,
   PORT_LISTEN_PANEL_CLOSED_KEY,
 } from '@/config';
+import { errorLog } from '@/logs';
 import { type ReactNode, useEffect, useState } from 'react';
 
 const SidePanelProvider = ({ children }: { children: ReactNode }) => {
@@ -20,7 +21,7 @@ const SidePanelProvider = ({ children }: { children: ReactNode }) => {
       chrome.runtime.sendMessage({ action: MESSAGE_PANEL_OPENED_PING_FROM_PANEL });
       chrome.runtime.connect({ name: PORT_LISTEN_PANEL_CLOSED_KEY });
     } catch (error) {
-      console.error('connect backend port', error);
+      errorLog('connect backend port', error);
     }
   }, []);
 

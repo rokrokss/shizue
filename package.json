@@ -1,11 +1,11 @@
 {
-  "name": "animal-crossing-gpt-extension",
-  "displayName": "Animal Crossing GPT",
+  "name": "shizue",
+  "displayName": "Shizue",
   "version": "0.0.0",
-  "description": "A simple Chrome extension featuring Animal Crossing characters for ChatGPT interactions.",
+  "description": "A simple Chrome extension featuring Shizue for LLM interactions.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rokrok/animal-crossing-gpt-extension.git"
+    "url": "https://github.com/rokrok/shizue.git"
   },
   "author": "rokrokss",
   "private": true,

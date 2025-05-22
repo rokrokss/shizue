@@ -11,10 +11,10 @@ export default defineConfig({
   manifestVersion: 3,
   manifest: ({ browser, manifestVersion, mode, command }) => {
     const manifest: UserManifest = {
-      name: 'Animal Crossing GPT',
+      name: 'Shizue',
       description: description,
       action: {
-        default_title: 'Animal Crossing GPT',
+        default_title: 'Shizue',
       },
       author: { email: 'q0115643@gmail.com' },
       permissions: ['storage', 'tabs', 'sidePanel', 'activeTab'],

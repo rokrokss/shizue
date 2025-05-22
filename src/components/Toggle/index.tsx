@@ -1,4 +1,5 @@
 import { MESSAGE_ACTION_SET_PANEL_OPEN_OR_NOT } from '@/config';
+import { debugLog } from '@/logs';
 import { useEventEmitter } from '@/providers/EventEmitterProvider';
 import { useEffect } from 'react';
 
@@ -7,7 +8,7 @@ const Toggle = () => {
 
   useEffect(() => {
     const handleMessage = (message: any) => {
-      console.log('[ROKROKSS] Toggle received message:', message);
+      debugLog('Toggle received message:', message);
     };
 
     const unsubscribe = eventEmitter.subscribe(handleMessage);
@@ -22,7 +23,7 @@ const Toggle = () => {
   };
 
   const handleClick = () => {
-    console.log('[ROKROKSS] Toggle clicked');
+    debugLog('Toggle clicked');
     setPanelOpenOrNot();
   };
 
