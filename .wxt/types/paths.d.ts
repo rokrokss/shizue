@@ -7,13 +7,13 @@ declare module "wxt/browser" {
     | "/"
     | "/background.js"
     | "/content-scripts/toggle.js"
+    | "/icon.svg"
     | "/icon/128.png"
     | "/icon/16.png"
     | "/icon/32.png"
     | "/icon/48.png"
     | "/icon/96.png"
     | "/sidepanel.html"
-    | "/wxt.svg"
   type HtmlPublicPath = Extract<PublicPath, `${string}.html`>
   export interface WxtRuntime {
     getURL(path: PublicPath): string;

@@ -1,3 +1,4 @@
+import Character from '@/components/Toggle/Character';
 import { MESSAGE_ACTION_SET_PANEL_OPEN_OR_NOT } from '@/config';
 import { debugLog } from '@/logs';
 import { useEventEmitter } from '@/providers/EventEmitterProvider';
@@ -6,13 +7,15 @@ import { useEffect } from 'react';
 const Toggle = () => {
   const eventEmitter = useEventEmitter();
 
+  const width = 42;
+  const height = 42;
+  const widthFull = 54;
+
   useEffect(() => {
     const handleMessage = (message: any) => {
       debugLog('Toggle received message:', message);
     };
-
     const unsubscribe = eventEmitter.subscribe(handleMessage);
-
     return () => {
       unsubscribe();
     };
@@ -28,26 +31,34 @@ const Toggle = () => {
   };
 
   return (
-    <div>
-      <button
-        style={{
-          position: 'fixed',
-          bottom: '20px',
-          right: '20px',
-          zIndex: 999999,
-          padding: '10px 14px',
-          borderRadius: '8px',
-          background: '#1e1e2f',
-          color: '#fff',
-          border: 'none',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
-          cursor: 'pointer',
-          fontSize: '14px',
-        }}
-        onClick={handleClick}
-      >
-        Toggle
-      </button>
+    <div
+      onClick={handleClick}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.width = `${widthFull}px`;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.width = `${width}px`;
+      }}
+      style={{
+        width: `${width}px`,
+        height: `${height}px`,
+        transition: 'width 0.3s ease-in-out',
+        background: 'linear-gradient( 135deg, #90F7EC 10%, #32CCBC 100%)',
+        position: 'fixed',
+        bottom: '26px',
+        right: '0',
+        zIndex: 999999,
+        cursor: 'pointer',
+        borderTopLeftRadius: '9999px',
+        borderBottomLeftRadius: '9999px',
+        borderTopRightRadius: '0',
+        borderBottomRightRadius: '0',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Character scale={1.8} marginLeft={'6px'} />
     </div>
   );
 };
