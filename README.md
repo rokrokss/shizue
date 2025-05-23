@@ -33,3 +33,9 @@ the concept is to build a browser extension that transforms your browsing experi
   - [ ] youtube
   - [ ] gmail
 - [ ] integrate other models
+- [ ] ai note app features
+  - [ ] save highlights
+  - [ ] use bookmarks
+  - [ ] write notes
+- [ ] ai meeting app features
+  - [ ] ...
