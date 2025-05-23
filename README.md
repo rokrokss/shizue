@@ -1,10 +1,12 @@
 # shizue
 
-work in progress
+work in progress...
 
-developing a free open source alternative to [Sider](https://sider.ai/pricing)
+Developing an open source alternative to [Sider](https://sider.ai/pricing)
 
-the concept is to build a browser extension that transforms your browsing experience—just like how cursor transforms vscode.
+The concept is to build a browser extension that transforms your browsing experience—just like how cursor transforms vscode.
+
+Sider is a great service, but I believe the future isn't about showcasing every available model or fragmenting features just to highlight how many options you have.
 
 ## features
 
