@@ -38,5 +38,6 @@ the concept is to build a browser extension that transforms your browsing experi
   - [ ] save highlights
   - [ ] use bookmarks
   - [ ] write notes
+  - [ ] use saved data for RAG
 - [ ] ai meeting app features
   - [ ] ...
