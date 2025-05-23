@@ -22,6 +22,7 @@ the concept is to build a browser extension that transforms your browsing experi
   - [ ] manage chat history
   - [ ] image support
 - [ ] summarize/translate the current page
+- [ ] search from tabs
 - [ ] integrate screenshots
 - [ ] overlay rich features on text selection
   - [ ] summarize
