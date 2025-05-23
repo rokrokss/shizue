@@ -11,7 +11,7 @@ the concept is to build a browser extension that transforms your browsing experi
 - [x] extension skeleton built with WXT
 - [x] toggle side panel with an overlay button
 - [ ] a main character to interact with
-  - [ ] design
+  - [x] chracter
   - [ ] animalese-like voice
   - [ ] sentiment expression based on chat
 - [ ] basic chat powered by openai models
