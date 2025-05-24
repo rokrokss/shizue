@@ -13,7 +13,7 @@ Sider is a great service, but I believe the future isn't about showcasing every 
 - [x] extension skeleton built with WXT
 - [x] toggle side panel with an overlay button
 - [ ] a main character to interact with
-  - [x] chracter
+  - [x] character
   - [ ] animalese-like voice
   - [ ] sentiment expression based on chat
 - [ ] basic chat powered by openai models
