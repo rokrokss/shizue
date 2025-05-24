@@ -6,7 +6,13 @@ import {
 import { errorLog } from '@/logs';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 
-const SidePanelProvider = ({ children }: { children: ReactNode }) => {
+const SidePanelProvider = ({
+  loadingComponent,
+  children,
+}: {
+  loadingComponent: ReactNode;
+  children: ReactNode;
+}) => {
   const [panelInitialized, setPanelInitialized] = useState(false);
 
   const handleMessage = useCallback((request: any) => {
@@ -32,7 +38,7 @@ const SidePanelProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [handleMessage]);
 
-  return <>{panelInitialized ? children : null}</>;
+  return <>{panelInitialized ? children : loadingComponent}</>;
 };
 
 export default SidePanelProvider;

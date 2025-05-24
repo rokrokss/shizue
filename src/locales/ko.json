@@ -1,0 +1,35 @@
+{
+  "extension_name": "시즈에",
+  "extension_description": "AI 어시스턴트 기반 브라우저 강화 익스텐션",
+  "toggle_description": "시즈에를 부릅니다.",
+  "overlayMenu": {
+    "settings": "설정",
+    "screenshot": "스크린샷",
+    "summarizePage": "페이지 요약",
+    "quickChat": "채팅"
+  },
+  "onboarding": {
+    "title": "안녕하세요! 저는 시즈에입니다.",
+    "checkProvider": {
+      "title": "AI 제공자를 선택하세요.",
+      "openaiApiKey": {
+        "title": "OpenAI API 키 사용",
+        "description": "API 키가 있는 사용자에게 적합합니다. 안정적이고 사용량 기반 요금제입니다."
+      },
+      "chatGPTWebApp": {
+        "title": "ChatGPT 웹앱 사용",
+        "description": "OpenAI 정책 변경으로 인해 불안정할 수 있습니다."
+      }
+    },
+    "selectLanguage": {
+      "title": "언어를 선택하세요."
+    },
+    "selectShortcut": {
+      "title": "패널을 열 수 있는 단축키를 설정하세요."
+    }
+  },
+  "chat": {
+    "greeting": "안녕하세요.",
+    "askAnything": "무엇이든 부탁하세요."
+  }
+}

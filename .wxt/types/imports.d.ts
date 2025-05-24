@@ -21,6 +21,7 @@ declare global {
   const useCallback: typeof import('react')['useCallback']
   const useContext: typeof import('react')['useContext']
   const useEffect: typeof import('react')['useEffect']
+  const useLanguage: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/useLanguage')['useLanguage']
   const useMemo: typeof import('react')['useMemo']
   const useReducer: typeof import('react')['useReducer']
   const useRef: typeof import('react')['useRef']

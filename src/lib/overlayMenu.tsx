@@ -8,24 +8,24 @@ export const overlayMenuItems = [
     name: 'Settings',
     onClick: () => {},
     icon: <SettingIcon className="sz:w-[20px] sz:h-[20px]" />,
-    tooltip: i18n.t('overlayMenu.settings'),
+    tooltip: 'overlayMenu.settings',
   },
   {
     name: 'Screenshot',
     onClick: () => {},
     icon: <ScreenshotIcon className="sz:w-[20px] sz:h-[20px]" />,
-    tooltip: i18n.t('overlayMenu.screenshot'),
+    tooltip: 'overlayMenu.screenshot',
   },
   {
     name: 'Summarize this Page',
     onClick: () => {},
     icon: <BookIcon className="sz:w-[20px] sz:h-[20px]" />,
-    tooltip: i18n.t('overlayMenu.summarizePage'),
+    tooltip: 'overlayMenu.summarizePage',
   },
   {
     name: 'Quick Chat',
     onClick: () => {},
     icon: <ChatIcon className="sz:w-[20px] sz:h-[20px]" />,
-    tooltip: i18n.t('overlayMenu.quichChat'),
+    tooltip: 'overlayMenu.quickChat',
   },
 ];

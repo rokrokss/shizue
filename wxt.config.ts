@@ -1,9 +1,7 @@
 import tailwindcss from '@tailwindcss/vite';
+import { visualizer } from 'rollup-plugin-visualizer';
 import svgr from 'vite-plugin-svgr';
 import { defineConfig, type UserManifest } from 'wxt';
-import packageJson from './package.json';
-
-const { description } = packageJson;
 
 export default defineConfig({
   modules: ['@wxt-dev/module-react', '@wxt-dev/i18n/module'],
@@ -14,8 +12,8 @@ export default defineConfig({
   manifestVersion: 3,
   manifest: ({ browser, manifestVersion, mode, command }) => {
     const manifest: UserManifest = {
-      name: 'Shizue',
-      description: description,
+      name: '__MSG_extension_name__',
+      description: '__MSG_extension_description__',
       action: {
         default_title: 'Shizue',
       },
@@ -31,7 +29,7 @@ export default defineConfig({
             default: 'Ctrl+Shift+E',
             mac: 'Command+Shift+E',
           },
-          description: 'Toggle Shizue side panel',
+          description: '__MSG_toggle_description__',
         },
       },
     };
@@ -45,6 +43,18 @@ export default defineConfig({
     },
   },
   vite: () => ({
-    plugins: [svgr(), tailwindcss()],
+    plugins: [
+      svgr(),
+      tailwindcss(),
+      visualizer({
+        filename: './dist/stats.html',
+        open: true,
+        gzipSize: true,
+        brotliSize: true,
+      }),
+    ],
   }),
+  i18n: {
+    localesDir: 'src/locales',
+  },
 });

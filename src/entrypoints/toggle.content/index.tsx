@@ -2,6 +2,8 @@ import '@/assets/tailwind.css';
 import Toggle from '@/components/Toggle';
 import { contentScriptLog, debugLog } from '@/logs';
 import { EventEmitterProvider } from '@/providers/EventEmitterProvider';
+import LanguageProvider from '@/providers/LanguageProvider';
+import { Provider as JotaiProvider } from 'jotai';
 import { StrictMode } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 
@@ -52,7 +54,11 @@ export default defineContentScript({
         root.render(
           <StrictMode>
             <EventEmitterProvider eventEmitter={eventEmitter}>
-              <Toggle />
+              <JotaiProvider>
+                <LanguageProvider loadingComponent={null}>
+                  <Toggle />
+                </LanguageProvider>
+              </JotaiProvider>
             </EventEmitterProvider>
           </StrictMode>
         );

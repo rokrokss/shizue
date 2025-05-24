@@ -1,0 +1,35 @@
+{
+  "extension_name": "Shizue",
+  "extension_description": "AI Assistant-based browser enhancement extension",
+  "toggle_description": "Toggle Shizue",
+  "overlayMenu": {
+    "settings": "Settings",
+    "screenshot": "Screenshot",
+    "summarizePage": "Summarize this Page",
+    "quickChat": "Quick Chat"
+  },
+  "onboarding": {
+    "title": "Welcome! I'm Shizue, your AI assistant.",
+    "checkProvider": {
+      "title": "Choose Your AI Provider",
+      "openaiApiKey": {
+        "title": "Use OpenAI API Key",
+        "description": "Ideal for those with an API key. Stable and usage-based pricing."
+      },
+      "chatGPTWebApp": {
+        "title": "Use ChatGPT Web App",
+        "description": "May be unstable due to changes in OpenAI's policies."
+      }
+    },
+    "selectLanguage": {
+      "title": "Choose Your Language"
+    },
+    "selectShortcut": {
+      "title": "Set your Keyboard Shortcut to Open the Side Panel"
+    }
+  },
+  "chat": {
+    "greeting": "How can I assist you today?",
+    "askAnything": "Ask anything"
+  }
+}

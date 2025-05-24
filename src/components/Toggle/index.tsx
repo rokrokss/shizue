@@ -5,11 +5,13 @@ import { debugLog } from '@/logs';
 import { useEventEmitter } from '@/providers/EventEmitterProvider';
 import { Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Toggle = () => {
   const eventEmitter = useEventEmitter();
   const [isHoveringCharacter, setIsHoveringCharacter] = useState(false);
   const [isHoveringMenu, setIsHoveringMenu] = useState(false);
+  const { t } = useTranslation();
 
   const isVisible = isHoveringCharacter || isHoveringMenu;
 
@@ -77,7 +79,7 @@ const Toggle = () => {
             >
               <Tooltip
                 placement="left"
-                title={<div className="sz:text-black">{item.tooltip}</div>}
+                title={<div className="sz:text-black">{t(item.tooltip)}</div>}
                 color="white"
               >
                 <div
