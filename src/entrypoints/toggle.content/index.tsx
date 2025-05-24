@@ -1,3 +1,4 @@
+import '@/assets/tailwind.css';
 import Toggle from '@/components/Toggle';
 import { contentScriptLog, debugLog } from '@/logs';
 import { EventEmitterProvider } from '@/providers/EventEmitterProvider';

@@ -1,5 +1,8 @@
+import tailwindcss from '@tailwindcss/vite';
+import svgr from 'vite-plugin-svgr';
 import { defineConfig, type UserManifest } from 'wxt';
 import packageJson from './package.json';
+
 const { description } = packageJson;
 
 export default defineConfig({
@@ -28,4 +31,7 @@ export default defineConfig({
       }
     },
   },
+  vite: () => ({
+    plugins: [svgr(), tailwindcss()],
+  }),
 });

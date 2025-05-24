@@ -1,3 +1,4 @@
+import '@/assets/tailwind.css';
 import SidePanel from '@/components/SidePanel';
 import SidePanelProvider from '@/providers/SidePanelProvider';
 import React from 'react';

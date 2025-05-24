@@ -1,9 +1,14 @@
+import tailwindcssMotion from 'tailwindcss-motion';
+
 /** @type {import('tailwindcss').Config} */
 export default {
-  prefix: 'cdx-',
-  content: ['src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./**/*.{js,ts,jsx,tsx,html}'],
   theme: {
-    extend: {},
+    extend: {
+      zIndex: {
+        2147483647: '2147483647',
+      },
+    },
   },
-  plugins: [],
+  plugins: [tailwindcssMotion],
 };
