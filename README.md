@@ -1,5 +1,7 @@
 # shizue
 
+![wip](/doc/wip.gif)
+
 work in progress...
 
 Developing an open source alternative to [Sider](https://sider.ai/pricing)

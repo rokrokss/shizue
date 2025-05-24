@@ -10,6 +10,7 @@ export default function StepProvider({
   onBack: () => void;
 }) {
   const [canProceed, setCanProceed] = useState(false);
+  const [apiKey, setApiKey] = useState('');
   const { t } = useTranslation();
 
   const lines = [
@@ -61,7 +62,12 @@ export default function StepProvider({
         <div>{lines[1]}</div>
       </div>
       <div className="sz:flex sz:flex-row sz:items-center sz:w-80">
-        <Input placeholder="sk-XXX......" className="sz:font-ycom sz:mr-[5px]" />
+        <Input
+          placeholder="sk-XXX......"
+          className="sz:font-ycom sz:mr-[5px]"
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+        />
         <Button
           className="sz:font-semibold sz:text-base sz:font-ycom"
           type="primary"
