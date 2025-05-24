@@ -22,6 +22,9 @@ export default defineConfig({
       author: { email: 'q0115643@gmail.com' },
       permissions: ['storage', 'tabs', 'sidePanel', 'activeTab'],
       default_locale: 'en',
+      side_panel: {
+        default_path: 'sidepanel.html',
+      },
     };
     return manifest;
   },

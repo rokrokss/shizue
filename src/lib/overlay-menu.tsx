@@ -23,9 +23,9 @@ export const overlayMenuItems = [
     tooltip: i18n.t('overlayMenu.summarizePage'),
   },
   {
-    name: 'Chat with this page',
+    name: 'Quick Chat',
     onClick: () => {},
     icon: <ChatIcon className="sz:w-[20px] sz:h-[20px]" />,
-    tooltip: i18n.t('overlayMenu.chatWithPage'),
+    tooltip: i18n.t('overlayMenu.quichChat'),
   },
 ];

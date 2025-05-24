@@ -1,13 +1,19 @@
 import '@/assets/tailwind.css';
-import SidePanel from '@/components/SidePanel';
+import { SidePanelRoutes } from '@/entrypoints/sidepanel/routes';
+import ShortcutProvider from '@/providers/ShortcutProvider';
 import SidePanelProvider from '@/providers/SidePanelProvider';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { HashRouter } from 'react-router-dom';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <SidePanelProvider>
-      <SidePanel />
-    </SidePanelProvider>
+    <ShortcutProvider>
+      <SidePanelProvider>
+        <HashRouter>
+          <SidePanelRoutes />
+        </HashRouter>
+      </SidePanelProvider>
+    </ShortcutProvider>
   </React.StrictMode>
 );

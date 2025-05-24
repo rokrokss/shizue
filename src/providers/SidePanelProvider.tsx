@@ -4,18 +4,21 @@ import {
   PORT_LISTEN_PANEL_CLOSED_KEY,
 } from '@/config';
 import { errorLog } from '@/logs';
-import { type ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 
 const SidePanelProvider = ({ children }: { children: ReactNode }) => {
   const [panelInitialized, setPanelInitialized] = useState(false);
 
+  const handleMessage = useCallback((request: any) => {
+    if (request.action === MESSAGE_UPDATE_PANEL_INIT_DATA) {
+      setPanelInitialized(true);
+    }
+  }, []);
+
   useEffect(() => {
     setPanelInitialized(true);
-    chrome.runtime.onMessage.addListener(function (request) {
-      if (request.action === MESSAGE_UPDATE_PANEL_INIT_DATA) {
-        setPanelInitialized(true);
-      }
-    });
+
+    chrome.runtime.onMessage.addListener(handleMessage);
 
     try {
       chrome.runtime.sendMessage({ action: MESSAGE_PANEL_OPENED_PING_FROM_PANEL });
@@ -23,7 +26,11 @@ const SidePanelProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       errorLog('connect backend port', error);
     }
-  }, []);
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(handleMessage);
+    };
+  }, [handleMessage]);
 
   return <>{panelInitialized ? children : null}</>;
 };

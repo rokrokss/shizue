@@ -2,6 +2,7 @@ import '@/assets/tailwind.css';
 import Toggle from '@/components/Toggle';
 import { contentScriptLog, debugLog } from '@/logs';
 import { EventEmitterProvider } from '@/providers/EventEmitterProvider';
+import ShortcutProvider from '@/providers/ShortcutProvider';
 import { createRoot } from 'react-dom/client';
 
 const setupMessageListener = () => {
@@ -33,9 +34,11 @@ export default defineContentScript({
       onMount: (container) => {
         const root = createRoot(container);
         root.render(
-          <EventEmitterProvider eventEmitter={eventEmitter}>
-            <Toggle />
-          </EventEmitterProvider>
+          <ShortcutProvider>
+            <EventEmitterProvider eventEmitter={eventEmitter}>
+              <Toggle />
+            </EventEmitterProvider>
+          </ShortcutProvider>
         );
         return root;
       },

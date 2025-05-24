@@ -2,4 +2,7 @@ overlayMenu:
   settings: Settings
   screenshot: Screenshot
   summarizePage: Summarize this Page
-  chatWithPage: Chat with this page
+  quichChat: Quick Chat
+chat:
+  greeting: How can I assist you today?
+  askAnything: Ask anything
