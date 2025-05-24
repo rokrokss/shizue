@@ -5,7 +5,7 @@ import {
   MESSAGE_UPDATE_PANEL_INIT_DATA,
   PORT_LISTEN_PANEL_CLOSED_KEY,
 } from '@/config';
-import { errorLog } from '@/logs';
+import { debugLog, errorLog } from '@/logs';
 
 let panelOpened = false;
 let currentWindowId: number | undefined;
@@ -87,6 +87,13 @@ export const sidebarToggleListners = () => {
       port.onDisconnect.addListener(() => {
         panelOpened = false;
       });
+    }
+  });
+
+  chrome.commands.onCommand.addListener((command) => {
+    if (command === 'toggle-sidepanel') {
+      debugLog('toggle-sidepanel command received');
+      changePanelShowStatus();
     }
   });
 };

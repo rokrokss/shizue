@@ -2,49 +2,66 @@ import '@/assets/tailwind.css';
 import Toggle from '@/components/Toggle';
 import { contentScriptLog, debugLog } from '@/logs';
 import { EventEmitterProvider } from '@/providers/EventEmitterProvider';
-import ShortcutProvider from '@/providers/ShortcutProvider';
-import { createRoot } from 'react-dom/client';
+import { StrictMode } from 'react';
+import { createRoot, Root } from 'react-dom/client';
+
+type EventEmitter = {
+  listeners: Set<(data: any) => void>;
+  emit: (data: any) => void;
+  subscribe: (listener: (data: any) => void) => () => void;
+};
+
+const createEventEmitter = (): EventEmitter => {
+  const listeners = new Set<(data: any) => void>();
+  return {
+    listeners,
+    emit(data) {
+      listeners.forEach((listener) => listener(data));
+    },
+    subscribe(listener) {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+  };
+};
 
 const setupMessageListener = () => {
-  browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  const handler = (message: any, sender: any, sendResponse: any) => {
     debugLog('Message received:', message);
-  });
+  };
+  browser.runtime.onMessage.addListener(handler);
+
+  return () => browser.runtime.onMessage.removeListener(handler);
 };
 
 export default defineContentScript({
   matches: ['http://*/*', 'https://*/*', '<all_urls>'],
   main(ctx) {
     contentScriptLog('Toggle');
-    setupMessageListener();
 
-    const eventEmitter = {
-      listeners: new Set<(data: any) => void>(),
-      emit(data: any) {
-        this.listeners.forEach((listener) => listener(data));
-      },
-      subscribe(listener: (data: any) => void) {
-        this.listeners.add(listener);
-        return () => this.listeners.delete(listener);
-      },
-    };
+    const cleanupMessageListener = setupMessageListener();
+    const eventEmitter = createEventEmitter();
+
+    let root: Root | null = null;
 
     const ui = createIntegratedUi(ctx, {
       position: 'inline',
       anchor: 'body',
       onMount: (container) => {
-        const root = createRoot(container);
+        root = createRoot(container);
         root.render(
-          <ShortcutProvider>
+          <StrictMode>
             <EventEmitterProvider eventEmitter={eventEmitter}>
               <Toggle />
             </EventEmitterProvider>
-          </ShortcutProvider>
+          </StrictMode>
         );
         return root;
       },
-      onRemove: (root) => {
+      onRemove: () => {
         eventEmitter.listeners.clear();
         root?.unmount();
+        cleanupMessageListener?.();
       },
     });
 

@@ -25,6 +25,15 @@ export default defineConfig({
       side_panel: {
         default_path: 'sidepanel.html',
       },
+      commands: {
+        'toggle-sidepanel': {
+          suggested_key: {
+            default: 'Ctrl+M',
+            mac: 'Command+M',
+          },
+          description: 'Toggle Shizue side panel',
+        },
+      },
     };
     return manifest;
   },
