@@ -1,9 +1,6 @@
-import BookIcon from '@/assets/icons/book.svg?react';
-import ChatIcon from '@/assets/icons/chat.svg?react';
-import ScreenshotIcon from '@/assets/icons/screenshot.svg?react';
-import SettingIcon from '@/assets/icons/setting.svg?react';
-import Character from '@/components/Toggle/Character';
+import CharacterStanding from '@/components/Character/CharacterStanding';
 import { MESSAGE_ACTION_SET_PANEL_OPEN_OR_NOT } from '@/config';
+import { overlayMenuItems } from '@/lib/overlay-menu';
 import { debugLog } from '@/logs';
 import { useEventEmitter } from '@/providers/EventEmitterProvider';
 import { Tooltip } from 'antd';
@@ -41,33 +38,6 @@ const Toggle = () => {
     setPanelOpenOrNot();
   };
 
-  const overlayMenuItems = [
-    {
-      name: 'Settings',
-      onClick: () => {},
-      icon: <SettingIcon className="sz:w-[20px] sz:h-[20px]" />,
-      tooltip: 'Settings',
-    },
-    {
-      name: 'Screenshot',
-      onClick: () => {},
-      icon: <ScreenshotIcon className="sz:w-[20px] sz:h-[20px]" />,
-      tooltip: 'Screenshot',
-    },
-    {
-      name: 'Summarize this Page',
-      onClick: () => {},
-      icon: <BookIcon className="sz:w-[20px] sz:h-[20px]" />,
-      tooltip: 'Summarize this Page',
-    },
-    {
-      name: 'Chat with this page',
-      onClick: () => {},
-      icon: <ChatIcon className="sz:w-[20px] sz:h-[20px]" />,
-      tooltip: 'Chat with this page',
-    },
-  ];
-
   return (
     <div className="sz:fixed sz:right-0 sz:bottom-[28px] sz:flex sz:flex-col sz:items-end sz:z-2147483647">
       <div
@@ -83,7 +53,7 @@ const Toggle = () => {
           ${
             isVisible
               ? 'sz:opacity-100 sz:translate-x-0 sz:pointer-events-auto'
-              : 'sz:opacity-0 sz:translate-x-2 sz:pointer-events-none'
+              : 'sz:opacity-0 sz:translate-x-[8px] sz:pointer-events-none'
           }
           `}
         style={{
@@ -148,7 +118,7 @@ const Toggle = () => {
           borderBottomRightRadius: '0',
         }}
       >
-        <Character scale={1.8} marginLeft={'6px'} />
+        <CharacterStanding scale={1.8} marginLeft={'6px'} />
       </div>
     </div>
   );

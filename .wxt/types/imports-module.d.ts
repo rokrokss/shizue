@@ -18,4 +18,5 @@ declare module '#imports' {
   export { InvalidMatchPattern, MatchPattern } from 'wxt/utils/match-patterns';
   export { useState, useCallback, useMemo, useEffect, useRef, useContext, useReducer } from 'react';
   export { fakeBrowser } from 'wxt/testing';
+  export { i18n } from '#i18n';
 }

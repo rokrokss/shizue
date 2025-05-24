@@ -6,7 +6,7 @@ import packageJson from './package.json';
 const { description } = packageJson;
 
 export default defineConfig({
-  modules: ['@wxt-dev/module-react'],
+  modules: ['@wxt-dev/module-react', '@wxt-dev/i18n/module'],
   srcDir: 'src',
   outDir: 'dist',
   publicDir: 'src/public',
@@ -21,6 +21,7 @@ export default defineConfig({
       },
       author: { email: 'q0115643@gmail.com' },
       permissions: ['storage', 'tabs', 'sidePanel', 'activeTab'],
+      default_locale: 'en',
     };
     return manifest;
   },

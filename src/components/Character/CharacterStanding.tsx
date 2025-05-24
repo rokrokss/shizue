@@ -1,7 +1,7 @@
 import standing from '@/assets/character/standing.png';
 import { useEffect, useState } from 'react';
 
-const Character = ({ scale, marginLeft }: { scale: number; marginLeft: string }) => {
+const CharacterStanding = ({ scale, marginLeft }: { scale: number; marginLeft: string }) => {
   const [frame, setFrame] = useState(0);
 
   const frameWidth = 14;
@@ -36,4 +36,4 @@ const Character = ({ scale, marginLeft }: { scale: number; marginLeft: string })
   );
 };
 
-export default Character;
+export default CharacterStanding;
