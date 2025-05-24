@@ -4,7 +4,7 @@ import {
   MESSAGE_PANEL_OPENED_PING_FROM_PANEL,
   MESSAGE_UPDATE_PANEL_INIT_DATA,
   PORT_LISTEN_PANEL_CLOSED_KEY,
-} from '@/config';
+} from '@/config/constants';
 import { debugLog, errorLog } from '@/logs';
 
 let panelOpened = false;

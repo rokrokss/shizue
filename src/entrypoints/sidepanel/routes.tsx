@@ -1,13 +1,31 @@
+import { OnboardedRoute } from '@/components/Onboarding/OnboardedRoute';
+import Onboarding from '@/components/Onboarding/Onboarding';
 import SidePanel from '@/components/SidePanel';
 import { Navigate, useRoutes } from 'react-router-dom';
 
 export const SidePanelRoutes = () => {
-  const preferredPath = localStorage.getItem('preferredPath') || '/default';
-
   const routes = [
-    { path: '/', element: <Navigate to={preferredPath} replace /> },
-    { path: '/default', element: <SidePanel /> },
-    { path: '/chat', element: <SidePanel /> },
+    { path: '/', element: <Navigate to={'/default'} replace /> },
+    {
+      path: '/default',
+      element: (
+        <OnboardedRoute>
+          <SidePanel />
+        </OnboardedRoute>
+      ),
+    },
+    {
+      path: '/chat',
+      element: (
+        <OnboardedRoute>
+          <SidePanel />
+        </OnboardedRoute>
+      ),
+    },
+    {
+      path: '/onboarding',
+      element: <Onboarding />,
+    },
   ];
 
   return useRoutes(routes);

@@ -28,8 +28,8 @@ export default defineConfig({
       commands: {
         'toggle-sidepanel': {
           suggested_key: {
-            default: 'Ctrl+M',
-            mac: 'Command+M',
+            default: 'Ctrl+Shift+E',
+            mac: 'Command+Shift+E',
           },
           description: 'Toggle Shizue side panel',
         },

@@ -19,4 +19,5 @@ declare module '#imports' {
   export { useState, useCallback, useMemo, useEffect, useRef, useContext, useReducer } from 'react';
   export { fakeBrowser } from 'wxt/testing';
   export { i18n } from '#i18n';
+  export { useSettings } from '../src/hooks/useSettings';
 }

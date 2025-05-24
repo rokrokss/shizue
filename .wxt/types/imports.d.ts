@@ -24,6 +24,7 @@ declare global {
   const useMemo: typeof import('react')['useMemo']
   const useReducer: typeof import('react')['useReducer']
   const useRef: typeof import('react')['useRef']
+  const useSettings: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/useSettings')['useSettings']
   const useState: typeof import('react')['useState']
 }
 // for type re-export

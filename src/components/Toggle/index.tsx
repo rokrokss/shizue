@@ -1,6 +1,6 @@
 import CharacterStanding from '@/components/Character/CharacterStanding';
-import { MESSAGE_ACTION_SET_PANEL_OPEN_OR_NOT } from '@/config';
-import { overlayMenuItems } from '@/lib/overlay-menu';
+import { MESSAGE_ACTION_SET_PANEL_OPEN_OR_NOT } from '@/config/constants';
+import { overlayMenuItems } from '@/lib/overlayMenu';
 import { debugLog } from '@/logs';
 import { useEventEmitter } from '@/providers/EventEmitterProvider';
 import { Tooltip } from 'antd';
