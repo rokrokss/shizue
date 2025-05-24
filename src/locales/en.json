@@ -9,12 +9,19 @@
     "quickChat": "Quick Chat"
   },
   "onboarding": {
-    "title": "Welcome! I'm Shizue, your AI assistant.",
-    "checkProvider": {
+    "greeting_0": "Welcome!",
+    "greeting_1": "I'm Shizue.",
+    "greeting_2": "A few steps first.",
+    "answer_0": "Hello!",
+    "continue": "Continue",
+    "next": "Next",
+    "back": "Back",
+    "selectProvider": {
       "title": "Choose Your AI Provider",
       "openaiApiKey": {
         "title": "Use OpenAI API Key",
-        "description": "Ideal for those with an API key. Stable and usage-based pricing."
+        "description": "Ideal for those with an API key. Stable and usage-based pricing.",
+        "validate": "validate"
       },
       "chatGPTWebApp": {
         "title": "Use ChatGPT Web App",
@@ -22,7 +29,9 @@
       }
     },
     "selectLanguage": {
-      "title": "Choose Your Language"
+      "title": "Choose Your Language",
+      "ko": "한국어",
+      "en": "English"
     },
     "selectShortcut": {
       "title": "Set your Keyboard Shortcut to Open the Side Panel"

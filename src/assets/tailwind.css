@@ -1,1 +1,20 @@
 @import "tailwindcss" prefix(sz) important;
+
+@font-face {
+  font-family: 'DungGeunMo';
+  src: url('/src/assets/fonts/DungGeunMo.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Ycomputer-Regular';
+  src: url('/src/assets/fonts/Ycomputer-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@theme {
+  --font-dgm: 'DungGeunMo', 'sans-serif';
+  --font-ycom: 'Ycomputer-Regular', 'sans-serif';
+}

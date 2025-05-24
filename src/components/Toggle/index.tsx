@@ -79,8 +79,9 @@ const Toggle = () => {
             >
               <Tooltip
                 placement="left"
-                title={<div className="sz:text-black">{t(item.tooltip)}</div>}
+                title={<div className="sz:text-black sz:font-ycom">{t(item.tooltip)}</div>}
                 color="white"
+                className="sz:font-ycom"
               >
                 <div
                   className="sz:cursor-pointer sz:rounded-full sz:flex sz:items-center sz:justify-center"

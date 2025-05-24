@@ -21,4 +21,5 @@ declare module '#imports' {
   export { i18n } from '#i18n';
   export { useLanguage } from '../src/hooks/useLanguage';
   export { useSettings } from '../src/hooks/useSettings';
+  export { default as useStreamingResponseStreamer } from '../src/hooks/useStreamingResponseStreamer';
 }

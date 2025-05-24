@@ -27,6 +27,7 @@ declare global {
   const useRef: typeof import('react')['useRef']
   const useSettings: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/useSettings')['useSettings']
   const useState: typeof import('react')['useState']
+  const useStreamingResponseStreamer: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/useStreamingResponseStreamer')['default']
 }
 // for type re-export
 declare global {

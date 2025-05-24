@@ -1,6 +1,7 @@
 import '@/assets/tailwind.css';
 import Toggle from '@/components/Toggle';
 import { contentScriptLog, debugLog } from '@/logs';
+import AntdProvider from '@/providers/AntdProvider';
 import { EventEmitterProvider } from '@/providers/EventEmitterProvider';
 import LanguageProvider from '@/providers/LanguageProvider';
 import { Provider as JotaiProvider } from 'jotai';
@@ -56,7 +57,9 @@ export default defineContentScript({
             <EventEmitterProvider eventEmitter={eventEmitter}>
               <JotaiProvider>
                 <LanguageProvider loadingComponent={null}>
-                  <Toggle />
+                  <AntdProvider>
+                    <Toggle />
+                  </AntdProvider>
                 </LanguageProvider>
               </JotaiProvider>
             </EventEmitterProvider>
