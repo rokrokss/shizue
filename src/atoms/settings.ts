@@ -1,5 +1,4 @@
 import { chromeStorageBackend } from '@/lib/storageBackend';
-import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
 export type Settings = {
@@ -18,8 +17,3 @@ export const settingsAtom = atomWithStorage<Settings>(
   chromeStorageBackend('local'),
   { getOnInit: true }
 );
-
-export const isOnboardedAtom = atom((get) => {
-  const settings = get(settingsAtom) as Settings;
-  return !!settings.openAIKey;
-});

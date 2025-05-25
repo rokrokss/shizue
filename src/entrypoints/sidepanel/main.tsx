@@ -4,6 +4,7 @@ import { SidePanelRoutes } from '@/entrypoints/sidepanel/routes';
 import AntdProvider from '@/providers/AntdProvider';
 import LanguageProvider from '@/providers/LanguageProvider';
 import SidePanelProvider from '@/providers/SidePanelProvider';
+import '@ant-design/v5-patch-for-react-19';
 import { Provider as JotaiProvider } from 'jotai';
 import React from 'react';
 import ReactDOM from 'react-dom/client';

@@ -20,7 +20,8 @@
       "title": "Choose Your AI Provider",
       "openaiApiKey": {
         "title": "Use OpenAI API Key",
-        "description": "Ideal for those with an API key. Stable and usage-based pricing.",
+        "description_0": "Ideal for those with an API key.",
+        "description_1": "Stable and usage-based pricing.",
         "validate": "validate"
       },
       "chatGPTWebApp": {

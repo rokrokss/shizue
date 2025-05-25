@@ -22,6 +22,8 @@
     "postinstall": "wxt prepare"
   },
   "dependencies": {
+    "@ant-design/icons": "~5.6.1",
+    "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@tailwindcss/vite": "^4.1.7",
     "@wxt-dev/i18n": "^0.2.4",
     "antd": "^5.25.2",
@@ -30,6 +32,7 @@
     "framer-motion": "^12.12.2",
     "i18next": "^25.2.0",
     "jotai": "^2.12.4",
+    "openai": "^4.103.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-i18next": "^15.5.2",

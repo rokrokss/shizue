@@ -1,6 +1,8 @@
+import EmptyPage from '@/components/Loader/EmptyPage';
 import { OnboardedRoute } from '@/components/Onboarding/OnboardedRoute';
 import Onboarding from '@/components/Onboarding/Onboarding';
 import SidePanel from '@/components/SidePanel';
+import { Suspense } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
 
 export const SidePanelRoutes = () => {
@@ -9,17 +11,21 @@ export const SidePanelRoutes = () => {
     {
       path: '/default',
       element: (
-        <OnboardedRoute>
-          <SidePanel />
-        </OnboardedRoute>
+        <Suspense fallback={<EmptyPage />}>
+          <OnboardedRoute>
+            <SidePanel />
+          </OnboardedRoute>
+        </Suspense>
       ),
     },
     {
       path: '/chat',
       element: (
-        <OnboardedRoute>
-          <SidePanel />
-        </OnboardedRoute>
+        <Suspense fallback={<EmptyPage />}>
+          <OnboardedRoute>
+            <SidePanel />
+          </OnboardedRoute>
+        </Suspense>
       ),
     },
     {

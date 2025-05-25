@@ -15,7 +15,8 @@ export type GeneratedI18nStructure = {
   "onboarding.back": { substitutions: 0, plural: false };
   "onboarding.selectProvider.title": { substitutions: 0, plural: false };
   "onboarding.selectProvider.openaiApiKey.title": { substitutions: 0, plural: false };
-  "onboarding.selectProvider.openaiApiKey.description": { substitutions: 0, plural: false };
+  "onboarding.selectProvider.openaiApiKey.description_0": { substitutions: 0, plural: false };
+  "onboarding.selectProvider.openaiApiKey.description_1": { substitutions: 0, plural: false };
   "onboarding.selectProvider.openaiApiKey.validate": { substitutions: 0, plural: false };
   "onboarding.selectProvider.chatGPTWebApp.title": { substitutions: 0, plural: false };
   "onboarding.selectProvider.chatGPTWebApp.description": { substitutions: 0, plural: false };

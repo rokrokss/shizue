@@ -4,6 +4,7 @@ import { contentScriptLog, debugLog } from '@/logs';
 import AntdProvider from '@/providers/AntdProvider';
 import { EventEmitterProvider } from '@/providers/EventEmitterProvider';
 import LanguageProvider from '@/providers/LanguageProvider';
+import '@ant-design/v5-patch-for-react-19';
 import { Provider as JotaiProvider } from 'jotai';
 import { StrictMode } from 'react';
 import { createRoot, Root } from 'react-dom/client';

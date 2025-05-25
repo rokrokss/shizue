@@ -20,7 +20,8 @@
       "title": "AI 제공자를 선택하세요.",
       "openaiApiKey": {
         "title": "OpenAI API 키 사용",
-        "description": "API 키가 있는 사용자에게 적합합니다. 안정적이고 사용량 기반 요금제입니다.",
+        "description_0": "API 키가 있는 사용자에게 적합합니다.",
+        "description_1": "안정적이며 사용한 만큼 비용이 발생합니다.",
         "validate": "검증"
       },
       "chatGPTWebApp": {
