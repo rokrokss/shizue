@@ -41,7 +41,7 @@ const Toggle = () => {
   };
 
   return (
-    <div className="sz:fixed sz:right-0 sz:bottom-[28px] sz:flex sz:flex-col sz:items-end sz:z-2147483647">
+    <div className="sz:fixed sz:right-0 sz:bottom-[26px] sz:flex sz:flex-col sz:items-end sz:z-2147483647">
       <div
         onMouseEnter={() => setIsHoveringMenu(true)}
         onMouseLeave={() => setIsHoveringMenu(false)}

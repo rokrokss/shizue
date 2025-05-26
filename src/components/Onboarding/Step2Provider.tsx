@@ -1,4 +1,4 @@
-import { debugLog } from '@/logs';
+import { validateApiKey } from '@/lib/validateApiKey';
 import { SmileOutlined } from '@ant-design/icons';
 import { Button, Input, Select } from 'antd';
 import { useState } from 'react';
@@ -28,38 +28,19 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
 
   const onClickValidate = async () => {
     setIsLoading(true);
-    if (!apiKey || !apiKey.startsWith('sk-')) {
-      debugLog('Invalid API key');
-      setIsLoading(false);
+    const isValid = await validateApiKey(apiKey);
+    if (isValid) {
+      setSettings((prev) => ({
+        ...prev,
+        openAIKey: apiKey,
+      }));
+      setIsInvalidApiKey(false);
+      setCanProceed(true);
+    } else {
       setIsInvalidApiKey(true);
-      return;
+      setCanProceed(false);
     }
-
-    try {
-      const response = await fetch('https://api.openai.com/v1/models', {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-      });
-
-      if (response.ok) {
-        setIsInvalidApiKey(false);
-        setSettings((prev) => ({
-          ...prev,
-          openAIKey: apiKey,
-        }));
-        setCanProceed(true);
-      } else {
-        const errorJson = await response.json();
-        debugLog('OpenAI error', errorJson);
-        setIsInvalidApiKey(true);
-      }
-    } catch (e) {
-      debugLog('API validation error', e);
-      setIsInvalidApiKey(true);
-    } finally {
-      setIsLoading(false);
-    }
+    setIsLoading(false);
   };
 
   const onClickNext = () => {

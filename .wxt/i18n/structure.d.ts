@@ -25,8 +25,13 @@ export type GeneratedI18nStructure = {
   "onboarding.selectLanguage.en": { substitutions: 0, plural: false };
   "onboarding.selectShortcut.title": { substitutions: 0, plural: false };
   "chat.greeting": { substitutions: 0, plural: false };
+  "chat.main_0": { substitutions: 0, plural: false };
   "chat.askAnything": { substitutions: 0, plural: false };
-  "chat.footer.joinDiscord": { substitutions: 0, plural: false };
+  "footer.joinDiscord": { substitutions: 0, plural: false };
+  "settings.title": { substitutions: 0, plural: false };
+  "settings.language": { substitutions: 0, plural: false };
+  "settings.shortcut": { substitutions: 0, plural: false };
+  "settings.aiProvider": { substitutions: 0, plural: false };
   "@@extension_id": { substitutions: 0, plural: false };
   "@@ui_locale": { substitutions: 0, plural: false };
   "@@bidi_dir": { substitutions: 0, plural: false };

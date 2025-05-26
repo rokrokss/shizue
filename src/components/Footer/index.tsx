@@ -7,7 +7,7 @@ const Footer = () => {
   return (
     <div className="sz:w-full sz:h-6 sz:flex sz:items-center sz:justify-center">
       <div
-        onClick={() => window.open('https://discord.gg/damCeHsz', '_blank')}
+        onClick={() => window.open('https://discord.gg/ukfPmxsyEy', '_blank')}
         className="sz:text-sm sz:text-gray-500 sz:cursor-pointer sz:flex sz:items-center sz:gap-1"
       >
         {t('footer.joinDiscord')}
