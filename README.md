@@ -19,27 +19,30 @@ Sider is a great service, but I believe the future isn't about showcasing every 
   - [ ] animalese-like voice
   - [ ] sentiment expression based on chat
 - [ ] basic chat powered by openai models
-  - [ ] authentication method
-    - [ ] user's api key
-    - [ ] chatgpt webapp integration
+  - [x] authentication method
+    - [x] user's api key
+    - [ ] integrate other models
+    - [ ] **auto selection**
   - [ ] interactive ui
   - [ ] context window
   - [ ] memory
   - [ ] manage chat history
   - [ ] image support
-- [ ] summarize/translate the current page
+- [ ] page translation features
+  - [ ] whole page
+  - [ ] on paragraph hover
+  - [ ] on text selection
+- [ ] summarize current page
 - [ ] search from tabs
 - [ ] integrate screenshots
 - [ ] overlay rich features on text selection
   - [ ] summarize
-  - [ ] translate
   - [ ] explain
   - [ ] grammar check
 - [ ] interactive overlays for specific websites
   - [ ] google search
   - [ ] youtube
   - [ ] gmail
-- [ ] integrate other models
 - [ ] ai note app features
   - [ ] save highlights
   - [ ] use bookmarks
