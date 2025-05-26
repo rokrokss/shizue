@@ -1,4 +1,4 @@
-import { useLanguage } from '@/hooks/useLanguage';
+import { useLanguage } from '@/hooks/language';
 import { Button, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 

@@ -1,4 +1,4 @@
-import { validateApiKey } from '@/lib/validateApiKey';
+import { validateApiKey } from '@/utils/validateApiKey';
 import { SmileOutlined } from '@ant-design/icons';
 import { Button, Input, Select } from 'antd';
 import { useState } from 'react';
@@ -44,7 +44,7 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
   };
 
   const onClickNext = () => {
-    navigate('/default');
+    navigate('/chat');
   };
 
   return (

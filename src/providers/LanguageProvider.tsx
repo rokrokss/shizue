@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai';
 import { ReactNode, useEffect, useState } from 'react';
 import { I18nextProvider } from 'react-i18next';
 
-import { languageAtom } from '@/atoms/language';
+import { languageAtom } from '@/hooks/language';
 import i18n, { initI18n } from '@/i18n';
 import { debugLog } from '@/logs';
 

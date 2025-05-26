@@ -1,7 +1,11 @@
-import { sidebarToggleListners } from '@/entrypoints/background/sidepanel';
+import {
+  sidebarToggleListners,
+  sidepanelMessageListners,
+} from '@/entrypoints/background/sidepanel';
 import { backgroundLog } from '@/logs';
 
 export default defineBackground(() => {
   backgroundLog();
   sidebarToggleListners();
+  sidepanelMessageListners();
 });

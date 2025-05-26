@@ -5,15 +5,7 @@ import { Navigate, useRoutes } from 'react-router-dom';
 
 export const SidePanelRoutes = () => {
   const routes = [
-    { path: '/', element: <Navigate to={'/default'} replace /> },
-    {
-      path: '/default',
-      element: (
-        <OnboardedRoute>
-          <SidePanel />
-        </OnboardedRoute>
-      ),
-    },
+    { path: '/', element: <Navigate to={'/chat'} replace /> },
     {
       path: '/chat',
       element: (

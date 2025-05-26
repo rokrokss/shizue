@@ -1,7 +1,7 @@
 import { Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-const ChatInput = ({ onSubmit }: { onSubmit: (text: string) => void }) => {
+const ChatInput = ({ onSubmit }: { onSubmit: (text: string) => Promise<void> }) => {
   const { t } = useTranslation();
   const [chatInput, setChatInput] = useState('');
   const [isComposing, setIsComposing] = useState(false);

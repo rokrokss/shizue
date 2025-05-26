@@ -1,7 +1,7 @@
-import { useSettings } from '@/hooks/useSettings';
-import { getOS } from '@/lib/userOS';
-import { validateApiKey } from '@/lib/validateApiKey';
-import { EyeInvisibleOutlined, EyeOutlined, SmileOutlined } from '@ant-design/icons';
+import { useSettings } from '@/hooks/settings';
+import { getOS } from '@/utils/userOS';
+import { validateApiKey } from '@/utils/validateApiKey';
+import { SmileOutlined } from '@ant-design/icons';
 import { Button, Input, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 
@@ -13,8 +13,7 @@ const SettingsModalContent = ({ onClose }: { onClose: () => void }) => {
   const [canProceed, setCanProceed] = useState(true);
   const [apiKey, setApiKey] = useState('');
   const [isValidateHovered, setIsValidateHovered] = useState(false);
-  const [isApiKeyVisible, setIsApiKeyVisible] = useState(false);
-  const [settings, setSettings] = useSettings();
+  const [_, setSettings] = useSettings();
 
   const handleSelect = (value: string) => {
     setLang(value as 'en' | 'ko');
@@ -38,16 +37,6 @@ const SettingsModalContent = ({ onClose }: { onClose: () => void }) => {
     }
     setIsLoading(false);
   };
-
-  const toggleApiKeyVisibility = () => {
-    setIsApiKeyVisible((prev) => !prev);
-  };
-
-  useEffect(() => {
-    if (settings.openAIKey) {
-      setApiKey(settings.openAIKey);
-    }
-  }, [settings.openAIKey]);
 
   return (
     <div
@@ -119,21 +108,9 @@ const SettingsModalContent = ({ onClose }: { onClose: () => void }) => {
             <Input
               className="sz:font-ycom sz:text-sm sz:mr-[5px] sz:h-8"
               placeholder="sk-XXX......"
-              defaultValue={settings.openAIKey}
               value={apiKey}
-              onChange={(e) => {
-                setIsApiKeyVisible(true);
-                setApiKey(e.target.value);
-              }}
+              onChange={(e) => setApiKey(e.target.value)}
               status={isInvalidApiKey ? 'error' : undefined}
-              type={isApiKeyVisible ? 'text' : 'password'}
-              suffix={
-                <Button
-                  type="text"
-                  icon={isApiKeyVisible ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-                  onClick={toggleApiKeyVisibility}
-                />
-              }
             />
             <Button
               className="sz:font-semibold sz:text-base sz:font-ycom sz:h-8"

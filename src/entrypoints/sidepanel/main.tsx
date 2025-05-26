@@ -6,12 +6,12 @@ import LanguageProvider from '@/providers/LanguageProvider';
 import SidePanelProvider from '@/providers/SidePanelProvider';
 import '@ant-design/v5-patch-for-react-19';
 import { Provider as JotaiProvider } from 'jotai';
-import React from 'react';
+import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  <StrictMode>
     <SidePanelProvider loadingComponent={<EmptyPage />}>
       <JotaiProvider>
         <LanguageProvider loadingComponent={<EmptyPage />}>
@@ -23,5 +23,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </LanguageProvider>
       </JotaiProvider>
     </SidePanelProvider>
-  </React.StrictMode>
+  </StrictMode>
 );

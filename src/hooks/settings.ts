@@ -1,10 +1,10 @@
-import { chromeStorageBackend } from '@/lib/storageBackend';
+import { chromeStorageBackend } from '@/utils/storageBackend';
+import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
 export type Settings = {
   theme: 'light' | 'dark' | 'system';
   openAIKey?: string;
-  model?: string;
 };
 
 export const defaultSettings: Settings = {
@@ -17,3 +17,5 @@ export const settingsAtom = atomWithStorage<Settings>(
   chromeStorageBackend('local'),
   { getOnInit: true }
 );
+
+export const useSettings = () => useAtom(settingsAtom);

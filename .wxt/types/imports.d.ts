@@ -4,30 +4,56 @@ declare global {
   const ContentScriptContext: typeof import('wxt/utils/content-script-context')['ContentScriptContext']
   const InvalidMatchPattern: typeof import('wxt/utils/match-patterns')['InvalidMatchPattern']
   const MatchPattern: typeof import('wxt/utils/match-patterns')['MatchPattern']
+  const addMessage: typeof import('/Users/pizzaman/workspace/shizue/src/utils/indexDB')['addMessage']
   const browser: typeof import('wxt/browser')['browser']
+  const chromeStorageBackend: typeof import('/Users/pizzaman/workspace/shizue/src/utils/storageBackend')['chromeStorageBackend']
   const createIframeUi: typeof import('wxt/utils/content-script-ui/iframe')['createIframeUi']
   const createIntegratedUi: typeof import('wxt/utils/content-script-ui/integrated')['createIntegratedUi']
   const createShadowRootUi: typeof import('wxt/utils/content-script-ui/shadow-root')['createShadowRootUi']
+  const createThread: typeof import('/Users/pizzaman/workspace/shizue/src/utils/indexDB')['createThread']
+  const currentChatAtom: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/chat')['currentChatAtom']
+  const currentThreadIdAtom: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/chat')['currentThreadIdAtom']
+  const db: typeof import('/Users/pizzaman/workspace/shizue/src/utils/indexDB')['db']
+  const defaultCurrentChat: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/chat')['defaultCurrentChat']
+  const defaultModels: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/models')['defaultModels']
+  const defaultSettings: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/settings')['defaultSettings']
+  const defaultUserMemory: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/userMemory')['defaultUserMemory']
   const defineAppConfig: typeof import('wxt/utils/define-app-config')['defineAppConfig']
   const defineBackground: typeof import('wxt/utils/define-background')['defineBackground']
   const defineContentScript: typeof import('wxt/utils/define-content-script')['defineContentScript']
   const defineUnlistedScript: typeof import('wxt/utils/define-unlisted-script')['defineUnlistedScript']
   const defineWxtPlugin: typeof import('wxt/utils/define-wxt-plugin')['defineWxtPlugin']
   const fakeBrowser: typeof import('wxt/testing')['fakeBrowser']
+  const getOS: typeof import('/Users/pizzaman/workspace/shizue/src/utils/userOS')['getOS']
   const i18n: typeof import('#i18n')['i18n']
   const injectScript: typeof import('wxt/utils/inject-script')['injectScript']
+  const languageAtom: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/language')['languageAtom']
+  const listThreads: typeof import('/Users/pizzaman/workspace/shizue/src/utils/indexDB')['listThreads']
+  const loadThread: typeof import('/Users/pizzaman/workspace/shizue/src/utils/indexDB')['loadThread']
+  const loadUserMemory: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/userMemory')['loadUserMemory']
+  const modelsAtom: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/models')['modelsAtom']
+  const overlayMenuItems: typeof import('/Users/pizzaman/workspace/shizue/src/utils/overlayMenu')['overlayMenuItems']
+  const settingsAtom: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/settings')['settingsAtom']
   const storage: typeof import('wxt/utils/storage')['storage']
+  const streamingResponseStreamer: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/streamingResponseStreamer')['default']
+  const threadsAtom: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/chat')['threadsAtom']
+  const touchThread: typeof import('/Users/pizzaman/workspace/shizue/src/utils/indexDB')['touchThread']
   const useAppConfig: typeof import('wxt/utils/app-config')['useAppConfig']
   const useCallback: typeof import('react')['useCallback']
+  const useChromePortStream: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/portStream')['useChromePortStream']
   const useContext: typeof import('react')['useContext']
+  const useCurrentChat: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/chat')['useCurrentChat']
   const useEffect: typeof import('react')['useEffect']
-  const useLanguage: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/useLanguage')['useLanguage']
+  const useLanguage: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/language')['useLanguage']
   const useMemo: typeof import('react')['useMemo']
+  const useModels: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/models')['useModels']
   const useReducer: typeof import('react')['useReducer']
   const useRef: typeof import('react')['useRef']
-  const useSettings: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/useSettings')['useSettings']
+  const useSettings: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/settings')['useSettings']
   const useState: typeof import('react')['useState']
-  const useStreamingResponseStreamer: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/useStreamingResponseStreamer')['default']
+  const useUserMemory: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/userMemory')['useUserMemory']
+  const userMemoryAtom: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/userMemory')['userMemoryAtom']
+  const validateApiKey: typeof import('/Users/pizzaman/workspace/shizue/src/utils/validateApiKey')['validateApiKey']
 }
 // for type re-export
 declare global {
@@ -58,4 +84,22 @@ declare global {
   // @ts-ignore
   export type { ScriptPublicPath, InjectScriptOptions } from 'wxt/utils/inject-script'
   import('wxt/utils/inject-script')
+  // @ts-ignore
+  export type { CurrentChat } from '/Users/pizzaman/workspace/shizue/src/hooks/chat'
+  import('/Users/pizzaman/workspace/shizue/src/hooks/chat')
+  // @ts-ignore
+  export type { Language } from '/Users/pizzaman/workspace/shizue/src/hooks/language'
+  import('/Users/pizzaman/workspace/shizue/src/hooks/language')
+  // @ts-ignore
+  export type { Models } from '/Users/pizzaman/workspace/shizue/src/hooks/models'
+  import('/Users/pizzaman/workspace/shizue/src/hooks/models')
+  // @ts-ignore
+  export type { Settings } from '/Users/pizzaman/workspace/shizue/src/hooks/settings'
+  import('/Users/pizzaman/workspace/shizue/src/hooks/settings')
+  // @ts-ignore
+  export type { UserMemory } from '/Users/pizzaman/workspace/shizue/src/hooks/userMemory'
+  import('/Users/pizzaman/workspace/shizue/src/hooks/userMemory')
+  // @ts-ignore
+  export type { Message, ThreadMeta } from '/Users/pizzaman/workspace/shizue/src/utils/indexDB'
+  import('/Users/pizzaman/workspace/shizue/src/utils/indexDB')
 }

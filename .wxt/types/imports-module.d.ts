@@ -19,7 +19,16 @@ declare module '#imports' {
   export { useState, useCallback, useMemo, useEffect, useRef, useContext, useReducer } from 'react';
   export { fakeBrowser } from 'wxt/testing';
   export { i18n } from '#i18n';
-  export { useLanguage } from '../src/hooks/useLanguage';
-  export { useSettings } from '../src/hooks/useSettings';
-  export { default as useStreamingResponseStreamer } from '../src/hooks/useStreamingResponseStreamer';
+  export { defaultCurrentChat, currentChatAtom, useCurrentChat, currentThreadIdAtom, threadsAtom, CurrentChat } from '../src/hooks/chat';
+  export { languageAtom, useLanguage, Language } from '../src/hooks/language';
+  export { defaultModels, modelsAtom, useModels, Models } from '../src/hooks/models';
+  export { useChromePortStream } from '../src/hooks/portStream';
+  export { defaultSettings, settingsAtom, useSettings, Settings } from '../src/hooks/settings';
+  export { default as streamingResponseStreamer } from '../src/hooks/streamingResponseStreamer';
+  export { defaultUserMemory, userMemoryAtom, useUserMemory, loadUserMemory, UserMemory } from '../src/hooks/userMemory';
+  export { db, addMessage, loadThread, listThreads, touchThread, createThread, Message, ThreadMeta } from '../src/utils/indexDB';
+  export { overlayMenuItems } from '../src/utils/overlayMenu';
+  export { chromeStorageBackend } from '../src/utils/storageBackend';
+  export { getOS } from '../src/utils/userOS';
+  export { validateApiKey } from '../src/utils/validateApiKey';
 }

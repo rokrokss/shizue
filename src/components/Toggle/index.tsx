@@ -1,14 +1,12 @@
 import CharacterStanding from '@/components/Character/CharacterStanding';
-import { MESSAGE_ACTION_SET_PANEL_OPEN_OR_NOT } from '@/config/constants';
-import { overlayMenuItems } from '@/lib/overlayMenu';
+import { MESSAGE_SET_PANEL_OPEN_OR_NOT } from '@/config/constants';
 import { debugLog } from '@/logs';
-import { useEventEmitter } from '@/providers/EventEmitterProvider';
+import { overlayMenuItems } from '@/utils/overlayMenu';
 import { Tooltip } from 'antd';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const Toggle = () => {
-  const eventEmitter = useEventEmitter();
   const [isHoveringCharacter, setIsHoveringCharacter] = useState(false);
   const [isHoveringMenu, setIsHoveringMenu] = useState(false);
   const { t } = useTranslation();
@@ -21,18 +19,8 @@ const Toggle = () => {
 
   const menuSize = 34;
 
-  useEffect(() => {
-    const handleMessage = (message: any) => {
-      debugLog('Toggle received message:', message);
-    };
-    const unsubscribe = eventEmitter.subscribe(handleMessage);
-    return () => {
-      unsubscribe();
-    };
-  }, [eventEmitter]);
-
   const setPanelOpenOrNot = () => {
-    void chrome.runtime.sendMessage({ action: MESSAGE_ACTION_SET_PANEL_OPEN_OR_NOT });
+    void chrome.runtime.sendMessage({ action: MESSAGE_SET_PANEL_OPEN_OR_NOT });
   };
 
   const handleClick = () => {
