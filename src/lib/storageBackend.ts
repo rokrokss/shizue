@@ -1,6 +1,6 @@
 type StorageArea = 'local' | 'sync' | 'session';
 
-export function chromeStorageBackend<T>(area: StorageArea = 'local') {
+export const chromeStorageBackend = <T>(area: StorageArea = 'local') => {
   return {
     async getItem(key: string, initialValue: T): Promise<T> {
       const stored = await chrome.storage[area].get(key);
@@ -26,4 +26,4 @@ export function chromeStorageBackend<T>(area: StorageArea = 'local') {
       return () => chrome.storage.onChanged.removeListener(handler);
     },
   };
-}
+};

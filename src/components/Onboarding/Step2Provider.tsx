@@ -8,13 +8,12 @@ import { useNavigate } from 'react-router-dom';
 export default function StepProvider({ onBack }: { onBack: () => void }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isInvalidApiKey, setIsInvalidApiKey] = useState(false);
+  const [canProceed, setCanProceed] = useState(false);
   const [apiKey, setApiKey] = useState('');
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [_, setSettings] = useSettings();
-
-  const canProceed = !isInvalidApiKey && !!apiKey;
 
   const lines = [
     t('onboarding.selectProvider.title'),
@@ -47,6 +46,7 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
           ...prev,
           openAIKey: apiKey,
         }));
+        setCanProceed(true);
       } else {
         const errorJson = await response.json();
         debugLog('OpenAI error', errorJson);

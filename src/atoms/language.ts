@@ -1,4 +1,3 @@
-// atoms/language.ts
 import { chromeStorageBackend } from '@/lib/storageBackend';
 import { atomWithStorage } from 'jotai/utils';
 
