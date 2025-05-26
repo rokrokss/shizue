@@ -41,5 +41,8 @@
   "chat": {
     "greeting": "안녕하세요.",
     "askAnything": "무엇이든 부탁하세요."
+  },
+  "footer": {
+    "joinDiscord": "디스코드로 놀러 오세요!"
   }
 }

@@ -9,7 +9,9 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isInvalidApiKey, setIsInvalidApiKey] = useState(false);
   const [canProceed, setCanProceed] = useState(false);
-  const [apiKey, setApiKey] = useState('');
+  const [apiKey, setApiKey] = useState(
+    process.env.NODE_ENV === 'development' ? import.meta.env.WXT_OPENAI_API_KEY : ''
+  );
   const { t } = useTranslation();
   const navigate = useNavigate();
 

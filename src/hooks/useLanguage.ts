@@ -2,7 +2,7 @@ import { languageAtom } from '@/atoms/language';
 import i18n from '@/i18n';
 import { useAtom } from 'jotai';
 
-export function useLanguage() {
+export const useLanguage = () => {
   const [lang, setLangRaw] = useAtom(languageAtom);
 
   const setLang = (newLang: typeof lang) => {
@@ -11,4 +11,4 @@ export function useLanguage() {
   };
 
   return { lang, setLang };
-}
+};

@@ -26,6 +26,7 @@ export type GeneratedI18nStructure = {
   "onboarding.selectShortcut.title": { substitutions: 0, plural: false };
   "chat.greeting": { substitutions: 0, plural: false };
   "chat.askAnything": { substitutions: 0, plural: false };
+  "chat.footer.joinDiscord": { substitutions: 0, plural: false };
   "@@extension_id": { substitutions: 0, plural: false };
   "@@ui_locale": { substitutions: 0, plural: false };
   "@@bidi_dir": { substitutions: 0, plural: false };

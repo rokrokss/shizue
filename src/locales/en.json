@@ -40,6 +40,9 @@
   },
   "chat": {
     "greeting": "How can I assist you today?",
-    "askAnything": "Ask anything"
+    "askAnything": "Ask anything",
+    "footer": {
+      "joinDiscord": "Join me on Discord"
+    }
   }
 }
