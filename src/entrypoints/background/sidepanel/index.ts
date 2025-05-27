@@ -8,6 +8,8 @@ import {
   PORT_LISTEN_PANEL_CLOSED_KEY,
   PORT_STREAM_MESSAGE,
   STORAGE_SETTINGS,
+  STREAM_FLUSH_THRESHOLD_0,
+  STREAM_FLUSH_THRESHOLD_1,
 } from '@/config/constants';
 import { getCurrentLanguage } from '@/entrypoints/background/language';
 import { loadUserMemory } from '@/hooks/userMemory';
@@ -150,21 +152,30 @@ export const sidepanelMessageListners = () => {
         const initialAIMessage = getInitialAIMessage(getCurrentLanguage());
         const initialSystemMessage = getInitialSystemMessage(getCurrentLanguage());
 
-        debugLog('thread', thread);
-
         const messages = [
-          new AIMessage(initialAIMessage),
           new SystemMessage(initialSystemMessage),
+          new AIMessage(initialAIMessage),
           ...thread.map((m) =>
             m.role === 'human' ? new HumanMessage(m.content) : new AIMessage(m.content)
           ),
         ];
 
-        debugLog('messages', messages);
-
         const messageId = crypto.randomUUID();
 
         let full = '';
+        let buffer = '';
+
+        const sendIfFull = async () => {
+          const threshold = full ? STREAM_FLUSH_THRESHOLD_1 : STREAM_FLUSH_THRESHOLD_0;
+          if (buffer.length >= threshold) {
+            full += buffer;
+            await db.messages.update(messageId, { content: full, done: false });
+            port.postMessage({ delta: buffer });
+            buffer = '';
+          }
+        };
+
+        debugLog('Stream llm start with messages: ', thread);
 
         const stream = await llm.stream(messages, { signal: abortController.signal });
 
@@ -175,27 +186,32 @@ export const sidepanelMessageListners = () => {
           content: full,
           createdAt: Date.now(),
           done: false,
+          onError: false,
         });
 
         try {
           for await (const chunk of stream) {
             const delta = typeof chunk === 'string' ? chunk : chunk.content ?? '';
-            full += delta;
-            await db.messages.update(messageId, { content: full, done: false });
-
-            port.postMessage({ delta });
+            buffer += delta;
+            await sendIfFull();
+          }
+          if (buffer) {
+            full += buffer;
+            port.postMessage({ delta: buffer });
           }
           port.postMessage({ done: true });
         } catch (err) {
-          errorLog('MESSAGE_RUN_GRAPH_STREAM Stream error:', err);
           if (!abortController.signal.aborted) {
+            errorLog('MESSAGE_RUN_GRAPH_STREAM Stream error:', err);
             try {
               port.postMessage({
                 error: 'stream_error',
                 message: (err as Error).message ?? String(err),
               });
             } catch (postError) {
-              console.warn('포트가 이미 닫혀 있어 에러 메시지를 보낼 수 없습니다.');
+              errorLog('port is already closed: ', postError);
+            } finally {
+              await db.messages.update(messageId, { content: full, onError: true });
             }
           }
         } finally {

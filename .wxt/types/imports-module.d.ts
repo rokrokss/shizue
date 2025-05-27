@@ -24,7 +24,7 @@ declare module '#imports' {
   export { defaultModels, modelsAtom, useModels, Models } from '../src/hooks/models';
   export { useChromePortStream } from '../src/hooks/portStream';
   export { defaultSettings, settingsAtom, useSettings, Settings } from '../src/hooks/settings';
-  export { default as streamingResponseStreamer } from '../src/hooks/streamingResponseStreamer';
+  export { default as useStreamText } from '../src/hooks/useStreamText';
   export { defaultUserMemory, userMemoryAtom, useUserMemory, loadUserMemory, UserMemory } from '../src/hooks/userMemory';
   export { hashStringToIndex } from '../src/utils/hash';
   export { db, addMessage, loadThread, listThreads, touchThread, createThread, Message, ThreadMeta } from '../src/utils/indexDB';

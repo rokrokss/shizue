@@ -16,3 +16,7 @@ export const STORAGE_CURRENT_CHAT = 'CURRENT_CHAT';
 export const STORAGE_MODELS = 'MODELS';
 export const STORAGE_SETTINGS = 'SETTINGS';
 export const STORAGE_USER_MEMORY = 'USER_MEMORY';
+
+/* parameters */
+export const STREAM_FLUSH_THRESHOLD_0 = 10;
+export const STREAM_FLUSH_THRESHOLD_1 = 20;

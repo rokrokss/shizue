@@ -7,6 +7,7 @@ export interface Message {
   content: string;
   createdAt: number;
   done: boolean;
+  onError: boolean;
 }
 
 export interface ThreadMeta {

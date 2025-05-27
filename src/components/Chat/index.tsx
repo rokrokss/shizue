@@ -16,6 +16,7 @@ export interface Message {
   role: 'human' | 'system' | 'ai';
   content: string;
   done: boolean;
+  onError: boolean;
 }
 
 const Chat = () => {
@@ -63,8 +64,8 @@ const Chat = () => {
       aiIndexRef.current = prev.length + 1;
       return [
         ...prev,
-        { role: 'human', content: text, done: true },
-        { role: 'ai', content: '', done: false },
+        { role: 'human', content: text, done: true, onError: false },
+        { role: 'ai', content: '', done: false, onError: false },
       ];
     });
 
@@ -75,6 +76,7 @@ const Chat = () => {
       content: text,
       createdAt: Date.now(),
       done: true,
+      onError: false,
     });
     await touchThread(threadId);
   };
@@ -91,6 +93,7 @@ const Chat = () => {
     const id = await checkIfThreadExists(text);
 
     await addHumanMessage(id, text);
+    scrollToBottom();
 
     startStream(
       { threadId: id },
@@ -99,7 +102,12 @@ const Chat = () => {
           setMessages((cur) => {
             const idx = aiIndexRef.current;
             const copy = [...cur];
-            copy[idx] = { role: 'ai', content: copy[idx].content + delta, done: false };
+            copy[idx] = {
+              role: 'ai',
+              content: copy[idx].content + delta,
+              done: false,
+              onError: false,
+            };
             scrollToBottom();
             return copy;
           }),
@@ -107,19 +115,53 @@ const Chat = () => {
           setMessages((cur) => {
             const idx = aiIndexRef.current;
             const copy = [...cur];
-            copy[idx] = { role: 'ai', content: copy[idx].content, done: true };
+            copy[idx] = {
+              role: 'ai',
+              content: copy[idx].content,
+              done: true,
+              onError: false,
+            };
             return copy;
           });
           touchThread(id);
         },
         onError: (err) => {
           errorLog('Chat Stream error:', err);
+          setMessages((cur) => {
+            const idx = aiIndexRef.current;
+            const copy = [...cur];
+            copy[idx] = {
+              role: 'ai',
+              content: copy[idx].content,
+              done: false,
+              onError: true,
+            };
+            return copy;
+          });
+          touchThread(id);
         },
       }
     );
   };
 
   const handleCancel = async () => {
+    if (
+      messages.length > 0 &&
+      messages[messages.length - 1].role === 'ai' &&
+      !messages[messages.length - 1].done
+    ) {
+      setMessages((cur) => {
+        const idx = aiIndexRef.current;
+        const copy = [...cur];
+        copy[idx] = {
+          role: 'ai',
+          content: copy[idx].content,
+          done: false,
+          onError: true,
+        };
+        return copy;
+      });
+    }
     cancelStream();
   };
 
@@ -139,7 +181,7 @@ const Chat = () => {
         sz:scrollbar-hidden
       "
       >
-        {threadId ? <ChatContainer messages={messages} /> : <ChatGreeting />}
+        {threadId && messages.length > 0 ? <ChatContainer messages={messages} /> : <ChatGreeting />}
         <div ref={bottomRef} />
       </div>
       <div className="sz:w-full">

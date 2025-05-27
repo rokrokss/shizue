@@ -1,11 +1,8 @@
 import { animate } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
-const useStreamingResponseStreamer = (
-  text: string,
-  options?: { delimiter?: string; duration?: number }
-) => {
-  const { delimiter = '', duration = 3 } = options || {};
+const useStreamText = (text: string, options?: { delimiter?: string; duration?: number }) => {
+  const { delimiter = '', duration = 1.15 } = options || {};
   const [cursor, setCursor] = useState(0);
   const [startingCursor, setStartingCursor] = useState(0);
   const [prevText, setPrevText] = useState(text);
@@ -30,4 +27,4 @@ const useStreamingResponseStreamer = (
   return text.split(delimiter).slice(0, cursor).join(delimiter);
 };
 
-export default useStreamingResponseStreamer;
+export default useStreamText;

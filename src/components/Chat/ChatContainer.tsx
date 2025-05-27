@@ -1,5 +1,6 @@
 import CharacterPick from '@/components/Character/CharacterPick';
 import { Message } from '@/components/Chat';
+import useStreamText from '@/hooks/useStreamText';
 import { hashStringToIndex } from '@/utils/hash';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -7,6 +8,8 @@ import remarkGfm from 'remark-gfm';
 const ChatContainer = ({ messages }: { messages: Message[] }) => {
   const characterIndexes: number[] = [];
   const characterCount = 6;
+
+  const animatedText = useStreamText(messages[messages.length - 1].content);
 
   return (
     <div
@@ -34,7 +37,14 @@ const ChatContainer = ({ messages }: { messages: Message[] }) => {
                 key={idx}
                 className="sz-message sz-mesage-ai sz:w-full sz:text-left sz:text-black"
               >
-                <Markdown remarkPlugins={[remarkGfm]}>{m.content}</Markdown>
+                <Markdown remarkPlugins={[remarkGfm]}>
+                  {idx === messages.length - 1 && !m.done ? animatedText : m.content}
+                </Markdown>
+                <div className="sz:text-xs sz:text-gray-500">
+                  {m.done ? 'done' : 'not done'}
+                  <br />
+                  {m.onError ? 'error' : 'no error'}
+                </div>
               </div>
             );
           }
