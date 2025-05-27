@@ -138,11 +138,13 @@ export const sidepanelMessageListners = () => {
               .then((v) => v[STORAGE_SETTINGS].openAIKey),
           });
 
+          const initialAIMessage = getInitialAIMessage(getCurrentLanguage());
           const initialSystemMessage = getInitialSystemMessage(getCurrentLanguage());
 
           debugLog('thread', thread);
 
           const messages = [
+            new AIMessage(initialAIMessage),
             new SystemMessage(initialSystemMessage),
             ...thread.map((m) =>
               m.role === 'human' ? new HumanMessage(m.content) : new AIMessage(m.content)
