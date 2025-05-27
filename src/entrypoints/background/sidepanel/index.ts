@@ -140,6 +140,8 @@ export const sidepanelMessageListners = () => {
 
           const initialSystemMessage = getInitialSystemMessage(getCurrentLanguage());
 
+          debugLog('thread', thread);
+
           const messages = [
             new SystemMessage(initialSystemMessage),
             ...thread.map((m) =>
@@ -158,6 +160,13 @@ export const sidepanelMessageListners = () => {
             port.postMessage({ delta });
           }
 
+          await addMessage({
+            id: crypto.randomUUID(),
+            threadId,
+            role: 'ai',
+            content: full,
+            createdAt: Date.now(),
+          });
           port.postMessage({ done: true });
         }
       });

@@ -31,7 +31,8 @@ class DB extends Dexie {
 export const db = new DB();
 
 export const addMessage = (m: Message) => db.messages.add(m);
-export const loadThread = (id: string) => db.messages.where('threadId').equals(id).toArray();
+export const loadThread = (id: string) =>
+  db.messages.where('threadId').equals(id).sortBy('createdAt');
 export const listThreads = () => db.threads.orderBy('updatedAt').reverse().toArray();
 export const touchThread = async (id: string) => {
   await db.threads.update(id, { updatedAt: Date.now() });
