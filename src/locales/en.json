@@ -42,7 +42,8 @@
     "greeting": "Hello,",
     "main_0": "How's your day going?",
     "askAnything": "Ask anything",
-    "connectionError": "Beep beep...🚨 System Error... 📡 🥺"
+    "connectionError": "Beep beep...🚨 System Error... 📡 🥺",
+    "retry": "Retry"
   },
   "footer": {
     "joinDiscord": "Join me on Discord!"

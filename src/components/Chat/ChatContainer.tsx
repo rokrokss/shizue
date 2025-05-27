@@ -68,7 +68,7 @@ const ChatContainer = ({
                         console.log('retry');
                       }}
                     >
-                      재시도
+                      {t('chat.retry')}
                     </Button>
                   </div>
                 ) : null}
