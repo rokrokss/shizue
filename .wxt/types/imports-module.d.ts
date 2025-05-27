@@ -26,6 +26,7 @@ declare module '#imports' {
   export { defaultSettings, settingsAtom, useSettings, Settings } from '../src/hooks/settings';
   export { default as streamingResponseStreamer } from '../src/hooks/streamingResponseStreamer';
   export { defaultUserMemory, userMemoryAtom, useUserMemory, loadUserMemory, UserMemory } from '../src/hooks/userMemory';
+  export { hashStringToIndex } from '../src/utils/hash';
   export { db, addMessage, loadThread, listThreads, touchThread, createThread, Message, ThreadMeta } from '../src/utils/indexDB';
   export { overlayMenuItems } from '../src/utils/overlayMenu';
   export { getInitialSystemMessage, getInitialAIMessage } from '../src/utils/prompts';

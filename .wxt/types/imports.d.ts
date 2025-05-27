@@ -27,6 +27,7 @@ declare global {
   const getInitialAIMessage: typeof import('/Users/pizzaman/workspace/shizue/src/utils/prompts')['getInitialAIMessage']
   const getInitialSystemMessage: typeof import('/Users/pizzaman/workspace/shizue/src/utils/prompts')['getInitialSystemMessage']
   const getOS: typeof import('/Users/pizzaman/workspace/shizue/src/utils/userOS')['getOS']
+  const hashStringToIndex: typeof import('/Users/pizzaman/workspace/shizue/src/utils/hash')['hashStringToIndex']
   const i18n: typeof import('#i18n')['i18n']
   const injectScript: typeof import('wxt/utils/inject-script')['injectScript']
   const languageAtom: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/language')['languageAtom']

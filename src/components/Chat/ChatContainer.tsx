@@ -1,8 +1,13 @@
+import CharacterPick from '@/components/Character/CharacterPick';
 import { Message } from '@/components/Chat';
+import { hashStringToIndex } from '@/utils/hash';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 const ChatContainer = ({ messages }: { messages: Message[] }) => {
+  const characterIndexes: number[] = [];
+  const characterCount = 6;
+
   return (
     <div
       className="
@@ -22,24 +27,28 @@ const ChatContainer = ({ messages }: { messages: Message[] }) => {
           sz:overflow-wrap-word
         "
       >
-        {messages.map((m, idx) =>
-          m.role === 'ai' ? (
-            <div
-              key={idx}
-              className="
-                sz-message 
-                sz-mesage-ai 
-                sz:w-full 
-                sz:text-left 
-                sz:text-black
-              "
-            >
-              <Markdown remarkPlugins={[remarkGfm]}>{m.content}</Markdown>
-            </div>
-          ) : (
-            <div
-              key={idx}
-              className="
+        {messages.map((m, idx) => {
+          if (m.role === 'ai') {
+            return (
+              <div
+                key={idx}
+                className="sz-message sz-mesage-ai sz:w-full sz:text-left sz:text-black"
+              >
+                <Markdown remarkPlugins={[remarkGfm]}>{m.content}</Markdown>
+              </div>
+            );
+          }
+
+          const prev = characterIndexes[characterIndexes.length - 1] ?? null;
+          const charIndex = hashStringToIndex(m.content + idx.toString(), prev, characterCount);
+          characterIndexes.push(charIndex);
+
+          return (
+            <div className="sz:flex sz:flex-row sz:items-center sz:justify-center">
+              <CharacterPick index={charIndex} marginLeft="0.25rem" />
+              <div
+                key={idx}
+                className="
                 sz-message 
                 sz-message-human 
                 sz:w-fit 
@@ -51,11 +60,12 @@ const ChatContainer = ({ messages }: { messages: Message[] }) => {
                 sz:rounded-lg 
                 sz:px-2
               "
-            >
-              <Markdown remarkPlugins={[remarkGfm]}>{m.content}</Markdown>
+              >
+                <Markdown remarkPlugins={[remarkGfm]}>{m.content}</Markdown>
+              </div>
             </div>
-          )
-        )}
+          );
+        })}
       </div>
     </div>
   );
