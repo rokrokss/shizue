@@ -1,11 +1,24 @@
 import Footer from '@/components/Footer';
-import { Input } from 'antd';
+import { Button, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-const ChatInput = ({ onSubmit }: { onSubmit: (text: string) => Promise<void> }) => {
+const ChatInput = ({
+  onSubmit,
+  onCancel,
+}: {
+  onSubmit: (text: string) => Promise<void>;
+  onCancel: () => Promise<void>;
+}) => {
   const { t } = useTranslation();
   const [chatInput, setChatInput] = useState('');
   const [isComposing, setIsComposing] = useState(false);
+
+  const handleSubmit = async (text: string) => {
+    if (text !== '') {
+      onSubmit(text);
+      setChatInput('');
+    }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter') {
@@ -14,11 +27,8 @@ const ChatInput = ({ onSubmit }: { onSubmit: (text: string) => Promise<void> }) 
       }
 
       e.preventDefault();
-      const currentValue = e.currentTarget.value;
-      if (currentValue.trim() !== '') {
-        onSubmit(currentValue.trim());
-        setChatInput('');
-      }
+      const currentValue = e.currentTarget.value.trim();
+      handleSubmit(currentValue);
     }
   };
 
@@ -46,6 +56,19 @@ const ChatInput = ({ onSubmit }: { onSubmit: (text: string) => Promise<void> }) 
             sz:placeholder:text-gray-400
           "
         />
+      </div>
+      <div className="sz:absolute sz:bottom-2 sz:right-2 sz:flex sz:gap-2">
+        <Button size="small" onClick={() => onCancel()}>
+          취소
+        </Button>
+        <Button
+          type="primary"
+          size="small"
+          onClick={() => handleSubmit(chatInput)}
+          disabled={!chatInput.trim()}
+        >
+          보내기
+        </Button>
       </div>
       <div className="sz-sidepanel-footer sz:h-6 sz:w-full sz:flex sz:items-center sz:justify-center">
         <Footer />

@@ -113,7 +113,9 @@ export const sidepanelMessageListners = () => {
       if (msg.type === MESSAGE_LOAD_THREAD) {
         const data = await loadThread(msg.threadId);
         sendResponse(
-          data.filter((m) => m.role !== 'system').map((m) => ({ role: m.role, content: m.content }))
+          data
+            .filter((m) => m.role !== 'system')
+            .map((m) => ({ role: m.role, content: m.content, done: m.done }))
         );
       }
     })();
@@ -121,57 +123,87 @@ export const sidepanelMessageListners = () => {
   });
 
   chrome.runtime.onConnect.addListener((port) => {
-    if (port.name === PORT_STREAM_MESSAGE) {
-      port.onMessage.addListener(async (msg) => {
-        if (msg.type === MESSAGE_RUN_GRAPH_STREAM) {
-          const { threadId } = msg;
+    if (port.name !== PORT_STREAM_MESSAGE) return;
 
-          const thread = await loadThread(threadId);
-          const memory = (await loadUserMemory()).text;
+    const abortController = new AbortController();
 
-          // test
-          const llm = new ChatOpenAI({
-            modelName: 'chatgpt-4o-latest',
-            temperature: 0.7,
-            apiKey: await chrome.storage.local
-              .get(STORAGE_SETTINGS)
-              .then((v) => v[STORAGE_SETTINGS].openAIKey),
-          });
+    port.onDisconnect.addListener(() => {
+      abortController.abort();
+    });
 
-          const initialAIMessage = getInitialAIMessage(getCurrentLanguage());
-          const initialSystemMessage = getInitialSystemMessage(getCurrentLanguage());
+    port.onMessage.addListener(async (msg) => {
+      if (msg.type === MESSAGE_RUN_GRAPH_STREAM) {
+        const { threadId } = msg;
 
-          debugLog('thread', thread);
+        const thread = await loadThread(threadId);
+        const memory = (await loadUserMemory()).text;
 
-          const messages = [
-            new AIMessage(initialAIMessage),
-            new SystemMessage(initialSystemMessage),
-            ...thread.map((m) =>
-              m.role === 'human' ? new HumanMessage(m.content) : new AIMessage(m.content)
-            ),
-          ];
+        // test
+        const llm = new ChatOpenAI({
+          modelName: 'chatgpt-4o-latest',
+          temperature: 0.7,
+          apiKey: await chrome.storage.local
+            .get(STORAGE_SETTINGS)
+            .then((v) => v[STORAGE_SETTINGS].openAIKey),
+        });
 
-          debugLog('messages', messages);
+        const initialAIMessage = getInitialAIMessage(getCurrentLanguage());
+        const initialSystemMessage = getInitialSystemMessage(getCurrentLanguage());
 
-          const stream = await llm.stream(messages);
+        debugLog('thread', thread);
 
-          let full = '';
+        const messages = [
+          new AIMessage(initialAIMessage),
+          new SystemMessage(initialSystemMessage),
+          ...thread.map((m) =>
+            m.role === 'human' ? new HumanMessage(m.content) : new AIMessage(m.content)
+          ),
+        ];
+
+        debugLog('messages', messages);
+
+        const messageId = crypto.randomUUID();
+
+        let full = '';
+
+        const stream = await llm.stream(messages, { signal: abortController.signal });
+
+        await db.messages.add({
+          id: messageId,
+          threadId,
+          role: 'ai',
+          content: full,
+          createdAt: Date.now(),
+          done: false,
+        });
+
+        try {
           for await (const chunk of stream) {
             const delta = typeof chunk === 'string' ? chunk : chunk.content ?? '';
             full += delta;
+            await db.messages.update(messageId, { content: full, done: false });
+
             port.postMessage({ delta });
           }
-
-          await addMessage({
-            id: crypto.randomUUID(),
-            threadId,
-            role: 'ai',
-            content: full,
-            createdAt: Date.now(),
-          });
           port.postMessage({ done: true });
+        } catch (err) {
+          errorLog('MESSAGE_RUN_GRAPH_STREAM Stream error:', err);
+          if (!abortController.signal.aborted) {
+            try {
+              port.postMessage({
+                error: 'stream_error',
+                message: (err as Error).message ?? String(err),
+              });
+            } catch (postError) {
+              console.warn('포트가 이미 닫혀 있어 에러 메시지를 보낼 수 없습니다.');
+            }
+          }
+        } finally {
+          if (!abortController.signal.aborted) {
+            await db.messages.update(messageId, { content: full, done: true });
+          }
         }
-      });
-    }
+      }
+    });
   });
 };

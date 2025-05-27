@@ -6,7 +6,7 @@ import TopMenu from '@/components/Chat/TopRightMenu';
 import { MESSAGE_LOAD_THREAD } from '@/config/constants';
 import { currentThreadIdAtom } from '@/hooks/chat';
 import { useChromePortStream } from '@/hooks/portStream';
-import { debugLog } from '@/logs';
+import { debugLog, errorLog } from '@/logs';
 import { addMessage, createThread, touchThread } from '@/utils/indexDB';
 import { throttleTrailing } from '@/utils/throttleTrailing';
 import { useAtom } from 'jotai';
@@ -15,6 +15,7 @@ import { useRef, useState } from 'react';
 export interface Message {
   role: 'human' | 'system' | 'ai';
   content: string;
+  done: boolean;
 }
 
 const Chat = () => {
@@ -60,7 +61,11 @@ const Chat = () => {
   const addHumanMessage = async (threadId: string, text: string) => {
     setMessages((prev) => {
       aiIndexRef.current = prev.length + 1;
-      return [...prev, { role: 'human', content: text }, { role: 'ai', content: '' }];
+      return [
+        ...prev,
+        { role: 'human', content: text, done: true },
+        { role: 'ai', content: '', done: false },
+      ];
     });
 
     await addMessage({
@@ -69,6 +74,7 @@ const Chat = () => {
       role: 'human',
       content: text,
       createdAt: Date.now(),
+      done: true,
     });
     await touchThread(threadId);
   };
@@ -93,13 +99,28 @@ const Chat = () => {
           setMessages((cur) => {
             const idx = aiIndexRef.current;
             const copy = [...cur];
-            copy[idx] = { role: 'ai', content: copy[idx].content + delta };
+            copy[idx] = { role: 'ai', content: copy[idx].content + delta, done: false };
             scrollToBottom();
             return copy;
           }),
-        onDone: () => touchThread(id),
+        onDone: () => {
+          setMessages((cur) => {
+            const idx = aiIndexRef.current;
+            const copy = [...cur];
+            copy[idx] = { role: 'ai', content: copy[idx].content, done: true };
+            return copy;
+          });
+          touchThread(id);
+        },
+        onError: (err) => {
+          errorLog('Chat Stream error:', err);
+        },
       }
     );
+  };
+
+  const handleCancel = async () => {
+    cancelStream();
   };
 
   return (
@@ -122,7 +143,7 @@ const Chat = () => {
         <div ref={bottomRef} />
       </div>
       <div className="sz:w-full">
-        <ChatInput onSubmit={handleSubmit} />
+        <ChatInput onSubmit={handleSubmit} onCancel={handleCancel} />
       </div>
       {isSettingsOpen && <SettingsModal onClose={closeSettings} />}
     </div>

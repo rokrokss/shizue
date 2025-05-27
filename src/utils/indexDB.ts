@@ -6,6 +6,7 @@ export interface Message {
   role: 'human' | 'system' | 'ai';
   content: string;
   createdAt: number;
+  done: boolean;
 }
 
 export interface ThreadMeta {

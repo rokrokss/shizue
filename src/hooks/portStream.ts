@@ -17,8 +17,12 @@ export const useChromePortStream = () => {
     portRef.current = port;
 
     const handleMessage = (msg: any) => {
-      if ('delta' in msg) opts.onDelta(msg.delta);
-      if (msg.done) {
+      if ('delta' in msg) {
+        opts.onDelta(msg.delta);
+      } else if ('error' in msg) {
+        opts.onError?.(msg.error);
+        port.disconnect();
+      } else if (msg.done) {
         opts.onDone();
         port.disconnect();
       }
