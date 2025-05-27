@@ -1,3 +1,4 @@
+import { STORAGE_CURRENT_CHAT } from '@/config/constants';
 import { chromeStorageBackend } from '@/utils/storageBackend';
 import { liveQuery } from 'dexie';
 import { atom, Atom, useAtom } from 'jotai';
@@ -10,7 +11,7 @@ export type CurrentChat = {
 export const defaultCurrentChat: CurrentChat = {};
 
 export const currentChatAtom = atomWithStorage<CurrentChat>(
-  'CURRENT_CHAT',
+  STORAGE_CURRENT_CHAT,
   defaultCurrentChat,
   chromeStorageBackend('local'),
   { getOnInit: true }

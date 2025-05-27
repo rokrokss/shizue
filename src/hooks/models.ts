@@ -1,3 +1,4 @@
+import { STORAGE_MODELS } from '@/config/constants';
 import { chromeStorageBackend } from '@/utils/storageBackend';
 import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
@@ -11,7 +12,7 @@ export const defaultModels: Models = {
 };
 
 export const modelsAtom = atomWithStorage<Models>(
-  'MODELS',
+  STORAGE_MODELS,
   defaultModels,
   chromeStorageBackend('local'),
   { getOnInit: true }

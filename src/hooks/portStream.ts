@@ -10,32 +10,29 @@ interface StreamOptions {
 export const useChromePortStream = () => {
   const portRef = useRef<chrome.runtime.Port | null>(null);
 
-  const startStream = useCallback(
-    (payload: { threadId: string; text: string }, opts: StreamOptions) => {
-      if (portRef.current) portRef.current.disconnect();
+  const startStream = useCallback((payload: { threadId: string }, opts: StreamOptions) => {
+    if (portRef.current) portRef.current.disconnect();
 
-      const port = chrome.runtime.connect({ name: PORT_STREAM_MESSAGE });
-      portRef.current = port;
+    const port = chrome.runtime.connect({ name: PORT_STREAM_MESSAGE });
+    portRef.current = port;
 
-      const handleMessage = (msg: any) => {
-        if ('delta' in msg) opts.onDelta(msg.delta);
-        if (msg.done) {
-          opts.onDone();
-          port.disconnect();
-        }
-      };
+    const handleMessage = (msg: any) => {
+      if ('delta' in msg) opts.onDelta(msg.delta);
+      if (msg.done) {
+        opts.onDone();
+        port.disconnect();
+      }
+    };
 
-      const handleDisconnect = () => {
-        port.onMessage.removeListener(handleMessage);
-      };
+    const handleDisconnect = () => {
+      port.onMessage.removeListener(handleMessage);
+    };
 
-      port.onMessage.addListener(handleMessage);
-      port.onDisconnect.addListener(handleDisconnect);
+    port.onMessage.addListener(handleMessage);
+    port.onDisconnect.addListener(handleDisconnect);
 
-      port.postMessage({ type: MESSAGE_RUN_GRAPH_STREAM, ...payload });
-    },
-    []
-  );
+    port.postMessage({ type: MESSAGE_RUN_GRAPH_STREAM, ...payload });
+  }, []);
 
   const cancelStream = useCallback(() => {
     portRef.current?.disconnect();

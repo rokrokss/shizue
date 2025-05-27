@@ -1,3 +1,4 @@
+import { STORAGE_LANGUAGE } from '@/config/constants';
 import i18n from '@/i18n';
 import { chromeStorageBackend } from '@/utils/storageBackend';
 import { useAtom } from 'jotai';
@@ -6,12 +7,12 @@ import { atomWithStorage } from 'jotai/utils';
 export type Language = 'en' | 'ko';
 
 const fallbackLanguage: Language = (() => {
-  const lang = navigator.language;
+  const lang = chrome.i18n.getUILanguage();
   return lang.startsWith('ko') ? 'ko' : 'en';
 })();
 
 export const languageAtom = atomWithStorage<Language>(
-  'LANGUAGE',
+  STORAGE_LANGUAGE,
   fallbackLanguage,
   chromeStorageBackend('local'),
   { getOnInit: true }

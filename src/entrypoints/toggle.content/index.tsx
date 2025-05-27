@@ -1,6 +1,6 @@
 import '@/assets/tailwind.css';
 import Toggle from '@/components/Toggle';
-import { contentScriptLog, debugLog } from '@/logs';
+import { contentScriptLog } from '@/logs';
 import AntdProvider from '@/providers/AntdProvider';
 import LanguageProvider from '@/providers/LanguageProvider';
 import '@ant-design/v5-patch-for-react-19';
@@ -8,42 +8,10 @@ import { Provider as JotaiProvider } from 'jotai';
 import { StrictMode } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 
-type EventEmitter = {
-  listeners: Set<(data: any) => void>;
-  emit: (data: any) => void;
-  subscribe: (listener: (data: any) => void) => () => void;
-};
-
-const createEventEmitter = (): EventEmitter => {
-  const listeners = new Set<(data: any) => void>();
-  return {
-    listeners,
-    emit(data) {
-      listeners.forEach((listener) => listener(data));
-    },
-    subscribe(listener) {
-      listeners.add(listener);
-      return () => listeners.delete(listener);
-    },
-  };
-};
-
-const setupMessageListener = () => {
-  const handler = (message: any, sender: any, sendResponse: any) => {
-    debugLog('Message received:', message);
-  };
-  browser.runtime.onMessage.addListener(handler);
-
-  return () => browser.runtime.onMessage.removeListener(handler);
-};
-
 export default defineContentScript({
   matches: ['http://*/*', 'https://*/*', '<all_urls>'],
   main(ctx) {
     contentScriptLog('Toggle');
-
-    const cleanupMessageListener = setupMessageListener();
-    const eventEmitter = createEventEmitter();
 
     let root: Root | null = null;
 
@@ -66,9 +34,7 @@ export default defineContentScript({
         return root;
       },
       onRemove: () => {
-        eventEmitter.listeners.clear();
         root?.unmount();
-        cleanupMessageListener?.();
       },
     });
 

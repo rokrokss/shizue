@@ -76,7 +76,7 @@ const Chat = () => {
     await addHumanMessage(id, text);
 
     startStream(
-      { threadId: id, text },
+      { threadId: id },
       {
         onDelta: (delta) =>
           setMessages((cur) => {
@@ -93,8 +93,8 @@ const Chat = () => {
   return (
     <div className="sz-chat sz:w-full sz:h-full sz:flex sz:flex-col sz:items-center">
       <TopMenu onSettingsClick={handleTopMenuSettingsClick} />
-      <div className="sz-chat-main sz:flex sz:flex-col sz:items-center sz:justify-center sz:h-full sz:w-full">
-        {threadId ? <ChatContainer threadId={threadId} messages={messages} /> : <ChatGreeting />}
+      <div className="sz-chat-main sz:flex sz:flex-col sz:items-center sz:justify-start sz:h-full sz:w-full">
+        {threadId ? <ChatContainer messages={messages} /> : <ChatGreeting />}
       </div>
       <ChatInput onSubmit={handleSubmit} />
       {isSettingsOpen && <SettingsModal onClose={closeSettings} />}

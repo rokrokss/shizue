@@ -1,3 +1,4 @@
+import { languageListeners } from '@/entrypoints/background/language';
 import {
   sidebarToggleListners,
   sidepanelMessageListners,
@@ -7,5 +8,6 @@ import { backgroundLog } from '@/logs';
 export default defineBackground(() => {
   backgroundLog();
   sidebarToggleListners();
+  languageListeners();
   sidepanelMessageListners();
 });

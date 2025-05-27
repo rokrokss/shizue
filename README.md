@@ -18,13 +18,13 @@ Sider is a great service, but I believe the future isn't about showcasing every 
   - [x] character
   - [ ] animalese-like voice
   - [ ] sentiment expression based on chat
-- [ ] basic chat powered by openai models
+- [x] basic chat powered by openai models
   - [x] authentication method
     - [x] user's api key
-    - [ ] integrate other models
-    - [ ] **auto selection**
-  - [ ] interactive ui
-  - [ ] context window
+  - [ ] integrate other vendors
+  - [ ] **model auto selection**
+  - [x] interactive ui
+  - [x] context window
   - [ ] memory
   - [ ] manage chat history
   - [ ] image support

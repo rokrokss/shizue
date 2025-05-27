@@ -1,19 +1,20 @@
 import { Message } from '@/components/Chat';
 
-const ChatContainer = ({
-  threadId,
-  messages,
-}: {
-  threadId: string | undefined;
-  messages: Message[];
-}) => {
+const ChatContainer = ({ messages }: { messages: Message[] }) => {
   return (
-    <div>
-      <div>{threadId}</div>
-      <div className="flex flex-col gap-2">
-        {messages.map((m, idx) => (
-          <div key={idx}>{m.content}</div>
-        ))}
+    <div className="sz:text-base sz:px-5 sz:pt-20 sz:w-full">
+      <div className="sz:flex sz:flex-col sz:gap-3">
+        {messages.map((m, idx) =>
+          m.role === 'ai' ? (
+            <div key={idx} className="sz:w-full sz:text-left sz:text-base">
+              {m.content}
+            </div>
+          ) : (
+            <div key={idx} className="sz:w-full sz:text-right sz:text-base sz:text-gray-500">
+              {m.content}
+            </div>
+          )
+        )}
       </div>
     </div>
   );

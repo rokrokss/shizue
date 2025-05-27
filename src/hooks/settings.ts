@@ -1,3 +1,4 @@
+import { STORAGE_SETTINGS } from '@/config/constants';
 import { chromeStorageBackend } from '@/utils/storageBackend';
 import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
@@ -12,7 +13,7 @@ export const defaultSettings: Settings = {
 };
 
 export const settingsAtom = atomWithStorage<Settings>(
-  'SETTINGS',
+  STORAGE_SETTINGS,
   defaultSettings,
   chromeStorageBackend('local'),
   { getOnInit: true }

@@ -24,6 +24,7 @@ declare global {
   const defineUnlistedScript: typeof import('wxt/utils/define-unlisted-script')['defineUnlistedScript']
   const defineWxtPlugin: typeof import('wxt/utils/define-wxt-plugin')['defineWxtPlugin']
   const fakeBrowser: typeof import('wxt/testing')['fakeBrowser']
+  const getInitialSystemMessage: typeof import('/Users/pizzaman/workspace/shizue/src/utils/prompts')['getInitialSystemMessage']
   const getOS: typeof import('/Users/pizzaman/workspace/shizue/src/utils/userOS')['getOS']
   const i18n: typeof import('#i18n')['i18n']
   const injectScript: typeof import('wxt/utils/inject-script')['injectScript']

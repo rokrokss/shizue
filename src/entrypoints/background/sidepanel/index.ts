@@ -7,10 +7,14 @@ import {
   MESSAGE_UPDATE_PANEL_INIT_DATA,
   PORT_LISTEN_PANEL_CLOSED_KEY,
   PORT_STREAM_MESSAGE,
+  STORAGE_SETTINGS,
 } from '@/config/constants';
+import { getCurrentLanguage } from '@/entrypoints/background/language';
 import { loadUserMemory } from '@/hooks/userMemory';
 import { debugLog, errorLog } from '@/logs';
 import { loadThread } from '@/utils/indexDB';
+import { AIMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { ChatOpenAI } from '@langchain/openai';
 
 let panelOpened = false;
 let currentWindowId: number | undefined;
@@ -120,12 +124,39 @@ export const sidepanelMessageListners = () => {
     if (port.name === PORT_STREAM_MESSAGE) {
       port.onMessage.addListener(async (msg) => {
         if (msg.type === MESSAGE_RUN_GRAPH_STREAM) {
-          const { threadId, text } = msg;
+          const { threadId } = msg;
 
           const thread = await loadThread(threadId);
-          const memory = await loadUserMemory();
+          const memory = (await loadUserMemory()).text;
 
-          debugLog('run graph stream', threadId, text, memory);
+          // test
+          const llm = new ChatOpenAI({
+            modelName: 'chatgpt-4o-latest',
+            temperature: 0.7,
+            apiKey: await chrome.storage.local
+              .get(STORAGE_SETTINGS)
+              .then((v) => v[STORAGE_SETTINGS].openAIKey),
+          });
+
+          const initialSystemMessage = getInitialSystemMessage(getCurrentLanguage());
+
+          const messages = [
+            new SystemMessage(initialSystemMessage),
+            ...thread.map((m) =>
+              m.role === 'human' ? new HumanMessage(m.content) : new AIMessage(m.content)
+            ),
+          ];
+
+          debugLog('messages', messages);
+
+          const stream = await llm.stream(messages);
+
+          let full = '';
+          for await (const chunk of stream) {
+            const delta = typeof chunk === 'string' ? chunk : chunk.content ?? '';
+            full += delta;
+            port.postMessage({ delta });
+          }
 
           port.postMessage({ done: true });
         }

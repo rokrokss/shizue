@@ -28,6 +28,7 @@ declare module '#imports' {
   export { defaultUserMemory, userMemoryAtom, useUserMemory, loadUserMemory, UserMemory } from '../src/hooks/userMemory';
   export { db, addMessage, loadThread, listThreads, touchThread, createThread, Message, ThreadMeta } from '../src/utils/indexDB';
   export { overlayMenuItems } from '../src/utils/overlayMenu';
+  export { getInitialSystemMessage } from '../src/utils/prompts';
   export { chromeStorageBackend } from '../src/utils/storageBackend';
   export { getOS } from '../src/utils/userOS';
   export { validateApiKey } from '../src/utils/validateApiKey';
