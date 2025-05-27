@@ -1,3 +1,4 @@
+import '@/assets/global.css';
 import '@/assets/tailwind.css';
 import Toggle from '@/components/Toggle';
 import { contentScriptLog } from '@/logs';

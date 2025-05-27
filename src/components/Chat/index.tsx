@@ -8,7 +8,9 @@ import { currentThreadIdAtom } from '@/hooks/chat';
 import { useChromePortStream } from '@/hooks/portStream';
 import { debugLog } from '@/logs';
 import { addMessage, createThread, touchThread } from '@/utils/indexDB';
+import { throttleTrailing } from '@/utils/throttleTrailing';
 import { useAtom } from 'jotai';
+import { useRef, useState } from 'react';
 
 export interface Message {
   role: 'human' | 'system' | 'ai';
@@ -19,9 +21,18 @@ const Chat = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [threadId, setThreadId] = useAtom(currentThreadIdAtom);
   const [messages, setMessages] = useState<Message[]>([]);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   const aiIndexRef = useRef<number>(-1);
   const { startStream, cancelStream } = useChromePortStream();
+
+  const scrollToBottom = useMemo(
+    () =>
+      throttleTrailing(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 300),
+    []
+  );
 
   const handleTopMenuSettingsClick = () => {
     setIsSettingsOpen(true);
@@ -83,6 +94,7 @@ const Chat = () => {
             const idx = aiIndexRef.current;
             const copy = [...cur];
             copy[idx] = { role: 'ai', content: copy[idx].content + delta };
+            scrollToBottom();
             return copy;
           }),
         onDone: () => touchThread(id),
@@ -93,10 +105,25 @@ const Chat = () => {
   return (
     <div className="sz-chat sz:w-full sz:h-full sz:flex sz:flex-col sz:items-center">
       <TopMenu onSettingsClick={handleTopMenuSettingsClick} />
-      <div className="sz-chat-main sz:flex sz:flex-col sz:items-center sz:justify-start sz:h-full sz:w-full">
+      <div
+        className="
+        sz-chat-main
+        sz:flex-1
+        sz:flex
+        sz:flex-col
+        sz:items-center
+        sz:justify-start
+        sz:w-full
+        sz:overflow-y-auto
+        sz:scrollbar-hidden
+      "
+      >
         {threadId ? <ChatContainer messages={messages} /> : <ChatGreeting />}
+        <div ref={bottomRef} />
       </div>
-      <ChatInput onSubmit={handleSubmit} />
+      <div className="sz:w-full">
+        <ChatInput onSubmit={handleSubmit} />
+      </div>
       {isSettingsOpen && <SettingsModal onClose={closeSettings} />}
     </div>
   );

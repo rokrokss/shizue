@@ -7,7 +7,36 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'D-DIN';
+  src: url('/src/assets/fonts/D-DIN/D-DIN.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'D-DIN';
+  src: url('/src/assets/fonts/D-DIN/D-DIN-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'D-DIN';
+  src: url('/src/assets/fonts/D-DIN/D-DIN-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+}
+
 @theme {
-  --font-dgm: 'DungGeunMo', 'sans-serif';
   --font-ycom: 'Ycomputer-Regular', 'sans-serif';
+  --font-mono: 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace';
+  --font-sans: 'ui-sans-serif', 'system-ui', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-ddin: 'D-DIN', 'ui-sans-serif', 'system-ui', 'sans-serif';
+}
+
+@utility scrollbar-hidden {
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
