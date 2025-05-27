@@ -6,7 +6,7 @@ import TopMenu from '@/components/Chat/TopRightMenu';
 import { MESSAGE_LOAD_THREAD } from '@/config/constants';
 import { currentThreadIdAtom } from '@/hooks/chat';
 import { useChromePortStream } from '@/hooks/portStream';
-import { debugLog, errorLog } from '@/logs';
+import { errorLog } from '@/logs';
 import { addMessage, createThread, touchThread } from '@/utils/indexDB';
 import { throttleTrailing } from '@/utils/throttleTrailing';
 import { useAtom } from 'jotai';
@@ -16,13 +16,15 @@ export interface Message {
   role: 'human' | 'system' | 'ai';
   content: string;
   done: boolean;
-  onError: boolean;
+  onInterrupt: boolean;
+  stopped: boolean;
 }
 
 const Chat = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [threadId, setThreadId] = useAtom(currentThreadIdAtom);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const aiIndexRef = useRef<number>(-1);
@@ -64,8 +66,8 @@ const Chat = () => {
       aiIndexRef.current = prev.length + 1;
       return [
         ...prev,
-        { role: 'human', content: text, done: true, onError: false },
-        { role: 'ai', content: '', done: false, onError: false },
+        { role: 'human', content: text, done: true, onInterrupt: false, stopped: false },
+        { role: 'ai', content: '', done: false, onInterrupt: false, stopped: false },
       ];
     });
 
@@ -76,7 +78,8 @@ const Chat = () => {
       content: text,
       createdAt: Date.now(),
       done: true,
-      onError: false,
+      onInterrupt: false,
+      stopped: false,
     });
     await touchThread(threadId);
   };
@@ -85,11 +88,9 @@ const Chat = () => {
     if (threadId) loadThreadBackground(threadId);
   }, []);
 
-  useEffect(() => {
-    debugLog('messages', messages);
-  }, [messages]);
-
   const handleSubmit = async (text: string) => {
+    setIsWaitingForResponse(true);
+
     const id = await checkIfThreadExists(text);
 
     await addHumanMessage(id, text);
@@ -106,7 +107,8 @@ const Chat = () => {
               role: 'ai',
               content: copy[idx].content + delta,
               done: false,
-              onError: false,
+              onInterrupt: false,
+              stopped: copy[idx].stopped,
             };
             scrollToBottom();
             return copy;
@@ -119,11 +121,14 @@ const Chat = () => {
               role: 'ai',
               content: copy[idx].content,
               done: true,
-              onError: false,
+              onInterrupt: false,
+              stopped: copy[idx].stopped,
             };
             return copy;
           });
           touchThread(id);
+          setIsWaitingForResponse(false);
+          scrollToBottom();
         },
         onError: (err) => {
           errorLog('Chat Stream error:', err);
@@ -134,11 +139,14 @@ const Chat = () => {
               role: 'ai',
               content: copy[idx].content,
               done: false,
-              onError: true,
+              onInterrupt: true,
+              stopped: copy[idx].stopped,
             };
             return copy;
           });
           touchThread(id);
+          setIsWaitingForResponse(false);
+          scrollToBottom();
         },
       }
     );
@@ -157,12 +165,15 @@ const Chat = () => {
           role: 'ai',
           content: copy[idx].content,
           done: false,
-          onError: true,
+          onInterrupt: true,
+          stopped: true,
         };
         return copy;
       });
     }
     cancelStream();
+    setIsWaitingForResponse(false);
+    scrollToBottom();
   };
 
   return (
@@ -181,11 +192,19 @@ const Chat = () => {
         sz:scrollbar-hidden
       "
       >
-        {threadId && messages.length > 0 ? <ChatContainer messages={messages} /> : <ChatGreeting />}
+        {threadId && messages.length > 0 ? (
+          <ChatContainer messages={messages} scrollToBottom={scrollToBottom} />
+        ) : (
+          <ChatGreeting />
+        )}
         <div ref={bottomRef} />
       </div>
       <div className="sz:w-full">
-        <ChatInput onSubmit={handleSubmit} onCancel={handleCancel} />
+        <ChatInput
+          isWaitingForResponse={isWaitingForResponse}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+        />
       </div>
       {isSettingsOpen && <SettingsModal onClose={closeSettings} />}
     </div>

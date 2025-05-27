@@ -137,17 +137,26 @@ export const sidepanelMessageListners = () => {
       if (msg.type === MESSAGE_RUN_GRAPH_STREAM) {
         const { threadId } = msg;
 
-        const thread = await loadThread(threadId);
-        const memory = (await loadUserMemory()).text;
-
         // test
-        const llm = new ChatOpenAI({
-          modelName: 'chatgpt-4o-latest',
-          temperature: 0.7,
-          apiKey: await chrome.storage.local
-            .get(STORAGE_SETTINGS)
-            .then((v) => v[STORAGE_SETTINGS].openAIKey),
+        const messageId = crypto.randomUUID();
+
+        const thread = await loadThread(threadId);
+
+        await db.messages.add({
+          id: messageId,
+          threadId,
+          role: 'ai',
+          content: '',
+          createdAt: Date.now(),
+          done: false,
+          onInterrupt: false,
+          stopped: false,
         });
+
+        let full = '';
+        let buffer = '';
+
+        const memory = (await loadUserMemory()).text;
 
         const initialAIMessage = getInitialAIMessage(getCurrentLanguage());
         const initialSystemMessage = getInitialSystemMessage(getCurrentLanguage());
@@ -160,11 +169,6 @@ export const sidepanelMessageListners = () => {
           ),
         ];
 
-        const messageId = crypto.randomUUID();
-
-        let full = '';
-        let buffer = '';
-
         const sendIfFull = async () => {
           const threshold = full ? STREAM_FLUSH_THRESHOLD_1 : STREAM_FLUSH_THRESHOLD_0;
           if (buffer.length >= threshold) {
@@ -175,19 +179,17 @@ export const sidepanelMessageListners = () => {
           }
         };
 
+        const llm = new ChatOpenAI({
+          modelName: 'chatgpt-4o-latest',
+          temperature: 0.7,
+          apiKey: await chrome.storage.local
+            .get(STORAGE_SETTINGS)
+            .then((v) => v[STORAGE_SETTINGS].openAIKey),
+        });
+
         debugLog('Stream llm start with messages: ', thread);
 
         const stream = await llm.stream(messages, { signal: abortController.signal });
-
-        await db.messages.add({
-          id: messageId,
-          threadId,
-          role: 'ai',
-          content: full,
-          createdAt: Date.now(),
-          done: false,
-          onError: false,
-        });
 
         try {
           for await (const chunk of stream) {
@@ -211,12 +213,14 @@ export const sidepanelMessageListners = () => {
             } catch (postError) {
               errorLog('port is already closed: ', postError);
             } finally {
-              await db.messages.update(messageId, { content: full, onError: true });
+              await db.messages.update(messageId, { content: full, onInterrupt: true });
             }
           }
         } finally {
           if (!abortController.signal.aborted) {
             await db.messages.update(messageId, { content: full, done: true });
+          } else {
+            await db.messages.update(messageId, { content: full, stopped: true });
           }
         }
       }

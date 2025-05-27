@@ -1,11 +1,14 @@
+import StopIcon from '@/assets/icons/stop.svg?react';
 import Footer from '@/components/Footer';
 import { Button, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 const ChatInput = ({
+  isWaitingForResponse,
   onSubmit,
   onCancel,
 }: {
+  isWaitingForResponse: boolean;
   onSubmit: (text: string) => Promise<void>;
   onCancel: () => Promise<void>;
 }) => {
@@ -27,6 +30,7 @@ const ChatInput = ({
       }
 
       e.preventDefault();
+      if (isWaitingForResponse) return;
       const currentValue = e.currentTarget.value.trim();
       handleSubmit(currentValue);
     }
@@ -57,19 +61,16 @@ const ChatInput = ({
           "
         />
       </div>
-      <div className="sz:absolute sz:bottom-2 sz:right-2 sz:flex sz:gap-2">
-        <Button size="small" onClick={() => onCancel()}>
-          취소
-        </Button>
-        <Button
-          type="primary"
-          size="small"
-          onClick={() => handleSubmit(chatInput)}
-          disabled={!chatInput.trim()}
-        >
-          보내기
-        </Button>
-      </div>
+      {isWaitingForResponse && (
+        <div className="sz:absolute sz:bottom-8 sz:right-6 sz:flex sz:items-center sz:justify-center">
+          <Button
+            shape="circle"
+            onClick={() => onCancel()}
+            icon={<StopIcon />}
+            size="large"
+          ></Button>
+        </div>
+      )}
       <div className="sz-sidepanel-footer sz:h-6 sz:w-full sz:flex sz:items-center sz:justify-center">
         <Footer />
       </div>

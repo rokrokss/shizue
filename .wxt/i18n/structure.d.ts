@@ -27,6 +27,7 @@ export type GeneratedI18nStructure = {
   "chat.greeting": { substitutions: 0, plural: false };
   "chat.main_0": { substitutions: 0, plural: false };
   "chat.askAnything": { substitutions: 0, plural: false };
+  "chat.connectionError": { substitutions: 0, plural: false };
   "footer.joinDiscord": { substitutions: 0, plural: false };
   "settings.title": { substitutions: 0, plural: false };
   "settings.language": { substitutions: 0, plural: false };

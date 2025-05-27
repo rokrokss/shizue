@@ -2,14 +2,25 @@ import CharacterPick from '@/components/Character/CharacterPick';
 import { Message } from '@/components/Chat';
 import useStreamText from '@/hooks/useStreamText';
 import { hashStringToIndex } from '@/utils/hash';
+import { Button } from 'antd';
+import { useTranslation } from 'react-i18next';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-const ChatContainer = ({ messages }: { messages: Message[] }) => {
+const ChatContainer = ({
+  messages,
+  scrollToBottom,
+}: {
+  messages: Message[];
+  scrollToBottom: () => void;
+}) => {
+  const { t } = useTranslation();
   const characterIndexes: number[] = [];
   const characterCount = 6;
 
-  const animatedText = useStreamText(messages[messages.length - 1].content);
+  const animatedText = useStreamText(messages[messages.length - 1].content, {
+    handleOnComplete: scrollToBottom,
+  });
 
   return (
     <div
@@ -35,16 +46,32 @@ const ChatContainer = ({ messages }: { messages: Message[] }) => {
             return (
               <div
                 key={idx}
-                className="sz-message sz-mesage-ai sz:w-full sz:text-left sz:text-black"
+                className="sz-message sz-mesage-ai sz:w-full sz:text-left sz:text-black sz:flex sz:flex-col"
               >
-                <Markdown remarkPlugins={[remarkGfm]}>
-                  {idx === messages.length - 1 && !m.done ? animatedText : m.content}
-                </Markdown>
-                <div className="sz:text-xs sz:text-gray-500">
-                  {m.done ? 'done' : 'not done'}
-                  <br />
-                  {m.onError ? 'error' : 'no error'}
+                <div className="sz:flex sz:flex-col sz:text-left sz:w-full">
+                  <Markdown remarkPlugins={[remarkGfm]}>
+                    {m.onInterrupt && !m.stopped
+                      ? t('chat.connectionError')
+                      : idx === messages.length - 1 && !m.done
+                      ? animatedText
+                      : m.content}
+                  </Markdown>
                 </div>
+
+                {(m.onInterrupt && !m.stopped) || m.stopped ? (
+                  <div className="sz:text-xs sz:text-gray-500 sz:pl-0.5 sz:pt-1">
+                    <Button
+                      color="cyan"
+                      variant="outlined"
+                      size="small"
+                      onClick={() => {
+                        console.log('retry');
+                      }}
+                    >
+                      재시도
+                    </Button>
+                  </div>
+                ) : null}
               </div>
             );
           }
@@ -54,7 +81,10 @@ const ChatContainer = ({ messages }: { messages: Message[] }) => {
           characterIndexes.push(charIndex);
 
           return (
-            <div className="sz:flex sz:flex-row sz:items-center sz:justify-center">
+            <div
+              key={`${idx}-container`}
+              className="sz:flex sz:flex-row sz:items-center sz:justify-center"
+            >
               <CharacterPick index={charIndex} marginLeft="0.25rem" />
               <div
                 key={idx}
