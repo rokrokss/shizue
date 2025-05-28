@@ -13,6 +13,12 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
   const threads = useAtomValue(threadsAtom);
 
   const handleDeleteThread = (id: string) => {
+    if (id === threadId) {
+      setThreadId(undefined);
+      deleteThread(id);
+      onClose();
+      return;
+    }
     deleteThread(id);
   };
 

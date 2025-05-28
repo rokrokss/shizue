@@ -122,6 +122,11 @@ const Chat = () => {
       cancelStream();
       loadThreadBackground(threadId);
     }
+
+    if (!threadId) {
+      cancelStream();
+      setMessages([]);
+    }
   }, [threadId]);
 
   const handleSubmit = async (text: string) => {
