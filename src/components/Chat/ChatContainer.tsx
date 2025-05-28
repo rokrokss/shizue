@@ -16,7 +16,7 @@ const ChatContainer = ({
 }) => {
   const { t } = useTranslation();
   const characterIndexes: number[] = [];
-  const characterCount = 6;
+  const characterCount = 9;
 
   const animatedText = useStreamText(messages[messages.length - 1].content, {
     handleOnComplete: scrollToBottom,
