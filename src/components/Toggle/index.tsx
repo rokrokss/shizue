@@ -1,4 +1,6 @@
-import CharacterStanding from '@/components/Character/CharacterStanding';
+import CharacterPickToggle, {
+  characterCountChat,
+} from '@/components/Character/CharacterPickToggle';
 import { MESSAGE_SET_PANEL_OPEN_OR_NOT } from '@/config/constants';
 import { debugLog } from '@/logs';
 import { overlayMenuItems } from '@/utils/overlayMenu';
@@ -9,15 +11,25 @@ import { useTranslation } from 'react-i18next';
 const Toggle = () => {
   const [isHoveringCharacter, setIsHoveringCharacter] = useState(false);
   const [isHoveringMenu, setIsHoveringMenu] = useState(false);
+  const [characterIndex, setCharacterIndex] = useState(0);
   const { t } = useTranslation();
 
   const isVisible = isHoveringCharacter || isHoveringMenu;
 
-  const width = 42;
-  const height = 42;
-  const widthFull = 54;
+  const width = 43;
+  const height = 43;
+  const widthFull = 55;
 
   const menuSize = 34;
+
+  useEffect(() => {
+    const charIndex = hashStringToIndex(
+      new Date().toISOString().split('T')[0],
+      null,
+      characterCountChat
+    );
+    setCharacterIndex(charIndex);
+  }, []);
 
   const setPanelOpenOrNot = () => {
     void chrome.runtime.sendMessage({ action: MESSAGE_SET_PANEL_OPEN_OR_NOT });
@@ -45,7 +57,7 @@ const Toggle = () => {
               ? 'sz:opacity-100 sz:translate-x-0 sz:pointer-events-auto'
               : 'sz:opacity-0 sz:translate-x-[8px] sz:pointer-events-none'
           }
-          `}
+      `}
         style={{
           transition: 'opacity 0.3s ease-in-out, translate 0.3s ease-in-out',
         }}
@@ -109,7 +121,7 @@ const Toggle = () => {
           borderBottomRightRadius: '0',
         }}
       >
-        <CharacterStanding scale={1.8} marginLeft={'6px'} />
+        <CharacterPickToggle index={characterIndex} />
       </div>
     </div>
   );

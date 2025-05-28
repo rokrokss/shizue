@@ -1,4 +1,4 @@
-import CharacterPick, { characterCount } from '@/components/Character/CharacterPick';
+import CharacterPickChat, { characterCount } from '@/components/Character/CharacterPickChat';
 import { Message } from '@/components/Chat';
 import useStreamText from '@/hooks/useStreamText';
 import { hashStringToIndex } from '@/utils/hash';
@@ -84,7 +84,7 @@ const ChatContainer = ({
               key={`${idx}-container`}
               className="sz:flex sz:flex-row sz:items-center sz:justify-center"
             >
-              <CharacterPick index={charIndex} marginLeft="0.25rem" />
+              <CharacterPickChat index={charIndex} scale={1} marginLeft="0.25rem" />
               <div
                 key={idx}
                 className="
