@@ -1,4 +1,4 @@
-import CharacterPick from '@/components/Character/CharacterPick';
+import CharacterPick, { characterCount } from '@/components/Character/CharacterPick';
 import { Message } from '@/components/Chat';
 import useStreamText from '@/hooks/useStreamText';
 import { hashStringToIndex } from '@/utils/hash';
@@ -16,7 +16,6 @@ const ChatContainer = ({
 }) => {
   const { t } = useTranslation();
   const characterIndexes: number[] = [];
-  const characterCount = 9;
 
   const animatedText = useStreamText(messages[messages.length - 1].content, {
     handleOnComplete: scrollToBottom,

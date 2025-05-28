@@ -3,14 +3,17 @@ import BabyCowSniff from '@/components/Character/BabyCowSniff';
 import BabyCowWalking from '@/components/Character/BabyCowWalking';
 import BlueChickenWatch from '@/components/Character/BlueChickenWatch';
 import CharacterForward from '@/components/Character/CharacterForward';
+import CharacterStanding from '@/components/Character/CharacterStanding';
 import Chicken from '@/components/Character/Chicken';
+import ChickenEating from '@/components/Character/ChickenEating';
 import CowEating from '@/components/Character/CowEating';
-import ChickenEating from './ChickenEating';
 
 interface CharacterPickProps {
   index: number;
   marginLeft: string;
 }
+
+export const characterCount = 10;
 
 const CharacterPick = ({ index, marginLeft }: CharacterPickProps) => {
   const characters = [
@@ -21,8 +24,9 @@ const CharacterPick = ({ index, marginLeft }: CharacterPickProps) => {
     <BlueChickenWatch key="4" scale={2.5} marginLeft={marginLeft} />,
     <Chicken key="5" scale={2.5} marginLeft={marginLeft} />,
     <BabyCowSniff key="6" scale={2.5} marginLeft={marginLeft} />,
-    <ChickenEating key="7" scale={2.5} marginLeft="0.25rem" />,
-    <BabyCowSniff key="8" scale={2} marginLeft="0.25rem" />,
+    <ChickenEating key="7" scale={2.5} marginLeft={marginLeft} />,
+    <BabyCowSniff key="8" scale={2} marginLeft={marginLeft} />,
+    <CharacterStanding key="9" scale={2} marginLeft={marginLeft} />,
   ];
 
   return characters[index % characters.length];
