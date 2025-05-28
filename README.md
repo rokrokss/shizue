@@ -10,7 +10,7 @@ The concept is to build a browser extension that transforms your browsing experi
 
 Sider is a great service, but I believe the future isn't about showcasing every available model or fragmenting features just to highlight how many options you have.
 
-## features
+## tasks
 
 - [x] extension skeleton built with WXT
 - [x] toggle side panel with an overlay button
