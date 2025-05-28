@@ -28,4 +28,4 @@ dist-ssr
 *.sw?
 
 # wxt
-./.wxt
+.wxt/*
