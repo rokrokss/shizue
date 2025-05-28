@@ -5,6 +5,7 @@ export type GeneratedI18nStructure = {
   "overlayMenu.settings": { substitutions: 0, plural: false };
   "overlayMenu.screenshot": { substitutions: 0, plural: false };
   "overlayMenu.summarizePage": { substitutions: 0, plural: false };
+  "overlayMenu.translatePage": { substitutions: 0, plural: false };
   "overlayMenu.quickChat": { substitutions: 0, plural: false };
   "onboarding.greeting_0": { substitutions: 0, plural: false };
   "onboarding.greeting_1": { substitutions: 0, plural: false };
