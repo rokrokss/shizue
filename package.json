@@ -28,6 +28,7 @@
     "@langchain/langgraph": "^0.2.73",
     "@langchain/openai": "^0.5.11",
     "@tailwindcss/vite": "^4.1.7",
+    "@webcomponents/custom-elements": "^1.6.0",
     "@wxt-dev/i18n": "^0.2.4",
     "antd": "^5.25.2",
     "antd-style": "^3.7.1",
