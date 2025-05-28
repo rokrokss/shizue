@@ -37,5 +37,8 @@
   "i18n-ally.enabledParsers": ["json"],
   "i18n-ally.sortKeys": true,
   "i18n-ally.namespace": false,
-  "i18n-ally.pathMatcher": "{locale}.json"
+  "i18n-ally.pathMatcher": "{locale}.json",
+  "cSpell.words": [
+    "shizue"
+  ]
 }
