@@ -25,8 +25,10 @@ declare global {
   const defineWxtPlugin: typeof import('wxt/utils/define-wxt-plugin')['defineWxtPlugin']
   const deleteThread: typeof import('/Users/pizzaman/workspace/shizue/src/utils/indexDB')['deleteThread']
   const fakeBrowser: typeof import('wxt/testing')['fakeBrowser']
+  const getCurrentLanguage: typeof import('/Users/pizzaman/workspace/shizue/src/utils/translation')['getCurrentLanguage']
   const getInitialAIMessage: typeof import('/Users/pizzaman/workspace/shizue/src/utils/prompts')['getInitialAIMessage']
   const getInitialSystemMessage: typeof import('/Users/pizzaman/workspace/shizue/src/utils/prompts')['getInitialSystemMessage']
+  const getLanguageName: typeof import('/Users/pizzaman/workspace/shizue/src/utils/translation')['getLanguageName']
   const getLatestMessageForThread: typeof import('/Users/pizzaman/workspace/shizue/src/utils/indexDB')['getLatestMessageForThread']
   const getOS: typeof import('/Users/pizzaman/workspace/shizue/src/utils/userOS')['getOS']
   const hashStringToIndex: typeof import('/Users/pizzaman/workspace/shizue/src/utils/hash')['hashStringToIndex']
@@ -43,6 +45,8 @@ declare global {
   const threadsAtom: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/chat')['threadsAtom']
   const throttleTrailing: typeof import('/Users/pizzaman/workspace/shizue/src/utils/throttleTrailing')['throttleTrailing']
   const touchThread: typeof import('/Users/pizzaman/workspace/shizue/src/utils/indexDB')['touchThread']
+  const translatePageElements: typeof import('/Users/pizzaman/workspace/shizue/src/utils/translation')['translatePageElements']
+  const translateText: typeof import('/Users/pizzaman/workspace/shizue/src/utils/translation')['translateText']
   const useAppConfig: typeof import('wxt/utils/app-config')['useAppConfig']
   const useCallback: typeof import('react')['useCallback']
   const useChromePortStream: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/portStream')['useChromePortStream']
@@ -108,4 +112,7 @@ declare global {
   // @ts-ignore
   export type { Message, ThreadMeta } from '/Users/pizzaman/workspace/shizue/src/utils/indexDB'
   import('/Users/pizzaman/workspace/shizue/src/utils/indexDB')
+  // @ts-ignore
+  export type { TranslationOptions, TranslationResult } from '/Users/pizzaman/workspace/shizue/src/utils/translation'
+  import('/Users/pizzaman/workspace/shizue/src/utils/translation')
 }

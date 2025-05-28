@@ -32,6 +32,7 @@ declare module '#imports' {
   export { getInitialSystemMessage, getInitialAIMessage } from '../src/utils/prompts';
   export { chromeStorageBackend } from '../src/utils/storageBackend';
   export { throttleTrailing } from '../src/utils/throttleTrailing';
+  export { getLanguageName, getCurrentLanguage, translateText, translatePageElements, TranslationOptions, TranslationResult } from '../src/utils/translation';
   export { getOS } from '../src/utils/userOS';
   export { validateApiKey } from '../src/utils/validateApiKey';
 }
