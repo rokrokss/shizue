@@ -43,7 +43,9 @@
     "main_0": "How's your day going?",
     "askAnything": "Ask anything",
     "connectionError": "Beep beep...🚨 System Error... 📡 🥺",
-    "retry": "Retry"
+    "retry": "Retry",
+    "history": "History",
+    "empty": "No messages yet"
   },
   "footer": {
     "joinDiscord": "Join me on Discord!"

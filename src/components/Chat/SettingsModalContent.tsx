@@ -5,7 +5,7 @@ import { SmileOutlined } from '@ant-design/icons';
 import { Button, Input, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-const SettingsModalContent = ({ onClose }: { onClose: () => void }) => {
+const SettingsModalContent = () => {
   const { t } = useTranslation();
   const { lang, setLang } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
@@ -39,19 +39,7 @@ const SettingsModalContent = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <div
-      className="
-          sz:bg-white sz:rounded-xl sz:px-6 sz:pt-6 sz:pb-9 sz:shadow-xl sz:min-w-70 sz:max-w-sm
-          sz:relative
-        "
-      onClick={(e) => e.stopPropagation()}
-    >
-      <button
-        className="sz:absolute sz:top-2 sz:right-3 sz:text-gray-400 hover:sz:text-black sz:cursor-pointer"
-        onClick={onClose}
-      >
-        ✕
-      </button>
+    <>
       <div className="sz:text-lg sz:font-semibold sz:mb-4 sz:text-center">
         {t('settings.title')}
       </div>
@@ -130,7 +118,7 @@ const SettingsModalContent = ({ onClose }: { onClose: () => void }) => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

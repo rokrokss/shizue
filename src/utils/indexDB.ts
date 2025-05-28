@@ -45,3 +45,11 @@ export const createThread = async (title = 'NEW_CHAT') => {
   await db.threads.add({ id, title, updatedAt: Date.now() });
   return id;
 };
+export const deleteThread = async (id: string) => {
+  await db.messages.where('threadId').equals(id).delete();
+  await db.threads.delete(id);
+};
+export const getLatestMessageForThread = async (threadId: string) => {
+  const messageList = await db.messages.where('threadId').equals(threadId).sortBy('createdAt');
+  return messageList.pop();
+};

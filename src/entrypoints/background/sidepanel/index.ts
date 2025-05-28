@@ -1,4 +1,5 @@
 import {
+  MESSAGE_CANCEL_NOT_STARTED_MESSAGE,
   MESSAGE_LOAD_THREAD,
   MESSAGE_OPEN_PANEL,
   MESSAGE_PANEL_OPENED_PING_FROM_PANEL,
@@ -14,7 +15,7 @@ import {
 import { getCurrentLanguage } from '@/entrypoints/background/language';
 import { loadUserMemory } from '@/hooks/userMemory';
 import { debugLog, errorLog } from '@/logs';
-import { loadThread } from '@/utils/indexDB';
+import { getLatestMessageForThread, loadThread } from '@/utils/indexDB';
 import { AIMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { ChatOpenAI } from '@langchain/openai';
 
@@ -117,8 +118,25 @@ export const sidepanelMessageListners = () => {
         sendResponse(
           data
             .filter((m) => m.role !== 'system')
-            .map((m) => ({ role: m.role, content: m.content, done: m.done }))
+            .map((m) => ({
+              role: m.role,
+              content: m.content,
+              done: m.done,
+              onInterrupt: m.onInterrupt,
+              stopped: m.stopped,
+            }))
         );
+      } else if (msg.type === MESSAGE_CANCEL_NOT_STARTED_MESSAGE) {
+        const latestMessage = await getLatestMessageForThread(msg.threadId);
+        if (
+          latestMessage &&
+          !latestMessage.done &&
+          !latestMessage.onInterrupt &&
+          !latestMessage.stopped &&
+          latestMessage.role === 'ai'
+        ) {
+          await db.messages.update(latestMessage.id, { stopped: true });
+        }
       }
     })();
     return true;
@@ -180,7 +198,7 @@ export const sidepanelMessageListners = () => {
         };
 
         const llm = new ChatOpenAI({
-          modelName: 'chatgpt-4o-latest',
+          modelName: 'gpt-4o',
           temperature: 0.7,
           apiKey: await chrome.storage.local
             .get(STORAGE_SETTINGS)

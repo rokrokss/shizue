@@ -1,16 +1,19 @@
 import StopIcon from '@/assets/icons/stop.svg?react';
 import Footer from '@/components/Footer';
-import { Button, Input } from 'antd';
+import { FolderOutlined } from '@ant-design/icons';
+import { Button, Input, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 const ChatInput = ({
   isWaitingForResponse,
   onSubmit,
   onCancel,
+  onOpenHistory,
 }: {
   isWaitingForResponse: boolean;
   onSubmit: (text: string) => Promise<void>;
   onCancel: () => Promise<void>;
+  onOpenHistory: () => void;
 }) => {
   const { t } = useTranslation();
   const [chatInput, setChatInput] = useState('');
@@ -38,7 +41,24 @@ const ChatInput = ({
 
   return (
     <div className="sz-chat-input sz:w-full sz:px-2 sz:flex sz:flex-col sz:items-center sz:justify-center">
-      <div className="sz:w-full sz:h-40 sz:px-2">
+      <div className="sz:flex sz:flex-col sz:w-full sz:h-45 sz:px-2">
+        <div className="sz:flex sz:items-center sz:justify-center">
+          <div className="sz:flex sz:w-full sz:items-center sz:justify-start">
+            <Tooltip
+              placement="top"
+              title={<div className="sz:text-black sz:font-ycom">{t('chat.history')}</div>}
+              color="white"
+              className="sz:font-ycom"
+            >
+              <Button
+                onClick={() => onOpenHistory()}
+                type="text"
+                icon={<FolderOutlined style={{ fontSize: '20px', color: 'rgba(0,0,0,0.88)' }} />}
+                size="middle"
+              ></Button>
+            </Tooltip>
+          </div>
+        </div>
         <Input.TextArea
           value={chatInput}
           onChange={(e) => setChatInput(e.target.value)}

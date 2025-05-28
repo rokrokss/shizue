@@ -1,16 +1,18 @@
 import ChatContainer from '@/components/Chat/ChatContainer';
 import ChatGreeting from '@/components/Chat/ChatGreeting';
 import ChatInput from '@/components/Chat/ChatInput';
-import SettingsModal from '@/components/Chat/SettingsModal';
+import SettingsModalContent from '@/components/Chat/SettingsModalContent';
+import ThreadListModalContent from '@/components/Chat/ThreadListModalContent';
 import TopMenu from '@/components/Chat/TopRightMenu';
-import { MESSAGE_LOAD_THREAD } from '@/config/constants';
+import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
+import { MESSAGE_CANCEL_NOT_STARTED_MESSAGE, MESSAGE_LOAD_THREAD } from '@/config/constants';
 import { currentThreadIdAtom } from '@/hooks/chat';
 import { useChromePortStream } from '@/hooks/portStream';
-import { errorLog } from '@/logs';
+import { debugLog, errorLog } from '@/logs';
 import { addMessage, createThread, touchThread } from '@/utils/indexDB';
 import { throttleTrailing } from '@/utils/throttleTrailing';
 import { useAtom } from 'jotai';
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export interface Message {
   role: 'human' | 'system' | 'ai';
@@ -22,13 +24,15 @@ export interface Message {
 
 const Chat = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [threadId, setThreadId] = useAtom(currentThreadIdAtom);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
-  const aiIndexRef = useRef<number>(-1);
+  const [threadId, setThreadId] = useAtom(currentThreadIdAtom);
   const { startStream, cancelStream } = useChromePortStream();
+
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const aiIndexRef = useRef<number>(-1);
 
   const scrollToBottom = useMemo(
     () =>
@@ -47,10 +51,39 @@ const Chat = () => {
   };
 
   const loadThreadBackground = useCallback(async (threadId: string) => {
-    chrome.runtime
-      .sendMessage({ type: MESSAGE_LOAD_THREAD, threadId })
-      .then((res: Message[]) => setMessages(res));
+    chrome.runtime.sendMessage({ type: MESSAGE_LOAD_THREAD, threadId }).then((res: Message[]) => {
+      debugLog(res);
+      setMessages(res);
+    });
   }, []);
+
+  const handleCancel = async () => {
+    if (
+      messages.length > 0 &&
+      messages[messages.length - 1].role === 'ai' &&
+      !messages[messages.length - 1].done
+    ) {
+      setMessages((cur) => {
+        const idx = aiIndexRef.current;
+        const copy = [...cur];
+        copy[idx] = {
+          role: 'ai',
+          content: copy[idx].content,
+          done: false,
+          onInterrupt: true,
+          stopped: true,
+        };
+        return copy;
+      });
+    }
+    cancelStream();
+    void chrome.runtime.sendMessage({
+      type: MESSAGE_CANCEL_NOT_STARTED_MESSAGE,
+      threadId,
+    });
+    setIsWaitingForResponse(false);
+    scrollToBottom();
+  };
 
   const checkIfThreadExists = async (text: string) => {
     let id = threadId;
@@ -85,8 +118,11 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    if (threadId) loadThreadBackground(threadId);
-  }, []);
+    if (!isWaitingForResponse && threadId) {
+      cancelStream();
+      loadThreadBackground(threadId);
+    }
+  }, [threadId]);
 
   const handleSubmit = async (text: string) => {
     setIsWaitingForResponse(true);
@@ -152,28 +188,12 @@ const Chat = () => {
     );
   };
 
-  const handleCancel = async () => {
-    if (
-      messages.length > 0 &&
-      messages[messages.length - 1].role === 'ai' &&
-      !messages[messages.length - 1].done
-    ) {
-      setMessages((cur) => {
-        const idx = aiIndexRef.current;
-        const copy = [...cur];
-        copy[idx] = {
-          role: 'ai',
-          content: copy[idx].content,
-          done: false,
-          onInterrupt: true,
-          stopped: true,
-        };
-        return copy;
-      });
-    }
-    cancelStream();
-    setIsWaitingForResponse(false);
-    scrollToBottom();
+  const handleOpenHistory = () => {
+    setIsHistoryOpen(true);
+  };
+
+  const handleCloseHistory = () => {
+    setIsHistoryOpen(false);
   };
 
   return (
@@ -204,9 +224,18 @@ const Chat = () => {
           isWaitingForResponse={isWaitingForResponse}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
+          onOpenHistory={handleOpenHistory}
         />
       </div>
-      {isSettingsOpen && <SettingsModal onClose={closeSettings} />}
+      {isSettingsOpen && (
+        <SidePanelFullModal onClose={closeSettings} content={<SettingsModalContent />} />
+      )}
+      {isHistoryOpen && (
+        <SidePanelFullModal
+          onClose={handleCloseHistory}
+          content={<ThreadListModalContent onClose={handleCloseHistory} />}
+        />
+      )}
     </div>
   );
 };

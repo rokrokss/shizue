@@ -5,6 +5,7 @@ export const MESSAGE_UPDATE_PANEL_INIT_DATA = 'update_panel_init_data';
 export const MESSAGE_PANEL_OPENED_PING_FROM_PANEL = 'panel_opened_ping_from_panel';
 export const MESSAGE_LOAD_THREAD = 'load_thread';
 export const MESSAGE_RUN_GRAPH_STREAM = 'run_graph_stream';
+export const MESSAGE_CANCEL_NOT_STARTED_MESSAGE = 'cancel_not_started_message';
 
 /* port */
 export const PORT_LISTEN_PANEL_CLOSED_KEY = 'listen_panel_closed_key';

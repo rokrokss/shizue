@@ -8,7 +8,7 @@ export type Models = {
 };
 
 export const defaultModels: Models = {
-  chatModel: 'chatgpt-4o-latest',
+  chatModel: 'gpt-4o',
 };
 
 export const modelsAtom = atomWithStorage<Models>(

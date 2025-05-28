@@ -43,7 +43,9 @@
     "main_0": "좋은 하루 보내고 계신가요?",
     "askAnything": "무엇이든 부탁하세요.",
     "connectionError": "뚜뚜...🚨 시스템 오류... 📡 🥺",
-    "retry": "재시도"
+    "retry": "재시도",
+    "history": "기록",
+    "empty": "아직 대화가 없어요."
   },
   "footer": {
     "joinDiscord": "디스코드로 놀러 오세요!"

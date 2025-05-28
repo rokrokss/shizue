@@ -23,8 +23,9 @@ const Toggle = () => {
   const menuSize = 34;
 
   useEffect(() => {
+    const date = new Date();
     const charIndex = hashStringToIndex(
-      new Date().toISOString().split('T')[0],
+      date.toISOString().split('T')[0] + date.getHours(),
       null,
       characterCountChat
     );

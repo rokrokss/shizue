@@ -27,7 +27,7 @@ declare module '#imports' {
   export { default as useStreamText } from '../src/hooks/useStreamText';
   export { defaultUserMemory, userMemoryAtom, useUserMemory, loadUserMemory, UserMemory } from '../src/hooks/userMemory';
   export { hashStringToIndex } from '../src/utils/hash';
-  export { db, addMessage, loadThread, listThreads, touchThread, createThread, Message, ThreadMeta } from '../src/utils/indexDB';
+  export { db, addMessage, loadThread, listThreads, touchThread, createThread, deleteThread, getLatestMessageForThread, Message, ThreadMeta } from '../src/utils/indexDB';
   export { overlayMenuItems } from '../src/utils/overlayMenu';
   export { getInitialSystemMessage, getInitialAIMessage } from '../src/utils/prompts';
   export { chromeStorageBackend } from '../src/utils/storageBackend';
