@@ -24,6 +24,7 @@
   "dependencies": {
     "@ant-design/icons": "~5.6.1",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
+    "@floating-ui/react": "^0.27.9",
     "@langchain/core": "^0.3.57",
     "@langchain/langgraph": "^0.2.73",
     "@langchain/openai": "^0.5.11",
