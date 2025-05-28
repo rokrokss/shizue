@@ -39,19 +39,18 @@ export class PageTranslator {
 
       if (hasNewContent) {
         // 디바운스를 위해 약간의 지연
-        setTimeout(() => this.translateVisibleElements(), 500);
+        // FIXME: 디바운스가 제대로 되고 있지 않습니다. 번역 중 새로운 요소가 추가되면 다시 요청이 진행되는 문제가 있습니다
+        // setTimeout(() => this.translateVisibleElements(), 500);
       }
     });
   }
 
   // 번역 활성화/비활성화 토글
-  public toggle(): boolean {
+  public toggle() {
     if (this.isActive) {
       this.deactivate();
-      return false;
     } else {
       this.activate();
-      return true;
     }
   }
 
@@ -147,6 +146,7 @@ export class PageTranslator {
 
   // 화면에 보이는 요소들 번역
   private async translateVisibleElements() {
+    if (!this.isActive) return;
     try {
       const targetLanguage = getLanguageName(await getCurrentLanguage());
       const elements = this.findTranslatableElements();
@@ -156,8 +156,7 @@ export class PageTranslator {
       for (const element of elements) {
         if (this.translatedElements.has(element)) continue;
         this.translatedElements.add(element);
-        
-        const text = element.textContent?.trim();
+        const text = element.innerHTML?.trim();
         if (!text) continue;
 
         // 스피너가 있는 오버레이를 먼저 생성
@@ -176,6 +175,7 @@ export class PageTranslator {
           } else {
             // 번역 실패 시 에러 상태 표시 후 제거
             overlay.setError(true);
+            errorLog('번역 중 오류:', translatedText.error);
             
             // 3초 후 오버레이 제거
             setTimeout(() => {
@@ -277,7 +277,7 @@ export class PageTranslator {
     }
 
     // 이미 번역된 요소인지 확인
-    if (element.querySelector('shizue-translation-overlay') !== null) {
+    if (element.querySelector('shizue-translation-overlay') !== null || element.tagName === 'SHIZUE-TRANSLATION-OVERLAY') {
       return false;
     }
 
@@ -286,7 +286,7 @@ export class PageTranslator {
     if (textElements.includes(element.tagName)) {
       return false;
     }
-    if (Array.from(element.getElementsByTagName('*')).some(child => this.isTranslatableElement(child))) {
+    if (Array.from(element.getElementsByTagName('*')).some(child => child !== element && this.isTranslatableElement(child))) {
       return false;
     }
     return true;
