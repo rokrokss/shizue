@@ -6,6 +6,8 @@ export class PageTranslator {
   private isActive: boolean = false;
   private observer: MutationObserver | null = null;
   private translatedElements: Set<Element> = new Set();
+  private scrollTimeout: NodeJS.Timeout | null = null;
+  private lastScrollTime: number = 0;
 
   constructor() {
     // 웹 컴포넌트 등록 확인
@@ -79,6 +81,9 @@ export class PageTranslator {
         attributes: false
       });
     }
+    
+    // 스크롤 이벤트 리스너 추가
+    this.addScrollListener();
   }
 
   // DOM 관찰 중지
@@ -86,7 +91,48 @@ export class PageTranslator {
     if (this.observer) {
       this.observer.disconnect();
     }
+    
+    // 스크롤 이벤트 리스너 제거
+    this.removeScrollListener();
   }
+
+  // 스크롤 이벤트 리스너 추가
+  private addScrollListener() {
+    window.addEventListener('scroll', this.handleScroll, { passive: true });
+    debugLog('스크롤 이벤트 리스너 추가됨');
+  }
+
+  // 스크롤 이벤트 리스너 제거
+  private removeScrollListener() {
+    window.removeEventListener('scroll', this.handleScroll);
+    if (this.scrollTimeout) {
+      clearTimeout(this.scrollTimeout);
+      this.scrollTimeout = null;
+    }
+    debugLog('스크롤 이벤트 리스너 제거됨');
+  }
+
+  // 스크롤 이벤트 핸들러 (디바운싱 적용)
+  private handleScroll = () => {
+    if (!this.isActive) return;
+
+    const now = Date.now();
+    this.lastScrollTime = now;
+
+    // 기존 타이머 클리어
+    if (this.scrollTimeout) {
+      clearTimeout(this.scrollTimeout);
+    }
+
+    // 300ms 디바운싱
+    this.scrollTimeout = setTimeout(() => {
+      // 마지막 스크롤 이벤트로부터 300ms 경과했는지 확인
+      if (Date.now() - this.lastScrollTime >= 300) {
+        debugLog('스크롤 완료 - 새로운 요소 번역 시작');
+        this.translateVisibleElements();
+      }
+    }, 300);
+  };
 
   // 모든 번역 제거
   private removeAllTranslations() {
@@ -168,7 +214,6 @@ export class PageTranslator {
   // 번역 가능한 요소들 찾기
   private findTranslatableElements(): Element[] {
     const elements: Element[] = [];
-    debugLog(document.body);
     const walker = document.createTreeWalker(
       document.body,
       NodeFilter.SHOW_ELEMENT,
@@ -237,11 +282,11 @@ export class PageTranslator {
     }
 
     // 텍스트 관련 요소이거나 리프 노드인지 확인
-    const textElements = ['SPAN', 'STRONG', 'EM', 'A', 'B', 'I', 'U', 'MARK', 'SMALL', 'SUB', 'SUP'];
+    const textElements = ['SPAN', 'STRONG', 'EM', 'A', 'B', 'I', 'U', 'MARK', 'SMALL', 'SUB', 'SUP', 'CODE'];
     if (textElements.includes(element.tagName)) {
       return false;
     }
-    if (!Array.from(element.children).every(child => textElements.includes(child.tagName))) {
+    if (Array.from(element.getElementsByTagName('*')).some(child => this.isTranslatableElement(child))) {
       return false;
     }
     return true;
@@ -252,7 +297,6 @@ export class PageTranslator {
     element.appendChild(overlay);
     return overlay;
   }
-
 
   // 현재 활성 상태 반환
   public isTranslationActive(): boolean {
@@ -266,6 +310,11 @@ export class PageTranslator {
       this.observer.disconnect();
       this.observer = null;
     }
+    
+    // 스크롤 관련 리소스 정리
+    this.removeScrollListener();
+    
+    debugLog('PageTranslator 리소스 정리 완료');
   }
 }
 
