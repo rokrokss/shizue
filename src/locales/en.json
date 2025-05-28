@@ -3,11 +3,9 @@
   "extension_description": "AI Assistant-based browser enhancement extension",
   "toggle_description": "Toggle Shizue",
   "overlayMenu": {
-    "settings": "Settings",
-    "screenshot": "Screenshot",
-    "summarizePage": "Summarize this Page",
-    "translatePage": "Translate this Page",
-    "quickChat": "Quick Chat"
+    "translateSettings": "Translate settings",
+    "translatePage": "Translate this page",
+    "summarizePage": "Summarize this page"
   },
   "onboarding": {
     "greeting_0": "Welcome!",

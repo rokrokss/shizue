@@ -3,11 +3,9 @@
   "extension_description": "AI 어시스턴트 기반 브라우저 강화 익스텐션",
   "toggle_description": "시즈에를 부릅니다.",
   "overlayMenu": {
-    "settings": "설정",
-    "screenshot": "스크린샷",
-    "summarizePage": "페이지 요약",
+    "translateSettings": "번역 설정",
     "translatePage": "페이지 번역",
-    "quickChat": "채팅"
+    "summarizePage": "페이지 요약"
   },
   "onboarding": {
     "greeting_0": "안녕하세요!",

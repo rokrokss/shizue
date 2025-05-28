@@ -1,6 +1,4 @@
 import BookIcon from '@/assets/icons/book.svg?react';
-import ChatIcon from '@/assets/icons/chat.svg?react';
-import ScreenshotIcon from '@/assets/icons/screenshot.svg?react';
 import SettingIcon from '@/assets/icons/setting.svg?react';
 import TranslateIcon from '@/assets/icons/translate.svg?react';
 import { getPageTranslator } from '@/utils/pageTranslator';
@@ -9,25 +7,13 @@ import { useTranslation } from 'react-i18next';
 
 const overlayMenuItems = [
   {
-    name: 'Settings',
+    name: 'Translate settings',
     onClick: () => {},
     icon: <SettingIcon className="sz:w-[20px] sz:h-[20px]" />,
-    tooltip: 'overlayMenu.settings',
+    tooltip: 'overlayMenu.translateSettings',
   },
   {
-    name: 'Screenshot',
-    onClick: () => {},
-    icon: <ScreenshotIcon className="sz:w-[20px] sz:h-[20px]" />,
-    tooltip: 'overlayMenu.screenshot',
-  },
-  {
-    name: 'Summarize this Page',
-    onClick: () => {},
-    icon: <BookIcon className="sz:w-[20px] sz:h-[20px]" />,
-    tooltip: 'overlayMenu.summarizePage',
-  },
-  {
-    name: 'Translate this Page',
+    name: 'Translate this page',
     onClick: async () => {
       getPageTranslator().toggle();
     },
@@ -35,10 +21,10 @@ const overlayMenuItems = [
     tooltip: 'overlayMenu.translatePage',
   },
   {
-    name: 'Quick Chat',
+    name: 'Summarize this page',
     onClick: () => {},
-    icon: <ChatIcon className="sz:w-[20px] sz:h-[20px]" />,
-    tooltip: 'overlayMenu.quickChat',
+    icon: <BookIcon className="sz:w-[20px] sz:h-[20px]" />,
+    tooltip: 'overlayMenu.summarizePage',
   },
 ];
 
