@@ -10,7 +10,7 @@ class ShizueTranslationOverlay extends HTMLElement {
 
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
+    // this.attachShadow({ mode: 'open' });
     this.originalElement = null;
     this.translatedText = '';
     this.isLoading = true; // 기본적으로 로딩 상태로 시작
@@ -30,11 +30,11 @@ class ShizueTranslationOverlay extends HTMLElement {
   }
 
   private render() {
-    if (!this.shadowRoot) return;
+    // if (!this.shadowRoot) return;
     
     if (this.isLoading) {
       this.style.opacity = '1';
-      this.shadowRoot.innerHTML = `
+      this.innerHTML = `
         <style>
           .spinner {
             display: inline-block;
@@ -58,7 +58,7 @@ class ShizueTranslationOverlay extends HTMLElement {
       `;
     } else {
       this.style.opacity = '0.5';
-      this.shadowRoot.innerHTML = this.translatedText;
+      this.innerHTML = this.translatedText;
     }
   }
 
