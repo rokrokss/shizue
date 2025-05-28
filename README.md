@@ -26,10 +26,10 @@ Sider is a great service, but I believe the future isn't about showcasing every 
   - [x] interactive ui
   - [x] context window
   - [ ] memory
-  - [ ] manage chat history
+  - [x] manage chat history
   - [ ] image support
 - [ ] page translation features
-  - [ ] whole page
+  - [x] whole page
   - [ ] on paragraph hover
   - [ ] on text selection
 - [ ] summarize current page
