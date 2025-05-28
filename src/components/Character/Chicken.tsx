@@ -14,7 +14,7 @@ const Chicken = ({ scale, marginLeft }: { scale: number; marginLeft: string }) =
   useEffect(() => {
     const interval = setInterval(() => {
       setFrame((prev) => (prev + 1) % totalFrames);
-    }, 300);
+    }, 250);
     return () => {
       clearInterval(interval);
     };

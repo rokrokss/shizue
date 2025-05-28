@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 const BabyCowSniff = ({ scale, marginLeft }: { scale: number; marginLeft: string }) => {
   const [frame, setFrame] = useState(0);
 
-  const frameWidth = 19;
+  const frameWidth = 21;
   const frameHeight = 13;
   const totalFrames = 8;
-  const frameSpacing = (243 - totalFrames * frameWidth) / (totalFrames - 1);
+  const frameSpacing = 11;
 
   const x = -(frameWidth + frameSpacing) * frame;
 

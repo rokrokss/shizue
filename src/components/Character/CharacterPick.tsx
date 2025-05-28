@@ -13,20 +13,19 @@ interface CharacterPickProps {
   marginLeft: string;
 }
 
-export const characterCount = 10;
+export const characterCount = 9;
 
 const CharacterPick = ({ index, marginLeft }: CharacterPickProps) => {
   const characters = [
     <CharacterForward key="0" scale={2} marginLeft={marginLeft} />,
     <CowEating key="1" scale={1.9} marginLeft={marginLeft} />,
-    <BabyCowEating key="2" scale={2} marginLeft={marginLeft} />,
-    <BabyCowWalking key="3" scale={2} marginLeft={marginLeft} />,
+    <BabyCowEating key="2" scale={2.15} marginLeft={marginLeft} />,
+    <BabyCowWalking key="3" scale={2.1} marginLeft={marginLeft} />,
     <BlueChickenWatch key="4" scale={2.5} marginLeft={marginLeft} />,
     <Chicken key="5" scale={2.5} marginLeft={marginLeft} />,
-    <BabyCowSniff key="6" scale={2.5} marginLeft={marginLeft} />,
+    <BabyCowSniff key="6" scale={2.25} marginLeft={marginLeft} />,
     <ChickenEating key="7" scale={2.5} marginLeft={marginLeft} />,
-    <BabyCowSniff key="8" scale={2} marginLeft={marginLeft} />,
-    <CharacterStanding key="9" scale={2} marginLeft={marginLeft} />,
+    <CharacterStanding key="8" scale={2} marginLeft={marginLeft} />,
   ];
 
   return characters[index % characters.length];
