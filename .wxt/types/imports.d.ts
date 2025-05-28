@@ -4,6 +4,7 @@ declare global {
   const ContentScriptContext: typeof import('wxt/utils/content-script-context')['ContentScriptContext']
   const InvalidMatchPattern: typeof import('wxt/utils/match-patterns')['InvalidMatchPattern']
   const MatchPattern: typeof import('wxt/utils/match-patterns')['MatchPattern']
+  const PageTranslator: typeof import('/Users/pizzaman/workspace/shizue/src/utils/pageTranslator')['PageTranslator']
   const addMessage: typeof import('/Users/pizzaman/workspace/shizue/src/utils/indexDB')['addMessage']
   const browser: typeof import('wxt/browser')['browser']
   const chromeStorageBackend: typeof import('/Users/pizzaman/workspace/shizue/src/utils/storageBackend')['chromeStorageBackend']
@@ -31,6 +32,7 @@ declare global {
   const getLanguageName: typeof import('/Users/pizzaman/workspace/shizue/src/utils/translation')['getLanguageName']
   const getLatestMessageForThread: typeof import('/Users/pizzaman/workspace/shizue/src/utils/indexDB')['getLatestMessageForThread']
   const getOS: typeof import('/Users/pizzaman/workspace/shizue/src/utils/userOS')['getOS']
+  const getPageTranslator: typeof import('/Users/pizzaman/workspace/shizue/src/utils/pageTranslator')['getPageTranslator']
   const hashStringToIndex: typeof import('/Users/pizzaman/workspace/shizue/src/utils/hash')['hashStringToIndex']
   const i18n: typeof import('#i18n')['i18n']
   const injectScript: typeof import('wxt/utils/inject-script')['injectScript']
@@ -45,7 +47,6 @@ declare global {
   const threadsAtom: typeof import('/Users/pizzaman/workspace/shizue/src/hooks/chat')['threadsAtom']
   const throttleTrailing: typeof import('/Users/pizzaman/workspace/shizue/src/utils/throttleTrailing')['throttleTrailing']
   const touchThread: typeof import('/Users/pizzaman/workspace/shizue/src/utils/indexDB')['touchThread']
-  const translatePageElements: typeof import('/Users/pizzaman/workspace/shizue/src/utils/translation')['translatePageElements']
   const translateText: typeof import('/Users/pizzaman/workspace/shizue/src/utils/translation')['translateText']
   const useAppConfig: typeof import('wxt/utils/app-config')['useAppConfig']
   const useCallback: typeof import('react')['useCallback']
@@ -112,6 +113,9 @@ declare global {
   // @ts-ignore
   export type { Message, ThreadMeta } from '/Users/pizzaman/workspace/shizue/src/utils/indexDB'
   import('/Users/pizzaman/workspace/shizue/src/utils/indexDB')
+  // @ts-ignore
+  export type { PageTranslator } from '/Users/pizzaman/workspace/shizue/src/utils/pageTranslator'
+  import('/Users/pizzaman/workspace/shizue/src/utils/pageTranslator')
   // @ts-ignore
   export type { TranslationOptions, TranslationResult } from '/Users/pizzaman/workspace/shizue/src/utils/translation'
   import('/Users/pizzaman/workspace/shizue/src/utils/translation')

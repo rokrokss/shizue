@@ -5,16 +5,20 @@ import '@webcomponents/custom-elements';
 class ShizueTranslationOverlay extends HTMLElement {
   private originalElement: Element | null;
   private translatedText: string;
+  private isLoading: boolean;
+  private hasError: boolean;
 
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
     this.originalElement = null;
     this.translatedText = '';
+    this.isLoading = true; // 기본적으로 로딩 상태로 시작
+    this.hasError = false;
   }
 
   static get observedAttributes() {
-    return ['original-text', 'translated-text'];
+    return ['original-text', 'translated-text', 'loading', 'error'];
   }
 
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
@@ -27,20 +31,76 @@ class ShizueTranslationOverlay extends HTMLElement {
 
   private render() {
     if (!this.shadowRoot) return;
-    this.style.opacity = '0.5';
-    this.shadowRoot.innerHTML = this.translatedText;
+    
+    if (this.isLoading) {
+      this.style.opacity = '1';
+      this.shadowRoot.innerHTML = `
+        <style>
+          .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #fdcb6e;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+          }
+          
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+          
+        </style>
+        <div class="spinner"></div>
+      `;
+    } else {
+      this.style.opacity = '0.5';
+      this.shadowRoot.innerHTML = this.translatedText;
+    }
   }
+
   // Public methods for external control
   setTexts(originalElement: Element, translatedText: string) {
-    console.log('setTexts', originalElement, translatedText);
-
     if (originalElement.children.length !== 0 || originalElement.tagName === 'P') {
       this.style.display = 'block';
     }
 
     this.originalElement = originalElement;
     this.translatedText = translatedText;
+    this.isLoading = false; // 텍스트가 설정되면 로딩 완료
+    this.hasError = false; // 성공 시 에러 상태 해제
     this.render();
+  }
+
+  // 로딩 상태 설정
+  setLoading(loading: boolean) {
+    this.isLoading = loading;
+    if (loading) {
+      this.hasError = false; // 로딩 시 에러 상태 해제
+    }
+    this.render();
+  }
+
+  // 에러 상태 설정
+  setError(hasError: boolean) {
+    this.hasError = hasError;
+    if (hasError) {
+      this.isLoading = false; // 에러 시 로딩 상태 해제
+    }
+    this.render();
+  }
+
+  // 로딩 상태 반환
+  getLoading(): boolean {
+    return this.isLoading;
+  }
+
+  // 에러 상태 반환
+  getError(): boolean {
+    return this.hasError;
   }
 }
 
