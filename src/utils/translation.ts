@@ -1,6 +1,6 @@
 import { STORAGE_LANGUAGE, STORAGE_SETTINGS } from '@/config/constants';
 import { Language } from '@/hooks/language';
-import { errorLog } from '@/logs';
+import { debugLog, errorLog } from '@/logs';
 
 export interface TranslationOptions {
   text: string;
@@ -53,8 +53,8 @@ export const translateText = async ({
     }
 
     const prompt = sourceLanguage === 'auto'
-      ? `Translate the following text to ${targetLanguage}. Only return the translated text without any explanation:\n\n${text}`
-      : `Translate the following text from ${sourceLanguage} to ${targetLanguage}. Only return the translated text without any explanation:\n\n${text}`;
+      ? `Translate the following text to ${targetLanguage}. Preserve the original HTML structure and formatting. Only return the translated text without any explanation:\n\n${text}`
+      : `Translate the following text from ${sourceLanguage} to ${targetLanguage}. Preserve the original HTML structure and formatting. Only return the translated text without any explanation:\n\n${text}`;
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -86,6 +86,8 @@ export const translateText = async ({
     if (!translatedText) {
       throw new Error('번역 결과를 받을 수 없습니다.');
     }
+
+    debugLog('번역 완료:', { original: text, translated: translatedText });
 
     return {
       success: true,
