@@ -1,4 +1,5 @@
 import { languageListeners } from '@/entrypoints/background/language';
+import { modelListeners } from '@/entrypoints/background/models';
 import {
   sidebarToggleListners,
   sidepanelMessageListners,
@@ -10,4 +11,5 @@ export default defineBackground(() => {
   sidebarToggleListners();
   languageListeners();
   sidepanelMessageListners();
+  modelListeners();
 });
