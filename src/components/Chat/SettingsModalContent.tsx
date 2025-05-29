@@ -1,8 +1,8 @@
 import { useSettings } from '@/hooks/settings';
+import { ChatModel, TranslateModel } from '@/lib/models';
+import { getOS } from '@/lib/userOS';
+import { validateApiKey } from '@/lib/validateApiKey';
 import { debugLog } from '@/logs';
-import { ChatModel, TranslateModel } from '@/utils/models';
-import { getOS } from '@/utils/userOS';
-import { validateApiKey } from '@/utils/validateApiKey';
 import { SmileOutlined } from '@ant-design/icons';
 import { Button, Input, Select } from 'antd';
 import { useTranslation } from 'react-i18next';

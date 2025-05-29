@@ -1,5 +1,5 @@
 import { currentThreadIdAtom, threadsAtom } from '@/hooks/chat';
-import { deleteThread } from '@/utils/indexDB';
+import { deleteThread } from '@/lib/indexDB';
 import { Button } from 'antd';
 import { useAtom, useAtomValue } from 'jotai';
 import { useState } from 'react';
