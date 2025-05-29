@@ -4,12 +4,12 @@ import TranslateIcon from '@/assets/icons/translate.svg?react';
 import CharacterPickToggle, {
   characterCountChat,
 } from '@/components/Character/CharacterPickToggle';
+import TogglePopoverModal from '@/components/Modal/TogglePopoverModal';
 import OverlayMenu from '@/components/Toggle/OverlayMenu';
 import OverlayMenuItem from '@/components/Toggle/OverlayMenuItem';
 import { MESSAGE_SET_PANEL_OPEN_OR_NOT } from '@/config/constants';
 import { debugLog } from '@/logs';
 import { getPageTranslator } from '@/utils/pageTranslator';
-import { Popover } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -22,7 +22,6 @@ const Toggle = () => {
   const [translateSettingsModalOpen, setTranslateSettingsModalOpen] = useState(false);
 
   const isVisible = isHoveringCharacter || isHoveringMenu || translateSettingsModalOpen;
-  // const isVisible = true;
 
   const width = 43;
   const height = 43;
@@ -86,29 +85,32 @@ const Toggle = () => {
         }}
       >
         <OverlayMenu>
-          <Popover
-            placement="bottom"
-            title={<div className="sz:text-black sz:font-ycom">{tooltipMessages[0]}</div>}
-            content={<div>test</div>}
-            open={translateSettingsModalOpen}
-            zIndex={2147483647}
-            styles={{
-              root: {
-                zIndex: 2147483647,
-                position: 'fixed',
-              },
+          <OverlayMenuItem
+            icon={<SettingIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
+            tooltipMessage={tooltipMessages[0]}
+            onClick={() => {
+              const visible = !translateSettingsModalOpen;
+              debugLog('translate settings modal open change', visible);
+              handleTranslateSettingsOpenChange(visible);
             }}
-          >
-            <OverlayMenuItem
-              icon={<SettingIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
-              tooltipMessage={tooltipMessages[0]}
-              onClick={() => {
-                const visible = !translateSettingsModalOpen;
-                debugLog('translate settings modal open change', visible);
-                handleTranslateSettingsOpenChange(visible);
-              }}
-            />
-          </Popover>
+            popoverContent={
+              <TogglePopoverModal
+                onClose={() => handleTranslateSettingsOpenChange(false)}
+                content={
+                  <>
+                    <div className="sz:font-ycom sz:text-black sz:text-[14px] sz:mb-[2px] sz:text-center">
+                      {t('overlayMenu.translateSettings')}
+                    </div>
+                    <div className="sz:font-ycom sz:text-gray-700 sz:text-[12px] sz:text-center">
+                      ...
+                    </div>
+                  </>
+                }
+              />
+            }
+            isPopoverOpen={translateSettingsModalOpen}
+            setPopoverOpen={handleTranslateSettingsOpenChange}
+          />
 
           <OverlayMenuItem
             icon={<TranslateIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
