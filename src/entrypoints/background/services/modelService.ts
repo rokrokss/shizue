@@ -37,7 +37,7 @@ export class ModelService {
         modelName,
         temperature,
         apiKey: openaiKey,
-        streaming: true,
+        streaming: streaming,
       });
       debugLog('ModelService: Successfully created a new model instance.');
       return llmInstance;
