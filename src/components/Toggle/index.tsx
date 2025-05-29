@@ -1,10 +1,8 @@
 import BookIcon from '@/assets/icons/book.svg?react';
-import SettingIcon from '@/assets/icons/setting.svg?react';
 import TranslateIcon from '@/assets/icons/translate.svg?react';
 import CharacterPickToggle, {
   characterCountChat,
 } from '@/components/Character/CharacterPickToggle';
-import TogglePopoverModal from '@/components/Modal/TogglePopoverModal';
 import OverlayMenu from '@/components/Toggle/OverlayMenu';
 import OverlayMenuItem from '@/components/Toggle/OverlayMenuItem';
 import { MESSAGE_SET_PANEL_OPEN_OR_NOT } from '@/config/constants';
@@ -83,7 +81,7 @@ const Toggle = () => {
         }}
       >
         <OverlayMenu>
-          <OverlayMenuItem
+          {/* <OverlayMenuItem
             icon={<SettingIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
             tooltipMessage={tooltipMessages[0]}
             onClick={() => handleTranslateSettingsOpenChange(!translateSettingsModalOpen)}
@@ -105,7 +103,7 @@ const Toggle = () => {
               />
             }
             isPopoverOpen={translateSettingsModalOpen}
-          />
+          /> */}
 
           <OverlayMenuItem
             icon={<TranslateIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
