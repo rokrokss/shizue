@@ -1,15 +1,12 @@
 import { STORAGE_MODELS } from '@/config/constants';
+import { ChatModel, TranslateModel } from '@/utils/models';
 import { chromeStorageBackend } from '@/utils/storageBackend';
 import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
-export type ChatModel = 'gpt-4.1' | 'gpt-4.1-mini';
-export type TranslateModel = 'gpt-4.1' | 'gpt-4.1-mini';
-
-
 export type Models = {
-  chatModel?: ChatModel;
-  translateModel?: TranslateModel;
+  chatModel: ChatModel;
+  translateModel: TranslateModel;
 };
 
 export const defaultModels: Models = {
