@@ -1,10 +1,10 @@
-import { languageListeners } from '@/entrypoints/background/language';
-import { modelListeners } from '@/entrypoints/background/models';
+import { messageHandlers } from '@/entrypoints/background/handlers/messageHandlers';
 import {
   sidebarToggleListeners,
   sidePanelMessageListeners,
 } from '@/entrypoints/background/sidepanel';
-import { sidePanelMessageHandlers } from '@/entrypoints/background/sidepanel/messageHandlers';
+import { languageListeners } from '@/entrypoints/background/states/language';
+import { modelListeners } from '@/entrypoints/background/states/models';
 import { backgroundLog } from '@/logs';
 
 export default defineBackground(() => {
@@ -16,13 +16,12 @@ export default defineBackground(() => {
 
   chrome.runtime.onMessage.addListener((msg, _s, sendResponse) => {
     (async () => {
-      const action = msg.action as keyof typeof sidePanelMessageHandlers;
+      const action = msg.action as keyof typeof messageHandlers;
 
-      if (sidePanelMessageHandlers[action]) {
-        await sidePanelMessageHandlers[action](msg, sendResponse);
+      if (messageHandlers[action]) {
+        await messageHandlers[action](msg, sendResponse);
       }
     })();
     return true;
   });
 });
-

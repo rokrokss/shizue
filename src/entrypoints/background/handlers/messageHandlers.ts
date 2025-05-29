@@ -29,7 +29,7 @@ async function handleLatestMessageForThread(msg: any, sendResponse: (response?: 
   }
 }
 
-export const sidePanelMessageHandlers = {
+export const messageHandlers = {
   [MESSAGE_LOAD_THREAD]: handleLoadThread,
   [MESSAGE_CANCEL_NOT_STARTED_MESSAGE]: handleLatestMessageForThread,
 };
