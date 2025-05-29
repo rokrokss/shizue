@@ -75,7 +75,7 @@ const Toggle = () => {
           ${
             isVisible
               ? 'sz:opacity-100 sz:translate-x-0 sz:pointer-events-auto'
-              : 'sz:opacity-0 sz:translate-x-[8px] sz:pointer-events-none'
+              : 'sz:opacity-0 sz:translate-x-[8px] sz:pointer-events-none sz:hidden'
           }
       `}
         style={{

@@ -17,11 +17,25 @@ export default defineContentScript({
     let root: Root | null = null;
     let mo: MutationObserver | null = null;
     let debounceId: number | null = null;
+    let uiContainer: HTMLElement | null = null;
+
+    const handleFullscreenChange = () => {
+      if (!uiContainer) return;
+
+      const isInFullscreen = !!document.fullscreenElement;
+
+      if (isInFullscreen) {
+        uiContainer.style.setProperty('display', 'none', 'important');
+      } else {
+        uiContainer.style.removeProperty('display');
+      }
+    };
 
     const ui = createIntegratedUi(ctx, {
       position: 'inline',
       anchor: 'body',
       onMount: (container) => {
+        uiContainer = container;
         container.id = '_shizue_toggle_overlay_';
         Object.assign(container.style, {
           position: 'fixed',
@@ -44,6 +58,9 @@ export default defineContentScript({
           </StrictMode>
         );
 
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        handleFullscreenChange();
+
         mo = new MutationObserver(() => {
           if (debounceId !== null) clearTimeout(debounceId);
 
@@ -63,6 +80,8 @@ export default defineContentScript({
         mo?.disconnect();
         if (debounceId !== null) clearTimeout(debounceId);
         root?.unmount();
+        document.removeEventListener('fullscreenchange', handleFullscreenChange);
+        uiContainer = null;
       },
     });
 
