@@ -1,6 +1,6 @@
-type ChatModel = 'gpt-4o' | 'chatgpt-4o-mini';
+type ChatModel = 'gpt-4.1' | 'chatgpt-4.1-mini';
 
-let currentChatModel: ChatModel = 'gpt-4o';
+let currentChatModel: ChatModel = 'gpt-4.1';
 
 const getCurrentChatModel = () => {
   return currentChatModel;

@@ -198,7 +198,7 @@ export const sidepanelMessageListners = () => {
         };
 
         const llm = new ChatOpenAI({
-          modelName: 'gpt-4o',
+          modelName: 'gpt-4.1',
           temperature: 0.7,
           apiKey: await chrome.storage.local
             .get(STORAGE_SETTINGS)
