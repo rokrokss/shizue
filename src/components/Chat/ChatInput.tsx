@@ -1,6 +1,6 @@
 import StopIcon from '@/assets/icons/stop.svg?react';
 import Footer from '@/components/Footer';
-import { FolderOutlined } from '@ant-design/icons';
+import { FolderOutlined, SmileOutlined } from '@ant-design/icons';
 import { Button, Input, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 
@@ -9,11 +9,13 @@ const ChatInput = ({
   onSubmit,
   onCancel,
   onOpenHistory,
+  onNewChat,
 }: {
   isWaitingForResponse: boolean;
   onSubmit: (text: string) => Promise<void>;
   onCancel: () => Promise<void>;
   onOpenHistory: () => void;
+  onNewChat: () => Promise<void>;
 }) => {
   const { t } = useTranslation();
   const [chatInput, setChatInput] = useState('');
@@ -54,6 +56,19 @@ const ChatInput = ({
                 onClick={() => onOpenHistory()}
                 type="text"
                 icon={<FolderOutlined style={{ fontSize: '20px', color: 'rgba(0,0,0,0.88)' }} />}
+                size="middle"
+              ></Button>
+            </Tooltip>
+            <Tooltip
+              placement="top"
+              title={<div className="sz:text-black sz:font-ycom">{t('chat.newChat')}</div>}
+              color="white"
+              className="sz:font-ycom"
+            >
+              <Button
+                onClick={() => onNewChat()}
+                type="text"
+                icon={<SmileOutlined style={{ fontSize: '20px', color: 'rgba(0,0,0,0.88)' }} />}
                 size="middle"
               ></Button>
             </Tooltip>

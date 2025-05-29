@@ -44,7 +44,8 @@
     "connectionError": "Beep beep...🚨 System Error... 📡 🥺",
     "retry": "Retry",
     "history": "History",
-    "empty": "No messages yet"
+    "empty": "No messages yet",
+    "newChat": "New Chat"
   },
   "footer": {
     "joinDiscord": "Join me on Discord!"
