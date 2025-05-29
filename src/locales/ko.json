@@ -44,7 +44,8 @@
     "connectionError": "뚜뚜...🚨 시스템 오류... 📡 🥺",
     "retry": "재시도",
     "history": "기록",
-    "empty": "아직 대화가 없어요."
+    "empty": "아직 대화가 없어요.",
+    "newChat": "새 대화"
   },
   "footer": {
     "joinDiscord": "디스코드로 놀러 오세요!"

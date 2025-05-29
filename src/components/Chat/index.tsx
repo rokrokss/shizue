@@ -201,6 +201,10 @@ const Chat = () => {
     setIsHistoryOpen(false);
   };
 
+  const handleNewChat = async () => {
+    setThreadId(undefined);
+  };
+
   return (
     <div className="sz-chat sz:w-full sz:h-full sz:flex sz:flex-col sz:items-center">
       <TopMenu onSettingsClick={handleTopMenuSettingsClick} />
@@ -230,6 +234,7 @@ const Chat = () => {
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           onOpenHistory={handleOpenHistory}
+          onNewChat={handleNewChat}
         />
       </div>
       {isSettingsOpen && (
