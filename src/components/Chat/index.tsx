@@ -34,10 +34,14 @@ const Chat = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const aiIndexRef = useRef<number>(-1);
 
-  const scrollToBottom = useMemo(
+  const scrollToBottom = useCallback(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
+
+  const scrollToBottomThrottled = useMemo(
     () =>
       throttleTrailing(() => {
-        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+        scrollToBottom();
       }, 300),
     []
   );
@@ -82,7 +86,7 @@ const Chat = () => {
       threadId,
     });
     setIsWaitingForResponse(false);
-    scrollToBottom();
+    scrollToBottomThrottled();
   };
 
   const checkIfThreadExists = async (text: string) => {
@@ -135,7 +139,7 @@ const Chat = () => {
     const id = await checkIfThreadExists(text);
 
     await addHumanMessage(id, text);
-    scrollToBottom();
+    scrollToBottomThrottled();
 
     startStream(
       { threadId: id },
@@ -151,7 +155,7 @@ const Chat = () => {
               onInterrupt: false,
               stopped: copy[idx].stopped,
             };
-            scrollToBottom();
+            scrollToBottomThrottled();
             return copy;
           }),
         onDone: () => {
@@ -169,7 +173,7 @@ const Chat = () => {
           });
           touchThread(id);
           setIsWaitingForResponse(false);
-          scrollToBottom();
+          scrollToBottomThrottled();
         },
         onError: (err) => {
           errorLog('Chat Stream error:', err);
@@ -187,7 +191,7 @@ const Chat = () => {
           });
           touchThread(id);
           setIsWaitingForResponse(false);
-          scrollToBottom();
+          scrollToBottomThrottled();
         },
       }
     );
@@ -222,7 +226,7 @@ const Chat = () => {
       "
       >
         {threadId && messages.length > 0 ? (
-          <ChatContainer messages={messages} scrollToBottom={scrollToBottom} />
+          <ChatContainer messages={messages} scrollToBottom={scrollToBottomThrottled} />
         ) : (
           <ChatGreeting />
         )}
