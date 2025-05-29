@@ -19,5 +19,5 @@ export const STORAGE_SETTINGS = 'SETTINGS';
 export const STORAGE_USER_MEMORY = 'USER_MEMORY';
 
 /* parameters */
-export const STREAM_FLUSH_THRESHOLD_0 = 10;
-export const STREAM_FLUSH_THRESHOLD_1 = 20;
+export const STREAM_FLUSH_THRESHOLD_0 = 5;
+export const STREAM_FLUSH_THRESHOLD_1 = 10;
