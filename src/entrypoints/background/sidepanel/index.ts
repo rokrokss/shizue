@@ -114,7 +114,7 @@ export const sidebarToggleListeners = () => {
 export const sidepanelMessageListeners = () => {
   chrome.runtime.onMessage.addListener((msg, _s, sendResponse) => {
     (async () => {
-      if (msg.type === MESSAGE_LOAD_THREAD) {
+      if (msg.action === MESSAGE_LOAD_THREAD) {
         const data = await loadThread(msg.threadId);
         sendResponse(
           data
@@ -127,7 +127,7 @@ export const sidepanelMessageListeners = () => {
               stopped: m.stopped,
             }))
         );
-      } else if (msg.type === MESSAGE_CANCEL_NOT_STARTED_MESSAGE) {
+      } else if (msg.action === MESSAGE_CANCEL_NOT_STARTED_MESSAGE) {
         const latestMessage = await getLatestMessageForThread(msg.threadId);
         if (
           latestMessage &&
@@ -153,7 +153,7 @@ export const sidepanelMessageListeners = () => {
     });
 
     port.onMessage.addListener(async (msg) => {
-      if (msg.type === MESSAGE_RUN_GRAPH_STREAM) {
+      if (msg.action === MESSAGE_RUN_GRAPH_STREAM) {
         const { threadId } = msg;
 
         // test

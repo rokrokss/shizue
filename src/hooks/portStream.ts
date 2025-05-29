@@ -35,7 +35,7 @@ export const useChromePortStream = () => {
     port.onMessage.addListener(handleMessage);
     port.onDisconnect.addListener(handleDisconnect);
 
-    port.postMessage({ type: MESSAGE_RUN_GRAPH_STREAM, ...payload });
+    port.postMessage({ action: MESSAGE_RUN_GRAPH_STREAM, ...payload });
   }, []);
 
   const cancelStream = useCallback(() => {
