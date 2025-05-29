@@ -12,6 +12,8 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
   const [threadId, setThreadId] = useAtom(currentThreadIdAtom);
   const threads = useAtomValue(threadsAtom);
 
+  const titleLength = 15;
+
   const handleDeleteThread = (id: string) => {
     if (id === threadId) {
       setThreadId(undefined);
@@ -35,7 +37,6 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
           threads.map((thread) => {
             const isSelected = thread.id === threadId;
             const isHovered = hoveredThreadId === thread.id;
-            const date = new Date(thread.updatedAt);
             return (
               <div
                 key={thread.id}
@@ -53,20 +54,14 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
                 >
                   <div className="sz:flex sz:justify-between sz:w-full sz:font-ycom">
                     <div
-                      className="sz:text-xs"
-                      style={{
-                        color: isSelected ? '#000' : '#777',
-                      }}
-                    >
-                      {date.toLocaleDateString()}
-                    </div>
-                    <div
                       className="sz:text-sm"
                       style={{
                         color: isSelected ? '#000' : '#777',
                       }}
                     >
-                      {thread.title.length > 7 ? `${thread.title.slice(0, 7)}..` : thread.title}
+                      {thread.title.length > titleLength
+                        ? `${thread.title.slice(0, titleLength)}..`
+                        : thread.title}
                     </div>
                   </div>
                 </Button>
@@ -85,7 +80,9 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
                         : 'sz:invisible sz:opacity-0 sz:pointer-events-none'
                     }
                     sz:text-gray-400
-                    sz:hover:text-cyan-300
+                    sz:border-gray-400
+                    sz:hover:border-red-400
+                    sz:hover:text-red-400
                     sz:transition-opacity
                   `}
                 >
