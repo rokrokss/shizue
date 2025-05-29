@@ -1,12 +1,10 @@
 import { STORAGE_LANGUAGE } from '@/config/constants';
-import { debugLog } from '@/logs';
 
 export type Language = 'English' | 'Korean';
 let currentLang: Language = chrome.i18n.getUILanguage().startsWith('ko') ? 'Korean' : 'English';
 
 const changeLanguage = (lang: string) => {
   currentLang = lang.startsWith('ko') ? 'Korean' : 'English';
-  debugLog('currentLang', currentLang);
 };
 
 export const getCurrentLanguage = () => currentLang;
