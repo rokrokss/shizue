@@ -1,6 +1,4 @@
 import {
-  MESSAGE_CANCEL_NOT_STARTED_MESSAGE,
-  MESSAGE_LOAD_THREAD,
   MESSAGE_OPEN_PANEL,
   MESSAGE_PANEL_OPENED_PING_FROM_PANEL,
   MESSAGE_RUN_GRAPH_STREAM,
@@ -14,7 +12,7 @@ import {
 } from '@/config/constants';
 import { getCurrentLanguage } from '@/entrypoints/background/language';
 import { loadUserMemory } from '@/hooks/userMemory';
-import { db, getLatestMessageForThread, loadThread } from '@/lib/indexDB';
+import { db, loadThread } from '@/lib/indexDB';
 import { getInitialAIMessage, getInitialSystemMessage } from '@/lib/prompts';
 import { debugLog, errorLog } from '@/logs';
 import { AIMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
@@ -111,38 +109,7 @@ export const sidebarToggleListeners = () => {
   });
 };
 
-export const sidepanelMessageListeners = () => {
-  chrome.runtime.onMessage.addListener((msg, _s, sendResponse) => {
-    (async () => {
-      if (msg.action === MESSAGE_LOAD_THREAD) {
-        const data = await loadThread(msg.threadId);
-        sendResponse(
-          data
-            .filter((m) => m.role !== 'system')
-            .map((m) => ({
-              role: m.role,
-              content: m.content,
-              done: m.done,
-              onInterrupt: m.onInterrupt,
-              stopped: m.stopped,
-            }))
-        );
-      } else if (msg.action === MESSAGE_CANCEL_NOT_STARTED_MESSAGE) {
-        const latestMessage = await getLatestMessageForThread(msg.threadId);
-        if (
-          latestMessage &&
-          !latestMessage.done &&
-          !latestMessage.onInterrupt &&
-          !latestMessage.stopped &&
-          latestMessage.role === 'ai'
-        ) {
-          await db.messages.update(latestMessage.id, { stopped: true });
-        }
-      }
-    })();
-    return true;
-  });
-
+export const sidePanelMessageListeners = () => {
   chrome.runtime.onConnect.addListener((port) => {
     if (port.name !== PORT_STREAM_MESSAGE) return;
 

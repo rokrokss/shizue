@@ -38,7 +38,5 @@
   "i18n-ally.sortKeys": true,
   "i18n-ally.namespace": false,
   "i18n-ally.pathMatcher": "{locale}.json",
-  "cSpell.words": [
-    "shizue"
-  ]
+  "cSpell.words": ["shizue", "sidepanel"]
 }
