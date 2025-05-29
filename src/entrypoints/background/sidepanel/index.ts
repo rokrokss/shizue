@@ -52,7 +52,7 @@ const changePanelShowStatus = () => {
   }
 };
 
-export const sidebarToggleListners = () => {
+export const sidebarToggleListeners = () => {
   if (typeof chrome.sidePanel === 'undefined') return;
 
   chrome.sidePanel
@@ -111,7 +111,7 @@ export const sidebarToggleListners = () => {
   });
 };
 
-export const sidepanelMessageListners = () => {
+export const sidepanelMessageListeners = () => {
   chrome.runtime.onMessage.addListener((msg, _s, sendResponse) => {
     (async () => {
       if (msg.type === MESSAGE_LOAD_THREAD) {

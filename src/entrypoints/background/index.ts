@@ -1,15 +1,15 @@
 import { languageListeners } from '@/entrypoints/background/language';
 import { modelListeners } from '@/entrypoints/background/models';
 import {
-  sidebarToggleListners,
-  sidepanelMessageListners,
+  sidebarToggleListeners,
+  sidepanelMessageListeners,
 } from '@/entrypoints/background/sidepanel';
 import { backgroundLog } from '@/logs';
 
 export default defineBackground(() => {
   backgroundLog();
-  sidebarToggleListners();
+  sidebarToggleListeners();
   languageListeners();
-  sidepanelMessageListners();
+  sidepanelMessageListeners();
   modelListeners();
 });
