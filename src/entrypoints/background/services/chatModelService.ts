@@ -7,24 +7,24 @@ import { debugLog, errorLog } from '@/logs';
 import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { ChatOpenAI } from '@langchain/openai';
 
-interface ModelSettings {
+interface ChatModelSettings {
   openaiKey?: string;
   modelName?: string;
   temperature?: number;
 }
 
-function getModelSettings(): ModelSettings {
+function getChatModelSettings(): ChatModelSettings {
   const openaiKey = getCurrentOpenaiKey();
   const modelName = getCurrentChatModel();
   const temperature = 0.7;
   return { openaiKey, modelName, temperature };
 }
 
-export class ModelService {
+export class ChatModelService {
   constructor() {}
 
-  private async getModelInstance(streaming: boolean = false): Promise<ChatOpenAI> {
-    const { openaiKey, modelName, temperature } = getModelSettings();
+  private async getChatModelInstance(streaming: boolean = false): Promise<ChatOpenAI> {
+    const { openaiKey, modelName, temperature } = getChatModelSettings();
 
     if (!openaiKey) {
       const errMsg = 'OpenAI API key is not set. Cannot create LLM instance.';
@@ -56,7 +56,7 @@ export class ModelService {
     let fullResponseContent = '';
 
     try {
-      const llm = await this.getModelInstance(true);
+      const llm = await this.getChatModelInstance(true);
       const stream = await llm.stream(messagesForModel, { signal: abortController.signal });
 
       let buffer = '';
@@ -225,11 +225,11 @@ export class ModelService {
   }
 }
 
-let modelService: ModelService | null = null;
+let chatModelService: ChatModelService | null = null;
 
-export const getModelService = (): ModelService => {
-  if (!modelService) {
-    modelService = new ModelService();
+export const getChatModelService = (): ChatModelService => {
+  if (!chatModelService) {
+    chatModelService = new ChatModelService();
   }
-  return modelService;
+  return chatModelService;
 };
