@@ -29,7 +29,7 @@ const Chat = () => {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   const [threadId, setThreadId] = useAtom(currentThreadIdAtom);
-  const { startStream, cancelStream } = useChromePortStream();
+  const { startStream, startRetryStream, cancelStream } = useChromePortStream();
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const aiIndexRef = useRef<number>(-1);
@@ -196,6 +196,78 @@ const Chat = () => {
     );
   };
 
+  const handleRetry = async (messageIdxToRetry: number) => {
+    if (!threadId) return;
+
+    setIsWaitingForResponse(true);
+
+    aiIndexRef.current = messageIdxToRetry;
+
+    setMessages((cur) => {
+      const idx = aiIndexRef.current;
+      const copy = [...cur];
+      copy[idx] = {
+        role: 'ai',
+        content: '',
+        done: false,
+        onInterrupt: false,
+        stopped: false,
+      };
+      return copy;
+    }),
+      startRetryStream(
+        { threadId: threadId, messageIdxToRetry: messageIdxToRetry },
+        {
+          onDelta: (delta) =>
+            setMessages((cur) => {
+              const idx = aiIndexRef.current;
+              const copy = [...cur];
+              copy[idx] = {
+                role: 'ai',
+                content: copy[idx].content + delta,
+                done: false,
+                onInterrupt: false,
+                stopped: copy[idx].stopped,
+              };
+              return copy;
+            }),
+          onDone: () => {
+            setMessages((cur) => {
+              const idx = aiIndexRef.current;
+              const copy = [...cur];
+              copy[idx] = {
+                role: 'ai',
+                content: copy[idx].content,
+                done: true,
+                onInterrupt: false,
+                stopped: copy[idx].stopped,
+              };
+              return copy;
+            });
+            touchThread(threadId);
+            setIsWaitingForResponse(false);
+          },
+          onError: (err) => {
+            errorLog('Chat Stream error:', err);
+            setMessages((cur) => {
+              const idx = aiIndexRef.current;
+              const copy = [...cur];
+              copy[idx] = {
+                role: 'ai',
+                content: copy[idx].content,
+                done: false,
+                onInterrupt: true,
+                stopped: copy[idx].stopped,
+              };
+              return copy;
+            });
+            touchThread(threadId);
+            setIsWaitingForResponse(false);
+          },
+        }
+      );
+  };
+
   const handleOpenHistory = () => {
     setIsHistoryOpen(true);
   };
@@ -225,7 +297,11 @@ const Chat = () => {
       "
       >
         {threadId && messages.length > 0 ? (
-          <ChatContainer messages={messages} scrollToBottom={scrollToBottomThrottled} />
+          <ChatContainer
+            messages={messages}
+            onRetry={handleRetry}
+            scrollToBottom={scrollToBottomThrottled}
+          />
         ) : (
           <ChatGreeting />
         )}

@@ -9,9 +9,11 @@ import remarkGfm from 'remark-gfm';
 
 const ChatContainer = ({
   messages,
+  onRetry,
   scrollToBottom,
 }: {
   messages: Message[];
+  onRetry: (messageIdxToRetry: number) => Promise<void>;
   scrollToBottom: () => void;
 }) => {
   const { t } = useTranslation();
@@ -63,9 +65,7 @@ const ChatContainer = ({
                       color="cyan"
                       variant="outlined"
                       size="small"
-                      onClick={() => {
-                        console.log('retry');
-                      }}
+                      onClick={() => onRetry(idx)}
                     >
                       {t('chat.retry')}
                     </Button>

@@ -4,7 +4,7 @@ import { db, loadThread } from '@/lib/indexDB';
 import { getInitialAIMessage, getInitialSystemMessage } from '@/lib/prompts';
 import { getCurrentLanguage } from '@/lib/translation';
 import { debugLog, errorLog } from '@/logs';
-import { AIMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { ChatOpenAI } from '@langchain/openai';
 
 interface ModelSettings {
@@ -47,45 +47,17 @@ export class ModelService {
     }
   }
 
-  public async streamChat(
-    threadId: string,
+  private async _executeStreamAndUpdate(
+    messageId: string,
+    messagesForModel: BaseMessage[],
     port: chrome.runtime.Port,
     abortController: AbortController
   ) {
-    const messageId = crypto.randomUUID();
     let fullResponseContent = '';
 
     try {
-      await db.messages.add({
-        id: messageId,
-        threadId,
-        role: 'ai',
-        content: '',
-        createdAt: Date.now(),
-        done: false,
-        onInterrupt: false,
-        stopped: false,
-      });
-
-      const threadHistory = await loadThread(threadId);
-
-      const memory = (await loadUserMemory()).text; // TODO
-
-      const initialSystemMessage = getInitialSystemMessage(getCurrentLanguage());
-      const initialAIMessage = getInitialAIMessage(getCurrentLanguage());
-
-      const messages = [
-        new SystemMessage(initialSystemMessage),
-        new AIMessage(initialAIMessage),
-        ...threadHistory.map((m) =>
-          m.role === 'human' ? new HumanMessage(m.content) : new AIMessage(m.content)
-        ),
-      ];
-
       const llm = await this.getModelInstance(true);
-      debugLog('ModelService: Starting LLM stream with messages for threadId:', threadId, messages);
-
-      const stream = await llm.stream(messages, { signal: abortController.signal });
+      const stream = await llm.stream(messagesForModel, { signal: abortController.signal });
 
       let buffer = '';
       const sendBufferToPort = async () => {
@@ -111,7 +83,7 @@ export class ModelService {
       port.postMessage({ done: true });
     } catch (err) {
       if (!abortController.signal.aborted) {
-        errorLog('ModelService: Error during streamChat execution:', err);
+        errorLog('ModelService: [_executeStreamAndUpdate] Error during execution:', err);
         try {
           port.postMessage({
             error: 'stream_error',
@@ -119,7 +91,7 @@ export class ModelService {
           });
         } catch (postError) {
           errorLog(
-            'ModelService: Port already closed while attempting to send stream_error:',
+            'ModelService: [_executeStreamAndUpdate] Port already closed while attempting to send stream_error:',
             postError
           );
         } finally {
@@ -131,6 +103,123 @@ export class ModelService {
         await db.messages.update(messageId, { content: fullResponseContent, done: true });
       } else {
         await db.messages.update(messageId, { content: fullResponseContent, stopped: true });
+      }
+    }
+  }
+
+  public async streamChat(
+    threadId: string,
+    port: chrome.runtime.Port,
+    abortController: AbortController
+  ) {
+    const messageId = crypto.randomUUID();
+
+    try {
+      await db.messages.add({
+        id: messageId,
+        threadId,
+        role: 'ai',
+        content: '',
+        createdAt: Date.now(),
+        done: false,
+        onInterrupt: false,
+        stopped: false,
+      });
+
+      const threadHistory = await loadThread(threadId);
+
+      const memory = (await loadUserMemory()).text; // TODO
+
+      const currentLang = getCurrentLanguage();
+      const initialSystemMessage = getInitialSystemMessage(currentLang);
+      const initialAIMessage = getInitialAIMessage(currentLang);
+
+      const messages = [
+        new SystemMessage(initialSystemMessage),
+        new AIMessage(initialAIMessage),
+        ...threadHistory.map((m) =>
+          m.role === 'human' ? new HumanMessage(m.content) : new AIMessage(m.content)
+        ),
+      ];
+
+      await this._executeStreamAndUpdate(messageId, messages, port, abortController);
+    } catch (err) {
+      errorLog(`ModelService: [streamChat] error on setup (messageId: ${messageId}):`, err);
+      try {
+        port.postMessage({ error: 'setup_error', message: (err as Error).message ?? String(err) });
+      } catch (postError) {
+        errorLog(
+          'ModelService: [streamChat] Port already closed while attempting to send setup_error:',
+          postError
+        );
+      }
+    }
+  }
+
+  public async retryStreamChat(
+    threadId: string,
+    messageIdxToRetry: number,
+    port: chrome.runtime.Port,
+    abortController: AbortController
+  ) {
+    try {
+      const fullThreadHistory = await loadThread(threadId);
+      debugLog('ModelService: [retryStreamChat] fullThreadHistory:', fullThreadHistory);
+      debugLog('ModelService: [retryStreamChat] messageIdxToRetry:', messageIdxToRetry);
+      const messageIdToRetry = fullThreadHistory.filter(
+        (m) => m.role === 'ai' || m.role === 'human'
+      )[messageIdxToRetry].id;
+
+      const messageToRetry = fullThreadHistory[messageIdxToRetry];
+      if (!messageToRetry) {
+        errorLog(
+          `ModelService: [retryStreamChat] message not found in thread history (messageId: ${messageIdToRetry})`
+        );
+        return;
+      }
+      if (messageToRetry.role !== 'ai') {
+        errorLog(
+          `ModelService: [retryStreamChat] cannot retry non-ai message (messageId: ${messageIdToRetry})`
+        );
+        return;
+      }
+
+      await db.messages.update(messageIdToRetry, {
+        content: '',
+        done: false,
+        onInterrupt: false,
+        stopped: false,
+      });
+
+      const memory = (await loadUserMemory()).text; // TODO
+
+      const currentLang = getCurrentLanguage();
+      const initialSystemMessage = getInitialSystemMessage(currentLang);
+      const initialAIMessage = getInitialAIMessage(currentLang);
+
+      const historyForModelInput = fullThreadHistory.slice(0, messageIdxToRetry);
+
+      const messagesForModel: BaseMessage[] = [
+        new SystemMessage(initialSystemMessage),
+        new AIMessage(initialAIMessage),
+        ...historyForModelInput.map((m) =>
+          m.role === 'human' ? new HumanMessage(m.content) : new AIMessage(m.content)
+        ),
+      ];
+
+      await this._executeStreamAndUpdate(messageIdToRetry, messagesForModel, port, abortController);
+    } catch (err) {
+      errorLog(
+        `ModelService: [retryStreamChat] error on setup (messageIdx: ${messageIdxToRetry}):`,
+        err
+      );
+      try {
+        port.postMessage({ error: 'setup_error', message: (err as Error).message ?? String(err) });
+      } catch (postError) {
+        errorLog(
+          'ModelService: [retryStreamChat] Port already closed while attempting to send setup_error:',
+          postError
+        );
       }
     }
   }
