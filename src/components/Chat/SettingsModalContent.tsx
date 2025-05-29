@@ -1,4 +1,5 @@
 import { useSettings } from '@/hooks/settings';
+import { ChatModel, TranslateModel } from '@/utils/models';
 import { getOS } from '@/utils/userOS';
 import { validateApiKey } from '@/utils/validateApiKey';
 import { SmileOutlined } from '@ant-design/icons';
@@ -14,9 +15,28 @@ const SettingsModalContent = () => {
   const [apiKey, setApiKey] = useState('');
   const [isValidateHovered, setIsValidateHovered] = useState(false);
   const [_, setSettings] = useSettings();
+  const [models, setModels] = useModels();
 
-  const handleSelect = (value: string) => {
+  const handleSelectLanguage = (value: string) => {
     setLang(value as 'en' | 'ko');
+  };
+
+  const handleSelectApiKey = (value: string) => {
+    setApiKey(value);
+  };
+
+  const handleSelectChatModel = (value: string) => {
+    setModels((prev) => ({
+      ...prev,
+      chatModel: value as ChatModel,
+    }));
+  };
+
+  const handleSelectTranslateModel = (value: string) => {
+    setModels((prev) => ({
+      ...prev,
+      translateModel: value as TranslateModel,
+    }));
   };
 
   const userOS = getOS();
@@ -48,7 +68,7 @@ const SettingsModalContent = () => {
           <div className="sz:text-base sz:text-gray-800">{t('settings.language')}</div>
           <Select
             defaultValue={lang}
-            onChange={handleSelect}
+            onChange={handleSelectLanguage}
             className="sz:font-ycom sz:w-30"
             options={[
               {
@@ -76,7 +96,7 @@ const SettingsModalContent = () => {
           <div className="sz:text-base sz:text-gray-800">{t('settings.aiProvider')}</div>
           <Select
             defaultValue="openai-api-key"
-            onChange={handleSelect}
+            onChange={handleSelectApiKey}
             className="sz:font-ycom sz:w-50"
             options={[
               {
@@ -115,6 +135,58 @@ const SettingsModalContent = () => {
                   <SmileOutlined style={{ fontSize: '20px' }} />
                 ))}
             </Button>
+          </div>
+          <div className="sz:flex sz:flex-col sz:items-center sz:gap-2">
+            <div className="sz:text-base sz:text-gray-800">대화 모델</div>
+            <Select
+              defaultValue={models.chatModel}
+              onChange={handleSelectChatModel}
+              className="sz:font-ycom sz:w-50"
+              options={[
+                {
+                  value: 'gpt-4.1',
+                  label: 'GPT 4.1',
+                  className: 'sz:font-ycom',
+                },
+                {
+                  value: 'gpt-4.1-mini',
+                  label: 'GPT 4.1 Mini',
+                  className: 'sz:font-ycom',
+                },
+                {
+                  value: 'wip',
+                  label: t('onboarding.selectProvider.chatGPTWebApp.title'),
+                  className: 'sz:font-ycom',
+                  disabled: true,
+                },
+              ]}
+            />
+          </div>
+          <div className="sz:flex sz:flex-col sz:items-center sz:gap-2">
+            <div className="sz:text-base sz:text-gray-800">번역 모델</div>
+            <Select
+              defaultValue={models.translateModel}
+              onChange={handleSelectTranslateModel}
+              className="sz:font-ycom sz:w-50"
+              options={[
+                {
+                  value: 'gpt-4.1',
+                  label: 'GPT 4.1',
+                  className: 'sz:font-ycom',
+                },
+                {
+                  value: 'gpt-4.1-mini',
+                  label: 'GPT 4.1 Mini',
+                  className: 'sz:font-ycom',
+                },
+                {
+                  value: 'wip',
+                  label: t('onboarding.selectProvider.chatGPTWebApp.title'),
+                  className: 'sz:font-ycom',
+                  disabled: true,
+                },
+              ]}
+            />
           </div>
         </div>
       </div>

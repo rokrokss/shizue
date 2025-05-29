@@ -1,4 +1,4 @@
-type ChatModel = 'gpt-4.1' | 'chatgpt-4.1-mini';
+type ChatModel = 'gpt-4.1' | 'gpt-4.1-mini';
 
 let currentChatModel: ChatModel = 'gpt-4.1';
 
