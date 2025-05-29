@@ -14,8 +14,9 @@ import {
 } from '@/config/constants';
 import { getCurrentLanguage } from '@/entrypoints/background/language';
 import { loadUserMemory } from '@/hooks/userMemory';
+import { db, getLatestMessageForThread, loadThread } from '@/lib/indexDB';
+import { getInitialAIMessage, getInitialSystemMessage } from '@/lib/prompts';
 import { debugLog, errorLog } from '@/logs';
-import { getLatestMessageForThread, loadThread } from '@/utils/indexDB';
 import { AIMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { ChatOpenAI } from '@langchain/openai';
 

@@ -1,5 +1,5 @@
 import { STORAGE_USER_MEMORY } from '@/config/constants';
-import { chromeStorageBackend } from '@/utils/storageBackend';
+import { chromeStorageBackend } from '@/lib/storageBackend';
 import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 

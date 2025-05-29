@@ -8,9 +8,9 @@ import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import { MESSAGE_CANCEL_NOT_STARTED_MESSAGE, MESSAGE_LOAD_THREAD } from '@/config/constants';
 import { currentThreadIdAtom } from '@/hooks/chat';
 import { useChromePortStream } from '@/hooks/portStream';
+import { addMessage, createThread, touchThread } from '@/lib/indexDB';
+import { throttleTrailing } from '@/lib/throttleTrailing';
 import { debugLog, errorLog } from '@/logs';
-import { addMessage, createThread, touchThread } from '@/utils/indexDB';
-import { throttleTrailing } from '@/utils/throttleTrailing';
 import { useAtom } from 'jotai';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 

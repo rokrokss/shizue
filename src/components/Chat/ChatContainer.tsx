@@ -1,7 +1,7 @@
 import CharacterPickChat, { characterCount } from '@/components/Character/CharacterPickChat';
 import { Message } from '@/components/Chat';
 import useStreamText from '@/hooks/useStreamText';
-import { hashStringToIndex } from '@/utils/hash';
+import { hashStringToIndex } from '@/lib/hash';
 import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 import Markdown from 'react-markdown';

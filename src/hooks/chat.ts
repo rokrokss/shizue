@@ -1,5 +1,6 @@
 import { STORAGE_CURRENT_CHAT } from '@/config/constants';
-import { chromeStorageBackend } from '@/utils/storageBackend';
+import { listThreads } from '@/lib/indexDB';
+import { chromeStorageBackend } from '@/lib/storageBackend';
 import { liveQuery } from 'dexie';
 import { atom, Atom, useAtom } from 'jotai';
 import { atomWithObservable, atomWithStorage } from 'jotai/utils';

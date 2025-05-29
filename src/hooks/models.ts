@@ -1,6 +1,6 @@
 import { STORAGE_MODELS } from '@/config/constants';
-import { ChatModel, TranslateModel } from '@/utils/models';
-import { chromeStorageBackend } from '@/utils/storageBackend';
+import { ChatModel, TranslateModel } from '@/lib/models';
+import { chromeStorageBackend } from '@/lib/storageBackend';
 import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 

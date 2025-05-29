@@ -1,5 +1,5 @@
 import { STORAGE_MODELS } from '@/config/constants';
-import { ChatModel, TranslateModel } from '@/utils/models';
+import { ChatModel, TranslateModel } from '@/lib/models';
 
 let currentChatModel: ChatModel = 'gpt-4.1';
 let currentTranslateModel: TranslateModel = 'gpt-4.1';

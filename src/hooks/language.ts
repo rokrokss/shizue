@@ -1,6 +1,6 @@
 import { STORAGE_LANGUAGE } from '@/config/constants';
 import i18n from '@/i18n';
-import { chromeStorageBackend } from '@/utils/storageBackend';
+import { chromeStorageBackend } from '@/lib/storageBackend';
 import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 

@@ -6,8 +6,9 @@ import CharacterPickToggle, {
 import OverlayMenu from '@/components/Toggle/OverlayMenu';
 import OverlayMenuItem from '@/components/Toggle/OverlayMenuItem';
 import { MESSAGE_SET_PANEL_OPEN_OR_NOT } from '@/config/constants';
+import { hashStringToIndex } from '@/lib/hash';
+import { getPageTranslator } from '@/lib/pageTranslator';
 import { debugLog } from '@/logs';
-import { getPageTranslator } from '@/utils/pageTranslator';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
