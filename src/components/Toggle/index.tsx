@@ -21,8 +21,8 @@ const Toggle = () => {
   const [characterIndex, setCharacterIndex] = useState(0);
   const [translateSettingsModalOpen, setTranslateSettingsModalOpen] = useState(false);
 
-  // const isVisible = isHoveringCharacter || isHoveringMenu || translateSettingsModalOpen;
-  const isVisible = true;
+  const isVisible = isHoveringCharacter || isHoveringMenu || translateSettingsModalOpen;
+  // const isVisible = true;
 
   const width = 43;
   const height = 43;
@@ -92,6 +92,12 @@ const Toggle = () => {
             content={<div>test</div>}
             open={translateSettingsModalOpen}
             zIndex={2147483647}
+            styles={{
+              root: {
+                zIndex: 2147483647,
+                position: 'fixed',
+              },
+            }}
           >
             <OverlayMenuItem
               icon={<SettingIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
