@@ -1,6 +1,7 @@
 import {
   MESSAGE_OPEN_PANEL,
   MESSAGE_PANEL_OPENED_PING_FROM_PANEL,
+  MESSAGE_RETRY_GRAPH_STREAM,
   MESSAGE_RUN_GRAPH_STREAM,
   MESSAGE_SET_PANEL_OPEN_OR_NOT,
   MESSAGE_UPDATE_PANEL_INIT_DATA,
@@ -116,6 +117,10 @@ export const sidePanelMessageListeners = () => {
         const { threadId } = msg;
 
         await getModelService().streamChat(threadId, port, abortController);
+      } else if (msg.action === MESSAGE_RETRY_GRAPH_STREAM) {
+        const { threadId, messageIdxToRetry } = msg;
+
+        await getModelService().retryStreamChat(threadId, messageIdxToRetry, port, abortController);
       }
     });
   });
