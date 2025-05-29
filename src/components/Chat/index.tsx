@@ -10,7 +10,7 @@ import { currentThreadIdAtom } from '@/hooks/chat';
 import { useChromePortStream } from '@/hooks/portStream';
 import { addMessage, createThread, touchThread } from '@/lib/indexDB';
 import { throttleTrailing } from '@/lib/throttleTrailing';
-import { debugLog, errorLog } from '@/logs';
+import { errorLog } from '@/logs';
 import { useAtom } from 'jotai';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -55,8 +55,7 @@ const Chat = () => {
   };
 
   const loadThreadBackground = useCallback(async (threadId: string) => {
-    chrome.runtime.sendMessage({ type: MESSAGE_LOAD_THREAD, threadId }).then((res: Message[]) => {
-      debugLog(res);
+    chrome.runtime.sendMessage({ action: MESSAGE_LOAD_THREAD, threadId }).then((res: Message[]) => {
       setMessages(res);
     });
   }, []);
@@ -82,7 +81,7 @@ const Chat = () => {
     }
     cancelStream();
     void chrome.runtime.sendMessage({
-      type: MESSAGE_CANCEL_NOT_STARTED_MESSAGE,
+      action: MESSAGE_CANCEL_NOT_STARTED_MESSAGE,
       threadId,
     });
     setIsWaitingForResponse(false);
