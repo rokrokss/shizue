@@ -58,7 +58,12 @@ const Toggle = () => {
   };
 
   return (
-    <div className="sz:fixed sz:right-0 sz:bottom-[26px] sz:flex sz:flex-col sz:items-end sz:z-2147483647">
+    <div
+      className="sz:fixed sz:right-0 sz:bottom-[26px] sz:flex sz:flex-col sz:items-end sz:z-2147483647"
+      style={{
+        pointerEvents: isVisible ? 'auto' : 'none',
+      }}
+    >
       <div
         onMouseEnter={() => setIsHoveringMenu(true)}
         onMouseLeave={() => setIsHoveringMenu(false)}
@@ -73,7 +78,7 @@ const Toggle = () => {
           ${
             isVisible
               ? 'sz:opacity-100 sz:translate-x-0 sz:pointer-events-auto'
-              : 'sz:opacity-0 sz:translate-x-[8px] sz:pointer-events-none sz:hidden'
+              : 'sz:opacity-0 sz:translate-x-[8px] sz:pointer-events-none'
           }
       `}
         style={{
@@ -132,6 +137,7 @@ const Toggle = () => {
           borderBottomLeftRadius: '9999px',
           borderTopRightRadius: '0',
           borderBottomRightRadius: '0',
+          pointerEvents: 'auto',
         }}
       >
         <CharacterPickToggle index={characterIndex} />
