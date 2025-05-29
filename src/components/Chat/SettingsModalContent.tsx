@@ -1,4 +1,5 @@
 import { useSettings } from '@/hooks/settings';
+import { debugLog } from '@/logs';
 import { ChatModel, TranslateModel } from '@/utils/models';
 import { getOS } from '@/utils/userOS';
 import { validateApiKey } from '@/utils/validateApiKey';
@@ -26,15 +27,19 @@ const SettingsModalContent = () => {
   };
 
   const handleSelectChatModel = (value: string) => {
+    debugLog('handleSelectChatModel', value);
     setModels((prev) => ({
       ...prev,
       chatModel: value as ChatModel,
+      translateModel: models.translateModel,
     }));
   };
 
   const handleSelectTranslateModel = (value: string) => {
+    debugLog('handleSelectTranslateModel', value);
     setModels((prev) => ({
       ...prev,
+      chatModel: models.chatModel,
       translateModel: value as TranslateModel,
     }));
   };
@@ -67,7 +72,7 @@ const SettingsModalContent = () => {
         <div className="sz:flex sz:flex-col sz:items-center sz:gap-2">
           <div className="sz:text-base sz:text-gray-800">{t('settings.language')}</div>
           <Select
-            defaultValue={lang}
+            value={lang}
             onChange={handleSelectLanguage}
             className="sz:font-ycom sz:w-30"
             options={[
@@ -112,7 +117,7 @@ const SettingsModalContent = () => {
               },
             ]}
           />
-          <div className="sz:flex sz:flex-row sz:items-center sz:w-50">
+          <div className="sz:flex sz:flex-row sz:items-center sz:w-50 sz:mb-1">
             <Input
               className="sz:font-ycom sz:text-sm sz:mr-[5px] sz:h-8"
               placeholder="sk-XXX......"
@@ -136,58 +141,54 @@ const SettingsModalContent = () => {
                 ))}
             </Button>
           </div>
-          <div className="sz:flex sz:flex-col sz:items-center sz:gap-2">
-            <div className="sz:text-base sz:text-gray-800">대화 모델</div>
-            <Select
-              defaultValue={models.chatModel}
-              onChange={handleSelectChatModel}
-              className="sz:font-ycom sz:w-50"
-              options={[
-                {
-                  value: 'gpt-4.1',
-                  label: 'GPT 4.1',
-                  className: 'sz:font-ycom',
-                },
-                {
-                  value: 'gpt-4.1-mini',
-                  label: 'GPT 4.1 Mini',
-                  className: 'sz:font-ycom',
-                },
-                {
-                  value: 'wip',
-                  label: t('onboarding.selectProvider.chatGPTWebApp.title'),
-                  className: 'sz:font-ycom',
-                  disabled: true,
-                },
-              ]}
-            />
-          </div>
-          <div className="sz:flex sz:flex-col sz:items-center sz:gap-2">
-            <div className="sz:text-base sz:text-gray-800">번역 모델</div>
-            <Select
-              defaultValue={models.translateModel}
-              onChange={handleSelectTranslateModel}
-              className="sz:font-ycom sz:w-50"
-              options={[
-                {
-                  value: 'gpt-4.1',
-                  label: 'GPT 4.1',
-                  className: 'sz:font-ycom',
-                },
-                {
-                  value: 'gpt-4.1-mini',
-                  label: 'GPT 4.1 Mini',
-                  className: 'sz:font-ycom',
-                },
-                {
-                  value: 'wip',
-                  label: t('onboarding.selectProvider.chatGPTWebApp.title'),
-                  className: 'sz:font-ycom',
-                  disabled: true,
-                },
-              ]}
-            />
-          </div>
+          <div className="sz:text-base sz:text-gray-800">대화 모델</div>
+          <Select
+            value={models.chatModel}
+            onChange={handleSelectChatModel}
+            className="sz:font-ycom sz:w-50"
+            options={[
+              {
+                value: 'gpt-4.1',
+                label: 'GPT 4.1',
+                className: 'sz:font-ycom',
+              },
+              {
+                value: 'gpt-4.1-mini',
+                label: 'GPT 4.1 Mini',
+                className: 'sz:font-ycom',
+              },
+              {
+                value: 'wip',
+                label: t('onboarding.selectProvider.chatGPTWebApp.title'),
+                className: 'sz:font-ycom',
+                disabled: true,
+              },
+            ]}
+          />
+          <div className="sz:text-base sz:text-gray-800">번역 모델</div>
+          <Select
+            value={models.translateModel}
+            onChange={handleSelectTranslateModel}
+            className="sz:font-ycom sz:w-50"
+            options={[
+              {
+                value: 'gpt-4.1',
+                label: 'GPT 4.1',
+                className: 'sz:font-ycom',
+              },
+              {
+                value: 'gpt-4.1-mini',
+                label: 'GPT 4.1 Mini',
+                className: 'sz:font-ycom',
+              },
+              {
+                value: 'wip',
+                label: t('onboarding.selectProvider.chatGPTWebApp.title'),
+                className: 'sz:font-ycom',
+                disabled: true,
+              },
+            ]}
+          />
         </div>
       </div>
     </>
