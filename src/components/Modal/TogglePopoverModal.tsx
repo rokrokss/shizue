@@ -1,7 +1,15 @@
-import { ReactNode } from 'react';
+import { ReactNode, RefObject, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
-const TogglePopoverModal = ({ onClose, content }: { onClose: () => void; content: ReactNode }) => {
+const TogglePopoverModal = ({
+  onClose,
+  triggerRef,
+  content,
+}: {
+  onClose: () => void;
+  triggerRef: RefObject<HTMLDivElement | null>;
+  content: ReactNode;
+}) => {
   if (typeof window === 'undefined') return null;
 
   const modalRef = useRef<HTMLDivElement>(null);
@@ -10,10 +18,15 @@ const TogglePopoverModal = ({ onClose, content }: { onClose: () => void; content
     const handleMouseDownCapture = (e: MouseEvent) => {
       if (!e.isTrusted) return;
 
-      if (modalRef.current?.contains(e.target as Node)) return;
+      const target = e.target as Node;
+
+      if (modalRef.current?.contains(target)) return;
+
+      if (triggerRef.current?.contains(target)) {
+        return;
+      }
 
       onClose();
-
       setTimeout(() => {
         const el = document.elementFromPoint(e.clientX, e.clientY);
         if (!el) return;
@@ -33,7 +46,7 @@ const TogglePopoverModal = ({ onClose, content }: { onClose: () => void; content
 
     document.addEventListener('mousedown', handleMouseDownCapture, true);
     return () => document.removeEventListener('mousedown', handleMouseDownCapture, true);
-  }, [onClose]);
+  }, [onClose, triggerRef]);
 
   return createPortal(
     <div

@@ -16,6 +16,8 @@ import { useTranslation } from 'react-i18next';
 const Toggle = () => {
   const { t } = useTranslation();
 
+  const translateSettingsPopoverTriggerRef = useRef<HTMLDivElement>(null);
+
   const [isHoveringCharacter, setIsHoveringCharacter] = useState(false);
   const [isHoveringMenu, setIsHoveringMenu] = useState(false);
   const [characterIndex, setCharacterIndex] = useState(0);
@@ -53,10 +55,6 @@ const Toggle = () => {
     setPanelOpenOrNot();
   };
 
-  const closeTranslateSettingsModal = () => {
-    setTranslateSettingsModalOpen(false);
-  };
-
   const handleTranslateSettingsOpenChange = (newOpen: boolean) => {
     setTranslateSettingsModalOpen(newOpen);
   };
@@ -88,13 +86,11 @@ const Toggle = () => {
           <OverlayMenuItem
             icon={<SettingIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
             tooltipMessage={tooltipMessages[0]}
-            onClick={() => {
-              const visible = !translateSettingsModalOpen;
-              debugLog('translate settings modal open change', visible);
-              handleTranslateSettingsOpenChange(visible);
-            }}
+            onClick={() => handleTranslateSettingsOpenChange(!translateSettingsModalOpen)}
+            ref={translateSettingsPopoverTriggerRef}
             popoverContent={
               <TogglePopoverModal
+                triggerRef={translateSettingsPopoverTriggerRef}
                 onClose={() => handleTranslateSettingsOpenChange(false)}
                 content={
                   <>
@@ -109,7 +105,6 @@ const Toggle = () => {
               />
             }
             isPopoverOpen={translateSettingsModalOpen}
-            setPopoverOpen={handleTranslateSettingsOpenChange}
           />
 
           <OverlayMenuItem
