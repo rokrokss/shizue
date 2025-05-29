@@ -8,7 +8,7 @@ import {
   PORT_LISTEN_PANEL_CLOSED_KEY,
   PORT_STREAM_MESSAGE,
 } from '@/config/constants';
-import { getModelService } from '@/entrypoints/background/services/modelService';
+import { getChatModelService } from '@/entrypoints/background/services/chatModelService';
 import { debugLog, errorLog } from '@/logs';
 
 let panelOpened = false;
@@ -116,11 +116,16 @@ export const sidePanelMessageListeners = () => {
       if (msg.action === MESSAGE_RUN_GRAPH_STREAM) {
         const { threadId } = msg;
 
-        await getModelService().streamChat(threadId, port, abortController);
+        await getChatModelService().streamChat(threadId, port, abortController);
       } else if (msg.action === MESSAGE_RETRY_GRAPH_STREAM) {
         const { threadId, messageIdxToRetry } = msg;
 
-        await getModelService().retryStreamChat(threadId, messageIdxToRetry, port, abortController);
+        await getChatModelService().retryStreamChat(
+          threadId,
+          messageIdxToRetry,
+          port,
+          abortController
+        );
       }
     });
   });
