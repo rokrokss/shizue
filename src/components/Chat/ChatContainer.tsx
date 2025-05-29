@@ -97,7 +97,7 @@ const ChatContainer = ({
                 sz:ml-auto 
                 sz:bg-gray-100 
                 sz:rounded-lg 
-                sz:px-2
+                sz:px-3
               "
               >
                 <Markdown remarkPlugins={[remarkGfm]}>{m.content}</Markdown>
