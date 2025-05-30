@@ -10,10 +10,10 @@ import {
   MESSAGE_SET_PANEL_OPEN_OR_NOT,
   MESSAGE_UPDATE_PANEL_INIT_DATA,
 } from '@/config/constants';
-import { getChatModelService } from '@/entrypoints/background/services/chatModelService';
 import { hashStringToIndex } from '@/lib/hash';
 import { getPageTranslator } from '@/lib/pageTranslator';
 import { debugLog } from '@/logs';
+import { getChatModelService } from '@/services/chatModelService';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
