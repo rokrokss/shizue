@@ -45,7 +45,8 @@
     "retry": "재시도",
     "history": "기록",
     "empty": "아직 대화가 없어요.",
-    "newChat": "새 대화"
+    "newChat": "새 대화",
+    "summaryRequestText": "페이지 요약을 부탁해! 시즈에!"
   },
   "footer": {
     "joinDiscord": "디스코드로 놀러 오세요!"

@@ -1,7 +1,7 @@
-import { currentThreadIdAtom, initialMessagesForAllThreadsAtom } from '@/hooks/chat';
-import { deleteThread } from '@/lib/indexDB';
+import { initialMessagesForAllThreadsAtom } from '@/hooks/chat';
+import { threadIdAtom } from '@/hooks/global';
+import { deleteThread, ThreadWithInitialMessages } from '@/lib/indexDB';
 import { getTimeString } from '@/lib/time';
-import { debugLog } from '@/logs';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useAtom, useAtomValue } from 'jotai';
@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 
 const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
   const [hoveredThreadId, setHoveredThreadId] = useState<string | null>(null);
-  const [threadId, setThreadId] = useAtom(currentThreadIdAtom);
+  const [threadId, setThreadId] = useAtom(threadIdAtom);
   const threadsWithMessages = useAtomValue(initialMessagesForAllThreadsAtom);
 
   const { t } = useTranslation();
@@ -30,15 +30,21 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
     onClose();
   };
 
+  const getThreadTitle = (thread: ThreadWithInitialMessages) => {
+    if (thread.firstMessage?.actionType === 'askForSummary') {
+      return t('overlayMenu.summarizePage') + ': ' + thread.firstMessage?.summaryTitle;
+    }
+    return thread.firstMessage?.content;
+  };
+
   return (
     <>
       <div className="sz:text-lg sz:font-semibold sz:mb-4 sz:text-center">{t('chat.history')}</div>
-      <div className="sz:flex sz:flex-col sz:gap-3">
+      <div className="sz:flex sz:flex-col sz:gap-3 sz:overflow-y-auto sz:max-h-[70vh]">
         {threadsWithMessages.length > 0 ? (
           threadsWithMessages.map((thread) => {
             const isSelected = thread.threadId === threadId;
             const isHovered = hoveredThreadId === thread.threadId;
-            debugLog(thread.threadId, threadId);
             return (
               <div
                 key={thread.threadId}
@@ -68,7 +74,7 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
                       }}
                     >
                       <div className="sz:text-sm sz:overflow-hidden sz:text-ellipsis sz:whitespace-nowrap">
-                        {thread.firstMessage?.content}
+                        {getThreadTitle(thread)}
                       </div>
                       <div className="sz:text-xs sz:text-gray-500">
                         {getTimeString(thread.updatedAt, t)}

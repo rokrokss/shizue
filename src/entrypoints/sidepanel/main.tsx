@@ -13,8 +13,8 @@ import { HashRouter } from 'react-router-dom';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <SidePanelProvider loadingComponent={<EmptyPage />}>
-      <JotaiProvider>
+    <JotaiProvider>
+      <SidePanelProvider loadingComponent={<EmptyPage />}>
         <LanguageProvider loadingComponent={<EmptyPage />}>
           <AntdProvider>
             <HashRouter>
@@ -22,7 +22,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             </HashRouter>
           </AntdProvider>
         </LanguageProvider>
-      </JotaiProvider>
-    </SidePanelProvider>
+      </SidePanelProvider>
+    </JotaiProvider>
   </StrictMode>
 );

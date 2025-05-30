@@ -45,7 +45,8 @@
     "retry": "Retry",
     "history": "History",
     "empty": "No messages yet",
-    "newChat": "New Chat"
+    "newChat": "New Chat",
+    "summaryRequestText": "Summarize this page! Shizue!"
   },
   "footer": {
     "joinDiscord": "Join me on Discord!"

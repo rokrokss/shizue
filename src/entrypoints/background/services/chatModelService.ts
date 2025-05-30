@@ -1,8 +1,13 @@
-import { STREAM_FLUSH_THRESHOLD_0, STREAM_FLUSH_THRESHOLD_1 } from '@/config/constants';
+import {
+  STORAGE_GLOBAL_STATE,
+  STREAM_FLUSH_THRESHOLD_0,
+  STREAM_FLUSH_THRESHOLD_1,
+} from '@/config/constants';
+import { getCurrentLanguage } from '@/entrypoints/background/states/language';
 import { getCurrentChatModel, getCurrentOpenaiKey } from '@/entrypoints/background/states/models';
 import { db, loadThread } from '@/lib/indexDB';
 import { getInitialAIMessage, getInitialSystemMessage } from '@/lib/prompts';
-import { getCurrentLanguage } from '@/lib/translation';
+import { readStorage, setStorage } from '@/lib/storageBackend';
 import { debugLog, errorLog } from '@/logs';
 import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { ChatOpenAI } from '@langchain/openai';
@@ -119,6 +124,7 @@ export class ChatModelService {
         id: messageId,
         threadId,
         role: 'ai',
+        actionType: 'chat',
         content: '',
         createdAt: Date.now(),
         done: false,
@@ -222,6 +228,17 @@ export class ChatModelService {
         );
       }
     }
+  }
+
+  public async initSummarizePageContent(title: string, text: string, pageLink: string) {
+    const prevGlobalState = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
+    await setStorage(STORAGE_GLOBAL_STATE, {
+      ...(prevGlobalState ?? {}),
+      actionType: 'askForSummary',
+      summaryTitle: title,
+      summaryPageLink: pageLink,
+      summaryText: text,
+    });
   }
 }
 

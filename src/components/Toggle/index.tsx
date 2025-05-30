@@ -5,7 +5,12 @@ import CharacterPickToggle, {
 } from '@/components/Character/CharacterPickToggle';
 import OverlayMenu from '@/components/Toggle/OverlayMenu';
 import OverlayMenuItem from '@/components/Toggle/OverlayMenuItem';
-import { MESSAGE_SET_PANEL_OPEN_OR_NOT } from '@/config/constants';
+import {
+  MESSAGE_OPEN_PANEL,
+  MESSAGE_SET_PANEL_OPEN_OR_NOT,
+  MESSAGE_UPDATE_PANEL_INIT_DATA,
+} from '@/config/constants';
+import { getChatModelService } from '@/entrypoints/background/services/chatModelService';
 import { hashStringToIndex } from '@/lib/hash';
 import { getPageTranslator } from '@/lib/pageTranslator';
 import { debugLog } from '@/logs';
@@ -49,6 +54,10 @@ const Toggle = () => {
     void chrome.runtime.sendMessage({ action: MESSAGE_SET_PANEL_OPEN_OR_NOT });
   };
 
+  const setPanelOpen = () => {
+    void chrome.runtime.sendMessage({ action: MESSAGE_OPEN_PANEL });
+  };
+
   const handleClick = () => {
     debugLog('Toggle clicked');
     setPanelOpenOrNot();
@@ -56,6 +65,20 @@ const Toggle = () => {
 
   const handleTranslateSettingsOpenChange = (newOpen: boolean) => {
     setTranslateSettingsModalOpen(newOpen);
+  };
+
+  const handleSummarizePage = async () => {
+    debugLog('Summarize page clicked');
+    const pageText = document.body.innerText;
+    await getChatModelService().initSummarizePageContent(
+      document.title,
+      pageText,
+      window.location.href
+    );
+    void chrome.runtime.sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA }).catch((err) => {
+      debugLog('handleSummarizePage: Panel not opened yet', err);
+    });
+    setPanelOpen();
   };
 
   return (
@@ -120,7 +143,7 @@ const Toggle = () => {
           <OverlayMenuItem
             icon={<BookIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
             tooltipMessage={tooltipMessages[2]}
-            onClick={() => {}}
+            onClick={() => handleSummarizePage()}
           />
         </OverlayMenu>
       </div>
