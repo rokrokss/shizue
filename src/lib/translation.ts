@@ -1,6 +1,7 @@
 import { STORAGE_LANGUAGE, STORAGE_SETTINGS } from '@/config/constants';
-import { Language } from '@/hooks/language';
 import { debugLog, errorLog } from '@/logs';
+
+type LanguageCode = 'ko' | 'en';
 
 export interface TranslationOptions {
   text: string;
@@ -15,17 +16,17 @@ export interface TranslationResult {
 }
 
 // 언어 코드를 OpenAI가 이해할 수 있는 언어명으로 매핑
-export const getLanguageName = (languageCode: Language): string => {
-  const languageMap: Record<Language, string> = {
-    'ko': 'Korean',
-    'en': 'English'
+export const getLanguageName = (languageCode: LanguageCode): string => {
+  const languageMap: Record<LanguageCode, string> = {
+    ko: 'Korean',
+    en: 'English',
   };
-  
+
   return languageMap[languageCode] || 'English';
 };
 
 // 현재 사용자 언어 설정 가져오기
-export const getCurrentLanguage = async (): Promise<Language> => {
+export const getCurrentLanguage = async (): Promise<LanguageCode> => {
   try {
     const storage = await chrome.storage.local.get(STORAGE_LANGUAGE);
     return storage[STORAGE_LANGUAGE] || 'ko';
@@ -38,7 +39,7 @@ export const getCurrentLanguage = async (): Promise<Language> => {
 export const translateText = async ({
   text,
   targetLanguage,
-  sourceLanguage = 'auto'
+  sourceLanguage = 'auto',
 }: TranslationOptions): Promise<TranslationResult> => {
   try {
     // OpenAI API 키 가져오기
@@ -48,18 +49,19 @@ export const translateText = async ({
     if (!apiKey) {
       return {
         success: false,
-        error: 'OpenAI API 키가 설정되지 않았습니다.'
+        error: 'OpenAI API 키가 설정되지 않았습니다.',
       };
     }
 
-    const prompt = sourceLanguage === 'auto'
-      ? `Translate the following text to ${targetLanguage}. Preserve the original HTML structure and formatting. Only return the translated text without any explanation:\n\n${text}`
-      : `Translate the following text from ${sourceLanguage} to ${targetLanguage}. Preserve the original HTML structure and formatting. Only return the translated text without any explanation:\n\n${text}`;
+    const prompt =
+      sourceLanguage === 'auto'
+        ? `Translate the following text to ${targetLanguage}. Preserve the original HTML structure and formatting. Only return the translated text without any explanation:\n\n${text}`
+        : `Translate the following text from ${sourceLanguage} to ${targetLanguage}. Preserve the original HTML structure and formatting. Only return the translated text without any explanation:\n\n${text}`;
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -67,12 +69,12 @@ export const translateText = async ({
         messages: [
           {
             role: 'user',
-            content: prompt
-          }
+            content: prompt,
+          },
         ],
         temperature: 0.3,
-        max_tokens: 2000
-      })
+        max_tokens: 2000,
+      }),
     });
 
     if (!response.ok) {
@@ -91,14 +93,13 @@ export const translateText = async ({
 
     return {
       success: true,
-      translatedText
+      translatedText,
     };
-
   } catch (error) {
     errorLog('번역 오류:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.'
+      error: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.',
     };
   }
 };

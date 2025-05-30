@@ -2,8 +2,8 @@ import {
   ShizueTranslationOverlay,
   registerShizueTranslationOverlay,
 } from '@/components/Translation/ShizueTranslationOverlay';
+import { getCurrentLanguage, getLanguageName, translateText } from '@/lib/translation';
 import { debugLog, errorLog } from '@/logs';
-import { getCurrentLanguage, getLanguageName, translateText } from '../lib/translation';
 
 export class PageTranslationService {
   private isActive: boolean = false;
