@@ -28,7 +28,6 @@
     "@langchain/core": "^0.3.57",
     "@langchain/langgraph": "^0.2.73",
     "@langchain/openai": "^0.5.11",
-    "@mozilla/readability": "^0.6.0",
     "@tailwindcss/vite": "^4.1.7",
     "@webcomponents/custom-elements": "^1.6.0",
     "@wxt-dev/i18n": "^0.2.4",
