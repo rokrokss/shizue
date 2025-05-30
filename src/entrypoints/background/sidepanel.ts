@@ -4,9 +4,9 @@ import {
   PORT_LISTEN_PANEL_CLOSED_KEY,
   PORT_STREAM_MESSAGE,
 } from '@/config/constants';
-import { getChatModelService } from '@/entrypoints/background/services/chatModelService';
 import { changePanelOpened, getPanelOpened } from '@/entrypoints/background/states/sidepanel';
 import { debugLog, errorLog } from '@/logs';
+import { getChatModelService } from '@/services/chatModelService';
 
 let currentWindowId: number | undefined;
 

@@ -1,6 +1,6 @@
 import CharacterPickChat, { characterCount } from '@/components/Character/CharacterPickChat';
 import { Message } from '@/components/Chat';
-import { DotCycle } from '@/components/Loader/dotCycle';
+import { DotCycle } from '@/components/Loader/DotCycle';
 import useStreamText from '@/hooks/useStreamText';
 import { hashStringToIndex } from '@/lib/hash';
 import { LinkOutlined } from '@ant-design/icons';
