@@ -109,7 +109,7 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
                             e.stopPropagation();
                             handleDeleteThread(thread.threadId);
                           }}
-                          className={`sz:text-gray-400 sz:hover:text-red-400 sz:cursor-pointer`}
+                          className="sz:text-gray-400 sz:hover:text-red-400 sz:cursor-pointer sz:w-6 sz:h-6 sz:flex sz:items-center sz:justify-center"
                           style={{
                             fontSize: '15px',
                             visibility: isHovered || isSelected ? 'visible' : 'hidden',
