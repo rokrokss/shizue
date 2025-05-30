@@ -1,7 +1,11 @@
 import { STORAGE_CURRENT_CHAT } from '@/config/constants';
-import { listThreads } from '@/lib/indexDB';
+import {
+  getInitialMessagesForAllThreads,
+  listThreads,
+  ThreadWithInitialMessages,
+} from '@/lib/indexDB';
 import { chromeStorageBackend } from '@/lib/storageBackend';
-import { liveQuery } from 'dexie';
+import { liveQuery, Observable } from 'dexie';
 import { atom, Atom, useAtom } from 'jotai';
 import { atomWithObservable, atomWithStorage } from 'jotai/utils';
 
@@ -29,3 +33,13 @@ export const currentThreadIdAtom = atom(
 );
 
 export const threadsAtom = atomWithObservable(() => liveQuery(() => listThreads()));
+
+export const initialMessagesForAllThreadsAtom = atomWithObservable<ThreadWithInitialMessages[]>(
+  (getJotai) => {
+    const observable: Observable<ThreadWithInitialMessages[]> = liveQuery(() =>
+      getInitialMessagesForAllThreads()
+    );
+    return observable;
+  },
+  { initialValue: [] }
+);

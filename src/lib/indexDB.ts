@@ -31,6 +31,14 @@ class DB extends Dexie {
   }
 }
 
+export interface ThreadWithInitialMessages {
+  threadId: string;
+  title: string;
+  updatedAt: number;
+  firstMessage?: Message;
+  secondMessage?: Message;
+}
+
 export const db = new DB();
 
 export const addMessage = (m: Message) => db.messages.add(m);
@@ -52,4 +60,27 @@ export const deleteThread = async (id: string) => {
 export const getLatestMessageForThread = async (threadId: string) => {
   const messageList = await db.messages.where('threadId').equals(threadId).sortBy('createdAt');
   return messageList.pop();
+};
+export const getInitialMessagesForAllThreads = async (): Promise<ThreadWithInitialMessages[]> => {
+  const allThreads = await listThreads();
+  const result: ThreadWithInitialMessages[] = [];
+
+  for (const threadMeta of allThreads) {
+    const sortedMessages = await db.messages
+      .where('threadId')
+      .equals(threadMeta.id)
+      .sortBy('createdAt');
+
+    const messagesInThread = sortedMessages.slice(0, 2);
+
+    result.push({
+      threadId: threadMeta.id,
+      title: threadMeta.title,
+      updatedAt: threadMeta.updatedAt,
+      firstMessage: messagesInThread[0],
+      secondMessage: messagesInThread[1],
+    });
+  }
+
+  return result;
 };

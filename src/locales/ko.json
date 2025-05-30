@@ -55,5 +55,11 @@
     "language": "언어",
     "shortcut": "패널 단축키",
     "aiProvider": "AI 제공자"
+  },
+  "time": {
+    "justNow": "방금 전",
+    "minutesAgo": "분 전",
+    "hoursAgo": "시간 전",
+    "daysAgo": "일 전"
   }
 }
