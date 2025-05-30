@@ -19,11 +19,13 @@ export const backgroundLog = () => {
 export const debugLog = (...args: any[]) => {
   if (process.env.NODE_ENV === 'development') {
     console.log('[ROKROKSS DEBUG]', ...args);
+    console.trace('Trace for ROKROKSS DEBUG');
   }
 };
 
 export const errorLog = (...args: any[]) => {
   if (process.env.NODE_ENV === 'development') {
     console.error('[ROKROKSS ERROR]', ...args);
+    console.trace('Trace for ROKROKSS ERROR');
   }
 };
