@@ -1,8 +1,11 @@
-import { ShizueTranslationOverlay, registerShizueTranslationOverlay } from '@/components/Translation/ShizueTranslationOverlay';
+import {
+  ShizueTranslationOverlay,
+  registerShizueTranslationOverlay,
+} from '@/components/Translation/ShizueTranslationOverlay';
 import { debugLog, errorLog } from '@/logs';
-import { getCurrentLanguage, getLanguageName, translateText } from './translation';
+import { getCurrentLanguage, getLanguageName, translateText } from '../lib/translation';
 
-export class PageTranslator {
+export class PageTranslationService {
   private isActive: boolean = false;
   private observer: MutationObserver | null = null;
   private translatedElements: Set<Element> = new Set();
@@ -21,7 +24,7 @@ export class PageTranslator {
       if (!this.isActive) return;
 
       let hasNewContent = false;
-      
+
       mutations.forEach((mutation) => {
         // 새로 추가된 노드들 확인
         mutation.addedNodes.forEach((node) => {
@@ -31,8 +34,10 @@ export class PageTranslator {
         });
 
         // 텍스트 변경 감지
-        if (mutation.type === 'characterData' || 
-            (mutation.type === 'childList' && mutation.target.nodeType === Node.ELEMENT_NODE)) {
+        if (
+          mutation.type === 'characterData' ||
+          (mutation.type === 'childList' && mutation.target.nodeType === Node.ELEMENT_NODE)
+        ) {
           hasNewContent = true;
         }
       });
@@ -77,10 +82,10 @@ export class PageTranslator {
         childList: true,
         subtree: true,
         characterData: true,
-        attributes: false
+        attributes: false,
       });
     }
-    
+
     // 스크롤 이벤트 리스너 추가
     this.addScrollListener();
   }
@@ -90,7 +95,7 @@ export class PageTranslator {
     if (this.observer) {
       this.observer.disconnect();
     }
-    
+
     // 스크롤 이벤트 리스너 제거
     this.removeScrollListener();
   }
@@ -150,7 +155,7 @@ export class PageTranslator {
     try {
       const targetLanguage = getLanguageName(await getCurrentLanguage());
       const elements = this.findTranslatableElements();
-      
+
       debugLog(`번역 대상 요소 ${elements.length}개 발견`);
 
       for (const element of elements) {
@@ -162,21 +167,21 @@ export class PageTranslator {
         // 스피너가 있는 오버레이를 먼저 생성
         const overlay = this.attachTranslationOverlay(element);
         overlay.setLoading(true);
-        
+
         try {
           // 번역 요청
           const translatedText = await translateText({
-            text, 
-            targetLanguage
+            text,
+            targetLanguage,
           });
-          
+
           if (translatedText.success && translatedText.translatedText) {
             overlay.setTexts(element, translatedText.translatedText);
           } else {
             // 번역 실패 시 에러 상태 표시 후 제거
             overlay.setError(true);
             errorLog('번역 중 오류:', translatedText.error);
-            
+
             // 3초 후 오버레이 제거
             setTimeout(() => {
               if (element.contains(overlay)) {
@@ -189,7 +194,7 @@ export class PageTranslator {
           // 오류 발생 시 에러 상태 표시 후 제거
           overlay.setError(true);
           errorLog('번역 중 오류:', error);
-          
+
           // 3초 후 오버레이 제거
           setTimeout(() => {
             try {
@@ -202,9 +207,9 @@ export class PageTranslator {
             }
           }, 3000);
         }
-          
+
         // API 호출 제한 방지
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
     } catch (error) {
       errorLog('요소 번역 중 오류:', error);
@@ -214,28 +219,24 @@ export class PageTranslator {
   // 번역 가능한 요소들 찾기
   private findTranslatableElements(): Element[] {
     const elements: Element[] = [];
-    const walker = document.createTreeWalker(
-      document.body,
-      NodeFilter.SHOW_ELEMENT,
-      {
-        acceptNode: (node) => {
-          const element = node as Element;
-          
-          if (!this.isElementVisible(element)) {
-            return NodeFilter.FILTER_REJECT;
-          }
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT, {
+      acceptNode: (node) => {
+        const element = node as Element;
 
-          if (this.isTranslatableElement(element)) {
-            return NodeFilter.FILTER_ACCEPT;
-          }
-
-          return NodeFilter.FILTER_SKIP;
+        if (!this.isElementVisible(element)) {
+          return NodeFilter.FILTER_REJECT;
         }
-      }
-    );
+
+        if (this.isTranslatableElement(element)) {
+          return NodeFilter.FILTER_ACCEPT;
+        }
+
+        return NodeFilter.FILTER_SKIP;
+      },
+    });
 
     let node;
-    while (node = walker.nextNode()) {
+    while ((node = walker.nextNode())) {
       elements.push(node as Element);
     }
 
@@ -266,7 +267,7 @@ export class PageTranslator {
   // 번역 가능한 요소인지 확인
   private isTranslatableElement(element: Element): boolean {
     const text = element.textContent?.trim();
-    
+
     if (!text || text.length === 0 || text.length > 2000) {
       return false;
     }
@@ -277,23 +278,45 @@ export class PageTranslator {
     }
 
     // 이미 번역된 요소인지 확인
-    if (element.querySelector('shizue-translation-overlay') !== null || element.tagName === 'SHIZUE-TRANSLATION-OVERLAY') {
+    if (
+      element.querySelector('shizue-translation-overlay') !== null ||
+      element.tagName === 'SHIZUE-TRANSLATION-OVERLAY'
+    ) {
       return false;
     }
 
     // 텍스트 관련 요소이거나 리프 노드인지 확인
-    const textElements = ['SPAN', 'STRONG', 'EM', 'A', 'B', 'I', 'U', 'MARK', 'SMALL', 'SUB', 'SUP', 'CODE'];
+    const textElements = [
+      'SPAN',
+      'STRONG',
+      'EM',
+      'A',
+      'B',
+      'I',
+      'U',
+      'MARK',
+      'SMALL',
+      'SUB',
+      'SUP',
+      'CODE',
+    ];
     if (textElements.includes(element.tagName)) {
       return false;
     }
-    if (Array.from(element.getElementsByTagName('*')).some(child => child !== element && this.isTranslatableElement(child))) {
+    if (
+      Array.from(element.getElementsByTagName('*')).some(
+        (child) => child !== element && this.isTranslatableElement(child)
+      )
+    ) {
       return false;
     }
     return true;
   }
 
   private attachTranslationOverlay(element: Element): ShizueTranslationOverlay {
-    const overlay = document.createElement('shizue-translation-overlay') as ShizueTranslationOverlay;
+    const overlay = document.createElement(
+      'shizue-translation-overlay'
+    ) as ShizueTranslationOverlay;
     element.appendChild(overlay);
     return overlay;
   }
@@ -310,21 +333,21 @@ export class PageTranslator {
       this.observer.disconnect();
       this.observer = null;
     }
-    
+
     // 스크롤 관련 리소스 정리
     this.removeScrollListener();
-    
+
     debugLog('PageTranslator 리소스 정리 완료');
   }
 }
 
 // 전역 인스턴스
-let globalPageTranslator: PageTranslator | null = null;
+let globalPageTranslationService: PageTranslationService | null = null;
 
 // 전역 PageTranslator 인스턴스 가져오기
-export const getPageTranslator = (): PageTranslator => {
-  if (!globalPageTranslator) {
-    globalPageTranslator = new PageTranslator();
+export const getPageTranslationService = (): PageTranslationService => {
+  if (!globalPageTranslationService) {
+    globalPageTranslationService = new PageTranslationService();
   }
-  return globalPageTranslator;
-}; 
+  return globalPageTranslationService;
+};

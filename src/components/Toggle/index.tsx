@@ -11,9 +11,9 @@ import {
   MESSAGE_UPDATE_PANEL_INIT_DATA,
 } from '@/config/constants';
 import { hashStringToIndex } from '@/lib/hash';
-import { getPageTranslator } from '@/lib/pageTranslator';
 import { debugLog } from '@/logs';
 import { getChatModelService } from '@/services/chatModelService';
+import { getPageTranslationService } from '@/services/PageTranslationService';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -137,7 +137,7 @@ const Toggle = () => {
           <OverlayMenuItem
             icon={<TranslateIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
             tooltipMessage={tooltipMessages[1]}
-            onClick={() => getPageTranslator().toggle()}
+            onClick={() => getPageTranslationService().toggle()}
           />
 
           <OverlayMenuItem
