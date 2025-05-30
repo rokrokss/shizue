@@ -32,8 +32,7 @@ Sider is a great service, but I believe the future isn't about showcasing every 
   - [x] whole page
   - [ ] on paragraph hover
   - [ ] on text selection
-- [ ] summarize current page
-- [ ] search from tabs
+- [x] summarize current page
 - [ ] integrate screenshots
 - [ ] overlay rich features on text selection
   - [ ] summarize
