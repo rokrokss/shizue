@@ -1,5 +1,6 @@
 import { currentThreadIdAtom, initialMessagesForAllThreadsAtom } from '@/hooks/chat';
 import { deleteThread } from '@/lib/indexDB';
+import { getTimeString } from '@/lib/time';
 import { debugLog } from '@/logs';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
@@ -27,27 +28,6 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
   const handleClickThread = (id: string) => {
     setThreadId(id);
     onClose();
-  };
-
-  const getTimeString = (timestamp: number) => {
-    const now = new Date();
-    const date = new Date(timestamp);
-    const diffInMilliseconds = now.getTime() - date.getTime();
-    const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
-    const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
-
-    if (diffInMinutes < 1) {
-      return t('time.justNow');
-    } else if (diffInMinutes < 60) {
-      return `${diffInMinutes}${t('time.minutesAgo')}`;
-    } else if (diffInHours < 24) {
-      return `${diffInHours}${t('time.hoursAgo')}`;
-    } else {
-      const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const day = date.getDate().toString().padStart(2, '0');
-      return `${year}.${month}.${day}`;
-    }
   };
 
   return (
@@ -91,7 +71,7 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
                         {thread.firstMessage?.content}
                       </div>
                       <div className="sz:text-xs sz:text-gray-500">
-                        {getTimeString(thread.updatedAt)}
+                        {getTimeString(thread.updatedAt, t)}
                       </div>
                     </div>
                     <div
