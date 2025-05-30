@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai';
 import { ReactNode, useEffect, useState } from 'react';
 import { I18nextProvider } from 'react-i18next';
 
-import { languageAtom } from '@/hooks/language';
+import { getI8NLanguage, languageAtom } from '@/hooks/language';
 import i18n, { initI18n } from '@/i18n';
 import { debugLog } from '@/logs';
 
@@ -18,14 +18,15 @@ const LanguageProvider = ({
 
   useEffect(() => {
     const start = performance.now();
+    const i8nLang = getI8NLanguage(lang);
     if (!i18n.isInitialized) {
-      initI18n(lang).then(() => {
+      initI18n(i8nLang).then(() => {
         debugLog('i18n initialized');
         setReady(true);
         debugLog(`Language initialization took ${performance.now() - start}ms`);
       });
     } else {
-      i18n.changeLanguage(lang);
+      i18n.changeLanguage(i8nLang);
       setReady(true);
     }
   }, [lang]);

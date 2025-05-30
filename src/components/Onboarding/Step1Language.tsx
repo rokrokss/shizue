@@ -19,7 +19,7 @@ export default function StepLanguage({
   };
 
   const handleSelect = (value: string) => {
-    setLang(value as 'en' | 'ko');
+    setLang(value as 'English' | 'Korean');
   };
 
   return (
@@ -32,8 +32,8 @@ export default function StepLanguage({
         onChange={handleSelect}
         className="sz:font-ycom"
         options={[
-          { value: 'en', label: t('onboarding.selectLanguage.en'), className: 'sz:font-ycom' },
-          { value: 'ko', label: t('onboarding.selectLanguage.ko'), className: 'sz:font-ycom' },
+          { value: 'English', label: t('onboarding.selectLanguage.en'), className: 'sz:font-ycom' },
+          { value: 'Korean', label: t('onboarding.selectLanguage.ko'), className: 'sz:font-ycom' },
         ]}
       />
       <Button

@@ -19,7 +19,7 @@ const SettingsModalContent = () => {
   const [models, setModels] = useModels();
 
   const handleSelectLanguage = (value: string) => {
-    setLang(value as 'en' | 'ko');
+    setLang(value as 'English' | 'Korean');
   };
 
   const handleSelectApiKey = (value: string) => {
@@ -77,12 +77,12 @@ const SettingsModalContent = () => {
             className="sz:font-ycom sz:w-30"
             options={[
               {
-                value: 'en',
+                value: 'English',
                 label: t('onboarding.selectLanguage.en'),
                 className: 'sz:font-ycom',
               },
               {
-                value: 'ko',
+                value: 'Korean',
                 label: t('onboarding.selectLanguage.ko'),
                 className: 'sz:font-ycom',
               },
