@@ -1,3 +1,5 @@
+import { errorLog } from '@/logs';
+
 type StorageArea = 'local' | 'sync' | 'session';
 
 export const chromeStorageBackend = <T>(area: StorageArea = 'local') => {
@@ -27,3 +29,30 @@ export const chromeStorageBackend = <T>(area: StorageArea = 'local') => {
     },
   };
 };
+
+export async function readStorage<T>(
+  key: string,
+  area: StorageArea = 'local'
+): Promise<T | undefined> {
+  try {
+    const result = await chrome.storage[area].get(key);
+    return result?.[key];
+  } catch (error) {
+    errorLog(`Error reading ${area} storage key "${key}":`, error);
+    return undefined;
+  }
+}
+
+export async function setStorage<T>(
+  key: string,
+  value: T,
+  area: StorageArea = 'local'
+): Promise<boolean> {
+  try {
+    await chrome.storage[area].set({ [key]: value });
+    return true;
+  } catch (error) {
+    errorLog(`Error setting ${area} storage key "${key}":`, error);
+    return false;
+  }
+}

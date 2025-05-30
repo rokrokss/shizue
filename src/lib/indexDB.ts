@@ -4,6 +4,9 @@ export interface Message {
   id: string;
   threadId: string;
   role: 'human' | 'system' | 'ai';
+  actionType: 'chat' | 'askForSummary';
+  summaryTitle?: string;
+  summaryPageLink?: string;
   content: string;
   createdAt: number;
   done: boolean;

@@ -6,16 +6,19 @@ import ThreadListModalContent from '@/components/Chat/ThreadListModalContent';
 import TopMenu from '@/components/Chat/TopRightMenu';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import { MESSAGE_CANCEL_NOT_STARTED_MESSAGE, MESSAGE_LOAD_THREAD } from '@/config/constants';
-import { currentThreadIdAtom } from '@/hooks/chat';
+import { messageAddedInPanelAtom, threadIdAtom } from '@/hooks/global';
 import { useChromePortStream } from '@/hooks/portStream';
 import { addMessage, createThread, touchThread } from '@/lib/indexDB';
 import { throttleTrailing } from '@/lib/throttleTrailing';
-import { errorLog } from '@/logs';
-import { useAtom } from 'jotai';
+import { debugLog, errorLog } from '@/logs';
+import { useAtom, useAtomValue } from 'jotai';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export interface Message {
   role: 'human' | 'system' | 'ai';
+  actionType: 'chat' | 'askForSummary';
+  summaryTitle?: string;
+  summaryPageLink?: string;
   content: string;
   done: boolean;
   onInterrupt: boolean;
@@ -28,7 +31,9 @@ const Chat = () => {
   const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
-  const [threadId, setThreadId] = useAtom(currentThreadIdAtom);
+  const [threadId, setThreadId] = useAtom(threadIdAtom);
+  const threadIdRef = useRef(threadId);
+  const messageAddedTimestamp = useAtomValue(messageAddedInPanelAtom);
   const { startStream, startRetryStream, cancelStream } = useChromePortStream();
 
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -54,11 +59,88 @@ const Chat = () => {
     setIsSettingsOpen(false);
   };
 
-  const loadThreadBackground = useCallback(async (threadId: string) => {
-    chrome.runtime.sendMessage({ action: MESSAGE_LOAD_THREAD, threadId }).then((res: Message[]) => {
-      setMessages(res);
-    });
-  }, []);
+  const handleAskForSummary = async (tId: string) => {
+    debugLog('handleAskForSummary messages', messages);
+    setIsWaitingForResponse(true);
+
+    aiIndexRef.current = messages.length + 1;
+
+    addAIMessage();
+
+    scrollToBottomThrottled();
+
+    startStream(
+      { threadId: tId },
+      {
+        onDelta: (delta) =>
+          setMessages((cur) => {
+            const idx = aiIndexRef.current;
+            const copy = [...cur];
+            copy[idx] = {
+              role: 'ai',
+              actionType: copy[idx].actionType,
+              content: copy[idx].content + delta,
+              done: false,
+              onInterrupt: false,
+              stopped: copy[idx].stopped,
+            };
+            scrollToBottomThrottled();
+            return copy;
+          }),
+        onDone: () => {
+          setMessages((cur) => {
+            const idx = aiIndexRef.current;
+            const copy = [...cur];
+            copy[idx] = {
+              role: 'ai',
+              actionType: copy[idx].actionType,
+              content: copy[idx].content,
+              done: true,
+              onInterrupt: false,
+              stopped: copy[idx].stopped,
+            };
+            return copy;
+          });
+          touchThread(tId);
+          setIsWaitingForResponse(false);
+          scrollToBottomThrottled();
+        },
+        onError: (err) => {
+          errorLog('Chat Stream error:', err);
+          setMessages((cur) => {
+            const idx = aiIndexRef.current;
+            const copy = [...cur];
+            copy[idx] = {
+              role: 'ai',
+              actionType: copy[idx].actionType,
+              content: copy[idx].content,
+              done: false,
+              onInterrupt: true,
+              stopped: copy[idx].stopped,
+            };
+            return copy;
+          });
+          touchThread(tId);
+          setIsWaitingForResponse(false);
+          scrollToBottomThrottled();
+        },
+      }
+    );
+  };
+
+  const loadThreadBackground = useCallback(
+    async (tId: string) => {
+      chrome.runtime
+        .sendMessage({ action: MESSAGE_LOAD_THREAD, threadId: tId })
+        .then((res: Message[]) => {
+          setMessages(res);
+          if (res.length > 0 && res[res.length - 1].actionType === 'askForSummary') {
+            handleAskForSummary(tId);
+          }
+        });
+    },
+    [setMessages, handleAskForSummary]
+  );
 
   const handleCancel = async () => {
     if (
@@ -71,6 +153,7 @@ const Chat = () => {
         const copy = [...cur];
         copy[idx] = {
           role: 'ai',
+          actionType: 'chat',
           content: copy[idx].content,
           done: false,
           onInterrupt: true,
@@ -89,35 +172,64 @@ const Chat = () => {
   };
 
   const checkIfThreadExists = async (text: string) => {
-    let id = threadId;
-    if (!id) {
-      id = await createThread(text.slice(0, 20));
-      setThreadId(id);
+    let tid = threadId;
+    if (!tid) {
+      tid = await createThread(text.slice(0, 20));
+      setThreadId(tid);
     }
-    return id;
+    return tid;
   };
 
-  const addHumanMessage = async (threadId: string, text: string) => {
+  const addHumanMessage = async (tId: string, text: string) => {
     setMessages((prev) => {
       aiIndexRef.current = prev.length + 1;
       return [
         ...prev,
-        { role: 'human', content: text, done: true, onInterrupt: false, stopped: false },
-        { role: 'ai', content: '', done: false, onInterrupt: false, stopped: false },
+        {
+          role: 'human',
+          actionType: 'chat',
+          content: text,
+          done: true,
+          onInterrupt: false,
+          stopped: false,
+        },
+        {
+          role: 'ai',
+          actionType: 'chat',
+          content: '',
+          done: false,
+          onInterrupt: false,
+          stopped: false,
+        },
       ];
     });
 
     await addMessage({
       id: crypto.randomUUID(),
-      threadId: threadId,
+      threadId: tId,
       role: 'human',
+      actionType: 'chat',
       content: text,
       createdAt: Date.now(),
       done: true,
       onInterrupt: false,
       stopped: false,
     });
-    await touchThread(threadId);
+    await touchThread(tId);
+  };
+
+  const addAIMessage = () => {
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: 'ai',
+        actionType: 'chat',
+        content: '',
+        done: false,
+        onInterrupt: false,
+        stopped: false,
+      },
+    ]);
   };
 
   useEffect(() => {
@@ -132,16 +244,31 @@ const Chat = () => {
     }
   }, [threadId]);
 
+  useEffect(() => {
+    threadIdRef.current = threadId;
+    debugLog('threadId', threadId);
+    debugLog('threadIdRef.current', threadIdRef.current);
+  }, [threadId]);
+
+  useEffect(() => {
+    if (messageAddedTimestamp) {
+      const currentThreadId = threadIdRef.current;
+      if (currentThreadId) {
+        loadThreadBackground(currentThreadId);
+      }
+    }
+  }, [messageAddedTimestamp]);
+
   const handleSubmit = async (text: string) => {
     setIsWaitingForResponse(true);
 
-    const id = await checkIfThreadExists(text);
+    const tId = await checkIfThreadExists(text);
 
-    await addHumanMessage(id, text);
+    await addHumanMessage(tId, text);
     scrollToBottomThrottled();
 
     startStream(
-      { threadId: id },
+      { threadId: tId },
       {
         onDelta: (delta) =>
           setMessages((cur) => {
@@ -149,6 +276,7 @@ const Chat = () => {
             const copy = [...cur];
             copy[idx] = {
               role: 'ai',
+              actionType: copy[idx].actionType,
               content: copy[idx].content + delta,
               done: false,
               onInterrupt: false,
@@ -163,6 +291,7 @@ const Chat = () => {
             const copy = [...cur];
             copy[idx] = {
               role: 'ai',
+              actionType: copy[idx].actionType,
               content: copy[idx].content,
               done: true,
               onInterrupt: false,
@@ -170,7 +299,7 @@ const Chat = () => {
             };
             return copy;
           });
-          touchThread(id);
+          touchThread(tId);
           setIsWaitingForResponse(false);
           scrollToBottomThrottled();
         },
@@ -181,6 +310,7 @@ const Chat = () => {
             const copy = [...cur];
             copy[idx] = {
               role: 'ai',
+              actionType: copy[idx].actionType,
               content: copy[idx].content,
               done: false,
               onInterrupt: true,
@@ -188,7 +318,7 @@ const Chat = () => {
             };
             return copy;
           });
-          touchThread(id);
+          touchThread(tId);
           setIsWaitingForResponse(false);
           scrollToBottomThrottled();
         },
@@ -208,6 +338,7 @@ const Chat = () => {
       const copy = [...cur];
       copy[idx] = {
         role: 'ai',
+        actionType: 'chat',
         content: '',
         done: false,
         onInterrupt: false,
@@ -216,7 +347,7 @@ const Chat = () => {
       return copy;
     }),
       startRetryStream(
-        { threadId: threadId, messageIdxToRetry: messageIdxToRetry },
+        { threadId, messageIdxToRetry: messageIdxToRetry },
         {
           onDelta: (delta) =>
             setMessages((cur) => {
@@ -224,6 +355,7 @@ const Chat = () => {
               const copy = [...cur];
               copy[idx] = {
                 role: 'ai',
+                actionType: copy[idx].actionType,
                 content: copy[idx].content + delta,
                 done: false,
                 onInterrupt: false,
@@ -237,6 +369,7 @@ const Chat = () => {
               const copy = [...cur];
               copy[idx] = {
                 role: 'ai',
+                actionType: copy[idx].actionType,
                 content: copy[idx].content,
                 done: true,
                 onInterrupt: false,
@@ -254,6 +387,7 @@ const Chat = () => {
               const copy = [...cur];
               copy[idx] = {
                 role: 'ai',
+                actionType: copy[idx].actionType,
                 content: copy[idx].content,
                 done: false,
                 onInterrupt: true,

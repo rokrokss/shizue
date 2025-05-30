@@ -1,7 +1,9 @@
 import CharacterPickChat, { characterCount } from '@/components/Character/CharacterPickChat';
 import { Message } from '@/components/Chat';
+import { DotCycle } from '@/components/Loader/dotCycle';
 import useStreamText from '@/hooks/useStreamText';
 import { hashStringToIndex } from '@/lib/hash';
+import { LinkOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 import Markdown from 'react-markdown';
@@ -22,6 +24,13 @@ const ChatContainer = ({
   const animatedText = useStreamText(messages[messages.length - 1].content, {
     handleOnComplete: scrollToBottom,
   });
+
+  const showRetryButton = (message: Message) =>
+    (message.onInterrupt && !message.stopped) || message.stopped;
+
+  const getMarkdownText = (content: string) => {
+    return <Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>;
+  };
 
   return (
     <div
@@ -44,22 +53,34 @@ const ChatContainer = ({
       >
         {messages.map((m, idx) => {
           if (m.role === 'ai') {
+            const isRetryButtonVisible = showRetryButton(m);
             return (
               <div
                 key={idx}
                 className="sz-message sz-mesage-ai sz:w-full sz:text-left sz:text-black sz:flex sz:flex-col"
               >
-                <div className="sz:flex sz:flex-col sz:text-left sz:w-full">
-                  <Markdown remarkPlugins={[remarkGfm]}>
-                    {m.onInterrupt && !m.stopped
-                      ? t('chat.connectionError')
-                      : idx === messages.length - 1 && !m.done
-                      ? animatedText
-                      : m.content}
-                  </Markdown>
+                <div
+                  className="sz:flex sz:flex-col sz:text-left sz:w-full"
+                  style={{
+                    minHeight: isRetryButtonVisible ? 'auto' : '30px',
+                  }}
+                >
+                  {m.onInterrupt && !m.stopped ? (
+                    t('chat.connectionError')
+                  ) : idx === messages.length - 1 && !m.done ? (
+                    m.content ? (
+                      getMarkdownText(animatedText)
+                    ) : isRetryButtonVisible ? null : (
+                      <div className="sz:flex sz:flex-row sz:items-center sz:justify-start sz:pl-3 sz:text-xl">
+                        <DotCycle />
+                      </div>
+                    )
+                  ) : (
+                    getMarkdownText(m.content)
+                  )}
                 </div>
 
-                {(m.onInterrupt && !m.stopped) || m.stopped ? (
+                {isRetryButtonVisible ? (
                   <div className="sz:text-xs sz:text-gray-500 sz:pl-0.5 sz:pt-1">
                     <Button
                       color="cyan"
@@ -82,7 +103,7 @@ const ChatContainer = ({
           return (
             <div
               key={`${idx}-container`}
-              className="sz:flex sz:flex-row sz:items-center sz:justify-center"
+              className="sz:flex sz:flex-row sz:items-start sz:justify-center"
             >
               <CharacterPickChat index={charIndex} scale={1} marginLeft="0.25rem" />
               <div
@@ -97,10 +118,27 @@ const ChatContainer = ({
                 sz:ml-auto 
                 sz:bg-gray-100 
                 sz:rounded-lg 
-                sz:px-3
+                sz:px-[14px]
+                sz:py-[8px]
               "
               >
-                <Markdown remarkPlugins={[remarkGfm]}>{m.content}</Markdown>
+                {m.actionType === 'chat' ? (
+                  <div className="sz:flex sz:flex-col sz:whitespace-pre-wrap">{m.content}</div>
+                ) : m.actionType === 'askForSummary' ? (
+                  <div className="sz:flex sz:flex-col">
+                    {getMarkdownText(t('chat.summaryRequestText'))}
+                    <a href={m.summaryPageLink} target="_blank" rel="noopener noreferrer">
+                      <div className="sz:flex sz:flex-row sz:items-center sz:gap-1">
+                        <LinkOutlined />
+                        <div className="sz:text-sm sz:text-gray-500 sz:pb-[2px]">
+                          {m.summaryTitle && m.summaryTitle.length > 25
+                            ? m.summaryTitle?.slice(0, 25) + '...'
+                            : m.summaryTitle}
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                ) : null}
               </div>
             </div>
           );
