@@ -317,11 +317,16 @@ const Chat = () => {
         />
       </div>
       {isSettingsOpen && (
-        <SidePanelFullModal onClose={closeSettings} content={<SettingsModalContent />} />
+        <SidePanelFullModal
+          onClose={closeSettings}
+          size="base"
+          content={<SettingsModalContent />}
+        />
       )}
       {isHistoryOpen && (
         <SidePanelFullModal
           onClose={handleCloseHistory}
+          size="large"
           content={<ThreadListModalContent onClose={handleCloseHistory} />}
         />
       )}

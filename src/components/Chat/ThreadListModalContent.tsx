@@ -1,5 +1,7 @@
-import { currentThreadIdAtom, threadsAtom } from '@/hooks/chat';
+import { currentThreadIdAtom, initialMessagesForAllThreadsAtom } from '@/hooks/chat';
 import { deleteThread } from '@/lib/indexDB';
+import { debugLog } from '@/logs';
+import { DeleteOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useAtom, useAtomValue } from 'jotai';
 import { useState } from 'react';
@@ -7,12 +9,10 @@ import { useTranslation } from 'react-i18next';
 
 const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
   const [hoveredThreadId, setHoveredThreadId] = useState<string | null>(null);
+  const [threadId, setThreadId] = useAtom(currentThreadIdAtom);
+  const threadsWithMessages = useAtomValue(initialMessagesForAllThreadsAtom);
 
   const { t } = useTranslation();
-  const [threadId, setThreadId] = useAtom(currentThreadIdAtom);
-  const threads = useAtomValue(threadsAtom);
-
-  const titleLength = 15;
 
   const handleDeleteThread = (id: string) => {
     if (id === threadId) {
@@ -29,64 +29,97 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
     onClose();
   };
 
+  const getTimeString = (timestamp: number) => {
+    const now = new Date();
+    const date = new Date(timestamp);
+    const diffInMilliseconds = now.getTime() - date.getTime();
+    const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
+    const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
+
+    if (diffInMinutes < 1) {
+      return t('time.justNow');
+    } else if (diffInMinutes < 60) {
+      return `${diffInMinutes}${t('time.minutesAgo')}`;
+    } else if (diffInHours < 24) {
+      return `${diffInHours}${t('time.hoursAgo')}`;
+    } else {
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      return `${year}.${month}.${day}`;
+    }
+  };
+
   return (
     <>
       <div className="sz:text-lg sz:font-semibold sz:mb-4 sz:text-center">{t('chat.history')}</div>
-      <div className="sz:flex sz:flex-col sz:gap-2">
-        {threads.length > 0 ? (
-          threads.map((thread) => {
-            const isSelected = thread.id === threadId;
-            const isHovered = hoveredThreadId === thread.id;
+      <div className="sz:flex sz:flex-col sz:gap-3">
+        {threadsWithMessages.length > 0 ? (
+          threadsWithMessages.map((thread) => {
+            const isSelected = thread.threadId === threadId;
+            const isHovered = hoveredThreadId === thread.threadId;
+            debugLog(thread.threadId, threadId);
             return (
               <div
-                key={thread.id}
-                className="sz:flex sz:items-center sz:gap-1"
-                onMouseEnter={() => setHoveredThreadId(thread.id)}
+                key={thread.threadId}
+                className="sz:flex sz:items-center"
+                onMouseEnter={() => setHoveredThreadId(thread.threadId)}
                 onMouseLeave={() => setHoveredThreadId(null)}
               >
                 <Button
                   type="text"
-                  className="sz:flex-1 sz:text-left"
+                  className="sz:flex-1 sz:text-left sz:max-w-full"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleClickThread(thread.id);
+                    handleClickThread(thread.threadId);
+                  }}
+                  style={{
+                    backgroundColor: isSelected || isHovered ? '#e0f0f0' : 'transparent',
+                    paddingTop: '10px',
+                    paddingBottom: '10px',
+                    height: '55px',
                   }}
                 >
-                  <div className="sz:flex sz:justify-between sz:w-full sz:font-ycom">
+                  <div className="sz:flex sz:flex-col sz:justify-between sz:w-full sz:font-ycom sz:pt-2 sz:pb-2">
                     <div
-                      className="sz:text-sm"
+                      className="sz:max-w-full sz:flex sz:flex-row sz:min-w-full sz:justify-between sz:gap-2"
                       style={{
                         color: isSelected ? '#000' : '#777',
                       }}
                     >
-                      {thread.title.length > titleLength
-                        ? `${thread.title.slice(0, titleLength)}..`
-                        : thread.title}
+                      <div className="sz:text-sm sz:overflow-hidden sz:text-ellipsis sz:whitespace-nowrap">
+                        {thread.firstMessage?.content}
+                      </div>
+                      <div className="sz:text-xs sz:text-gray-500">
+                        {getTimeString(thread.updatedAt)}
+                      </div>
+                    </div>
+                    <div
+                      className="sz:max-w-full sz:flex sz:flex-row sz:min-w-full sz:justify-between sz:gap-2"
+                      style={{
+                        color: isSelected ? '#000' : '#777',
+                      }}
+                    >
+                      <div className="sz:text-sm sz:overflow-hidden sz:text-ellipsis sz:whitespace-nowrap sz:pt-[3px]">
+                        {'> ' + thread.secondMessage?.content}
+                      </div>
+                      <div className="sz:text-xs sz:text-gray-500 sz:flex sz:flex-row sz:gap-1 sz:w-6">
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteThread(thread.threadId);
+                          }}
+                          className={`sz:text-gray-400 sz:hover:text-red-400 sz:cursor-pointer`}
+                          style={{
+                            fontSize: '15px',
+                            visibility: isHovered || isSelected ? 'visible' : 'hidden',
+                          }}
+                        >
+                          <DeleteOutlined />
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </Button>
-                <Button
-                  shape="circle"
-                  size="small"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteThread(thread.id);
-                  }}
-                  className={`
-                    sz:w-6 sz:h-6 sz:flex-shrink-0 sz:flex sz:items-center sz:justify-center
-                    ${
-                      isHovered
-                        ? 'sz:visible sz:opacity-100'
-                        : 'sz:invisible sz:opacity-0 sz:pointer-events-none'
-                    }
-                    sz:text-gray-400
-                    sz:border-gray-400
-                    sz:hover:border-red-400
-                    sz:hover:text-red-400
-                    sz:transition-opacity
-                  `}
-                >
-                  ✕
                 </Button>
               </div>
             );

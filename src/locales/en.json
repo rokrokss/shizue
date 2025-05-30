@@ -55,5 +55,11 @@
     "language": "Language",
     "shortcut": "Panel Shortcut",
     "aiProvider": "AI Provider"
+  },
+  "time": {
+    "justNow": "just now",
+    "minutesAgo": "m ago",
+    "hoursAgo": "h ago",
+    "daysAgo": "d ago"
   }
 }
