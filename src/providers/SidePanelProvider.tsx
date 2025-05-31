@@ -4,6 +4,7 @@ import {
   PORT_LISTEN_PANEL_CLOSED_KEY,
   STORAGE_GLOBAL_STATE,
 } from '@/config/constants';
+import { chatStatusAtom } from '@/hooks/chat';
 import {
   actionTypeAtom,
   messageAddedInPanelAtom,
@@ -14,7 +15,7 @@ import { addMessage, createThread } from '@/lib/indexDB';
 import { getSummarizePageTextPrompt } from '@/lib/prompts';
 import { readStorage } from '@/lib/storageBackend';
 import { debugLog, errorLog } from '@/logs';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 
 const SidePanelProvider = ({
@@ -29,6 +30,7 @@ const SidePanelProvider = ({
   const [threadId, setThreadId] = useAtom(threadIdAtom);
   const setMessageAddedInPanel = useSetAtom(messageAddedInPanelAtom);
   const setActionType = useSetAtom(actionTypeAtom);
+  const chatStatus = useAtomValue(chatStatusAtom);
 
   const rollbackActionType = useCallback(() => {
     setActionType('chat');
@@ -37,7 +39,9 @@ const SidePanelProvider = ({
   const getInitData = useCallback(async () => {
     const initData = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
     debugLog('initData', initData);
-    if (initData?.actionType === 'askForSummary') {
+    if (isChatWaiting(chatStatus)) {
+      debugLog('SidePanelProvider: [getInitData] skip initData for chatStatus', chatStatus);
+    } else if (initData?.actionType === 'askForSummary') {
       const { summaryTitle, summaryText, summaryPageLink } = initData;
 
       debugLog('SidePanelProvider: [getInitData] summaryTitle', summaryTitle);
@@ -74,9 +78,9 @@ const SidePanelProvider = ({
       } else {
         setMessageAddedInPanel(Date.now());
       }
-      rollbackActionType();
     }
-  }, [threadId, setThreadId, rollbackActionType, setMessageAddedInPanel]);
+    rollbackActionType();
+  }, [threadId, setThreadId, rollbackActionType, setMessageAddedInPanel, chatStatus]);
 
   const handleMessage = useCallback(
     async (request: any) => {

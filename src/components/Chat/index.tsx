@@ -6,6 +6,7 @@ import ThreadListModalContent from '@/components/Chat/ThreadListModalContent';
 import TopMenu from '@/components/Chat/TopRightMenu';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import { MESSAGE_CANCEL_NOT_STARTED_MESSAGE, MESSAGE_LOAD_THREAD } from '@/config/constants';
+import { chatStatusAtom, isChatIdle } from '@/hooks/chat';
 import { messageAddedInPanelAtom, threadIdAtom } from '@/hooks/global';
 import { useChromePortStream } from '@/hooks/portStream';
 import { addMessage, createThread, touchThread } from '@/lib/indexDB';
@@ -28,7 +29,7 @@ export interface Message {
 const Chat = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
+  const [chatStatus, setChatStatus] = useAtom(chatStatusAtom);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   const [threadId, setThreadId] = useAtom(threadIdAtom);
@@ -61,7 +62,7 @@ const Chat = () => {
 
   const handleAskForSummary = async (tId: string) => {
     debugLog('handleAskForSummary messages', messages);
-    setIsWaitingForResponse(true);
+    setChatStatus('waiting');
 
     aiIndexRef.current = messages.length + 1;
 
@@ -102,7 +103,7 @@ const Chat = () => {
             return copy;
           });
           touchThread(tId);
-          setIsWaitingForResponse(false);
+          setChatStatus('idle');
           scrollToBottomThrottled();
         },
         onError: (err) => {
@@ -121,7 +122,7 @@ const Chat = () => {
             return copy;
           });
           touchThread(tId);
-          setIsWaitingForResponse(false);
+          setChatStatus('idle');
           scrollToBottomThrottled();
         },
       }
@@ -167,7 +168,7 @@ const Chat = () => {
       action: MESSAGE_CANCEL_NOT_STARTED_MESSAGE,
       threadId,
     });
-    setIsWaitingForResponse(false);
+    setChatStatus('idle');
     scrollToBottomThrottled();
   };
 
@@ -233,7 +234,7 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    if (!isWaitingForResponse && threadId) {
+    if (isChatIdle(chatStatus) && threadId) {
       cancelStream();
       loadThreadBackground(threadId);
     }
@@ -260,7 +261,7 @@ const Chat = () => {
   }, [messageAddedTimestamp]);
 
   const handleSubmit = async (text: string) => {
-    setIsWaitingForResponse(true);
+    setChatStatus('waiting');
 
     const tId = await checkIfThreadExists(text);
 
@@ -300,7 +301,7 @@ const Chat = () => {
             return copy;
           });
           touchThread(tId);
-          setIsWaitingForResponse(false);
+          setChatStatus('idle');
           scrollToBottomThrottled();
         },
         onError: (err) => {
@@ -319,7 +320,7 @@ const Chat = () => {
             return copy;
           });
           touchThread(tId);
-          setIsWaitingForResponse(false);
+          setChatStatus('idle');
           scrollToBottomThrottled();
         },
       }
@@ -329,7 +330,7 @@ const Chat = () => {
   const handleRetry = async (messageIdxToRetry: number) => {
     if (!threadId) return;
 
-    setIsWaitingForResponse(true);
+    setChatStatus('waiting');
 
     aiIndexRef.current = messageIdxToRetry;
 
@@ -378,7 +379,7 @@ const Chat = () => {
               return copy;
             });
             touchThread(threadId);
-            setIsWaitingForResponse(false);
+            setChatStatus('idle');
           },
           onError: (err) => {
             errorLog('Chat Stream error:', err);
@@ -396,7 +397,7 @@ const Chat = () => {
               return copy;
             });
             touchThread(threadId);
-            setIsWaitingForResponse(false);
+            setChatStatus('idle');
           },
         }
       );
@@ -443,7 +444,7 @@ const Chat = () => {
       </div>
       <div className="sz:w-full">
         <ChatInput
-          isWaitingForResponse={isWaitingForResponse}
+          chatStatus={chatStatus}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           onOpenHistory={handleOpenHistory}
