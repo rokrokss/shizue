@@ -104,7 +104,6 @@ const Toggle = () => {
           className={`
             sz:flex sz:flex-col
             sz:items-center
-            sz:shadow-md
             sz:pb-[8px]
             sz:pr-[8px]
             sz:transition-all sz:duration-300
