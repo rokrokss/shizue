@@ -4,7 +4,7 @@ import { getOS } from '@/lib/userOS';
 import { validateApiKey } from '@/lib/validateApiKey';
 import { debugLog } from '@/logs';
 import { SmileOutlined } from '@ant-design/icons';
-import { Button, Input, Select } from 'antd';
+import { Button, Checkbox, Input, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 const SettingsModalContent = () => {
@@ -17,6 +17,7 @@ const SettingsModalContent = () => {
   const [isValidateHovered, setIsValidateHovered] = useState(false);
   const [_, setSettings] = useSettings();
   const [models, setModels] = useModels();
+  const [layout, setLayout] = useLayout();
 
   const handleSelectLanguage = (value: string) => {
     setLang(value as 'English' | 'Korean');
@@ -42,6 +43,19 @@ const SettingsModalContent = () => {
       chatModel: models.chatModel,
       translateModel: value as TranslateModel,
     }));
+  };
+
+  const handleToggleShowToggle = () => {
+    setLayout((prev) => {
+      if (prev instanceof Promise) {
+        return prev;
+      }
+      const newShowToggle = !prev.showToggle;
+      return {
+        ...prev,
+        showToggle: newShowToggle,
+      };
+    });
   };
 
   const userOS = getOS();
@@ -189,6 +203,15 @@ const SettingsModalContent = () => {
               },
             ]}
           />
+          <div className="sz:flex sz:flex-col sz:items-center sz:w-50 sz:mt-2">
+            <Checkbox
+              checked={!layout.showToggle}
+              onChange={handleToggleShowToggle}
+              className="sz:font-ycom"
+            >
+              {t('layout.hideToggle')}
+            </Checkbox>
+          </div>
         </div>
       </div>
     </>

@@ -5,10 +5,12 @@ import { atomWithStorage } from 'jotai/utils';
 
 export type Layout = {
   toggleYPosition: number;
+  showToggle: boolean;
 };
 
 export const defaultLayout: Layout = {
   toggleYPosition: 0,
+  showToggle: true,
 };
 
 export const layoutAtom = atomWithStorage<Layout>(

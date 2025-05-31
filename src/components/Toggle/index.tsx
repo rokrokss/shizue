@@ -101,25 +101,26 @@ const Toggle = () => {
   };
 
   return (
-    <motion.div
-      drag="y"
-      dragMomentum={false}
-      dragElastic={0}
-      onDragStart={() => setIsDragging(true)}
-      onDragEnd={handleDragEnd}
-      style={{ y: layout.toggleYPosition }}
-      className="sz:fixed sz:right-0 sz:bottom-[26px] sz:flex sz:flex-col sz:items-end sz:z-2147483647"
-    >
-      <div
-        className="sz:flex sz:flex-col sz:items-end sz:z-2147483647"
-        style={{
-          pointerEvents: isVisible ? 'auto' : 'none',
-        }}
+    layout.showToggle && (
+      <motion.div
+        drag="y"
+        dragMomentum={false}
+        dragElastic={0}
+        onDragStart={() => setIsDragging(true)}
+        onDragEnd={handleDragEnd}
+        style={{ y: layout.toggleYPosition }}
+        className="sz:fixed sz:right-0 sz:bottom-[26px] sz:flex sz:flex-col sz:items-end sz:z-2147483647"
       >
         <div
-          onMouseEnter={() => setIsHoveringMenu(true)}
-          onMouseLeave={() => setIsHoveringMenu(false)}
-          className={`
+          className="sz:flex sz:flex-col sz:items-end sz:z-2147483647"
+          style={{
+            pointerEvents: isVisible ? 'auto' : 'none',
+          }}
+        >
+          <div
+            onMouseEnter={() => setIsHoveringMenu(true)}
+            onMouseLeave={() => setIsHoveringMenu(false)}
+            className={`
             sz:flex sz:flex-col
             sz:items-center
             sz:pb-[8px]
@@ -132,12 +133,12 @@ const Toggle = () => {
                 : 'sz:opacity-0 sz:translate-x-[8px] sz:pointer-events-none'
             }
         `}
-          style={{
-            transition: 'opacity 0.3s ease-in-out, translate 0.3s ease-in-out',
-          }}
-        >
-          <OverlayMenu>
-            {/* <OverlayMenuItem
+            style={{
+              transition: 'opacity 0.3s ease-in-out, translate 0.3s ease-in-out',
+            }}
+          >
+            <OverlayMenu>
+              {/* <OverlayMenuItem
               icon={<SettingIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
               tooltipMessage={tooltipMessages[0]}
               onClick={() => handleTranslateSettingsOpenChange(!translateSettingsModalOpen)}
@@ -161,42 +162,43 @@ const Toggle = () => {
               isPopoverOpen={translateSettingsModalOpen}
             /> */}
 
-            <OverlayMenuItem
-              icon={
-                <TranslateIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />
-              }
-              tooltipMessage={tooltipMessages[1]}
-              onClick={handleTranslatePage}
-            />
+              <OverlayMenuItem
+                icon={
+                  <TranslateIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />
+                }
+                tooltipMessage={tooltipMessages[1]}
+                onClick={handleTranslatePage}
+              />
 
-            <OverlayMenuItem
-              icon={<BookIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
-              tooltipMessage={tooltipMessages[2]}
-              onClick={handleSummarizePage}
-            />
-          </OverlayMenu>
+              <OverlayMenuItem
+                icon={<BookIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
+                tooltipMessage={tooltipMessages[2]}
+                onClick={handleSummarizePage}
+              />
+            </OverlayMenu>
+          </div>
+          <div
+            onMouseEnter={() => setIsHoveringCharacter(true)}
+            onMouseLeave={() => setIsHoveringCharacter(false)}
+            className="sz:flex sz:items-center sz:justify-center sz:cursor-pointer sz:shadow-lg sz:shadow-cyan-400/20 sz:z-2147483647"
+            onClick={handleClick}
+            style={{
+              width: isVisible ? `${widthFull}px` : `${width}px`,
+              height: `${height}px`,
+              transition: 'width 0.3s ease-in-out',
+              background: 'linear-gradient( 135deg, #90F7EC 10%, #32CCBC 100%)',
+              borderTopLeftRadius: '9999px',
+              borderBottomLeftRadius: '9999px',
+              borderTopRightRadius: '0',
+              borderBottomRightRadius: '0',
+              pointerEvents: 'auto',
+            }}
+          >
+            <CharacterPickToggle index={characterIndex} />
+          </div>
         </div>
-        <div
-          onMouseEnter={() => setIsHoveringCharacter(true)}
-          onMouseLeave={() => setIsHoveringCharacter(false)}
-          className="sz:flex sz:items-center sz:justify-center sz:cursor-pointer sz:shadow-lg sz:shadow-cyan-400/20 sz:z-2147483647"
-          onClick={handleClick}
-          style={{
-            width: isVisible ? `${widthFull}px` : `${width}px`,
-            height: `${height}px`,
-            transition: 'width 0.3s ease-in-out',
-            background: 'linear-gradient( 135deg, #90F7EC 10%, #32CCBC 100%)',
-            borderTopLeftRadius: '9999px',
-            borderBottomLeftRadius: '9999px',
-            borderTopRightRadius: '0',
-            borderBottomRightRadius: '0',
-            pointerEvents: 'auto',
-          }}
-        >
-          <CharacterPickToggle index={characterIndex} />
-        </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    )
   );
 };
 
