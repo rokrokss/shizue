@@ -9,6 +9,8 @@ const changeLanguage = (lang: Language) => {
 
 export const getCurrentLanguage = () => currentLang;
 
+export const getTranslationTargetLanguage = () => currentLang;
+
 export const languageListeners = () => {
   chrome.storage.local.get(STORAGE_LANGUAGE, (res) => {
     if (res.LANGUAGE) changeLanguage(res.LANGUAGE as Language);

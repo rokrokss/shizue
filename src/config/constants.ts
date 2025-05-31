@@ -7,6 +7,7 @@ export const MESSAGE_LOAD_THREAD = 'action_load_thread';
 export const MESSAGE_RUN_GRAPH_STREAM = 'run_graph_stream';
 export const MESSAGE_RETRY_GRAPH_STREAM = 'retry_graph_stream';
 export const MESSAGE_CANCEL_NOT_STARTED_MESSAGE = 'cancel_not_started_message';
+export const MESSAGE_TRANSLATE_HTML_TEXT = 'translate_html_text';
 
 /* port */
 export const PORT_LISTEN_PANEL_CLOSED_KEY = 'listen_panel_closed_key';

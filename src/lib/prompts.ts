@@ -1,4 +1,4 @@
-import { Language } from '@/entrypoints/background/states/language';
+import { Language } from '@/hooks/language';
 
 export const getInitialSystemMessage = (lang: Language) => {
   return `You are Shizue (시즈에 in Korean), an AI assistant who solves a wide range of problems.
@@ -35,4 +35,10 @@ ${title}
 
 ${text}`;
   return getSummaryPrompt(content);
+};
+
+export const getHtmlTranslationPrompt = (text: string, targetLanguage: Language) => {
+  return `Translate the following text to ${targetLanguage}. Preserve the original HTML structure and formatting. Only return the translated text without any explanation.
+===text to translate===
+${text}`;
 };

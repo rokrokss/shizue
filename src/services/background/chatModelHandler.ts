@@ -1,35 +1,71 @@
+import { STREAM_FLUSH_THRESHOLD_0, STREAM_FLUSH_THRESHOLD_1 } from '@/config/constants';
 import {
-  STORAGE_GLOBAL_STATE,
-  STREAM_FLUSH_THRESHOLD_0,
-  STREAM_FLUSH_THRESHOLD_1,
-} from '@/config/constants';
-import { getCurrentLanguage } from '@/entrypoints/background/states/language';
-import { getCurrentChatModel, getCurrentOpenaiKey } from '@/entrypoints/background/states/models';
+  getCurrentLanguage,
+  getTranslationTargetLanguage,
+} from '@/entrypoints/background/states/language';
+import {
+  getCurrentChatModel,
+  getCurrentOpenaiKey,
+  getCurrentTranslateModel,
+} from '@/entrypoints/background/states/models';
 import { db, loadThread } from '@/lib/indexDB';
-import { getInitialAIMessage, getInitialSystemMessage } from '@/lib/prompts';
-import { readStorage, setStorage } from '@/lib/storageBackend';
+import {
+  getHtmlTranslationPrompt,
+  getInitialAIMessage,
+  getInitialSystemMessage,
+} from '@/lib/prompts';
 import { debugLog, errorLog } from '@/logs';
 import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { ChatOpenAI } from '@langchain/openai';
 
-interface ChatModelSettings {
+interface ModelPreset {
   openaiKey?: string;
-  modelName?: string;
-  temperature?: number;
+  modelName: string;
 }
 
-function getChatModelSettings(): ChatModelSettings {
+export interface TranslationResult {
+  success: boolean;
+  translatedText?: string;
+  error?: string;
+}
+
+interface ModelOptions {
+  maxTokens?: number;
+  temperature?: number;
+  streaming?: boolean;
+  modelPreset?: ModelPreset;
+}
+
+interface OpenAIChatOptions {
+  modelName: string;
+  apiKey: string;
+  maxTokens: number;
+  temperature: number;
+  streaming: boolean;
+}
+
+function getChatModelPreset(): ModelPreset {
   const openaiKey = getCurrentOpenaiKey();
   const modelName = getCurrentChatModel();
-  const temperature = 0.7;
-  return { openaiKey, modelName, temperature };
+  return { openaiKey, modelName };
 }
 
-export class ChatModelService {
+function getTranslationModelPreset(): ModelPreset {
+  const openaiKey = getCurrentOpenaiKey();
+  const modelName = getCurrentTranslateModel();
+  return { openaiKey, modelName };
+}
+
+export class ChatModelHandler {
   constructor() {}
 
-  private async getChatModelInstance(streaming: boolean = false): Promise<ChatOpenAI> {
-    const { openaiKey, modelName, temperature } = getChatModelSettings();
+  private async getModelInstance({
+    maxTokens = -1,
+    temperature = 0.7,
+    streaming = false,
+    modelPreset = getChatModelPreset(),
+  }: ModelOptions): Promise<ChatOpenAI> {
+    const { openaiKey, modelName } = modelPreset;
 
     if (!openaiKey) {
       const errMsg = 'OpenAI API key is not set. Cannot create LLM instance.';
@@ -38,16 +74,18 @@ export class ChatModelService {
     }
 
     try {
-      const llmInstance = new ChatOpenAI({
+      const options: OpenAIChatOptions = {
         modelName,
         temperature,
         apiKey: openaiKey,
-        streaming: streaming,
-      });
-      debugLog('ModelService: Successfully created a new model instance.');
+        streaming,
+        maxTokens,
+      };
+      const llmInstance = new ChatOpenAI(options);
+      debugLog('ChatModelHandler Successfully created a new model instance.');
       return llmInstance;
     } catch (err) {
-      errorLog('ModelService: Error during new LLM instance creation:', err);
+      errorLog('ChatModelHandler Error during new LLM instance creation:', err);
       throw err;
     }
   }
@@ -61,7 +99,7 @@ export class ChatModelService {
     let fullResponseContent = '';
 
     try {
-      const llm = await this.getChatModelInstance(true);
+      const llm = await this.getModelInstance({ streaming: true });
       const stream = await llm.stream(messagesForModel, { signal: abortController.signal });
 
       let buffer = '';
@@ -88,7 +126,7 @@ export class ChatModelService {
       port.postMessage({ done: true });
     } catch (err) {
       if (!abortController.signal.aborted) {
-        errorLog('ModelService: [_executeStreamAndUpdate] Error during execution:', err);
+        errorLog('ChatModelHandler [_executeStreamAndUpdate] Error during execution:', err);
         try {
           port.postMessage({
             error: 'stream_error',
@@ -96,7 +134,7 @@ export class ChatModelService {
           });
         } catch (postError) {
           errorLog(
-            'ModelService: [_executeStreamAndUpdate] Port already closed while attempting to send stream_error:',
+            'ChatModelHandler [_executeStreamAndUpdate] Port already closed while attempting to send stream_error:',
             postError
           );
         } finally {
@@ -150,12 +188,12 @@ export class ChatModelService {
 
       await this._executeStreamAndUpdate(messageId, messages, port, abortController);
     } catch (err) {
-      errorLog(`ModelService: [streamChat] error on setup (messageId: ${messageId}):`, err);
+      errorLog(`ChatModelHandler [streamChat] error on setup (messageId: ${messageId}):`, err);
       try {
         port.postMessage({ error: 'setup_error', message: (err as Error).message ?? String(err) });
       } catch (postError) {
         errorLog(
-          'ModelService: [streamChat] Port already closed while attempting to send setup_error:',
+          'ChatModelHandler [streamChat] Port already closed while attempting to send setup_error:',
           postError
         );
       }
@@ -170,8 +208,8 @@ export class ChatModelService {
   ) {
     try {
       const fullThreadHistory = await loadThread(threadId);
-      debugLog('ModelService: [retryStreamChat] fullThreadHistory:', fullThreadHistory);
-      debugLog('ModelService: [retryStreamChat] messageIdxToRetry:', messageIdxToRetry);
+      debugLog('ChatModelHandler [retryStreamChat] fullThreadHistory:', fullThreadHistory);
+      debugLog('ChatModelHandler [retryStreamChat] messageIdxToRetry:', messageIdxToRetry);
       const messageIdToRetry = fullThreadHistory.filter(
         (m) => m.role === 'ai' || m.role === 'human'
       )[messageIdxToRetry].id;
@@ -179,13 +217,13 @@ export class ChatModelService {
       const messageToRetry = fullThreadHistory[messageIdxToRetry];
       if (!messageToRetry) {
         errorLog(
-          `ModelService: [retryStreamChat] message not found in thread history (messageId: ${messageIdToRetry})`
+          `ChatModelHandler [retryStreamChat] message not found in thread history (messageId: ${messageIdToRetry})`
         );
         return;
       }
       if (messageToRetry.role !== 'ai') {
         errorLog(
-          `ModelService: [retryStreamChat] cannot retry non-ai message (messageId: ${messageIdToRetry})`
+          `ChatModelHandler [retryStreamChat] cannot retry non-ai message (messageId: ${messageIdToRetry})`
         );
         return;
       }
@@ -216,37 +254,48 @@ export class ChatModelService {
       await this._executeStreamAndUpdate(messageIdToRetry, messagesForModel, port, abortController);
     } catch (err) {
       errorLog(
-        `ModelService: [retryStreamChat] error on setup (messageIdx: ${messageIdxToRetry}):`,
+        `ChatModelHandler [retryStreamChat] error on setup (messageIdx: ${messageIdxToRetry}):`,
         err
       );
       try {
         port.postMessage({ error: 'setup_error', message: (err as Error).message ?? String(err) });
       } catch (postError) {
         errorLog(
-          'ModelService: [retryStreamChat] Port already closed while attempting to send setup_error:',
+          'ChatModelHandler [retryStreamChat] Port already closed while attempting to send setup_error:',
           postError
         );
       }
     }
   }
 
-  public async initSummarizePageContent(title: string, text: string, pageLink: string) {
-    const prevGlobalState = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
-    await setStorage(STORAGE_GLOBAL_STATE, {
-      ...(prevGlobalState ?? {}),
-      actionType: 'askForSummary',
-      summaryTitle: title,
-      summaryPageLink: pageLink,
-      summaryText: text,
-    });
+  public async translateHtmlText(text: string): Promise<TranslationResult> {
+    try {
+      const targetLanguage = getTranslationTargetLanguage();
+      const prompt = getHtmlTranslationPrompt(text, targetLanguage);
+
+      const llm = await this.getModelInstance({
+        temperature: 0.3,
+        maxTokens: 2000,
+        streaming: false,
+        modelPreset: getTranslationModelPreset(),
+      });
+      const response = await llm.invoke([new HumanMessage(prompt)]);
+
+      debugLog('ChatModelHandler [translateText] response:', response);
+
+      return { success: true, translatedText: (response.content as string).trim() };
+    } catch (err) {
+      errorLog('ChatModelHandler [translateText] error:', err);
+      return { success: false, error: (err as Error).message ?? String(err) };
+    }
   }
 }
 
-let chatModelService: ChatModelService | null = null;
+let chatModelHandler: ChatModelHandler | null = null;
 
-export const getChatModelService = (): ChatModelService => {
-  if (!chatModelService) {
-    chatModelService = new ChatModelService();
+export const getChatModelHandler = (): ChatModelHandler => {
+  if (!chatModelHandler) {
+    chatModelHandler = new ChatModelHandler();
   }
-  return chatModelService;
+  return chatModelHandler;
 };

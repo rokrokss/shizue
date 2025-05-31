@@ -2,10 +2,10 @@ import {
   ShizueTranslationOverlay,
   registerShizueTranslationOverlay,
 } from '@/components/Translation/ShizueTranslationOverlay';
-import { getCurrentLanguage, getLanguageName, translateText } from '@/lib/translation';
 import { debugLog, errorLog } from '@/logs';
+import { translationService } from '@/services/translationService';
 
-export class PageTranslationService {
+export class PageTranslator {
   private isActive: boolean = false;
   private observer: MutationObserver | null = null;
   private translatedElements: Set<Element> = new Set();
@@ -13,12 +13,12 @@ export class PageTranslationService {
   private lastScrollTime: number = 0;
 
   constructor() {
-    // 웹 컴포넌트 등록 확인
+    // Check if web component is registered
     registerShizueTranslationOverlay();
     this.setupMutationObserver();
   }
 
-  // MutationObserver 설정
+  // Set up MutationObserver
   private setupMutationObserver() {
     this.observer = new MutationObserver((mutations) => {
       if (!this.isActive) return;
@@ -26,14 +26,14 @@ export class PageTranslationService {
       let hasNewContent = false;
 
       mutations.forEach((mutation) => {
-        // 새로 추가된 노드들 확인
+        // Check if new nodes are added
         mutation.addedNodes.forEach((node) => {
           if (node.nodeType === Node.ELEMENT_NODE) {
             hasNewContent = true;
           }
         });
 
-        // 텍스트 변경 감지
+        // Detect text changes
         if (
           mutation.type === 'characterData' ||
           (mutation.type === 'childList' && mutation.target.nodeType === Node.ELEMENT_NODE)
@@ -43,14 +43,14 @@ export class PageTranslationService {
       });
 
       if (hasNewContent) {
-        // 디바운스를 위해 약간의 지연
-        // FIXME: 디바운스가 제대로 되고 있지 않습니다. 번역 중 새로운 요소가 추가되면 다시 요청이 진행되는 문제가 있습니다
+        // For debouncing, add a slight delay
+        // FIXME: The debouncing is not working properly. When a new element is added during translation, the request is repeated.
         // setTimeout(() => this.translateVisibleElements(), 500);
       }
     });
   }
 
-  // 번역 활성화/비활성화 토글
+  // Toggle translation activation/deactivation
   public toggle() {
     if (this.isActive) {
       this.deactivate();
@@ -59,23 +59,23 @@ export class PageTranslationService {
     }
   }
 
-  // 번역 활성화
+  // Activate translation
   private activate() {
     this.isActive = true;
     this.startObserving();
     this.translateVisibleElements();
-    debugLog('페이지 번역 활성화됨');
+    debugLog('Page translation activated');
   }
 
-  // 번역 비활성화
+  // Deactivate translation
   private deactivate() {
     this.isActive = false;
     this.stopObserving();
     this.removeAllTranslations();
-    debugLog('페이지 번역 비활성화됨');
+    debugLog('Page translation deactivated');
   }
 
-  // DOM 관찰 시작
+  // Start observing DOM
   private startObserving() {
     if (this.observer) {
       this.observer.observe(document.body, {
@@ -86,59 +86,59 @@ export class PageTranslationService {
       });
     }
 
-    // 스크롤 이벤트 리스너 추가
+    // Add scroll event listener
     this.addScrollListener();
   }
 
-  // DOM 관찰 중지
+  // Stop observing DOM
   private stopObserving() {
     if (this.observer) {
       this.observer.disconnect();
     }
 
-    // 스크롤 이벤트 리스너 제거
+    // Remove scroll event listener
     this.removeScrollListener();
   }
 
-  // 스크롤 이벤트 리스너 추가
+  // Add scroll event listener
   private addScrollListener() {
     window.addEventListener('scroll', this.handleScroll, { passive: true });
-    debugLog('스크롤 이벤트 리스너 추가됨');
+    debugLog('Scroll event listener added');
   }
 
-  // 스크롤 이벤트 리스너 제거
+  // Remove scroll event listener
   private removeScrollListener() {
     window.removeEventListener('scroll', this.handleScroll);
     if (this.scrollTimeout) {
       clearTimeout(this.scrollTimeout);
       this.scrollTimeout = null;
     }
-    debugLog('스크롤 이벤트 리스너 제거됨');
+    debugLog('Scroll event listener removed');
   }
 
-  // 스크롤 이벤트 핸들러 (디바운싱 적용)
+  // Scroll event handler (with debouncing)
   private handleScroll = () => {
     if (!this.isActive) return;
 
     const now = Date.now();
     this.lastScrollTime = now;
 
-    // 기존 타이머 클리어
+    // Clear existing timer
     if (this.scrollTimeout) {
       clearTimeout(this.scrollTimeout);
     }
 
-    // 300ms 디바운싱
+    // 300ms debouncing
     this.scrollTimeout = setTimeout(() => {
-      // 마지막 스크롤 이벤트로부터 300ms 경과했는지 확인
+      // Check if 300ms has passed since the last scroll event
       if (Date.now() - this.lastScrollTime >= 300) {
-        debugLog('스크롤 완료 - 새로운 요소 번역 시작');
+        debugLog('Scroll completed - start translating new elements');
         this.translateVisibleElements();
       }
     }, 300);
   };
 
-  // 모든 번역 제거
+  // Remove all translations
   private removeAllTranslations() {
     this.translatedElements.forEach((element) => {
       const overlay = element.querySelector('shizue-translation-overlay') as Element;
@@ -149,14 +149,13 @@ export class PageTranslationService {
     this.translatedElements.clear();
   }
 
-  // 화면에 보이는 요소들 번역
+  // Translate visible elements
   private async translateVisibleElements() {
     if (!this.isActive) return;
     try {
-      const targetLanguage = getLanguageName(await getCurrentLanguage());
       const elements = this.findTranslatableElements();
 
-      debugLog(`번역 대상 요소 ${elements.length}개 발견`);
+      debugLog(`Found ${elements.length} elements to translate`);
 
       for (const element of elements) {
         if (this.translatedElements.has(element)) continue;
@@ -164,25 +163,22 @@ export class PageTranslationService {
         const text = element.innerHTML?.trim();
         if (!text) continue;
 
-        // 스피너가 있는 오버레이를 먼저 생성
+        // Create overlay with spinner first
         const overlay = this.attachTranslationOverlay(element);
         overlay.setLoading(true);
 
         try {
-          // 번역 요청
-          const translatedText = await translateText({
-            text,
-            targetLanguage,
-          });
+          // Request translation
+          const translatedTextResult = await translationService.translateHtmlText(text);
 
-          if (translatedText.success && translatedText.translatedText) {
-            overlay.setTexts(element, translatedText.translatedText);
+          if (translatedTextResult.success && translatedTextResult.translatedText) {
+            overlay.setTexts(element, translatedTextResult.translatedText);
           } else {
-            // 번역 실패 시 에러 상태 표시 후 제거
+            // Show error state and remove overlay after translation fails
             overlay.setError(true);
-            errorLog('번역 중 오류:', translatedText.error);
+            errorLog('Translation error:', translatedTextResult.error);
 
-            // 3초 후 오버레이 제거
+            // Remove overlay after 3 seconds
             setTimeout(() => {
               if (element.contains(overlay)) {
                 element.removeChild(overlay);
@@ -191,11 +187,11 @@ export class PageTranslationService {
             }, 3000);
           }
         } catch (error) {
-          // 오류 발생 시 에러 상태 표시 후 제거
+          // Show error state and remove overlay after translation fails
           overlay.setError(true);
-          errorLog('번역 중 오류:', error);
+          errorLog('Translation error:', error);
 
-          // 3초 후 오버레이 제거
+          // Remove overlay after 3 seconds
           setTimeout(() => {
             try {
               if (element.contains(overlay)) {
@@ -203,20 +199,20 @@ export class PageTranslationService {
                 this.translatedElements.delete(element);
               }
             } catch (removeError) {
-              debugLog('오버레이 제거 중 오류:', removeError);
+              debugLog('Error removing overlay:', removeError);
             }
           }, 3000);
         }
 
-        // API 호출 제한 방지
+        // Prevent API call rate limiting
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
     } catch (error) {
-      errorLog('요소 번역 중 오류:', error);
+      errorLog('Error translating elements:', error);
     }
   }
 
-  // 번역 가능한 요소들 찾기
+  // Find translatable elements
   private findTranslatableElements(): Element[] {
     const elements: Element[] = [];
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT, {
@@ -243,7 +239,7 @@ export class PageTranslationService {
     return elements;
   }
 
-  // 요소가 화면에 보이는지 확인
+  // Check if element is visible
   private isElementVisible(element: Element): boolean {
     try {
       const style = window.getComputedStyle(element);
@@ -264,7 +260,7 @@ export class PageTranslationService {
     }
   }
 
-  // 번역 가능한 요소인지 확인
+  // Check if element is translatable
   private isTranslatableElement(element: Element): boolean {
     const text = element.textContent?.trim();
 
@@ -272,12 +268,12 @@ export class PageTranslationService {
       return false;
     }
 
-    // 실제 텍스트가 포함되어 있는지 확인
+    // Check if actual text is included
     if (!/[a-zA-Z가-힣]/.test(text)) {
       return false;
     }
 
-    // 이미 번역된 요소인지 확인
+    // Check if element is already translated
     if (
       element.querySelector('shizue-translation-overlay') !== null ||
       element.tagName === 'SHIZUE-TRANSLATION-OVERLAY'
@@ -285,7 +281,7 @@ export class PageTranslationService {
       return false;
     }
 
-    // 텍스트 관련 요소이거나 리프 노드인지 확인
+    // Check if element is a text-related element or a leaf node
     const textElements = [
       'SPAN',
       'STRONG',
@@ -321,12 +317,12 @@ export class PageTranslationService {
     return overlay;
   }
 
-  // 현재 활성 상태 반환
+  // Return current active state
   public isTranslationActive(): boolean {
     return this.isActive;
   }
 
-  // 리소스 정리
+  // Clean up resources
   public destroy() {
     this.deactivate();
     if (this.observer) {
@@ -334,20 +330,20 @@ export class PageTranslationService {
       this.observer = null;
     }
 
-    // 스크롤 관련 리소스 정리
+    // Clean up scroll-related resources
     this.removeScrollListener();
 
-    debugLog('PageTranslator 리소스 정리 완료');
+    debugLog('PageTranslator resources cleaned up');
   }
 }
 
-// 전역 인스턴스
-let globalPageTranslationService: PageTranslationService | null = null;
+// Global instance
+let globalPageTranslator: PageTranslator | null = null;
 
-// 전역 PageTranslator 인스턴스 가져오기
-export const getPageTranslationService = (): PageTranslationService => {
-  if (!globalPageTranslationService) {
-    globalPageTranslationService = new PageTranslationService();
+// Get global PageTranslator instance
+export const getPageTranslator = (): PageTranslator => {
+  if (!globalPageTranslator) {
+    globalPageTranslator = new PageTranslator();
   }
-  return globalPageTranslationService;
+  return globalPageTranslator;
 };
