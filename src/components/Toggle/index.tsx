@@ -14,6 +14,7 @@ import { hashStringToIndex } from '@/lib/hash';
 import { debugLog } from '@/logs';
 import { getChatModelService } from '@/services/chatModelService';
 import { getPageTranslationService } from '@/services/PageTranslationService';
+import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -26,6 +27,7 @@ const Toggle = () => {
   const [isHoveringMenu, setIsHoveringMenu] = useState(false);
   const [characterIndex, setCharacterIndex] = useState(0);
   const [translateSettingsModalOpen, setTranslateSettingsModalOpen] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const isVisible = isHoveringCharacter || isHoveringMenu || translateSettingsModalOpen;
 
@@ -60,6 +62,7 @@ const Toggle = () => {
 
   const handleClick = () => {
     debugLog('Toggle clicked');
+    if (isDragging) return;
     setPanelOpenOrNot();
   };
 
@@ -82,9 +85,16 @@ const Toggle = () => {
   };
 
   return (
-    <div
-      className="sz:fixed sz:right-0 sz:bottom-[26px] sz:flex sz:flex-col sz:items-end sz:z-2147483647"
-      style={{
+    <motion.div 
+    drag="y"
+    dragMomentum={false} 
+    dragElastic={0}
+    onDragStart={() => setIsDragging(true)}
+    onDragEnd={() => setIsDragging(false)}
+    className="sz:fixed sz:right-0 sz:bottom-[26px] sz:flex sz:flex-col sz:items-end sz:z-2147483647">
+    <div 
+      className="sz:flex sz:flex-col sz:items-end sz:z-2147483647" 
+      style={{ 
         pointerEvents: isVisible ? 'auto' : 'none',
       }}
     >
@@ -167,6 +177,7 @@ const Toggle = () => {
         <CharacterPickToggle index={characterIndex} />
       </div>
     </div>
+    </motion.div>
   );
 };
 
