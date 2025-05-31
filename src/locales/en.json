@@ -62,5 +62,8 @@
     "minutesAgo": "m ago",
     "hoursAgo": "h ago",
     "daysAgo": "d ago"
+  },
+  "layout": {
+    "hideToggle": "Hide Button"
   }
 }
