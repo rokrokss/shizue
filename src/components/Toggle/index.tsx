@@ -10,10 +10,11 @@ import {
   MESSAGE_SET_PANEL_OPEN_OR_NOT,
   MESSAGE_UPDATE_PANEL_INIT_DATA,
 } from '@/config/constants';
+import { useLayout } from '@/hooks/layout';
 import { hashStringToIndex } from '@/lib/hash';
 import { debugLog } from '@/logs';
 import { getChatModelService } from '@/services/chatModelService';
-import { getPageTranslationService } from '@/services/PageTranslationService';
+import { getPageTranslationService } from '@/services/pageTranslationService';
 import { motion, PanInfo } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +29,7 @@ const Toggle = () => {
   const [characterIndex, setCharacterIndex] = useState(0);
   const [translateSettingsModalOpen, setTranslateSettingsModalOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [draggedYPosition, setDraggedYPosition] = useState(0);
+  const [layout, setLayout] = useLayout();
 
   const isVisible = isHoveringCharacter || isHoveringMenu || translateSettingsModalOpen;
 
@@ -88,9 +89,8 @@ const Toggle = () => {
 
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     setIsDragging(false);
-    const newYPosition = draggedYPosition + info.offset.y;
-    setDraggedYPosition(newYPosition);
-    localStorage.setItem('toggleYPosition', newYPosition.toString());
+    const newYPosition = layout.toggleYPosition + info.offset.y;
+    setLayout({ ...layout, toggleYPosition: newYPosition });
     debugLog('Toggle: [handleDragEnd] newYPosition', newYPosition);
   };
 
@@ -100,15 +100,6 @@ const Toggle = () => {
     getPageTranslationService().toggle();
   };
 
-  useEffect(() => {
-    const savedYPositionString = localStorage.getItem('toggleYPosition');
-    if (savedYPositionString) {
-      const savedYPosition = parseFloat(savedYPositionString);
-      debugLog('Toggle: [useEffect] Loaded savedYPosition from localStorage', savedYPosition);
-      setDraggedYPosition(savedYPosition);
-    }
-  }, []);
-
   return (
     <motion.div
       drag="y"
@@ -116,7 +107,7 @@ const Toggle = () => {
       dragElastic={0}
       onDragStart={() => setIsDragging(true)}
       onDragEnd={handleDragEnd}
-      style={{ y: draggedYPosition }}
+      style={{ y: layout.toggleYPosition }}
       className="sz:fixed sz:right-0 sz:bottom-[26px] sz:flex sz:flex-col sz:items-end sz:z-2147483647"
     >
       <div
