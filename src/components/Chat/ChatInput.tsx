@@ -1,7 +1,6 @@
-import StopIcon from '@/assets/icons/stop.svg?react';
 import Footer from '@/components/Footer';
 import { ChatStatus, isChatWaiting } from '@/hooks/chat';
-import { FolderOutlined, SmileOutlined } from '@ant-design/icons';
+import { FolderOutlined, PauseOutlined, SmileOutlined } from '@ant-design/icons';
 import { Button, Input, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 
@@ -21,6 +20,7 @@ const ChatInput = ({
   const { t } = useTranslation();
   const [chatInput, setChatInput] = useState('');
   const [isComposing, setIsComposing] = useState(false);
+  const [isCancelHovered, setIsCancelHovered] = useState(false);
 
   const handleSubmit = async (text: string) => {
     if (text !== '') {
@@ -98,11 +98,19 @@ const ChatInput = ({
         />
       </div>
       {isChatWaiting(chatStatus) && (
-        <div className="sz:absolute sz:bottom-8 sz:right-6 sz:flex sz:items-center sz:justify-center">
+        <div
+          onMouseEnter={() => setIsCancelHovered(true)}
+          onMouseLeave={() => setIsCancelHovered(false)}
+          className="sz:absolute sz:bottom-8 sz:right-6 sz:flex sz:items-center sz:justify-center sz:text-gray-400 sz:hover:text-sz-cyan"
+        >
           <Button
             shape="circle"
             onClick={() => onCancel()}
-            icon={<StopIcon />}
+            icon={
+              <PauseOutlined
+                className={`sz:text-gray-400 ${isCancelHovered ? 'sz:text-sz-cyan' : ''}`}
+              />
+            }
             size="large"
           ></Button>
         </div>
