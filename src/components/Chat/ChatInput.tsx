@@ -1,17 +1,18 @@
 import StopIcon from '@/assets/icons/stop.svg?react';
 import Footer from '@/components/Footer';
+import { ChatStatus, isChatWaiting } from '@/hooks/chat';
 import { FolderOutlined, SmileOutlined } from '@ant-design/icons';
 import { Button, Input, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 const ChatInput = ({
-  isWaitingForResponse,
+  chatStatus,
   onSubmit,
   onCancel,
   onOpenHistory,
   onNewChat,
 }: {
-  isWaitingForResponse: boolean;
+  chatStatus: ChatStatus;
   onSubmit: (text: string) => Promise<void>;
   onCancel: () => Promise<void>;
   onOpenHistory: () => void;
@@ -35,7 +36,7 @@ const ChatInput = ({
       }
 
       e.preventDefault();
-      if (isWaitingForResponse) return;
+      if (isChatWaiting(chatStatus)) return;
       const currentValue = e.currentTarget.value.trim();
       handleSubmit(currentValue);
     }
@@ -96,7 +97,7 @@ const ChatInput = ({
           "
         />
       </div>
-      {isWaitingForResponse && (
+      {isChatWaiting(chatStatus) && (
         <div className="sz:absolute sz:bottom-8 sz:right-6 sz:flex sz:items-center sz:justify-center">
           <Button
             shape="circle"
