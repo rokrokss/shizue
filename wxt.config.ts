@@ -2,6 +2,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { visualizer } from 'rollup-plugin-visualizer';
 import svgr from 'vite-plugin-svgr';
 import { defineConfig, type UserManifest } from 'wxt';
+import toUtf8 from './scripts/vite-plugin-to-utf8';
 
 export default defineConfig({
   modules: ['@wxt-dev/module-react', '@wxt-dev/i18n/module'],
@@ -52,6 +53,7 @@ export default defineConfig({
         gzipSize: true,
         brotliSize: true,
       }),
+      toUtf8(),
     ],
   }),
   i18n: {
