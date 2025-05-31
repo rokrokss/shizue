@@ -94,6 +94,12 @@ const Toggle = () => {
     debugLog('Toggle: [handleDragEnd] newYPosition', newYPosition);
   };
 
+  const handleTranslatePage = () => {
+    debugLog('Translate page clicked');
+    if (isDragging) return;
+    getPageTranslationService().toggle();
+  };
+
   useEffect(() => {
     const savedYPositionString = localStorage.getItem('toggleYPosition');
     if (savedYPositionString) {
@@ -169,13 +175,13 @@ const Toggle = () => {
                 <TranslateIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />
               }
               tooltipMessage={tooltipMessages[1]}
-              onClick={() => getPageTranslationService().toggle()}
+              onClick={handleTranslatePage}
             />
 
             <OverlayMenuItem
               icon={<BookIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
               tooltipMessage={tooltipMessages[2]}
-              onClick={() => handleSummarizePage()}
+              onClick={handleSummarizePage}
             />
           </OverlayMenu>
         </div>
