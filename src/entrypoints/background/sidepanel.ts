@@ -6,7 +6,7 @@ import {
 } from '@/config/constants';
 import { changePanelOpened, getPanelOpened } from '@/entrypoints/background/states/sidepanel';
 import { debugLog, errorLog } from '@/logs';
-import { getChatModelService } from '@/services/chatModelService';
+import { getChatModelHandler } from '@/services/background/chatModelHandler';
 
 let currentWindowId: number | undefined;
 
@@ -96,11 +96,11 @@ export const sidePanelMessageListeners = () => {
       if (msg.action === MESSAGE_RUN_GRAPH_STREAM) {
         const { threadId } = msg;
 
-        await getChatModelService().streamChat(threadId, port, abortController);
+        await getChatModelHandler().streamChat(threadId, port, abortController);
       } else if (msg.action === MESSAGE_RETRY_GRAPH_STREAM) {
         const { threadId, messageIdxToRetry } = msg;
 
-        await getChatModelService().retryStreamChat(
+        await getChatModelHandler().retryStreamChat(
           threadId,
           messageIdxToRetry,
           port,

@@ -1,4 +1,4 @@
-import { messageHandlers } from '@/entrypoints/background/handlers/messageHandlers';
+import { messageHandlers } from '@/services/background/messageHandlers';
 import {
   sidebarToggleListeners,
   sidePanelMessageListeners,

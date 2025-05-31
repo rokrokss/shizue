@@ -5,13 +5,14 @@ import SettingsModalContent from '@/components/Chat/SettingsModalContent';
 import ThreadListModalContent from '@/components/Chat/ThreadListModalContent';
 import TopMenu from '@/components/Chat/TopRightMenu';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
-import { MESSAGE_CANCEL_NOT_STARTED_MESSAGE, MESSAGE_LOAD_THREAD } from '@/config/constants';
+import { MESSAGE_LOAD_THREAD } from '@/config/constants';
 import { chatStatusAtom, isChatIdle } from '@/hooks/chat';
 import { messageAddedInPanelAtom, threadIdAtom } from '@/hooks/global';
 import { useChromePortStream } from '@/hooks/portStream';
 import { addMessage, createThread, touchThread } from '@/lib/indexDB';
 import { throttleTrailing } from '@/lib/throttleTrailing';
 import { debugLog, errorLog } from '@/logs';
+import { chatService } from '@/services/chatService';
 import { useAtom, useAtomValue } from 'jotai';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -164,10 +165,7 @@ const Chat = () => {
       });
     }
     cancelStream();
-    void chrome.runtime.sendMessage({
-      action: MESSAGE_CANCEL_NOT_STARTED_MESSAGE,
-      threadId,
-    });
+    chatService.cancelNotStartedMessage(threadId!);
     setChatStatus('idle');
     scrollToBottomThrottled();
   };

@@ -5,16 +5,14 @@ import CharacterPickToggle, {
 } from '@/components/Character/CharacterPickToggle';
 import OverlayMenu from '@/components/Toggle/OverlayMenu';
 import OverlayMenuItem from '@/components/Toggle/OverlayMenuItem';
-import {
-  MESSAGE_OPEN_PANEL,
-  MESSAGE_SET_PANEL_OPEN_OR_NOT,
-  MESSAGE_UPDATE_PANEL_INIT_DATA,
-} from '@/config/constants';
+import { MESSAGE_UPDATE_PANEL_INIT_DATA } from '@/config/constants';
 import { useLayout } from '@/hooks/layout';
 import { hashStringToIndex } from '@/lib/hash';
+import { getPageTranslator } from '@/lib/pageTranslator';
+import { initSummarizePageContent } from '@/lib/summarize';
 import { debugLog } from '@/logs';
-import { getChatModelService } from '@/services/chatModelService';
-import { getPageTranslationService } from '@/services/pageTranslationService';
+import { panelService } from '@/services/panelService';
+
 import { motion, PanInfo } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -55,11 +53,11 @@ const Toggle = () => {
   }, []);
 
   const setPanelOpenOrNot = () => {
-    void chrome.runtime.sendMessage({ action: MESSAGE_SET_PANEL_OPEN_OR_NOT });
+    panelService.setPanelOpenOrNot();
   };
 
   const setPanelOpen = () => {
-    void chrome.runtime.sendMessage({ action: MESSAGE_OPEN_PANEL });
+    panelService.openPanel();
   };
 
   const handleClick = () => {
@@ -76,11 +74,7 @@ const Toggle = () => {
     debugLog('Summarize page clicked');
     if (isDragging) return;
     const pageText = document.body.innerText;
-    await getChatModelService().initSummarizePageContent(
-      document.title,
-      pageText,
-      window.location.href
-    );
+    await initSummarizePageContent(document.title, pageText, window.location.href);
     void chrome.runtime.sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA }).catch((err) => {
       debugLog('handleSummarizePage: Panel not opened yet', err);
     });
@@ -97,7 +91,7 @@ const Toggle = () => {
   const handleTranslatePage = () => {
     debugLog('Translate page clicked');
     if (isDragging) return;
-    getPageTranslationService().toggle();
+    getPageTranslator().toggle();
   };
 
   return (

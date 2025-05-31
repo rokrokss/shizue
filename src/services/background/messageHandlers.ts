@@ -4,10 +4,12 @@ import {
   MESSAGE_OPEN_PANEL,
   MESSAGE_PANEL_OPENED_PING_FROM_PANEL,
   MESSAGE_SET_PANEL_OPEN_OR_NOT,
+  MESSAGE_TRANSLATE_HTML_TEXT,
 } from '@/config/constants';
 import { changePanelShowStatus, openPanel } from '@/entrypoints/background/sidepanel';
 import { changePanelOpened, getPanelOpened } from '@/entrypoints/background/states/sidepanel';
 import { db, getLatestMessageForThread, loadThread } from '@/lib/indexDB';
+import { getChatModelHandler } from '@/services/background/chatModelHandler';
 
 async function handleSetPanelOpenOrNot(msg: any, sendResponse: (response?: any) => void) {
   changePanelShowStatus();
@@ -54,10 +56,17 @@ async function handleOpenPanel(msg: any, sendResponse: (response?: any) => void)
   }
 }
 
+async function handleTranslateHtmlText(msg: any, sendResponse: (response?: any) => void) {
+  const { text } = msg;
+  const translatedText = await getChatModelHandler().translateHtmlText(text);
+  sendResponse(translatedText);
+}
+
 export const messageHandlers = {
   [MESSAGE_LOAD_THREAD]: handleLoadThread,
   [MESSAGE_CANCEL_NOT_STARTED_MESSAGE]: handleLatestMessageForThread,
   [MESSAGE_SET_PANEL_OPEN_OR_NOT]: handleSetPanelOpenOrNot,
   [MESSAGE_PANEL_OPENED_PING_FROM_PANEL]: handlePanelOpenedPingFromPanel,
   [MESSAGE_OPEN_PANEL]: handleOpenPanel,
+  [MESSAGE_TRANSLATE_HTML_TEXT]: handleTranslateHtmlText,
 };
