@@ -45,6 +45,9 @@ Sider is a great service, but I believe the future isn't about showcasing every 
 - [ ] search in user's web browsers
   - [ ] fuzzy find in tabs/bookmarks/history
   - [ ] ai search
+- [ ] color themes
+  - [ ] dark mode
+  - [ ] customized themes
 - [ ] ai note app features
   - [ ] save highlights
   - [ ] use bookmarks
