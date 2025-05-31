@@ -73,6 +73,7 @@ const Toggle = () => {
 
   const handleSummarizePage = async () => {
     debugLog('Summarize page clicked');
+    if (isDragging) return;
     const pageText = document.body.innerText;
     await getChatModelService().initSummarizePageContent(
       document.title,
