@@ -14,8 +14,8 @@ import { hashStringToIndex } from '@/lib/hash';
 import { debugLog } from '@/logs';
 import { getChatModelService } from '@/services/chatModelService';
 import { getPageTranslationService } from '@/services/PageTranslationService';
-import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { motion, PanInfo } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const Toggle = () => {
@@ -28,6 +28,7 @@ const Toggle = () => {
   const [characterIndex, setCharacterIndex] = useState(0);
   const [translateSettingsModalOpen, setTranslateSettingsModalOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [draggedYPosition, setDraggedYPosition] = useState(0);
 
   const isVisible = isHoveringCharacter || isHoveringMenu || translateSettingsModalOpen;
 
@@ -84,17 +85,36 @@ const Toggle = () => {
     setPanelOpen();
   };
 
+  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    setIsDragging(false);
+    const newYPosition = draggedYPosition + info.offset.y;
+    setDraggedYPosition(newYPosition);
+    localStorage.setItem('toggleYPosition', newYPosition.toString());
+    debugLog('Toggle: [handleDragEnd] newYPosition', newYPosition);
+  };
+
+  useEffect(() => {
+    const savedYPositionString = localStorage.getItem('toggleYPosition');
+    if (savedYPositionString) {
+      const savedYPosition = parseFloat(savedYPositionString);
+      debugLog('Toggle: [useEffect] Loaded savedYPosition from localStorage', savedYPosition);
+      setDraggedYPosition(savedYPosition);
+    }
+  }, []);
+
   return (
-    <motion.div 
-    drag="y"
-    dragMomentum={false} 
-    dragElastic={0}
-    onDragStart={() => setIsDragging(true)}
-    onDragEnd={() => setIsDragging(false)}
-    className="sz:fixed sz:right-0 sz:bottom-[26px] sz:flex sz:flex-col sz:items-end sz:z-2147483647">
-      <div 
-        className="sz:flex sz:flex-col sz:items-end sz:z-2147483647" 
-        style={{ 
+    <motion.div
+      drag="y"
+      dragMomentum={false}
+      dragElastic={0}
+      onDragStart={() => setIsDragging(true)}
+      onDragEnd={handleDragEnd}
+      style={{ y: draggedYPosition }}
+      className="sz:fixed sz:right-0 sz:bottom-[26px] sz:flex sz:flex-col sz:items-end sz:z-2147483647"
+    >
+      <div
+        className="sz:flex sz:flex-col sz:items-end sz:z-2147483647"
+        style={{
           pointerEvents: isVisible ? 'auto' : 'none',
         }}
       >
@@ -144,7 +164,9 @@ const Toggle = () => {
             /> */}
 
             <OverlayMenuItem
-              icon={<TranslateIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
+              icon={
+                <TranslateIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />
+              }
               tooltipMessage={tooltipMessages[1]}
               onClick={() => getPageTranslationService().toggle()}
             />
