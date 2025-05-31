@@ -76,7 +76,13 @@ export default defineContentScript({
         mo.observe(document.body, { childList: true, subtree: true });
         return root;
       },
-      onRemove: () => {},
+      onRemove: () => {
+        mo?.disconnect();
+        if (debounceId !== null) clearTimeout(debounceId);
+        root?.unmount();
+        document.removeEventListener('fullscreenchange', handleFullscreenChange);
+        uiContainer = null;
+      },
     });
 
     ui.mount();
