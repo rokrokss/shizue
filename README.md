@@ -42,6 +42,9 @@ Sider is a great service, but I believe the future isn't about showcasing every 
   - [ ] google search
   - [ ] youtube
   - [ ] gmail
+- [ ] search in user's web browsers
+  - [ ] fuzzy find in tabs/bookmarks/history
+  - [ ] ai search
 - [ ] ai note app features
   - [ ] save highlights
   - [ ] use bookmarks
