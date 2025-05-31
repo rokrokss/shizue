@@ -19,6 +19,7 @@ export const STORAGE_MODELS = 'MODELS';
 export const STORAGE_SETTINGS = 'SETTINGS';
 export const STORAGE_USER_MEMORY = 'USER_MEMORY';
 export const STORAGE_GLOBAL_STATE = 'GLOBAL_STATE';
+export const STORAGE_LAYOUT = 'LAYOUT';
 
 /* parameters */
 export const STREAM_FLUSH_THRESHOLD_0 = 5;
