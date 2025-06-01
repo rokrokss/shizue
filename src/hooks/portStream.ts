@@ -62,14 +62,17 @@ export const useChromePortStream = () => {
   );
 
   const startStream = useCallback(
-    (payload: { threadId: string }, opts: StreamOptions) => {
+    (payload: { threadId: string; actionType: ActionType }, opts: StreamOptions) => {
       _initiatePortCommunication(MESSAGE_RUN_GRAPH_STREAM, payload, opts);
     },
     [_initiatePortCommunication]
   );
 
   const startRetryStream = useCallback(
-    (payload: { threadId: string; messageIdxToRetry: number }, opts: StreamOptions) => {
+    (
+      payload: { threadId: string; actionType: ActionType; messageIdxToRetry: number },
+      opts: StreamOptions
+    ) => {
       _initiatePortCommunication(MESSAGE_RETRY_GRAPH_STREAM, payload, opts);
     },
     [_initiatePortCommunication]

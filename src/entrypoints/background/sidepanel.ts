@@ -94,17 +94,18 @@ export const sidePanelMessageListeners = () => {
 
     port.onMessage.addListener(async (msg) => {
       if (msg.action === MESSAGE_RUN_GRAPH_STREAM) {
-        const { threadId } = msg;
+        const { threadId, actionType } = msg;
 
-        await getChatModelHandler().streamChat(threadId, port, abortController);
+        await getChatModelHandler().streamChat(threadId, port, abortController, actionType);
       } else if (msg.action === MESSAGE_RETRY_GRAPH_STREAM) {
-        const { threadId, messageIdxToRetry } = msg;
+        const { threadId, messageIdxToRetry, actionType } = msg;
 
         await getChatModelHandler().retryStreamChat(
           threadId,
           messageIdxToRetry,
           port,
-          abortController
+          abortController,
+          actionType
         );
       }
     });

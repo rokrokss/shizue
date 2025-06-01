@@ -7,8 +7,10 @@ export const sidePanelHydratedAtom = atom(false);
 
 export const messageAddedInPanelAtom = atom<number | null>(null);
 
+export type ActionType = 'chat' | 'askForSummary';
+
 export type GlobalState = {
-  actionType: 'chat' | 'askForSummary';
+  actionType: ActionType;
   threadId?: string;
   summaryTitle?: string;
   summaryText?: string;
@@ -36,7 +38,7 @@ export const threadIdAtom = atom(
 
 export const actionTypeAtom = atom(
   (get) => get(globalStateAtom as Atom<GlobalState>).actionType,
-  (get, set, newActionType: 'chat' | 'askForSummary') => {
+  (get, set, newActionType: ActionType) => {
     const globalState = get(globalStateAtom);
     set(globalStateAtom, { ...globalState, actionType: newActionType });
   }

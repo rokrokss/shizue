@@ -8,6 +8,7 @@ import {
   getCurrentOpenaiKey,
   getCurrentTranslateModel,
 } from '@/entrypoints/background/states/models';
+import { ActionType } from '@/hooks/global';
 import { db, loadThread } from '@/lib/indexDB';
 import {
   getHtmlTranslationPrompt,
@@ -82,7 +83,7 @@ export class ChatModelHandler {
         maxTokens,
       };
       const llmInstance = new ChatOpenAI(options);
-      debugLog('ChatModelHandler Successfully created a new model instance.');
+      debugLog('ChatModelHandler Successfully created a new model instance with options:', options);
       return llmInstance;
     } catch (err) {
       errorLog('ChatModelHandler Error during new LLM instance creation:', err);
@@ -94,12 +95,16 @@ export class ChatModelHandler {
     messageId: string,
     messagesForModel: BaseMessage[],
     port: chrome.runtime.Port,
-    abortController: AbortController
+    abortController: AbortController,
+    actionType: ActionType
   ) {
     let fullResponseContent = '';
 
     try {
-      const llm = await this.getModelInstance({ streaming: true });
+      const llm = await this.getModelInstance({
+        streaming: true,
+        temperature: actionType === 'askForSummary' ? 0.3 : 0.7,
+      });
       const stream = await llm.stream(messagesForModel, { signal: abortController.signal });
 
       let buffer = '';
@@ -153,7 +158,8 @@ export class ChatModelHandler {
   public async streamChat(
     threadId: string,
     port: chrome.runtime.Port,
-    abortController: AbortController
+    abortController: AbortController,
+    actionType: ActionType
   ) {
     const messageId = crypto.randomUUID();
 
@@ -186,7 +192,7 @@ export class ChatModelHandler {
         ),
       ];
 
-      await this._executeStreamAndUpdate(messageId, messages, port, abortController);
+      await this._executeStreamAndUpdate(messageId, messages, port, abortController, actionType);
     } catch (err) {
       errorLog(`ChatModelHandler [streamChat] error on setup (messageId: ${messageId}):`, err);
       try {
@@ -204,7 +210,8 @@ export class ChatModelHandler {
     threadId: string,
     messageIdxToRetry: number,
     port: chrome.runtime.Port,
-    abortController: AbortController
+    abortController: AbortController,
+    actionType: ActionType
   ) {
     try {
       const fullThreadHistory = await loadThread(threadId);
@@ -251,7 +258,13 @@ export class ChatModelHandler {
         ),
       ];
 
-      await this._executeStreamAndUpdate(messageIdToRetry, messagesForModel, port, abortController);
+      await this._executeStreamAndUpdate(
+        messageIdToRetry,
+        messagesForModel,
+        port,
+        abortController,
+        actionType
+      );
     } catch (err) {
       errorLog(
         `ChatModelHandler [retryStreamChat] error on setup (messageIdx: ${messageIdxToRetry}):`,
