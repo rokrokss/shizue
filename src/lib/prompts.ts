@@ -19,7 +19,12 @@ export const getInitialAIMessage = (lang: Language) => {
 
 const getSummaryPrompt = (content: string) => {
   return `I want you to act as a text summarizer to help me create a concise summary of the text I provide.
-The summary expressing the key points and concepts written in the original text without adding your interpretations.
+Please strictly follow the guidelines below to create your summary.
+
+1. The summary expressing the key points and concepts written in the original text without adding your interpretations.
+2. The very first line of your output must be a **single, short, concise sentence that encapsulates the core message or essence of the entire provided text.**
+3. Ensure the output is well-organized in paragraphs, coherent, and presented in clear, natural-sounding text. The goal is a polished and professional-quality summary.
+4. Ensure paragraphs are clearly separated, preferably by a blank line, and added with a bold title for each paragraph for readability.
 
 ${content}
 `;
