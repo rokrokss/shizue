@@ -41,7 +41,7 @@ class ShizueTranslationOverlay extends HTMLElement {
             width: 14px;
             height: 14px;
             border: 2px solid #f3f3f3;
-            border-top: 2px solid #fdcb6e;
+            border-top: 2px solid #32CCBC;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
             margin-right: 8px;

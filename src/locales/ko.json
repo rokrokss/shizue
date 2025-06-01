@@ -5,7 +5,8 @@
   "overlayMenu": {
     "translateSettings": "번역 설정",
     "translatePage": "페이지 번역",
-    "summarizePage": "페이지 요약"
+    "summarizePage": "페이지 요약",
+    "removeTranslation": "번역 없애기"
   },
   "onboarding": {
     "greeting_0": "안녕하세요!",
