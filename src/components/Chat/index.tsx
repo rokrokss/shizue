@@ -7,7 +7,7 @@ import TopMenu from '@/components/Chat/TopRightMenu';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import { MESSAGE_LOAD_THREAD } from '@/config/constants';
 import { chatStatusAtom, isChatIdle } from '@/hooks/chat';
-import { messageAddedInPanelAtom, threadIdAtom } from '@/hooks/global';
+import { ActionType, messageAddedInPanelAtom, threadIdAtom } from '@/hooks/global';
 import { useChromePortStream } from '@/hooks/portStream';
 import { addMessage, createThread, touchThread } from '@/lib/indexDB';
 import { throttleTrailing } from '@/lib/throttleTrailing';
@@ -18,7 +18,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export interface Message {
   role: 'human' | 'system' | 'ai';
-  actionType: 'chat' | 'askForSummary';
+  actionType: ActionType;
   summaryTitle?: string;
   summaryPageLink?: string;
   content: string;
@@ -40,6 +40,7 @@ const Chat = () => {
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const aiIndexRef = useRef<number>(-1);
+  const actionType = useRef<ActionType>('chat');
 
   const scrollToBottom = useCallback(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -65,6 +66,7 @@ const Chat = () => {
     debugLog('handleAskForSummary messages', messages);
     setChatStatus('waiting');
 
+    actionType.current = 'askForSummary';
     aiIndexRef.current = messages.length + 1;
 
     addAIMessage();
@@ -72,7 +74,7 @@ const Chat = () => {
     scrollToBottomThrottled();
 
     startStream(
-      { threadId: tId },
+      { threadId: tId, actionType: actionType.current },
       {
         onDelta: (delta) =>
           setMessages((cur) => {
@@ -181,6 +183,7 @@ const Chat = () => {
 
   const addHumanMessage = async (tId: string, text: string) => {
     setMessages((prev) => {
+      actionType.current = 'chat';
       aiIndexRef.current = prev.length + 1;
       return [
         ...prev,
@@ -267,7 +270,7 @@ const Chat = () => {
     scrollToBottomThrottled();
 
     startStream(
-      { threadId: tId },
+      { threadId: tId, actionType: actionType.current },
       {
         onDelta: (delta) =>
           setMessages((cur) => {
@@ -330,6 +333,7 @@ const Chat = () => {
 
     setChatStatus('waiting');
 
+    actionType.current = messages[messageIdxToRetry - 1].actionType;
     aiIndexRef.current = messageIdxToRetry;
 
     setMessages((cur) => {
@@ -346,7 +350,11 @@ const Chat = () => {
       return copy;
     }),
       startRetryStream(
-        { threadId, messageIdxToRetry: messageIdxToRetry },
+        {
+          threadId,
+          messageIdxToRetry: messageIdxToRetry,
+          actionType: actionType.current,
+        },
         {
           onDelta: (delta) =>
             setMessages((cur) => {

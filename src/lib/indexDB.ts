@@ -1,10 +1,11 @@
+import { ActionType } from '@/hooks/global';
 import Dexie, { Table } from 'dexie';
 
 export interface Message {
   id: string;
   threadId: string;
   role: 'human' | 'system' | 'ai';
-  actionType: 'chat' | 'askForSummary';
+  actionType: ActionType;
   summaryTitle?: string;
   summaryPageLink?: string;
   content: string;
