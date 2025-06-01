@@ -5,7 +5,8 @@
   "overlayMenu": {
     "translateSettings": "Translate settings",
     "translatePage": "Translate this page",
-    "summarizePage": "Summarize this page"
+    "summarizePage": "Summarize this page",
+    "removeTranslation": "Remove translation"
   },
   "onboarding": {
     "greeting_0": "Welcome!",

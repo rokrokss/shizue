@@ -1,5 +1,6 @@
 import BookIcon from '@/assets/icons/book.svg?react';
 import TranslateIcon from '@/assets/icons/translate.svg?react';
+import TranslateCheckIcon from '@/assets/icons/translate_check.svg?react';
 import CharacterPickToggle, {
   characterCountChat,
 } from '@/components/Character/CharacterPickToggle';
@@ -28,8 +29,10 @@ const Toggle = () => {
   const [translateSettingsModalOpen, setTranslateSettingsModalOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [layout, setLayout] = useLayout();
+  const [isTranslationActive, setIsTranslationActive] = useState(false);
 
-  const isVisible = isHoveringCharacter || isHoveringMenu || translateSettingsModalOpen;
+  const isVisible =
+    isHoveringCharacter || isHoveringMenu || translateSettingsModalOpen || isTranslationActive;
 
   const width = 43;
   const height = 43;
@@ -40,6 +43,7 @@ const Toggle = () => {
     t('overlayMenu.translateSettings'),
     t('overlayMenu.translatePage'),
     t('overlayMenu.summarizePage'),
+    t('overlayMenu.removeTranslation'),
   ];
 
   useEffect(() => {
@@ -92,6 +96,7 @@ const Toggle = () => {
     debugLog('Translate page clicked');
     if (isDragging) return;
     getPageTranslator().toggle();
+    setIsTranslationActive(!isTranslationActive);
   };
 
   return (
@@ -158,9 +163,17 @@ const Toggle = () => {
 
               <OverlayMenuItem
                 icon={
-                  <TranslateIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />
+                  isTranslationActive ? (
+                    <TranslateCheckIcon
+                      className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`}
+                    />
+                  ) : (
+                    <TranslateIcon
+                      className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`}
+                    />
+                  )
                 }
-                tooltipMessage={tooltipMessages[1]}
+                tooltipMessage={isTranslationActive ? tooltipMessages[3] : tooltipMessages[1]}
                 onClick={handleTranslatePage}
               />
 
