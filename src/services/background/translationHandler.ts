@@ -33,7 +33,7 @@ function getTranslationModelPreset(): ModelPreset {
 export class TranslationHandler {
   constructor() {}
 
-  public async isAbleToTranslate(): Promise<boolean> {
+  public async canTranslate(): Promise<boolean> {
     const openaiKey = getCurrentOpenaiKey();
     return Boolean(openaiKey);
   }
