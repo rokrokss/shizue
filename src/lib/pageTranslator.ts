@@ -8,9 +8,14 @@ import { translationService } from '@/services/translationService';
 export class PageTranslator {
   private isActive: boolean = false;
   private observer: MutationObserver | null = null;
-  private translatedElements: Set<Element> = new Set();
   private scrollTimeout: NodeJS.Timeout | null = null;
   private lastScrollTime: number = 0;
+  private readonly MAX_CHARS_PER_API_REQUEST = 1000;
+
+  // properties for robust queueing
+  private translationQueue: { elements: Element[]; texts: string[] }[] = [];
+  private isProcessingBatch: boolean = false;
+  private queuedElements: Set<Element> = new Set();
 
   constructor() {
     // Check if web component is registered
@@ -67,11 +72,18 @@ export class PageTranslator {
     debugLog('Page translation activated');
   }
 
+  private abortCurrentBatch() {
+    this.isProcessingBatch = false;
+    // TODO: abort controller to stop llm call in background
+  }
+
   // Deactivate translation
   private deactivate() {
     this.isActive = false;
     this.stopObserving();
+    this.abortCurrentBatch();
     this.removeAllTranslations();
+    this.translationQueue = [];
     debugLog('Page translation deactivated');
   }
 
@@ -140,13 +152,13 @@ export class PageTranslator {
 
   // Remove all translations
   private removeAllTranslations() {
-    this.translatedElements.forEach((element) => {
+    this.queuedElements.forEach((element) => {
       const overlay = element.querySelector('shizue-translation-overlay') as Element;
       if (overlay) {
         element.removeChild(overlay);
       }
     });
-    this.translatedElements.clear();
+    this.queuedElements.clear();
   }
 
   private removeOverlayFromElement(
@@ -157,8 +169,186 @@ export class PageTranslator {
     if (element.contains(overlay)) {
       element.removeChild(overlay);
       if (removeTranslatedElement) {
-        this.translatedElements.delete(element);
+        if (this.queuedElements.has(element)) {
+          this.queuedElements.delete(element);
+        }
       }
+    }
+  }
+
+  private createTranslationBatches(
+    elements: Element[]
+  ): { elements: Element[]; texts: string[] }[] {
+    debugLog(
+      `Found ${elements.length} new elements for potential translation. Creating batches...`
+    );
+
+    const batches: {
+      elements: Element[];
+      texts: string[];
+    }[] = [];
+
+    let currentBatchElements: Element[] = [];
+    let currentBatchTexts: string[] = [];
+    let currentBatchCharCount = 0;
+
+    for (const element of elements) {
+      const text = element.innerHTML?.trim();
+      const textLength = text.length;
+
+      if (textLength >= this.MAX_CHARS_PER_API_REQUEST) {
+        // batch with a single element
+        if (currentBatchElements.length > 0) {
+          // if there is a batch being created, complete it first
+          batches.push({
+            elements: currentBatchElements,
+            texts: currentBatchTexts,
+          });
+        }
+        batches.push({ elements: [element], texts: [text] });
+
+        currentBatchElements = [];
+        currentBatchTexts = [];
+        currentBatchCharCount = 0;
+      } else {
+        // add current element to existing batch or start a new batch
+        if (
+          currentBatchCharCount + textLength > this.MAX_CHARS_PER_API_REQUEST &&
+          currentBatchElements.length > 0
+        ) {
+          // complete and start a new batch
+          batches.push({
+            elements: currentBatchElements,
+            texts: currentBatchTexts,
+          });
+          currentBatchElements = [element];
+          currentBatchTexts = [text];
+          currentBatchCharCount = textLength;
+        } else {
+          // push to existing batch
+          currentBatchElements.push(element);
+          currentBatchTexts.push(text);
+          currentBatchCharCount += textLength;
+        }
+      }
+    }
+
+    // leftovers
+    if (currentBatchElements.length > 0) {
+      batches.push({
+        elements: currentBatchElements,
+        texts: currentBatchTexts,
+      });
+    }
+
+    return batches;
+  }
+
+  private async processTranslationQueue() {
+    if (this.isProcessingBatch || this.translationQueue.length === 0 || !this.isActive) {
+      return;
+    }
+
+    this.isProcessingBatch = true;
+    const batchToProcess = this.translationQueue.shift();
+
+    if (!batchToProcess || batchToProcess.elements.length === 0) {
+      this.isProcessingBatch = false;
+      if (this.isActive) this.processTranslationQueue(); // process next batch
+      return;
+    }
+
+    debugLog(
+      `Processing a batch of ${batchToProcess.elements.length} element(s). Remaining batches: ${this.translationQueue.length}`
+    );
+
+    const { elements, texts } = batchToProcess;
+
+    const overlaysInBatch: { element: Element; overlay: ShizueTranslationOverlay }[] = [];
+    elements.forEach((element) => {
+      if (
+        this.queuedElements.has(element) &&
+        !element.querySelector('shizue-translation-overlay')
+      ) {
+        const overlay = this.attachTranslationOverlay(element);
+        overlay.setLoading(true);
+        overlaysInBatch.push({ element, overlay });
+      } else {
+        // overlay exists unexpectedly
+        if (this.queuedElements.has(element)) {
+          this.queuedElements.delete(element);
+        }
+      }
+    });
+
+    const validElementsForApi = overlaysInBatch.map((o) => o.element);
+    const validTextsForApi = texts.filter(
+      (_, index) => elements.indexOf(validElementsForApi[index]) !== -1
+    );
+
+    if (validElementsForApi.length === 0) {
+      this.isProcessingBatch = false;
+      if (this.isActive) this.processTranslationQueue();
+      return;
+    }
+
+    try {
+      const translatedTextResult = await translationService.translateHtmlTextBatch(
+        validTextsForApi
+      );
+
+      if (!this.isActive) {
+        debugLog(
+          `Translation batch processing was deactivated for batch with ${elements.length} elements.`
+        );
+        overlaysInBatch.forEach(({ element: el, overlay: ov }) => {
+          if (el.contains(ov)) {
+            this.removeOverlayFromElement(el, ov, true);
+          } else if (this.queuedElements.has(el)) {
+            this.queuedElements.delete(el);
+          }
+        });
+        return;
+      }
+
+      if (!translatedTextResult.success || !translatedTextResult.translatedTexts) {
+        errorLog('Error translating elements:', translatedTextResult.error);
+
+        for (let i = 0; i < overlaysInBatch.length; i++) {
+          overlaysInBatch[i].overlay.setError(true);
+
+          setTimeout(() => {
+            this.removeOverlayFromElement(overlaysInBatch[i].element, overlaysInBatch[i].overlay);
+          }, 3000);
+        }
+        return;
+      }
+
+      for (let i = 0; i < overlaysInBatch.length; i++) {
+        if (texts[i] === translatedTextResult.translatedTexts[i]) {
+          overlaysInBatch[i].overlay.setLoading(false);
+          setTimeout(() => {
+            this.removeOverlayFromElement(
+              overlaysInBatch[i].element,
+              overlaysInBatch[i].overlay,
+              false
+            );
+          }, 3000);
+        } else {
+          overlaysInBatch[i].overlay.setTexts(translatedTextResult.translatedTexts[i]);
+        }
+      }
+    } catch (err) {
+      errorLog('Error in batch translation API call:', err);
+      overlaysInBatch.forEach(({ element, overlay }) => {
+        overlay.setError(true);
+        setTimeout(() => {
+          this.removeOverlayFromElement(element, overlay, true);
+        }, 3000);
+      });
+    } finally {
+      this.isProcessingBatch = false;
+      if (this.isActive) this.processTranslationQueue();
     }
   }
 
@@ -166,62 +356,20 @@ export class PageTranslator {
   private async translateVisibleElements() {
     if (!this.isActive) return;
     try {
-      const elements = this.findTranslatableElements();
+      const elements = this.findTranslatableElements().filter(
+        (element) => !this.queuedElements.has(element)
+      );
+      if (elements.length === 0) {
+        return;
+      }
 
-      debugLog(`Found ${elements.length} elements to translate`);
+      elements.forEach((element) => this.queuedElements.add(element));
 
-      for (const element of elements) {
-        if (this.translatedElements.has(element)) continue;
-        this.translatedElements.add(element);
-        const text = element.innerHTML?.trim();
-        if (!text) continue;
+      const batches = this.createTranslationBatches(elements);
 
-        // Create overlay with spinner first
-        const overlay = this.attachTranslationOverlay(element);
-        overlay.setLoading(true);
-
-        try {
-          // Request translation
-          const translatedTextResult = await translationService.translateHtmlText(text);
-
-          if (
-            translatedTextResult.success &&
-            translatedTextResult.translatedText &&
-            translatedTextResult.translatedText !== text
-          ) {
-            overlay.setTexts(translatedTextResult.translatedText);
-          } else if (translatedTextResult.success && translatedTextResult.translatedText) {
-            overlay.setLoading(false);
-            setTimeout(() => {
-              this.removeOverlayFromElement(element, overlay, false);
-            }, 3000);
-          } else {
-            // Show error state and remove overlay after translation fails
-            overlay.setError(true);
-            errorLog('Translation error:', translatedTextResult.error);
-
-            // Remove overlay after 3 seconds
-            setTimeout(() => {
-              this.removeOverlayFromElement(element, overlay);
-            }, 3000);
-          }
-        } catch (error) {
-          // Show error state and remove overlay after translation fails
-          overlay.setError(true);
-          errorLog('Translation error:', error);
-
-          // Remove overlay after 3 seconds
-          setTimeout(() => {
-            try {
-              this.removeOverlayFromElement(element, overlay);
-            } catch (removeError) {
-              debugLog('Error removing overlay:', removeError);
-            }
-          }, 3000);
-        }
-
-        // Prevent API call rate limiting
-        await new Promise((resolve) => setTimeout(resolve, 100));
+      if (batches.length > 0) {
+        this.translationQueue.push(...batches);
+        this.processTranslationQueue();
       }
     } catch (error) {
       errorLog('Error translating elements:', error);
@@ -278,22 +426,33 @@ export class PageTranslator {
 
   // Check if element is translatable
   private isTranslatableElement(element: Element): boolean {
+    // Check if element is already translated
+    if (
+      element.querySelector('shizue-translation-overlay') !== null ||
+      element.tagName === 'SHIZUE-TRANSLATION-OVERLAY'
+    ) {
+      return false;
+    }
+
     const text = element.textContent?.trim();
 
     if (!text || text.length === 0 || text.length > 2000) {
       return false;
     }
 
-    // Check if actual text is included
-    if (!/[a-zA-Z가-힣]/.test(text)) {
+    // Check if the text is just one alphabet
+    if (/^[a-zA-Z]$/.test(text)) {
       return false;
     }
 
-    // Check if element is already translated
-    if (
-      element.querySelector('shizue-translation-overlay') !== null ||
-      element.tagName === 'SHIZUE-TRANSLATION-OVERLAY'
-    ) {
+    // Check if actual text is included
+    // all except numbers
+    if (!/\p{L}/u.test(text)) {
+      return false;
+    }
+
+    // Check if element is editable
+    if ((element as HTMLElement).isContentEditable) {
       return false;
     }
 

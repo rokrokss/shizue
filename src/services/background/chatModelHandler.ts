@@ -1,49 +1,12 @@
 import { STREAM_FLUSH_THRESHOLD_0, STREAM_FLUSH_THRESHOLD_1 } from '@/config/constants';
-import {
-  getCurrentLanguage,
-  getTranslationTargetLanguage,
-} from '@/entrypoints/background/states/language';
-import {
-  getCurrentChatModel,
-  getCurrentOpenaiKey,
-  getCurrentTranslateModel,
-} from '@/entrypoints/background/states/models';
+import { getCurrentLanguage } from '@/entrypoints/background/states/language';
+import { getCurrentChatModel, getCurrentOpenaiKey } from '@/entrypoints/background/states/models';
 import { ActionType } from '@/hooks/global';
 import { db, loadThread } from '@/lib/indexDB';
-import {
-  getHtmlTranslationPrompt,
-  getInitialAIMessage,
-  getInitialSystemMessage,
-} from '@/lib/prompts';
+import { getModelInstance, ModelPreset } from '@/lib/models';
+import { getInitialAIMessage, getInitialSystemMessage } from '@/lib/prompts';
 import { debugLog, errorLog } from '@/logs';
 import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { ChatOpenAI } from '@langchain/openai';
-
-interface ModelPreset {
-  openaiKey?: string;
-  modelName: string;
-}
-
-export interface TranslationResult {
-  success: boolean;
-  translatedText?: string;
-  error?: string;
-}
-
-interface ModelOptions {
-  maxTokens?: number;
-  temperature?: number;
-  streaming?: boolean;
-  modelPreset?: ModelPreset;
-}
-
-interface OpenAIChatOptions {
-  modelName: string;
-  apiKey: string;
-  maxTokens: number;
-  temperature: number;
-  streaming: boolean;
-}
 
 function getChatModelPreset(): ModelPreset {
   const openaiKey = getCurrentOpenaiKey();
@@ -51,45 +14,8 @@ function getChatModelPreset(): ModelPreset {
   return { openaiKey, modelName };
 }
 
-function getTranslationModelPreset(): ModelPreset {
-  const openaiKey = getCurrentOpenaiKey();
-  const modelName = getCurrentTranslateModel();
-  return { openaiKey, modelName };
-}
-
 export class ChatModelHandler {
   constructor() {}
-
-  private async getModelInstance({
-    maxTokens = -1,
-    temperature = 0.7,
-    streaming = false,
-    modelPreset = getChatModelPreset(),
-  }: ModelOptions): Promise<ChatOpenAI> {
-    const { openaiKey, modelName } = modelPreset;
-
-    if (!openaiKey) {
-      const errMsg = 'OpenAI API key is not set. Cannot create LLM instance.';
-      errorLog(errMsg);
-      throw new Error(errMsg);
-    }
-
-    try {
-      const options: OpenAIChatOptions = {
-        modelName,
-        temperature,
-        apiKey: openaiKey,
-        streaming,
-        maxTokens,
-      };
-      const llmInstance = new ChatOpenAI(options);
-      debugLog('ChatModelHandler Successfully created a new model instance with options:', options);
-      return llmInstance;
-    } catch (err) {
-      errorLog('ChatModelHandler Error during new LLM instance creation:', err);
-      throw err;
-    }
-  }
 
   private async _executeStreamAndUpdate(
     messageId: string,
@@ -101,9 +27,10 @@ export class ChatModelHandler {
     let fullResponseContent = '';
 
     try {
-      const llm = await this.getModelInstance({
+      const llm = await getModelInstance({
         streaming: true,
         temperature: actionType === 'askForSummary' ? 0.3 : 0.7,
+        modelPreset: getChatModelPreset(),
       });
       const stream = await llm.stream(messagesForModel, { signal: abortController.signal });
 
@@ -278,28 +205,6 @@ export class ChatModelHandler {
           postError
         );
       }
-    }
-  }
-
-  public async translateHtmlText(text: string): Promise<TranslationResult> {
-    try {
-      const targetLanguage = getTranslationTargetLanguage();
-      const prompt = getHtmlTranslationPrompt(text, targetLanguage);
-
-      const llm = await this.getModelInstance({
-        temperature: 0.3,
-        maxTokens: 2000,
-        streaming: false,
-        modelPreset: getTranslationModelPreset(),
-      });
-      const response = await llm.invoke([new HumanMessage(prompt)]);
-
-      debugLog('ChatModelHandler [translateText] response:', response);
-
-      return { success: true, translatedText: (response.content as string).trim() };
-    } catch (err) {
-      errorLog('ChatModelHandler [translateText] error:', err);
-      return { success: false, error: (err as Error).message ?? String(err) };
     }
   }
 }
