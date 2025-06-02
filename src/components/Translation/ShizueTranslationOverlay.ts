@@ -48,16 +48,31 @@ class ShizueTranslationOverlay extends HTMLElement {
       textElements.includes(parentElement.tagName) &&
       window.getComputedStyle(parentElement).display === 'inline'
     ) {
-      this.style.display = 'inline';
+      this.style.display = 'inline-block';
     } else {
       this.style.display = 'block';
     }
+    this.style.display = 'block';
+    this.style.transition = 'max-height 0.3s ease-in-out, opacity 0.3s ease-in-out';
+    this.style.boxSizing = 'border-box';
+
+    this.style.overflow = 'hidden'; // for max-height transition
+    this.style.maxHeight = '0px';
 
     if (this.isLoading) {
-      this.style.opacity = '1';
-      this.style.lineHeight = '5px';
+      this.style.maxHeight = '0px';
+      setTimeout(() => {
+        this.style.opacity = '1';
+      }, 0);
       this.innerHTML = `
         <style>
+          .shizue-spinner-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 18px;
+            padding: 1px 0;
+          }
           .spinner {
             display: inline-block;
             width: 14px;
@@ -66,8 +81,6 @@ class ShizueTranslationOverlay extends HTMLElement {
             border-top: 2px solid #32CCBC;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
           }
           
           @keyframes spin {
@@ -76,12 +89,24 @@ class ShizueTranslationOverlay extends HTMLElement {
           }
           
         </style>
-        <div class="spinner"></div>
+        <div class="shizue-spinner-wrapper"><div class="spinner"></div></div>
       `;
+      this.style.lineHeight = 'normal';
+      setTimeout(() => {
+        this.style.maxHeight = '20px';
+      }, 0);
     } else {
-      this.style.opacity = '0.5';
-      this.style.lineHeight = '';
+      this.style.maxHeight = '20px';
       this.innerHTML = this.translatedText;
+      this.style.lineHeight = '';
+      this.style.opacity = '0.5';
+
+      const targetHeight = this.scrollHeight + 'px';
+      if (this.style.maxHeight !== targetHeight) {
+        setTimeout(() => {
+          this.style.maxHeight = targetHeight;
+        }, 0);
+      }
     }
   }
 
