@@ -44,7 +44,10 @@ class ShizueTranslationOverlay extends HTMLElement {
       'SUP',
       'CODE',
     ];
-    if (textElements.includes(parentElement.tagName) && window.getComputedStyle(parentElement).display === 'inline') {
+    if (
+      textElements.includes(parentElement.tagName) &&
+      window.getComputedStyle(parentElement).display === 'inline'
+    ) {
       this.style.display = 'inline';
     } else {
       this.style.display = 'block';

@@ -149,6 +149,13 @@ export class PageTranslator {
     this.translatedElements.clear();
   }
 
+  private removeOverlayFromElement(element: Element, overlay: ShizueTranslationOverlay) {
+    if (element.contains(overlay)) {
+      element.removeChild(overlay);
+      this.translatedElements.delete(element);
+    }
+  }
+
   // Translate visible elements
   private async translateVisibleElements() {
     if (!this.isActive) return;
@@ -171,8 +178,17 @@ export class PageTranslator {
           // Request translation
           const translatedTextResult = await translationService.translateHtmlText(text);
 
-          if (translatedTextResult.success && translatedTextResult.translatedText) {
+          if (
+            translatedTextResult.success &&
+            translatedTextResult.translatedText &&
+            translatedTextResult.translatedText !== text
+          ) {
             overlay.setTexts(translatedTextResult.translatedText);
+          } else if (translatedTextResult.success && translatedTextResult.translatedText) {
+            overlay.setLoading(false);
+            setTimeout(() => {
+              this.removeOverlayFromElement(element, overlay);
+            }, 3000);
           } else {
             // Show error state and remove overlay after translation fails
             overlay.setError(true);
@@ -180,10 +196,7 @@ export class PageTranslator {
 
             // Remove overlay after 3 seconds
             setTimeout(() => {
-              if (element.contains(overlay)) {
-                element.removeChild(overlay);
-                this.translatedElements.delete(element);
-              }
+              this.removeOverlayFromElement(element, overlay);
             }, 3000);
           }
         } catch (error) {
@@ -194,10 +207,7 @@ export class PageTranslator {
           // Remove overlay after 3 seconds
           setTimeout(() => {
             try {
-              if (element.contains(overlay)) {
-                element.removeChild(overlay);
-                this.translatedElements.delete(element);
-              }
+              this.removeOverlayFromElement(element, overlay);
             } catch (removeError) {
               debugLog('Error removing overlay:', removeError);
             }
@@ -296,7 +306,10 @@ export class PageTranslator {
       'SUP',
       'CODE',
     ];
-    if (textElements.includes(element.tagName) && window.getComputedStyle(element).display === 'inline') {
+    if (
+      textElements.includes(element.tagName) &&
+      window.getComputedStyle(element).display === 'inline'
+    ) {
       return false;
     }
     if (
@@ -310,7 +323,9 @@ export class PageTranslator {
   }
 
   private attachTranslationOverlay(element: Element): ShizueTranslationOverlay {
-    const overlay = document.createElement('shizue-translation-overlay') as ShizueTranslationOverlay;
+    const overlay = document.createElement(
+      'shizue-translation-overlay'
+    ) as ShizueTranslationOverlay;
     element.appendChild(overlay);
     return overlay;
   }
