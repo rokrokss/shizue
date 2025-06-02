@@ -35,6 +35,7 @@ const Toggle = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [layout, setLayout] = useLayout();
   const [isTranslationActive, setIsTranslationActive] = useState(false);
+  const isTranslationActiveRef = useRef(isTranslationActive);
 
   const isVisible =
     isHoveringCharacter || isHoveringMenu || translateSettingsModalOpen || isTranslationActive;
@@ -62,19 +63,8 @@ const Toggle = () => {
   }, []);
 
   useEffect(() => {
-    const messageListener = (message: any) => {
-      if (message.action === MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE) {
-        handleTranslatePage();
-      } else if (message.action === MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE) {
-        handleSummarizePage();
-      }
-    };
-    chrome.runtime.onMessage.addListener(messageListener);
-
-    return () => {
-      chrome.runtime.onMessage.removeListener(messageListener);
-    };
-  }, []);
+    isTranslationActiveRef.current = isTranslationActive;
+  }, [isTranslationActive]);
 
   const setPanelOpenOrNot = () => {
     panelService.setPanelOpenOrNot();
@@ -112,7 +102,7 @@ const Toggle = () => {
     debugLog('Toggle: [handleDragEnd] newYPosition', newYPosition);
   };
 
-  const handleTranslatePage = async () => {
+  const handleTranslatePage = useCallback(async () => {
     debugLog('Translate page clicked');
 
     if (isDragging) return;
@@ -125,7 +115,22 @@ const Toggle = () => {
 
     getPageTranslator().toggle();
     setIsTranslationActive(!isTranslationActive);
-  };
+  }, [isDragging, isTranslationActive]);
+
+  useEffect(() => {
+    const messageListener = (message: any) => {
+      if (message.action === MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE) {
+        if (!isTranslationActiveRef.current) handleTranslatePage();
+      } else if (message.action === MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE) {
+        handleSummarizePage();
+      }
+    };
+    chrome.runtime.onMessage.addListener(messageListener);
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(messageListener);
+    };
+  }, []);
 
   return (
     layout.showToggle && (
