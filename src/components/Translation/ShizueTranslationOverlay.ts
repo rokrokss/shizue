@@ -3,7 +3,6 @@ import '@webcomponents/custom-elements';
 
 // Shizue Translation Overlay Web Component
 class ShizueTranslationOverlay extends HTMLElement {
-  private originalElement: Element | null;
   private translatedText: string;
   private isLoading: boolean;
   private hasError: boolean;
