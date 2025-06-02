@@ -10,7 +10,6 @@ class ShizueTranslationOverlay extends HTMLElement {
 
   constructor() {
     super();
-    // this.attachShadow({ mode: 'open' });
     this.originalElement = null;
     this.translatedText = '';
     this.isLoading = true; // 기본적으로 로딩 상태로 시작
@@ -30,8 +29,7 @@ class ShizueTranslationOverlay extends HTMLElement {
   }
 
   private render() {
-    // if (!this.shadowRoot) return;
-    
+    this.style.visibility = 'visible';
     if (this.isLoading) {
       this.style.opacity = '1';
       this.innerHTML = `
