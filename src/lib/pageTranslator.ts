@@ -172,7 +172,7 @@ export class PageTranslator {
           const translatedTextResult = await translationService.translateHtmlText(text);
 
           if (translatedTextResult.success && translatedTextResult.translatedText) {
-            overlay.setTexts(element, translatedTextResult.translatedText);
+            overlay.setTexts(translatedTextResult.translatedText);
           } else {
             // Show error state and remove overlay after translation fails
             overlay.setError(true);
@@ -296,7 +296,7 @@ export class PageTranslator {
       'SUP',
       'CODE',
     ];
-    if (textElements.includes(element.tagName)) {
+    if (textElements.includes(element.tagName) && window.getComputedStyle(element).display === 'inline') {
       return false;
     }
     if (
@@ -310,9 +310,7 @@ export class PageTranslator {
   }
 
   private attachTranslationOverlay(element: Element): ShizueTranslationOverlay {
-    const overlay = document.createElement(
-      'shizue-translation-overlay'
-    ) as ShizueTranslationOverlay;
+    const overlay = document.createElement('shizue-translation-overlay') as ShizueTranslationOverlay;
     element.appendChild(overlay);
     return overlay;
   }
