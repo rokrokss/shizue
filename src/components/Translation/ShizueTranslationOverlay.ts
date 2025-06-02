@@ -10,7 +10,7 @@ class ShizueTranslationOverlay extends HTMLElement {
   constructor() {
     super();
     this.translatedText = '';
-    this.isLoading = true; // 기본적으로 로딩 상태로 시작
+    this.isLoading = true;
     this.hasError = false;
   }
 
@@ -55,6 +55,7 @@ class ShizueTranslationOverlay extends HTMLElement {
 
     if (this.isLoading) {
       this.style.opacity = '1';
+      this.style.lineHeight = '5px';
       this.innerHTML = `
         <style>
           .spinner {
@@ -79,6 +80,7 @@ class ShizueTranslationOverlay extends HTMLElement {
       `;
     } else {
       this.style.opacity = '0.5';
+      this.style.lineHeight = '';
       this.innerHTML = this.translatedText;
     }
   }
