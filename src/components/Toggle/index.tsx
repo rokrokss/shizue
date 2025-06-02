@@ -6,7 +6,11 @@ import CharacterPickToggle, {
 } from '@/components/Character/CharacterPickToggle';
 import OverlayMenu from '@/components/Toggle/OverlayMenu';
 import OverlayMenuItem from '@/components/Toggle/OverlayMenuItem';
-import { MESSAGE_UPDATE_PANEL_INIT_DATA } from '@/config/constants';
+import {
+  MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE,
+  MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
+  MESSAGE_UPDATE_PANEL_INIT_DATA,
+} from '@/config/constants';
 import { useLayout } from '@/hooks/layout';
 import { hashStringToIndex } from '@/lib/hash';
 import { getPageTranslator } from '@/lib/pageTranslator';
@@ -55,6 +59,21 @@ const Toggle = () => {
       characterCountChat
     );
     setCharacterIndex(charIndex);
+  }, []);
+
+  useEffect(() => {
+    const messageListener = (message: any) => {
+      if (message.action === MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE) {
+        handleTranslatePage();
+      } else if (message.action === MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE) {
+        handleSummarizePage();
+      }
+    };
+    chrome.runtime.onMessage.addListener(messageListener);
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(messageListener);
+    };
   }, []);
 
   const setPanelOpenOrNot = () => {

@@ -1,4 +1,4 @@
-import { messageHandlers } from '@/services/background/messageHandlers';
+import { createContextMenu } from '@/entrypoints/background/contextMenu';
 import {
   sidebarToggleListeners,
   sidePanelMessageListeners,
@@ -6,6 +6,7 @@ import {
 import { languageListeners } from '@/entrypoints/background/states/language';
 import { modelListeners } from '@/entrypoints/background/states/models';
 import { backgroundLog } from '@/logs';
+import { messageHandlers } from '@/services/background/messageHandlers';
 
 export default defineBackground(() => {
   backgroundLog();
@@ -13,6 +14,7 @@ export default defineBackground(() => {
   languageListeners();
   sidePanelMessageListeners();
   modelListeners();
+  createContextMenu();
 
   chrome.runtime.onMessage.addListener((msg, _s, sendResponse) => {
     (async () => {
