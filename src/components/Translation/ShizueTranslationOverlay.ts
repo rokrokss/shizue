@@ -10,7 +10,6 @@ class ShizueTranslationOverlay extends HTMLElement {
 
   constructor() {
     super();
-    this.originalElement = null;
     this.translatedText = '';
     this.isLoading = true; // 기본적으로 로딩 상태로 시작
     this.hasError = false;
@@ -30,6 +29,28 @@ class ShizueTranslationOverlay extends HTMLElement {
 
   private render() {
     this.style.visibility = 'visible';
+    const parentElement = this.parentElement;
+    if (!parentElement) return;
+    const textElements = [
+      'SPAN',
+      'STRONG',
+      'EM',
+      'A',
+      'B',
+      'I',
+      'U',
+      'MARK',
+      'SMALL',
+      'SUB',
+      'SUP',
+      'CODE',
+    ];
+    if (textElements.includes(parentElement.tagName) && window.getComputedStyle(parentElement).display === 'inline') {
+      this.style.display = 'inline';
+    } else {
+      this.style.display = 'block';
+    }
+
     if (this.isLoading) {
       this.style.opacity = '1';
       this.innerHTML = `
@@ -61,12 +82,7 @@ class ShizueTranslationOverlay extends HTMLElement {
   }
 
   // Public methods for external control
-  setTexts(originalElement: Element, translatedText: string) {
-    if (originalElement.children.length !== 0 || originalElement.tagName === 'P') {
-      this.style.display = 'block';
-    }
-
-    this.originalElement = originalElement;
+  setTexts(translatedText: string) {
     this.translatedText = translatedText;
     this.isLoading = false; // 텍스트가 설정되면 로딩 완료
     this.hasError = false; // 성공 시 에러 상태 해제
