@@ -2,7 +2,6 @@ import {
   MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE,
   MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
 } from '@/config/constants';
-import { debugLog } from '@/logs';
 import { createI18n } from '@wxt-dev/i18n';
 
 export const createContextMenu = async () => {
@@ -30,7 +29,6 @@ export const createContextMenu = async () => {
   }
 
   chrome.contextMenus.onClicked.addListener((info, tab) => {
-    debugLog(info, tab);
     if (tab?.id) {
       if (info.menuItemId === 'translatePage') {
         chrome.tabs.sendMessage(tab.id, {
