@@ -149,10 +149,16 @@ export class PageTranslator {
     this.translatedElements.clear();
   }
 
-  private removeOverlayFromElement(element: Element, overlay: ShizueTranslationOverlay) {
+  private removeOverlayFromElement(
+    element: Element,
+    overlay: ShizueTranslationOverlay,
+    removeTranslatedElement: boolean = true
+  ) {
     if (element.contains(overlay)) {
       element.removeChild(overlay);
-      this.translatedElements.delete(element);
+      if (removeTranslatedElement) {
+        this.translatedElements.delete(element);
+      }
     }
   }
 
@@ -187,7 +193,7 @@ export class PageTranslator {
           } else if (translatedTextResult.success && translatedTextResult.translatedText) {
             overlay.setLoading(false);
             setTimeout(() => {
-              this.removeOverlayFromElement(element, overlay);
+              this.removeOverlayFromElement(element, overlay, false);
             }, 3000);
           } else {
             // Show error state and remove overlay after translation fails
