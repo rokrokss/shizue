@@ -47,3 +47,26 @@ export const getHtmlTranslationPrompt = (text: string, targetLanguage: Language)
 ===text to translate===
 ${text}`;
 };
+
+export const getHtmlTranslationBatchPrompt = (
+  serializedTextBatch: string,
+  targetLanguage: Language
+) => {
+  return `You are an expert HTML translator.
+Your task is to translate an array of text into ${targetLanguage}.
+Each HTML snippet in the input array must be translated individually, carefully preserving its original HTML structure and formatting.
+Only return the translated text without any explanation.
+You MUST return your response as a single, valid JSON object. This object must contain one key: "translations".
+The value of "translations" must be a JSON array of strings. Each string in this array should be the translated HTML content corresponding to the HTML snippet at the same index in the input array.
+Do NOT include any explanatory text, markdown formatting (like \`\`\`json), or anything else outside of the JSON object itself.
+
+===Input HTML Snippets (JSON array)===
+
+${serializedTextBatch}
+
+===Example of the EXACT JSON Output Format expected===
+
+{
+  "translations": ["translated_html_snippet_1", "translated_html_snippet_2", ..., "translated_html_snippet_n"]
+}`;
+};
