@@ -11,7 +11,7 @@ import { createRoot, Root } from 'react-dom/client';
 
 export default defineContentScript({
   matches: ['http://*/*', 'https://*/*', '<all_urls>'],
-  runAt: 'document_end',
+  runAt: 'document_idle',
   main(ctx) {
     const mountUi = () => {
       contentScriptLog('Toggle');
