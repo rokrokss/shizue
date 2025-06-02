@@ -6,6 +6,7 @@ class ShizueTranslationOverlay extends HTMLElement {
   private translatedText: string;
   private isLoading: boolean;
   private hasError: boolean;
+  private resizeObserver: ResizeObserver | null = null;
 
   constructor() {
     super();
@@ -24,6 +25,35 @@ class ShizueTranslationOverlay extends HTMLElement {
 
   connectedCallback() {
     this.render();
+    this.resizeObserver = new ResizeObserver(() => this.handleResize());
+    this.resizeObserver.observe(this);
+  }
+
+  disconnectedCallback() {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
+  }
+
+  private handleResize() {
+    if (
+      !this.isLoading &&
+      !this.hasError &&
+      this.style.visibility === 'visible' &&
+      parseFloat(this.style.opacity) > 0
+    ) {
+      const currentTransition = this.style.transition;
+      this.style.transition = 'none'; // disable transition while resizing
+
+      this.style.maxHeight = 'none';
+      const newScrollHeight = this.scrollHeight;
+      this.style.maxHeight = newScrollHeight + 'px';
+
+      requestAnimationFrame(() => {
+        this.style.transition = currentTransition;
+      });
+    }
   }
 
   private render() {
@@ -61,9 +91,9 @@ class ShizueTranslationOverlay extends HTMLElement {
 
     if (this.isLoading) {
       this.style.maxHeight = '0px';
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         this.style.opacity = '1';
-      }, 0);
+      });
       this.innerHTML = `
         <style>
           .shizue-spinner-wrapper {
@@ -92,9 +122,9 @@ class ShizueTranslationOverlay extends HTMLElement {
         <div class="shizue-spinner-wrapper"><div class="spinner"></div></div>
       `;
       this.style.lineHeight = 'normal';
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         this.style.maxHeight = '20px';
-      }, 0);
+      });
     } else {
       this.style.maxHeight = '20px';
       this.innerHTML = this.translatedText;
@@ -103,9 +133,9 @@ class ShizueTranslationOverlay extends HTMLElement {
 
       const targetHeight = this.scrollHeight + 'px';
       if (this.style.maxHeight !== targetHeight) {
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           this.style.maxHeight = targetHeight;
-        }, 0);
+        });
       }
     }
   }
