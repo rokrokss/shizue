@@ -13,6 +13,7 @@ import { getPageTranslator } from '@/lib/pageTranslator';
 import { initSummarizePageContent } from '@/lib/summarize';
 import { debugLog } from '@/logs';
 import { panelService } from '@/services/panelService';
+import { translationService } from '@/services/translationService';
 
 import { motion, PanInfo } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
@@ -92,9 +93,17 @@ const Toggle = () => {
     debugLog('Toggle: [handleDragEnd] newYPosition', newYPosition);
   };
 
-  const handleTranslatePage = () => {
+  const handleTranslatePage = async () => {
     debugLog('Translate page clicked');
+
     if (isDragging) return;
+
+    const canTranslate = await translationService.canTranslate();
+    if (!canTranslate) {
+      debugLog('Translate page clicked but not able to translate');
+      return;
+    }
+
     getPageTranslator().toggle();
     setIsTranslationActive(!isTranslationActive);
   };

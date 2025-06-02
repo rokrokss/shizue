@@ -1,4 +1,5 @@
 import {
+  MESSAGE_CAN_TRANSLATE,
   MESSAGE_CANCEL_NOT_STARTED_MESSAGE,
   MESSAGE_LOAD_THREAD,
   MESSAGE_OPEN_PANEL,
@@ -69,6 +70,11 @@ async function handleTranslateHtmlTextBatch(msg: any, sendResponse: (response?: 
   sendResponse(translatedTexts);
 }
 
+async function handleCanTranslate(msg: any, sendResponse: (response?: any) => void) {
+  const canTranslate = await getTranslationHandler().isAbleToTranslate();
+  sendResponse(canTranslate);
+}
+
 export const messageHandlers = {
   [MESSAGE_LOAD_THREAD]: handleLoadThread,
   [MESSAGE_CANCEL_NOT_STARTED_MESSAGE]: handleLatestMessageForThread,
@@ -77,4 +83,5 @@ export const messageHandlers = {
   [MESSAGE_OPEN_PANEL]: handleOpenPanel,
   [MESSAGE_TRANSLATE_HTML_TEXT]: handleTranslateHtmlText,
   [MESSAGE_TRANSLATE_HTML_TEXT_BATCH]: handleTranslateHtmlTextBatch,
+  [MESSAGE_CAN_TRANSLATE]: handleCanTranslate,
 };
