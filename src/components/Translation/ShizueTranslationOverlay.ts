@@ -43,16 +43,8 @@ class ShizueTranslationOverlay extends HTMLElement {
       this.style.visibility === 'visible' &&
       parseFloat(this.style.opacity) > 0
     ) {
-      const currentTransition = this.style.transition;
-      this.style.transition = 'none'; // disable transition while resizing
-
-      this.style.maxHeight = 'none';
       const newScrollHeight = this.scrollHeight;
       this.style.maxHeight = newScrollHeight + 'px';
-
-      requestAnimationFrame(() => {
-        this.style.transition = currentTransition;
-      });
     }
   }
 
@@ -91,9 +83,9 @@ class ShizueTranslationOverlay extends HTMLElement {
 
     if (this.isLoading) {
       this.style.maxHeight = '0px';
-      requestAnimationFrame(() => {
+      setTimeout(() => {
         this.style.opacity = '1';
-      });
+      }, 0);
       this.innerHTML = `
         <style>
           .shizue-spinner-wrapper {
@@ -122,9 +114,9 @@ class ShizueTranslationOverlay extends HTMLElement {
         <div class="shizue-spinner-wrapper"><div class="spinner"></div></div>
       `;
       this.style.lineHeight = 'normal';
-      requestAnimationFrame(() => {
+      setTimeout(() => {
         this.style.maxHeight = '20px';
-      });
+      }, 0);
     } else {
       this.style.maxHeight = '20px';
       this.innerHTML = this.translatedText;
@@ -133,9 +125,9 @@ class ShizueTranslationOverlay extends HTMLElement {
 
       const targetHeight = this.scrollHeight + 'px';
       if (this.style.maxHeight !== targetHeight) {
-        requestAnimationFrame(() => {
+        setTimeout(() => {
           this.style.maxHeight = targetHeight;
-        });
+        }, 0);
       }
     }
   }
