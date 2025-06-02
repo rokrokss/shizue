@@ -143,7 +143,7 @@ export class PageTranslator {
     // 300ms debouncing
     this.scrollTimeout = setTimeout(() => {
       // Check if 300ms has passed since the last scroll event
-      if (Date.now() - this.lastScrollTime >= 500) {
+      if (Date.now() - this.lastScrollTime >= 300) {
         debugLog('Scroll completed - start translating new elements');
         this.translateVisibleElements();
       }
