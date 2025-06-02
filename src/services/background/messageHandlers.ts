@@ -71,7 +71,7 @@ async function handleTranslateHtmlTextBatch(msg: any, sendResponse: (response?: 
 }
 
 async function handleCanTranslate(msg: any, sendResponse: (response?: any) => void) {
-  const canTranslate = await getTranslationHandler().isAbleToTranslate();
+  const canTranslate = await getTranslationHandler().canTranslate();
   sendResponse(canTranslate);
 }
 
