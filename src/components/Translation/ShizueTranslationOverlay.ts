@@ -6,7 +6,6 @@ class ShizueTranslationOverlay extends HTMLElement {
   private translatedText: string;
   private isLoading: boolean;
   private hasError: boolean;
-  private resizeObserver: ResizeObserver | null = null;
 
   constructor() {
     super();
@@ -25,27 +24,6 @@ class ShizueTranslationOverlay extends HTMLElement {
 
   connectedCallback() {
     this.render();
-    this.resizeObserver = new ResizeObserver(() => this.handleResize());
-    this.resizeObserver.observe(this);
-  }
-
-  disconnectedCallback() {
-    if (this.resizeObserver) {
-      this.resizeObserver.disconnect();
-      this.resizeObserver = null;
-    }
-  }
-
-  private handleResize() {
-    if (
-      !this.isLoading &&
-      !this.hasError &&
-      this.style.visibility === 'visible' &&
-      parseFloat(this.style.opacity) > 0
-    ) {
-      const newScrollHeight = this.scrollHeight;
-      this.style.maxHeight = newScrollHeight + 'px';
-    }
   }
 
   private render() {
@@ -128,6 +106,10 @@ class ShizueTranslationOverlay extends HTMLElement {
         setTimeout(() => {
           this.style.maxHeight = targetHeight;
         }, 0);
+        setTimeout(() => {
+          this.style.overflow = 'visible';
+          this.style.maxHeight = 'none';
+        }, 400);
       }
     }
   }
