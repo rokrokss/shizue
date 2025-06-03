@@ -19,6 +19,7 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 | Side Chat     | ![chat](doc/chat.gif)   | 
 | Bilingual Reading  | ![translate](doc/translate.gif) | 
 | One-Click Page Summaries     | ![summarize](doc/summarize.gif)                                       | 
+| Dark Mode | ![darkMode](doc/darkmode.gif) |
 
 <br/>
 
