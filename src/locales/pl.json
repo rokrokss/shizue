@@ -1,0 +1,89 @@
+{
+  "extension_name": "Shizue",
+  "extension_description": "Rozszerzenie przeglądarki oparte na asystencie AI",
+  "toggle_description": "Przełącz Shizue",
+  "overlayMenu": {
+    "translateSettings": "Ustawienia tłumaczenia",
+    "translatePage": "Przetłumacz tę stronę",
+    "summarizePage": "Podsumuj tę stronę",
+    "removeTranslation": "Usuń tłumaczenie"
+  },
+  "onboarding": {
+    "greeting_0": "Witaj!",
+    "greeting_1": "Jestem Shizue.",
+    "greeting_2": "Najpierw kilka kroków.",
+    "answer_0": "Cześć!",
+    "continue": "Kontynuuj",
+    "next": "Dalej",
+    "back": "Wstecz",
+    "selectProvider": {
+      "title": "Wybierz swojego dostawcę AI",
+      "openaiApiKey": {
+        "title": "Użyj klucza API OpenAI",
+        "description_0": "Idealne dla osób posiadających klucz API.",
+        "description_1": "Stabilne i oparte na zużyciu ceny.",
+        "validate": "Zatwierdź"
+      },
+      "chatGPTWebApp": {
+        "title": "W trakcie prac...",
+        "description": "Może być niestabilne z powodu zmian w politykach OpenAI."
+      }
+    },
+    "selectLanguage": {
+      "title": "Wybierz swój język"
+    },
+    "selectShortcut": {
+      "title": "Ustaw skrót klawiaturowy do otwierania panelu bocznego"
+    }
+  },
+  "chat": {
+    "greeting": "Cześć,",
+    "main_0": "Jak mija dzień?",
+    "askAnything": "Zapytaj o cokolwiek",
+    "connectionError": "Pip pip...🚨 Błąd systemu... 📡 🥺",
+    "retry": "Spróbuj ponownie",
+    "history": "Historia",
+    "empty": "Brak wiadomości",
+    "newChat": "Nowy czat",
+    "summaryRequestText": "Podsumuj tę stronę! Shizue!"
+  },
+  "footer": {
+    "joinDiscord": "Dołącz do mnie na Discordzie!"
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "language": "Język",
+    "shortcut": "Skrót panelu",
+    "aiProvider": "Dostawca AI",
+    "chatModel": "Model czatu",
+    "translateModel": "Model tłumaczenia",
+    "sourceLanguage": "Język źródłowy",
+    "targetLanguage": "Język docelowy",
+    "auto": "Automatycznie"
+  },
+  "time": {
+    "justNow": "przed chwilą",
+    "minutesAgo": "min temu",
+    "hoursAgo": "godz. temu",
+    "daysAgo": "dni temu"
+  },
+  "layout": {
+    "hideToggle": "Ukryj przycisk"
+  },
+  "language": {
+    "English": "Angielski",
+    "Korean": "Koreański",
+    "Chinese": "Chiński",
+    "Japanese": "Japoński",
+    "Spanish": "Hiszpański",
+    "French": "Francuski",
+    "Portuguese": "Portugalski",
+    "Russian": "Rosyjski",
+    "Hindi": "Hinduski",
+    "Italian": "Włoski",
+    "German": "Niemiecki",
+    "Polish": "Polski",
+    "Turkish": "Turecki",
+    "Arabic": "Arabski"
+  }
+}

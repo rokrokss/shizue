@@ -1,0 +1,89 @@
+{
+  "extension_name": "Shizue",
+  "extension_description": "基于AI助手的浏览器增强扩展",
+  "toggle_description": "切换 Shizue",
+  "overlayMenu": {
+    "translateSettings": "翻译设置",
+    "translatePage": "翻译此页面",
+    "summarizePage": "总结此页面",
+    "removeTranslation": "移除翻译"
+  },
+  "onboarding": {
+    "greeting_0": "欢迎！",
+    "greeting_1": "我是 Shizue。",
+    "greeting_2": "首先需要几个步骤。",
+    "answer_0": "你好！",
+    "continue": "继续",
+    "next": "下一步",
+    "back": "返回",
+    "selectProvider": {
+      "title": "选择您的AI提供商",
+      "openaiApiKey": {
+        "title": "使用 OpenAI API 密钥",
+        "description_0": "非常适合拥有 API 密钥的用户。",
+        "description_1": "稳定且按使用量计费。",
+        "validate": "验证"
+      },
+      "chatGPTWebApp": {
+        "title": "正在开发中...",
+        "description": "由于 OpenAI 政策的更改，可能不稳定。"
+      }
+    },
+    "selectLanguage": {
+      "title": "选择您的语言"
+    },
+    "selectShortcut": {
+      "title": "设置打开侧边栏的键盘快捷键"
+    }
+  },
+  "chat": {
+    "greeting": "你好，",
+    "main_0": "今天过得怎么样？",
+    "askAnything": "随便问",
+    "connectionError": "哔哔...🚨 系统错误... 📡 🥺",
+    "retry": "重试",
+    "history": "历史记录",
+    "empty": "暂无消息",
+    "newChat": "新聊天",
+    "summaryRequestText": "总结这个页面！Shizue！"
+  },
+  "footer": {
+    "joinDiscord": "加入我的 Discord！"
+  },
+  "settings": {
+    "title": "设置",
+    "language": "语言",
+    "shortcut": "面板快捷键",
+    "aiProvider": "AI 提供商",
+    "chatModel": "聊天模型",
+    "translateModel": "翻译模型",
+    "sourceLanguage": "源语言",
+    "targetLanguage": "目标语言",
+    "auto": "自动"
+  },
+  "time": {
+    "justNow": "刚刚",
+    "minutesAgo": "分钟前",
+    "hoursAgo": "小时前",
+    "daysAgo": "天前"
+  },
+  "layout": {
+    "hideToggle": "隐藏按钮"
+  },
+  "language": {
+    "English": "英语",
+    "Korean": "韩语",
+    "Chinese": "中文",
+    "Japanese": "日语",
+    "Spanish": "西班牙语",
+    "French": "法语",
+    "Portuguese": "葡萄牙语",
+    "Russian": "俄语",
+    "Hindi": "印地语",
+    "Italian": "意大利语",
+    "German": "德语",
+    "Polish": "波兰语",
+    "Turkish": "土耳其语",
+    "Arabic": "阿拉伯语"
+  }
+}

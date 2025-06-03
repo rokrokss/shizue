@@ -1,10 +1,9 @@
 import { STORAGE_LANGUAGE, STORAGE_TRANSLATE_TARGET_LANGUAGE } from '@/config/constants';
 import { Language } from '@/hooks/language';
+import { determineAppLanguage } from '@/lib/language';
 
-let currentLang: Language = chrome.i18n.getUILanguage().startsWith('ko') ? 'Korean' : 'English';
-let currentTranslationTargetLang: Language = chrome.i18n.getUILanguage().startsWith('ko')
-  ? 'Korean'
-  : 'English';
+let currentLang: Language = determineAppLanguage(chrome.i18n.getUILanguage());
+let currentTranslationTargetLang: Language = determineAppLanguage(chrome.i18n.getUILanguage());
 
 const changeLanguage = (lang: Language) => {
   currentLang = lang;

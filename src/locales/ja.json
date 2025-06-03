@@ -1,0 +1,89 @@
+{
+  "extension_name": "しずえ",
+  "extension_description": "AIアシスタントベースのブラウザ強化拡張機能",
+  "toggle_description": "しずえを切り替え",
+  "overlayMenu": {
+    "translateSettings": "翻訳設定",
+    "translatePage": "このページを翻訳",
+    "summarizePage": "このページを要約",
+    "removeTranslation": "翻訳を削除"
+  },
+  "onboarding": {
+    "greeting_0": "ようこそ！",
+    "greeting_1": "私はしずえです。",
+    "greeting_2": "まずいくつかのステップが必要です。",
+    "answer_0": "こんにちは！",
+    "continue": "続ける",
+    "next": "次へ",
+    "back": "戻る",
+    "selectProvider": {
+      "title": "AIプロバイダーを選択してください",
+      "openaiApiKey": {
+        "title": "OpenAI APIキーを使用",
+        "description_0": "APIキーをお持ちの方に最適です。",
+        "description_1": "安定しており、使用量に基づいた価格設定です。",
+        "validate": "検証"
+      },
+      "chatGPTWebApp": {
+        "title": "開発中...",
+        "description": "OpenAIのポリシー変更により不安定になる可能性があります。"
+      }
+    },
+    "selectLanguage": {
+      "title": "言語を選択してください"
+    },
+    "selectShortcut": {
+      "title": "サイドパネルを開くキーボードショートカットを設定してください"
+    }
+  },
+  "chat": {
+    "greeting": "こんにちは、",
+    "main_0": "今日の調子はどうですか？",
+    "askAnything": "何でも聞いてください",
+    "connectionError": "ピーピー...🚨 システムエラー... 📡 🥺",
+    "retry": "再試行",
+    "history": "履歴",
+    "empty": "まだメッセージはありません",
+    "newChat": "新しいチャット",
+    "summaryRequestText": "このページを要約して！しずえ！"
+  },
+  "footer": {
+    "joinDiscord": "Discordに参加してください！"
+  },
+  "settings": {
+    "title": "設定",
+    "language": "言語",
+    "shortcut": "パネルショートカット",
+    "aiProvider": "AIプロバイダー",
+    "chatModel": "チャットモデル",
+    "translateModel": "翻訳モデル",
+    "sourceLanguage": "翻訳元の言語",
+    "targetLanguage": "翻訳先の言語",
+    "auto": "自動"
+  },
+  "time": {
+    "justNow": "たった今",
+    "minutesAgo": "分前",
+    "hoursAgo": "時間前",
+    "daysAgo": "日前"
+  },
+  "layout": {
+    "hideToggle": "ボタンを非表示"
+  },
+  "language": {
+    "English": "英語",
+    "Korean": "韓国語",
+    "Chinese": "中国語",
+    "Japanese": "日本語",
+    "Spanish": "スペイン語",
+    "French": "フランス語",
+    "Portuguese": "ポルトガル語",
+    "Russian": "ロシア語",
+    "Hindi": "ヒンディー語",
+    "Italian": "イタリア語",
+    "German": "ドイツ語",
+    "Polish": "ポーランド語",
+    "Turkish": "トルコ語",
+    "Arabic": "アラビア語"
+  }
+}

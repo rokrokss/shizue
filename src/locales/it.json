@@ -1,0 +1,89 @@
+{
+  "extension_name": "Shizue",
+  "extension_description": "Estensione per il potenziamento del browser basata su assistente AI",
+  "toggle_description": "Attiva/Disattiva Shizue",
+  "overlayMenu": {
+    "translateSettings": "Impostazioni di traduzione",
+    "translatePage": "Traduci questa pagina",
+    "summarizePage": "Riassumi questa pagina",
+    "removeTranslation": "Rimuovi traduzione"
+  },
+  "onboarding": {
+    "greeting_0": "Benvenuto!",
+    "greeting_1": "Sono Shizue.",
+    "greeting_2": "Prima alcuni passaggi.",
+    "answer_0": "Ciao!",
+    "continue": "Continua",
+    "next": "Avanti",
+    "back": "Indietro",
+    "selectProvider": {
+      "title": "Scegli il tuo provider AI",
+      "openaiApiKey": {
+        "title": "Usa la chiave API di OpenAI",
+        "description_0": "Ideale per chi ha una chiave API.",
+        "description_1": "Stabile e con prezzi basati sull'utilizzo.",
+        "validate": "Convalida"
+      },
+      "chatGPTWebApp": {
+        "title": "Lavori in corso...",
+        "description": "Potrebbe essere instabile a causa di modifiche nelle politiche di OpenAI."
+      }
+    },
+    "selectLanguage": {
+      "title": "Scegli la tua lingua"
+    },
+    "selectShortcut": {
+      "title": "Imposta la tua scorciatoia da tastiera per aprire il pannello laterale"
+    }
+  },
+  "chat": {
+    "greeting": "Ciao,",
+    "main_0": "Come sta andando la tua giornata?",
+    "askAnything": "Chiedi qualsiasi cosa",
+    "connectionError": "Beep beep...🚨 Errore di sistema... 📡 🥺",
+    "retry": "Riprova",
+    "history": "Cronologia",
+    "empty": "Nessun messaggio ancora",
+    "newChat": "Nuova chat",
+    "summaryRequestText": "Riassumi questa pagina! Shizue!"
+  },
+  "footer": {
+    "joinDiscord": "Unisciti a me su Discord!"
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "language": "Lingua",
+    "shortcut": "Scorciatoia pannello",
+    "aiProvider": "Provider AI",
+    "chatModel": "Modello di chat",
+    "translateModel": "Modello di traduzione",
+    "sourceLanguage": "Lingua di partenza",
+    "targetLanguage": "Lingua di destinazione",
+    "auto": "Automatico"
+  },
+  "time": {
+    "justNow": "ora",
+    "minutesAgo": "m fa",
+    "hoursAgo": "h fa",
+    "daysAgo": "g fa"
+  },
+  "layout": {
+    "hideToggle": "Nascondi pulsante"
+  },
+  "language": {
+    "English": "Inglese",
+    "Korean": "Coreano",
+    "Chinese": "Cinese",
+    "Japanese": "Giapponese",
+    "Spanish": "Spagnolo",
+    "French": "Francese",
+    "Portuguese": "Portoghese",
+    "Russian": "Russo",
+    "Hindi": "Hindi",
+    "Italian": "Italiano",
+    "German": "Tedesco",
+    "Polish": "Polacco",
+    "Turkish": "Turco",
+    "Arabic": "Arabo"
+  }
+}

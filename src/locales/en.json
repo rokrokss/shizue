@@ -72,6 +72,18 @@
   },
   "language": {
     "English": "English",
-    "Korean": "Korean"
+    "Korean": "Korean",
+    "Chinese": "Chinese",
+    "Japanese": "Japanese",
+    "Spanish": "Spanish",
+    "French": "French",
+    "Portuguese": "Portuguese",
+    "Russian": "Russian",
+    "Hindi": "Hindi",
+    "Italian": "Italian",
+    "German": "German",
+    "Polish": "Polish",
+    "Turkish": "Turkish",
+    "Arabic": "Arabic"
   }
 }
