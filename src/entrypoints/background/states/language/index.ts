@@ -26,12 +26,13 @@ export const languageListeners = () => {
   });
 
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === 'local')
+    if (area === 'local') {
       if (changes.LANGUAGE) {
         changeLanguage(changes.LANGUAGE.newValue as Language);
       }
-    if (changes.TRANSLATE_TARGET_LANGUAGE) {
-      changeTranslationTargetLanguage(changes.TRANSLATE_TARGET_LANGUAGE.newValue as Language);
+      if (changes.TRANSLATE_TARGET_LANGUAGE) {
+        changeTranslationTargetLanguage(changes.TRANSLATE_TARGET_LANGUAGE.newValue as Language);
+      }
     }
   });
 };
