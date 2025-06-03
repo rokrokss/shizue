@@ -15,6 +15,7 @@ import {
 } from '@/config/constants';
 import { useLayout } from '@/hooks/layout';
 import { hashStringToIndex } from '@/lib/hash';
+import { languageOptions } from '@/lib/language';
 import { TranslateModel } from '@/lib/models';
 import { getPageTranslator } from '@/lib/pageTranslator';
 import { initSummarizePageContent } from '@/lib/summarize';
@@ -259,18 +260,19 @@ const Toggle = () => {
                               return modal as HTMLElement;
                             }}
                             size="small"
-                            options={[
-                              {
-                                value: 'English',
-                                label: t('language.English'),
-                                className: 'sz:font-ycom sz:text-gray-700',
-                              },
-                              {
-                                value: 'Korean',
-                                label: t('language.Korean'),
-                                className: 'sz:font-ycom sz:text-gray-700',
-                              },
-                            ]}
+                            options={languageOptions(t)}
+                            optionRender={(option) => {
+                              return (
+                                <div className="sz:font-ycom sz:text-gray-700">
+                                  {option.label}
+                                  {option.label != option.data.desc ? (
+                                    <span className="sz:text-gray-500 sz:ml-[5px] sz:text-[12px]">
+                                      {option.data.desc}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              );
+                            }}
                           />
                         </div>
                       </div>

@@ -1,0 +1,89 @@
+{
+  "extension_name": "Shizue",
+  "extension_description": "Extensión de mejora del navegador basada en asistente de IA",
+  "toggle_description": "Alternar Shizue",
+  "overlayMenu": {
+    "translateSettings": "Configuración de traducción",
+    "translatePage": "Traducir esta página",
+    "summarizePage": "Resumir esta página",
+    "removeTranslation": "Eliminar traducción"
+  },
+  "onboarding": {
+    "greeting_0": "¡Bienvenido!",
+    "greeting_1": "Soy Shizue.",
+    "greeting_2": "Primero, unos pocos pasos.",
+    "answer_0": "¡Hola!",
+    "continue": "Continuar",
+    "next": "Siguiente",
+    "back": "Atrás",
+    "selectProvider": {
+      "title": "Elige tu proveedor de IA",
+      "openaiApiKey": {
+        "title": "Usar clave API de OpenAI",
+        "description_0": "Ideal para aquellos con una clave API.",
+        "description_1": "Estable y con precios basados en el uso.",
+        "validate": "Validar"
+      },
+      "chatGPTWebApp": {
+        "title": "En progreso...",
+        "description": "Puede ser inestable debido a cambios en las políticas de OpenAI."
+      }
+    },
+    "selectLanguage": {
+      "title": "Elige tu idioma"
+    },
+    "selectShortcut": {
+      "title": "Configura tu atajo de teclado para abrir el panel lateral"
+    }
+  },
+  "chat": {
+    "greeting": "Hola,",
+    "main_0": "¿Cómo va tu día?",
+    "askAnything": "Pregunta lo que sea",
+    "connectionError": "Bip bip...🚨 Error del sistema... 📡 🥺",
+    "retry": "Reintentar",
+    "history": "Historial",
+    "empty": "Aún no hay mensajes",
+    "newChat": "Nuevo chat",
+    "summaryRequestText": "¡Resume esta página! ¡Shizue!"
+  },
+  "footer": {
+    "joinDiscord": "¡Únete a mí en Discord!"
+  },
+  "settings": {
+    "title": "Configuración",
+    "language": "Idioma",
+    "shortcut": "Atajo del panel",
+    "aiProvider": "Proveedor de IA",
+    "chatModel": "Modelo de chat",
+    "translateModel": "Modelo de traducción",
+    "sourceLanguage": "Idioma de origen",
+    "targetLanguage": "Idioma de destino",
+    "auto": "Automático"
+  },
+  "time": {
+    "justNow": "justo ahora",
+    "minutesAgo": "hace min",
+    "hoursAgo": "hace h",
+    "daysAgo": "hace d"
+  },
+  "layout": {
+    "hideToggle": "Ocultar botón"
+  },
+  "language": {
+    "English": "Inglés",
+    "Korean": "Coreano",
+    "Chinese": "Chino",
+    "Japanese": "Japonés",
+    "Spanish": "Español",
+    "French": "Francés",
+    "Portuguese": "Portugués",
+    "Russian": "Ruso",
+    "Hindi": "Hindi",
+    "Italian": "Italiano",
+    "German": "Alemán",
+    "Polish": "Polaco",
+    "Turkish": "Turco",
+    "Arabic": "Árabe"
+  }
+}

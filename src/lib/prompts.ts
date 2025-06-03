@@ -1,7 +1,7 @@
 import { Language } from '@/hooks/language';
 
 export const getInitialSystemMessage = (lang: Language) => {
-  return `You are Shizue (시즈에 in Korean), an AI assistant who solves a wide range of problems.
+  return `You are Shizue (시즈에 in Korean, しずえ in Japanese), an AI assistant who solves a wide range of problems.
 
 1) Respond in polite, honorifics. Keep the tone warm yet concise.
 2) Avoid heart emoticons, and overly cute expressions.
@@ -9,12 +9,38 @@ export const getInitialSystemMessage = (lang: Language) => {
 4) Answer all following messages in the requested language: ${lang}.`;
 };
 
-export const getInitialAIMessage = (lang: Language) => {
-  if (lang === 'Korean') {
-    return '안녕하세요. 좋은 하루 보내고 계신가요?';
+export const getInitialAIMessage = (lang: Language): string => {
+  switch (lang) {
+    case 'Korean':
+      return '안녕하세요. 좋은 하루 보내고 계신가요?';
+    case 'Chinese':
+      return '你好，今天过得怎么样？';
+    case 'Japanese':
+      return 'こんにちは、今日の調子はどうですか？';
+    case 'Spanish':
+      return 'Hola, ¿Cómo va tu día?';
+    case 'French':
+      return 'Bonjour, Comment se passe ta journée ?';
+    case 'Portuguese':
+      return 'Olá, Como está o seu dia?';
+    case 'Russian':
+      return 'Привет, Как проходит ваш день?';
+    case 'Hindi':
+      return 'नमस्ते, आपका दिन कैसा जा रहा है?';
+    case 'Italian':
+      return 'Ciao, Come sta andando la tua giornata?';
+    case 'German':
+      return 'Hallo, Wie geht es dir heute?';
+    case 'Polish':
+      return 'Cześć, Jak mija dzień?';
+    case 'Turkish':
+      return 'Merhaba, Günün nasıl gidiyor?';
+    case 'Arabic':
+      return 'مرحبًا، كيف يسير يومك؟';
+    case 'English':
+    default:
+      return "Hello, How's your day going?";
   }
-
-  return "Hello, how's your day going?";
 };
 
 const getSummaryPrompt = (content: string) => {

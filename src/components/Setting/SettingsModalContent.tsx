@@ -1,4 +1,6 @@
+import { Language, useLanguage } from '@/hooks/language';
 import { useSettings } from '@/hooks/settings';
+import { languageOptions } from '@/lib/language';
 import { ChatModel, TranslateModel } from '@/lib/models';
 import { getOS } from '@/lib/userOS';
 import { validateApiKey } from '@/lib/validateApiKey';
@@ -20,7 +22,7 @@ const SettingsModalContent = () => {
   const [layout, setLayout] = useLayout();
 
   const handleSelectLanguage = (value: string) => {
-    setLang(value as 'English' | 'Korean');
+    setLang(value as Language);
   };
 
   const handleSelectApiKey = (value: string) => {
@@ -88,25 +90,26 @@ const SettingsModalContent = () => {
           <Select
             value={lang}
             onChange={handleSelectLanguage}
-            className="sz:font-ycom sz:w-30"
-            options={[
-              {
-                value: 'English',
-                label: t('language.English'),
-                className: 'sz:font-ycom',
-              },
-              {
-                value: 'Korean',
-                label: t('language.Korean'),
-                className: 'sz:font-ycom',
-              },
-            ]}
+            className="sz:font-ycom sz:w-40"
+            options={languageOptions(t)}
+            optionRender={(option) => {
+              return (
+                <div className="sz:font-ycom">
+                  {option.label}
+                  {option.label != option.data.desc ? (
+                    <span className="sz:text-gray-500 sz:ml-[5px] sz:text-[12px]">
+                      {option.data.desc}
+                    </span>
+                  ) : null}
+                </div>
+              );
+            }}
           />
         </div>
         <div className="sz:flex sz:flex-col sz:items-center sz:gap-2">
           <div className="sz:text-base sz:text-gray-800">{t('settings.shortcut')}</div>
           <Input
-            className="sz:w-35"
+            className="sz:w-40"
             disabled={true}
             value={userOS === 'mac' ? '⌘ + Shift + E' : 'Ctrl + Shift + E'}
           />

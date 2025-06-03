@@ -1,0 +1,89 @@
+{
+  "extension_name": "Shizue",
+  "extension_description": "Extension d'amélioration du navigateur basée sur un assistant IA",
+  "toggle_description": "Activer/Désactiver Shizue",
+  "overlayMenu": {
+    "translateSettings": "Paramètres de traduction",
+    "translatePage": "Traduire cette page",
+    "summarizePage": "Résumer cette page",
+    "removeTranslation": "Supprimer la traduction"
+  },
+  "onboarding": {
+    "greeting_0": "Bienvenue !",
+    "greeting_1": "Je suis Shizue.",
+    "greeting_2": "Quelques étapes d'abord.",
+    "answer_0": "Bonjour !",
+    "continue": "Continuer",
+    "next": "Suivant",
+    "back": "Retour",
+    "selectProvider": {
+      "title": "Choisissez votre fournisseur d'IA",
+      "openaiApiKey": {
+        "title": "Utiliser la clé API OpenAI",
+        "description_0": "Idéal pour ceux qui ont une clé API.",
+        "description_1": "Stable et tarification basée sur l'utilisation.",
+        "validate": "Valider"
+      },
+      "chatGPTWebApp": {
+        "title": "Travail en cours...",
+        "description": "Peut être instable en raison de changements dans les politiques d'OpenAI."
+      }
+    },
+    "selectLanguage": {
+      "title": "Choisissez votre langue"
+    },
+    "selectShortcut": {
+      "title": "Définissez votre raccourci clavier pour ouvrir le panneau latéral"
+    }
+  },
+  "chat": {
+    "greeting": "Bonjour,",
+    "main_0": "Comment se passe ta journée ?",
+    "askAnything": "Demandez n'importe quoi",
+    "connectionError": "Bip bip...🚨 Erreur système... 📡 🥺",
+    "retry": "Réessayer",
+    "history": "Historique",
+    "empty": "Aucun message pour l'instant",
+    "newChat": "Nouvelle discussion",
+    "summaryRequestText": "Résume cette page ! Shizue !"
+  },
+  "footer": {
+    "joinDiscord": "Rejoignez-moi sur Discord !"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "language": "Langue",
+    "shortcut": "Raccourci du panneau",
+    "aiProvider": "Fournisseur d'IA",
+    "chatModel": "Modèle de chat",
+    "translateModel": "Modèle de traduction",
+    "sourceLanguage": "Langue source",
+    "targetLanguage": "Langue cible",
+    "auto": "Automatique"
+  },
+  "time": {
+    "justNow": "à l'instant",
+    "minutesAgo": "il y a min",
+    "hoursAgo": "il y a h",
+    "daysAgo": "il y a j"
+  },
+  "layout": {
+    "hideToggle": "Masquer le bouton"
+  },
+  "language": {
+    "English": "Anglais",
+    "Korean": "Coréen",
+    "Chinese": "Chinois",
+    "Japanese": "Japonais",
+    "Spanish": "Espagnol",
+    "French": "Français",
+    "Portuguese": "Portugais",
+    "Russian": "Russe",
+    "Hindi": "Hindi",
+    "Italian": "Italien",
+    "German": "Allemand",
+    "Polish": "Polonais",
+    "Turkish": "Turc",
+    "Arabic": "Arabe"
+  }
+}

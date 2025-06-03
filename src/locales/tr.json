@@ -1,0 +1,89 @@
+{
+  "extension_name": "Shizue",
+  "extension_description": "Yapay Zeka Asistanı tabanlı tarayıcı geliştirme eklentisi",
+  "toggle_description": "Shizue'yi Aç/Kapat",
+  "overlayMenu": {
+    "translateSettings": "Çeviri ayarları",
+    "translatePage": "Bu sayfayı çevir",
+    "summarizePage": "Bu sayfayı özetle",
+    "removeTranslation": "Çeviriyi kaldır"
+  },
+  "onboarding": {
+    "greeting_0": "Hoş geldiniz!",
+    "greeting_1": "Ben Shizue.",
+    "greeting_2": "Önce birkaç adım.",
+    "answer_0": "Merhaba!",
+    "continue": "Devam Et",
+    "next": "İleri",
+    "back": "Geri",
+    "selectProvider": {
+      "title": "Yapay Zeka Sağlayıcınızı Seçin",
+      "openaiApiKey": {
+        "title": "OpenAI API Anahtarını Kullan",
+        "description_0": "API anahtarı olanlar için ideal.",
+        "description_1": "Kararlı ve kullanıma dayalı fiyatlandırma.",
+        "validate": "Doğrula"
+      },
+      "chatGPTWebApp": {
+        "title": "Çalışmalar devam ediyor...",
+        "description": "OpenAI politikalarındaki değişiklikler nedeniyle kararsız olabilir."
+      }
+    },
+    "selectLanguage": {
+      "title": "Dilinizi Seçin"
+    },
+    "selectShortcut": {
+      "title": "Yan paneli açmak için Klavye Kısayolunuzu ayarlayın"
+    }
+  },
+  "chat": {
+    "greeting": "Merhaba,",
+    "main_0": "Günün nasıl gidiyor?",
+    "askAnything": "Herhangi bir şey sor",
+    "connectionError": "Bip bip...🚨 Sistem Hatası... 📡 🥺",
+    "retry": "Yeniden Dene",
+    "history": "Geçmiş",
+    "empty": "Henüz mesaj yok",
+    "newChat": "Yeni Sohbet",
+    "summaryRequestText": "Bu sayfayı özetle! Shizue!"
+  },
+  "footer": {
+    "joinDiscord": "Discord'da bana katılın!"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "language": "Dil",
+    "shortcut": "Panel Kısayolu",
+    "aiProvider": "Yapay Zeka Sağlayıcısı",
+    "chatModel": "Sohbet Modeli",
+    "translateModel": "Çeviri Modeli",
+    "sourceLanguage": "Kaynak Dil",
+    "targetLanguage": "Hedef Dil",
+    "auto": "Otomatik"
+  },
+  "time": {
+    "justNow": "az önce",
+    "minutesAgo": "dk önce",
+    "hoursAgo": "sa önce",
+    "daysAgo": "gün önce"
+  },
+  "layout": {
+    "hideToggle": "Düğmeyi Gizle"
+  },
+  "language": {
+    "English": "İngilizce",
+    "Korean": "Korece",
+    "Chinese": "Çince",
+    "Japanese": "Japonca",
+    "Spanish": "İspanyolca",
+    "French": "Fransızca",
+    "Portuguese": "Portekizce",
+    "Russian": "Rusça",
+    "Hindi": "Hintçe",
+    "Italian": "İtalyanca",
+    "German": "Almanca",
+    "Polish": "Lehçe",
+    "Turkish": "Türkçe",
+    "Arabic": "Arapça"
+  }
+}
