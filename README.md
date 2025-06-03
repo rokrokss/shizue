@@ -67,7 +67,7 @@ In the meantime, you can install Shizue manually from the source by following th
 3.  **Load in Chrome:**
     * Go to `chrome://extensions`.
     * Enable "Developer mode".
-    * Click "Load unpacked" and select the build output directory (`dist/`).
+    * Click "Load unpacked" and select the build output directory (`dist/chrome-mv3/`).
 
 # 💬 Community & Feedback
 
