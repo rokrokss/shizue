@@ -5,7 +5,7 @@ import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
 export const defaultChatModel: ChatModel = 'gpt-4.1';
-export const defaultTranslateModel: TranslateModel = 'gpt-4.1';
+export const defaultTranslateModel: TranslateModel = 'gpt-4.1-mini';
 
 export const chatModelAtom = atomWithStorage<ChatModel>(
   STORAGE_CHAT_MODEL,
