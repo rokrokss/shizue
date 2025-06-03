@@ -60,14 +60,14 @@ In the meantime, you can install Shizue manually from the source by following th
 
 2.  **Build:**
     ```bash
-    pnpm build # For production build (typically outputs to `dist/` or `build/`)
+    pnpm build # For production build
     # Or use `pnpm dev` for development with hot-reloading
     ```
 
 3.  **Load in Chrome:**
     * Go to `chrome://extensions`.
     * Enable "Developer mode".
-    * Click "Load unpacked" and select the build output directory (e.g., `dist/`).
+    * Click "Load unpacked" and select the build output directory (`dist/`).
 
 # 💬 Community & Feedback
 
