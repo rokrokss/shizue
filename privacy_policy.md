@@ -1,10 +1,10 @@
 # Shizue Privacy Policy (개인정보처리방침)
 
-**Last Updated: [오늘 날짜 YYYY-MM-DD]**
+**Last Updated: [2025-06-03]**
 
 Shizue is a Chrome extension designed to enhance your Browse experience by integrating Large Language Models (LLMs).
 
-**Data Collection and Usage (데이터 수집 및 사용)**
+**Data Collection and Usage**
 
 Shizue **does not collect, store, or transmit any personal user data or Browse activity to external servers or cloud services.**
 
@@ -12,15 +12,15 @@ Shizue **does not collect, store, or transmit any personal user data or Browse a
 * **Chat History & Settings:** Any chat history generated within the side panel, along with your extension settings (e.g., color themes, language preferences), are also stored **only on your local device.** This data is not collected or transmitted.
 * **Browse Data:** For features like page summarization and bilingual reading, Shizue accesses the content of the active tab. This data is processed locally on your device for the requested functionality and is **not collected or transmitted.**
 
-**No External Services for User Data (사용자 데이터를 위한 외부 서비스 없음)**
+**No External Services for User Data**
 
 Shizue operates entirely client-side. We do not use any analytics, tracking, or data collection services that process user information.
 
-**Changes to This Privacy Policy (개인정보처리방침 변경)**
+**Changes to This Privacy Policy**
 
 We may update our Privacy Policy from time to time. We will notify you of any changes by updating the "Last Updated" date at the top of this Privacy Policy. You are advised to review this Privacy Policy periodically for any changes.
 
-**Contact Us (문의)**
+**Contact Us**
 
 If you have any questions about this Privacy Policy, please contact us via our Discord server: [https://discord.gg/ukfPmxsyEy](https://discord.gg/ukfPmxsyEy)
 
@@ -30,7 +30,7 @@ If you have any questions about this Privacy Policy, please contact us via our D
 
 # Shizue 개인정보처리방침
 
-**최종 업데이트: [오늘 날짜 YYYY-MM-DD]**
+**최종 업데이트: [2025-06-03]**
 
 Shizue는 대규모 언어 모델(LLM)을 통합하여 여러분의 브라우징 경험을 향상시키기 위해 설계된 크롬 확장 프로그램입니다.
 
