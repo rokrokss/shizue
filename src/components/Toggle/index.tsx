@@ -1,9 +1,11 @@
 import BookIcon from '@/assets/icons/book.svg?react';
+import SettingIcon from '@/assets/icons/setting.svg?react';
 import TranslateIcon from '@/assets/icons/translate.svg?react';
 import TranslateCheckIcon from '@/assets/icons/translate_check.svg?react';
 import CharacterPickToggle, {
   characterCountChat,
 } from '@/components/Character/CharacterPickToggle';
+import TogglePopoverModal from '@/components/Modal/TogglePopoverModal';
 import OverlayMenu from '@/components/Toggle/OverlayMenu';
 import OverlayMenuItem from '@/components/Toggle/OverlayMenuItem';
 import {
@@ -13,12 +15,13 @@ import {
 } from '@/config/constants';
 import { useLayout } from '@/hooks/layout';
 import { hashStringToIndex } from '@/lib/hash';
+import { TranslateModel } from '@/lib/models';
 import { getPageTranslator } from '@/lib/pageTranslator';
 import { initSummarizePageContent } from '@/lib/summarize';
 import { debugLog } from '@/logs';
 import { panelService } from '@/services/panelService';
 import { translationService } from '@/services/translationService';
-
+import { Select } from 'antd';
 import { motion, PanInfo } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -36,6 +39,9 @@ const Toggle = () => {
   const [layout, setLayout] = useLayout();
   const [isTranslationActive, setIsTranslationActive] = useState(false);
   const isTranslationActiveRef = useRef(isTranslationActive);
+  const [settingsTriggerYPosition, setSettingsTriggerYPosition] = useState(0);
+  const [models, setModels] = useModels();
+  const [targetLanguage, setTargetLanguage] = useTranslateTargetLanguage();
 
   const isVisible =
     isHoveringCharacter || isHoveringMenu || translateSettingsModalOpen || isTranslationActive;
@@ -81,7 +87,23 @@ const Toggle = () => {
   };
 
   const handleTranslateSettingsOpenChange = (newOpen: boolean) => {
+    if (newOpen && translateSettingsPopoverTriggerRef.current) {
+      const rect = translateSettingsPopoverTriggerRef.current.getBoundingClientRect();
+      setSettingsTriggerYPosition(rect.top);
+      debugLog('handleTranslateSettingsOpenChange: Settings trigger Y position:', rect.top);
+    }
     setTranslateSettingsModalOpen(newOpen);
+  };
+
+  const handleSelectTranslateModel = (model: string) => {
+    setModels((prev) => ({
+      ...prev,
+      translateModel: model as TranslateModel,
+    }));
+  };
+
+  const handleSelectTargetLanguage = (language: string) => {
+    setTargetLanguage(language as Language);
   };
 
   const handleSummarizePage = async () => {
@@ -170,29 +192,93 @@ const Toggle = () => {
             }}
           >
             <OverlayMenu>
-              {/* <OverlayMenuItem
-              icon={<SettingIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
-              tooltipMessage={tooltipMessages[0]}
-              onClick={() => handleTranslateSettingsOpenChange(!translateSettingsModalOpen)}
-              ref={translateSettingsPopoverTriggerRef}
-              popoverContent={
-                <TogglePopoverModal
-                  triggerRef={translateSettingsPopoverTriggerRef}
-                  onClose={() => handleTranslateSettingsOpenChange(false)}
-                  content={
-                    <>
-                      <div className="sz:font-ycom sz:text-black sz:text-[14px] sz:mb-[2px] sz:text-center">
-                        {t('overlayMenu.translateSettings')}
+              <OverlayMenuItem
+                icon={
+                  <SettingIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />
+                }
+                tooltipMessage={tooltipMessages[0]}
+                onClick={() => handleTranslateSettingsOpenChange(!translateSettingsModalOpen)}
+                ref={translateSettingsPopoverTriggerRef}
+                popoverContent={
+                  <TogglePopoverModal
+                    triggerRef={translateSettingsPopoverTriggerRef}
+                    settingsTriggerYPosition={settingsTriggerYPosition}
+                    onClose={() => handleTranslateSettingsOpenChange(false)}
+                    content={
+                      <div className="sz:flex sz:flex-col sz:items-center sz:gap-[10px]">
+                        <div className="sz:font-ycom sz:text-black sz:text-[16px] sz:mb-[2px] sz:text-center">
+                          {t('overlayMenu.translateSettings')}
+                        </div>
+                        <div className="sz:flex sz:flex-row sz:items-center sz:gap-[10px] sz:w-full sz:justify-between">
+                          <div className="sz:font-ycom sz:text-gray-700 sz:text-[14px]">
+                            {t('settings.translateModel')}
+                          </div>
+                          <Select
+                            value={models.translateModel}
+                            onChange={handleSelectTranslateModel}
+                            className="sz:font-ycom sz:w-[150px]"
+                            getPopupContainer={() => {
+                              const modal = document.getElementsByClassName(
+                                'sz-toggle-translate-settings-modal'
+                              )[0];
+                              return modal as HTMLElement;
+                            }}
+                            size="small"
+                            options={[
+                              {
+                                value: 'gpt-4.1',
+                                label: 'GPT 4.1',
+                                className: 'sz:font-ycom sz:text-gray-700',
+                              },
+                              {
+                                value: 'gpt-4.1-mini',
+                                label: 'GPT 4.1 Mini',
+                                className: 'sz:font-ycom sz:text-gray-700',
+                              },
+                              {
+                                value: 'wip',
+                                label: t('onboarding.selectProvider.chatGPTWebApp.title'),
+                                className: 'sz:font-ycom',
+                                disabled: true,
+                              },
+                            ]}
+                          />
+                        </div>
+                        <div className="sz:flex sz:flex-row sz:items-center sz:gap-[10px] sz:w-full sz:justify-between">
+                          <div className="sz:text-gray-700 sz:text-[14px] sz:font-ycom">
+                            {t('settings.targetLanguage')}
+                          </div>
+                          <Select
+                            value={targetLanguage}
+                            onChange={handleSelectTargetLanguage}
+                            className="sz:font-ycom sz:w-[150px] sz:text-gray-700"
+                            getPopupContainer={() => {
+                              const modal = document.getElementsByClassName(
+                                'sz-toggle-translate-settings-modal'
+                              )[0];
+                              return modal as HTMLElement;
+                            }}
+                            size="small"
+                            options={[
+                              {
+                                value: 'English',
+                                label: t('language.English'),
+                                className: 'sz:font-ycom sz:text-gray-700',
+                              },
+                              {
+                                value: 'Korean',
+                                label: t('language.Korean'),
+                                className: 'sz:font-ycom sz:text-gray-700',
+                              },
+                            ]}
+                          />
+                        </div>
                       </div>
-                      <div className="sz:font-ycom sz:text-gray-700 sz:text-[12px] sz:text-center">
-                        ...
-                      </div>
-                    </>
-                  }
-                />
-              }
-              isPopoverOpen={translateSettingsModalOpen}
-            /> */}
+                    }
+                  />
+                }
+                isPopoverOpen={translateSettingsModalOpen}
+              />
 
               <OverlayMenuItem
                 icon={

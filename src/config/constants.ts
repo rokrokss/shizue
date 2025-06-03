@@ -19,6 +19,7 @@ export const PORT_STREAM_MESSAGE = 'stream_message_key';
 
 /* storage */
 export const STORAGE_LANGUAGE = 'LANGUAGE';
+export const STORAGE_TRANSLATE_TARGET_LANGUAGE = 'TRANSLATE_TARGET_LANGUAGE';
 export const STORAGE_CURRENT_CHAT = 'CURRENT_CHAT';
 export const STORAGE_MODELS = 'MODELS';
 export const STORAGE_SETTINGS = 'SETTINGS';

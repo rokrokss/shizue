@@ -30,9 +30,7 @@
       }
     },
     "selectLanguage": {
-      "title": "언어를 선택하세요.",
-      "ko": "한국어",
-      "en": "English"
+      "title": "언어를 선택하세요."
     },
     "selectShortcut": {
       "title": "패널을 열 수 있는 단축키를 설정하세요."
@@ -56,7 +54,12 @@
     "title": "설정",
     "language": "언어",
     "shortcut": "패널 단축키",
-    "aiProvider": "AI 제공자"
+    "aiProvider": "AI 제공자",
+    "chatModel": "대화 모델",
+    "translateModel": "번역 모델",
+    "sourceLanguage": "원본 언어",
+    "targetLanguage": "대상 언어",
+    "auto": "자동"
   },
   "time": {
     "justNow": "방금 전",
@@ -66,5 +69,9 @@
   },
   "layout": {
     "hideToggle": "버튼 숨기기"
+  },
+  "language": {
+    "English": "영어",
+    "Korean": "한국어"
   }
 }
