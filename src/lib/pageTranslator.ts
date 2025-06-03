@@ -2,6 +2,7 @@ import {
   ShizueTranslationOverlay,
   registerShizueTranslationOverlay,
 } from '@/components/Translation/ShizueTranslationOverlay';
+import { TEXT_ELEMENTS } from '@/lib/html';
 import { debugLog, errorLog } from '@/logs';
 import { translationService } from '@/services/translationService';
 
@@ -145,6 +146,7 @@ export class PageTranslator {
       // Check if 300ms has passed since the last scroll event
       if (Date.now() - this.lastScrollTime >= 300) {
         debugLog('Scroll completed - start translating new elements');
+        debugLog('queuedElements', this.queuedElements);
         this.translateVisibleElements();
       }
     }, 300);
@@ -457,26 +459,13 @@ export class PageTranslator {
     }
 
     // Check if element is a text-related element or a leaf node
-    const textElements = [
-      'SPAN',
-      'STRONG',
-      'EM',
-      'A',
-      'B',
-      'I',
-      'U',
-      'MARK',
-      'SMALL',
-      'SUB',
-      'SUP',
-      'CODE',
-    ];
     if (
-      textElements.includes(element.tagName) &&
+      TEXT_ELEMENTS.includes(element.tagName) &&
       window.getComputedStyle(element).display === 'inline'
     ) {
       return false;
     }
+
     if (
       Array.from(element.getElementsByTagName('*')).some(
         (child) => child !== element && this.isTranslatableElement(child)

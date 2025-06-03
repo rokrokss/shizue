@@ -1,3 +1,4 @@
+import { TEXT_ELEMENTS } from '@/lib/html';
 import { debugLog, errorLog } from '@/logs';
 import '@webcomponents/custom-elements';
 
@@ -30,22 +31,8 @@ class ShizueTranslationOverlay extends HTMLElement {
     this.style.visibility = 'visible';
     const parentElement = this.parentElement;
     if (!parentElement) return;
-    const textElements = [
-      'SPAN',
-      'STRONG',
-      'EM',
-      'A',
-      'B',
-      'I',
-      'U',
-      'MARK',
-      'SMALL',
-      'SUB',
-      'SUP',
-      'CODE',
-    ];
     if (
-      textElements.includes(parentElement.tagName) &&
+      TEXT_ELEMENTS.includes(parentElement.tagName) &&
       window.getComputedStyle(parentElement).display === 'inline'
     ) {
       this.style.display = 'inline-block';
@@ -176,7 +163,6 @@ export const registerShizueTranslationOverlay = (): boolean => {
     customElements.define('shizue-translation-overlay', ShizueTranslationOverlay);
     debugLog('ShizueTranslationOverlay 웹 컴포넌트가 성공적으로 등록되었습니다');
     return true;
-
   } catch (error) {
     errorLog('웹 컴포넌트 등록 중 오류:', error);
     return false;
