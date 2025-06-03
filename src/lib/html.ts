@@ -11,5 +11,4 @@ export const TEXT_ELEMENTS = [
   'SUB',
   'SUP',
   'CODE',
-  'LI',
 ];

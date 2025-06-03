@@ -356,11 +356,13 @@ export class PageTranslator {
 
   // Translate visible elements
   private async translateVisibleElements() {
+    debugLog('translateVisibleElements called, isActive:', this.isActive);
     if (!this.isActive) return;
     try {
       const elements = this.findTranslatableElements().filter(
         (element) => !this.queuedElements.has(element)
       );
+
       if (elements.length === 0) {
         return;
       }
@@ -385,8 +387,12 @@ export class PageTranslator {
       acceptNode: (node) => {
         const element = node as Element;
 
-        if (!this.isElementVisible(element)) {
+        if (this.isElementHidden(element)) {
           return NodeFilter.FILTER_REJECT;
+        }
+
+        if (!this.isElementVisible(element)) {
+          return NodeFilter.FILTER_SKIP;
         }
 
         if (this.isTranslatableElement(element)) {
@@ -403,6 +409,17 @@ export class PageTranslator {
     }
 
     return elements;
+  }
+
+  private isElementHidden(element: Element): boolean {
+    const style = window.getComputedStyle(element);
+    const rect = element.getBoundingClientRect();
+    return (
+      style.display === 'none' ||
+      style.visibility === 'hidden' ||
+      rect.width === 0 ||
+      rect.height === 0
+    );
   }
 
   // Check if element is visible
@@ -458,7 +475,7 @@ export class PageTranslator {
       return false;
     }
 
-    // Check if element is a text-related element or a leaf node
+    // Check for TEXT_ELEMENTS that are inline
     if (
       TEXT_ELEMENTS.includes(element.tagName) &&
       window.getComputedStyle(element).display === 'inline'
@@ -473,6 +490,7 @@ export class PageTranslator {
     ) {
       return false;
     }
+
     return true;
   }
 
