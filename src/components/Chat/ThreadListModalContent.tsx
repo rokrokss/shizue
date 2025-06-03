@@ -1,5 +1,6 @@
 import { initialMessagesForAllThreadsAtom } from '@/hooks/chat';
 import { threadIdAtom } from '@/hooks/global';
+import { useThemeValue } from '@/hooks/layout';
 import { deleteThread, ThreadWithInitialMessages } from '@/lib/indexDB';
 import { getTimeString } from '@/lib/time';
 import { DeleteOutlined } from '@ant-design/icons';
@@ -9,6 +10,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
+  const theme = useThemeValue();
   const [hoveredThreadId, setHoveredThreadId] = useState<string | null>(null);
   const [threadId, setThreadId] = useAtom(threadIdAtom);
   const threadsWithMessages = useAtomValue(initialMessagesForAllThreadsAtom);
@@ -39,8 +41,14 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <>
-      <div className="sz:text-lg sz:font-semibold sz:mb-4 sz:text-center">{t('chat.history')}</div>
-      <div className="sz:flex sz:flex-col sz:gap-3 sz:overflow-y-auto sz:max-h-[70vh]">
+      <div
+        className={`sz:text-lg sz:font-semibold sz:mb-4 sz:text-center ${
+          theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
+        }`}
+      >
+        {t('chat.history')}
+      </div>
+      <div className="sz:flex sz:flex-col sz:gap-3 sz:overflow-y-auto sz:scrollbar-hidden sz:max-h-[70vh]">
         {threadsWithMessages.length > 0 ? (
           threadsWithMessages.map((thread) => {
             const isSelected = thread.threadId === threadId;
@@ -60,7 +68,12 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
                     handleClickThread(thread.threadId);
                   }}
                   style={{
-                    backgroundColor: isSelected || isHovered ? '#e0f0f0' : 'transparent',
+                    backgroundColor:
+                      isSelected || isHovered
+                        ? theme == 'dark'
+                          ? '#141414'
+                          : '#e0f0f0'
+                        : 'transparent',
                     paddingTop: '10px',
                     paddingBottom: '10px',
                     height: '55px',
@@ -70,20 +83,34 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
                     <div
                       className="sz:max-w-full sz:flex sz:flex-row sz:min-w-full sz:justify-between sz:gap-2"
                       style={{
-                        color: isSelected ? '#000' : '#777',
+                        color: isSelected ? (theme == 'dark' ? 'white' : 'black') : '#777',
                       }}
                     >
-                      <div className="sz:text-sm sz:overflow-hidden sz:text-ellipsis sz:whitespace-nowrap">
+                      <div
+                        className={`sz:text-sm sz:overflow-hidden sz:text-ellipsis sz:whitespace-nowrap ${
+                          theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
+                        }`}
+                      >
                         {getThreadTitle(thread)}
                       </div>
-                      <div className="sz:text-xs sz:text-gray-500">
+                      <div
+                        className={`sz:text-xs ${
+                          theme == 'dark' ? 'sz:text-[#ccc]' : 'sz:text-gray-500'
+                        }`}
+                      >
                         {getTimeString(thread.updatedAt, t)}
                       </div>
                     </div>
                     <div
                       className="sz:max-w-full sz:flex sz:flex-row sz:min-w-full sz:justify-between sz:gap-2"
                       style={{
-                        color: isSelected ? '#000' : '#777',
+                        color: isSelected
+                          ? theme == 'dark'
+                            ? 'white'
+                            : 'black'
+                          : theme == 'dark'
+                          ? '#ccc'
+                          : '#777',
                       }}
                     >
                       <div className="sz:text-sm sz:overflow-hidden sz:text-ellipsis sz:whitespace-nowrap sz:pt-[3px]">

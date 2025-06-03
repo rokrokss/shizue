@@ -1,8 +1,10 @@
+import { Theme } from '@/hooks/layout';
 import { Tooltip } from 'antd';
 import { forwardRef, ReactNode } from 'react';
 
 export interface OverlayMenuItemProps {
   icon: ReactNode;
+  theme: Theme;
   popoverContent?: ReactNode;
   isPopoverOpen?: boolean;
   tooltipMessage: string;
@@ -10,13 +12,21 @@ export interface OverlayMenuItemProps {
 }
 
 const OverlayMenuItem = forwardRef<HTMLDivElement, OverlayMenuItemProps>(
-  ({ icon, popoverContent, isPopoverOpen, tooltipMessage, onClick }, triggerRef) => {
+  ({ theme, icon, popoverContent, isPopoverOpen, tooltipMessage, onClick }, triggerRef) => {
     return (
       <>
         <Tooltip
           placement="left"
-          title={<div className="sz:text-black sz:font-ycom sz:z-2147483647">{tooltipMessage}</div>}
-          color="white"
+          title={
+            <div
+              className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
+                theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
+              }`}
+            >
+              {tooltipMessage}
+            </div>
+          }
+          color={theme == 'dark' ? '#505362' : 'white'}
           mouseEnterDelay={0.03}
           zIndex={2147483647}
         >

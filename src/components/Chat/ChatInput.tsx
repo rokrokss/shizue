@@ -1,5 +1,6 @@
 import Footer from '@/components/Footer';
 import { ChatStatus, isChatWaiting } from '@/hooks/chat';
+import { useThemeValue } from '@/hooks/layout';
 import { FolderOutlined, PauseOutlined, SmileOutlined } from '@ant-design/icons';
 import { Button, Input, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +22,7 @@ const ChatInput = ({
   const [chatInput, setChatInput] = useState('');
   const [isComposing, setIsComposing] = useState(false);
   const [isCancelHovered, setIsCancelHovered] = useState(false);
+  const theme = useThemeValue();
 
   const handleSubmit = async (text: string) => {
     if (text !== '') {
@@ -49,27 +51,59 @@ const ChatInput = ({
           <div className="sz:flex sz:w-full sz:items-center sz:justify-start">
             <Tooltip
               placement="top"
-              title={<div className="sz:text-black sz:font-ycom">{t('chat.history')}</div>}
-              color="white"
+              title={
+                <div
+                  className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
+                    theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
+                  }`}
+                >
+                  {t('chat.history')}
+                </div>
+              }
+              color={theme == 'dark' ? '#505362' : 'white'}
               className="sz:font-ycom"
             >
               <Button
                 onClick={() => onOpenHistory()}
                 type="text"
-                icon={<FolderOutlined style={{ fontSize: '20px', color: 'rgba(0,0,0,0.88)' }} />}
+                icon={
+                  <FolderOutlined
+                    style={{
+                      fontSize: '20px',
+                      color: 'rgba(0,0,0,0.88)',
+                      filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                    }}
+                  />
+                }
                 size="middle"
               ></Button>
             </Tooltip>
             <Tooltip
               placement="top"
-              title={<div className="sz:text-black sz:font-ycom">{t('chat.newChat')}</div>}
-              color="white"
+              title={
+                <div
+                  className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
+                    theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
+                  }`}
+                >
+                  {t('chat.newChat')}
+                </div>
+              }
+              color={theme == 'dark' ? '#505362' : 'white'}
               className="sz:font-ycom"
             >
               <Button
                 onClick={() => onNewChat()}
                 type="text"
-                icon={<SmileOutlined style={{ fontSize: '20px', color: 'rgba(0,0,0,0.88)' }} />}
+                icon={
+                  <SmileOutlined
+                    style={{
+                      fontSize: '20px',
+                      color: 'rgba(0,0,0,0.88)',
+                      filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                    }}
+                  />
+                }
                 size="middle"
               ></Button>
             </Tooltip>

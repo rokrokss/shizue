@@ -68,7 +68,10 @@
     "daysAgo": "يوم مضت"
   },
   "layout": {
-    "hideToggle": "إخفاء الزر"
+    "hideToggle": "إخفاء الزر",
+    "theme": "السمة",
+    "lightMode": "فضاء",
+    "darkMode": "مظلم"
   },
   "language": {
     "English": "الإنجليزية",

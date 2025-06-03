@@ -13,7 +13,7 @@ import {
   MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
   MESSAGE_UPDATE_PANEL_INIT_DATA,
 } from '@/config/constants';
-import { useLayout } from '@/hooks/layout';
+import { useShowToggle, useToggleYPosition } from '@/hooks/layout';
 import { hashStringToIndex } from '@/lib/hash';
 import { languageOptions } from '@/lib/language';
 import { TranslateModel } from '@/lib/models';
@@ -37,12 +37,14 @@ const Toggle = () => {
   const [characterIndex, setCharacterIndex] = useState(0);
   const [translateSettingsModalOpen, setTranslateSettingsModalOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [layout, setLayout] = useLayout();
+  const [showToggle, _] = useShowToggle();
+  const [toggleYPosition, setToggleYPosition] = useToggleYPosition();
   const [isTranslationActive, setIsTranslationActive] = useState(false);
   const isTranslationActiveRef = useRef(isTranslationActive);
   const [settingsTriggerYPosition, setSettingsTriggerYPosition] = useState(0);
   const [models, setModels] = useModels();
   const [targetLanguage, setTargetLanguage] = useTranslateTargetLanguage();
+  const theme = useThemeValue();
 
   const isVisible =
     isHoveringCharacter || isHoveringMenu || translateSettingsModalOpen || isTranslationActive;
@@ -120,8 +122,8 @@ const Toggle = () => {
 
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     setIsDragging(false);
-    const newYPosition = layout.toggleYPosition + info.offset.y;
-    setLayout({ ...layout, toggleYPosition: newYPosition });
+    const newYPosition = toggleYPosition + info.offset.y;
+    setToggleYPosition(newYPosition);
     debugLog('Toggle: [handleDragEnd] newYPosition', newYPosition);
   };
 
@@ -156,14 +158,17 @@ const Toggle = () => {
   }, []);
 
   return (
-    layout.showToggle && (
+    showToggle && (
       <motion.div
         drag="y"
         dragMomentum={false}
         dragElastic={0}
         onDragStart={() => setIsDragging(true)}
         onDragEnd={handleDragEnd}
-        style={{ y: layout.toggleYPosition }}
+        style={{
+          y: toggleYPosition,
+          filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+        }}
         className="sz:fixed sz:right-0 sz:bottom-[26px] sz:flex sz:flex-col sz:items-end sz:z-2147483647"
       >
         <div
@@ -194,6 +199,7 @@ const Toggle = () => {
           >
             <OverlayMenu>
               <OverlayMenuItem
+                theme={theme}
                 icon={
                   <SettingIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />
                 }
@@ -205,13 +211,22 @@ const Toggle = () => {
                     triggerRef={translateSettingsPopoverTriggerRef}
                     settingsTriggerYPosition={settingsTriggerYPosition}
                     onClose={() => handleTranslateSettingsOpenChange(false)}
+                    theme={theme}
                     content={
                       <div className="sz:flex sz:flex-col sz:items-center sz:gap-[10px]">
-                        <div className="sz:font-ycom sz:text-black sz:text-[16px] sz:mb-[2px] sz:text-center">
+                        <div
+                          className={`sz:font-ycom sz:text-[16px] sz:mb-[2px] sz:text-center ${
+                            theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
+                          }`}
+                        >
                           {t('overlayMenu.translateSettings')}
                         </div>
                         <div className="sz:flex sz:flex-row sz:items-center sz:gap-[10px] sz:w-full sz:justify-between">
-                          <div className="sz:font-ycom sz:text-gray-700 sz:text-[14px]">
+                          <div
+                            className={`sz:font-ycom sz:text-[14px] ${
+                              theme == 'dark' ? 'sz:text-white' : 'sz:text-gray-700'
+                            }`}
+                          >
                             {t('settings.translateModel')}
                           </div>
                           <Select
@@ -229,12 +244,16 @@ const Toggle = () => {
                               {
                                 value: 'gpt-4.1',
                                 label: 'GPT 4.1',
-                                className: 'sz:font-ycom sz:text-gray-700',
+                                className: `sz:font-ycom ${
+                                  theme == 'dark' ? 'sz:text-white' : 'sz:text-gray-700'
+                                }`,
                               },
                               {
                                 value: 'gpt-4.1-mini',
                                 label: 'GPT 4.1 Mini',
-                                className: 'sz:font-ycom sz:text-gray-700',
+                                className: `sz:font-ycom ${
+                                  theme == 'dark' ? 'sz:text-white' : 'sz:text-gray-700'
+                                }`,
                               },
                               {
                                 value: 'wip',
@@ -246,7 +265,11 @@ const Toggle = () => {
                           />
                         </div>
                         <div className="sz:flex sz:flex-row sz:items-center sz:gap-[10px] sz:w-full sz:justify-between">
-                          <div className="sz:text-gray-700 sz:text-[14px] sz:font-ycom">
+                          <div
+                            className={`sz:text-[14px] sz:font-ycom ${
+                              theme == 'dark' ? 'sz:text-white' : 'sz:text-gray-700'
+                            }`}
+                          >
                             {t('settings.targetLanguage')}
                           </div>
                           <Select
@@ -263,7 +286,11 @@ const Toggle = () => {
                             options={languageOptions(t)}
                             optionRender={(option) => {
                               return (
-                                <div className="sz:font-ycom sz:text-gray-700">
+                                <div
+                                  className={`sz:font-ycom ${
+                                    theme == 'dark' ? 'sz:text-white' : 'sz:text-gray-700'
+                                  }`}
+                                >
                                   {option.label}
                                   {option.label != option.data.desc ? (
                                     <span className="sz:text-gray-500 sz:ml-[5px] sz:text-[12px]">
@@ -283,6 +310,7 @@ const Toggle = () => {
               />
 
               <OverlayMenuItem
+                theme={theme}
                 icon={
                   isTranslationActive ? (
                     <TranslateCheckIcon
@@ -299,6 +327,7 @@ const Toggle = () => {
               />
 
               <OverlayMenuItem
+                theme={theme}
                 icon={<BookIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
                 tooltipMessage={tooltipMessages[2]}
                 onClick={handleSummarizePage}

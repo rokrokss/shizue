@@ -45,7 +45,7 @@ export const getI8NLanguage = (language: Language) => {
     case 'Korean':
       return 'ko';
     case 'Chinese':
-      return 'zh';
+      return 'zh_CN';
     case 'Japanese':
       return 'ja';
     case 'Spanish':
@@ -53,7 +53,7 @@ export const getI8NLanguage = (language: Language) => {
     case 'French':
       return 'fr';
     case 'Portuguese':
-      return 'pt';
+      return 'pt_BR';
     case 'Russian':
       return 'ru';
     case 'Hindi':

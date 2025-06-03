@@ -68,7 +68,10 @@
     "daysAgo": "g fa"
   },
   "layout": {
-    "hideToggle": "Nascondi pulsante"
+    "hideToggle": "Nascondi pulsante",
+    "theme": "Tema",
+    "lightMode": "Chiaro",
+    "darkMode": "Scuro"
   },
   "language": {
     "English": "Inglese",

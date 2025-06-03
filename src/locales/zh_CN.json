@@ -68,7 +68,10 @@
     "daysAgo": "天前"
   },
   "layout": {
-    "hideToggle": "隐藏按钮"
+    "hideToggle": "隐藏按钮",
+    "theme": "主题",
+    "lightMode": "日间模式",
+    "darkMode": "夜间模式"
   },
   "language": {
     "English": "英语",

@@ -7,6 +7,7 @@ import CharacterStanding from '@/components/Character/CharacterStanding';
 import Chicken from '@/components/Character/Chicken';
 import ChickenEating from '@/components/Character/ChickenEating';
 import CowEating from '@/components/Character/CowEating';
+import { useThemeValue } from '@/hooks/layout';
 
 interface CharacterPickChatProps {
   index: number;
@@ -17,6 +18,8 @@ interface CharacterPickChatProps {
 export const characterCount = 9;
 
 const CharacterPickChat = ({ index, scale, marginLeft }: CharacterPickChatProps) => {
+  const theme = useThemeValue();
+
   const characters = [
     <CharacterForward key="0" scale={2 * scale} marginLeft={marginLeft} />,
     <CowEating key="1" scale={1.9 * scale} marginLeft={marginLeft} />,
@@ -29,7 +32,11 @@ const CharacterPickChat = ({ index, scale, marginLeft }: CharacterPickChatProps)
     <CharacterStanding key="8" scale={2 * scale} marginLeft={marginLeft} />,
   ];
 
-  return characters[index % characters.length];
+  return (
+    <div style={{ filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none' }}>
+      {characters[index % characters.length]}
+    </div>
+  );
 };
 
 export default CharacterPickChat;

@@ -1,13 +1,14 @@
 import ChatContainer from '@/components/Chat/ChatContainer';
 import ChatGreeting from '@/components/Chat/ChatGreeting';
 import ChatInput from '@/components/Chat/ChatInput';
-import SettingsModalContent from '@/components/Setting/SettingsModalContent';
 import ThreadListModalContent from '@/components/Chat/ThreadListModalContent';
 import TopMenu from '@/components/Chat/TopRightMenu';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
+import SettingsModalContent from '@/components/Setting/SettingsModalContent';
 import { MESSAGE_LOAD_THREAD } from '@/config/constants';
 import { chatStatusAtom, isChatIdle } from '@/hooks/chat';
 import { ActionType, messageAddedInPanelAtom, threadIdAtom } from '@/hooks/global';
+import { useThemeValue } from '@/hooks/layout';
 import { useChromePortStream } from '@/hooks/portStream';
 import { addMessage, createThread, touchThread } from '@/lib/indexDB';
 import { throttleTrailing } from '@/lib/throttleTrailing';
@@ -28,6 +29,7 @@ export interface Message {
 }
 
 const Chat = () => {
+  const theme = useThemeValue();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [chatStatus, setChatStatus] = useAtom(chatStatusAtom);
@@ -422,7 +424,11 @@ const Chat = () => {
   };
 
   return (
-    <div className="sz-chat sz:w-full sz:h-full sz:flex sz:flex-col sz:items-center">
+    <div
+      className={`sz-chat sz:w-full sz:h-full sz:flex sz:flex-col sz:items-center ${
+        theme == 'dark' ? 'sz:bg-[#1C1D26]' : 'sz:bg-white'
+      }`}
+    >
       <TopMenu onSettingsClick={handleTopMenuSettingsClick} />
       <div
         className="

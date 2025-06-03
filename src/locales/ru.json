@@ -68,7 +68,10 @@
     "daysAgo": "д назад"
   },
   "layout": {
-    "hideToggle": "Скрыть кнопку"
+    "hideToggle": "Скрыть кнопку",
+    "theme": "Тема",
+    "lightMode": "Светлая",
+    "darkMode": "Тёмная"
   },
   "language": {
     "English": "Английский",
