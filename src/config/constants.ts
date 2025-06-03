@@ -8,7 +8,6 @@ export const MESSAGE_RUN_GRAPH_STREAM = 'run_graph_stream';
 export const MESSAGE_RETRY_GRAPH_STREAM = 'retry_graph_stream';
 export const MESSAGE_CANCEL_NOT_STARTED_MESSAGE = 'cancel_not_started_message';
 export const MESSAGE_CAN_TRANSLATE = 'can_translate';
-export const MESSAGE_TRANSLATE_HTML_TEXT = 'translate_html_text';
 export const MESSAGE_TRANSLATE_HTML_TEXT_BATCH = 'translate_html_text_batch';
 export const MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE = 'context_menu_translate_page';
 export const MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE = 'context_menu_summarize_page';

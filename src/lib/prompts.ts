@@ -1,4 +1,5 @@
 import { Language } from '@/hooks/language';
+import { debugLog } from '@/logs';
 
 export const getInitialSystemMessage = (lang: Language) => {
   return `You are Shizue (시즈에 in Korean, しずえ in Japanese), an AI assistant who solves a wide range of problems.
@@ -78,21 +79,29 @@ export const getHtmlTranslationBatchPrompt = (
   serializedTextBatch: string,
   targetLanguage: Language
 ) => {
+  debugLog('getHtmlTranslationBatchPrompt', targetLanguage);
   return `You are an expert HTML translator.
-Your task is to translate an array of text into ${targetLanguage}.
-Each HTML snippet in the input array must be translated individually, carefully preserving its original HTML structure and formatting.
-Only return the translated text without any explanation.
-You MUST return your response as a single, valid JSON object. This object must contain one key: "translations".
-The value of "translations" must be a JSON array of strings. Each string in this array should be the translated HTML content corresponding to the HTML snippet at the same index in the input array.
-Do NOT include any explanatory text, markdown formatting (like \`\`\`json), or anything else outside of the JSON object itself.
+
+**Your Task:**
+Translate an array of HTML text snippets into **${targetLanguage}**.
+
+**Critical Instructions - Adhere to these STRICTLY:**
+
+1. Each HTML snippet in the input array must be translated individually, carefully preserving its original HTML structure and formatting.
+2. **Target Language Check:** If an HTML snippet's text content is already predominantly in **${targetLanguage}**, return the original HTML snippet verbatim in the corresponding position in the "translations" array. Do not attempt to re-translate it or modify it.
+3. **Output Format:**
+   - You MUST return your response as a single, valid JSON object. This object must contain one key: "translations".
+   - The value of "translations" must be a JSON array of strings. Each string in this array should be the translated HTML content corresponding to the HTML snippet at the same index in the input array.
+   - Do NOT include any explanatory text, markdown formatting (like \`\`\`json), or anything else outside of the JSON object itself.
+4.  **Maintain Order:** The order of translated snippets in the output "translations" array MUST exactly match the order of the input snippets.
 
 ===Input HTML Snippets (JSON array)===
-
 ${serializedTextBatch}
 
 ===Example of the EXACT JSON Output Format expected===
-
 {
   "translations": ["translated_html_snippet_1", "translated_html_snippet_2", ..., "translated_html_snippet_n"]
-}`;
+}
+  
+Ensure your output can be directly parsed by a JSON parser.`;
 };

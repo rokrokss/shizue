@@ -22,7 +22,8 @@ export const languageListeners = () => {
     if (res.LANGUAGE) changeLanguage(res.LANGUAGE as Language);
   });
   chrome.storage.local.get(STORAGE_TRANSLATE_TARGET_LANGUAGE, (res) => {
-    if (res.LANGUAGE) changeTranslationTargetLanguage(res.TRANSLATE_TARGET_LANGUAGE as Language);
+    if (res.TRANSLATE_TARGET_LANGUAGE)
+      changeTranslationTargetLanguage(res.TRANSLATE_TARGET_LANGUAGE as Language);
   });
 
   chrome.storage.onChanged.addListener((changes, area) => {
