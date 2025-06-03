@@ -1,24 +1,24 @@
-import { STORAGE_MODELS } from '@/config/constants';
+import { STORAGE_CHAT_MODEL, STORAGE_TRANSLATE_MODEL } from '@/config/constants';
 import { ChatModel, TranslateModel } from '@/lib/models';
 import { chromeStorageBackend } from '@/lib/storageBackend';
 import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
-export type Models = {
-  chatModel: ChatModel;
-  translateModel: TranslateModel;
-};
+export const defaultChatModel: ChatModel = 'gpt-4.1';
+export const defaultTranslateModel: TranslateModel = 'gpt-4.1';
 
-export const defaultModels: Models = {
-  chatModel: 'gpt-4.1',
-  translateModel: 'gpt-4.1',
-};
-
-export const modelsAtom = atomWithStorage<Models>(
-  STORAGE_MODELS,
-  defaultModels,
+export const chatModelAtom = atomWithStorage<ChatModel>(
+  STORAGE_CHAT_MODEL,
+  defaultChatModel,
+  chromeStorageBackend('local'),
+  { getOnInit: true }
+);
+export const translateModelAtom = atomWithStorage<TranslateModel>(
+  STORAGE_TRANSLATE_MODEL,
+  defaultTranslateModel,
   chromeStorageBackend('local'),
   { getOnInit: true }
 );
 
-export const useModels = () => useAtom(modelsAtom);
+export const useChatModel = () => useAtom(chatModelAtom);
+export const useTranslateModel = () => useAtom(translateModelAtom);

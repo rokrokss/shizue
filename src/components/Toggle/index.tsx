@@ -14,6 +14,7 @@ import {
   MESSAGE_UPDATE_PANEL_INIT_DATA,
 } from '@/config/constants';
 import { useShowToggle, useToggleYPosition } from '@/hooks/layout';
+import { useTranslateModel } from '@/hooks/models';
 import { hashStringToIndex } from '@/lib/hash';
 import { languageOptions } from '@/lib/language';
 import { TranslateModel } from '@/lib/models';
@@ -42,9 +43,9 @@ const Toggle = () => {
   const [isTranslationActive, setIsTranslationActive] = useState(false);
   const isTranslationActiveRef = useRef(isTranslationActive);
   const [settingsTriggerYPosition, setSettingsTriggerYPosition] = useState(0);
-  const [models, setModels] = useModels();
   const [targetLanguage, setTargetLanguage] = useTranslateTargetLanguage();
   const theme = useThemeValue();
+  const [translateModel, setTranslateModel] = useTranslateModel();
 
   const isVisible =
     isHoveringCharacter || isHoveringMenu || translateSettingsModalOpen || isTranslationActive;
@@ -99,10 +100,7 @@ const Toggle = () => {
   };
 
   const handleSelectTranslateModel = (model: string) => {
-    setModels((prev) => ({
-      ...prev,
-      translateModel: model as TranslateModel,
-    }));
+    setTranslateModel(model as TranslateModel);
   };
 
   const handleSelectTargetLanguage = (language: string) => {
@@ -230,7 +228,7 @@ const Toggle = () => {
                             {t('settings.translateModel')}
                           </div>
                           <Select
-                            value={models.translateModel}
+                            value={translateModel}
                             onChange={handleSelectTranslateModel}
                             className="sz:font-ycom sz:w-[150px]"
                             getPopupContainer={() => {

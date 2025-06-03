@@ -1,5 +1,6 @@
 import { Language, useLanguage } from '@/hooks/language';
 import { useShowToggle } from '@/hooks/layout';
+import { useChatModel, useTranslateModel } from '@/hooks/models';
 import { useSettings } from '@/hooks/settings';
 import { languageOptions } from '@/lib/language';
 import { ChatModel, TranslateModel } from '@/lib/models';
@@ -19,7 +20,8 @@ const SettingsModalContent = () => {
   const [apiKey, setApiKey] = useState('');
   const [isValidateHovered, setIsValidateHovered] = useState(false);
   const [_, setSettings] = useSettings();
-  const [models, setModels] = useModels();
+  const [chatModel, setChatModel] = useChatModel();
+  const [translateModel, setTranslateModel] = useTranslateModel();
   const [theme, setTheme] = useTheme();
   const [showToggle, setShowToggle] = useShowToggle();
 
@@ -33,20 +35,12 @@ const SettingsModalContent = () => {
 
   const handleSelectChatModel = (value: string) => {
     debugLog('handleSelectChatModel', value);
-    setModels((prev) => ({
-      ...prev,
-      chatModel: value as ChatModel,
-      translateModel: models.translateModel,
-    }));
+    setChatModel(value as ChatModel);
   };
 
   const handleSelectTranslateModel = (value: string) => {
     debugLog('handleSelectTranslateModel', value);
-    setModels((prev) => ({
-      ...prev,
-      chatModel: models.chatModel,
-      translateModel: value as TranslateModel,
-    }));
+    setTranslateModel(value as TranslateModel);
   };
 
   const handleToggleShowToggle = () => {
@@ -181,7 +175,7 @@ const SettingsModalContent = () => {
             {t('settings.chatModel')}
           </div>
           <Select
-            value={models.chatModel}
+            value={chatModel}
             onChange={handleSelectChatModel}
             className="sz:font-ycom sz:w-50"
             options={[
@@ -211,7 +205,7 @@ const SettingsModalContent = () => {
             {t('settings.translateModel')}
           </div>
           <Select
-            value={models.translateModel}
+            value={translateModel}
             onChange={handleSelectTranslateModel}
             className="sz:font-ycom sz:w-50"
             options={[
