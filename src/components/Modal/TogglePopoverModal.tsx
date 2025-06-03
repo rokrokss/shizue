@@ -5,10 +5,12 @@ const TogglePopoverModal = ({
   onClose,
   triggerRef,
   content,
+  settingsTriggerYPosition,
 }: {
   onClose: () => void;
   triggerRef: RefObject<HTMLDivElement | null>;
   content: ReactNode;
+  settingsTriggerYPosition: number;
 }) => {
   if (typeof window === 'undefined') return null;
 
@@ -52,13 +54,15 @@ const TogglePopoverModal = ({
     <div
       ref={modalRef}
       className="
-          sz:bg-white sz:rounded-xl sz:px-[10px] sz:pt-[10px] sz:pb-[10px] sz:shadow-xl sz:min-w-70 sz:h-[200px] sz:max-w-sm
-          sz:fixed sz:bottom-[75px] sz:right-[47px] sz:z-2147483647
+          sz-toggle-translate-settings-modal
+          sz:bg-white sz:rounded-xl sz:px-[15px] sz:pt-[10px] sz:pb-[10px] sz:shadow-xl sz:min-w-[280px] sz:h-[127px] sz:max-w-sm
+          sz:fixed sz:right-[47px] sz:z-2147483647
         "
+      style={{ top: settingsTriggerYPosition - 25 }}
       onClick={(e) => e.stopPropagation()}
     >
       <button
-        className="sz:absolute sz:top-2 sz:right-3 sz:text-gray-500 hover:sz:text-black sz:cursor-pointer"
+        className="sz:absolute sz:top-[8px] sz:right-[12px] sz:text-gray-500 hover:sz:text-black sz:cursor-pointer"
         onClick={onClose}
       >
         ✕

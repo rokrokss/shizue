@@ -92,12 +92,12 @@ const SettingsModalContent = () => {
             options={[
               {
                 value: 'English',
-                label: t('onboarding.selectLanguage.en'),
+                label: t('language.English'),
                 className: 'sz:font-ycom',
               },
               {
                 value: 'Korean',
-                label: t('onboarding.selectLanguage.ko'),
+                label: t('language.Korean'),
                 className: 'sz:font-ycom',
               },
             ]}
@@ -155,7 +155,7 @@ const SettingsModalContent = () => {
                 ))}
             </Button>
           </div>
-          <div className="sz:text-base sz:text-gray-800">대화 모델</div>
+          <div className="sz:text-base sz:text-gray-800">{t('settings.chatModel')}</div>
           <Select
             value={models.chatModel}
             onChange={handleSelectChatModel}
@@ -179,7 +179,7 @@ const SettingsModalContent = () => {
               },
             ]}
           />
-          <div className="sz:text-base sz:text-gray-800">번역 모델</div>
+          <div className="sz:text-base sz:text-gray-800">{t('settings.translateModel')}</div>
           <Select
             value={models.translateModel}
             onChange={handleSelectTranslateModel}

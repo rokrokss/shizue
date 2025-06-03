@@ -32,8 +32,8 @@ export default function StepLanguage({
         onChange={handleSelect}
         className="sz:font-ycom"
         options={[
-          { value: 'English', label: t('onboarding.selectLanguage.en'), className: 'sz:font-ycom' },
-          { value: 'Korean', label: t('onboarding.selectLanguage.ko'), className: 'sz:font-ycom' },
+          { value: 'English', label: t('language.English'), className: 'sz:font-ycom' },
+          { value: 'Korean', label: t('language.Korean'), className: 'sz:font-ycom' },
         ]}
       />
       <Button
