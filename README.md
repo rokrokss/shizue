@@ -4,7 +4,7 @@
   <p>Supercharge your Browse experience with the power of LLMs</p>
 </div>
 
-# 👋 INTRO
+# 👋 Intro
 
 Shizue is a Chrome extension designed for integrating Large Language Models (LLMs) into the daily Browse workflow. The project aims to enhance browser interactions with LLM-driven features, conceptually similar to how tools like Cursor augment code editors.
 
