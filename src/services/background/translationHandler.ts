@@ -45,7 +45,7 @@ export class TranslationHandler {
 
       const llm = await getModelInstance({
         temperature: 0.1,
-        maxTokens: 5000,
+        maxTokens: 8000,
         streaming: false,
         modelPreset: getTranslationModelPreset(),
       });
