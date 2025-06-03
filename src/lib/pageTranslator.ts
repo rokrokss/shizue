@@ -2,6 +2,7 @@ import {
   ShizueTranslationOverlay,
   registerShizueTranslationOverlay,
 } from '@/components/Translation/ShizueTranslationOverlay';
+import { Language } from '@/hooks/language';
 import { TEXT_ELEMENTS } from '@/lib/html';
 import { debugLog, errorLog } from '@/logs';
 import { translationService } from '@/services/translationService';
@@ -18,7 +19,11 @@ export class PageTranslator {
   private isProcessingBatch: boolean = false;
   private queuedElements: Set<Element> = new Set();
 
-  private cachedTranslations: Map<string, string> = new Map();
+  private visitedElements: Set<Element> = new Set();
+
+  private cachedTranslations: Map<string, Map<string, string>> = new Map();
+
+  private targetLanguage: Language | null = null;
 
   constructor() {
     // Check if web component is registered
@@ -58,18 +63,11 @@ export class PageTranslator {
     });
   }
 
-  // Toggle translation activation/deactivation
-  public toggle() {
-    if (this.isActive) {
-      this.deactivate();
-    } else {
-      this.activate();
-    }
-  }
-
   // Activate translation
-  private activate() {
+  public activate(targetLanguage: Language) {
     this.isActive = true;
+    this.targetLanguage = targetLanguage;
+    this.cachedTranslations.set(targetLanguage, new Map());
     this.startObserving();
     this.translateVisibleElements();
     debugLog('Page translation activated');
@@ -81,12 +79,14 @@ export class PageTranslator {
   }
 
   // Deactivate translation
-  private deactivate() {
+  public deactivate() {
     this.isActive = false;
     this.stopObserving();
     this.abortCurrentBatch();
     this.removeAllTranslations();
     this.translationQueue = [];
+    this.queuedElements = new Set();
+    this.visitedElements = new Set();
     debugLog('Page translation deactivated');
   }
 
@@ -148,7 +148,6 @@ export class PageTranslator {
       // Check if 300ms has passed since the last scroll event
       if (Date.now() - this.lastScrollTime >= 300) {
         debugLog('Scroll completed - start translating new elements');
-        debugLog('queuedElements', this.queuedElements);
         this.translateVisibleElements();
       }
     }, 300);
@@ -156,13 +155,13 @@ export class PageTranslator {
 
   // Remove all translations
   private removeAllTranslations() {
-    this.queuedElements.forEach((element) => {
+    this.visitedElements.forEach((element) => {
       const overlay = element.querySelector('shizue-translation-overlay') as Element;
       if (overlay) {
         element.removeChild(overlay);
       }
     });
-    this.queuedElements.clear();
+    this.visitedElements.clear();
   }
 
   private removeOverlayFromElement(
@@ -175,6 +174,9 @@ export class PageTranslator {
       if (removeTranslatedElement) {
         if (this.queuedElements.has(element)) {
           this.queuedElements.delete(element);
+        }
+        if (this.visitedElements.has(element)) {
+          this.visitedElements.delete(element);
         }
       }
     }
@@ -269,12 +271,15 @@ export class PageTranslator {
     for (let i = 0; i < elements.length; i++) {
       const element = elements[i];
       const text = texts[i];
-      if (this.cachedTranslations.has(text)) {
-        const translatedText = this.cachedTranslations.get(text) as string;
+      if (this.cachedTranslations.get(this.targetLanguage as string)?.has(text)) {
+        const translatedText = this.cachedTranslations
+          .get(this.targetLanguage as string)
+          ?.get(text) as string;
         debugLog(
           `[processTranslationQueue] cached translation found for ${text}, translatedText: ${translatedText}`
         );
         const overlay = this.attachTranslationOverlay(element);
+        this.visitedElements.add(element);
         overlay.setTexts(translatedText);
         if (this.queuedElements.has(element)) {
           this.queuedElements.delete(element);
@@ -284,6 +289,7 @@ export class PageTranslator {
         !element.querySelector('shizue-translation-overlay')
       ) {
         const overlay = this.attachTranslationOverlay(element);
+        this.visitedElements.add(element);
         overlay.setLoading(true);
         overlaysInBatch.push({ element, overlay });
       } else {
@@ -342,7 +348,9 @@ export class PageTranslator {
       }
 
       for (let i = 0; i < overlaysInBatch.length; i++) {
-        this.cachedTranslations.set(validTextsForApi[i], translatedTextResult.translatedTexts[i]);
+        this.cachedTranslations
+          .get(this.targetLanguage as string)
+          ?.set(validTextsForApi[i], translatedTextResult.translatedTexts[i]);
         if (texts[i] === translatedTextResult.translatedTexts[i]) {
           overlaysInBatch[i].overlay.setLoading(false);
           setTimeout(() => {
@@ -395,12 +403,15 @@ export class PageTranslator {
       for (let i = 0; i < elements.length; i++) {
         const element = elements[i];
         const text = element.innerHTML?.trim();
-        if (this.cachedTranslations.has(text)) {
-          const translatedText = this.cachedTranslations.get(text) as string;
+        if (this.cachedTranslations.get(this.targetLanguage as string)?.has(text)) {
+          const translatedText = this.cachedTranslations
+            .get(this.targetLanguage as string)
+            ?.get(text) as string;
           debugLog(
             `[translateVisibleElements] cached translation found for ${text}, translatedText: ${translatedText}`
           );
           const overlay = this.attachTranslationOverlay(element);
+          this.visitedElements.add(element);
           overlay.setTexts(translatedText);
         } else {
           queueAbleItems.push({ element, text });

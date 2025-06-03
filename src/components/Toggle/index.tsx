@@ -13,6 +13,7 @@ import {
   MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
   MESSAGE_UPDATE_PANEL_INIT_DATA,
 } from '@/config/constants';
+import { Language } from '@/hooks/language';
 import { useShowToggle, useToggleYPosition } from '@/hooks/layout';
 import { useTranslateModel } from '@/hooks/models';
 import { hashStringToIndex } from '@/lib/hash';
@@ -136,9 +137,14 @@ const Toggle = () => {
       return;
     }
 
-    getPageTranslator().toggle();
+    if (isTranslationActive) {
+      getPageTranslator().deactivate();
+    } else {
+      getPageTranslator().activate(targetLanguage as Language);
+    }
+
     setIsTranslationActive(!isTranslationActive);
-  }, [isDragging, isTranslationActive]);
+  }, [isDragging, isTranslationActive, targetLanguage]);
 
   useEffect(() => {
     const messageListener = (message: any) => {
