@@ -1,6 +1,7 @@
 import CharacterPickChat, { characterCount } from '@/components/Character/CharacterPickChat';
 import { Message } from '@/components/Chat';
 import { DotCycle } from '@/components/Loader/DotCycle';
+import { useThemeValue } from '@/hooks/layout';
 import useStreamText from '@/hooks/useStreamText';
 import { hashStringToIndex } from '@/lib/hash';
 import { LinkOutlined } from '@ant-design/icons';
@@ -20,6 +21,7 @@ const ChatContainer = ({
 }) => {
   const { t } = useTranslation();
   const characterIndexes: number[] = [];
+  const theme = useThemeValue();
 
   const animatedText = useStreamText(messages[messages.length - 1].content, {
     handleOnComplete: scrollToBottom,
@@ -57,7 +59,10 @@ const ChatContainer = ({
             return (
               <div
                 key={idx}
-                className="sz-message sz-mesage-ai sz:w-full sz:text-left sz:text-black sz:flex sz:flex-col"
+                className="sz-message sz-mesage-ai sz:w-full sz:text-left sz:flex sz:flex-col"
+                style={{
+                  color: theme == 'dark' ? 'white' : 'black',
+                }}
               >
                 <div
                   className="sz:flex sz:flex-col sz:text-left sz:w-full"
@@ -104,6 +109,7 @@ const ChatContainer = ({
             <div
               key={`${idx}-container`}
               className="sz:flex sz:flex-row sz:items-start sz:justify-center"
+              style={{ filter: theme == 'dark' ? 'invert(1)' : 'none' }}
             >
               <CharacterPickChat index={charIndex} scale={1} marginLeft="0.25rem" />
               <div

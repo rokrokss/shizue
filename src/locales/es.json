@@ -68,7 +68,10 @@
     "daysAgo": "hace d"
   },
   "layout": {
-    "hideToggle": "Ocultar botón"
+    "hideToggle": "Ocultar botón",
+    "theme": "Tema",
+    "lightMode": "Claro",
+    "darkMode": "Oscuro"
   },
   "language": {
     "English": "Inglés",

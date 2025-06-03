@@ -68,7 +68,10 @@
     "daysAgo": "日前"
   },
   "layout": {
-    "hideToggle": "ボタンを非表示"
+    "hideToggle": "ボタンを非表示",
+    "theme": "テーマ",
+    "lightMode": "ライト",
+    "darkMode": "ダーク"
   },
   "language": {
     "English": "英語",

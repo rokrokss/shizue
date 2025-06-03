@@ -1,4 +1,5 @@
 import { Language, useLanguage } from '@/hooks/language';
+import { useShowToggle } from '@/hooks/layout';
 import { useSettings } from '@/hooks/settings';
 import { languageOptions } from '@/lib/language';
 import { ChatModel, TranslateModel } from '@/lib/models';
@@ -19,7 +20,8 @@ const SettingsModalContent = () => {
   const [isValidateHovered, setIsValidateHovered] = useState(false);
   const [_, setSettings] = useSettings();
   const [models, setModels] = useModels();
-  const [layout, setLayout] = useLayout();
+  const [theme, setTheme] = useTheme();
+  const [showToggle, setShowToggle] = useShowToggle();
 
   const handleSelectLanguage = (value: string) => {
     setLang(value as Language);
@@ -48,16 +50,11 @@ const SettingsModalContent = () => {
   };
 
   const handleToggleShowToggle = () => {
-    setLayout((prev) => {
-      if (prev instanceof Promise) {
-        return prev;
-      }
-      const newShowToggle = !prev.showToggle;
-      return {
-        ...prev,
-        showToggle: newShowToggle,
-      };
-    });
+    setShowToggle(!showToggle);
+  };
+
+  const handleSelectTheme = (value: string) => {
+    setTheme(value as Theme);
   };
 
   const userOS = getOS();
@@ -81,12 +78,21 @@ const SettingsModalContent = () => {
 
   return (
     <>
-      <div className="sz:text-lg sz:font-semibold sz:mb-4 sz:text-center">
+      <div
+        className="sz:text-lg sz:font-semibold sz:mb-4 sz:text-center"
+        style={{
+          color: theme == 'dark' ? 'white' : 'black',
+        }}
+      >
         {t('settings.title')}
       </div>
       <div className="sz:flex sz:flex-col sz:gap-4">
         <div className="sz:flex sz:flex-col sz:items-center sz:gap-2">
-          <div className="sz:text-base sz:text-gray-800">{t('settings.language')}</div>
+          <div
+            className={`sz:text-base ${theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'}`}
+          >
+            {t('settings.language')}
+          </div>
           <Select
             value={lang}
             onChange={handleSelectLanguage}
@@ -107,7 +113,11 @@ const SettingsModalContent = () => {
           />
         </div>
         <div className="sz:flex sz:flex-col sz:items-center sz:gap-2">
-          <div className="sz:text-base sz:text-gray-800">{t('settings.shortcut')}</div>
+          <div
+            className={`sz:text-base ${theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'}`}
+          >
+            {t('settings.shortcut')}
+          </div>
           <Input
             className="sz:w-40"
             disabled={true}
@@ -115,7 +125,11 @@ const SettingsModalContent = () => {
           />
         </div>
         <div className="sz:flex sz:flex-col sz:items-center sz:gap-2">
-          <div className="sz:text-base sz:text-gray-800">{t('settings.aiProvider')}</div>
+          <div
+            className={`sz:text-base ${theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'}`}
+          >
+            {t('settings.aiProvider')}
+          </div>
           <Select
             defaultValue="openai-api-key"
             onChange={handleSelectApiKey}
@@ -149,6 +163,9 @@ const SettingsModalContent = () => {
               loading={isLoading}
               onMouseEnter={() => setIsValidateHovered(true)}
               onMouseLeave={() => setIsValidateHovered(false)}
+              style={{
+                color: theme == 'dark' ? '#000' : 'white',
+              }}
             >
               {!isLoading &&
                 (isValidateHovered || !canProceed ? (
@@ -158,7 +175,11 @@ const SettingsModalContent = () => {
                 ))}
             </Button>
           </div>
-          <div className="sz:text-base sz:text-gray-800">{t('settings.chatModel')}</div>
+          <div
+            className={`sz:text-base ${theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'}`}
+          >
+            {t('settings.chatModel')}
+          </div>
           <Select
             value={models.chatModel}
             onChange={handleSelectChatModel}
@@ -182,7 +203,13 @@ const SettingsModalContent = () => {
               },
             ]}
           />
-          <div className="sz:text-base sz:text-gray-800">{t('settings.translateModel')}</div>
+          <div
+            className={`sz:text-base ${theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'} ${
+              theme == 'dark' ? 'sz:mb-1' : 'sz:mb-1'
+            }`}
+          >
+            {t('settings.translateModel')}
+          </div>
           <Select
             value={models.translateModel}
             onChange={handleSelectTranslateModel}
@@ -206,9 +233,31 @@ const SettingsModalContent = () => {
               },
             ]}
           />
+          <div
+            className={`sz:text-base ${theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'}`}
+          >
+            {t('layout.theme')}
+          </div>
+          <Select
+            value={theme}
+            onChange={handleSelectTheme}
+            className="sz:font-ycom sz:w-50"
+            options={[
+              {
+                value: 'light',
+                label: t('layout.lightMode'),
+                className: 'sz:font-ycom',
+              },
+              {
+                value: 'dark',
+                label: t('layout.darkMode'),
+                className: 'sz:font-ycom',
+              },
+            ]}
+          />
           <div className="sz:flex sz:flex-col sz:items-center sz:w-50 sz:mt-2">
             <Checkbox
-              checked={!layout.showToggle}
+              checked={!showToggle}
               onChange={handleToggleShowToggle}
               className="sz:font-ycom"
             >

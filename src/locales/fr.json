@@ -68,7 +68,10 @@
     "daysAgo": "il y a j"
   },
   "layout": {
-    "hideToggle": "Masquer le bouton"
+    "hideToggle": "Masquer le bouton",
+    "theme": "Thème",
+    "lightMode": "Clair",
+    "darkMode": "Sombre"
   },
   "language": {
     "English": "Anglais",

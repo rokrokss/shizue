@@ -68,7 +68,10 @@
     "daysAgo": "gün önce"
   },
   "layout": {
-    "hideToggle": "Düğmeyi Gizle"
+    "hideToggle": "Düğmeyi Gizle",
+    "theme": "Tema",
+    "lightMode": "Açık",
+    "darkMode": "Koyu"
   },
   "language": {
     "English": "İngilizce",

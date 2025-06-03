@@ -25,7 +25,9 @@ export const STORAGE_MODELS = 'MODELS';
 export const STORAGE_SETTINGS = 'SETTINGS';
 export const STORAGE_USER_MEMORY = 'USER_MEMORY';
 export const STORAGE_GLOBAL_STATE = 'GLOBAL_STATE';
-export const STORAGE_LAYOUT = 'LAYOUT';
+export const STORAGE_THEME = 'THEME';
+export const STORAGE_SHOW_TOGGLE = 'SHOW_TOGGLE';
+export const STORAGE_TOGGLE_Y_POSITION = 'TOGGLE_Y_POSITION';
 
 /* parameters */
 export const STREAM_FLUSH_THRESHOLD_0 = 5;

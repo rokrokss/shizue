@@ -11,19 +11,21 @@ import it from '@/locales/it.json';
 import ja from '@/locales/ja.json';
 import ko from '@/locales/ko.json';
 import pl from '@/locales/pl.json';
-import pt from '@/locales/pt.json';
+import pt from '@/locales/pt_BR.json';
 import ru from '@/locales/ru.json';
 import tr from '@/locales/tr.json';
-import zh from '@/locales/zh.json';
+import zh from '@/locales/zh_CN.json';
 
 export type SupportedLanguageCode =
   | 'en'
   | 'ko'
-  | 'zh'
+  | 'zh_CN'
+  | 'zh_TW'
   | 'ja'
   | 'es'
   | 'fr'
-  | 'pt'
+  | 'pt_BR'
+  | 'pt_PT'
   | 'ru'
   | 'hi'
   | 'it'
@@ -35,11 +37,13 @@ export type SupportedLanguageCode =
 export const resources = {
   en: { translation: en },
   ko: { translation: ko },
-  zh: { translation: zh },
+  zh_CN: { translation: zh },
+  zh_TW: { translation: zh },
   ja: { translation: ja },
   es: { translation: es },
   fr: { translation: fr },
-  pt: { translation: pt },
+  pt_BR: { translation: pt },
+  pt_PT: { translation: pt },
   ru: { translation: ru },
   hi: { translation: hi },
   it: { translation: it },

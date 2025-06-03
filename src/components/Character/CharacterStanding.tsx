@@ -1,7 +1,15 @@
 import standing from '@/assets/character/standing.png';
 import { useEffect, useState } from 'react';
 
-const CharacterStanding = ({ scale, marginLeft }: { scale: number; marginLeft: string }) => {
+const CharacterStanding = ({
+  scale,
+  marginLeft,
+  invert,
+}: {
+  scale: number;
+  marginLeft: string;
+  invert?: boolean;
+}) => {
   const [frame, setFrame] = useState(0);
 
   const frameWidth = 14;
@@ -31,6 +39,7 @@ const CharacterStanding = ({ scale, marginLeft }: { scale: number; marginLeft: s
         backgroundSize: `auto ${frameHeight * scale}px`,
         imageRendering: 'pixelated',
         marginLeft: marginLeft,
+        filter: invert ? 'invert(1) hue-rotate(180deg)' : 'none',
       }}
     />
   );

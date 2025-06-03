@@ -1,9 +1,12 @@
+import { useThemeValue } from '@/hooks/layout';
 import { SettingOutlined } from '@ant-design/icons';
 
 const TopMenu = ({ onSettingsClick }: { onSettingsClick: () => void }) => {
+  const theme = useThemeValue();
+
   return (
     <button
-      className="
+      className={`
         sz:fixed
         sz:top-3
         sz:right-3
@@ -14,11 +17,13 @@ const TopMenu = ({ onSettingsClick }: { onSettingsClick: () => void }) => {
         sz:flex
         sz:flex-col
         sz:gap-2
-        sz:bg-white
-      "
+        ${theme == 'dark' ? 'sz:bg-[#1C1D26]' : 'sz:bg-white'}
+      `}
       onClick={onSettingsClick}
     >
-      <SettingOutlined style={{ fontSize: 22 }} />
+      <SettingOutlined
+        style={{ fontSize: 22, filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none' }}
+      />
     </button>
   );
 };
