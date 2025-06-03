@@ -43,6 +43,32 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 ### 💖 Free & Open Source, Forever:
   - Licensed under the MIT License. The codebase is available for inspection, modification, and contribution.
 
+# 🐳 Installation
+
+Deployment on the Chrome Web Store is currently under review. We'll update this section once Shizue is available there!
+
+In the meantime, you can install Shizue manually from the source by following these steps:
+
+### Manual Install (for Developers):
+
+1.  **Clone & Setup:**
+    ```bash
+    # Ensure pnpm is installed (npm i -g pnpm)
+    git clone https://github.com/rokrokss/shizue && cd shizue
+    pnpm install
+    ```
+
+2.  **Build:**
+    ```bash
+    pnpm build # For production build (typically outputs to `dist/` or `build/`)
+    # Or use `pnpm dev` for development with hot-reloading
+    ```
+
+3.  **Load in Chrome:**
+    * Go to `chrome://extensions`.
+    * Enable "Developer mode".
+    * Click "Load unpacked" and select the build output directory (e.g., `dist/`).
+
 # 💬 Community & Feedback
 
 For suggestions, feedback, or discussions, join me on [Discord](https://discord.gg/ukfPmxsyEy).
