@@ -1,57 +1,42 @@
-# shizue
+<div align="center">
+  <img src="src/public/icon/128.png" alt="Shizue Logo" width="64" />
+  <h1>Shizue</h1>
+  <p>Supercharge your Browse experience with the power of LLMs</p>
+</div>
 
-![wip](/doc/wip.gif)
+# 👋 INTRO
 
-work in progress...
+Shizue is a Chrome extension designed for integrating Large Language Models (LLMs) into the daily Browse workflow. The project aims to enhance browser interactions with LLM-driven features, conceptually similar to how tools like Cursor augment code editors.
 
-Developing an open source alternative to [Sider](https://sider.ai/pricing)
+Shizue provides a free, open-source alternative to commercial services (e.g., [Sider](https://sider.ai/pricing)) that restricts access to newer models behind paywalls. It enables users to utilize their own API keys for direct access to LLM functionalities, such as page summarization and bilingual webpage translation.
 
-The concept is to build a browser extension that transforms your browsing experience—just like how cursor transforms vscode.
+# 🌟 Features
 
-Sider is a great service, but I believe the future isn't about showcasing every available model or fragmenting features just to highlight how many options you have.
+### 💬 AI Chat Sidebar:
+  - Interact with LLMs via a side panel for queries, brainstorming, or information retrieval without navigating away from the current page.
+  
+### 🌐 Bilingual Reading:
+  - View web content in two languages side-by-side, aiding in language learning or comprehension of foreign-language texts.
+  
+### 📄 One-Click Page Summaries:
+  - Generate concise summaries of web pages for quick content overview.
+  
+### 🔑 Use Your Own OpenAI API Key:
+  - Supports personal OpenAI API keys for direct and potentially more cost-effective usage of models. Users are billed directly by OpenAI.
+  
+### 🎨 Color Themes:
+  - Offers Light and Dark mode options for interface customization.
+  
+### 🛡️ Secure & Private:
+  - API keys and user data are intended to be handled securely within the extension.
+  
+### 💖 Free & Open Source, Forever:
+  - Licensed under the MIT License. The codebase is available for inspection, modification, and contribution.
 
-## tasks
+# 💬 Community & Feedback
 
-- [x] extension skeleton built with WXT
-- [x] toggle side panel with an overlay button
-- [ ] a main character to interact with
-  - [x] character
-  - [ ] animalese-like voice
-  - [ ] sentiment expression based on chat
-- [x] basic chat powered by openai models
-  - [x] authentication method
-    - [x] user's api key
-  - [ ] integrate other vendors
-  - [ ] **model auto selection**
-  - [x] interactive ui
-  - [x] context window
-  - [ ] memory
-  - [x] manage chat history
-  - [ ] image support
-- [ ] page translation features
-  - [x] whole page
-  - [ ] on paragraph hover
-  - [ ] on text selection
-- [x] summarize current page
-- [ ] integrate screenshots
-- [ ] overlay rich features on text selection
-  - [ ] summarize
-  - [ ] explain
-  - [ ] grammar check
-- [ ] interactive overlays for specific websites
-  - [ ] google search
-  - [ ] youtube
-  - [ ] gmail
-- [ ] search in user's web browsers
-  - [ ] fuzzy find in tabs/bookmarks/history
-  - [ ] ai search
-- [ ] color themes
-  - [ ] dark mode
-  - [ ] customized themes
-- [ ] ai note app features
-  - [ ] save highlights
-  - [ ] use bookmarks
-  - [ ] write notes
-  - [ ] use saved data for RAG
-- [ ] ai meeting app features
-  - [ ] ...
+For suggestions, feedback, or discussions, join me on [Discord](https://discord.gg/ukfPmxsyEy).
+
+# 📄 License
+
+Shizue is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
