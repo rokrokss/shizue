@@ -39,7 +39,6 @@ class ShizueTranslationOverlay extends HTMLElement {
     } else {
       this.style.display = 'block';
     }
-    this.style.display = 'block';
     this.style.transition = 'max-height 0.3s ease-in-out, opacity 0.3s ease-in-out';
     this.style.boxSizing = 'border-box';
 
@@ -92,6 +91,9 @@ class ShizueTranslationOverlay extends HTMLElement {
       if (this.style.maxHeight !== targetHeight) {
         setTimeout(() => {
           this.style.maxHeight = targetHeight;
+        }, 0);
+        setTimeout(() => {
+          this.style.opacity = '0.5';
         }, 0);
         setTimeout(() => {
           this.style.overflow = 'visible';
