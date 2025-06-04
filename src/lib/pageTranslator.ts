@@ -542,7 +542,13 @@ export class PageTranslator {
       }
     }
 
-    if (element.tagName === 'LI') {
+    if (
+      Array.from(element.getElementsByTagName('*')).some(
+        (child) => child !== element && this.isTranslatableElement(child)
+      )
+    ) {
+      return false;
+    } else if (element.tagName === 'LI') {
       const parent = element.parentElement;
       if (parent && (parent.tagName === 'UL' || parent.tagName === 'OL')) {
         const grandParent = parent.parentElement;
@@ -560,12 +566,6 @@ export class PageTranslator {
       if (hasCompetingBlockChild) {
         return false; // Skip this LI if it has other significant translatable blocks as direct children
       }
-    } else if (
-      Array.from(element.getElementsByTagName('*')).some(
-        (child) => child !== element && this.isTranslatableElement(child)
-      )
-    ) {
-      return false;
     }
 
     return true;
