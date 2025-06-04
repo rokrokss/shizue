@@ -9,7 +9,6 @@ import { translationService } from '@/services/translationService';
 
 export class PageTranslator {
   private isActive: boolean = false;
-  private observer: MutationObserver | null = null;
   private scrollTimeout: NodeJS.Timeout | null = null;
   private lastScrollTime: number = 0;
   private readonly MAX_CHARS_PER_API_REQUEST = 1000;
@@ -28,39 +27,6 @@ export class PageTranslator {
   constructor() {
     // Check if web component is registered
     registerShizueTranslationOverlay();
-    this.setupMutationObserver();
-  }
-
-  // Set up MutationObserver
-  private setupMutationObserver() {
-    this.observer = new MutationObserver((mutations) => {
-      if (!this.isActive) return;
-
-      let hasNewContent = false;
-
-      mutations.forEach((mutation) => {
-        // Check if new nodes are added
-        mutation.addedNodes.forEach((node) => {
-          if (node.nodeType === Node.ELEMENT_NODE) {
-            hasNewContent = true;
-          }
-        });
-
-        // Detect text changes
-        if (
-          mutation.type === 'characterData' ||
-          (mutation.type === 'childList' && mutation.target.nodeType === Node.ELEMENT_NODE)
-        ) {
-          hasNewContent = true;
-        }
-      });
-
-      if (hasNewContent) {
-        // For debouncing, add a slight delay
-        // FIXME: The debouncing is not working properly. When a new element is added during translation, the request is repeated.
-        // setTimeout(() => this.translateVisibleElements(), 500);
-      }
-    });
   }
 
   // Activate translation
@@ -94,25 +60,12 @@ export class PageTranslator {
 
   // Start observing DOM
   private startObserving() {
-    if (this.observer) {
-      this.observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        characterData: true,
-        attributes: false,
-      });
-    }
-
     // Add scroll event listener
     this.addScrollListener();
   }
 
   // Stop observing DOM
   private stopObserving() {
-    if (this.observer) {
-      this.observer.disconnect();
-    }
-
     // Remove scroll event listener
     this.removeScrollListener();
   }
@@ -586,10 +539,6 @@ export class PageTranslator {
   // Clean up resources
   public destroy() {
     this.deactivate();
-    if (this.observer) {
-      this.observer.disconnect();
-      this.observer = null;
-    }
 
     // Clean up scroll-related resources
     this.removeScrollListener();
