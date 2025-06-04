@@ -109,7 +109,9 @@ const ChatContainer = ({
             <div
               key={`${idx}-container`}
               className="sz:flex sz:flex-row sz:items-start sz:justify-center"
-              style={{ filter: theme == 'dark' ? 'invert(1)' : 'none' }}
+              style={{
+                filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+              }}
             >
               <CharacterPickChat index={charIndex} scale={1} marginLeft="0.25rem" />
               <div
