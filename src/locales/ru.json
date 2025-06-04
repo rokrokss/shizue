@@ -71,7 +71,9 @@
     "hideToggle": "Скрыть кнопку",
     "theme": "Тема",
     "lightMode": "Светлая",
-    "darkMode": "Тёмная"
+    "darkMode": "Тёмная",
+    "resetPosition": "Сбросить положение",
+    "menuButton": "Кнопка меню"
   },
   "language": {
     "English": "Английский",

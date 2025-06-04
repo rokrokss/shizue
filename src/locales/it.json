@@ -71,7 +71,9 @@
     "hideToggle": "Nascondi pulsante",
     "theme": "Tema",
     "lightMode": "Chiaro",
-    "darkMode": "Scuro"
+    "darkMode": "Scuro",
+    "resetPosition": "Ripristina posizione",
+    "menuButton": "Pulsante menu"
   },
   "language": {
     "English": "Inglese",

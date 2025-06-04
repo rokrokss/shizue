@@ -71,7 +71,9 @@
     "hideToggle": "Hide Button",
     "theme": "Theme",
     "lightMode": "Light",
-    "darkMode": "Dark"
+    "darkMode": "Dark",
+    "resetPosition": "Reset Position",
+    "menuButton": "Menu Button"
   },
   "language": {
     "English": "English",

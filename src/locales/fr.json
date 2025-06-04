@@ -71,7 +71,9 @@
     "hideToggle": "Masquer le bouton",
     "theme": "Thème",
     "lightMode": "Clair",
-    "darkMode": "Sombre"
+    "darkMode": "Sombre",
+    "resetPosition": "Réinitialiser la position",
+    "menuButton": "Bouton de menu"
   },
   "language": {
     "English": "Anglais",

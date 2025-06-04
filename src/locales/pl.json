@@ -71,7 +71,9 @@
     "hideToggle": "Ukryj przycisk",
     "theme": "Motyw",
     "lightMode": "Jasny",
-    "darkMode": "Ciemny"
+    "darkMode": "Ciemny",
+    "resetPosition": "Zresetuj pozycję",
+    "menuButton": "Przycisk menu"
   },
   "language": {
     "English": "Angielski",

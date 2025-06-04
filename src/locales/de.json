@@ -71,7 +71,9 @@
     "hideToggle": "Button ausblenden",
     "theme": "Thema",
     "lightMode": "Hell",
-    "darkMode": "Dunkel"
+    "darkMode": "Dunkel",
+    "resetPosition": "Position zurücksetzen",
+    "menuButton": "Menü-Schaltfläche"
   },
   "language": {
     "English": "Englisch",

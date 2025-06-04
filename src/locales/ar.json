@@ -71,7 +71,9 @@
     "hideToggle": "إخفاء الزر",
     "theme": "السمة",
     "lightMode": "فضاء",
-    "darkMode": "مظلم"
+    "darkMode": "مظلم",
+    "resetPosition": "إعادة تعيين الموضع",
+    "menuButton": "زر القائمة"
   },
   "language": {
     "English": "الإنجليزية",
