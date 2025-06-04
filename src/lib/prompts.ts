@@ -88,8 +88,10 @@ Translate an array of HTML text snippets into **${targetLanguage}**.
 **Critical Instructions - Adhere to these STRICTLY:**
 
 1. Each HTML snippet in the input array must be translated individually, carefully preserving its original HTML structure and formatting.
-2. **Target Language Check:** If an HTML snippet's text content is already predominantly in **${targetLanguage}**, return empty string in the corresponding position in the "translations" array. Do not attempt to re-translate it or modify it.
-3. **Translated Result Check:** If the translated result is the same as the original text, return empty string in the corresponding position in the "translations" array. Do not attempt to re-translate it or modify it.
+2. **Target Language Check (Return Empty String):** If an HTML snippet's text content is already predominantly in **${targetLanguage}**, which means native speaker of **${targetLanguage}** can read, return empty string in the corresponding position in the "translations" array. Do not attempt to re-translate it or modify it.
+3. **"No Actual Change" Check (Return Empty String):**
+   - If the translated result is the same as the original text, return empty string in the corresponding position in the "translations" array. Do not attempt to re-translate it or modify it.
+   - But for example, "<strong>1차 필터링</strong>"(Korean) and "<strong>1st Filtering</strong>"(English) are not same, because they are in different languages.
 4. **Output Format:**
    - You MUST return your response as a single, valid JSON object. This object must contain one key: "translations".
    - The value of "translations" must be a JSON array of strings. Each string in this array should be the translated HTML content corresponding to the HTML snippet at the same index in the input array.
