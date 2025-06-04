@@ -1,4 +1,8 @@
-import { STORAGE_CHAT_MODEL, STORAGE_SETTINGS, STORAGE_TRANSLATE_MODEL } from '@/config/constants';
+import {
+  STORAGE_CHAT_MODEL,
+  STORAGE_OPENAI_KEY,
+  STORAGE_TRANSLATE_MODEL,
+} from '@/config/constants';
 import { ChatModel, TranslateModel } from '@/lib/models';
 
 let currentChatModel: ChatModel = 'gpt-4.1';
@@ -34,24 +38,25 @@ export const modelListeners = () => {
     if (newTranslateModel) changeTranslateModel(newTranslateModel);
   });
 
-  chrome.storage.local.get(STORAGE_SETTINGS, (res) => {
-    const newOpenaiKey = res.SETTINGS?.openAIKey as string;
+  chrome.storage.local.get(STORAGE_OPENAI_KEY, (res) => {
+    const newOpenaiKey = res.OPENAI_KEY as string;
     if (newOpenaiKey) changeOpenaiKey(newOpenaiKey);
   });
 
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === 'local' && changes.CHAT_MODEL) {
-      const newChatModel = changes.CHAT_MODEL.newValue?.chatModel as ChatModel;
-      if (newChatModel) changeChatModel(newChatModel);
-    }
-    if (area === 'local' && changes.TRANSLATE_MODEL) {
-      const newTranslateModel = changes.TRANSLATE_MODEL.newValue?.translateModel as TranslateModel;
-      if (newTranslateModel) changeTranslateModel(newTranslateModel);
-    }
-
-    if (area === 'local' && changes.SETTINGS) {
-      const newOpenaiKey = changes.SETTINGS.newValue?.openAIKey as string;
-      if (newOpenaiKey) changeOpenaiKey(newOpenaiKey);
+    if (area === 'local') {
+      if (changes.CHAT_MODEL) {
+        const newChatModel = changes.CHAT_MODEL.newValue as ChatModel;
+        if (newChatModel) changeChatModel(newChatModel);
+      }
+      if (changes.TRANSLATE_MODEL) {
+        const newTranslateModel = changes.TRANSLATE_MODEL.newValue as TranslateModel;
+        if (newTranslateModel) changeTranslateModel(newTranslateModel);
+      }
+      if (changes.OPENAI_KEY) {
+        const newOpenaiKey = changes.OPENAI_KEY.newValue as string;
+        if (newOpenaiKey) changeOpenaiKey(newOpenaiKey);
+      }
     }
   });
 };
