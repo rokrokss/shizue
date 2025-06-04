@@ -159,8 +159,8 @@ export class PageTranslator {
   private removeAllTranslations() {
     this.visitedElements.forEach((element) => {
       const overlay = element.querySelector('shizue-translation-overlay') as Element;
-      if (overlay) {
-        element.removeChild(overlay);
+      if (overlay && overlay.parentNode) {
+        overlay.parentNode.removeChild(overlay);
       }
     });
     this.visitedElements.clear();
