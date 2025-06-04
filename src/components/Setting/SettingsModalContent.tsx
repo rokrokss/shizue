@@ -1,7 +1,7 @@
 import { Language, useLanguage } from '@/hooks/language';
 import { defaultToggleYPosition, toggleYPositionAtom, useShowToggle } from '@/hooks/layout';
 import { useChatModel, useTranslateModel } from '@/hooks/models';
-import { useSettings } from '@/hooks/settings';
+import { useSetOpenAIKey } from '@/hooks/settings';
 import { languageOptions } from '@/lib/language';
 import { ChatModel, TranslateModel } from '@/lib/models';
 import { getOS } from '@/lib/userOS';
@@ -20,7 +20,7 @@ const SettingsModalContent = () => {
   const [canProceed, setCanProceed] = useState(true);
   const [apiKey, setApiKey] = useState('');
   const [isValidateHovered, setIsValidateHovered] = useState(false);
-  const [_, setSettings] = useSettings();
+  const setOpenAIKey = useSetOpenAIKey();
   const [chatModel, setChatModel] = useChatModel();
   const [translateModel, setTranslateModel] = useTranslateModel();
   const [theme, setTheme] = useTheme();
@@ -59,10 +59,7 @@ const SettingsModalContent = () => {
     setIsLoading(true);
     const isValid = await validateApiKey(apiKey);
     if (isValid) {
-      setSettings((prev) => ({
-        ...prev,
-        openAIKey: apiKey,
-      }));
+      setOpenAIKey(apiKey);
       setIsInvalidApiKey(false);
       setCanProceed(true);
     } else {

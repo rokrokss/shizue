@@ -1,22 +1,17 @@
-import { STORAGE_SETTINGS } from '@/config/constants';
+import { STORAGE_OPENAI_KEY } from '@/config/constants';
 import { chromeStorageBackend } from '@/lib/storageBackend';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
-export type Settings = {
-  theme: 'light' | 'dark' | 'system';
-  openAIKey?: string;
-};
+export const defaultOpenAIKey = '';
 
-export const defaultSettings: Settings = {
-  theme: 'system',
-};
-
-export const settingsAtom = atomWithStorage<Settings>(
-  STORAGE_SETTINGS,
-  defaultSettings,
+export const openAIKeyAtom = atomWithStorage<string>(
+  STORAGE_OPENAI_KEY,
+  defaultOpenAIKey,
   chromeStorageBackend('local'),
   { getOnInit: true }
 );
 
-export const useSettings = () => useAtom(settingsAtom);
+export const useOpenAIKey = () => useAtom(openAIKeyAtom);
+export const useOpenAIKeyValue = () => useAtomValue(openAIKeyAtom);
+export const useSetOpenAIKey = () => useSetAtom(openAIKeyAtom);
