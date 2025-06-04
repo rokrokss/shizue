@@ -1,3 +1,4 @@
+import { useThemeValue } from '@/hooks/layout';
 import { validateApiKey } from '@/lib/validateApiKey';
 import { SmileOutlined } from '@ant-design/icons';
 import { Button, Input, Select } from 'antd';
@@ -16,6 +17,7 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
   const navigate = useNavigate();
 
   const [_, setSettings] = useSettings();
+  const theme = useThemeValue();
 
   const lines = [
     t('onboarding.selectProvider.title'),
@@ -108,7 +110,9 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
         </Button>
       </div>
       <Button
-        className="sz:mt-2 sz:font-semibold sz:text-base sz:font-ycom"
+        className={`sz:mt-2 sz:font-semibold sz:text-base sz:font-ycom ${
+          theme == 'dark' ? 'sz:text-black' : ''
+        }`}
         type="primary"
         disabled={!canProceed || isLoading}
         onClick={onClickNext}
