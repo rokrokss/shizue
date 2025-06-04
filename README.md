@@ -8,7 +8,7 @@
 
 Shizue is a Chrome extension designed for integrating Large Language Models (LLMs) into the daily Browse workflow. The project aims to enhance browser interactions with LLM-driven features, conceptually similar to how tools like Cursor augment code editors.
 
-Shizue provides a free, open-source alternative to commercial services (e.g., [Sider](https://sider.ai/pricing)) that **restricts access to newer models or handy services** behind additional paywalls. It enables users to utilize their own API keys for direct access to LLM functionalities, such as page summarization and bilingual webpage translation.
+Shizue provides a free, open-source alternative to commercial services (e.g., [Sider](https://sider.ai/pricing)) that **restricts access to newer models or handy services** behind additional paywalls. Shizue enables users to utilize their own API keys for direct access to rich LLM functionalities, such as page summarization and bilingual webpage translation.
 
 <br/>
 
