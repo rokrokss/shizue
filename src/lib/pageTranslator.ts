@@ -565,24 +565,6 @@ export class PageTranslator {
       )
     ) {
       return false;
-    } else if (element.tagName === 'LI') {
-      const parent = element.parentElement;
-      if (parent && (parent.tagName === 'UL' || parent.tagName === 'OL')) {
-        const grandParent = parent.parentElement;
-        if (grandParent && grandParent.tagName === 'LI') {
-          return false;
-        }
-      }
-      const hasCompetingBlockChild = Array.from(element.children).some((child) => {
-        // A competing block child is a translatable element that is NOT a UL or OL.
-        // UL/OL within an LI are considered part of the LI's content for translation.
-        return (
-          child.tagName !== 'UL' && child.tagName !== 'OL' && this.isTranslatableElement(child) // Recursive call
-        );
-      });
-      if (hasCompetingBlockChild) {
-        return false; // Skip this LI if it has other significant translatable blocks as direct children
-      }
     }
 
     return true;
