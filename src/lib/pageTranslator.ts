@@ -353,7 +353,10 @@ export class PageTranslator {
         this.cachedTranslations
           .get(this.targetLanguage as string)
           ?.set(validTextsForApi[i], translatedTextResult.translatedTexts[i]);
-        if (texts[i] === translatedTextResult.translatedTexts[i]) {
+        if (
+          texts[i] === translatedTextResult.translatedTexts[i] ||
+          !translatedTextResult.translatedTexts[i]
+        ) {
           overlaysInBatch[i].overlay.setLoading(false);
           setTimeout(() => {
             this.removeOverlayFromElement(
