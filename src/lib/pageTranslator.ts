@@ -282,7 +282,14 @@ export class PageTranslator {
         );
         const overlay = this.attachTranslationOverlay(element);
         this.visitedElements.add(element);
-        overlay.setTexts(translatedText);
+        if (translatedText.trim() !== '') {
+          overlay.setTexts(translatedText);
+        } else {
+          overlay.setLoading(false);
+          setTimeout(() => {
+            this.removeOverlayFromElement(element, overlay, false);
+          }, 3000);
+        }
         if (this.queuedElements.has(element)) {
           this.queuedElements.delete(element);
         }
@@ -355,7 +362,7 @@ export class PageTranslator {
           ?.set(validTextsForApi[i], translatedTextResult.translatedTexts[i]);
         if (
           texts[i] === translatedTextResult.translatedTexts[i] ||
-          !translatedTextResult.translatedTexts[i]
+          translatedTextResult.translatedTexts[i].trim() === ''
         ) {
           overlaysInBatch[i].overlay.setLoading(false);
           setTimeout(() => {
@@ -417,7 +424,14 @@ export class PageTranslator {
           );
           const overlay = this.attachTranslationOverlay(element);
           this.visitedElements.add(element);
-          overlay.setTexts(translatedText);
+          if (translatedText.trim() !== '') {
+            overlay.setTexts(translatedText);
+          } else {
+            overlay.setLoading(false);
+            setTimeout(() => {
+              this.removeOverlayFromElement(element, overlay, false);
+            }, 3000);
+          }
         } else {
           queueAbleItems.push({ element, text });
         }
