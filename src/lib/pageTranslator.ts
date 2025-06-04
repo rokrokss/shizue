@@ -67,7 +67,9 @@ export class PageTranslator {
   public activate(targetLanguage: Language) {
     this.isActive = true;
     this.targetLanguage = targetLanguage;
-    this.cachedTranslations.set(targetLanguage, new Map());
+    if (!this.cachedTranslations.has(targetLanguage)) {
+      this.cachedTranslations.set(targetLanguage, new Map());
+    }
     this.startObserving();
     this.translateVisibleElements();
     debugLog('Page translation activated');
@@ -592,6 +594,7 @@ export class PageTranslator {
 
     // Clean up scroll-related resources
     this.removeScrollListener();
+    this.cachedTranslations.clear();
 
     debugLog('PageTranslator resources cleaned up');
   }
