@@ -14,10 +14,12 @@ import { getTranslationHandler } from '@/services/background/translationHandler'
 
 async function handleSetPanelOpenOrNot(msg: any, sendResponse: (response?: any) => void) {
   changePanelShowStatus();
+  sendResponse({ status: 'success' });
 }
 
 async function handlePanelOpenedPingFromPanel(msg: any, sendResponse: (response?: any) => void) {
   changePanelOpened(true);
+  sendResponse({ status: 'success' });
 }
 
 async function handleLoadThread(msg: any, sendResponse: (response?: any) => void) {
@@ -49,12 +51,14 @@ async function handleLatestMessageForThread(msg: any, sendResponse: (response?: 
   ) {
     await db.messages.update(latestMessage.id, { stopped: true });
   }
+  sendResponse({ status: 'success' });
 }
 
 async function handleOpenPanel(msg: any, sendResponse: (response?: any) => void) {
   if (!getPanelOpened()) {
     openPanel(undefined);
   }
+  sendResponse({ status: 'success' });
 }
 
 async function handleTranslateHtmlTextBatch(msg: any, sendResponse: (response?: any) => void) {
