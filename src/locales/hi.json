@@ -71,7 +71,9 @@
     "hideToggle": "बटन छिपाएं",
     "theme": "थीम",
     "lightMode": "लाइट",
-    "darkMode": "डार्क"
+    "darkMode": "डार्क",
+    "resetPosition": "पोज़ीशन रीसेट",
+    "menuButton": "मेनू बटन"
   },
   "language": {
     "English": "अंग्रेज़ी",

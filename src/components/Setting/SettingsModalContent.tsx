@@ -1,5 +1,5 @@
 import { Language, useLanguage } from '@/hooks/language';
-import { useShowToggle } from '@/hooks/layout';
+import { defaultToggleYPosition, toggleYPositionAtom, useShowToggle } from '@/hooks/layout';
 import { useChatModel, useTranslateModel } from '@/hooks/models';
 import { useSettings } from '@/hooks/settings';
 import { languageOptions } from '@/lib/language';
@@ -9,6 +9,7 @@ import { validateApiKey } from '@/lib/validateApiKey';
 import { debugLog } from '@/logs';
 import { SmileOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Input, Select } from 'antd';
+import { useSetAtom } from 'jotai';
 import { useTranslation } from 'react-i18next';
 
 const SettingsModalContent = () => {
@@ -24,6 +25,7 @@ const SettingsModalContent = () => {
   const [translateModel, setTranslateModel] = useTranslateModel();
   const [theme, setTheme] = useTheme();
   const [showToggle, setShowToggle] = useShowToggle();
+  const setToggleYPosition = useSetAtom(toggleYPositionAtom);
 
   const handleSelectLanguage = (value: string) => {
     setLang(value as Language);
@@ -198,9 +200,7 @@ const SettingsModalContent = () => {
             ]}
           />
           <div
-            className={`sz:text-base ${theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'} ${
-              theme == 'dark' ? 'sz:mb-1' : 'sz:mb-1'
-            }`}
+            className={`sz:text-base ${theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'}`}
           >
             {t('settings.translateModel')}
           </div>
@@ -249,14 +249,34 @@ const SettingsModalContent = () => {
               },
             ]}
           />
-          <div className="sz:flex sz:flex-col sz:items-center sz:w-50 sz:mt-2">
-            <Checkbox
-              checked={!showToggle}
-              onChange={handleToggleShowToggle}
-              className="sz:font-ycom"
+          <div className="sz:flex sz:flex-col sz:items-center sz:w-50 sz:mt-1">
+            <div
+              className={`sz:text-base ${
+                theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'
+              }`}
             >
-              {t('layout.hideToggle')}
-            </Checkbox>
+              {t('layout.menuButton')}
+            </div>
+            <div className="sz:flex sz:flex-col sz:items-center sz:justify-center sz:w-50 sz:mt-2">
+              <Checkbox
+                checked={!showToggle}
+                onChange={handleToggleShowToggle}
+                className="sz:font-ycom sz:w-50 sz:flex sz:flex-row sz:items-center sz:justify-center"
+              >
+                {t('layout.hideToggle')}
+              </Checkbox>
+              <Button
+                className="sz:font-semibold sz:text-small sz:font-ycom sz:mt-2 sz:min-w-27"
+                type="primary"
+                onClick={() => setToggleYPosition(defaultToggleYPosition)}
+                style={{
+                  color: theme == 'dark' ? '#000' : 'white',
+                }}
+                size="small"
+              >
+                {t('layout.resetPosition')}
+              </Button>
+            </div>
           </div>
         </div>
       </div>

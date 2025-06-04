@@ -71,7 +71,9 @@
     "hideToggle": "Düğmeyi Gizle",
     "theme": "Tema",
     "lightMode": "Açık",
-    "darkMode": "Koyu"
+    "darkMode": "Koyu",
+    "resetPosition": "Pozisyonu Sıfırla",
+    "menuButton": "Menü Düğmesi"
   },
   "language": {
     "English": "İngilizce",

@@ -47,6 +47,7 @@ const Toggle = () => {
   const [targetLanguage, setTargetLanguage] = useTranslateTargetLanguage();
   const theme = useThemeValue();
   const [translateModel, setTranslateModel] = useTranslateModel();
+  const [motionDivId, setMotionDivId] = useState(0);
 
   const isVisible =
     isHoveringCharacter || isHoveringMenu || translateSettingsModalOpen || isTranslationActive;
@@ -126,6 +127,11 @@ const Toggle = () => {
     debugLog('Toggle: [handleDragEnd] newYPosition', newYPosition);
   };
 
+  useEffect(() => {
+    debugLog('Toggle: [useEffect] toggleYPosition', toggleYPosition, 'motionDivId', motionDivId);
+    setMotionDivId(motionDivId + 1);
+  }, [toggleYPosition]);
+
   const handleTranslatePage = useCallback(async () => {
     debugLog('Translate page clicked');
 
@@ -164,6 +170,7 @@ const Toggle = () => {
   return (
     showToggle && (
       <motion.div
+        key={motionDivId}
         drag="y"
         dragMomentum={false}
         dragElastic={0}

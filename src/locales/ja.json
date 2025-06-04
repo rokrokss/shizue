@@ -71,7 +71,9 @@
     "hideToggle": "ボタンを非表示",
     "theme": "テーマ",
     "lightMode": "ライト",
-    "darkMode": "ダーク"
+    "darkMode": "ダーク",
+    "resetPosition": "位置をリセット",
+    "menuButton": "メニューボタン"
   },
   "language": {
     "English": "英語",

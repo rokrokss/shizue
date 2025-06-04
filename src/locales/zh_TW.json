@@ -71,7 +71,9 @@
     "hideToggle": "隐藏按钮",
     "theme": "主题",
     "lightMode": "日间模式",
-    "darkMode": "夜间模式"
+    "darkMode": "夜间模式",
+    "resetPosition": "重置位置",
+    "menuButton": "菜單按鈕"
   },
   "language": {
     "English": "英语",
