@@ -50,7 +50,7 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 
 # 🐳 Installation
 
-Deployment on the Chrome Web Store is currently under review. We'll update this section once Shizue is available there!
+Deployment on the Chrome Web Store is currently under review. I'll update this section once Shizue is available there!
 
 In the meantime, you can install Shizue manually from the source by following these steps:
 
