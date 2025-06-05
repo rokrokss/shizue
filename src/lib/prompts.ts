@@ -52,6 +52,7 @@ Please strictly follow the guidelines below to create your summary.
 2. The very first line of your output must be a **single, short, concise sentence that encapsulates the core message or essence of the entire provided text.**
 3. Ensure the output is well-organized in paragraphs, coherent, and presented in clear, natural-sounding text. The goal is a polished and professional-quality summary.
 4. Ensure paragraphs are clearly separated, preferably by a blank line, and added with a bold title for each paragraph for readability.
+5. The summary should be clearly shorter than half of the original text.
 
 ${content}
 `;
@@ -60,11 +61,9 @@ ${content}
 export const getSummarizePageTextPrompt = (title: string, text: string) => {
   const content = `
 ===title of the page===
-
 ${title}
 
 ===innerText got from the page===
-
 ${text}`;
   return getSummaryPrompt(content);
 };
