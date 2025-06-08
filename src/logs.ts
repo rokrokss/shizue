@@ -19,7 +19,7 @@ export const backgroundLog = () => {
 export const debugLog = (...args: any[]) => {
   if (process.env.NODE_ENV === 'development') {
     console.log('[ROKROKSS DEBUG]', ...args);
-    console.trace('Trace for ROKROKSS DEBUG');
+    // console.trace('Trace for ROKROKSS DEBUG');
   }
 };
 

@@ -1,0 +1,126 @@
+import { debugLog, errorLog } from '@/logs';
+
+// Regex to parse the player response from the page
+const YT_INITIAL_PLAYER_RESPONSE_RE =
+  /ytInitialPlayerResponse\s*=\s*({.+?})\s*;\s*(?:var\s+(?:meta|head)|<\/script|\n)/;
+
+function compareTracks(track1: any, track2: any) {
+  const langCode1 = track1.languageCode;
+  const langCode2 = track2.languageCode;
+
+  if (track1.kind !== 'asr' && track2.kind === 'asr') {
+    // asr: Automatic Speech Recognition
+    return -1; // Non-ASR comes first
+  } else if (track1.kind === 'asr' && track2.kind !== 'asr') {
+    return 1; // Non-ASR comes first
+  } else if (langCode1 === 'en' && langCode2 !== 'en') {
+    return -1; // English comes first
+  } else if (langCode1 !== 'en' && langCode2 === 'en') {
+    return 1; // English comes first
+  }
+
+  return 0;
+}
+
+export const getVideoId = () => {
+  return new URLSearchParams(window.location.search).get('v');
+};
+
+const getPotValue = async (): Promise<string | null> => {
+  return new Promise((resolve) => {
+    const observer = new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        if (entry.name.includes('timedtext') && entry.name.includes('pot=')) {
+          debugLog('[Youtube] getPotValue: entry includes all', entry);
+          const url = new URL(entry.name);
+          const pot = url.searchParams.get('pot');
+          if (pot) {
+            observer.disconnect();
+            resolve(pot);
+            return;
+          }
+        }
+      }
+    });
+
+    observer.observe({ entryTypes: ['resource'] });
+
+    const subtitlesButton = document.querySelector('.ytp-subtitles-button');
+    if (subtitlesButton instanceof HTMLElement) {
+      setTimeout(() => {
+        subtitlesButton.click();
+      }, 500);
+
+      setTimeout(() => {
+        subtitlesButton.click();
+      }, 700);
+    }
+
+    setTimeout(() => {
+      observer.disconnect();
+      resolve(null);
+    }, 5000);
+  });
+};
+
+const getPlayerData = async (videoId: string) => {
+  const pageData = await fetch(`https://www.youtube.com/watch?v=${videoId}`);
+  const body = await pageData.text();
+  const playerResponseMatch = body.match(YT_INITIAL_PLAYER_RESPONSE_RE);
+  return playerResponseMatch ? JSON.parse(playerResponseMatch[1]) : null;
+};
+
+const getTranscriptData = async (player: any) => {
+  try {
+    if (player.captions && player.captions.playerCaptionsTracklistRenderer) {
+      const tracks = player.captions.playerCaptionsTracklistRenderer.captionTracks;
+      if (tracks && tracks.length > 0) {
+        tracks.sort(compareTracks);
+        const targetTrack = tracks[0];
+        const url = new URL(targetTrack.baseUrl);
+        url.searchParams.set('c', 'WEB');
+        url.searchParams.set('fmt', 'json3');
+        url.searchParams.set('cplatform', 'DESKTOP');
+        url.searchParams.set('hl', 'en');
+        const pot = await getPotValue();
+        debugLog('[Youtube] getTranscriptData: pot', pot);
+        if (pot) {
+          url.searchParams.set('pot', pot);
+        }
+        debugLog('[Youtube] getTranscriptData: url', url.toString());
+        const response = await fetch(url.toString());
+        debugLog('[Youtube] getTranscriptData: response', response);
+        const transcript = await response.json();
+        return transcript;
+      }
+    }
+  } catch (error) {
+    errorLog('[Youtube] getTranscriptData: error', error);
+    return;
+  }
+};
+
+export const getVideoData = async (videoId: string) => {
+  const player = await getPlayerData(videoId);
+  if (!player) {
+    errorLog('[Youtube] getVideoData: Unable to get player data');
+    return { videoId };
+  }
+  const metadata = {
+    title: player.videoDetails.title,
+    duration: player.videoDetails.lengthSeconds,
+    author: player.videoDetails.author,
+    views: player.videoDetails.viewCount,
+    keywords: player.videoDetails.keywords,
+    shortDescription: player.videoDetails.shortDescription,
+    channelId: player.videoDetails.channelId,
+  };
+
+  const transcript = await getTranscriptData(player);
+  if (!transcript) {
+    debugLog('[Youtube] getVideoData: No transcript data found');
+    return { videoId, metadata, player };
+  }
+
+  return { videoId, metadata, player, transcript };
+};
