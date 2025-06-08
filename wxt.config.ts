@@ -19,7 +19,7 @@ export default defineConfig({
         default_title: 'Shizue',
       },
       author: { email: 'q0115643@gmail.com' },
-      permissions: ['storage', 'tabs', 'sidePanel', 'activeTab', 'contextMenus'],
+      permissions: ['storage', 'sidePanel', 'activeTab', 'contextMenus'],
       default_locale: 'en',
       side_panel: {
         default_path: 'sidepanel.html',
