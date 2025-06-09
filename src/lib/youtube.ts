@@ -49,11 +49,11 @@ const getPotValue = async (): Promise<string | null> => {
     if (subtitlesButton instanceof HTMLElement) {
       setTimeout(() => {
         subtitlesButton.click();
-      }, 500);
+      }, 200);
 
       setTimeout(() => {
         subtitlesButton.click();
-      }, 700);
+      }, 400);
     }
 
     setTimeout(() => {

@@ -1,49 +1,67 @@
+import useAdObserver from '@/lib/useAdObserver';
 import { getVideoData, getVideoId } from '@/lib/youtube';
 import { debugLog } from '@/logs';
 import { LoadingOutlined, SmileOutlined } from '@ant-design/icons';
 import { Switch } from 'antd';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const YoutubeCaptionToggle = () => {
-  const [lastVideoId, setLastVideoId] = useState<string | null>(null);
   const [isCaptionAvailable, setIsCaptionAvailable] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleNewVideo = async () => {
-    setIsCaptionAvailable(false);
-    const vid = getVideoId();
-    debugLog('[Youtube] handleNewVideo: vid', vid);
+  const lastVideoIdRef = useRef<string | null>(null);
+  const inFlightRef = useRef(false);
 
-    if (!vid) {
-      debugLog('[Youtube] handleNewVideo: No videoId found');
-      return;
-    }
-
-    if (lastVideoId && vid === lastVideoId) {
-      debugLog('[Youtube] handleNewVideo: lastVideoId is the same');
-      return;
-    }
-
-    setLastVideoId(vid);
-
-    const videoData = await getVideoData(vid);
-    debugLog('[Youtube] videoData', videoData);
-
-    if (videoData?.transcript) {
-      setIsCaptionAvailable(true);
-    }
+  const isAdPlaying = () => {
+    const ad = document.querySelector<HTMLDivElement>('.ytp-ad-module');
+    return !!ad && ((ad.textContent?.trim().length ?? 0) > 0 || ad.childElementCount > 0);
   };
 
-  useEffect(() => {
-    if (!lastVideoId) {
-      handleNewVideo();
+  const refreshCaptionStatus = useCallback(async () => {
+    if (inFlightRef.current) return;
+    if (isAdPlaying()) {
+      setIsCaptionAvailable(false);
+      debugLog('[Youtube] refreshCaptionStatus: ad is playing');
+      return;
     }
-    window.addEventListener('yt-navigate-finish', handleNewVideo);
+
+    const vid = getVideoId();
+    if (!vid || vid === lastVideoIdRef.current) return;
+
+    inFlightRef.current = true;
+
+    try {
+      lastVideoIdRef.current = vid;
+      debugLog('[YouTube] checking captions for', vid);
+
+      const data = await getVideoData(vid);
+      debugLog('[Youtube] videoData', data);
+
+      setIsCaptionAvailable(!!data?.transcript);
+    } finally {
+      inFlightRef.current = false;
+    }
+  }, []);
+
+  useAdObserver(
+    () => {
+      debugLog('[Youtube] useAdObserver: ad is started');
+      setIsCaptionAvailable(false);
+    },
+    () => {
+      debugLog('[Youtube] useAdObserver: ad is finished');
+      refreshCaptionStatus();
+    }
+  );
+
+  useEffect(() => {
+    refreshCaptionStatus();
+    window.addEventListener('yt-navigate-finish', refreshCaptionStatus, { passive: true });
 
     return () => {
-      window.removeEventListener('yt-navigate-finish', handleNewVideo);
+      window.removeEventListener('yt-navigate-finish', refreshCaptionStatus);
     };
-  }, []);
+  }, [refreshCaptionStatus]);
 
   const handleToggle = (checked: boolean) => {
     setIsLoading(checked);

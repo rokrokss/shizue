@@ -5,6 +5,7 @@ import { contentScriptLog } from '@/logs';
 import AntdProvider from '@/providers/AntdProvider';
 import { StyleProvider as AntdStyleProvider } from '@ant-design/cssinjs';
 import '@ant-design/v5-patch-for-react-19';
+import { StrictMode } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 
 export default defineContentScript({
@@ -37,11 +38,13 @@ export default defineContentScript({
         shadow.host.classList.add('sz:inline-flex');
         shadow.host.classList.add('sz:leading-0');
         root.render(
-          <AntdStyleProvider container={cssContainer}>
-            <AntdProvider>
-              <YoutubeSubtitleToggle />
-            </AntdProvider>
-          </AntdStyleProvider>
+          <StrictMode>
+            <AntdStyleProvider container={cssContainer}>
+              <AntdProvider>
+                <YoutubeSubtitleToggle />
+              </AntdProvider>
+            </AntdStyleProvider>
+          </StrictMode>
         );
         return root;
       },
