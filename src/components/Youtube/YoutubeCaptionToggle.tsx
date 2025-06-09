@@ -1,3 +1,4 @@
+import YoutubeCaptionSettingModal from '@/components/Modal/YoutubeCaptionSettingModal';
 import useAdObserver from '@/lib/useAdObserver';
 import { getVideoData, getVideoId, TranscriptMetadata } from '@/lib/youtube';
 import { debugLog } from '@/logs';
@@ -5,7 +6,7 @@ import { LoadingOutlined, ReadFilled } from '@ant-design/icons';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type TooltipPos = { x: number; y: number } | null;
+type ElementPos = { x: number; y: number } | null;
 
 const YoutubeCaptionToggle = () => {
   const { t } = useTranslation();
@@ -14,7 +15,9 @@ const YoutubeCaptionToggle = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [transcriptMetadata, setTranscriptMetadata] = useState<TranscriptMetadata[]>([]);
   const iconRef = useRef<HTMLDivElement | null>(null);
-  const [tooltipPos, setTooltipPos] = useState<TooltipPos>(null);
+  const [tooltipPos, setTooltipPos] = useState<ElementPos>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [settingModalPos, setSettingModalPos] = useState<ElementPos>(null);
 
   const lastVideoIdRef = useRef<string | null>(null);
   const inFlightRef = useRef(false);
@@ -26,10 +29,10 @@ const YoutubeCaptionToggle = () => {
 
   const refreshCaptionStatus = useCallback(async () => {
     if (inFlightRef.current) return;
-    if (isAdPlaying()) {
+    if (!window.location.pathname.includes('watch') || isAdPlaying()) {
       setIsCaptionAvailable(false);
+      setIsSettingsOpen(false);
       setTranscriptMetadata([]);
-      debugLog('[Youtube] refreshCaptionStatus: ad is playing');
       return;
     }
 
@@ -54,6 +57,7 @@ const YoutubeCaptionToggle = () => {
         setTranscriptMetadata([]);
       }
     } finally {
+      setIsSettingsOpen(false);
       inFlightRef.current = false;
     }
   }, []);
@@ -61,6 +65,7 @@ const YoutubeCaptionToggle = () => {
   const handleAdStart = useCallback(() => {
     debugLog('[Youtube] useAdObserver: ad is started');
     setIsCaptionAvailable(false);
+    setIsSettingsOpen(false);
     setTranscriptMetadata([]);
   }, []);
 
@@ -69,19 +74,36 @@ const YoutubeCaptionToggle = () => {
     refreshCaptionStatus();
   }, [refreshCaptionStatus]);
 
+  const handleResize = useCallback(() => {
+    if (isSettingsOpen) {
+      setIsSettingsOpen(false);
+    }
+  }, [isSettingsOpen, setIsSettingsOpen]);
+
   useAdObserver(handleAdStart, handleAdEnd);
 
   useEffect(() => {
     refreshCaptionStatus();
+
     window.addEventListener('yt-navigate-finish', refreshCaptionStatus, { passive: true });
+    window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('yt-navigate-finish', refreshCaptionStatus);
+      window.removeEventListener('resize', handleResize);
     };
-  }, [refreshCaptionStatus]);
+  }, [refreshCaptionStatus, handleResize]);
 
-  const handleToggle = (checked: boolean) => {
-    setIsLoading(checked);
+  const handleToggle = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (!iconRef.current) return;
+    if (isSettingsOpen) {
+      setIsSettingsOpen(!isSettingsOpen);
+    } else {
+      const { left, top, width } = iconRef.current.getBoundingClientRect();
+      setSettingModalPos({ x: left + width / 2 - 100, y: top - 85 });
+      setIsSettingsOpen(!isSettingsOpen);
+    }
   };
 
   const showTooltip = useCallback(() => {
@@ -121,6 +143,7 @@ const YoutubeCaptionToggle = () => {
           ref={iconRef}
           onMouseEnter={showTooltip}
           onMouseLeave={hideTooltip}
+          onClick={handleToggle}
         >
           {isLoading ? (
             <LoadingOutlined
@@ -143,8 +166,11 @@ const YoutubeCaptionToggle = () => {
                 sz-hover-ai-caption
                 sz:fixed
                 sz:-translate-x-1/2
-                sz:h-[24px] sz:rounded-lg
-                sz:bg-black sz:text-[#E8E9EA] sz:shadow-xl
+                sz:h-[24px]
+                sz:rounded-lg
+                sz:bg-black/72
+                sz:text-[#E8E9EA]
+                sz:shadow-xl
                 sz:z-[2147483647]
                 sz:text-center
                 sz:text-[13px]
@@ -152,7 +178,7 @@ const YoutubeCaptionToggle = () => {
                 sz:flex
                 sz:items-center
                 sz:justify-center
-                sz:px-3
+                sz:px-4
               "
               style={{ left: tooltipPos.x, top: tooltipPos.y }}
             >
@@ -160,6 +186,14 @@ const YoutubeCaptionToggle = () => {
             </div>
           )}
         </div>
+        {isSettingsOpen && settingModalPos && (
+          <YoutubeCaptionSettingModal
+            onClose={() => setIsSettingsOpen(false)}
+            content={<div className="sz:text-white">hello</div>}
+            tooltipX={settingModalPos.x}
+            tooltipY={settingModalPos.y}
+          />
+        )}
       </div>
     )
   );
