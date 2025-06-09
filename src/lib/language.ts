@@ -1,37 +1,43 @@
+import { Language } from '@/hooks/language';
 import { TFunction } from 'i18next';
 
-export const determineAppLanguage = (uiLang: string): Language => {
-  if (uiLang.startsWith('ko')) {
+export const languageCodeToLanguage = (languageCode: string): Language | undefined => {
+  if (languageCode.startsWith('ko')) {
     return 'Korean';
-  } else if (uiLang.startsWith('zh')) {
+  } else if (languageCode.startsWith('zh')) {
     return 'Chinese';
-  } else if (uiLang.startsWith('ja')) {
+  } else if (languageCode.startsWith('ja')) {
     return 'Japanese';
-  } else if (uiLang.startsWith('es')) {
+  } else if (languageCode.startsWith('es')) {
     return 'Spanish';
-  } else if (uiLang.startsWith('fr')) {
+  } else if (languageCode.startsWith('fr')) {
     return 'French';
-  } else if (uiLang.startsWith('pt')) {
+  } else if (languageCode.startsWith('pt')) {
     return 'Portuguese';
-  } else if (uiLang.startsWith('ru')) {
+  } else if (languageCode.startsWith('ru')) {
     return 'Russian';
-  } else if (uiLang.startsWith('hi')) {
+  } else if (languageCode.startsWith('hi')) {
     return 'Hindi';
-  } else if (uiLang.startsWith('it')) {
+  } else if (languageCode.startsWith('it')) {
     return 'Italian';
-  } else if (uiLang.startsWith('de')) {
+  } else if (languageCode.startsWith('de')) {
     return 'German';
-  } else if (uiLang.startsWith('pl')) {
+  } else if (languageCode.startsWith('pl')) {
     return 'Polish';
-  } else if (uiLang.startsWith('tr')) {
+  } else if (languageCode.startsWith('tr')) {
     return 'Turkish';
-  } else if (uiLang.startsWith('ar')) {
+  } else if (languageCode.startsWith('ar')) {
     return 'Arabic';
-  } else if (uiLang.startsWith('en')) {
+  } else if (languageCode.startsWith('en')) {
     return 'English';
   } else {
-    return 'English';
+    return;
   }
+};
+
+export const determineAppLanguage = (uiLang: string): Language => {
+  const uiText = languageCodeToLanguage(uiLang);
+  return uiText ?? 'English';
 };
 
 export const languageOptions = (t: TFunction) => [

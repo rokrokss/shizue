@@ -3,6 +3,7 @@ import '@/assets/tailwind.css';
 import YoutubeSubtitleToggle from '@/components/Youtube/YoutubeCaptionToggle';
 import { contentScriptLog } from '@/logs';
 import AntdProvider from '@/providers/AntdProvider';
+import LanguageProvider from '@/providers/LanguageProvider';
 import { StyleProvider as AntdStyleProvider } from '@ant-design/cssinjs';
 import '@ant-design/v5-patch-for-react-19';
 import { StrictMode } from 'react';
@@ -39,11 +40,13 @@ export default defineContentScript({
         shadow.host.classList.add('sz:leading-0');
         root.render(
           <StrictMode>
-            <AntdStyleProvider container={cssContainer}>
-              <AntdProvider>
-                <YoutubeSubtitleToggle />
-              </AntdProvider>
-            </AntdStyleProvider>
+            <LanguageProvider loadingComponent={null}>
+              <AntdStyleProvider container={cssContainer}>
+                <AntdProvider>
+                  <YoutubeSubtitleToggle />
+                </AntdProvider>
+              </AntdStyleProvider>
+            </LanguageProvider>
           </StrictMode>
         );
         return root;
