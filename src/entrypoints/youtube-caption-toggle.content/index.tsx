@@ -6,11 +6,12 @@ import AntdProvider from '@/providers/AntdProvider';
 import LanguageProvider from '@/providers/LanguageProvider';
 import { StyleProvider as AntdStyleProvider } from '@ant-design/cssinjs';
 import '@ant-design/v5-patch-for-react-19';
+import 'antd/dist/reset.css?inline';
 import { Provider as JotaiProvider } from 'jotai';
 import { StrictMode } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 
-const HOST_ID = 'shizue-youtube-caption-toggle-shadow-host';
+export const YOUTUBE_TOGGLE_SHADOW_HOST_ID = 'shizue-youtube-caption-toggle-shadow-host';
 
 export default defineContentScript({
   matches: ['https://youtube.com/*', 'https://www.youtube.com/*'],
@@ -18,7 +19,7 @@ export default defineContentScript({
   cssInjectionMode: 'ui',
   async main(ctx) {
     const mountUi = async () => {
-      if (document.getElementById(HOST_ID)) return;
+      if (document.getElementById(YOUTUBE_TOGGLE_SHADOW_HOST_ID)) return;
 
       const anchor = document.querySelector('.ytp-right-controls');
       if (!anchor) return;
@@ -28,7 +29,7 @@ export default defineContentScript({
       let root: Root | null = null;
 
       const customDiv = document.createElement('div');
-      customDiv.id = HOST_ID;
+      customDiv.id = YOUTUBE_TOGGLE_SHADOW_HOST_ID;
       customDiv.className =
         'sz:inline-block sz:w-fit sz:h-full sz:px-0 sz:py-0 sz:overflow-hidden sz:leading-0';
       anchor?.prepend(customDiv);
@@ -36,11 +37,10 @@ export default defineContentScript({
       const ui = await createShadowRootUi(ctx, {
         name: 'shizue-youtube-caption-toggle',
         position: 'inline',
-        anchor: `#${HOST_ID}`,
+        anchor: `#${YOUTUBE_TOGGLE_SHADOW_HOST_ID}`,
         append: 'first',
-        mode: 'closed',
+        mode: 'open',
         onMount: (container, shadow) => {
-          const cssContainer = shadow.querySelector('head')!;
           root = createRoot(container);
           container.classList.add('sz:h-full');
           shadow.host.classList.add('sz:h-full');
@@ -50,7 +50,7 @@ export default defineContentScript({
             <StrictMode>
               <JotaiProvider>
                 <LanguageProvider loadingComponent={null}>
-                  <AntdStyleProvider container={cssContainer}>
+                  <AntdStyleProvider container={shadow.host}>
                     <AntdProvider>
                       <YoutubeSubtitleToggle />
                     </AntdProvider>
