@@ -1,12 +1,12 @@
-import YoutubeCaptionSettingModal from '@/components/Modal/YoutubeCaptionSettingModal';
+import LanguageOptionItem from '@/components/Youtube/LanguageOptionItem';
+import { languageOptions } from '@/lib/language';
 import useAdObserver from '@/lib/useAdObserver';
 import { getVideoData, getVideoId, TranscriptMetadata } from '@/lib/youtube';
 import { debugLog } from '@/logs';
 import { LoadingOutlined, ReadFilled } from '@ant-design/icons';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Button, ConfigProvider, Divider, Dropdown, Popover, Space, theme, Tooltip } from 'antd';
+import { cloneElement, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
-type ElementPos = { x: number; y: number } | null;
 
 const YoutubeCaptionToggle = () => {
   const { t } = useTranslation();
@@ -14,10 +14,11 @@ const YoutubeCaptionToggle = () => {
   const [isCaptionAvailable, setIsCaptionAvailable] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [transcriptMetadata, setTranscriptMetadata] = useState<TranscriptMetadata[]>([]);
-  const iconRef = useRef<HTMLDivElement | null>(null);
-  const [tooltipPos, setTooltipPos] = useState<ElementPos>(null);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [settingModalPos, setSettingModalPos] = useState<ElementPos>(null);
+  const [targetLanguage, setTargetLanguage] = useState<Language>('English');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownTriggerRef = useRef<HTMLDivElement>(null);
+  const [isLanguagePopoverOpen, setIsLanguagePopoverOpen] = useState(false);
+  const [isActivated, setIsActivated] = useState(false);
 
   const lastVideoIdRef = useRef<string | null>(null);
   const inFlightRef = useRef(false);
@@ -31,7 +32,7 @@ const YoutubeCaptionToggle = () => {
     if (inFlightRef.current) return;
     if (!window.location.pathname.includes('watch') || isAdPlaying()) {
       setIsCaptionAvailable(false);
-      setIsSettingsOpen(false);
+      setIsDropdownOpen(false);
       setTranscriptMetadata([]);
       return;
     }
@@ -40,6 +41,7 @@ const YoutubeCaptionToggle = () => {
     if (!vid || vid === lastVideoIdRef.current) return;
 
     inFlightRef.current = true;
+    setIsDropdownOpen(false);
 
     try {
       lastVideoIdRef.current = vid;
@@ -57,7 +59,6 @@ const YoutubeCaptionToggle = () => {
         setTranscriptMetadata([]);
       }
     } finally {
-      setIsSettingsOpen(false);
       inFlightRef.current = false;
     }
   }, []);
@@ -65,7 +66,6 @@ const YoutubeCaptionToggle = () => {
   const handleAdStart = useCallback(() => {
     debugLog('[Youtube] useAdObserver: ad is started');
     setIsCaptionAvailable(false);
-    setIsSettingsOpen(false);
     setTranscriptMetadata([]);
   }, []);
 
@@ -74,127 +74,295 @@ const YoutubeCaptionToggle = () => {
     refreshCaptionStatus();
   }, [refreshCaptionStatus]);
 
-  const handleResize = useCallback(() => {
-    if (isSettingsOpen) {
-      setIsSettingsOpen(false);
-    }
-  }, [isSettingsOpen, setIsSettingsOpen]);
-
   useAdObserver(handleAdStart, handleAdEnd);
 
   useEffect(() => {
     refreshCaptionStatus();
 
     window.addEventListener('yt-navigate-finish', refreshCaptionStatus, { passive: true });
-    window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('yt-navigate-finish', refreshCaptionStatus);
-      window.removeEventListener('resize', handleResize);
     };
-  }, [refreshCaptionStatus, handleResize]);
+  }, [refreshCaptionStatus]);
 
-  const handleToggle = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    if (!iconRef.current) return;
-    if (isSettingsOpen) {
-      setIsSettingsOpen(!isSettingsOpen);
-    } else {
-      const { left, top, width } = iconRef.current.getBoundingClientRect();
-      setSettingModalPos({ x: left + width / 2 - 100, y: top - 85 });
-      setIsSettingsOpen(!isSettingsOpen);
+  const handleSelectTargetLanguage = (language: string) => {
+    setTargetLanguage(language as Language);
+  };
+
+  const handleDropdownOpenChange = (open: boolean) => {
+    setIsDropdownOpen(open);
+
+    if (open) {
+      const videoElement = document.querySelector('video');
+      if (videoElement && !videoElement.paused) {
+        videoElement.pause();
+        debugLog('[YouTube] Video paused by dropdown click');
+      }
     }
   };
 
-  const showTooltip = useCallback(() => {
-    if (!iconRef.current) return;
-    const { left, top, width } = iconRef.current.getBoundingClientRect();
+  const handleGenerateCaption = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    debugLog('[YouTube] generate caption');
+    setIsDropdownOpen(false);
+    setIsLoading(true);
+  };
 
-    setTooltipPos({ x: left + width / 2, y: top - 53 });
-  }, []);
+  useEffect(() => {
+    if (!dropdownTriggerRef.current) {
+      return;
+    }
 
-  const hideTooltip = useCallback(() => setTooltipPos(null), []);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting && isDropdownOpen) {
+            setIsDropdownOpen(false);
+            debugLog('[YouTube] Dropdown closed due to scrolling out of view.');
+          }
+        });
+      },
+      {
+        root: null,
+        threshold: 0.1,
+      }
+    );
+
+    observer.observe(dropdownTriggerRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [isDropdownOpen]);
 
   return (
     isCaptionAvailable && (
-      <div
-        className="
-        sz:flex
-        sz:flex-col
-        sz:justify-center
-        sz:items-center
-        sz:h-full
-        sz:px-2
-        sz:mx-2
-        sz:py-[2px]
-        sz:rounded-lg
-        sz:font-youtube
-      "
+      <ConfigProvider
+        prefixCls="sz-ant-"
+        iconPrefixCls="sz-ant-icon-"
+        theme={{
+          token: {
+            colorPrimary: '#32CCBC',
+          },
+          algorithm: theme.darkAlgorithm,
+        }}
       >
         <div
           className="
+            sz-youtube-caption-toggle
             sz:flex
+            sz:flex-col
             sz:justify-center
             sz:items-center
-            sz:px-3
-            sz:gap-2
-            sz:cursor-pointer
+            sz:h-full
+            sz:px-2
+            sz:mx-2
+            sz:py-[2px]
+            sz:rounded-lg
+            sz:font-youtube
           "
-          ref={iconRef}
-          onMouseEnter={showTooltip}
-          onMouseLeave={hideTooltip}
-          onClick={handleToggle}
+          ref={dropdownTriggerRef}
         >
-          {isLoading ? (
-            <LoadingOutlined
-              style={{
-                fontSize: '24px',
+          <Tooltip
+            placement="top"
+            title={t('youtube.aiCaption')}
+            arrow={false}
+            styles={{
+              body: {
                 color: '#E8E9EA',
+                backgroundColor: 'rgba(0, 0, 0, 0.72)',
+                fontSize: '13px',
+                maxHeight: '24px',
+                marginBottom: '27px',
+                paddingTop: '2px',
+                paddingBottom: '2px',
+                minHeight: '24px',
+                height: '24px',
+                borderRadius: '4px',
+                display: isDropdownOpen ? 'none' : 'block',
+              },
+            }}
+          >
+            <Dropdown
+              placement="top"
+              trigger={['click']}
+              overlayStyle={{
+                paddingBottom: '24px',
               }}
-            />
-          ) : (
-            <ReadFilled
-              style={{
-                fontSize: '24px',
-                color: '#E8E9EA',
+              open={isDropdownOpen}
+              onOpenChange={handleDropdownOpenChange}
+              menu={{
+                items: [
+                  {
+                    key: 'aiCaption',
+                    label: (
+                      <div
+                        className="
+                          sz:flex
+                          sz:flex-row
+                          sz:items-center
+                          sz:gap-2
+                          sz:cursor-default
+                          sz:text-[13px]
+                        "
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <span className="sz:text-white">{t('youtube.aiCaption')}</span>
+                      </div>
+                    ),
+                  },
+                  {
+                    key: 'selectLanguage',
+                    label: (
+                      <Popover
+                        placement="rightBottom"
+                        styles={{
+                          body: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            transform: 'translateY(7px)',
+                            marginLeft: '7px',
+                            padding: 0,
+                          },
+                        }}
+                        arrow={false}
+                        open={isDropdownOpen && isLanguagePopoverOpen}
+                        // open={true}
+                        onOpenChange={setIsLanguagePopoverOpen}
+                        content={
+                          <div
+                            className="
+                              sz:flex
+                              sz:flex-col
+                              sz:rounded-lg
+                              sz:m-0 sz:p-0
+                            "
+                            style={{
+                              height: '170px',
+                              overflowY: 'auto',
+                            }}
+                          >
+                            {languageOptions(t).map((option, index) => {
+                              const isFirst = index === 0;
+                              const isLast = index === languageOptions(t).length - 1;
+                              return (
+                                <LanguageOptionItem
+                                  key={option.value}
+                                  option={option}
+                                  isFirst={isFirst}
+                                  isLast={isLast}
+                                  onClick={() => {
+                                    handleSelectTargetLanguage(option.value);
+                                    setIsLanguagePopoverOpen(false);
+                                  }}
+                                />
+                              );
+                            })}
+                          </div>
+                        }
+                      >
+                        <div
+                          className="
+                            sz:flex
+                            sz:flex-row
+                            sz:items-center
+                            sz:justify-between
+                            sz:gap-2
+                            sz:cursor-default
+                            sz:text-[13px]
+                          "
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          <span className="sz:text-white">{t('settings.targetLanguage')}</span>
+                          <span className="sz:text-gray-400">
+                            {t(`language.${targetLanguage}`)}
+                          </span>
+                        </div>
+                      </Popover>
+                    ),
+                  },
+                ],
               }}
-            />
-          )}
-          {tooltipPos && (
-            <div
-              className="
-                sz-hover-ai-caption
-                sz:fixed
-                sz:-translate-x-1/2
-                sz:h-[24px]
-                sz:rounded-lg
-                sz:bg-black/72
-                sz:text-[#E8E9EA]
-                sz:shadow-xl
-                sz:z-[2147483647]
-                sz:text-center
-                sz:text-[13px]
-                sz:leading-none
-                sz:flex
-                sz:items-center
-                sz:justify-center
-                sz:px-4
-              "
-              style={{ left: tooltipPos.x, top: tooltipPos.y }}
+              popupRender={(menu) => (
+                <div
+                  className="
+                  sz-dropdown-caption-menu
+                  sz:bg-black/72
+                  sz:rounded-lg
+                "
+                >
+                  {cloneElement(
+                    menu as React.ReactElement<{
+                      style: React.CSSProperties;
+                    }>,
+                    {
+                      style: { padding: 0, backgroundColor: 'transparent' },
+                    }
+                  )}
+                  <Divider style={{ margin: 0 }} />
+                  <Space
+                    style={{ padding: 6 }}
+                    className="sz:w-full sz:flex sz:justify-center sz:items-center"
+                  >
+                    <Button
+                      variant="filled"
+                      size="small"
+                      className="sz:w-full sz:text-[13px]"
+                      onClick={handleGenerateCaption}
+                    >
+                      자막 생성
+                    </Button>
+                  </Space>
+                </div>
+              )}
             >
-              {t('youtube.aiCaption')}
-            </div>
-          )}
+              <div
+                className="
+                  sz:flex
+                  sz:flex-col
+                  sz:justify-center
+                  sz:items-center
+                  sz:px-3
+                  sz:gap-2
+                  sz:cursor-pointer
+                "
+              >
+                {isLoading ? (
+                  <LoadingOutlined
+                    style={{
+                      fontSize: '24px',
+                      color: '#E8E9EA',
+                    }}
+                  />
+                ) : (
+                  <ReadFilled
+                    style={{
+                      fontSize: '24px',
+                      color: '#E8E9EA',
+                    }}
+                  />
+                )}
+                <div
+                  style={{
+                    position: 'absolute',
+                    borderRadius: '20%',
+                    height: '3px',
+                    width: '24px',
+                    backgroundColor: '#32CCBC',
+                    bottom: '10%',
+                    opacity: isActivated ? 1 : 0,
+                    transition: 'opacity 0.3s ease-in-out',
+                  }}
+                />
+              </div>
+            </Dropdown>
+          </Tooltip>
         </div>
-        {isSettingsOpen && settingModalPos && (
-          <YoutubeCaptionSettingModal
-            onClose={() => setIsSettingsOpen(false)}
-            content={<div className="sz:text-white">hello</div>}
-            tooltipX={settingModalPos.x}
-            tooltipY={settingModalPos.y}
-          />
-        )}
-      </div>
+      </ConfigProvider>
     )
   );
 };
