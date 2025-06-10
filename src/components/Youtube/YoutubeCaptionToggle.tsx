@@ -1,4 +1,5 @@
 import LanguageOptionItem from '@/components/Youtube/LanguageOptionItem';
+import { getCaptionInjector } from '@/lib/captionInjector';
 import { languageOptions } from '@/lib/language';
 import useAdObserver from '@/lib/useAdObserver';
 import { getVideoData, getVideoId, TranscriptMetadata } from '@/lib/youtube';
@@ -106,7 +107,23 @@ const YoutubeCaptionToggle = () => {
     e.stopPropagation();
     debugLog('[YouTube] generate caption');
     setIsDropdownOpen(false);
-    setIsLoading(true);
+    getCaptionInjector().activate();
+    setIsActivated(true);
+    const videoElement = document.querySelector('video');
+    if (videoElement && videoElement.paused) {
+      videoElement.play();
+      debugLog('[YouTube] Video played by generate caption');
+    }
+  };
+
+  const handleClickIcon = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isActivated) return;
+
+    e.stopPropagation();
+    e.preventDefault();
+    debugLog('[YouTube] deactivate caption');
+    getCaptionInjector().deactivate();
+    setIsActivated(false);
   };
 
   useEffect(() => {
@@ -186,11 +203,11 @@ const YoutubeCaptionToggle = () => {
           >
             <Dropdown
               placement="top"
-              trigger={['click']}
+              trigger={isActivated ? [] : ['click']}
               overlayStyle={{
                 paddingBottom: '24px',
               }}
-              open={isDropdownOpen}
+              open={isActivated ? false : isDropdownOpen}
               onOpenChange={handleDropdownOpenChange}
               menu={{
                 items: [
@@ -330,6 +347,7 @@ const YoutubeCaptionToggle = () => {
                   sz:gap-2
                   sz:cursor-pointer
                 "
+                onClick={handleClickIcon}
               >
                 {isLoading ? (
                   <LoadingOutlined
@@ -351,11 +369,10 @@ const YoutubeCaptionToggle = () => {
                     position: 'absolute',
                     borderRadius: '20%',
                     height: '3px',
-                    width: '24px',
+                    width: isActivated ? '24px' : 0,
                     backgroundColor: '#32CCBC',
                     bottom: '10%',
-                    opacity: isActivated ? 1 : 0,
-                    transition: 'opacity 0.3s ease-in-out',
+                    transition: 'width 0.5s ease-in-out',
                   }}
                 />
               </div>
