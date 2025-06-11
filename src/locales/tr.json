@@ -95,6 +95,7 @@
     "aiCaption": "Shizue AI Altyazı",
     "numCaptLines": "Satır Sayısı",
     "activate": "Aktif Et",
-    "deactivate": "Pasif Et"
+    "deactivate": "Pasif Et",
+    "youtubeCaptionButton": "YouTube Altyazı Düğmesi"
   }
 }

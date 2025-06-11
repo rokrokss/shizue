@@ -95,6 +95,7 @@
     "aiCaption": "Subtítulos IA de Shizue",
     "numCaptLines": "Número de líneas",
     "activate": "Activar",
-    "deactivate": "Desactivar"
+    "deactivate": "Desactivar",
+    "youtubeCaptionButton": "Botón de subtítulos de YouTube"
   }
 }

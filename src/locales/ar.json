@@ -95,6 +95,7 @@
     "aiCaption": "تعليقات توضيحية بالذكاء الاصطناعي من Shizue",
     "numCaptLines": "عدد الخطوط",
     "activate": "تنشيط",
-    "deactivate": "تعطيل"
+    "deactivate": "تعطيل",
+    "youtubeCaptionButton": "زر التعليقات التوضيحية لليوتيوب"
   }
 }

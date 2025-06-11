@@ -95,6 +95,7 @@
     "aiCaption": "Legenda IA de Shizue",
     "numCaptLines": "Número de linhas",
     "activate": "Ativar",
-    "deactivate": "Desativar"
+    "deactivate": "Desativar",
+    "youtubeCaptionButton": "Botão de legenda YouTube"
   }
 }

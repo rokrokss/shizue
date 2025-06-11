@@ -95,6 +95,7 @@
     "aiCaption": "Napisy AI Shizue",
     "numCaptLines": "Liczba wierszy",
     "activate": "Aktywuj",
-    "deactivate": "Dezaktywuj"
+    "deactivate": "Dezaktywuj",
+    "youtubeCaptionButton": "Przycisk napisy YouTube"
   }
 }

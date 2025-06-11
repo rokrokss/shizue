@@ -95,6 +95,7 @@
     "aiCaption": "Shizue KI-Untertitel",
     "numCaptLines": "Anzahl der Zeilen",
     "activate": "Aktivieren",
-    "deactivate": "Deaktivieren"
+    "deactivate": "Deaktivieren",
+    "youtubeCaptionButton": "YouTube-Untertitel-Schaltfläche"
   }
 }

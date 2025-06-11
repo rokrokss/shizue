@@ -95,6 +95,7 @@
     "aiCaption": "Shizue AI 字幕",
     "numCaptLines": "行數",
     "activate": "激活",
-    "deactivate": "禁用"
+    "deactivate": "禁用",
+    "youtubeCaptionButton": "YouTube 字幕按鈕"
   }
 }

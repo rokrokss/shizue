@@ -95,6 +95,7 @@
     "aiCaption": "Shizue AI Caption",
     "numCaptLines": "Number of Lines",
     "activate": "Activate",
-    "deactivate": "Deactivate"
+    "deactivate": "Deactivate",
+    "youtubeCaptionButton": "Youtube Caption Button"
   }
 }
