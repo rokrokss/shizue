@@ -170,7 +170,7 @@ export class CaptionInjector {
     try {
       const response = await fetch(metadata.baseUrl);
       const data = await response.json();
-      const captions = data.events
+      const captions: Caption[] = data.events
         .filter((event: any) => event.segs)
         .map((event: any) => ({
           startTime: event.tStartMs / 1000,
@@ -182,7 +182,16 @@ export class CaptionInjector {
         }))
         .filter((caption: Caption) => caption.text.length > 0);
 
-      return captions;
+      const captionsSqueezed = captions.map((caption, i) => {
+        if (i === captions.length - 1) return caption;
+        const nextCaption = captions[i + 1];
+        return {
+          ...caption,
+          endTime: Math.min(caption.endTime, nextCaption.startTime),
+        };
+      });
+
+      return captionsSqueezed;
     } catch (err) {
       errorLog(`[YouTube] Failed to fetch captions for ${language}`, err);
       return null;
@@ -198,6 +207,7 @@ export class CaptionInjector {
     try {
       const nativeCaptions = await this.fetchNativeCaptions(this.targetLanguage);
       if (nativeCaptions) {
+        debugLog('[YouTube] nativeCaptions', nativeCaptions);
         this.captionCache.set(this.targetLanguage, nativeCaptions);
         debugLog('[YouTube] Using native captions for', this.targetLanguage);
         this.isTranslating = false;
