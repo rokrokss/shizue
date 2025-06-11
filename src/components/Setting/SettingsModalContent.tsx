@@ -291,7 +291,7 @@ const SettingsModalContent = () => {
                 theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'
               }`}
             >
-              유튜브 자막 버튼
+              {t('youtube.youtubeCaptionButton')}
             </div>
             <div className="sz:flex sz:flex-col sz:items-center sz:justify-center sz:w-50 sz:mt-2">
               <Checkbox

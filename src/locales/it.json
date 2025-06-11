@@ -95,6 +95,7 @@
     "aiCaption": "Sottotitoli AI di Shizue",
     "numCaptLines": "Numero di linee",
     "activate": "Attiva",
-    "deactivate": "Disattiva"
+    "deactivate": "Disattiva",
+    "youtubeCaptionButton": "Pulsante sottotitoli YouTube"
   }
 }

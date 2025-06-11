@@ -95,6 +95,7 @@
     "aiCaption": "AI-субтитры Shizue",
     "numCaptLines": "Количество строк",
     "activate": "Активировать",
-    "deactivate": "Деактивировать"
+    "deactivate": "Деактивировать",
+    "youtubeCaptionButton": "Кнопка субтитров YouTube"
   }
 }
