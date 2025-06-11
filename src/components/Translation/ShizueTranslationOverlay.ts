@@ -106,35 +106,31 @@ class ShizueTranslationOverlay extends HTMLElement {
   // Public methods for external control
   setTexts(translatedText: string) {
     this.translatedText = translatedText;
-    this.isLoading = false; // 텍스트가 설정되면 로딩 완료
-    this.hasError = false; // 성공 시 에러 상태 해제
+    this.isLoading = false;
+    this.hasError = false;
     this.render();
   }
 
-  // 로딩 상태 설정
   setLoading(loading: boolean) {
     this.isLoading = loading;
     if (loading) {
-      this.hasError = false; // 로딩 시 에러 상태 해제
+      this.hasError = false;
     }
     this.render();
   }
 
-  // 에러 상태 설정
   setError(hasError: boolean) {
     this.hasError = hasError;
     if (hasError) {
-      this.isLoading = false; // 에러 시 로딩 상태 해제
+      this.isLoading = false;
     }
     this.render();
   }
 
-  // 로딩 상태 반환
   getLoading(): boolean {
     return this.isLoading;
   }
 
-  // 에러 상태 반환
   getError(): boolean {
     return this.hasError;
   }
@@ -145,28 +141,28 @@ export const registerShizueTranslationOverlay = (): boolean => {
   try {
     // Check if we're in a browser environment
     if (typeof window === 'undefined' || typeof document === 'undefined') {
-      debugLog('웹 컴포넌트 등록 스킵: 브라우저 환경이 아님');
+      debugLog('Skipping web component registration: Not in browser environment');
       return false;
     }
 
     // Check if customElements is available
     if (typeof customElements === 'undefined' || !customElements) {
-      errorLog('customElements API가 사용할 수 없습니다');
+      errorLog('customElements API is not available');
       return false;
     }
 
     // Check if already registered
     if (customElements.get('shizue-translation-overlay')) {
-      debugLog('ShizueTranslationOverlay 웹 컴포넌트가 이미 등록되어 있습니다');
+      debugLog('ShizueTranslationOverlay web component is already registered');
       return true;
     }
 
     // Register the component
     customElements.define('shizue-translation-overlay', ShizueTranslationOverlay);
-    debugLog('ShizueTranslationOverlay 웹 컴포넌트가 성공적으로 등록되었습니다');
+    debugLog('ShizueTranslationOverlay web component is successfully registered');
     return true;
   } catch (error) {
-    errorLog('웹 컴포넌트 등록 중 오류:', error);
+    errorLog('Error registering ShizueTranslationOverlay web component:', error);
     return false;
   }
 };
