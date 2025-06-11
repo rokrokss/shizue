@@ -1,4 +1,5 @@
 import { Language } from '@/hooks/language';
+import { Caption, VideoMetadata } from '@/lib/youtube';
 import { debugLog } from '@/logs';
 
 export const getInitialSystemMessage = (lang: Language) => {
@@ -106,4 +107,46 @@ ${serializedTextBatch}
 }
   
 Ensure your output can be directly parsed by a JSON parser.`;
+};
+
+export const getYoutubeCaptionTranslationPrompt = (
+  captions: Caption[],
+  targetLanguage: Language,
+  metadata: VideoMetadata
+) => {
+  return `You are a highly specialized YouTube Caption Translator. Your primary function is to perform a line-by-line translation.
+
+**Your Task:**
+Translate each line from the input array into **${targetLanguage}**.
+
+**--- Core Principles (MUST be followed unconditionally) ---**
+
+1.  **Strict Length Match:** The output "translations" array MUST contain the exact same number of strings as the input array.
+    - The length of input lines array and output translations array must be identical, no matter what.
+
+2.  **Preserve Fragmentation:** Input lines are often grammatical fragments. Your translation for that line MUST also be a fragment.
+    - **DO NOT try to create complete, natural-sounding sentences by combining lines.** Your task is technical translation, not creative writing. It is OKAY and EXPECTED for your translated lines to be incomplete sentences.
+
+**--- Output Format ---**
+
+-   You MUST return your response as a single, valid JSON object.
+-   The JSON object must contain one key: "translations".
+-   The value of "translations" must be a JSON array of strings.
+-   Do NOT include any text, explanations, or markdown formatting (like \`\`\`json) outside the JSON object itself.
+
+===Video Metadata (for Tonal Context Only)===
+${JSON.stringify(metadata)}
+
+===Input Lines to Translate (Line Count: ${captions.length})===
+${JSON.stringify(captions.map((c) => c.text))}
+
+===Example of the EXACT JSON Output Format expected===
+{
+  "translations": ["translated_line_1", "translated_line_2", ..., "translated_line_n"]
+}
+  
+**Final Check before generating:** Does my output array have exactly ${
+    captions.length
+  } items? If not, I must correct it.
+`;
 };

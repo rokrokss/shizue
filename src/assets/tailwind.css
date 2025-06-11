@@ -33,6 +33,7 @@
   --font-mono: 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace';
   --font-sans: 'ui-sans-serif', 'system-ui', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   --font-ddin: 'D-DIN', 'ui-sans-serif', 'system-ui', 'sans-serif';
+  --font-youtube: Roboto, Arial, Helvetica, sans-serif;
   --color-sz-cyan: #32CCBC;
 }
 

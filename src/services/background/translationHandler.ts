@@ -4,7 +4,12 @@ import {
   getCurrentTranslateModel,
 } from '@/entrypoints/background/states/models';
 import { ModelPreset, getModelInstance } from '@/lib/models';
-import { getHtmlTranslationBatchPrompt, getHtmlTranslationPrompt } from '@/lib/prompts';
+import {
+  getHtmlTranslationBatchPrompt,
+  getHtmlTranslationPrompt,
+  getYoutubeCaptionTranslationPrompt,
+} from '@/lib/prompts';
+import { Caption, VideoMetadata } from '@/lib/youtube';
 import { debugLog, errorLog } from '@/logs';
 import { HumanMessage } from '@langchain/core/messages';
 
@@ -18,6 +23,16 @@ export interface BatchTranslationResult {
   success: boolean;
   translatedTexts?: string[];
   error?: string;
+}
+
+export interface YoutubeCaptionTranslationResult {
+  success: boolean;
+  captions?: Caption[];
+  error?: string;
+}
+
+interface YoutubeCaptionTranslationJsonResponseFormat {
+  translations: string[];
 }
 
 interface BatchTranslationJsonResponseFormat {
@@ -36,6 +51,98 @@ export class TranslationHandler {
   public async canTranslate(): Promise<boolean> {
     const openaiKey = getCurrentOpenaiKey();
     return Boolean(openaiKey);
+  }
+
+  public async translateYoutubeCaption(
+    captions: Caption[],
+    targetLanguage: Language,
+    metadata: VideoMetadata
+  ): Promise<YoutubeCaptionTranslationResult> {
+    try {
+      const prompt = getYoutubeCaptionTranslationPrompt(captions, targetLanguage, metadata);
+
+      const llm = await getModelInstance({
+        temperature: 0.1,
+        streaming: false,
+        modelPreset: getTranslationModelPreset(),
+        responseFormat: { type: 'json_object' },
+      });
+
+      debugLog('TranslationHandler [translateYoutubeCaption] prompt:', prompt);
+      const response = await llm.invoke([new HumanMessage(prompt)]);
+      const rawResponseContent = (response.content as string)?.trim();
+
+      debugLog(
+        'TranslationHandler [translateYoutubeCaption] raw response from AI:',
+        rawResponseContent
+      );
+
+      let parsedResponse: YoutubeCaptionTranslationJsonResponseFormat;
+      try {
+        parsedResponse = JSON.parse(rawResponseContent);
+      } catch (parseError) {
+        errorLog(
+          'TranslationHandler [translateYoutubeCaption] JSON parsing error:',
+          (parseError as Error).message,
+          'Raw response:',
+          rawResponseContent
+        );
+        return {
+          success: false,
+          error: `Failed to parse model response. Error: ${(parseError as Error).message}`,
+        };
+      }
+
+      if (
+        !parsedResponse ||
+        !parsedResponse.translations ||
+        !Array.isArray(parsedResponse.translations) ||
+        !parsedResponse.translations.every((item) => typeof item === 'string')
+      ) {
+        const validationErrorMsg =
+          "AI response is not a valid JSON object with a 'translations' array of strings.";
+        errorLog(
+          'TranslationHandler [translateYoutubeCaption] JSON validation error:',
+          validationErrorMsg,
+          'Parsed response:',
+          parsedResponse
+        );
+        return {
+          success: false,
+          error: `Invalid JSON structure in AI response. Details: ${validationErrorMsg}`,
+        };
+      }
+
+      const translatedTextsArray = parsedResponse.translations;
+
+      if (translatedTextsArray.length !== captions.length) {
+        const countMismatchErrorMsg = `Number of translated texts (${translatedTextsArray.length}) does not match input size (${captions.length}).`;
+        errorLog(
+          'ChatModelHandler [translateYoutubeCaption] Item count mismatch error:',
+          countMismatchErrorMsg
+        );
+        return {
+          success: false,
+          error: `Item count mismatch in AI response. Details: ${countMismatchErrorMsg}`,
+        };
+      }
+
+      return {
+        success: true,
+        captions: captions.map((c, index) => ({
+          ...c,
+          text: translatedTextsArray[index],
+        })),
+      };
+    } catch (err) {
+      errorLog('TranslationHandler [translateYoutubeCaption] general error:', err);
+      return {
+        success: false,
+        error: `General error during Youtube Caption translation. Error: ${
+          (err as Error).message ?? String(err)
+        }`,
+      };
+    }
   }
 
   public async translateHtmlText(text: string): Promise<TranslationResult> {
