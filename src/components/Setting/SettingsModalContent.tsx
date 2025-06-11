@@ -113,7 +113,6 @@ const SettingsModalContent = () => {
           </div>
           <Input
             className="sz:w-40"
-            disabled={true}
             value={userOS === 'mac' ? '⌘ + Shift + E' : 'Ctrl + Shift + E'}
           />
         </div>
