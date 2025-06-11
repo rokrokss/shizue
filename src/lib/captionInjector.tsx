@@ -2,7 +2,7 @@ import tailwindRaw from '@/assets/tailwind.css?inline';
 import { CaptionDisplay } from '@/components/Youtube/CaptionDisplay';
 import { Language } from '@/hooks/language';
 import { Caption, TranscriptMetadata, VideoMetadata } from '@/lib/youtube';
-import { debugLog } from '@/logs';
+import { debugLog, errorLog } from '@/logs';
 import AntdProvider from '@/providers/AntdProvider';
 import LanguageProvider from '@/providers/LanguageProvider';
 import { translationService } from '@/services/translationService';
@@ -12,6 +12,7 @@ import { StrictMode } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 
 const CUSTOM_CAPTION_ID = 'shizue-custom-caption';
+const CAPTION_CHUNK_SIZE = 10;
 
 export class CaptionInjector {
   private customCaptionRoot: Root | null = null;
@@ -25,8 +26,14 @@ export class CaptionInjector {
   private shadowRoot: ShadowRoot | null = null;
   private transcriptMetadata: TranscriptMetadata[] = [];
   private videoMetadata: VideoMetadata | null = null;
+  private isTranslating = false;
+  private translatedChunks = new Set<number>();
+  private priorityChunkQueue = new Set<number>();
+  private sequentialChunkIndex = 0;
 
-  constructor() {}
+  constructor() {
+    this.handleVideoSeeked = this.handleVideoSeeked.bind(this);
+  }
 
   public setMetaData = (transcriptMetadata: TranscriptMetadata[], videoMetadata: VideoMetadata) => {
     this.transcriptMetadata = transcriptMetadata;
@@ -34,8 +41,52 @@ export class CaptionInjector {
   };
 
   public setVideoElement = (videoElement: HTMLVideoElement) => {
+    if (this.videoElement) {
+      this.videoElement.removeEventListener('seeked', this.handleVideoSeeked);
+    }
     this.videoElement = videoElement;
+    this.videoElement.addEventListener('seeked', this.handleVideoSeeked);
   };
+
+  private _getChunkIndexFromTime(time: number): number | null {
+    const baseLanguage = this.transcriptMetadata[0]?.language;
+    if (!baseLanguage) return null;
+
+    const baseCaptions = this.captionCache.get(baseLanguage);
+    if (!baseCaptions) return null;
+
+    const targetCaptionIndex = baseCaptions.findIndex(
+      (c) => time >= c.startTime && time < c.endTime
+    );
+
+    if (targetCaptionIndex === -1) {
+      if (time > baseCaptions[baseCaptions.length - 1].endTime) {
+        return Math.floor((baseCaptions.length - 1) / CAPTION_CHUNK_SIZE);
+      }
+      return null;
+    }
+
+    return Math.floor(targetCaptionIndex / CAPTION_CHUNK_SIZE);
+  }
+
+  private handleVideoSeeked() {
+    debugLog('[YouTube] handleVideoSeeked', this.isTranslating, this.videoElement);
+    if (!this.isTranslating || !this.videoElement) return;
+
+    const seekedTime = this.videoElement.currentTime;
+
+    const chunkIndex = this._getChunkIndexFromTime(seekedTime);
+    if (chunkIndex === null) return;
+
+    const chunkStartIndex = chunkIndex * CAPTION_CHUNK_SIZE;
+
+    if (!this.translatedChunks.has(chunkStartIndex)) {
+      debugLog(`[YouTube] Seek detected. Prioritizing chunk starting at index ${chunkStartIndex}`);
+      this.priorityChunkQueue.add(chunkStartIndex);
+      this.sequentialChunkIndex = chunkIndex;
+      debugLog(`[YouTube] Sequential translation index reset to ${chunkIndex}`);
+    }
+  }
 
   private findCaptionIndex = (time: number): number | null => {
     const allCaptions = this.captionCache.get(this.targetLanguage) ?? [];
@@ -70,12 +121,21 @@ export class CaptionInjector {
   };
 
   public updateCurrentTime = () => {
-    if (!this.videoElement || !this.customCaptionRoot) return;
+    if (!this.videoElement || !this.customCaptionRoot) return true;
 
     this.currentTime = this.videoElement.currentTime;
     const allCaptions = this.captionCache.get(this.targetLanguage) ?? [];
 
     const currentIndex = this.findCaptionIndex(this.currentTime);
+
+    let isCurrentCaptionTranslated = true;
+
+    if (currentIndex) {
+      const chunkStartIndex = Math.floor(currentIndex / CAPTION_CHUNK_SIZE) * CAPTION_CHUNK_SIZE;
+      if (!this.translatedChunks.has(chunkStartIndex)) {
+        isCurrentCaptionTranslated = false;
+      }
+    }
 
     let newLines: string[] = [];
     if (currentIndex !== null) {
@@ -100,42 +160,18 @@ export class CaptionInjector {
         </StrictMode>
       );
     }
+
+    return isCurrentCaptionTranslated;
   };
 
-  public activate = async (targetLanguage: Language, numLines: number) => {
-    this.numLines = numLines;
-    if (document.getElementById(CUSTOM_CAPTION_ID)) return;
+  private async fetchNativeCaptions(language: Language): Promise<Caption[] | null> {
+    const metadata = this.transcriptMetadata.find((m) => m.language === language);
+    if (!metadata) return null;
 
-    this.targetLanguage = targetLanguage;
-    if (!this.captionCache.has(targetLanguage)) {
-      for (const metadata of this.transcriptMetadata) {
-        if (metadata.language === targetLanguage) {
-          const captionResponse = await fetch(metadata.baseUrl);
-          const data = await captionResponse.json();
-          debugLog('[YouTube] caption data', data);
-          const captions = data.events
-            .filter((event: any) => event.segs)
-            .map((event: any) => ({
-              startTime: event.tStartMs / 1000,
-              endTime: (event.tStartMs + event.dDurationMs) / 1000,
-              text: event.segs
-                .map((seg: any) => seg.utf8)
-                .join('')
-                .trim(),
-            }))
-            .filter((caption: Caption) => caption.text.length > 0 && caption.text !== '[Music]');
-          this.captionCache.set(targetLanguage, captions);
-        }
-      }
-    }
-
-    if (!this.captionCache.has(targetLanguage)) {
-      // get baseCaption from transcriptMetadata
-      const base = this.transcriptMetadata[0];
-      const baseCaptionResponse = await fetch(base.baseUrl);
-      const baseData = await baseCaptionResponse.json();
-      debugLog('[YouTube] base caption data', baseData);
-      const baseCaptions = baseData.events
+    try {
+      const response = await fetch(metadata.baseUrl);
+      const data = await response.json();
+      const captions = data.events
         .filter((event: any) => event.segs)
         .map((event: any) => ({
           startTime: event.tStartMs / 1000,
@@ -145,19 +181,136 @@ export class CaptionInjector {
             .join('')
             .trim(),
         }))
-        .filter((caption: Caption) => caption.text.length > 0 && caption.text !== '[Music]');
-      this.captionCache.set(base.language, baseCaptions);
+        .filter((caption: Caption) => caption.text.length > 0);
 
-      // translate base captions to target language
-      const translatedCaptions = await translationService.translateYoutubeCaption(
-        baseCaptions,
-        targetLanguage,
-        this.videoMetadata!
-      );
-      this.captionCache.set(targetLanguage, translatedCaptions.captions!);
+      return captions;
+    } catch (err) {
+      errorLog(`[YouTube] Failed to fetch captions for ${language}`, err);
+      return null;
+    }
+  }
+
+  private async startStreamingTranslation() {
+    if (this.isTranslating) return;
+
+    this.isTranslating = true;
+    this.priorityChunkQueue.clear();
+
+    try {
+      const nativeCaptions = await this.fetchNativeCaptions(this.targetLanguage);
+      if (nativeCaptions) {
+        this.captionCache.set(this.targetLanguage, nativeCaptions);
+        debugLog('[YouTube] Using native captions for', this.targetLanguage);
+        this.isTranslating = false;
+        return;
+      }
+
+      if (!this.captionCache.has(this.targetLanguage)) {
+        debugLog(`[YouTube] No cache for ${this.targetLanguage}. Initializing new translation.`);
+
+        const baseLanguage = this.transcriptMetadata[0]?.language;
+        const baseCaptions = await this.fetchNativeCaptions(baseLanguage);
+        if (!baseCaptions) {
+          throw new Error(`Could not fetch base captions for ${baseLanguage}`);
+        }
+        this.captionCache.set(baseLanguage, baseCaptions);
+
+        const currentTime = this.videoElement?.currentTime ?? 0;
+        const currentChunkIndex = this._getChunkIndexFromTime(currentTime) ?? 0;
+
+        this.sequentialChunkIndex = currentChunkIndex;
+        debugLog(
+          `[YouTube] Initializing sequential index to ${currentChunkIndex} based on current time.`
+        );
+
+        this.translatedChunks.clear();
+        this.priorityChunkQueue.clear();
+        this.captionCache.set(this.targetLanguage, [...baseCaptions]);
+      }
+
+      const baseCaptions = this.captionCache.get(this.transcriptMetadata[0]?.language)!;
+      const totalChunks = Math.ceil(baseCaptions.length / CAPTION_CHUNK_SIZE);
+
+      if (this.translatedChunks.size >= totalChunks) {
+        debugLog('[YouTube] All chunks already translated.');
+        this.isTranslating = false;
+        return;
+      }
+
+      debugLog(`[YouTube] Starting or resuming chunk translation to ${this.targetLanguage}`);
+
+      while (this.translatedChunks.size < totalChunks) {
+        if (!this.isTranslating) {
+          debugLog('[YouTube] Translation cancelled.');
+          break;
+        }
+
+        let chunkStartIndex: number | undefined = undefined;
+
+        if (this.priorityChunkQueue.size > 0) {
+          chunkStartIndex = this.priorityChunkQueue.values().next().value!;
+          this.priorityChunkQueue.delete(chunkStartIndex);
+        } else {
+          const nextIndex = this.sequentialChunkIndex * CAPTION_CHUNK_SIZE;
+          if (nextIndex < baseCaptions.length && !this.translatedChunks.has(nextIndex)) {
+            chunkStartIndex = nextIndex;
+          }
+          this.sequentialChunkIndex++;
+        }
+
+        if (chunkStartIndex === undefined) {
+          // wait for queued chunks to resolve
+          if (this.translatedChunks.size < totalChunks) {
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            continue;
+          } else {
+            break;
+          }
+        }
+
+        if (this.translatedChunks.has(chunkStartIndex)) {
+          continue;
+        }
+
+        const chunk = baseCaptions.slice(chunkStartIndex, chunkStartIndex + CAPTION_CHUNK_SIZE);
+
+        const result = await translationService.translateYoutubeCaption(
+          chunk,
+          this.targetLanguage,
+          this.videoMetadata!
+        );
+
+        if (result.success && result.captions) {
+          const targetCache = this.captionCache.get(this.targetLanguage);
+          if (targetCache) {
+            result.captions.forEach((caption, i) => {
+              targetCache[chunkStartIndex! + i] = caption;
+            });
+          }
+        } else {
+          errorLog(
+            `[YouTube] Failed to translate chunk at index ${chunkStartIndex}:`,
+            result.error
+          );
+        }
+
+        this.translatedChunks.add(chunkStartIndex);
+      }
+
+      debugLog('[YouTube] Finished all translation chunks.');
+    } finally {
+      debugLog('[YouTube] Streaming translation finished.');
+      this.isTranslating = false;
+    }
+  }
+
+  public activate = async (targetLanguage: Language, numLines: number) => {
+    if (document.getElementById(CUSTOM_CAPTION_ID)) {
+      this.deactivate();
     }
 
-    debugLog('[YouTube] captionCache', this.captionCache);
+    this.numLines = numLines;
+    this.targetLanguage = targetLanguage;
 
     this.videoElement = document.querySelector('video');
 
@@ -207,9 +360,16 @@ export class CaptionInjector {
         </JotaiProvider>
       </StrictMode>
     );
+
+    this.startStreamingTranslation().catch((err) => {
+      errorLog('[YouTube] Streaming translation failed:', err);
+      this.deactivate(); // Clean up on failure
+    });
   };
 
   public deactivate = () => {
+    debugLog('[YouTube] deactivate');
+    this.isTranslating = false;
     const host = document.getElementById(CUSTOM_CAPTION_ID);
 
     this.customCaptionRoot?.unmount();
@@ -229,10 +389,15 @@ export class CaptionInjector {
   public clear = () => {
     this.transcriptMetadata = [];
     this.videoMetadata = null;
-    this.videoElement = null;
     this.captionCache.clear();
     this.targetLanguage = 'English';
     this.lastFoundCaptionIndex = null;
+    this.translatedChunks.clear();
+    this.priorityChunkQueue.clear();
+    if (this.videoElement) {
+      this.videoElement.removeEventListener('seeked', this.handleVideoSeeked);
+    }
+    this.videoElement = null;
     this.deactivate();
   };
 }

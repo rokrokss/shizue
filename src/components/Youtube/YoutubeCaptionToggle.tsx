@@ -41,7 +41,7 @@ const YoutubeCaptionToggle = () => {
   const [isLanguagePopoverOpen, setIsLanguagePopoverOpen] = useState(false);
   const [isActivated, setIsActivated] = useState(false);
   const animationFrameRef = useRef<number | null>(null);
-  const [numLines, setNumLines] = useState(2);
+  const [numLines, setNumLines] = useState(1);
   const storedTargetLanguage = useTranslateTargetLanguageValue();
 
   const lastVideoIdRef = useRef<string | null>(null);
@@ -60,6 +60,7 @@ const YoutubeCaptionToggle = () => {
       setIsDropdownOpen(false);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
       }
       return;
     }
@@ -74,6 +75,7 @@ const YoutubeCaptionToggle = () => {
     getCaptionInjector().clear();
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
     }
 
     try {
@@ -120,6 +122,7 @@ const YoutubeCaptionToggle = () => {
       getCaptionInjector().clear();
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
       }
     };
   }, [refreshCaptionStatus]);
@@ -131,7 +134,7 @@ const YoutubeCaptionToggle = () => {
   const handleDropdownOpenChange = (open: boolean) => {
     setIsDropdownOpen(open);
 
-    if (open && !isActivated) {
+    if (open) {
       const videoElement = document.querySelector('video');
       if (videoElement && !videoElement.paused) {
         videoElement.pause();
@@ -140,8 +143,26 @@ const YoutubeCaptionToggle = () => {
     }
   };
 
+  const stateRef = useRef({
+    isActivated,
+    isLoading,
+  });
+
+  useEffect(() => {
+    stateRef.current = {
+      isActivated,
+      isLoading,
+    };
+  }, [isActivated, isLoading]);
+
   const updateLoop = () => {
-    getCaptionInjector().updateCurrentTime();
+    const isCurrentCaptionTranslated = getCaptionInjector().updateCurrentTime();
+
+    const { isActivated: currentIsActivated, isLoading: currentIsLoading } = stateRef.current;
+
+    if (currentIsActivated && !isCurrentCaptionTranslated != currentIsLoading) {
+      setIsLoading(!isCurrentCaptionTranslated);
+    }
     animationFrameRef.current = requestAnimationFrame(updateLoop);
   };
 
@@ -150,14 +171,16 @@ const YoutubeCaptionToggle = () => {
     debugLog('[YouTube] generate caption');
     setIsDropdownOpen(false);
     setIsLoading(true);
-    await getCaptionInjector().activate(targetLanguage, numLines);
+
+    // starting translation in the background
+    getCaptionInjector().activate(targetLanguage, numLines);
 
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
     }
     animationFrameRef.current = requestAnimationFrame(updateLoop);
 
-    setIsLoading(false);
     setIsActivated(true);
     const videoElement = document.querySelector('video');
     if (videoElement && videoElement.paused) {
@@ -172,6 +195,7 @@ const YoutubeCaptionToggle = () => {
     debugLog('[YouTube] deactivate caption');
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
     }
     getCaptionInjector().deactivate();
     setIsLoading(false);
@@ -448,7 +472,7 @@ const YoutubeCaptionToggle = () => {
                 {isLoading ? (
                   <LoadingOutlined
                     style={{
-                      fontSize: '24px',
+                      fontSize: '21px',
                       color: '#E8E9EA',
                     }}
                   />
