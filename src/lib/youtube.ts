@@ -10,6 +10,21 @@ export type TranscriptMetadata = {
   language: Language;
 };
 
+export type VideoMetadata = {
+  title: string;
+  duration: number;
+  author: string;
+  keywords: string[];
+  shortDescription: string;
+  channelId: string;
+};
+
+export type Caption = {
+  startTime: number;
+  endTime: number;
+  text: string;
+};
+
 // Regex to parse the player response from the page
 const YT_INITIAL_PLAYER_RESPONSE_RE =
   /ytInitialPlayerResponse\s*=\s*({.+?})\s*;\s*(?:var\s+(?:meta|head)|<\/script|\n)/;
@@ -80,34 +95,6 @@ const getPlayerData = async (videoId: string) => {
   return playerResponseMatch ? JSON.parse(playerResponseMatch[1]) : null;
 };
 
-const getTranscriptData = async (player: any) => {
-  try {
-    if (player.captions && player.captions.playerCaptionsTracklistRenderer) {
-      const tracks = player.captions.playerCaptionsTracklistRenderer.captionTracks;
-      if (tracks && tracks.length > 0) {
-        tracks.sort(compareTracks);
-        const targetTrack = tracks[0];
-        const url = new URL(targetTrack.baseUrl);
-        url.searchParams.set('c', 'WEB');
-        url.searchParams.set('fmt', 'json3');
-        url.searchParams.set('cplatform', 'DESKTOP');
-        const pot = await getPotValue();
-        debugLog('[Youtube] getTranscriptData: pot', pot);
-        if (pot) {
-          url.searchParams.set('pot', pot);
-        }
-        debugLog('[Youtube] getTranscriptData: url', url.toString());
-        const response = await fetch(url.toString());
-        const transcript = await response.json();
-        return transcript;
-      }
-    }
-  } catch (error) {
-    errorLog('[Youtube] getTranscriptData: error', error);
-    return;
-  }
-};
-
 const getTranscriptMetadata = async (player: any): Promise<TranscriptMetadata[] | undefined> => {
   try {
     const tracks: any[] | undefined =
@@ -151,11 +138,10 @@ export const getVideoData = async (videoId: string) => {
     errorLog('[Youtube] getVideoData: Unable to get player data');
     return { videoId };
   }
-  const metadata = {
+  const metadata: VideoMetadata = {
     title: player.videoDetails.title,
     duration: player.videoDetails.lengthSeconds,
     author: player.videoDetails.author,
-    views: player.videoDetails.viewCount,
     keywords: player.videoDetails.keywords,
     shortDescription: player.videoDetails.shortDescription,
     channelId: player.videoDetails.channelId,

@@ -68,6 +68,7 @@ const YoutubeCaptionToggle = () => {
 
     inFlightRef.current = true;
     setIsDropdownOpen(false);
+    setIsLoading(false);
     setIsActivated(false);
     getCaptionInjector().clear();
     if (animationFrameRef.current) {
@@ -83,11 +84,11 @@ const YoutubeCaptionToggle = () => {
 
       const videoElement = document.querySelector('video');
 
-      if (data?.transcriptMetadata && videoElement) {
+      if (data?.transcriptMetadata && videoElement && data.metadata) {
         lastVideoIdRef.current = vid;
         setIsCaptionAvailable(true);
         getCaptionInjector().setVideoElement(videoElement as HTMLVideoElement);
-        getCaptionInjector().setTranscriptMetadata(data.transcriptMetadata);
+        getCaptionInjector().setMetaData(data.transcriptMetadata, data.metadata);
       } else {
         setIsCaptionAvailable(false);
       }
@@ -143,17 +144,19 @@ const YoutubeCaptionToggle = () => {
     animationFrameRef.current = requestAnimationFrame(updateLoop);
   };
 
-  const handleGenerateCaption = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleGenerateCaption = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     debugLog('[YouTube] generate caption');
     setIsDropdownOpen(false);
-    getCaptionInjector().activate(targetLanguage, numLines);
+    setIsLoading(true);
+    await getCaptionInjector().activate(targetLanguage, numLines);
 
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
     }
     animationFrameRef.current = requestAnimationFrame(updateLoop);
 
+    setIsLoading(false);
     setIsActivated(true);
     const videoElement = document.querySelector('video');
     if (videoElement && videoElement.paused) {
@@ -172,6 +175,7 @@ const YoutubeCaptionToggle = () => {
       cancelAnimationFrame(animationFrameRef.current);
     }
     getCaptionInjector().deactivate();
+    setIsLoading(false);
     setIsActivated(false);
   };
 

@@ -1,4 +1,5 @@
 import { Language } from '@/hooks/language';
+import { Caption, VideoMetadata } from '@/lib/youtube';
 import { debugLog } from '@/logs';
 
 export const getInitialSystemMessage = (lang: Language) => {
@@ -106,4 +107,39 @@ ${serializedTextBatch}
 }
   
 Ensure your output can be directly parsed by a JSON parser.`;
+};
+
+export const getYoutubeCaptionTranslationPrompt = (
+  captions: Caption[],
+  targetLanguage: Language,
+  metadata: VideoMetadata
+) => {
+  return `You are an expert Youtube Caption Translator.
+
+**Your Task:**
+You will be given metadata of the video and an array of lines.
+Translate an array of lines into **${targetLanguage}**.
+
+**Critical Instructions - Adhere to these STRICTLY:**
+
+1. Each lines in the input array must be translated individually.
+2. **Output Format:**
+   - You MUST return your response as a single, valid JSON object. This object must contain one key: "translations".
+   - The value of "translations" must be a JSON array of strings. Each string in this array should be the translated line corresponding to the line at the same index in the input array.
+   - Do NOT include any explanatory text, markdown formatting (like \`\`\`json), or anything else outside of the JSON object itself.
+4.  **Maintain Order:** The order of translated lines in the output "translations" array MUST exactly match the order of the input lines.
+
+===Video Metadata===
+${JSON.stringify(metadata)}
+
+===Input Lines (JSON array)===
+${JSON.stringify(captions.map((c) => c.text))}
+
+===Example of the EXACT JSON Output Format expected===
+{
+  "translations": ["translated_line_1", "translated_line_2", ..., "translated_line_n"]
+}
+  
+Ensure your output can be directly parsed by a JSON parser.
+`;
 };
