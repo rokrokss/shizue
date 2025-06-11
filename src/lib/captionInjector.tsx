@@ -25,8 +25,10 @@ export class CaptionInjector {
   private targetLanguage: Language = 'English';
   private captionCache: Map<Language, Caption[]> = new Map();
   private currentTime: number = 0;
-  private captionTextElement: HTMLSpanElement | null = null;
-  private lastFoundCaption: Caption | null = null;
+  private numLines = 1;
+  private currentCaptionLines: string[] = [];
+  private lastFoundCaptionIndex: number | null = null;
+  private shadowRoot: ShadowRoot | null = null;
 
   constructor() {}
 
@@ -38,52 +40,73 @@ export class CaptionInjector {
     this.videoElement = videoElement;
   };
 
-  private findCaption = (time: number): Caption | null => {
-    if (
-      this.lastFoundCaption &&
-      time >= this.lastFoundCaption.startTime &&
-      time < this.lastFoundCaption.endTime
-    ) {
-      return this.lastFoundCaption;
+  private findCaptionIndex = (time: number): number | null => {
+    const allCaptions = this.captionCache.get(this.targetLanguage) ?? [];
+    if (allCaptions.length === 0) return null;
+
+    if (this.lastFoundCaptionIndex !== null) {
+      const lastCaption = allCaptions[this.lastFoundCaptionIndex];
+      if (lastCaption && time >= lastCaption.startTime && time < lastCaption.endTime) {
+        return this.lastFoundCaptionIndex;
+      }
     }
 
-    const arr = this.captionCache.get(this.targetLanguage) ?? [];
     let lo = 0,
-      hi = arr.length - 1;
-
-    let foundCaption: Caption | null = null;
+      hi = allCaptions.length - 1;
+    let foundIndex: number | null = null;
 
     while (lo <= hi) {
       const mid = (lo + hi) >> 1;
-      const c = arr[mid];
+      const c = allCaptions[mid];
       if (time < c.startTime) {
         hi = mid - 1;
       } else if (time >= c.endTime) {
         lo = mid + 1;
       } else {
-        foundCaption = c; // startTime ≤ time < endTime
+        foundIndex = mid;
         break;
       }
     }
 
-    this.lastFoundCaption = foundCaption;
-    return foundCaption;
+    this.lastFoundCaptionIndex = foundIndex;
+    return foundIndex;
   };
 
   public updateCurrentTime = () => {
-    if (!this.videoElement || !this.captionTextElement) return;
+    if (!this.videoElement || !this.customCaptionRoot) return;
 
     this.currentTime = this.videoElement.currentTime;
+    const allCaptions = this.captionCache.get(this.targetLanguage) ?? [];
 
-    const line = this.findCaption(this.currentTime);
-    const newText = line?.text ?? '';
+    const currentIndex = this.findCaptionIndex(this.currentTime);
 
-    if (this.captionTextElement.textContent !== newText) {
-      this.captionTextElement.textContent = newText;
+    let newLines: string[] = [];
+    if (currentIndex !== null) {
+      const startIndex = Math.max(0, currentIndex - this.numLines + 1);
+      newLines = allCaptions.slice(startIndex, currentIndex + 1).map((c) => c.text);
+    }
+
+    if (JSON.stringify(newLines) !== JSON.stringify(this.currentCaptionLines)) {
+      this.currentCaptionLines = newLines;
+
+      this.customCaptionRoot!.render(
+        <StrictMode>
+          <JotaiProvider>
+            <LanguageProvider loadingComponent={null}>
+              <AntdStyleProvider container={this.shadowRoot!}>
+                <AntdProvider>
+                  <CaptionDisplay lines={this.currentCaptionLines} />
+                </AntdProvider>
+              </AntdStyleProvider>
+            </LanguageProvider>
+          </JotaiProvider>
+        </StrictMode>
+      );
     }
   };
 
-  public activate = async (targetLanguage: Language) => {
+  public activate = async (targetLanguage: Language, numLines: number) => {
+    this.numLines = numLines;
     if (document.getElementById(CUSTOM_CAPTION_ID)) return;
 
     this.targetLanguage = targetLanguage;
@@ -137,25 +160,21 @@ export class CaptionInjector {
     container.appendChild(windowBottom);
     document.querySelector('.html5-video-player')?.appendChild(container);
 
-    const shadowRoot = shadowHost.attachShadow({ mode: 'closed' });
+    this.shadowRoot = shadowHost.attachShadow({ mode: 'closed' });
     const sheet = new CSSStyleSheet();
     sheet.replaceSync(tailwindRaw);
-    shadowRoot.adoptedStyleSheets = [...shadowRoot.adoptedStyleSheets, sheet];
+    this.shadowRoot.adoptedStyleSheets = [...this.shadowRoot.adoptedStyleSheets, sheet];
     const reactMountPoint = document.createElement('div');
-    shadowRoot.appendChild(reactMountPoint);
+    this.shadowRoot.appendChild(reactMountPoint);
 
     this.customCaptionRoot = createRoot(reactMountPoint);
     this.customCaptionRoot.render(
       <StrictMode>
         <JotaiProvider>
           <LanguageProvider loadingComponent={null}>
-            <AntdStyleProvider container={shadowRoot}>
+            <AntdStyleProvider container={this.shadowRoot}>
               <AntdProvider>
-                <CaptionDisplay
-                  ref={(el) => {
-                    this.captionTextElement = el;
-                  }}
-                />
+                <CaptionDisplay lines={[]} />
               </AntdProvider>
             </AntdStyleProvider>
           </LanguageProvider>
@@ -167,9 +186,10 @@ export class CaptionInjector {
   public deactivate = () => {
     const host = document.getElementById(CUSTOM_CAPTION_ID);
 
-    this.captionTextElement = null;
     this.customCaptionRoot?.unmount();
     this.customCaptionRoot = null;
+    this.shadowRoot = null;
+    this.currentCaptionLines = [];
 
     if (host) {
       host.remove();
@@ -185,7 +205,7 @@ export class CaptionInjector {
     this.videoElement = null;
     this.captionCache.clear();
     this.targetLanguage = 'English';
-    this.lastFoundCaption = null;
+    this.lastFoundCaptionIndex = null;
     this.deactivate();
   };
 }
