@@ -1,5 +1,10 @@
 import { Language, useLanguage } from '@/hooks/language';
-import { defaultToggleYPosition, toggleYPositionAtom, useShowToggle } from '@/hooks/layout';
+import {
+  defaultToggleYPosition,
+  toggleYPositionAtom,
+  useShowToggle,
+  useShowYoutubeCaptionToggle,
+} from '@/hooks/layout';
 import { useChatModel, useTranslateModel } from '@/hooks/models';
 import { useSetOpenAIKey } from '@/hooks/settings';
 import { languageOptions } from '@/lib/language';
@@ -26,6 +31,7 @@ const SettingsModalContent = () => {
   const [theme, setTheme] = useTheme();
   const [showToggle, setShowToggle] = useShowToggle();
   const setToggleYPosition = useSetAtom(toggleYPositionAtom);
+  const [showYoutubeCaptionToggle, setShowYoutubeCaptionToggle] = useShowYoutubeCaptionToggle();
 
   const handleSelectLanguage = (value: string) => {
     setLang(value as Language);
@@ -47,6 +53,10 @@ const SettingsModalContent = () => {
 
   const handleToggleShowToggle = () => {
     setShowToggle(!showToggle);
+  };
+
+  const handleToggleYoutubeCaptionToggle = () => {
+    setShowYoutubeCaptionToggle(!showYoutubeCaptionToggle);
   };
 
   const handleSelectTheme = (value: string) => {
@@ -273,6 +283,24 @@ const SettingsModalContent = () => {
               >
                 {t('layout.resetPosition')}
               </Button>
+            </div>
+          </div>
+          <div className="sz:flex sz:flex-col sz:items-center sz:w-50 sz:mt-1">
+            <div
+              className={`sz:text-base ${
+                theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'
+              }`}
+            >
+              유튜브 자막 버튼
+            </div>
+            <div className="sz:flex sz:flex-col sz:items-center sz:justify-center sz:w-50 sz:mt-2">
+              <Checkbox
+                checked={!showYoutubeCaptionToggle}
+                onChange={handleToggleYoutubeCaptionToggle}
+                className="sz:font-ycom sz:w-50 sz:flex sz:flex-row sz:items-center sz:justify-center"
+              >
+                {t('layout.hideToggle')}
+              </Checkbox>
             </div>
           </div>
         </div>

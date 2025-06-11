@@ -70,7 +70,6 @@ export class CaptionInjector {
   }
 
   private handleVideoSeeked() {
-    debugLog('[YouTube] handleVideoSeeked', this.isTranslating, this.videoElement);
     if (!this.isTranslating || !this.videoElement) return;
 
     const seekedTime = this.videoElement.currentTime;
