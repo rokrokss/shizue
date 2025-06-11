@@ -104,7 +104,7 @@ const getTranscriptMetadata = async (player: any): Promise<TranscriptMetadata[] 
     const sortedTracks = tracks.sort(compareTracks);
 
     const filteredTracks = sortedTracks.filter((t: any) => t.kind != 'asr');
-    if (!filteredTracks.length && sortedTracks[0]?.languageCode === 'en') {
+    if (!filteredTracks.length && sortedTracks[0]) {
       filteredTracks.push(sortedTracks[0]);
     }
 
@@ -147,6 +147,7 @@ export const getVideoData = async (videoId: string) => {
     channelId: player.videoDetails.channelId,
   };
 
+  debugLog('[Youtube] getVideoData: player', player);
   const transcriptMetadata = await getTranscriptMetadata(player);
   if (!transcriptMetadata) {
     debugLog('[Youtube] getVideoData: No transcript data found');
