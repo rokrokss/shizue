@@ -90,5 +90,8 @@
     "Polish": "폴란드어",
     "Turkish": "터키어",
     "Arabic": "아랍어"
+  },
+  "youtube": {
+    "aiCaption": "시즈에 AI 자막"
   }
 }

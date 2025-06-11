@@ -2,7 +2,7 @@ import { STORAGE_LANGUAGE, STORAGE_TRANSLATE_TARGET_LANGUAGE } from '@/config/co
 import i18n from '@/i18n';
 import { determineAppLanguage } from '@/lib/language';
 import { chromeStorageBackend } from '@/lib/storageBackend';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
 export type Language =
@@ -85,4 +85,5 @@ export const useLanguage = () => {
   return { lang, setLang };
 };
 
+export const useTranslateTargetLanguageValue = () => useAtomValue(targetLanguageAtom);
 export const useTranslateTargetLanguage = () => useAtom(targetLanguageAtom);
