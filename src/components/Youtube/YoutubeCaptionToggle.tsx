@@ -41,7 +41,8 @@ const YoutubeCaptionToggle = () => {
   const [isLanguagePopoverOpen, setIsLanguagePopoverOpen] = useState(false);
   const [isActivated, setIsActivated] = useState(false);
   const animationFrameRef = useRef<number | null>(null);
-  const [numLines, setNumLines] = useState(1);
+  const [numLines, setNumLines] = useState(2);
+  const storedTargetLanguage = useTranslateTargetLanguageValue();
 
   const lastVideoIdRef = useRef<string | null>(null);
   const inFlightRef = useRef(false);
@@ -130,7 +131,7 @@ const YoutubeCaptionToggle = () => {
   const handleDropdownOpenChange = (open: boolean) => {
     setIsDropdownOpen(open);
 
-    if (open) {
+    if (open && !isActivated) {
       const videoElement = document.querySelector('video');
       if (videoElement && !videoElement.paused) {
         videoElement.pause();
@@ -165,9 +166,7 @@ const YoutubeCaptionToggle = () => {
     }
   };
 
-  const handleClickIcon = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isActivated) return;
-
+  const handleDeactivateCaption = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
     debugLog('[YouTube] deactivate caption');
@@ -177,6 +176,7 @@ const YoutubeCaptionToggle = () => {
     getCaptionInjector().deactivate();
     setIsLoading(false);
     setIsActivated(false);
+    setIsDropdownOpen(false);
   };
 
   useEffect(() => {
@@ -205,6 +205,10 @@ const YoutubeCaptionToggle = () => {
       observer.disconnect();
     };
   }, [isDropdownOpen]);
+
+  useEffect(() => {
+    setTargetLanguage(storedTargetLanguage);
+  }, [storedTargetLanguage]);
 
   return (
     isCaptionAvailable && (
@@ -256,11 +260,11 @@ const YoutubeCaptionToggle = () => {
           >
             <Dropdown
               placement="top"
-              trigger={isActivated ? [] : ['click']}
+              trigger={['click']}
               overlayStyle={{
                 paddingBottom: '24px',
               }}
-              open={isActivated ? false : isDropdownOpen}
+              open={isDropdownOpen}
               onOpenChange={handleDropdownOpenChange}
               menu={{
                 items: [
@@ -408,15 +412,23 @@ const YoutubeCaptionToggle = () => {
                   <Divider style={{ margin: 0 }} />
                   <Space
                     style={{ padding: 6 }}
-                    className="sz:w-full sz:flex sz:justify-center sz:items-center"
+                    className="sz:w-full sz:flex sz:flex-row sz:justify-center sz:items-center sz:gap-4"
                   >
                     <Button
-                      variant="filled"
+                      type="primary"
                       size="small"
                       className="sz:w-full sz:text-[13px]"
                       onClick={handleGenerateCaption}
                     >
-                      자막 생성
+                      생성
+                    </Button>
+                    <Button
+                      type="dashed"
+                      size="small"
+                      className="sz:w-full sz:text-[13px]"
+                      onClick={handleDeactivateCaption}
+                    >
+                      해제
                     </Button>
                   </Space>
                 </div>
@@ -432,7 +444,6 @@ const YoutubeCaptionToggle = () => {
                   sz:gap-2
                   sz:cursor-pointer
                 "
-                onClick={handleClickIcon}
               >
                 {isLoading ? (
                   <LoadingOutlined
