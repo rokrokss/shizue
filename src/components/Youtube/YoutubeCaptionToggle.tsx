@@ -1,5 +1,6 @@
 import LanguageOptionItem from '@/components/Youtube/LanguageOptionItem';
 import { Language } from '@/hooks/language';
+import { useShowYoutubeCaptionToggleValue } from '@/hooks/layout';
 import { getCaptionInjector } from '@/lib/captionInjector';
 import { languageOptions } from '@/lib/language';
 import useAdObserver from '@/lib/useAdObserver';
@@ -43,6 +44,8 @@ const YoutubeCaptionToggle = () => {
   const animationFrameRef = useRef<number | null>(null);
   const [numLines, setNumLines] = useState(1);
   const storedTargetLanguage = useTranslateTargetLanguageValue();
+  const showToggleRef = useRef<boolean>(false);
+  const showYoutubeCaptionToggle = useShowYoutubeCaptionToggleValue();
 
   const lastVideoIdRef = useRef<string | null>(null);
   const inFlightRef = useRef(false);
@@ -53,6 +56,7 @@ const YoutubeCaptionToggle = () => {
   };
 
   const refreshCaptionStatus = useCallback(async () => {
+    if (!showToggleRef.current) return;
     if (inFlightRef.current) return;
     if (!window.location.pathname.includes('watch') || isAdPlaying()) {
       debugLog('[YouTube] refreshCaptionStatus: not watch page or ad is playing');
@@ -155,6 +159,30 @@ const YoutubeCaptionToggle = () => {
     };
   }, [isActivated, isLoading]);
 
+  useEffect(() => {
+    showToggleRef.current = showYoutubeCaptionToggle;
+
+    if (showYoutubeCaptionToggle) {
+      refreshCaptionStatus();
+    } else {
+      const videoElement = document.querySelector('video');
+      if (videoElement && !videoElement.paused) {
+        videoElement.pause();
+        debugLog('[YouTube] Video paused by deactivate');
+      }
+      setTimeout(() => {
+        if (animationFrameRef.current) {
+          cancelAnimationFrame(animationFrameRef.current);
+          animationFrameRef.current = null;
+        }
+        getCaptionInjector().deactivate();
+        setIsLoading(false);
+        setIsActivated(false);
+        setIsDropdownOpen(false);
+      }, 0);
+    }
+  }, [showYoutubeCaptionToggle]);
+
   const updateLoop = () => {
     const isCurrentCaptionTranslated = getCaptionInjector().updateCurrentTime();
 
@@ -235,7 +263,8 @@ const YoutubeCaptionToggle = () => {
   }, [storedTargetLanguage]);
 
   return (
-    isCaptionAvailable && (
+    isCaptionAvailable &&
+    showYoutubeCaptionToggle && (
       <ConfigProvider
         prefixCls="sz-ant-"
         iconPrefixCls="sz-ant-icon-"
