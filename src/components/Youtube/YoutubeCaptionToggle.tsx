@@ -1,8 +1,9 @@
 import LanguageOptionItem from '@/components/Youtube/LanguageOptionItem';
+import { Language } from '@/hooks/language';
 import { getCaptionInjector } from '@/lib/captionInjector';
 import { languageOptions } from '@/lib/language';
 import useAdObserver from '@/lib/useAdObserver';
-import { getVideoData, getVideoId, TranscriptMetadata } from '@/lib/youtube';
+import { getVideoData, getVideoId } from '@/lib/youtube';
 import { debugLog } from '@/logs';
 import { LoadingOutlined, ReadFilled } from '@ant-design/icons';
 import { Button, ConfigProvider, Divider, Dropdown, Popover, Space, theme, Tooltip } from 'antd';
@@ -14,12 +15,12 @@ const YoutubeCaptionToggle = () => {
 
   const [isCaptionAvailable, setIsCaptionAvailable] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [transcriptMetadata, setTranscriptMetadata] = useState<TranscriptMetadata[]>([]);
   const [targetLanguage, setTargetLanguage] = useState<Language>('English');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownTriggerRef = useRef<HTMLDivElement>(null);
   const [isLanguagePopoverOpen, setIsLanguagePopoverOpen] = useState(false);
   const [isActivated, setIsActivated] = useState(false);
+  const animationFrameRef = useRef<number | null>(null);
 
   const lastVideoIdRef = useRef<string | null>(null);
   const inFlightRef = useRef(false);
@@ -32,9 +33,12 @@ const YoutubeCaptionToggle = () => {
   const refreshCaptionStatus = useCallback(async () => {
     if (inFlightRef.current) return;
     if (!window.location.pathname.includes('watch') || isAdPlaying()) {
+      debugLog('[YouTube] refreshCaptionStatus: not watch page or ad is playing');
       setIsCaptionAvailable(false);
       setIsDropdownOpen(false);
-      setTranscriptMetadata([]);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
       return;
     }
 
@@ -43,6 +47,11 @@ const YoutubeCaptionToggle = () => {
 
     inFlightRef.current = true;
     setIsDropdownOpen(false);
+    setIsActivated(false);
+    getCaptionInjector().clear();
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
 
     try {
       lastVideoIdRef.current = vid;
@@ -51,13 +60,15 @@ const YoutubeCaptionToggle = () => {
       const data = await getVideoData(vid);
       debugLog('[Youtube] videoData', data);
 
-      if (data?.transcriptMetadata) {
+      const videoElement = document.querySelector('video');
+
+      if (data?.transcriptMetadata && videoElement) {
         lastVideoIdRef.current = vid;
         setIsCaptionAvailable(true);
-        setTranscriptMetadata(data.transcriptMetadata);
+        getCaptionInjector().setVideoElement(videoElement as HTMLVideoElement);
+        getCaptionInjector().setTranscriptMetadata(data.transcriptMetadata);
       } else {
         setIsCaptionAvailable(false);
-        setTranscriptMetadata([]);
       }
     } finally {
       inFlightRef.current = false;
@@ -67,7 +78,6 @@ const YoutubeCaptionToggle = () => {
   const handleAdStart = useCallback(() => {
     debugLog('[Youtube] useAdObserver: ad is started');
     setIsCaptionAvailable(false);
-    setTranscriptMetadata([]);
   }, []);
 
   const handleAdEnd = useCallback(() => {
@@ -84,6 +94,10 @@ const YoutubeCaptionToggle = () => {
 
     return () => {
       window.removeEventListener('yt-navigate-finish', refreshCaptionStatus);
+      getCaptionInjector().clear();
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
     };
   }, [refreshCaptionStatus]);
 
@@ -103,11 +117,22 @@ const YoutubeCaptionToggle = () => {
     }
   };
 
+  const updateLoop = () => {
+    getCaptionInjector().updateCurrentTime();
+    animationFrameRef.current = requestAnimationFrame(updateLoop);
+  };
+
   const handleGenerateCaption = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     debugLog('[YouTube] generate caption');
     setIsDropdownOpen(false);
-    getCaptionInjector().activate();
+    getCaptionInjector().activate(targetLanguage);
+
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
+    animationFrameRef.current = requestAnimationFrame(updateLoop);
+
     setIsActivated(true);
     const videoElement = document.querySelector('video');
     if (videoElement && videoElement.paused) {
@@ -122,6 +147,9 @@ const YoutubeCaptionToggle = () => {
     e.stopPropagation();
     e.preventDefault();
     debugLog('[YouTube] deactivate caption');
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
     getCaptionInjector().deactivate();
     setIsActivated(false);
   };
