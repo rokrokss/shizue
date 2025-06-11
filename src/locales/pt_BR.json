@@ -92,6 +92,9 @@
     "Arabic": "Árabe"
   },
   "youtube": {
-    "aiCaption": "Legenda IA de Shizue"
+    "aiCaption": "Legenda IA de Shizue",
+    "numCaptLines": "Número de linhas",
+    "activate": "Ativar",
+    "deactivate": "Desativar"
   }
 }

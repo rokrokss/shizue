@@ -92,6 +92,9 @@
     "Arabic": "Arabe"
   },
   "youtube": {
-    "aiCaption": "Sous-titres IA de Shizue"
+    "aiCaption": "Sous-titres IA de Shizue",
+    "numCaptLines": "Nombre de lignes",
+    "activate": "Activer",
+    "deactivate": "Désactiver"
   }
 }

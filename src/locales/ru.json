@@ -92,6 +92,9 @@
     "Arabic": "Арабский"
   },
   "youtube": {
-    "aiCaption": "AI-субтитры Shizue"
+    "aiCaption": "AI-субтитры Shizue",
+    "numCaptLines": "Количество строк",
+    "activate": "Активировать",
+    "deactivate": "Деактивировать"
   }
 }

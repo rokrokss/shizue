@@ -92,6 +92,9 @@
     "Arabic": "アラビア語"
   },
   "youtube": {
-    "aiCaption": "しずえ AI 字幕"
+    "aiCaption": "しずえ AI 字幕",
+    "numCaptLines": "行数",
+    "activate": "有効",
+    "deactivate": "無効"
   }
 }

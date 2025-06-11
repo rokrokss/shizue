@@ -92,6 +92,9 @@
     "Arabic": "Arabic"
   },
   "youtube": {
-    "aiCaption": "Shizue AI Caption"
+    "aiCaption": "Shizue AI Caption",
+    "numCaptLines": "Number of Lines",
+    "activate": "Activate",
+    "deactivate": "Deactivate"
   }
 }
