@@ -2,6 +2,13 @@
   <img src="src/public/icon/128.png" alt="Shizue Logo" width="64" />
   <h1>Shizue</h1>
   <p>Supercharge your Browse experience with the power of LLMs</p>
+
+
+  <p>
+    <a style="font-size: 28px" href="https://chromewebstore.google.com/detail/mpcbgfkoholfgapcgcmfjobnfcbnfanm?utm_source=item-share-cb">
+      Download Shizue from Chrome Web Store
+    </a>
+  </p>
 </div>
 
 # 👋 Intro
@@ -54,9 +61,7 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 
 # 🐳 Installation
 
-Deployment on the Chrome Web Store is currently under review. I'll update this section once Shizue is available there!
-
-In the meantime, you can install Shizue manually from the source by following these steps:
+You can install Shizue from [Chrome Web Store](https://chromewebstore.google.com/detail/mpcbgfkoholfgapcgcmfjobnfcbnfanm?utm_source=item-share-cb), or you can install Shizue manually from the source by following these steps:
 
 ### Manual Install (for Developers):
 
