@@ -6,6 +6,7 @@ import {
   MESSAGE_PANEL_OPENED_PING_FROM_PANEL,
   MESSAGE_SET_PANEL_OPEN_OR_NOT,
   MESSAGE_TRANSLATE_HTML_TEXT_BATCH,
+  MESSAGE_TRANSLATE_YOUTUBE_CAPTION,
 } from '@/config/constants';
 import { changePanelShowStatus, openPanel } from '@/entrypoints/background/sidepanel';
 import { changePanelOpened, getPanelOpened } from '@/entrypoints/background/states/sidepanel';
@@ -72,6 +73,16 @@ async function handleCanTranslate(msg: any, sendResponse: (response?: any) => vo
   sendResponse(canTranslate);
 }
 
+async function handleTranslateYoutubeCaption(msg: any, sendResponse: (response?: any) => void) {
+  const { captions, targetLanguage, metadata } = msg;
+  const translatedCaptions = await getTranslationHandler().translateYoutubeCaption(
+    captions,
+    targetLanguage,
+    metadata
+  );
+  sendResponse(translatedCaptions);
+}
+
 export const messageHandlers = {
   [MESSAGE_LOAD_THREAD]: handleLoadThread,
   [MESSAGE_CANCEL_NOT_STARTED_MESSAGE]: handleLatestMessageForThread,
@@ -80,4 +91,5 @@ export const messageHandlers = {
   [MESSAGE_OPEN_PANEL]: handleOpenPanel,
   [MESSAGE_TRANSLATE_HTML_TEXT_BATCH]: handleTranslateHtmlTextBatch,
   [MESSAGE_CAN_TRANSLATE]: handleCanTranslate,
+  [MESSAGE_TRANSLATE_YOUTUBE_CAPTION]: handleTranslateYoutubeCaption,
 };

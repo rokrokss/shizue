@@ -1,10 +1,11 @@
 import tailwindRaw from '@/assets/tailwind.css?inline';
 import { CaptionDisplay } from '@/components/Youtube/CaptionDisplay';
 import { Language } from '@/hooks/language';
-import { TranscriptMetadata } from '@/lib/youtube';
+import { Caption, TranscriptMetadata, VideoMetadata } from '@/lib/youtube';
 import { debugLog } from '@/logs';
 import AntdProvider from '@/providers/AntdProvider';
 import LanguageProvider from '@/providers/LanguageProvider';
+import { translationService } from '@/services/translationService';
 import { StyleProvider as AntdStyleProvider } from '@ant-design/cssinjs';
 import { Provider as JotaiProvider } from 'jotai';
 import { StrictMode } from 'react';
@@ -12,16 +13,9 @@ import { createRoot, Root } from 'react-dom/client';
 
 const CUSTOM_CAPTION_ID = 'shizue-custom-caption';
 
-type Caption = {
-  startTime: number;
-  endTime: number;
-  text: string;
-};
-
 export class CaptionInjector {
   private customCaptionRoot: Root | null = null;
   private videoElement: HTMLVideoElement | null = null;
-  private transcriptMetadata: TranscriptMetadata[] = [];
   private targetLanguage: Language = 'English';
   private captionCache: Map<Language, Caption[]> = new Map();
   private currentTime: number = 0;
@@ -29,11 +23,14 @@ export class CaptionInjector {
   private currentCaptionLines: string[] = [];
   private lastFoundCaptionIndex: number | null = null;
   private shadowRoot: ShadowRoot | null = null;
+  private transcriptMetadata: TranscriptMetadata[] = [];
+  private videoMetadata: VideoMetadata | null = null;
 
   constructor() {}
 
-  public setTranscriptMetadata = (transcriptMetadata: TranscriptMetadata[]) => {
+  public setMetaData = (transcriptMetadata: TranscriptMetadata[], videoMetadata: VideoMetadata) => {
     this.transcriptMetadata = transcriptMetadata;
+    this.videoMetadata = videoMetadata;
   };
 
   public setVideoElement = (videoElement: HTMLVideoElement) => {
@@ -131,6 +128,35 @@ export class CaptionInjector {
         }
       }
     }
+
+    if (!this.captionCache.has(targetLanguage)) {
+      // get baseCaption from transcriptMetadata
+      const base = this.transcriptMetadata[0];
+      const baseCaptionResponse = await fetch(base.baseUrl);
+      const baseData = await baseCaptionResponse.json();
+      debugLog('[YouTube] base caption data', baseData);
+      const baseCaptions = baseData.events
+        .filter((event: any) => event.segs)
+        .map((event: any) => ({
+          startTime: event.tStartMs / 1000,
+          endTime: (event.tStartMs + event.dDurationMs) / 1000,
+          text: event.segs
+            .map((seg: any) => seg.utf8)
+            .join('')
+            .trim(),
+        }))
+        .filter((caption: Caption) => caption.text.length > 0 && caption.text !== '[Music]');
+      this.captionCache.set(base.language, baseCaptions);
+
+      // translate base captions to target language
+      const translatedCaptions = await translationService.translateYoutubeCaption(
+        baseCaptions,
+        targetLanguage,
+        this.videoMetadata!
+      );
+      this.captionCache.set(targetLanguage, translatedCaptions.captions!);
+    }
+
     debugLog('[YouTube] captionCache', this.captionCache);
 
     this.videoElement = document.querySelector('video');
@@ -202,6 +228,7 @@ export class CaptionInjector {
 
   public clear = () => {
     this.transcriptMetadata = [];
+    this.videoMetadata = null;
     this.videoElement = null;
     this.captionCache.clear();
     this.targetLanguage = 'English';
