@@ -6,9 +6,29 @@ import useAdObserver from '@/lib/useAdObserver';
 import { getVideoData, getVideoId } from '@/lib/youtube';
 import { debugLog } from '@/logs';
 import { LoadingOutlined, ReadFilled } from '@ant-design/icons';
-import { Button, ConfigProvider, Divider, Dropdown, Popover, Space, theme, Tooltip } from 'antd';
+import {
+  Button,
+  ConfigProvider,
+  Divider,
+  Dropdown,
+  InputNumber,
+  Popover,
+  Space,
+  theme,
+  Tooltip,
+} from 'antd';
 import { cloneElement, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+const ERROR_TO_IGNORE = 'trigger element and popup element should in same shadow root';
+const originalError = console.error;
+console.error = (...args) => {
+  const [firstArg] = args;
+  if (typeof firstArg === 'string' && firstArg.includes(ERROR_TO_IGNORE)) {
+    return;
+  }
+  originalError.apply(console, args);
+};
 
 const YoutubeCaptionToggle = () => {
   const { t } = useTranslation();
@@ -21,6 +41,7 @@ const YoutubeCaptionToggle = () => {
   const [isLanguagePopoverOpen, setIsLanguagePopoverOpen] = useState(false);
   const [isActivated, setIsActivated] = useState(false);
   const animationFrameRef = useRef<number | null>(null);
+  const [numLines, setNumLines] = useState(1);
 
   const lastVideoIdRef = useRef<string | null>(null);
   const inFlightRef = useRef(false);
@@ -126,7 +147,7 @@ const YoutubeCaptionToggle = () => {
     e.stopPropagation();
     debugLog('[YouTube] generate caption');
     setIsDropdownOpen(false);
-    getCaptionInjector().activate(targetLanguage);
+    getCaptionInjector().activate(targetLanguage, numLines);
 
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
@@ -274,7 +295,6 @@ const YoutubeCaptionToggle = () => {
                         }}
                         arrow={false}
                         open={isDropdownOpen && isLanguagePopoverOpen}
-                        // open={true}
                         onOpenChange={setIsLanguagePopoverOpen}
                         content={
                           <div
@@ -330,15 +350,48 @@ const YoutubeCaptionToggle = () => {
                       </Popover>
                     ),
                   },
+                  {
+                    key: 'numLines',
+                    label: (
+                      <div
+                        className="
+                          sz:flex
+                          sz:flex-row
+                          sz:items-center
+                          sz:justify-between
+                          sz:gap-4
+                          sz:cursor-default
+                          sz:text-[13px]
+                        "
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <span className="sz:text-white">자막 줄 수</span>
+                        <InputNumber
+                          min={1}
+                          max={5}
+                          value={numLines}
+                          size="small"
+                          style={{ textAlign: 'right', fontSize: '12px', width: '45px' }}
+                          onChange={(value) => {
+                            if (value) {
+                              setNumLines(value);
+                            }
+                          }}
+                        />
+                      </div>
+                    ),
+                  },
                 ],
               }}
               popupRender={(menu) => (
                 <div
                   className="
-                  sz-dropdown-caption-menu
-                  sz:bg-black/72
-                  sz:rounded-lg
-                "
+                    sz-dropdown-caption-menu
+                    sz:bg-black/72
+                    sz:rounded-lg
+                  "
                 >
                   {cloneElement(
                     menu as React.ReactElement<{
