@@ -36,7 +36,7 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   - Generate concise summaries of web pages for quick content overview.
 
 ### 📺 LLM Translations for Youtube Captions:
-  - Generate LLM based translations for Youtube captions.
+  - Generate LLM based translations for Youtube captions in realtime.
 
 ### 🔑 Use Your Own OpenAI API Key:
   - Supports personal OpenAI API keys for direct and potentially more cost-effective usage of models. Users are billed directly by OpenAI.
