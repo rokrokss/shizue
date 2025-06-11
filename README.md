@@ -21,28 +21,32 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 | Side Chat     | ![chat](doc/chat.gif)   | 
 | Bilingual Reading  | ![translate](doc/translate.gif) | 
 | One-Click Page Summaries     | ![summarize](doc/summarize.gif)                                       | 
+| AI Translation for Youtube Captions | ![youtube](doc/youtube.gif) |
 | Dark Mode | ![darkMode](doc/darkmode.gif) |
 
 <br/>
 
 ### 💬 AI Chat Sidebar:
   - Quickly launch the sidebar using a keyboard shortcut to interact with LLMs via a side panel for queries, brainstorming, or information retrieval without navigating away from the current page.
-  
+
 ### 🌐 Bilingual Reading:
   - View web content in two languages side-by-side, aiding in language learning or comprehension of foreign-language texts.
-  
+
 ### 📄 One-Click Page Summaries:
   - Generate concise summaries of web pages for quick content overview.
-  
+
+### 📺 LLM Translations for Youtube Captions:
+  - Generate LLM based translations for Youtube captions.
+
 ### 🔑 Use Your Own OpenAI API Key:
   - Supports personal OpenAI API keys for direct and potentially more cost-effective usage of models. Users are billed directly by OpenAI.
-  
+
 ### 🎨 Color Themes:
   - Offers Light and Dark mode options for interface customization.
-  
+
 ### 🛡️ Secure & Private:
   - API keys and user data are intended to be handled securely within the extension.
-  
+
 ### 💖 Free & Open Source:
   - Licensed under the MIT License. The codebase is available for inspection, modification, and contribution.
 
