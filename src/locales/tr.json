@@ -92,6 +92,9 @@
     "Arabic": "Arapça"
   },
   "youtube": {
-    "aiCaption": "Shizue AI Altyazı"
+    "aiCaption": "Shizue AI Altyazı",
+    "numCaptLines": "Satır Sayısı",
+    "activate": "Aktif Et",
+    "deactivate": "Pasif Et"
   }
 }

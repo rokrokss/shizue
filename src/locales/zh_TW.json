@@ -92,6 +92,9 @@
     "Arabic": "阿拉伯语"
   },
   "youtube": {
-    "aiCaption": "Shizue AI 字幕"
+    "aiCaption": "Shizue AI 字幕",
+    "numCaptLines": "行數",
+    "activate": "激活",
+    "deactivate": "禁用"
   }
 }

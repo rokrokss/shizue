@@ -92,6 +92,9 @@
     "Arabic": "아랍어"
   },
   "youtube": {
-    "aiCaption": "시즈에 AI 자막"
+    "aiCaption": "시즈에 AI 자막",
+    "numCaptLines": "자막 줄 수",
+    "activate": "생성",
+    "deactivate": "해제"
   }
 }

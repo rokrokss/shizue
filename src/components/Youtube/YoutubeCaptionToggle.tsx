@@ -399,7 +399,7 @@ const YoutubeCaptionToggle = () => {
                           e.stopPropagation();
                         }}
                       >
-                        <span className="sz:text-white">자막 줄 수</span>
+                        <span className="sz:text-white">{t('youtube.numCaptLines')}</span>
                         <InputNumber
                           min={1}
                           max={5}
@@ -444,7 +444,7 @@ const YoutubeCaptionToggle = () => {
                       className="sz:w-full sz:text-[13px]"
                       onClick={handleGenerateCaption}
                     >
-                      생성
+                      {t('youtube.activate')}
                     </Button>
                     <Button
                       type="dashed"
@@ -452,7 +452,7 @@ const YoutubeCaptionToggle = () => {
                       className="sz:w-full sz:text-[13px]"
                       onClick={handleDeactivateCaption}
                     >
-                      해제
+                      {t('youtube.deactivate')}
                     </Button>
                   </Space>
                 </div>

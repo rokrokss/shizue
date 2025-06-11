@@ -92,6 +92,9 @@
     "Arabic": "العربية"
   },
   "youtube": {
-    "aiCaption": "تعليقات توضيحية بالذكاء الاصطناعي من Shizue"
+    "aiCaption": "تعليقات توضيحية بالذكاء الاصطناعي من Shizue",
+    "numCaptLines": "عدد الخطوط",
+    "activate": "تنشيط",
+    "deactivate": "تعطيل"
   }
 }

@@ -92,6 +92,9 @@
     "Arabic": "अरबी"
   },
   "youtube": {
-    "aiCaption": "शिज़ुए AI कैप्शन"
+    "aiCaption": "शिज़ुए AI कैप्शन",
+    "numCaptLines": "पंक्तियों की संख्या",
+    "activate": "सक्रिय करें",
+    "deactivate": "असक्रिय करें"
   }
 }
