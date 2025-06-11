@@ -130,7 +130,7 @@ export class CaptionInjector {
 
     let isCurrentCaptionTranslated = true;
 
-    if (currentIndex) {
+    if (currentIndex && this.isTranslating) {
       const chunkStartIndex = Math.floor(currentIndex / CAPTION_CHUNK_SIZE) * CAPTION_CHUNK_SIZE;
       if (!this.translatedChunks.has(chunkStartIndex)) {
         isCurrentCaptionTranslated = false;
@@ -211,6 +211,8 @@ export class CaptionInjector {
         const baseLanguage = this.transcriptMetadata[0]?.language;
         const baseCaptions = await this.fetchNativeCaptions(baseLanguage);
         if (!baseCaptions) {
+          debugLog('[YouTube] transcriptMetadata', this.transcriptMetadata);
+          debugLog(`[YouTube] Could not fetch base captions for ${baseLanguage}`);
           throw new Error(`Could not fetch base captions for ${baseLanguage}`);
         }
         this.captionCache.set(baseLanguage, baseCaptions);
