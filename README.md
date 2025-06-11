@@ -61,7 +61,8 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 
 # 🐳 Installation
 
-You can install Shizue from [Chrome Web Store](https://chromewebstore.google.com/detail/mpcbgfkoholfgapcgcmfjobnfcbnfanm?utm_source=item-share-cb), or you can install Shizue manually from the source by following these steps:
+- You can install Shizue from [Chrome Web Store](https://chromewebstore.google.com/detail/mpcbgfkoholfgapcgcmfjobnfcbnfanm?utm_source=item-share-cb),
+- or you can install Shizue manually from the source by following these steps:
 
 ### Manual Install (for Developers):
 
