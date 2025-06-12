@@ -27,8 +27,8 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 | -------- |----------------------------------------------------------------------------------------------------| 
 | Side Chat     | ![chat](doc/chat.gif)   | 
 | Bilingual Reading  | ![translate](doc/translate.gif) | 
-| One-Click Page Summaries     | ![summarize](doc/summarize.gif)                                       | 
 | AI Translation for Youtube Captions | ![youtube](doc/youtube.gif) |
+| One-Click Page Summaries     | ![summarize](doc/summarize.gif)                                       |
 | Dark Mode | ![darkMode](doc/darkmode.gif) |
 
 <br/>
@@ -39,12 +39,12 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 ### 🌐 Bilingual Reading:
   - View web content in two languages side-by-side, aiding in language learning or comprehension of foreign-language texts.
 
-### 📄 One-Click Page Summaries:
-  - Generate concise summaries of web pages for quick content overview.
-
 ### 📺 LLM Translations for Youtube Captions:
   - Next Release...
   - Generate LLM based translations for Youtube captions in realtime.
+
+### 📄 One-Click Page Summaries:
+  - Generate concise summaries of web pages for quick content overview.
 
 ### 🔑 Use Your Own OpenAI API Key:
   - Supports personal OpenAI API keys for direct and potentially more cost-effective usage of models. Users are billed directly by OpenAI.
