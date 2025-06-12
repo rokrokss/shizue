@@ -1,15 +1,4 @@
-@layer theme, base, components, utilities;
-@import "tailwindcss/theme.css" layer(theme) prefix(sz);
-@import "tailwindcss/utilities.css" layer(utilities) prefix(sz);
-
-@layer base {
-  .shizue-preflight {
-      @import "tailwindcss/preflight" important;
-  }
-  .sz-ant--tooltip {
-    @import "tailwindcss/preflight" important;
-  }
-}
+@import "tailwindcss" prefix(sz) important;
 
 @font-face {
   font-family: 'Ycomputer-Regular';

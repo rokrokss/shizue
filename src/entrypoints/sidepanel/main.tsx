@@ -1,5 +1,5 @@
 import '@/assets/global.css';
-import '@/assets/tailwind.css';
+import '@/assets/tailwindPreflight.css';
 import EmptyPage from '@/components/Loader/EmptyPage';
 import { SidePanelRoutes } from '@/entrypoints/sidepanel/routes';
 import AntdProvider from '@/providers/AntdProvider';

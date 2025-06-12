@@ -44,7 +44,9 @@ export default defineContentScript({
             inset: '0 auto auto 0',
             zIndex: '2147483647',
             pointerEvents: 'auto',
+            all: 'initial',
           });
+          container.classList.add('shizue-preflight');
           document.body.append(container);
 
           root = createRoot(container);

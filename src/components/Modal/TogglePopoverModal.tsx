@@ -56,7 +56,7 @@ const TogglePopoverModal = ({
     <div
       ref={modalRef}
       className="
-          sz-toggle-translate-settings-modal sz:rounded-xl sz:px-[15px] sz:pt-[10px] sz:pb-[10px] sz:shadow-xl sz:min-w-[280px] sz:h-[127px] sz:max-w-sm
+          sz-toggle-translate-settings-modal shizue-preflight sz:rounded-xl sz:px-[20px] sz:pt-[15px] sz:pb-[15px] sz:shadow-xl sz:min-w-[250px] sz:h-[100px] sz:max-w-sm
           sz:fixed sz:right-[47px] sz:z-2147483647
         "
       style={{
@@ -67,8 +67,11 @@ const TogglePopoverModal = ({
       onClick={(e) => e.stopPropagation()}
     >
       <button
-        className="sz:absolute sz:top-[8px] sz:right-[12px] hover:sz:text-black sz:cursor-pointer"
+        className="sz:absolute sz:top-[8px] sz:right-[12px] hover:sz:text-black sz:cursor-pointer sz:bg-transparent"
         onClick={onClose}
+        style={{
+          color: theme == 'dark' ? 'white' : 'rgb(16, 16, 16)',
+        }}
       >
         ✕
       </button>
