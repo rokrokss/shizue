@@ -40,7 +40,6 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   - View web content in two languages side-by-side, aiding in language learning or comprehension of foreign-language texts.
 
 ### 📺 LLM Translations for Youtube Captions:
-  - Next Release...
   - Generate LLM based translations for Youtube captions in realtime.
 
 ### 📄 One-Click Page Summaries:
