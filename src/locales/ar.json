@@ -24,6 +24,7 @@
         "description_1": "مستقر وتسعير على أساس الاستخدام.",
         "validate": "تحقق"
       },
+      "geminiApiKey": "استخدام مفتاح Gemini API",
       "chatGPTWebApp": {
         "title": "قيد التطوير...",
         "description": "قد يكون غير مستقر بسبب التغييرات في سياسات OpenAI."
@@ -59,7 +60,11 @@
     "translateModel": "نموذج الترجمة",
     "sourceLanguage": "اللغة المصدر",
     "targetLanguage": "اللغة الهدف",
-    "auto": "تلقائي"
+    "auto": "تلقائي",
+    "general": "عام",
+    "models": "النماذج",
+    "layout": "التخطيط",
+    "registered": "مسجل"
   },
   "time": {
     "justNow": "الآن",

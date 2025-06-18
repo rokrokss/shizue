@@ -1,5 +1,4 @@
 import {
-  MESSAGE_CAN_TRANSLATE,
   MESSAGE_TRANSLATE_HTML_TEXT_BATCH,
   MESSAGE_TRANSLATE_YOUTUBE_CAPTION,
 } from '@/config/constants';
@@ -9,14 +8,6 @@ import {
   BatchTranslationResult,
   YoutubeCaptionTranslationResult,
 } from '@/services/background/translationHandler';
-
-async function canTranslate() {
-  const result: boolean = await chrome.runtime.sendMessage({
-    action: MESSAGE_CAN_TRANSLATE,
-  });
-  debugLog('canTranslate result:', result);
-  return result;
-}
 
 async function translateHtmlTextBatch(texts: string[]) {
   const result: BatchTranslationResult = await chrome.runtime.sendMessage({
@@ -41,7 +32,6 @@ async function translateYoutubeCaption(
 }
 
 export const translationService = {
-  canTranslate,
   translateHtmlTextBatch,
   translateYoutubeCaption,
 };

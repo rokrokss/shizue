@@ -15,7 +15,11 @@ import {
 } from '@/config/constants';
 import { Language } from '@/hooks/language';
 import { useShowToggle, useToggleYPosition } from '@/hooks/layout';
-import { useTranslateModel } from '@/hooks/models';
+import {
+  useGeminiValidatedValue,
+  useOpenAIValidatedValue,
+  useTranslateModel,
+} from '@/hooks/models';
 import { hashStringToIndex } from '@/lib/hash';
 import { languageOptions } from '@/lib/language';
 import { TranslateModel } from '@/lib/models';
@@ -23,10 +27,9 @@ import { getPageTranslator } from '@/lib/pageTranslator';
 import { initSummarizePageContent } from '@/lib/summarize';
 import { debugLog } from '@/logs';
 import { panelService } from '@/services/panelService';
-import { translationService } from '@/services/translationService';
 import { Select } from 'antd';
 import { motion, PanInfo } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const Toggle = () => {
@@ -48,6 +51,8 @@ const Toggle = () => {
   const theme = useThemeValue();
   const [translateModel, setTranslateModel] = useTranslateModel();
   const [motionDivId, setMotionDivId] = useState(0);
+  const openAIValidated = useOpenAIValidatedValue();
+  const geminiValidated = useGeminiValidatedValue();
 
   const isVisible =
     isHoveringCharacter || isHoveringMenu || translateSettingsModalOpen || isTranslationActive;
@@ -93,6 +98,11 @@ const Toggle = () => {
   };
 
   const handleTranslateSettingsOpenChange = (newOpen: boolean) => {
+    if (!openAIValidated && !geminiValidated) {
+      debugLog('Translate page clicked but not able to open translate settings');
+      return;
+    }
+
     if (newOpen && translateSettingsPopoverTriggerRef.current) {
       const rect = translateSettingsPopoverTriggerRef.current.getBoundingClientRect();
       setSettingsTriggerYPosition(rect.top);
@@ -137,8 +147,7 @@ const Toggle = () => {
 
     if (isDragging) return;
 
-    const canTranslate = await translationService.canTranslate();
-    if (!canTranslate) {
+    if (!openAIValidated && !geminiValidated) {
       debugLog('Translate page clicked but not able to translate');
       return;
     }
@@ -243,7 +252,7 @@ const Toggle = () => {
                           <Select
                             value={translateModel}
                             onChange={handleSelectTranslateModel}
-                            className="sz:font-ycom sz:w-[150px]"
+                            className="sz:font-ycom sz:w-[180px]"
                             getPopupContainer={() => {
                               const modal = document.getElementsByClassName(
                                 'sz-toggle-translate-settings-modal'
@@ -255,16 +264,62 @@ const Toggle = () => {
                               {
                                 value: 'gpt-4.1',
                                 label: 'GPT 4.1',
-                                className: `sz:font-ycom ${
-                                  theme == 'dark' ? 'sz:text-white' : 'sz:text-gray-700'
-                                }`,
+                                className: 'sz:font-ycom',
+                                styles: {
+                                  color: openAIValidated
+                                    ? theme == 'dark'
+                                      ? 'white'
+                                      : 'rgb(55, 65, 81)'
+                                    : theme == 'dark'
+                                    ? 'rgba(255, 255, 255, 0.25)'
+                                    : 'rgba(55, 65, 81, 0.25)',
+                                },
+                                disabled: !openAIValidated,
                               },
                               {
                                 value: 'gpt-4.1-mini',
                                 label: 'GPT 4.1 Mini',
-                                className: `sz:font-ycom ${
-                                  theme == 'dark' ? 'sz:text-white' : 'sz:text-gray-700'
-                                }`,
+                                className: 'sz:font-ycom',
+                                styles: {
+                                  color: openAIValidated
+                                    ? theme == 'dark'
+                                      ? 'white'
+                                      : 'rgb(55, 65, 81)'
+                                    : theme == 'dark'
+                                    ? 'rgba(255, 255, 255, 0.25)'
+                                    : 'rgba(55, 65, 81, 0.25)',
+                                },
+                                disabled: !openAIValidated,
+                              },
+                              {
+                                value: 'gemini-2.5-flash-preview-05-20',
+                                label: 'Gemini 2.5 Flash',
+                                className: 'sz:font-ycom',
+                                styles: {
+                                  color: geminiValidated
+                                    ? theme == 'dark'
+                                      ? 'white'
+                                      : 'rgb(55, 65, 81)'
+                                    : theme == 'dark'
+                                    ? 'rgba(255, 255, 255, 0.25)'
+                                    : 'rgba(55, 65, 81, 0.25)',
+                                },
+                                disabled: !geminiValidated,
+                              },
+                              {
+                                value: 'gemini-2.0-flash-lite',
+                                label: 'Gemini 2.0 Flash Lite',
+                                className: 'sz:font-ycom',
+                                styles: {
+                                  color: geminiValidated
+                                    ? theme == 'dark'
+                                      ? 'white'
+                                      : 'rgb(55, 65, 81)'
+                                    : theme == 'dark'
+                                    ? 'rgba(255, 255, 255, 0.25)'
+                                    : 'rgba(55, 65, 81, 0.25)',
+                                },
+                                disabled: !geminiValidated,
                               },
                               {
                                 value: 'wip',
@@ -286,7 +341,7 @@ const Toggle = () => {
                           <Select
                             value={targetLanguage}
                             onChange={handleSelectTargetLanguage}
-                            className="sz:font-ycom sz:w-[150px] sz:text-gray-700"
+                            className="sz:font-ycom sz:w-[180px] sz:text-gray-700"
                             getPopupContainer={() => {
                               const modal = document.getElementsByClassName(
                                 'sz-toggle-translate-settings-modal'

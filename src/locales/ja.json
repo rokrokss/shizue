@@ -24,6 +24,7 @@
         "description_1": "安定しており、使用量に基づいた価格設定です。",
         "validate": "検証"
       },
+      "geminiApiKey": "Gemini APIキーを使用",
       "chatGPTWebApp": {
         "title": "開発中...",
         "description": "OpenAIのポリシー変更により不安定になる可能性があります。"
@@ -59,7 +60,11 @@
     "translateModel": "翻訳モデル",
     "sourceLanguage": "翻訳元の言語",
     "targetLanguage": "翻訳先の言語",
-    "auto": "自動"
+    "auto": "自動",
+    "general": "一般",
+    "models": "モデル",
+    "layout": "レイアウト",
+    "registered": "登録済み"
   },
   "time": {
     "justNow": "たった今",

@@ -1,5 +1,14 @@
 import { useThemeValue } from '@/hooks/layout';
-import { useSetOpenAIKey } from '@/hooks/settings';
+import {
+  defaultGeminiChatModel,
+  defaultGeminiTranslateModel,
+  defaultOpenAIChatModel,
+  defaultOpenAITranslateModel,
+  useSetChatModel,
+  useSetTranslateModel,
+} from '@/hooks/models';
+import { useSetGeminiKey, useSetOpenAIKey } from '@/hooks/settings';
+import { ModelProvider } from '@/lib/models';
 import { validateApiKey } from '@/lib/validateApiKey';
 import { SmileOutlined } from '@ant-design/icons';
 import { Button, Input, Select } from 'antd';
@@ -16,10 +25,14 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
   );
   const { t } = useTranslation();
   const navigate = useNavigate();
-
+  const [selectedProvider, setSelectedProvider] = useState<ModelProvider>('openai-api-key');
   const setOpenAIKey = useSetOpenAIKey();
+  const setGeminiKey = useSetGeminiKey();
+  const setChatModel = useSetChatModel();
+  const setTranslateModel = useSetTranslateModel();
   const theme = useThemeValue();
-
+  const setOpenAIValidated = useSetOpenAIValidated();
+  const setGeminiValidated = useSetGeminiValidated();
   const lines = [
     t('onboarding.selectProvider.title'),
     t('onboarding.selectProvider.openaiApiKey.description_0'),
@@ -27,13 +40,26 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
     t('onboarding.selectProvider.chatGPTWebApp.description'),
   ];
 
-  const handleSelect = (value: string) => {};
+  const handleSelect = (value: string) => {
+    setSelectedProvider(value as ModelProvider);
+    setApiKey('');
+  };
 
   const onClickValidate = async () => {
     setIsLoading(true);
-    const isValid = await validateApiKey(apiKey);
+    const isValid = await validateApiKey(apiKey, selectedProvider);
     if (isValid) {
-      setOpenAIKey(apiKey);
+      if (selectedProvider === 'openai-api-key') {
+        setOpenAIKey(apiKey);
+        setChatModel(defaultOpenAIChatModel);
+        setTranslateModel(defaultOpenAITranslateModel);
+        setOpenAIValidated(true);
+      } else if (selectedProvider === 'gemini-api-key') {
+        setGeminiKey(apiKey);
+        setChatModel(defaultGeminiChatModel);
+        setTranslateModel(defaultGeminiTranslateModel);
+        setGeminiValidated(true);
+      }
       setIsInvalidApiKey(false);
       setCanProceed(true);
     } else {
@@ -63,6 +89,11 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
             className: 'sz:font-ycom',
           },
           {
+            value: 'gemini-api-key',
+            label: t('onboarding.selectProvider.geminiApiKey'),
+            className: 'sz:font-ycom',
+          },
+          {
             value: 'chatgpt-webapp',
             label: t('onboarding.selectProvider.chatGPTWebApp.title'),
             className: 'sz:font-ycom',
@@ -88,7 +119,7 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
       </div>
       <div className="sz:flex sz:flex-row sz:items-center sz:w-80">
         <Input
-          placeholder="sk-XXX......"
+          placeholder={selectedProvider === 'openai-api-key' ? 'sk-XXX......' : 'AIza......'}
           className="sz:font-ycom sz:mr-[5px]"
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}

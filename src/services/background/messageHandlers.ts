@@ -1,5 +1,4 @@
 import {
-  MESSAGE_CAN_TRANSLATE,
   MESSAGE_CANCEL_NOT_STARTED_MESSAGE,
   MESSAGE_LOAD_THREAD,
   MESSAGE_OPEN_PANEL,
@@ -68,11 +67,6 @@ async function handleTranslateHtmlTextBatch(msg: any, sendResponse: (response?: 
   sendResponse(translatedTexts);
 }
 
-async function handleCanTranslate(msg: any, sendResponse: (response?: any) => void) {
-  const canTranslate = await getTranslationHandler().canTranslate();
-  sendResponse(canTranslate);
-}
-
 async function handleTranslateYoutubeCaption(msg: any, sendResponse: (response?: any) => void) {
   const { captions, targetLanguage, metadata } = msg;
   const translatedCaptions = await getTranslationHandler().translateYoutubeCaption(
@@ -90,6 +84,5 @@ export const messageHandlers = {
   [MESSAGE_PANEL_OPENED_PING_FROM_PANEL]: handlePanelOpenedPingFromPanel,
   [MESSAGE_OPEN_PANEL]: handleOpenPanel,
   [MESSAGE_TRANSLATE_HTML_TEXT_BATCH]: handleTranslateHtmlTextBatch,
-  [MESSAGE_CAN_TRANSLATE]: handleCanTranslate,
   [MESSAGE_TRANSLATE_YOUTUBE_CAPTION]: handleTranslateYoutubeCaption,
 };

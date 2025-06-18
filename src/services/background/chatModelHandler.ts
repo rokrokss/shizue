@@ -1,6 +1,10 @@
 import { STREAM_FLUSH_THRESHOLD_0, STREAM_FLUSH_THRESHOLD_1 } from '@/config/constants';
 import { getCurrentLanguage } from '@/entrypoints/background/states/language';
-import { getCurrentChatModel, getCurrentOpenaiKey } from '@/entrypoints/background/states/models';
+import {
+  getCurrentChatModel,
+  getCurrentGeminiKey,
+  getCurrentOpenaiKey,
+} from '@/entrypoints/background/states/models';
 import { ActionType } from '@/hooks/global';
 import { db, loadThread } from '@/lib/indexDB';
 import { getModelInstance, ModelPreset } from '@/lib/models';
@@ -10,8 +14,9 @@ import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from '@langchain/
 
 function getChatModelPreset(): ModelPreset {
   const openaiKey = getCurrentOpenaiKey();
+  const geminiKey = getCurrentGeminiKey();
   const modelName = getCurrentChatModel();
-  return { openaiKey, modelName };
+  return { openaiKey, geminiKey, modelName };
 }
 
 export class ChatModelHandler {
@@ -27,12 +32,21 @@ export class ChatModelHandler {
     let fullResponseContent = '';
 
     try {
-      const llm = await getModelInstance({
+      const llm = getModelInstance({
         streaming: true,
         temperature: actionType === 'askForSummary' ? 0.3 : 0.7,
         modelPreset: getChatModelPreset(),
       });
-      const stream = await llm.stream(messagesForModel, { signal: abortController.signal });
+      debugLog('ChatModelHandler [_executeStreamAndUpdate] messagesForModel:', messagesForModel);
+      const stream = await llm.stream(
+        messagesForModel.map((m) => {
+          if (m.content == '') {
+            m.content = ' ';
+          }
+          return m;
+        }),
+        { signal: abortController.signal }
+      );
 
       let buffer = '';
       const sendBufferToPort = async () => {

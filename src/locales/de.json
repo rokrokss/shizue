@@ -24,6 +24,7 @@
         "description_1": "Stabil und nutzungsbasierte Preise.",
         "validate": "Validieren"
       },
+      "geminiApiKey": "Gemini API-Schlüssel verwenden",
       "chatGPTWebApp": {
         "title": "In Arbeit...",
         "description": "Kann aufgrund von Änderungen in den OpenAI-Richtlinien instabil sein."
@@ -59,7 +60,11 @@
     "translateModel": "Übersetzungsmodell",
     "sourceLanguage": "Ausgangssprache",
     "targetLanguage": "Zielsprache",
-    "auto": "Automatisch"
+    "auto": "Automatisch",
+    "general": "Allgemein",
+    "models": "Modelle",
+    "layout": "Layout",
+    "registered": "Registriert"
   },
   "time": {
     "justNow": "gerade eben",

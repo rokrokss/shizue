@@ -24,6 +24,7 @@
         "description_1": "स्थिर और उपयोग-आधारित मूल्य निर्धारण।",
         "validate": "सत्यापित करें"
       },
+      "geminiApiKey": "Gemini API कुंजी का उपयोग करें",
       "chatGPTWebApp": {
         "title": "कार्य प्रगति पर है...",
         "description": "OpenAI की नीतियों में बदलाव के कारण अस्थिर हो सकता है।"
@@ -59,7 +60,11 @@
     "translateModel": "अनुवाद मॉडल",
     "sourceLanguage": "स्रोत भाषा",
     "targetLanguage": "लक्ष्य भाषा",
-    "auto": "ऑटो"
+    "auto": "ऑटो",
+    "general": "सामान्य",
+    "models": "मॉडल",
+    "layout": "लेआउट",
+    "registered": "रजिस्टर्ड"
   },
   "time": {
     "justNow": "अभी-अभी",
