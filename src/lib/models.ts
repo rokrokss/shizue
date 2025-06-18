@@ -9,14 +9,14 @@ export type ModelProvider = 'openai-api-key' | 'gemini-api-key';
 export type ChatModel =
   | 'gpt-4.1'
   | 'gpt-4.1-mini'
-  | 'gemini-2.5-flash-preview-05-20'
-  | 'gemini-2.0-flash-lite';
+  | 'gemini-2.5-flash'
+  | 'gemini-2.5-flash-lite-preview-06-17';
 
 export type TranslateModel =
   | 'gpt-4.1'
   | 'gpt-4.1-mini'
-  | 'gemini-2.5-flash-preview-05-20'
-  | 'gemini-2.0-flash-lite';
+  | 'gemini-2.5-flash'
+  | 'gemini-2.5-flash-lite-preview-06-17';
 
 export interface ModelPreset {
   openaiKey?: string;
