@@ -83,18 +83,21 @@
   "language": {
     "English": "Inglês",
     "Korean": "Coreano",
-    "Chinese": "Chinês",
+    "ChineseSimplified": "Chinês (Simplificado)",
+    "ChineseTraditional": "Chinês (Tradicional)",
     "Japanese": "Japonês",
     "Spanish": "Espanhol",
     "French": "Francês",
-    "Portuguese": "Português",
+    "PortugueseBR": "Português (Brasil)",
+    "PortuguesePT": "Português (Portugal)",
     "Russian": "Russo",
     "Hindi": "Hindi",
     "Italian": "Italiano",
     "German": "Alemão",
     "Polish": "Polonês",
     "Turkish": "Turco",
-    "Arabic": "Árabe"
+    "Arabic": "Árabe",
+    "Filipino": "Filipino"
   },
   "youtube": {
     "aiCaption": "Legenda IA de Shizue",

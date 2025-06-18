@@ -83,18 +83,21 @@
   "language": {
     "English": "Inglés",
     "Korean": "Coreano",
-    "Chinese": "Chino",
+    "ChineseSimplified": "Chino (Simplificado)",
+    "ChineseTraditional": "Chino (Tradicional)",
     "Japanese": "Japonés",
     "Spanish": "Español",
     "French": "Francés",
-    "Portuguese": "Portugués",
+    "PortugueseBR": "Portugués (Brasil)",
+    "PortuguesePT": "Portugués (Portugal)",
     "Russian": "Ruso",
     "Hindi": "Hindi",
     "Italian": "Italiano",
     "German": "Alemán",
     "Polish": "Polaco",
     "Turkish": "Turco",
-    "Arabic": "Árabe"
+    "Arabic": "Árabe",
+    "Filipino": "Filipino"
   },
   "youtube": {
     "aiCaption": "Subtítulos IA de Shizue",

@@ -83,18 +83,21 @@
   "language": {
     "English": "İngilizce",
     "Korean": "Korece",
-    "Chinese": "Çince",
+    "ChineseSimplified": "Çince (Basitleştirilmiş)",
+    "ChineseTraditional": "Çince (Geleneksel)",
     "Japanese": "Japonca",
     "Spanish": "İspanyolca",
     "French": "Fransızca",
-    "Portuguese": "Portekizce",
+    "PortugueseBR": "Portekizce (Brezilya)",
+    "PortuguesePT": "Portekizce (Portekiz)",
     "Russian": "Rusça",
     "Hindi": "Hintçe",
     "Italian": "İtalyanca",
     "German": "Almanca",
     "Polish": "Lehçe",
     "Turkish": "Türkçe",
-    "Arabic": "Arapça"
+    "Arabic": "Arapça",
+    "Filipino": "Filipince"
   },
   "youtube": {
     "aiCaption": "Shizue AI Altyazı",

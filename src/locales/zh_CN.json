@@ -83,18 +83,21 @@
   "language": {
     "English": "英语",
     "Korean": "韩语",
-    "Chinese": "中文",
+    "ChineseSimplified": "中文（简体）",
+    "ChineseTraditional": "中文（繁体）",
     "Japanese": "日语",
     "Spanish": "西班牙语",
     "French": "法语",
-    "Portuguese": "葡萄牙语",
+    "PortugueseBR": "葡萄牙语（巴西）",
+    "PortuguesePT": "葡萄牙语（葡萄牙）",
     "Russian": "俄语",
     "Hindi": "印地语",
     "Italian": "意大利语",
     "German": "德语",
     "Polish": "波兰语",
     "Turkish": "土耳其语",
-    "Arabic": "阿拉伯语"
+    "Arabic": "阿拉伯语",
+    "Filipino": "菲律宾语"
   },
   "youtube": {
     "aiCaption": "Shizue AI 字幕",

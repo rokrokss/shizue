@@ -1,23 +1,23 @@
 {
   "extension_name": "Shizue",
-  "extension_description": "Extensão de aprimoramento de navegador baseada em assistente de IA",
+  "extension_description": "Extensão de melhoria do navegador baseada em assistente de IA",
   "toggle_description": "Alternar Shizue",
   "overlayMenu": {
-    "translateSettings": "Configurações de tradução",
+    "translateSettings": "Definições de tradução",
     "translatePage": "Traduzir esta página",
     "summarizePage": "Resumir esta página",
     "removeTranslation": "Remover tradução"
   },
   "onboarding": {
     "greeting_0": "Bem-vindo!",
-    "greeting_1": "Eu sou Shizue.",
+    "greeting_1": "Sou a Shizue.",
     "greeting_2": "Alguns passos primeiro.",
     "answer_0": "Olá!",
     "continue": "Continuar",
-    "next": "Próximo",
+    "next": "Seguinte",
     "back": "Voltar",
     "selectProvider": {
-      "title": "Escolha seu provedor de IA",
+      "title": "Escolha o seu fornecedor de IA",
       "openaiApiKey": {
         "title": "Usar chave de API da OpenAI",
         "description_0": "Ideal para quem possui uma chave de API.",
@@ -26,12 +26,12 @@
       },
       "geminiApiKey": "Usar chave de API da Gemini",
       "chatGPTWebApp": {
-        "title": "Trabalho em andamento...",
-        "description": "Pode estar instável devido a mudanças nas políticas da OpenAI."
+        "title": "Trabalho em curso...",
+        "description": "Pode estar instável devido a alterações nas políticas da OpenAI."
       }
     },
     "selectLanguage": {
-      "title": "Escolha seu idioma"
+      "title": "Escolha o seu idioma"
     },
     "selectShortcut": {
       "title": "Defina o atalho do teclado para abrir o painel lateral"
@@ -39,32 +39,32 @@
   },
   "chat": {
     "greeting": "Olá,",
-    "main_0": "Como está o seu dia?",
-    "askAnything": "Pergunte qualquer coisa",
-    "connectionError": "Bip bip...🚨 Erro de sistema... 📡 🥺",
+    "main_0": "Como está o teu dia?",
+    "askAnything": "Pergunta o que quiseres",
+    "connectionError": "Bip bip...🚨 Erro do sistema... 📡 🥺",
     "retry": "Tentar novamente",
     "history": "Histórico",
-    "empty": "Nenhuma mensagem ainda",
-    "newChat": "Novo chat",
-    "summaryRequestText": "Resuma esta página! Shizue!"
+    "empty": "Ainda não há mensagens",
+    "newChat": "Nova conversa",
+    "summaryRequestText": "Resume esta página! Shizue!"
   },
   "footer": {
-    "joinDiscord": "Junte-se a mim no Discord!"
+    "joinDiscord": "Junta-te a mim no Discord!"
   },
   "settings": {
-    "title": "Configurações",
+    "title": "Definições",
     "language": "Idioma",
     "shortcut": "Atalho do painel",
-    "aiProvider": "Provedor de IA",
-    "chatModel": "Modelo de chat",
+    "aiProvider": "Fornecedor de IA",
+    "chatModel": "Modelo de conversa",
     "translateModel": "Modelo de tradução",
     "sourceLanguage": "Idioma de origem",
     "targetLanguage": "Idioma de destino",
     "auto": "Automático",
     "general": "Geral",
     "models": "Modelos",
-    "layout": "Layout",
-    "registered": "Registrado"
+    "layout": "Disposição",
+    "registered": "Registado"
   },
   "time": {
     "justNow": "agora mesmo",
@@ -77,31 +77,34 @@
     "theme": "Tema",
     "lightMode": "Claro",
     "darkMode": "Escuro",
-    "resetPosition": "Redefinir posição",
-    "menuButton": "Botão de menu"
+    "resetPosition": "Repor posição",
+    "menuButton": "Botão do menu"
   },
   "language": {
     "English": "Inglês",
     "Korean": "Coreano",
-    "Chinese": "Chinês",
+    "ChineseSimplified": "Chinês (Simplificado)",
+    "ChineseTraditional": "Chinês (Tradicional)",
     "Japanese": "Japonês",
     "Spanish": "Espanhol",
     "French": "Francês",
-    "Portuguese": "Português",
+    "PortugueseBR": "Português (Brasil)",
+    "PortuguesePT": "Português (Portugal)",
     "Russian": "Russo",
     "Hindi": "Hindi",
     "Italian": "Italiano",
     "German": "Alemão",
-    "Polish": "Polonês",
+    "Polish": "Polaco",
     "Turkish": "Turco",
-    "Arabic": "Árabe"
+    "Arabic": "Árabe",
+    "Filipino": "Filipino"
   },
   "youtube": {
-    "aiCaption": "Legenda IA de Shizue",
+    "aiCaption": "Legenda IA da Shizue",
     "numCaptLines": "Número de linhas",
     "activate": "Ativar",
     "deactivate": "Desativar",
-    "youtubeCaptionButton": "Botão de legenda YouTube",
+    "youtubeCaptionButton": "Botão de legenda do YouTube",
     "bilingual": "Bilingue"
   }
 }

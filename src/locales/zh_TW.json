@@ -1,106 +1,109 @@
 {
   "extension_name": "Shizue",
-  "extension_description": "基于AI助手的浏览器增强扩展",
-  "toggle_description": "切换 Shizue",
+  "extension_description": "基於AI助手的瀏覽器增強擴充功能",
+  "toggle_description": "切換 Shizue",
   "overlayMenu": {
-    "translateSettings": "翻译设置",
-    "translatePage": "翻译此页面",
-    "summarizePage": "总结此页面",
-    "removeTranslation": "移除翻译"
+    "translateSettings": "翻譯設定",
+    "translatePage": "翻譯此頁面",
+    "summarizePage": "總結此頁面",
+    "removeTranslation": "移除翻譯"
   },
   "onboarding": {
-    "greeting_0": "欢迎！",
+    "greeting_0": "歡迎！",
     "greeting_1": "我是 Shizue。",
-    "greeting_2": "首先需要几个步骤。",
+    "greeting_2": "首先需要幾個步驟。",
     "answer_0": "你好！",
-    "continue": "继续",
+    "continue": "繼續",
     "next": "下一步",
     "back": "返回",
     "selectProvider": {
-      "title": "选择您的AI提供商",
+      "title": "選擇您的AI提供商",
       "openaiApiKey": {
-        "title": "使用 OpenAI API 密钥",
-        "description_0": "非常适合拥有 API 密钥的用户。",
-        "description_1": "稳定且按使用量计费。",
-        "validate": "验证"
+        "title": "使用 OpenAI API 金鑰",
+        "description_0": "非常適合擁有 API 金鑰的使用者。",
+        "description_1": "穩定且按使用量計費。",
+        "validate": "驗證"
       },
-      "geminiApiKey": "使用 Gemini API 密钥",
+      "geminiApiKey": "使用 Gemini API 金鑰",
       "chatGPTWebApp": {
-        "title": "正在开发中...",
-        "description": "由于 OpenAI 政策的更改，可能不稳定。"
+        "title": "開發中...",
+        "description": "由於 OpenAI 政策的變更，可能不穩定。"
       }
     },
     "selectLanguage": {
-      "title": "选择您的语言"
+      "title": "選擇您的語言"
     },
     "selectShortcut": {
-      "title": "设置打开侧边栏的键盘快捷键"
+      "title": "設定開啟側邊欄的鍵盤快捷鍵"
     }
   },
   "chat": {
     "greeting": "你好，",
-    "main_0": "今天过得怎么样？",
-    "askAnything": "随便问",
-    "connectionError": "哔哔...🚨 系统错误... 📡 🥺",
-    "retry": "重试",
-    "history": "历史记录",
-    "empty": "暂无消息",
-    "newChat": "新聊天",
-    "summaryRequestText": "总结这个页面！Shizue！"
+    "main_0": "今天過得怎麼樣？",
+    "askAnything": "隨便問",
+    "connectionError": "嗶嗶...🚨 系統錯誤... 📡 🥺",
+    "retry": "重試",
+    "history": "歷史記錄",
+    "empty": "暫無訊息",
+    "newChat": "新對話",
+    "summaryRequestText": "總結這個頁面！Shizue！"
   },
   "footer": {
     "joinDiscord": "加入我的 Discord！"
   },
   "settings": {
-    "title": "设置",
-    "language": "语言",
-    "shortcut": "面板快捷键",
+    "title": "設定",
+    "language": "語言",
+    "shortcut": "面板快捷鍵",
     "aiProvider": "AI 提供商",
-    "chatModel": "聊天模型",
-    "translateModel": "翻译模型",
-    "sourceLanguage": "源语言",
-    "targetLanguage": "目标语言",
-    "auto": "自动",
-    "general": "通用",
+    "chatModel": "對話模型",
+    "translateModel": "翻譯模型",
+    "sourceLanguage": "來源語言",
+    "targetLanguage": "目標語言",
+    "auto": "自動",
+    "general": "一般",
     "models": "模型",
-    "layout": "布局",
-    "registered": "已注册"
+    "layout": "版面配置",
+    "registered": "已註冊"
   },
   "time": {
-    "justNow": "刚刚",
-    "minutesAgo": "分钟前",
-    "hoursAgo": "小时前",
+    "justNow": "剛剛",
+    "minutesAgo": "分鐘前",
+    "hoursAgo": "小時前",
     "daysAgo": "天前"
   },
   "layout": {
-    "hideToggle": "隐藏按钮",
-    "theme": "主题",
-    "lightMode": "日间模式",
-    "darkMode": "夜间模式",
-    "resetPosition": "重置位置",
-    "menuButton": "菜單按鈕"
+    "hideToggle": "隱藏按鈕",
+    "theme": "主題",
+    "lightMode": "日間模式",
+    "darkMode": "夜間模式",
+    "resetPosition": "重設位置",
+    "menuButton": "選單按鈕"
   },
   "language": {
-    "English": "英语",
-    "Korean": "韩语",
-    "Chinese": "中文",
-    "Japanese": "日语",
-    "Spanish": "西班牙语",
-    "French": "法语",
-    "Portuguese": "葡萄牙语",
-    "Russian": "俄语",
-    "Hindi": "印地语",
-    "Italian": "意大利语",
-    "German": "德语",
-    "Polish": "波兰语",
-    "Turkish": "土耳其语",
-    "Arabic": "阿拉伯语"
+    "English": "英語",
+    "Korean": "韓語",
+    "ChineseSimplified": "中文（簡體）",
+    "ChineseTraditional": "中文（繁體）",
+    "Japanese": "日語",
+    "Spanish": "西班牙語",
+    "French": "法語",
+    "PortugueseBR": "葡萄牙語（巴西）",
+    "PortuguesePT": "葡萄牙語（葡萄牙）",
+    "Russian": "俄語",
+    "Hindi": "印地語",
+    "Italian": "義大利語",
+    "German": "德語",
+    "Polish": "波蘭語",
+    "Turkish": "土耳其語",
+    "Arabic": "阿拉伯語",
+    "Filipino": "菲律賓語"
   },
   "youtube": {
     "aiCaption": "Shizue AI 字幕",
     "numCaptLines": "行數",
-    "activate": "激活",
-    "deactivate": "禁用",
+    "activate": "啟用",
+    "deactivate": "停用",
     "youtubeCaptionButton": "YouTube 字幕按鈕",
     "bilingual": "雙語"
   }
