@@ -292,7 +292,7 @@ const Toggle = () => {
                                 disabled: !openAIValidated,
                               },
                               {
-                                value: 'gemini-2.5-flash-preview-05-20',
+                                value: 'gemini-2.5-flash',
                                 label: 'Gemini 2.5 Flash',
                                 className: 'sz:font-ycom',
                                 styles: {
@@ -307,8 +307,8 @@ const Toggle = () => {
                                 disabled: !geminiValidated,
                               },
                               {
-                                value: 'gemini-2.0-flash-lite',
-                                label: 'Gemini 2.0 Flash Lite',
+                                value: 'gemini-2.5-flash-lite-preview-06-17',
+                                label: 'Gemini 2.5 Flash Lite',
                                 className: 'sz:font-ycom',
                                 styles: {
                                   color: geminiValidated
