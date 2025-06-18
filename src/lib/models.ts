@@ -2,8 +2,6 @@ import { debugLog, errorLog } from '@/logs';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { ChatOpenAI } from '@langchain/openai';
 
-/* ---------- 타입 ---------- */
-
 export type ModelProvider = 'openai-api-key' | 'gemini-api-key';
 
 export type ChatModel =

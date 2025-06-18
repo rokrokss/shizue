@@ -101,6 +101,7 @@
     "numCaptLines": "Número de líneas",
     "activate": "Activar",
     "deactivate": "Desactivar",
-    "youtubeCaptionButton": "Botón de subtítulos de YouTube"
+    "youtubeCaptionButton": "Botón de subtítulos de YouTube",
+    "bilingual": "Bilingüe"
   }
 }

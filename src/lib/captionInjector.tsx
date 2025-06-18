@@ -18,9 +18,11 @@ export class CaptionInjector {
   private customCaptionRoot: Root | null = null;
   private videoElement: HTMLVideoElement | null = null;
   private targetLanguage: Language = 'English';
+  private baseLanguage: Language = 'English';
   private captionCache: Map<Language, Caption[]> = new Map();
   private currentTime: number = 0;
   private numLines = 1;
+  private bilingual = false;
   private currentCaptionLines: string[] = [];
   private lastFoundCaptionIndex: number | null = null;
   private shadowRoot: ShadowRoot | null = null;
@@ -137,9 +139,14 @@ export class CaptionInjector {
     }
 
     let newLines: string[] = [];
+    let originalLines: string[] = [];
     if (currentIndex !== null) {
       const startIndex = Math.max(0, currentIndex - this.numLines + 1);
       newLines = allCaptions.slice(startIndex, currentIndex + 1).map((c) => c.text);
+      originalLines = this.captionCache
+        .get(this.baseLanguage)!
+        .slice(startIndex, currentIndex + 1)
+        .map((c) => c.text);
     }
 
     if (JSON.stringify(newLines) !== JSON.stringify(this.currentCaptionLines)) {
@@ -151,7 +158,11 @@ export class CaptionInjector {
             <LanguageProvider loadingComponent={null}>
               <AntdStyleProvider container={this.shadowRoot!}>
                 <AntdProvider>
-                  <CaptionDisplay lines={this.currentCaptionLines} />
+                  <CaptionDisplay
+                    lines={this.currentCaptionLines}
+                    originalLines={originalLines}
+                    bilingual={this.bilingual && isCurrentCaptionTranslated}
+                  />
                 </AntdProvider>
               </AntdStyleProvider>
             </LanguageProvider>
@@ -211,6 +222,7 @@ export class CaptionInjector {
         this.captionCache.set(this.targetLanguage, nativeCaptions);
         debugLog('[YouTube] Using native captions for', this.targetLanguage);
         this.isTranslating = false;
+        this.baseLanguage = this.targetLanguage;
         return;
       }
 
@@ -224,6 +236,7 @@ export class CaptionInjector {
           debugLog(`[YouTube] Could not fetch base captions for ${baseLanguage}`);
           throw new Error(`Could not fetch base captions for ${baseLanguage}`);
         }
+        this.baseLanguage = baseLanguage;
         this.captionCache.set(baseLanguage, baseCaptions);
 
         const currentTime = this.videoElement?.currentTime ?? 0;
@@ -315,12 +328,13 @@ export class CaptionInjector {
     }
   }
 
-  public activate = async (targetLanguage: Language, numLines: number) => {
+  public activate = async (targetLanguage: Language, numLines: number, bilingual: boolean) => {
     if (document.getElementById(CUSTOM_CAPTION_ID)) {
       this.deactivate();
     }
 
     this.numLines = numLines;
+    this.bilingual = bilingual;
     this.targetLanguage = targetLanguage;
 
     this.videoElement = document.querySelector('video');
@@ -364,7 +378,7 @@ export class CaptionInjector {
           <LanguageProvider loadingComponent={null}>
             <AntdStyleProvider container={this.shadowRoot}>
               <AntdProvider>
-                <CaptionDisplay lines={[]} />
+                <CaptionDisplay lines={[]} originalLines={[]} bilingual={false} />
               </AntdProvider>
             </AntdStyleProvider>
           </LanguageProvider>

@@ -1,5 +1,6 @@
 import {
   STORAGE_SHOW_TOGGLE,
+  STORAGE_SHOW_YOUTUBE_BILINGUAL_CAPTION,
   STORAGE_SHOW_YOUTUBE_CAPTION_TOGGLE,
   STORAGE_THEME,
   STORAGE_TOGGLE_Y_POSITION,
@@ -14,6 +15,7 @@ export const defaultTheme: Theme = 'light';
 export const defaultShowToggle = true;
 export const defaultToggleYPosition = -18;
 export const defaultShowYoutubeCaptionToggle = true;
+export const defaultShowYoutubeBilingualCaption = false;
 
 export const themeAtom = atomWithStorage<Theme>(
   STORAGE_THEME,
@@ -43,9 +45,17 @@ export const youtubeShowCaptionToggleAtom = atomWithStorage<boolean>(
   { getOnInit: true }
 );
 
+export const youtubeShowBilingualCaptionAtom = atomWithStorage<boolean>(
+  STORAGE_SHOW_YOUTUBE_BILINGUAL_CAPTION,
+  defaultShowYoutubeBilingualCaption,
+  chromeStorageBackend('local'),
+  { getOnInit: true }
+);
+
 export const useTheme = () => useAtom(themeAtom);
 export const useThemeValue = () => useAtomValue(themeAtom);
 export const useShowToggle = () => useAtom(showToggleAtom);
 export const useToggleYPosition = () => useAtom(toggleYPositionAtom);
 export const useShowYoutubeCaptionToggle = () => useAtom(youtubeShowCaptionToggleAtom);
 export const useShowYoutubeCaptionToggleValue = () => useAtomValue(youtubeShowCaptionToggleAtom);
+export const useShowYoutubeBilingualCaption = () => useAtom(youtubeShowBilingualCaptionAtom);

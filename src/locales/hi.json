@@ -81,7 +81,7 @@
     "menuButton": "मेनू बटन"
   },
   "language": {
-    "English": "अंग्रेज़ी",
+    "English": "अंग्रे़ी",
     "Korean": "कोरियाई",
     "Chinese": "चीनी",
     "Japanese": "जापानी",
@@ -101,6 +101,7 @@
     "numCaptLines": "पंक्तियों की संख्या",
     "activate": "सक्रिय करें",
     "deactivate": "असक्रिय करें",
-    "youtubeCaptionButton": "यूट्यूब कैप्शन बटन"
+    "youtubeCaptionButton": "यूट्यूब कैप्शन बटन",
+    "bilingual": "द्विभाषी"
   }
 }

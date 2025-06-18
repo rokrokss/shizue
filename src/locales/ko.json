@@ -101,6 +101,7 @@
     "numCaptLines": "자막 줄 수",
     "activate": "생성",
     "deactivate": "해제",
-    "youtubeCaptionButton": "유튜브 자막 버튼"
+    "youtubeCaptionButton": "유튜브 자막 버튼",
+    "bilingual": "이중 언어"
   }
 }

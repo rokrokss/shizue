@@ -1,6 +1,6 @@
 import LanguageOptionItem from '@/components/Youtube/LanguageOptionItem';
 import { Language } from '@/hooks/language';
-import { useShowYoutubeCaptionToggleValue } from '@/hooks/layout';
+import { useShowYoutubeBilingualCaption, useShowYoutubeCaptionToggleValue } from '@/hooks/layout';
 import { getCaptionInjector } from '@/lib/captionInjector';
 import { languageOptions } from '@/lib/language';
 import useAdObserver from '@/lib/useAdObserver';
@@ -15,6 +15,7 @@ import {
   InputNumber,
   Popover,
   Space,
+  Switch,
   theme,
   Tooltip,
 } from 'antd';
@@ -46,6 +47,8 @@ const YoutubeCaptionToggle = () => {
   const storedTargetLanguage = useTranslateTargetLanguageValue();
   const showToggleRef = useRef<boolean>(false);
   const showYoutubeCaptionToggle = useShowYoutubeCaptionToggleValue();
+  const [showYoutubeBilingualCaption, setShowYoutubeBilingualCaption] =
+    useShowYoutubeBilingualCaption();
 
   const lastVideoIdRef = useRef<string | null>(null);
   const inFlightRef = useRef(false);
@@ -201,7 +204,7 @@ const YoutubeCaptionToggle = () => {
     setIsLoading(true);
 
     // starting translation in the background
-    getCaptionInjector().activate(targetLanguage, numLines);
+    getCaptionInjector().activate(targetLanguage, numLines, showYoutubeBilingualCaption);
 
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
@@ -440,6 +443,32 @@ const YoutubeCaptionToggle = () => {
                               setNumLines(value);
                             }
                           }}
+                        />
+                      </div>
+                    ),
+                  },
+                  {
+                    key: 'seeOriginal',
+                    label: (
+                      <div
+                        className="
+                          sz:flex
+                          sz:flex-row
+                          sz:items-center
+                          sz:justify-between
+                          sz:gap-4
+                          sz:cursor-default
+                          sz:text-[13px]
+                        "
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <span className="sz:text-white">{t('youtube.bilingual')}</span>
+                        <Switch
+                          size="small"
+                          checked={showYoutubeBilingualCaption}
+                          onChange={setShowYoutubeBilingualCaption}
                         />
                       </div>
                     ),

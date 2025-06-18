@@ -101,6 +101,7 @@
     "numCaptLines": "Numero di linee",
     "activate": "Attiva",
     "deactivate": "Disattiva",
-    "youtubeCaptionButton": "Pulsante sottotitoli YouTube"
+    "youtubeCaptionButton": "Pulsante sottotitoli YouTube",
+    "bilingual": "Bilingue"
   }
 }
