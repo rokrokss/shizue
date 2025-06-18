@@ -101,6 +101,7 @@
     "numCaptLines": "行数",
     "activate": "激活",
     "deactivate": "禁用",
-    "youtubeCaptionButton": "YouTube 字幕按钮"
+    "youtubeCaptionButton": "YouTube 字幕按钮",
+    "bilingual": "双语"
   }
 }

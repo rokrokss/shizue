@@ -101,6 +101,7 @@
     "numCaptLines": "Anzahl der Zeilen",
     "activate": "Aktivieren",
     "deactivate": "Deaktivieren",
-    "youtubeCaptionButton": "YouTube-Untertitel-Schaltfläche"
+    "youtubeCaptionButton": "YouTube-Untertitel-Schaltfläche",
+    "bilingual": "Zweisprachig"
   }
 }

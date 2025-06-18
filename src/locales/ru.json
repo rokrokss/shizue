@@ -101,6 +101,7 @@
     "numCaptLines": "Количество строк",
     "activate": "Активировать",
     "deactivate": "Деактивировать",
-    "youtubeCaptionButton": "Кнопка субтитров YouTube"
+    "youtubeCaptionButton": "Кнопка субтитров YouTube",
+    "bilingual": "Двуязычный"
   }
 }

@@ -101,6 +101,7 @@
     "numCaptLines": "Number of Lines",
     "activate": "Activate",
     "deactivate": "Deactivate",
-    "youtubeCaptionButton": "Youtube Caption Button"
+    "youtubeCaptionButton": "Youtube Caption Button",
+    "bilingual": "Bilingual"
   }
 }
