@@ -83,18 +83,21 @@
   "language": {
     "English": "अंग्रे़ी",
     "Korean": "कोरियाई",
-    "Chinese": "चीनी",
+    "ChineseSimplified": "चीनी (सरलीकृत)",
+    "ChineseTraditional": "चीनी (पारंपरिक)",
     "Japanese": "जापानी",
     "Spanish": "स्पेनिश",
     "French": "फ़्रेंच",
-    "Portuguese": "पुर्तगाली",
+    "PortugueseBR": "पुर्तगाली (ब्राज़ील)",
+    "PortuguesePT": "पुर्तगाली (पुर्तगाल)",
     "Russian": "रूसी",
-    "Hindi": "हिन्दी",
+    "Hindi": "हिंदी",
     "Italian": "इतालवी",
     "German": "जर्मन",
     "Polish": "पोलिश",
     "Turkish": "तुर्की",
-    "Arabic": "अरबी"
+    "Arabic": "अरबी",
+    "Filipino": "फिलिपीनो"
   },
   "youtube": {
     "aiCaption": "शिज़ुए AI कैप्शन",

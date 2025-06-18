@@ -83,18 +83,21 @@
   "language": {
     "English": "الإنجليزية",
     "Korean": "الكورية",
-    "Chinese": "الصينية",
+    "ChineseSimplified": "الصينية (المبسطة)",
+    "ChineseTraditional": "الصينية (التقليدية)",
     "Japanese": "اليابانية",
     "Spanish": "الإسبانية",
     "French": "الفرنسية",
-    "Portuguese": "البرتغالية",
+    "PortugueseBR": "البرتغالية (البرازيل)",
+    "PortuguesePT": "البرتغالية (البرتغال)",
     "Russian": "الروسية",
     "Hindi": "الهندية",
     "Italian": "الإيطالية",
     "German": "الألمانية",
     "Polish": "البولندية",
     "Turkish": "التركية",
-    "Arabic": "العربية"
+    "Arabic": "العربية",
+    "Filipino": "الفلبينية"
   },
   "youtube": {
     "aiCaption": "تعليقات توضيحية بالذكاء الاصطناعي من Shizue",

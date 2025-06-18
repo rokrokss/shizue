@@ -83,18 +83,21 @@
   "language": {
     "English": "English",
     "Korean": "Korean",
-    "Chinese": "Chinese",
+    "ChineseSimplified": "Chinese (Simplified)",
+    "ChineseTraditional": "Chinese (Traditional)",
     "Japanese": "Japanese",
     "Spanish": "Spanish",
     "French": "French",
-    "Portuguese": "Portuguese",
+    "PortugueseBR": "Portuguese (Brazil)",
+    "PortuguesePT": "Portuguese (Portugal)",
     "Russian": "Russian",
     "Hindi": "Hindi",
     "Italian": "Italian",
     "German": "German",
     "Polish": "Polish",
     "Turkish": "Turkish",
-    "Arabic": "Arabic"
+    "Arabic": "Arabic",
+    "Filipino": "Filipino"
   },
   "youtube": {
     "aiCaption": "Shizue AI Caption",

@@ -1,0 +1,110 @@
+{
+  "extension_name": "Shizue",
+  "extension_description": "AI Assistant-based browser enhancement extension",
+  "toggle_description": "Toggle Shizue",
+  "overlayMenu": {
+    "translateSettings": "Mga setting ng pagsasalin",
+    "translatePage": "Isalin ang pahinang ito",
+    "summarizePage": "Ibuod ang pahinang ito",
+    "removeTranslation": "Alisin ang pagsasalin"
+  },
+  "onboarding": {
+    "greeting_0": "Maligayang pagdating!",
+    "greeting_1": "Ako si Shizue.",
+    "greeting_2": "Ilang hakbang muna.",
+    "answer_0": "Kamusta!",
+    "continue": "Magpatuloy",
+    "next": "Susunod",
+    "back": "Bumalik",
+    "selectProvider": {
+      "title": "Piliin ang Iyong AI Provider",
+      "openaiApiKey": {
+        "title": "Gamitin ang OpenAI API Key",
+        "description_0": "Ideal para sa mga may API key.",
+        "description_1": "Stable at usage-based pricing.",
+        "validate": "i-validate"
+      },
+      "geminiApiKey": "Gamitin ang Gemini API Key",
+      "chatGPTWebApp": {
+        "title": "work in progress...",
+        "description": "Maaaring hindi stable dahil sa mga pagbabago sa mga patakaran ng OpenAI."
+      }
+    },
+    "selectLanguage": {
+      "title": "Piliin ang Iyong Wika"
+    },
+    "selectShortcut": {
+      "title": "Itakda ang Iyong Keyboard Shortcut para Buksan ang Side Panel"
+    }
+  },
+  "chat": {
+    "greeting": "Kamusta,",
+    "main_0": "Kumusta ang iyong araw?",
+    "askAnything": "Magtanong ng kahit ano",
+    "connectionError": "Beep beep...🚨 System Error... 📡 🥺",
+    "retry": "Subukan ulit",
+    "history": "Kasaysayan",
+    "empty": "Walang mensahe pa",
+    "newChat": "Bagong Chat",
+    "summaryRequestText": "Ibuod ang pahinang ito! Shizue!"
+  },
+  "footer": {
+    "joinDiscord": "Sumali sa akin sa Discord!"
+  },
+  "settings": {
+    "title": "Mga Setting",
+    "language": "Wika",
+    "shortcut": "Panel Shortcut",
+    "aiProvider": "AI Provider",
+    "chatModel": "Chat Model",
+    "translateModel": "Translation Model",
+    "sourceLanguage": "Source Language",
+    "targetLanguage": "Target Language",
+    "auto": "Auto",
+    "general": "Pangkalahatan",
+    "models": "Mga Model",
+    "layout": "Layout",
+    "registered": "Nakarehistro"
+  },
+  "time": {
+    "justNow": "ngayon lang",
+    "minutesAgo": "m ang nakalipas",
+    "hoursAgo": "h ang nakalipas",
+    "daysAgo": "d ang nakalipas"
+  },
+  "layout": {
+    "hideToggle": "Itago ang Button",
+    "theme": "Tema",
+    "lightMode": "Maliwanag",
+    "darkMode": "Madilim",
+    "resetPosition": "I-reset ang Posisyon",
+    "menuButton": "Menu Button"
+  },
+  "language": {
+    "English": "Ingles",
+    "Korean": "Koreano",
+    "ChineseSimplified": "Intsik (Simplified)",
+    "ChineseTraditional": "Intsik (Traditional)",
+    "Japanese": "Hapon",
+    "Spanish": "Espanyol",
+    "French": "Pranses",
+    "PortugueseBR": "Portuges (Brazil)",
+    "PortuguesePT": "Portuges (Portugal)",
+    "Russian": "Ruso",
+    "Hindi": "Hindi",
+    "Italian": "Italyano",
+    "German": "Aleman",
+    "Polish": "Polako",
+    "Turkish": "Turko",
+    "Arabic": "Arabe",
+    "Filipino": "Filipino"
+  },
+  "youtube": {
+    "aiCaption": "Shizue AI Caption",
+    "numCaptLines": "Bilang ng mga Linya",
+    "activate": "I-activate",
+    "deactivate": "I-deactivate",
+    "youtubeCaptionButton": "Youtube Caption Button",
+    "bilingual": "Bilingual"
+  }
+}

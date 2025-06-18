@@ -83,18 +83,21 @@
   "language": {
     "English": "英語",
     "Korean": "韓国語",
-    "Chinese": "中国語",
+    "ChineseSimplified": "中国語（簡体字）",
+    "ChineseTraditional": "中国語（繁体字）",
     "Japanese": "日本語",
     "Spanish": "スペイン語",
     "French": "フランス語",
-    "Portuguese": "ポルトガル語",
+    "PortugueseBR": "ポルトガル語（ブラジル）",
+    "PortuguesePT": "ポルトガル語（ポルトガル）",
     "Russian": "ロシア語",
     "Hindi": "ヒンディー語",
     "Italian": "イタリア語",
     "German": "ドイツ語",
     "Polish": "ポーランド語",
     "Turkish": "トルコ語",
-    "Arabic": "アラビア語"
+    "Arabic": "アラビア語",
+    "Filipino": "フィリピン語"
   },
   "youtube": {
     "aiCaption": "しずえ AI 字幕",

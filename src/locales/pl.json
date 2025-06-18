@@ -83,18 +83,21 @@
   "language": {
     "English": "Angielski",
     "Korean": "Koreański",
-    "Chinese": "Chiński",
+    "ChineseSimplified": "Chiński (Uproszczony)",
+    "ChineseTraditional": "Chiński (Tradycyjny)",
     "Japanese": "Japoński",
     "Spanish": "Hiszpański",
     "French": "Francuski",
-    "Portuguese": "Portugalski",
+    "PortugueseBR": "Portugalski (Brazylia)",
+    "PortuguesePT": "Portugalski (Portugalia)",
     "Russian": "Rosyjski",
-    "Hindi": "Hinduski",
+    "Hindi": "Hindi",
     "Italian": "Włoski",
     "German": "Niemiecki",
     "Polish": "Polski",
     "Turkish": "Turecki",
-    "Arabic": "Arabski"
+    "Arabic": "Arabski",
+    "Filipino": "Filipiński"
   },
   "youtube": {
     "aiCaption": "Napisy AI Shizue",

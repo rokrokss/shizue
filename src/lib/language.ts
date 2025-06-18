@@ -3,31 +3,41 @@ import { TFunction } from 'i18next';
 
 export const languageCodeToLanguage = (languageCode: string): Language | undefined => {
   if (languageCode.startsWith('ko')) {
-    return 'Korean';
+    return 'Korean_한국어';
   } else if (languageCode.startsWith('zh')) {
-    return 'Chinese';
+    if (languageCode.includes('TW') || languageCode.includes('HK')) {
+      return 'ChineseTraditional_繁體中文';
+    } else {
+      return 'ChineseSimplified_简体中文';
+    }
   } else if (languageCode.startsWith('ja')) {
-    return 'Japanese';
+    return 'Japanese_日本語';
   } else if (languageCode.startsWith('es')) {
-    return 'Spanish';
+    return 'Spanish_Español';
   } else if (languageCode.startsWith('fr')) {
-    return 'French';
+    return 'French_Français';
   } else if (languageCode.startsWith('pt')) {
-    return 'Portuguese';
+    if (languageCode.includes('PT')) {
+      return 'PortuguesePT_Português';
+    } else {
+      return 'PortugueseBR_Português';
+    }
   } else if (languageCode.startsWith('ru')) {
-    return 'Russian';
+    return 'Russian_Русский';
   } else if (languageCode.startsWith('hi')) {
-    return 'Hindi';
+    return 'Hindi_हिंदी';
   } else if (languageCode.startsWith('it')) {
-    return 'Italian';
+    return 'Italian_Italiano';
   } else if (languageCode.startsWith('de')) {
-    return 'German';
+    return 'German_Deutsch';
   } else if (languageCode.startsWith('pl')) {
-    return 'Polish';
+    return 'Polish_Polski';
   } else if (languageCode.startsWith('tr')) {
-    return 'Turkish';
+    return 'Turkish_Türkçe';
   } else if (languageCode.startsWith('ar')) {
-    return 'Arabic';
+    return 'Arabic_العربية';
+  } else if (languageCode.startsWith('fil')) {
+    return 'Filipino_Tagalog';
   } else if (languageCode.startsWith('en')) {
     return 'English';
   } else {
@@ -47,68 +57,83 @@ export const languageOptions = (t: TFunction) => [
     desc: 'English',
   },
   {
-    value: 'Korean',
+    value: 'Korean_한국어',
     label: t('language.Korean'),
     desc: '한국어',
   },
   {
-    value: 'Chinese',
-    label: t('language.Chinese'),
-    desc: '中文',
+    value: 'ChineseSimplified_简体中文',
+    label: t('language.ChineseSimplified'),
+    desc: '简体中文',
   },
   {
-    value: 'Japanese',
+    value: 'ChineseTraditional_繁體中文',
+    label: t('language.ChineseTraditional'),
+    desc: '繁體中文',
+  },
+  {
+    value: 'Japanese_日本語',
     label: t('language.Japanese'),
     desc: '日本語',
   },
   {
-    value: 'Spanish',
+    value: 'Spanish_Español',
     label: t('language.Spanish'),
     desc: 'Español',
   },
   {
-    value: 'French',
+    value: 'French_Français',
     label: t('language.French'),
     desc: 'Français',
   },
   {
-    value: 'Portuguese',
-    label: t('language.Portuguese'),
-    desc: 'Português',
+    value: 'PortugueseBR_Português',
+    label: t('language.PortugueseBR'),
+    desc: 'Português (Brasil)',
   },
   {
-    value: 'Russian',
+    value: 'PortuguesePT_Português',
+    label: t('language.PortuguesePT'),
+    desc: 'Português (Portugal)',
+  },
+  {
+    value: 'Russian_Русский',
     label: t('language.Russian'),
     desc: 'Русский',
   },
   {
-    value: 'Hindi',
+    value: 'Hindi_हिंदी',
     label: t('language.Hindi'),
     desc: 'हिंदी',
   },
   {
-    value: 'Italian',
+    value: 'Italian_Italiano',
     label: t('language.Italian'),
     desc: 'Italiano',
   },
   {
-    value: 'German',
+    value: 'German_Deutsch',
     label: t('language.German'),
     desc: 'Deutsch',
   },
   {
-    value: 'Polish',
+    value: 'Polish_Polski',
     label: t('language.Polish'),
     desc: 'Polski',
   },
   {
-    value: 'Turkish',
+    value: 'Turkish_Türkçe',
     label: t('language.Turkish'),
     desc: 'Türkçe',
   },
   {
-    value: 'Arabic',
+    value: 'Arabic_العربية',
     label: t('language.Arabic'),
     desc: 'العربية',
+  },
+  {
+    value: 'Filipino_Tagalog',
+    label: t('language.Filipino'),
+    desc: 'Tagalog',
   },
 ];

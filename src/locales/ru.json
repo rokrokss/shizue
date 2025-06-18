@@ -83,18 +83,21 @@
   "language": {
     "English": "Английский",
     "Korean": "Корейский",
-    "Chinese": "Китайский",
+    "ChineseSimplified": "Китайский (Упрощенный)",
+    "ChineseTraditional": "Китайский (Традиционный)",
     "Japanese": "Японский",
     "Spanish": "Испанский",
     "French": "Французский",
-    "Portuguese": "Португальский",
+    "PortugueseBR": "Португальский (Бразилия)",
+    "PortuguesePT": "Португальский (Португалия)",
     "Russian": "Русский",
     "Hindi": "Хинди",
     "Italian": "Итальянский",
     "German": "Немецкий",
     "Polish": "Польский",
     "Turkish": "Турецкий",
-    "Arabic": "Арабский"
+    "Arabic": "Арабский",
+    "Filipino": "Филиппинский"
   },
   "youtube": {
     "aiCaption": "AI-субтитры Shizue",
