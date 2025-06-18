@@ -68,11 +68,10 @@ const TogglePopoverModal = ({
       onClick={(e) => e.stopPropagation()}
     >
       <button
-        className="sz:absolute sz:top-[8px] sz:right-[12px] hover:sz:text-black sz:cursor-pointer sz:bg-transparent"
+        className={`sz:absolute sz:top-[8px] sz:right-[12px] hover:sz:text-black sz:cursor-pointer sz:bg-transparent ${
+          theme == 'dark' ? 'sz:text-white' : 'sz:text-gray-400'
+        }`}
         onClick={onClose}
-        style={{
-          color: theme == 'dark' ? 'white' : 'rgb(16, 16, 16)',
-        }}
       >
         ✕
       </button>

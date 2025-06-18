@@ -1,5 +1,6 @@
 import { getTranslationTargetLanguage } from '@/entrypoints/background/states/language';
 import {
+  getCurrentGeminiKey,
   getCurrentOpenaiKey,
   getCurrentTranslateModel,
 } from '@/entrypoints/background/states/models';
@@ -41,17 +42,13 @@ interface BatchTranslationJsonResponseFormat {
 
 function getTranslationModelPreset(): ModelPreset {
   const openaiKey = getCurrentOpenaiKey();
+  const geminiKey = getCurrentGeminiKey();
   const modelName = getCurrentTranslateModel();
-  return { openaiKey, modelName };
+  return { openaiKey, geminiKey, modelName };
 }
 
 export class TranslationHandler {
   constructor() {}
-
-  public async canTranslate(): Promise<boolean> {
-    const openaiKey = getCurrentOpenaiKey();
-    return Boolean(openaiKey);
-  }
 
   public async translateYoutubeCaption(
     captions: Caption[],
@@ -61,7 +58,7 @@ export class TranslationHandler {
     try {
       const prompt = getYoutubeCaptionTranslationPrompt(captions, targetLanguage, metadata);
 
-      const llm = await getModelInstance({
+      const llm = getModelInstance({
         temperature: 0.1,
         streaming: false,
         modelPreset: getTranslationModelPreset(),
@@ -150,7 +147,7 @@ export class TranslationHandler {
       const targetLanguage = getTranslationTargetLanguage();
       const prompt = getHtmlTranslationPrompt(text, targetLanguage);
 
-      const llm = await getModelInstance({
+      const llm = getModelInstance({
         temperature: 0.1,
         maxTokens: 8000,
         streaming: false,
@@ -179,7 +176,7 @@ export class TranslationHandler {
 
       const batchPrompt = getHtmlTranslationBatchPrompt(serializedTextBatch, targetLanguage);
 
-      const llm = await getModelInstance({
+      const llm = getModelInstance({
         temperature: 0.1,
         maxTokens: 5000,
         streaming: false,

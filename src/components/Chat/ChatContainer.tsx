@@ -23,7 +23,7 @@ const ChatContainer = ({
   const characterIndexes: number[] = [];
   const theme = useThemeValue();
 
-  const animatedText = useStreamText(messages[messages.length - 1].content, {
+  const animatedText = useStreamText(messages[messages.length - 1].content.trim(), {
     handleOnComplete: scrollToBottom,
   });
 
@@ -73,7 +73,7 @@ const ChatContainer = ({
                   {m.onInterrupt && !m.stopped ? (
                     t('chat.connectionError')
                   ) : idx === messages.length - 1 && !m.done ? (
-                    m.content ? (
+                    m.content.trim() ? (
                       getMarkdownText(animatedText)
                     ) : isRetryButtonVisible ? null : (
                       <div className="sz:flex sz:flex-row sz:items-center sz:justify-start sz:pl-3 sz:text-xl">

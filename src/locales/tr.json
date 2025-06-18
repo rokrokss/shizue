@@ -24,6 +24,7 @@
         "description_1": "Kararlı ve kullanıma dayalı fiyatlandırma.",
         "validate": "Doğrula"
       },
+      "geminiApiKey": "Gemini API Anahtarını Kullan",
       "chatGPTWebApp": {
         "title": "Çalışmalar devam ediyor...",
         "description": "OpenAI politikalarındaki değişiklikler nedeniyle kararsız olabilir."
@@ -59,7 +60,11 @@
     "translateModel": "Çeviri Modeli",
     "sourceLanguage": "Kaynak Dil",
     "targetLanguage": "Hedef Dil",
-    "auto": "Otomatik"
+    "auto": "Otomatik",
+    "general": "Genel",
+    "models": "Modeller",
+    "layout": "Düzen",
+    "registered": "Kayıtlı"
   },
   "time": {
     "justNow": "az önce",

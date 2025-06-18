@@ -24,6 +24,7 @@
         "description_1": "Стабильно и с оплатой по мере использования.",
         "validate": "Проверить"
       },
+      "geminiApiKey": "Использовать API-ключ Gemini",
       "chatGPTWebApp": {
         "title": "В разработке...",
         "description": "Может быть нестабильно из-за изменений в политиках OpenAI."
@@ -59,7 +60,11 @@
     "translateModel": "Модель перевода",
     "sourceLanguage": "Исходный язык",
     "targetLanguage": "Целевой язык",
-    "auto": "Авто"
+    "auto": "Авто",
+    "general": "Общие",
+    "models": "Модели",
+    "layout": "Макет",
+    "registered": "Зарегистрирован"
   },
   "time": {
     "justNow": "только что",

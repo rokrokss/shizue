@@ -24,6 +24,7 @@
         "description_1": "안정적이며 사용한 만큼 비용이 발생합니다.",
         "validate": "검증"
       },
+      "geminiApiKey": "Gemini API 키 사용",
       "chatGPTWebApp": {
         "title": "열심히 작업 중...",
         "description": "OpenAI 정책 변경으로 인해 불안정할 수 있습니다."
@@ -59,7 +60,11 @@
     "translateModel": "번역 모델",
     "sourceLanguage": "원본 언어",
     "targetLanguage": "대상 언어",
-    "auto": "자동"
+    "auto": "자동",
+    "general": "일반",
+    "models": "모델",
+    "layout": "레이아웃",
+    "registered": "등록 상태"
   },
   "time": {
     "justNow": "방금 전",
