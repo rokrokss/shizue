@@ -83,8 +83,8 @@
   "language": {
     "English": "Ingles",
     "Korean": "Koreano",
-    "ChineseSimplified": "Intsik (Simplified)",
-    "ChineseTraditional": "Intsik (Traditional)",
+    "ChineseSimplified": "Intsik (Pinasimple)",
+    "ChineseTraditional": "Intsik (Tradisyonal)",
     "Japanese": "Hapon",
     "Spanish": "Espanyol",
     "French": "Pranses",
@@ -96,8 +96,13 @@
     "German": "Aleman",
     "Polish": "Polako",
     "Turkish": "Turko",
-    "Arabic": "Arabe",
-    "Filipino": "Filipino"
+    "Arabic": "Arabo",
+    "Filipino": "Filipino",
+    "Bengali": "Bengali",
+    "Urdu": "Urdu",
+    "Swahili": "Swahili",
+    "Vietnamese": "Biyetnames",
+    "Persian": "Persyano"
   },
   "youtube": {
     "aiCaption": "Shizue AI Caption",

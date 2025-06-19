@@ -38,6 +38,16 @@ export const languageCodeToLanguage = (languageCode: string): Language | undefin
     return 'Arabic_العربية';
   } else if (languageCode.startsWith('fil')) {
     return 'Filipino_Tagalog';
+  } else if (languageCode.startsWith('bn')) {
+    return 'Bengali_বাংলা';
+  } else if (languageCode.startsWith('ur')) {
+    return 'Urdu_اردو';
+  } else if (languageCode.startsWith('sw')) {
+    return 'Swahili_Kiswahili';
+  } else if (languageCode.startsWith('vi')) {
+    return 'Vietnamese_Tiếng Việt';
+  } else if (languageCode.startsWith('fa')) {
+    return 'Persian_فارسی';
   } else if (languageCode.startsWith('en')) {
     return 'English';
   } else {
@@ -135,5 +145,30 @@ export const languageOptions = (t: TFunction) => [
     value: 'Filipino_Tagalog',
     label: t('language.Filipino'),
     desc: 'Tagalog',
+  },
+  {
+    value: 'Bengali_বাংলা',
+    label: t('language.Bengali'),
+    desc: 'বাংলা',
+  },
+  {
+    value: 'Urdu_اردو',
+    label: t('language.Urdu'),
+    desc: 'اردو',
+  },
+  {
+    value: 'Swahili_Kiswahili',
+    label: t('language.Swahili'),
+    desc: 'Kiswahili',
+  },
+  {
+    value: 'Vietnamese_Tiếng Việt',
+    label: t('language.Vietnamese'),
+    desc: 'Tiếng Việt',
+  },
+  {
+    value: 'Persian_فارسی',
+    label: t('language.Persian'),
+    desc: 'فارسی',
   },
 ];

@@ -121,7 +121,7 @@ const SettingsModalContent = () => {
                   <Select
                     value={lang}
                     onChange={handleSelectLanguage}
-                    className="sz:font-ycom sz:w-40"
+                    className="sz:font-ycom sz:w-60"
                     options={languageOptions(t)}
                     optionRender={(option) => {
                       return (
@@ -146,7 +146,7 @@ const SettingsModalContent = () => {
                     {t('settings.shortcut')}
                   </div>
                   <Input
-                    className="sz:w-40"
+                    className="sz:w-60"
                     style={{ caretColor: 'transparent' }}
                     value={userOS === 'mac' ? '⌘ + Shift + E' : 'Ctrl + Shift + E'}
                   />
