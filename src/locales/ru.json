@@ -97,7 +97,12 @@
     "Polish": "Польский",
     "Turkish": "Турецкий",
     "Arabic": "Арабский",
-    "Filipino": "Филиппинский"
+    "Filipino": "Филиппинский",
+    "Bengali": "Бенгальский",
+    "Urdu": "Урду",
+    "Swahili": "Суахили",
+    "Vietnamese": "Вьетнамский",
+    "Persian": "Персидский"
   },
   "youtube": {
     "aiCaption": "AI-субтитры Shizue",

@@ -22,7 +22,12 @@ export type Language =
   | 'Polish_Polski'
   | 'Turkish_Türkçe'
   | 'Arabic_العربية'
-  | 'Filipino_Tagalog';
+  | 'Filipino_Tagalog'
+  | 'Bengali_বাংলা'
+  | 'Urdu_اردو'
+  | 'Swahili_Kiswahili'
+  | 'Vietnamese_Tiếng Việt'
+  | 'Persian_فارسی';
 
 const fallbackLanguage: Language = (() => {
   const uiLang = chrome.i18n.getUILanguage();
@@ -77,6 +82,16 @@ export const getI8NLanguage = (language: Language) => {
       return 'ar';
     case 'Filipino_Tagalog':
       return 'fil';
+    case 'Bengali_বাংলা':
+      return 'bn';
+    case 'Urdu_اردو':
+      return 'ur';
+    case 'Swahili_Kiswahili':
+      return 'sw';
+    case 'Vietnamese_Tiếng Việt':
+      return 'vi';
+    case 'Persian_فارسی':
+      return 'fa';
     case 'English':
     default:
       return 'en';

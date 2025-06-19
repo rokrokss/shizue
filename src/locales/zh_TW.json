@@ -97,7 +97,12 @@
     "Polish": "波蘭語",
     "Turkish": "土耳其語",
     "Arabic": "阿拉伯語",
-    "Filipino": "菲律賓語"
+    "Filipino": "菲律賓語",
+    "Bengali": "孟加拉語",
+    "Urdu": "烏爾都語",
+    "Swahili": "斯瓦希里語",
+    "Vietnamese": "越南語",
+    "Persian": "波斯語"
   },
   "youtube": {
     "aiCaption": "Shizue AI 字幕",

@@ -97,7 +97,12 @@
     "Polish": "البولندية",
     "Turkish": "التركية",
     "Arabic": "العربية",
-    "Filipino": "الفلبينية"
+    "Filipino": "الفلبينية",
+    "Bengali": "البنغالية",
+    "Urdu": "الأردية",
+    "Swahili": "السواحيلية",
+    "Vietnamese": "الفيتنامية",
+    "Persian": "الفارسية"
   },
   "youtube": {
     "aiCaption": "تعليقات توضيحية بالذكاء الاصطناعي من Shizue",

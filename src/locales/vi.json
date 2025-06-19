@@ -1,0 +1,115 @@
+{
+  "extension_name": "Shizue",
+  "extension_description": "Tiện ích mở rộng trình duyệt dựa trên AI Assistant",
+  "toggle_description": "Chuyển đổi Shizue",
+  "overlayMenu": {
+    "translateSettings": "Cài đặt dịch thuật",
+    "translatePage": "Dịch trang này",
+    "summarizePage": "Tóm tắt trang này",
+    "removeTranslation": "Xóa bản dịch"
+  },
+  "onboarding": {
+    "greeting_0": "Chào mừng!",
+    "greeting_1": "Tôi là Shizue.",
+    "greeting_2": "Một vài bước đầu tiên.",
+    "answer_0": "Xin chào!",
+    "continue": "Tiếp tục",
+    "next": "Tiếp theo",
+    "back": "Quay lại",
+    "selectProvider": {
+      "title": "Chọn Nhà cung cấp AI của bạn",
+      "openaiApiKey": {
+        "title": "Sử dụng OpenAI API Key",
+        "description_0": "Lý tưởng cho những ai có API key.",
+        "description_1": "Ổn định và giá cả dựa trên sử dụng.",
+        "validate": "xác thực"
+      },
+      "geminiApiKey": "Sử dụng Gemini API Key",
+      "chatGPTWebApp": {
+        "title": "đang làm việc...",
+        "description": "Có thể không ổn định do thay đổi trong chính sách của OpenAI."
+      }
+    },
+    "selectLanguage": {
+      "title": "Chọn Ngôn ngữ của bạn"
+    },
+    "selectShortcut": {
+      "title": "Đặt Phím tắt Bàn phím để Mở Bảng điều khiển Bên"
+    }
+  },
+  "chat": {
+    "greeting": "Xin chào,",
+    "main_0": "Ngày của bạn thế nào?",
+    "askAnything": "Hỏi bất cứ điều gì",
+    "connectionError": "Beep beep...🚨 Lỗi Hệ thống... 📡 🥺",
+    "retry": "Thử lại",
+    "history": "Lịch sử",
+    "empty": "Chưa có tin nhắn nào",
+    "newChat": "Trò chuyện mới",
+    "summaryRequestText": "Tóm tắt trang này! Shizue!"
+  },
+  "footer": {
+    "joinDiscord": "Tham gia cùng tôi trên Discord!"
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "language": "Ngôn ngữ",
+    "shortcut": "Phím tắt Bảng điều khiển",
+    "aiProvider": "Nhà cung cấp AI",
+    "chatModel": "Mô hình Trò chuyện",
+    "translateModel": "Mô hình Dịch thuật",
+    "sourceLanguage": "Ngôn ngữ Nguồn",
+    "targetLanguage": "Ngôn ngữ Đích",
+    "auto": "Tự động",
+    "general": "Chung",
+    "models": "Mô hình",
+    "layout": "Bố cục",
+    "registered": "Đã đăng ký"
+  },
+  "time": {
+    "justNow": "vừa xong",
+    "minutesAgo": "phút trước",
+    "hoursAgo": "giờ trước",
+    "daysAgo": "ngày trước"
+  },
+  "layout": {
+    "hideToggle": "Ẩn Nút",
+    "theme": "Chủ đề",
+    "lightMode": "Sáng",
+    "darkMode": "Tối",
+    "resetPosition": "Đặt lại Vị trí",
+    "menuButton": "Nút Menu"
+  },
+  "language": {
+    "English": "Tiếng Anh",
+    "Korean": "Tiếng Hàn",
+    "ChineseSimplified": "Tiếng Trung (Giản thể)",
+    "ChineseTraditional": "Tiếng Trung (Phồn thể)",
+    "Japanese": "Tiếng Nhật",
+    "Spanish": "Tiếng Tây Ban Nha",
+    "French": "Tiếng Pháp",
+    "PortugueseBR": "Tiếng Bồ Đào Nha (Brazil)",
+    "PortuguesePT": "Tiếng Bồ Đào Nha (Bồ Đào Nha)",
+    "Russian": "Tiếng Nga",
+    "Hindi": "Tiếng Hindi",
+    "Italian": "Tiếng Ý",
+    "German": "Tiếng Đức",
+    "Polish": "Tiếng Ba Lan",
+    "Turkish": "Tiếng Thổ Nhĩ Kỳ",
+    "Arabic": "Tiếng Ả Rập",
+    "Filipino": "Tiếng Filipino",
+    "Bengali": "Tiếng Bengali",
+    "Urdu": "Tiếng Urdu",
+    "Swahili": "Tiếng Swahili",
+    "Vietnamese": "Tiếng Việt",
+    "Persian": "Tiếng Ba Tư"
+  },
+  "youtube": {
+    "aiCaption": "Chú thích AI Shizue",
+    "numCaptLines": "Số dòng",
+    "activate": "Kích hoạt",
+    "deactivate": "Vô hiệu hóa",
+    "youtubeCaptionButton": "Nút Chú thích Youtube",
+    "bilingual": "Song ngữ"
+  }
+}

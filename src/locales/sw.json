@@ -1,0 +1,115 @@
+{
+  "extension_name": "Shizue",
+  "extension_description": "Kiongeza kivinjari cha AI Assistant",
+  "toggle_description": "Badilisha Shizue",
+  "overlayMenu": {
+    "translateSettings": "Mipangilio ya kutafsiri",
+    "translatePage": "Tafsiri ukurasa huu",
+    "summarizePage": "Muhtasari wa ukurasa huu",
+    "removeTranslation": "Ondoa tafsiri"
+  },
+  "onboarding": {
+    "greeting_0": "Karibu!",
+    "greeting_1": "Mimi ni Shizue.",
+    "greeting_2": "Hatua chache kwanza.",
+    "answer_0": "Hujambo!",
+    "continue": "Endelea",
+    "next": "Ifuatayo",
+    "back": "Nyuma",
+    "selectProvider": {
+      "title": "Chagua Mtoaji wa AI Wako",
+      "openaiApiKey": {
+        "title": "Tumia OpenAI API Key",
+        "description_0": "Bora kwa wale walio na API key.",
+        "description_1": "Thabiti na bei ya matumizi.",
+        "validate": "thibitisha"
+      },
+      "geminiApiKey": "Tumia Gemini API Key",
+      "chatGPTWebApp": {
+        "title": "kazi inaendelea...",
+        "description": "Inaweza kuwa isiyo thabiti kutokana na mabadiliko katika sera za OpenAI."
+      }
+    },
+    "selectLanguage": {
+      "title": "Chagua Lugha Yako"
+    },
+    "selectShortcut": {
+      "title": "Weka Shortcut ya Keyboard Yako ya Kufungua Panel ya Upande"
+    }
+  },
+  "chat": {
+    "greeting": "Hujambo,",
+    "main_0": "Siku yako inaendeleaje?",
+    "askAnything": "Uliza chochote",
+    "connectionError": "Beep beep...🚨 Hitilafu ya Mfumo... 📡 🥺",
+    "retry": "Jaribu tena",
+    "history": "Historia",
+    "empty": "Hakuna ujumbe bado",
+    "newChat": "Ongea Mpya",
+    "summaryRequestText": "Muhtasari wa ukurasa huu! Shizue!"
+  },
+  "footer": {
+    "joinDiscord": "Jiunge nami kwenye Discord!"
+  },
+  "settings": {
+    "title": "Mipangilio",
+    "language": "Lugha",
+    "shortcut": "Shortcut ya Panel",
+    "aiProvider": "Mtoaji wa AI",
+    "chatModel": "Mfano wa Ongea",
+    "translateModel": "Mfano wa Kutafsiri",
+    "sourceLanguage": "Lugha ya Chanzo",
+    "targetLanguage": "Lugha ya Lengwa",
+    "auto": "Moja kwa moja",
+    "general": "Jumla",
+    "models": "Miundo",
+    "layout": "Muundo",
+    "registered": "Imeandikishwa"
+  },
+  "time": {
+    "justNow": "sasa hivi",
+    "minutesAgo": "dakika zilizopita",
+    "hoursAgo": "saa zilizopita",
+    "daysAgo": "siku zilizopita"
+  },
+  "layout": {
+    "hideToggle": "Ficha Kitufe",
+    "theme": "Mandhari",
+    "lightMode": "Mwanga",
+    "darkMode": "Giza",
+    "resetPosition": "Weka upya Nafasi",
+    "menuButton": "Kitufe cha Menu"
+  },
+  "language": {
+    "English": "Kiingereza",
+    "Korean": "Kikorea",
+    "ChineseSimplified": "Kichina (Rahisi)",
+    "ChineseTraditional": "Kichina (Jadi)",
+    "Japanese": "Kijapani",
+    "Spanish": "Kihispania",
+    "French": "Kifaransa",
+    "PortugueseBR": "Kireno (Brazil)",
+    "PortuguesePT": "Kireno (Ureno)",
+    "Russian": "Kirusi",
+    "Hindi": "Kihindi",
+    "Italian": "Kiitaliano",
+    "German": "Kijerumani",
+    "Polish": "Kipolandi",
+    "Turkish": "Kituruki",
+    "Arabic": "Kiarabu",
+    "Filipino": "Kifilipino",
+    "Bengali": "Kibengali",
+    "Urdu": "Kiurdu",
+    "Swahili": "Kiswahili",
+    "Vietnamese": "Kivietnamu",
+    "Persian": "Kiajemi"
+  },
+  "youtube": {
+    "aiCaption": "Shizue AI Caption",
+    "numCaptLines": "Idadi ya Mistari",
+    "activate": "Amilisha",
+    "deactivate": "Ondoa",
+    "youtubeCaptionButton": "Kitufe cha Caption ya Youtube",
+    "bilingual": "Lugha mbili"
+  }
+}
