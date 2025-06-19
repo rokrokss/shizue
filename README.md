@@ -45,8 +45,8 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 ### 📄 One-Click Page Summaries:
   - Generate concise summaries of web pages for quick content overview.
 
-### 🔑 Use Your Own OpenAI API Key:
-  - Supports personal OpenAI API keys for direct and potentially more cost-effective usage of models. Users are billed directly by OpenAI.
+### 🔑 Use Your Own API Keys:
+  - Supports personal OpenAI/Gemini API keys for direct and potentially more cost-effective usage of models. Users are billed directly by those vendors.
 
 ### 🎨 Color Themes:
   - Offers Light and Dark mode options for interface customization.
