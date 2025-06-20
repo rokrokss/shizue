@@ -9,11 +9,15 @@ const logoText = `
 const msgText = (msg: string) => `\n${' '.repeat(14 - msg.length / 2)}[${msg}]`;
 
 export const contentScriptLog = (item: string) => {
-  console.log(logoText, msgText(`${item} Script Loaded`));
+  if (process.env.NODE_ENV === 'development') {
+    console.log(logoText, msgText(`${item} Script Loaded`));
+  }
 };
 
 export const backgroundLog = () => {
-  console.log(logoText, msgText('Background Loaded'));
+  if (process.env.NODE_ENV === 'development') {
+    console.log(logoText, msgText('Background Loaded'));
+  }
 };
 
 export const debugLog = (...args: any[]) => {
