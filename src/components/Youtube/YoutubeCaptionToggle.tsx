@@ -398,7 +398,7 @@ const YoutubeCaptionToggle = () => {
                             sz:flex-row
                             sz:items-center
                             sz:justify-between
-                            sz:gap-2
+                            sz:gap-4
                             sz:cursor-default
                             sz:text-[13px]
                           "
@@ -408,7 +408,7 @@ const YoutubeCaptionToggle = () => {
                         >
                           <span className="sz:text-white">{t('settings.targetLanguage')}</span>
                           <span className="sz:text-gray-400">
-                            {t(`language.${targetLanguage}`)}
+                            {t(`language.${targetLanguage.split('_')[0]}`)}
                           </span>
                         </div>
                       </Popover>
