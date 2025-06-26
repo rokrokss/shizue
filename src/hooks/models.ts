@@ -13,7 +13,7 @@ import { atomWithStorage } from 'jotai/utils';
 export const defaultOpenAIChatModel: ChatModel = 'gpt-4.1';
 export const defaultOpenAITranslateModel: TranslateModel = 'gpt-4.1-mini';
 export const defaultGeminiChatModel: ChatModel = 'gemini-2.5-flash';
-export const defaultGeminiTranslateModel: TranslateModel = 'gemini-2.5-flash-lite-preview-06-17';
+export const defaultGeminiTranslateModel: TranslateModel = 'gemini-2.5-flash';
 
 export const defaultOpenAIValidated = undefined;
 export const defaultGeminiValidated = undefined;
