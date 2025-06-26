@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.6
+
+- Control Youtube caption size
+
 ## v0.1.4
 
 - Bilingual mode for Youtube Translation
