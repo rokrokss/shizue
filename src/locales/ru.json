@@ -49,7 +49,8 @@
     "summaryRequestText": "Суммируй эту страницу! Shizue!"
   },
   "footer": {
-    "joinDiscord": "Присоединяйтесь ко мне в Discord!"
+    "joinDiscord": "Присоединяйтесь ко мне в Discord!",
+    "rate": "Оцените меня!"
   },
   "settings": {
     "title": "Настройки",

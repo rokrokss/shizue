@@ -49,7 +49,8 @@
     "summaryRequestText": "페이지 요약을 부탁해! 시즈에!"
   },
   "footer": {
-    "joinDiscord": "디스코드로 놀러 오세요!"
+    "joinDiscord": "디스코드로 놀러 오세요!",
+    "rate": "별점 남기러 가실래요?"
   },
   "settings": {
     "title": "설정",

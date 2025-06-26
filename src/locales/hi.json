@@ -49,7 +49,8 @@
     "summaryRequestText": "इस पेज का सारांश करो! Shizue!"
   },
   "footer": {
-    "joinDiscord": "Discord पर मुझसे जुड़ें!"
+    "joinDiscord": "Discord पर मुझसे जुड़ें!",
+    "rate": "मुझे रेट करें!"
   },
   "settings": {
     "title": "सेटिंग्स",

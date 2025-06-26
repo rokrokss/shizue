@@ -49,7 +49,8 @@
     "summaryRequestText": "Podsumuj tę stronę! Shizue!"
   },
   "footer": {
-    "joinDiscord": "Dołącz do mnie na Discordzie!"
+    "joinDiscord": "Dołącz do mnie na Discordzie!",
+    "rate": "Oceń mnie!"
   },
   "settings": {
     "title": "Ustawienia",
