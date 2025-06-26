@@ -18,6 +18,7 @@ import pt_br from '@/locales/pt_BR.json';
 import pt_pt from '@/locales/pt_PT.json';
 import ru from '@/locales/ru.json';
 import sw from '@/locales/sw.json';
+import th from '@/locales/th.json';
 import tr from '@/locales/tr.json';
 import ur from '@/locales/ur.json';
 import vi from '@/locales/vi.json';
@@ -46,7 +47,8 @@ export type SupportedLanguageCode =
   | 'ur'
   | 'sw'
   | 'vi'
-  | 'fa';
+  | 'fa'
+  | 'th';
 
 export const resources = {
   en: { translation: en },
@@ -71,6 +73,7 @@ export const resources = {
   sw: { translation: sw },
   vi: { translation: vi },
   fa: { translation: fa },
+  th: { translation: th },
 };
 
 export async function initI18n(lang: SupportedLanguageCode) {

@@ -48,6 +48,8 @@ export const languageCodeToLanguage = (languageCode: string): Language | undefin
     return 'Vietnamese_Tiếng Việt';
   } else if (languageCode.startsWith('fa')) {
     return 'Persian_فارسی';
+  } else if (languageCode.startsWith('th')) {
+    return 'Thai_ภาษาไทย';
   } else if (languageCode.startsWith('en')) {
     return 'English';
   } else {
@@ -170,5 +172,10 @@ export const languageOptions = (t: TFunction) => [
     value: 'Persian_فارسی',
     label: t('language.Persian'),
     desc: 'فارسی',
+  },
+  {
+    value: 'Thai_ภาษาไทย',
+    label: t('language.Thai'),
+    desc: 'ภาษาไทย',
   },
 ];

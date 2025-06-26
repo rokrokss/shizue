@@ -27,7 +27,8 @@ export type Language =
   | 'Urdu_اردو'
   | 'Swahili_Kiswahili'
   | 'Vietnamese_Tiếng Việt'
-  | 'Persian_فارسی';
+  | 'Persian_فارسی'
+  | 'Thai_ภาษาไทย';
 
 const fallbackLanguage: Language = (() => {
   const uiLang = chrome.i18n.getUILanguage();
@@ -92,6 +93,8 @@ export const getI8NLanguage = (language: Language) => {
       return 'vi';
     case 'Persian_فارسی':
       return 'fa';
+    case 'Thai_ภาษาไทย':
+      return 'th';
     case 'English':
     default:
       return 'en';
