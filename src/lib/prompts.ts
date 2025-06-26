@@ -13,32 +13,50 @@ export const getInitialSystemMessage = (lang: Language) => {
 
 export const getInitialAIMessage = (lang: Language): string => {
   switch (lang) {
-    case 'Korean':
+    case 'Korean_한국어':
       return '안녕하세요. 좋은 하루 보내고 계신가요?';
-    case 'Chinese':
+    case 'ChineseSimplified_简体中文':
       return '你好，今天过得怎么样？';
-    case 'Japanese':
+    case 'ChineseTraditional_繁體中文':
+      return '你好，今天過得怎麼樣？';
+    case 'Japanese_日本語':
       return 'こんにちは、今日の調子はどうですか？';
-    case 'Spanish':
+    case 'Spanish_Español':
       return 'Hola, ¿Cómo va tu día?';
-    case 'French':
+    case 'French_Français':
       return 'Bonjour, Comment se passe ta journée ?';
-    case 'Portuguese':
+    case 'PortugueseBR_Português':
       return 'Olá, Como está o seu dia?';
-    case 'Russian':
+    case 'PortuguesePT_Português':
+      return 'Olá, Como está o seu dia?';
+    case 'Russian_Русский':
       return 'Привет, Как проходит ваш день?';
-    case 'Hindi':
+    case 'Hindi_हिंदी':
       return 'नमस्ते, आपका दिन कैसा जा रहा है?';
-    case 'Italian':
+    case 'Italian_Italiano':
       return 'Ciao, Come sta andando la tua giornata?';
-    case 'German':
+    case 'German_Deutsch':
       return 'Hallo, Wie geht es dir heute?';
-    case 'Polish':
+    case 'Polish_Polski':
       return 'Cześć, Jak mija dzień?';
-    case 'Turkish':
+    case 'Turkish_Türkçe':
       return 'Merhaba, Günün nasıl gidiyor?';
-    case 'Arabic':
+    case 'Arabic_العربية':
       return 'مرحبًا، كيف يسير يومك؟';
+    case 'Filipino_Tagalog':
+      return 'Kumusta, Kumusta ang inyong araw?';
+    case 'Bengali_বাংলা':
+      return 'হ্যালো, আপনার দিন কেমন যাচ্ছে?';
+    case 'Urdu_اردو':
+      return 'ہیلو، آپ کا دن کیسا گزر رہا ہے؟';
+    case 'Swahili_Kiswahili':
+      return 'Hujambo, Je, siku yako inakwenda vipi?';
+    case 'Vietnamese_Tiếng Việt':
+      return 'Xin chào, Hôm nay của bạn thế nào?';
+    case 'Persian_فارسی':
+      return 'سلام، روزتان چطور می‌گذرد؟';
+    case 'Thai_ภาษาไทย':
+      return 'สวัสดี วันนี้เป็นอย่างไรบ้าง?';
     case 'English':
     default:
       return "Hello, How's your day going?";
