@@ -207,10 +207,11 @@ const Toggle = () => {
             sz:pr-[8px]
             sz:transition-all sz:duration-300
             sz:z-2147483647
+            sz:overflow-hidden
             ${
               isVisible
-                ? 'sz:opacity-100 sz:translate-x-0 sz:pointer-events-auto'
-                : 'sz:opacity-0 sz:translate-x-[8px] sz:pointer-events-none'
+                ? 'sz:opacity-100 sz:translate-x-0 sz:pointer-events-auto sz:max-h-[500px]'
+                : 'sz:opacity-0 sz:translate-x-[8px] sz:pointer-events-none sz:max-h-0'
             }
         `}
             style={{
