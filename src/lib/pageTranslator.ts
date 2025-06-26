@@ -437,12 +437,13 @@ export class PageTranslator {
   private isElementHidden(element: Element): boolean {
     const style = window.getComputedStyle(element);
     const rect = element.getBoundingClientRect();
-    return (
+    const hidden =
       style.display === 'none' ||
       style.visibility === 'hidden' ||
       rect.width === 0 ||
-      rect.height === 0
-    );
+      rect.height === 0;
+    const isAstroIsland = element.tagName == 'ASTRO-ISLAND';
+    return hidden && !isAstroIsland;
   }
 
   // Check if element is visible
