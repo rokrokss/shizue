@@ -111,6 +111,7 @@
     "activate": "Activar",
     "deactivate": "Desactivar",
     "youtubeCaptionButton": "Botón de subtítulos de YouTube",
-    "bilingual": "Bilingüe"
+    "bilingual": "Bilingüe",
+    "captionSizeRatio": "Tamaño de subtítulos"
   }
 }

@@ -111,6 +111,7 @@
     "activate": "Aktivieren",
     "deactivate": "Deaktivieren",
     "youtubeCaptionButton": "YouTube-Untertitel-Schaltfläche",
-    "bilingual": "Zweisprachig"
+    "bilingual": "Zweisprachig",
+    "captionSizeRatio": "Untertitelgröße"
   }
 }

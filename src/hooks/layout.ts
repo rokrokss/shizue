@@ -4,6 +4,7 @@ import {
   STORAGE_SHOW_YOUTUBE_CAPTION_TOGGLE,
   STORAGE_THEME,
   STORAGE_TOGGLE_Y_POSITION,
+  STORAGE_YOUTUBE_CAPTION_SIZE_RATIO,
 } from '@/config/constants';
 import { chromeStorageBackend } from '@/lib/storageBackend';
 import { useAtom, useAtomValue } from 'jotai';
@@ -16,6 +17,7 @@ export const defaultShowToggle = true;
 export const defaultToggleYPosition = -18;
 export const defaultShowYoutubeCaptionToggle = true;
 export const defaultShowYoutubeBilingualCaption = false;
+export const defaultCaptionSizeRatio = 1.0;
 
 export const themeAtom = atomWithStorage<Theme>(
   STORAGE_THEME,
@@ -52,6 +54,13 @@ export const youtubeShowBilingualCaptionAtom = atomWithStorage<boolean>(
   { getOnInit: true }
 );
 
+export const youtubeCaptionSizeRatioAtom = atomWithStorage<number>(
+  STORAGE_YOUTUBE_CAPTION_SIZE_RATIO,
+  defaultCaptionSizeRatio,
+  chromeStorageBackend('local'),
+  { getOnInit: true }
+);
+
 export const useTheme = () => useAtom(themeAtom);
 export const useThemeValue = () => useAtomValue(themeAtom);
 export const useShowToggle = () => useAtom(showToggleAtom);
@@ -59,3 +68,4 @@ export const useToggleYPosition = () => useAtom(toggleYPositionAtom);
 export const useShowYoutubeCaptionToggle = () => useAtom(youtubeShowCaptionToggleAtom);
 export const useShowYoutubeCaptionToggleValue = () => useAtomValue(youtubeShowCaptionToggleAtom);
 export const useShowYoutubeBilingualCaption = () => useAtom(youtubeShowBilingualCaptionAtom);
+export const useYoutubeCaptionSizeRatio = () => useAtom(youtubeCaptionSizeRatioAtom);

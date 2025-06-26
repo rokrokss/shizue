@@ -111,6 +111,7 @@
     "activate": "激活",
     "deactivate": "禁用",
     "youtubeCaptionButton": "YouTube 字幕按钮",
-    "bilingual": "双语"
+    "bilingual": "双语",
+    "captionSizeRatio": "字幕大小"
   }
 }

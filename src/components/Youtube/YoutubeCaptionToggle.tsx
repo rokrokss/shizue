@@ -1,6 +1,10 @@
 import LanguageOptionItem from '@/components/Youtube/LanguageOptionItem';
 import { Language } from '@/hooks/language';
-import { useShowYoutubeBilingualCaption, useShowYoutubeCaptionToggleValue } from '@/hooks/layout';
+import {
+  useShowYoutubeBilingualCaption,
+  useShowYoutubeCaptionToggleValue,
+  useYoutubeCaptionSizeRatio,
+} from '@/hooks/layout';
 import { useGeminiValidatedValue, useOpenAIValidatedValue } from '@/hooks/models';
 import { getCaptionInjector } from '@/lib/captionInjector';
 import { languageOptions } from '@/lib/language';
@@ -51,6 +55,7 @@ const YoutubeCaptionToggle = () => {
   const showYoutubeCaptionToggle = useShowYoutubeCaptionToggleValue();
   const [showYoutubeBilingualCaption, setShowYoutubeBilingualCaption] =
     useShowYoutubeBilingualCaption();
+  const [captionSizeRatio, setCaptionSizeRatio] = useYoutubeCaptionSizeRatio();
   const openAIValidated = useOpenAIValidatedValue();
   const geminiValidated = useGeminiValidatedValue();
 
@@ -214,7 +219,12 @@ const YoutubeCaptionToggle = () => {
     setIsLoading(true);
 
     // starting translation in the background
-    getCaptionInjector().activate(targetLanguage, numLines, showYoutubeBilingualCaption);
+    getCaptionInjector().activate(
+      targetLanguage,
+      numLines,
+      showYoutubeBilingualCaption,
+      captionSizeRatio
+    );
 
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
@@ -479,6 +489,42 @@ const YoutubeCaptionToggle = () => {
                           size="small"
                           checked={showYoutubeBilingualCaption}
                           onChange={setShowYoutubeBilingualCaption}
+                        />
+                      </div>
+                    ),
+                  },
+                  {
+                    key: 'captionSizeRatio',
+                    label: (
+                      <div
+                        className="
+                          sz:flex
+                          sz:flex-row
+                          sz:items-center
+                          sz:justify-between
+                          sz:gap-4
+                          sz:cursor-default
+                          sz:text-[13px]
+                        "
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <span className="sz:text-white">{t('youtube.captionSizeRatio')}</span>
+                        <InputNumber<number>
+                          defaultValue={captionSizeRatio * 100}
+                          size="small"
+                          min={0}
+                          max={500}
+                          step={5}
+                          style={{ textAlign: 'right', fontSize: '12px', width: '67px' }}
+                          formatter={(value) => `${value}%`}
+                          parser={(value) => value?.replace('%', '') as unknown as number}
+                          onChange={(value) => {
+                            if (value) {
+                              setCaptionSizeRatio(value / 100);
+                            }
+                          }}
                         />
                       </div>
                     ),

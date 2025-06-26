@@ -111,6 +111,7 @@
     "activate": "有効",
     "deactivate": "無効",
     "youtubeCaptionButton": "YouTube 字幕ボタン",
-    "bilingual": "バイリンガル"
+    "bilingual": "バイリンガル",
+    "captionSizeRatio": "字幕サイズ"
   }
 }

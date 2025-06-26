@@ -23,6 +23,7 @@ export class CaptionInjector {
   private currentTime: number = 0;
   private numLines = 1;
   private bilingual = false;
+  private captionSizeRatio = 1.0;
   private currentCaptionLines: string[] = [];
   private lastFoundCaptionIndex: number | null = null;
   private shadowRoot: ShadowRoot | null = null;
@@ -162,6 +163,7 @@ export class CaptionInjector {
                     lines={this.currentCaptionLines}
                     originalLines={originalLines}
                     bilingual={this.bilingual && isCurrentCaptionTranslated}
+                    captionSizeRatio={this.captionSizeRatio}
                   />
                 </AntdProvider>
               </AntdStyleProvider>
@@ -328,13 +330,19 @@ export class CaptionInjector {
     }
   }
 
-  public activate = async (targetLanguage: Language, numLines: number, bilingual: boolean) => {
+  public activate = async (
+    targetLanguage: Language,
+    numLines: number,
+    bilingual: boolean,
+    captionSizeRatio: number
+  ) => {
     if (document.getElementById(CUSTOM_CAPTION_ID)) {
       this.deactivate();
     }
 
     this.numLines = numLines;
     this.bilingual = bilingual;
+    this.captionSizeRatio = captionSizeRatio;
     this.targetLanguage = targetLanguage;
 
     this.videoElement = document.querySelector('video');
@@ -378,7 +386,12 @@ export class CaptionInjector {
           <LanguageProvider loadingComponent={null}>
             <AntdStyleProvider container={this.shadowRoot}>
               <AntdProvider>
-                <CaptionDisplay lines={[]} originalLines={[]} bilingual={false} />
+                <CaptionDisplay
+                  lines={[]}
+                  originalLines={[]}
+                  bilingual={false}
+                  captionSizeRatio={1.0}
+                />
               </AntdProvider>
             </AntdStyleProvider>
           </LanguageProvider>

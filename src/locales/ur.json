@@ -111,6 +111,7 @@
     "activate": "فعال کریں",
     "deactivate": "غیر فعال کریں",
     "youtubeCaptionButton": "یوٹیوب کیپشن بٹن",
-    "bilingual": "دو لسانی"
+    "bilingual": "دو لسانی",
+    "captionSizeRatio": "کیپشن سائز"
   }
 }

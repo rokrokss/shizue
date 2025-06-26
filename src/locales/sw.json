@@ -111,6 +111,7 @@
     "activate": "Amilisha",
     "deactivate": "Ondoa",
     "youtubeCaptionButton": "Kitufe cha Caption ya Youtube",
-    "bilingual": "Lugha mbili"
+    "bilingual": "Lugha mbili",
+    "captionSizeRatio": "Kichwa cha Caption"
   }
 }

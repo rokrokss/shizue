@@ -111,6 +111,7 @@
     "activate": "Aktywuj",
     "deactivate": "Dezaktywuj",
     "youtubeCaptionButton": "Przycisk napisy YouTube",
-    "bilingual": "Dwujęzyczny"
+    "bilingual": "Dwujęzyczny",
+    "captionSizeRatio": "Rozmiar napisy"
   }
 }

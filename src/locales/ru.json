@@ -111,6 +111,7 @@
     "activate": "Активировать",
     "deactivate": "Деактивировать",
     "youtubeCaptionButton": "Кнопка субтитров YouTube",
-    "bilingual": "Двуязычный"
+    "bilingual": "Двуязычный",
+    "captionSizeRatio": "Размер субтитров"
   }
 }

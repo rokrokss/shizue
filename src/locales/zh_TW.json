@@ -111,6 +111,7 @@
     "activate": "啟用",
     "deactivate": "停用",
     "youtubeCaptionButton": "YouTube 字幕按鈕",
-    "bilingual": "雙語"
+    "bilingual": "雙語",
+    "captionSizeRatio": "字幕大小"
   }
 }

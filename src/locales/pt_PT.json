@@ -111,6 +111,7 @@
     "activate": "Ativar",
     "deactivate": "Desativar",
     "youtubeCaptionButton": "Botão de legenda do YouTube",
-    "bilingual": "Bilingue"
+    "bilingual": "Bilingue",
+    "captionSizeRatio": "Tamanho da legenda"
   }
 }
