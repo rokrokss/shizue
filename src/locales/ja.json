@@ -61,6 +61,7 @@
     "translateModel": "翻訳モデル",
     "sourceLanguage": "翻訳元の言語",
     "targetLanguage": "翻訳先の言語",
+    "translateTargetLanguage": "翻訳対象言語",
     "auto": "自動",
     "general": "一般",
     "models": "モデル",

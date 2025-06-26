@@ -61,6 +61,7 @@
     "translateModel": "Modelo de traducción",
     "sourceLanguage": "Idioma de origen",
     "targetLanguage": "Idioma de destino",
+    "translateTargetLanguage": "Idioma de Destino de Traducción",
     "auto": "Automático",
     "general": "General",
     "models": "Modelos",

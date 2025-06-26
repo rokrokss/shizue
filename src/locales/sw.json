@@ -61,6 +61,7 @@
     "translateModel": "Mfano wa Kutafsiri",
     "sourceLanguage": "Lugha ya Chanzo",
     "targetLanguage": "Lugha ya Lengwa",
+    "translateTargetLanguage": "Lugha ya Lengwa ya Kutafsiri",
     "auto": "Moja kwa moja",
     "general": "Jumla",
     "models": "Miundo",

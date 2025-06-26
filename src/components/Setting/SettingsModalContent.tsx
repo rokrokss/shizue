@@ -1,4 +1,4 @@
-import { Language, useLanguage } from '@/hooks/language';
+import { Language, useLanguage, useTranslateTargetLanguage } from '@/hooks/language';
 import { toggleYPositionAtom, useShowToggle, useShowYoutubeCaptionToggle } from '@/hooks/layout';
 import {
   useChatModel,
@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 const SettingsModalContent = () => {
   const { t } = useTranslation();
   const { lang, setLang } = useLanguage();
+  const [targetLanguage, setTargetLanguage] = useTranslateTargetLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [isInvalidApiKey, setIsInvalidApiKey] = useState(false);
   const [canProceed, setCanProceed] = useState(true);
@@ -39,6 +40,10 @@ const SettingsModalContent = () => {
 
   const handleSelectLanguage = (value: string) => {
     setLang(value as Language);
+  };
+
+  const handleSelectTargetLanguage = (value: string) => {
+    setTargetLanguage(value as Language);
   };
 
   const handleSelectProvider = (value: string) => {
@@ -121,6 +126,33 @@ const SettingsModalContent = () => {
                   <Select
                     value={lang}
                     onChange={handleSelectLanguage}
+                    className="sz:font-ycom sz:w-60"
+                    options={languageOptions(t)}
+                    optionRender={(option) => {
+                      return (
+                        <div className="sz:font-ycom">
+                          {option.label}
+                          {option.label != option.data.desc ? (
+                            <span className="sz:text-gray-500 sz:ml-[5px] sz:text-[12px]">
+                              {option.data.desc}
+                            </span>
+                          ) : null}
+                        </div>
+                      );
+                    }}
+                  />
+                </div>
+                <div className="sz:flex sz:flex-col sz:items-center sz:gap-2">
+                  <div
+                    className={`sz:text-base ${
+                      theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'
+                    }`}
+                  >
+                    {t('settings.translateTargetLanguage')}
+                  </div>
+                  <Select
+                    value={targetLanguage}
+                    onChange={handleSelectTargetLanguage}
                     className="sz:font-ycom sz:w-60"
                     options={languageOptions(t)}
                     optionRender={(option) => {

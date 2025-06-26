@@ -61,6 +61,7 @@
     "translateModel": "अनुवाद मॉडल",
     "sourceLanguage": "स्रोत भाषा",
     "targetLanguage": "लक्ष्य भाषा",
+    "translateTargetLanguage": "अनुवाद लक्ष्य भाषा",
     "auto": "ऑटो",
     "general": "सामान्य",
     "models": "मॉडल",
