@@ -49,7 +49,15 @@ const OverlayMenuItem = forwardRef<HTMLDivElement, OverlayMenuItemProps>(
             }}
             ref={triggerRef}
           >
-            {icon}
+            <div
+              className="sz:flex sz:items-center sz:justify-center"
+              style={{
+                width: 24,
+                height: 24,
+              }}
+            >
+              {icon}
+            </div>
           </div>
         </Tooltip>
         {isPopoverOpen && popoverContent && popoverContent}
