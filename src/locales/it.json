@@ -111,6 +111,7 @@
     "activate": "Attiva",
     "deactivate": "Disattiva",
     "youtubeCaptionButton": "Pulsante sottotitoli YouTube",
-    "bilingual": "Bilingue"
+    "bilingual": "Bilingue",
+    "captionSizeRatio": "Dimensione sottotitoli"
   }
 }

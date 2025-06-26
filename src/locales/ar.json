@@ -111,6 +111,7 @@
     "activate": "تنشيط",
     "deactivate": "تعطيل",
     "youtubeCaptionButton": "زر التعليقات التوضيحية لليوتيوب",
-    "bilingual": "ثنائي اللغة"
+    "bilingual": "ثنائي اللغة",
+    "captionSizeRatio": "حجم التعليقات التوضيحية"
   }
 }

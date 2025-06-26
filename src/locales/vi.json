@@ -111,6 +111,7 @@
     "activate": "Kích hoạt",
     "deactivate": "Vô hiệu hóa",
     "youtubeCaptionButton": "Nút Chú thích Youtube",
-    "bilingual": "Song ngữ"
+    "bilingual": "Song ngữ",
+    "captionSizeRatio": "Kích thước chú thích"
   }
 }

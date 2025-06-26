@@ -111,6 +111,7 @@
     "activate": "Activate",
     "deactivate": "Deactivate",
     "youtubeCaptionButton": "Youtube Caption Button",
-    "bilingual": "Bilingual"
+    "bilingual": "Bilingual",
+    "captionSizeRatio": "Caption Size"
   }
 }
