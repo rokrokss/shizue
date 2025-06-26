@@ -60,7 +60,7 @@ const Toggle = () => {
   const width = 43;
   const height = 43;
   const widthFull = 55;
-  const menuIconSize = 20;
+  const menuIconSize = 23;
 
   const tooltipMessages = [
     t('overlayMenu.translateSettings'),

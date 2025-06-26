@@ -52,8 +52,8 @@ const OverlayMenuItem = forwardRef<HTMLDivElement, OverlayMenuItemProps>(
             <div
               className="sz:flex sz:items-center sz:justify-center"
               style={{
-                width: 24,
-                height: 24,
+                width: 23,
+                height: 23,
               }}
             >
               {icon}
