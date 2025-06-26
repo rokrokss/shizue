@@ -49,7 +49,8 @@
     "summaryRequestText": "خلاصه این صفحه! شیزو!"
   },
   "footer": {
-    "joinDiscord": "به من در Discord بپیوندید!"
+    "joinDiscord": "به من در Discord بپیوندید!",
+    "rate": "می‌خواهید نظری بدهید؟"
   },
   "settings": {
     "title": "تنظیمات",

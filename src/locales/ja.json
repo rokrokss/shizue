@@ -49,7 +49,8 @@
     "summaryRequestText": "このページを要約して！しずえ！"
   },
   "footer": {
-    "joinDiscord": "Discordに参加してください！"
+    "joinDiscord": "Discordに参加してください！",
+    "rate": "評価を残しませんか？"
   },
   "settings": {
     "title": "設定",

@@ -49,7 +49,8 @@
     "summaryRequestText": "Resuma esta página! Shizue!"
   },
   "footer": {
-    "joinDiscord": "Junte-se a mim no Discord!"
+    "joinDiscord": "Junte-se a mim no Discord!",
+    "rate": "Avalie-me!"
   },
   "settings": {
     "title": "Configurações",

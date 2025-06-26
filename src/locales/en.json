@@ -49,7 +49,8 @@
     "summaryRequestText": "Summarize this page! Shizue!"
   },
   "footer": {
-    "joinDiscord": "Join me on Discord!"
+    "joinDiscord": "Join me on Discord!",
+    "rate": "Would you like to leave a rating?"
   },
   "settings": {
     "title": "Settings",

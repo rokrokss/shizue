@@ -49,7 +49,8 @@
     "summaryRequestText": "এই পৃষ্ঠাটি সংক্ষেপ করুন! শিজুয়ে!"
   },
   "footer": {
-    "joinDiscord": "Discord-এ আমার সাথে যোগ দিন!"
+    "joinDiscord": "Discord-এ আমার সাথে যোগ দিন!",
+    "rate": "আমার সম্পর্কে মন্তব্য করুন!"
   },
   "settings": {
     "title": "সেটিংস",
