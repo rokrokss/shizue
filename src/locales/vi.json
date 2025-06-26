@@ -61,6 +61,7 @@
     "translateModel": "Mô hình Dịch thuật",
     "sourceLanguage": "Ngôn ngữ Nguồn",
     "targetLanguage": "Ngôn ngữ Đích",
+    "translateTargetLanguage": "Ngôn Ngữ Đích Dịch Thuật",
     "auto": "Tự động",
     "general": "Chung",
     "models": "Mô hình",

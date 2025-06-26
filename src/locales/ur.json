@@ -61,6 +61,7 @@
     "translateModel": "ترجمہ ماڈل",
     "sourceLanguage": "ماخذ زبان",
     "targetLanguage": "ہدف زبان",
+    "translateTargetLanguage": "ترجمہ ہدف زبان",
     "auto": "خودکار",
     "general": "عام",
     "models": "ماڈلز",

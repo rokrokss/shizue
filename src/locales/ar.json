@@ -61,6 +61,7 @@
     "translateModel": "نموذج الترجمة",
     "sourceLanguage": "اللغة المصدر",
     "targetLanguage": "اللغة الهدف",
+    "translateTargetLanguage": "لغة الهدف للترجمة",
     "auto": "تلقائي",
     "general": "عام",
     "models": "النماذج",

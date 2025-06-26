@@ -61,6 +61,7 @@
     "translateModel": "Çeviri Modeli",
     "sourceLanguage": "Kaynak Dil",
     "targetLanguage": "Hedef Dil",
+    "translateTargetLanguage": "Çeviri Hedef Dili",
     "auto": "Otomatik",
     "general": "Genel",
     "models": "Modeller",

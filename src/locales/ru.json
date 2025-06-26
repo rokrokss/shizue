@@ -61,6 +61,7 @@
     "translateModel": "Модель перевода",
     "sourceLanguage": "Исходный язык",
     "targetLanguage": "Целевой язык",
+    "translateTargetLanguage": "Целевой Язык Перевода",
     "auto": "Авто",
     "general": "Общие",
     "models": "Модели",

@@ -61,6 +61,7 @@
     "translateModel": "مدل ترجمه",
     "sourceLanguage": "زبان مبدأ",
     "targetLanguage": "زبان هدف",
+    "translateTargetLanguage": "زبان هدف ترجمه",
     "auto": "خودکار",
     "general": "عمومی",
     "models": "مدل‌ها",

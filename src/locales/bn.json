@@ -61,6 +61,7 @@
     "translateModel": "অনুবাদ মডেল",
     "sourceLanguage": "উৎস ভাষা",
     "targetLanguage": "লক্ষ্য ভাষা",
+    "translateTargetLanguage": "অনুবাদ লক্ষ্য ভাষা",
     "auto": "স্বয়ংক্রিয়",
     "general": "সাধারণ",
     "models": "মডেল",

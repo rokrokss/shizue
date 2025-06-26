@@ -61,6 +61,7 @@
     "translateModel": "Translation Model",
     "sourceLanguage": "Source Language",
     "targetLanguage": "Target Language",
+    "translateTargetLanguage": "Target Language ng Pagsasalin",
     "auto": "Auto",
     "general": "Pangkalahatan",
     "models": "Mga Model",

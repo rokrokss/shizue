@@ -61,6 +61,7 @@
     "translateModel": "번역 모델",
     "sourceLanguage": "원본 언어",
     "targetLanguage": "대상 언어",
+    "translateTargetLanguage": "번역 대상 언어",
     "auto": "자동",
     "general": "일반",
     "models": "모델",
