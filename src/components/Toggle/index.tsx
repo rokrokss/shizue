@@ -100,6 +100,7 @@ const Toggle = () => {
   const handleTranslateSettingsOpenChange = (newOpen: boolean) => {
     if (!openAIValidated && !geminiValidated) {
       debugLog('Translate page clicked but not able to open translate settings');
+      setPanelOpen();
       return;
     }
 

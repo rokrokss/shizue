@@ -1,11 +1,13 @@
 import LanguageOptionItem from '@/components/Youtube/LanguageOptionItem';
 import { Language } from '@/hooks/language';
 import { useShowYoutubeBilingualCaption, useShowYoutubeCaptionToggleValue } from '@/hooks/layout';
+import { useGeminiValidatedValue, useOpenAIValidatedValue } from '@/hooks/models';
 import { getCaptionInjector } from '@/lib/captionInjector';
 import { languageOptions } from '@/lib/language';
 import useAdObserver from '@/lib/useAdObserver';
 import { getVideoData, getVideoId } from '@/lib/youtube';
 import { debugLog } from '@/logs';
+import { panelService } from '@/services/panelService';
 import { LoadingOutlined, ReadFilled } from '@ant-design/icons';
 import {
   Button,
@@ -49,6 +51,8 @@ const YoutubeCaptionToggle = () => {
   const showYoutubeCaptionToggle = useShowYoutubeCaptionToggleValue();
   const [showYoutubeBilingualCaption, setShowYoutubeBilingualCaption] =
     useShowYoutubeBilingualCaption();
+  const openAIValidated = useOpenAIValidatedValue();
+  const geminiValidated = useGeminiValidatedValue();
 
   const lastVideoIdRef = useRef<string | null>(null);
   const inFlightRef = useRef(false);
@@ -139,6 +143,12 @@ const YoutubeCaptionToggle = () => {
   };
 
   const handleDropdownOpenChange = (open: boolean) => {
+    if (!openAIValidated && !geminiValidated) {
+      debugLog('Youtube caption toggle clicked but not able to open translate settings');
+      panelService.openPanel();
+      return;
+    }
+
     setIsDropdownOpen(open);
 
     if (open) {
