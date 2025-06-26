@@ -59,7 +59,7 @@ const ChatContainer = ({
             return (
               <div
                 key={idx}
-                className="sz-message sz-mesage-ai sz:w-full sz:text-left sz:flex sz:flex-col"
+                className="sz-message sz-message-ai sz:w-full sz:text-left sz:flex sz:flex-col"
                 style={{
                   color: theme == 'dark' ? 'white' : 'black',
                 }}
