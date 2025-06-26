@@ -18,7 +18,7 @@ export default defineConfig({
       action: {
         default_title: 'Shizue',
       },
-      author: { email: 'q0115643@gmail.com' },
+      author: { email: 'hello@shizue.ai' },
       permissions: ['storage', 'sidePanel', 'activeTab', 'contextMenus'],
       default_locale: 'en',
       side_panel: {
