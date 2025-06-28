@@ -80,7 +80,11 @@
     "lightMode": "日間模式",
     "darkMode": "夜間模式",
     "resetPosition": "重設位置",
-    "menuButton": "選單按鈕"
+    "menuButton": "選單按鈕",
+    "hideFromCurrentSite": "從目前網站隱藏",
+    "hideFromAllSites": "從所有網站隱藏",
+    "hiddenSites": "隱藏網站",
+    "restore": "還原"
   },
   "language": {
     "English": "英語",

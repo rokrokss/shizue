@@ -80,7 +80,11 @@
     "lightMode": "Mwanga",
     "darkMode": "Giza",
     "resetPosition": "Weka upya Nafasi",
-    "menuButton": "Kitufe cha Menu"
+    "menuButton": "Kitufe cha Menu",
+    "hideFromCurrentSite": "Ficha kwenye tovuti hii",
+    "hideFromAllSites": "Ficha kwenye tovuti zote",
+    "hiddenSites": "Tovuti Zilizofichwa",
+    "restore": "Rudisha"
   },
   "language": {
     "English": "Kiingereza",

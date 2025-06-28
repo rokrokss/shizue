@@ -80,7 +80,11 @@
     "lightMode": "হালকা",
     "darkMode": "অন্ধকার",
     "resetPosition": "অবস্থান রিসেট করুন",
-    "menuButton": "মেনু বোতাম"
+    "menuButton": "মেনু বোতাম",
+    "hideFromCurrentSite": "বর্তমান সাইট থেকে লুকান",
+    "hideFromAllSites": "সব সাইট থেকে লুকান",
+    "hiddenSites": "লুকানো সাইট",
+    "restore": "ফেরত"
   },
   "language": {
     "English": "ইংরেজি",

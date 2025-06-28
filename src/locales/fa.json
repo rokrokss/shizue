@@ -80,7 +80,11 @@
     "lightMode": "روشن",
     "darkMode": "تیره",
     "resetPosition": "بازنشانی موقعیت",
-    "menuButton": "دکمه منو"
+    "menuButton": "دکمه منو",
+    "hideFromCurrentSite": "پنهان کردن از سایت فعلی",
+    "hideFromAllSites": "پنهان کردن از همه سایت‌ها",
+    "hiddenSites": "سایت‌های مخفی",
+    "restore": "بازگرد"
   },
   "language": {
     "English": "انگلیسی",

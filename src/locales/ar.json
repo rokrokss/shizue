@@ -80,7 +80,11 @@
     "lightMode": "فضاء",
     "darkMode": "مظلم",
     "resetPosition": "إعادة تعيين الموضع",
-    "menuButton": "زر القائمة"
+    "menuButton": "زر القائمة",
+    "hideFromCurrentSite": "إخفاء من الموقع الحالي",
+    "hideFromAllSites": "إخفاء من جميع المواقع",
+    "hiddenSites": "المواقع المخفية",
+    "restore": "إرجاع"
   },
   "language": {
     "English": "الإنجليزية",

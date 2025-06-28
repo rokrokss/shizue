@@ -80,7 +80,11 @@
     "lightMode": "Claro",
     "darkMode": "Escuro",
     "resetPosition": "Repor posição",
-    "menuButton": "Botão do menu"
+    "menuButton": "Botão do menu",
+    "hideFromCurrentSite": "Ocultar do site atual",
+    "hideFromAllSites": "Ocultar de todos os sites",
+    "hiddenSites": "Sites Ocultos",
+    "restore": "Repor"
   },
   "language": {
     "English": "Inglês",

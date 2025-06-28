@@ -80,7 +80,11 @@
     "lightMode": "Sáng",
     "darkMode": "Tối",
     "resetPosition": "Đặt lại Vị trí",
-    "menuButton": "Nút Menu"
+    "menuButton": "Nút Menu",
+    "hideFromCurrentSite": "Ẩn khỏi trang hiện tại",
+    "hideFromAllSites": "Ẩn khỏi tất cả trang",
+    "hiddenSites": "Trang web ẩn",
+    "restore": "Phục hồi"
   },
   "language": {
     "English": "Tiếng Anh",
