@@ -80,7 +80,11 @@
     "lightMode": "Açık",
     "darkMode": "Koyu",
     "resetPosition": "Pozisyonu Sıfırla",
-    "menuButton": "Menü Düğmesi"
+    "menuButton": "Menü Düğmesi",
+    "hideFromCurrentSite": "Mevcut siteden gizle",
+    "hideFromAllSites": "Tüm sitelerden gizle",
+    "hiddenSites": "Gizli Siteler",
+    "restore": "Geri"
   },
   "language": {
     "English": "İngilizce",

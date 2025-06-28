@@ -80,7 +80,11 @@
     "lightMode": "라이트",
     "darkMode": "다크",
     "resetPosition": "위치 초기화",
-    "menuButton": "메뉴 버튼"
+    "menuButton": "메뉴 버튼",
+    "hideFromCurrentSite": "이 사이트에서 숨기기",
+    "hideFromAllSites": "모든 사이트에서 숨기기",
+    "hiddenSites": "숨겨진 사이트",
+    "restore": "복원"
   },
   "language": {
     "English": "영어",

@@ -80,7 +80,11 @@
     "lightMode": "สว่าง",
     "darkMode": "มืด",
     "resetPosition": "รีเซ็ตตำแหน่ง",
-    "menuButton": "ปุ่มเมนู"
+    "menuButton": "ปุ่มเมนู",
+    "hideFromCurrentSite": "ซ่อนจากไซต์ปัจจุบัน",
+    "hideFromAllSites": "ซ่อนจากทุกไซต์",
+    "hiddenSites": "เว็บไซต์ที่ซ่อน",
+    "restore": "คืน"
   },
   "language": {
     "English": "อังกฤษ",

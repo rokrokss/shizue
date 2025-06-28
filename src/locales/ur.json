@@ -80,7 +80,11 @@
     "lightMode": "روشنی",
     "darkMode": "اندھیرا",
     "resetPosition": "پوزیشن ری سیٹ کریں",
-    "menuButton": "مینو بٹن"
+    "menuButton": "مینو بٹن",
+    "hideFromCurrentSite": "موجودہ سائٹ سے چھپائیں",
+    "hideFromAllSites": "تمام سائٹس سے چھپائیں",
+    "hiddenSites": "چھپی ہوئی سائٹیں",
+    "restore": "واپس"
   },
   "language": {
     "English": "انگریزی",

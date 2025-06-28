@@ -1,10 +1,12 @@
 import BookIcon from '@/assets/icons/book.svg?react';
+import CloseIcon from '@/assets/icons/close.svg?react';
 import SettingIcon from '@/assets/icons/setting.svg?react';
 import TranslateIcon from '@/assets/icons/translate.svg?react';
 import TranslateCheckIcon from '@/assets/icons/translate_check.svg?react';
 import CharacterPickToggle, {
   characterCountChat,
 } from '@/components/Character/CharacterPickToggle';
+import ToggleClosePopoverModal from '@/components/Modal/ToggleClosePopoverModal';
 import TogglePopoverModal from '@/components/Modal/TogglePopoverModal';
 import OverlayMenu from '@/components/Toggle/OverlayMenu';
 import OverlayMenuItem from '@/components/Toggle/OverlayMenuItem';
@@ -14,7 +16,7 @@ import {
   MESSAGE_UPDATE_PANEL_INIT_DATA,
 } from '@/config/constants';
 import { Language } from '@/hooks/language';
-import { useShowToggle, useToggleYPosition } from '@/hooks/layout';
+import { useShowToggle, useToggleHiddenSiteList, useToggleYPosition } from '@/hooks/layout';
 import {
   useGeminiValidatedValue,
   useOpenAIValidatedValue,
@@ -27,7 +29,7 @@ import { getPageTranslator } from '@/lib/pageTranslator';
 import { initSummarizePageContent } from '@/lib/summarize';
 import { debugLog } from '@/logs';
 import { panelService } from '@/services/panelService';
-import { Select } from 'antd';
+import { Button, Select } from 'antd';
 import { motion, PanInfo } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -35,27 +37,40 @@ import { useTranslation } from 'react-i18next';
 const Toggle = () => {
   const { t } = useTranslation();
 
+  const toggleRef = useRef<HTMLDivElement>(null);
   const translateSettingsPopoverTriggerRef = useRef<HTMLDivElement>(null);
+  const closeModalTriggerRef = useRef<HTMLDivElement>(null);
 
   const [isHoveringCharacter, setIsHoveringCharacter] = useState(false);
+  const [isHoveringClose, setIsHoveringClose] = useState(false);
   const [isHoveringMenu, setIsHoveringMenu] = useState(false);
   const [characterIndex, setCharacterIndex] = useState(0);
   const [translateSettingsModalOpen, setTranslateSettingsModalOpen] = useState(false);
+  const [closeIconModalOpen, setCloseIconModalOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [showToggle, _] = useShowToggle();
   const [toggleYPosition, setToggleYPosition] = useToggleYPosition();
   const [isTranslationActive, setIsTranslationActive] = useState(false);
   const isTranslationActiveRef = useRef(isTranslationActive);
   const [settingsTriggerYPosition, setSettingsTriggerYPosition] = useState(0);
+  const [closeIconTriggerYPosition, setCloseIconTriggerYPosition] = useState(0);
   const [targetLanguage, setTargetLanguage] = useTranslateTargetLanguage();
   const theme = useThemeValue();
   const [translateModel, setTranslateModel] = useTranslateModel();
   const [motionDivId, setMotionDivId] = useState(0);
   const openAIValidated = useOpenAIValidatedValue();
   const geminiValidated = useGeminiValidatedValue();
+  const [showToggle, setShowToggle] = useShowToggle();
+  const [toggleHiddenSiteList, setToggleHiddenSiteList] = useToggleHiddenSiteList();
+  const [isHoveringHideFromCurrentSite, setIsHoveringHideFromCurrentSite] = useState(false);
+  const [isHoveringHideFromAllSites, setIsHoveringHideFromAllSites] = useState(false);
 
   const isVisible =
-    isHoveringCharacter || isHoveringMenu || translateSettingsModalOpen || isTranslationActive;
+    isHoveringCharacter ||
+    isHoveringMenu ||
+    translateSettingsModalOpen ||
+    isTranslationActive ||
+    isHoveringClose ||
+    closeIconModalOpen;
 
   const width = 43;
   const height = 43;
@@ -68,6 +83,17 @@ const Toggle = () => {
     t('overlayMenu.summarizePage'),
     t('overlayMenu.removeTranslation'),
   ];
+
+  const getCurrentDomain = useCallback(() => {
+    return window.location.hostname;
+  }, []);
+
+  const isCurrentSiteHidden = useMemo(() => {
+    if (!showToggle) return true;
+    const currentDomain = getCurrentDomain();
+    debugLog('currentDomain', currentDomain, 'toggleHiddenSiteList', toggleHiddenSiteList);
+    return toggleHiddenSiteList.includes(currentDomain);
+  }, [toggleHiddenSiteList, showToggle, getCurrentDomain]);
 
   useEffect(() => {
     const date = new Date();
@@ -110,6 +136,26 @@ const Toggle = () => {
       debugLog('handleTranslateSettingsOpenChange: Settings trigger Y position:', rect.top);
     }
     setTranslateSettingsModalOpen(newOpen);
+  };
+
+  const handleCloseIconClick = (newOpen: boolean) => {
+    if (newOpen && closeModalTriggerRef.current) {
+      const rect = closeModalTriggerRef.current.getBoundingClientRect();
+      const triggerYPosition = rect.top - 150;
+      setCloseIconTriggerYPosition(triggerYPosition);
+      debugLog('handleCloseIconClick: Close icon trigger Y position:', triggerYPosition);
+    }
+    setCloseIconModalOpen(newOpen);
+  };
+
+  const handleHideToggle = () => {
+    setCloseIconModalOpen(false);
+    setShowToggle(false);
+  };
+
+  const handleHideToggleFromCurrentSite = () => {
+    setCloseIconModalOpen(false);
+    setToggleHiddenSiteList([...toggleHiddenSiteList, getCurrentDomain()]);
   };
 
   const handleSelectTranslateModel = (model: string) => {
@@ -178,7 +224,7 @@ const Toggle = () => {
   }, []);
 
   return (
-    showToggle && (
+    !isCurrentSiteHidden && (
       <motion.div
         key={motionDivId}
         drag="y"
@@ -197,24 +243,25 @@ const Toggle = () => {
           style={{
             pointerEvents: isVisible ? 'auto' : 'none',
           }}
+          ref={toggleRef}
         >
           <div
             onMouseEnter={() => setIsHoveringMenu(true)}
             onMouseLeave={() => setIsHoveringMenu(false)}
             className={`
-            sz:flex sz:flex-col
-            sz:items-center
-            sz:pb-[8px]
-            sz:pr-[8px]
-            sz:transition-all sz:duration-300
-            sz:z-2147483647
-            sz:overflow-hidden
-            ${
-              isVisible
-                ? 'sz:opacity-100 sz:translate-x-0 sz:pointer-events-auto sz:max-h-[500px]'
-                : 'sz:opacity-0 sz:translate-x-[8px] sz:pointer-events-none sz:max-h-0'
-            }
-        `}
+              sz:flex sz:flex-col
+              sz:items-center
+              sz:pb-[8px]
+              sz:pr-[8px]
+              sz:transition-all sz:duration-300
+              sz:z-2147483647
+              sz:overflow-hidden
+              ${
+                isVisible
+                  ? 'sz:opacity-100 sz:translate-x-0 sz:pointer-events-auto sz:max-h-[500px]'
+                  : 'sz:opacity-0 sz:translate-x-[8px] sz:pointer-events-none sz:max-h-0'
+              }
+            `}
             style={{
               transition: 'opacity 0.3s ease-in-out, translate 0.3s ease-in-out',
             }}
@@ -230,6 +277,7 @@ const Toggle = () => {
                 ref={translateSettingsPopoverTriggerRef}
                 popoverContent={
                   <TogglePopoverModal
+                    toggleRef={toggleRef}
                     triggerRef={translateSettingsPopoverTriggerRef}
                     settingsTriggerYPosition={settingsTriggerYPosition}
                     onClose={() => handleTranslateSettingsOpenChange(false)}
@@ -237,7 +285,7 @@ const Toggle = () => {
                     content={
                       <div className="sz:flex sz:flex-col sz:items-center sz:gap-[10px]">
                         <div
-                          className={`sz:font-ycom sz:text-[16px] sz:mb-[2px] sz:text-center ${
+                          className={`sz:font-ycom sz:text-[16px] sz:mb-[2px] sz:text-center sz:leading-[16px] ${
                             theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
                           }`}
                         >
@@ -421,6 +469,79 @@ const Toggle = () => {
           >
             <CharacterPickToggle index={characterIndex} />
           </div>
+          <div
+            className="sz:relative"
+            style={{
+              opacity: isVisible && !closeIconModalOpen ? 1 : 0,
+              pointerEvents: isVisible && !closeIconModalOpen ? 'auto' : 'none',
+              width: isVisible && !closeIconModalOpen ? `${widthFull + 12}px` : `${width + 12}px`,
+              transition: isVisible && !closeIconModalOpen ? 'opacity 0.2s ease-in-out' : 'none',
+              marginTop: '-4.5px',
+            }}
+            onMouseEnter={() => setIsHoveringClose(true)}
+            onMouseLeave={() => setIsHoveringClose(false)}
+            ref={closeModalTriggerRef}
+          >
+            <CloseIcon
+              className="sz:w-[14px] sz:h-[14px] sz:cursor-pointer"
+              onClick={() => handleCloseIconClick(!closeIconModalOpen)}
+            />
+          </div>
+          {closeIconModalOpen && (
+            <ToggleClosePopoverModal
+              toggleRef={toggleRef}
+              settingsTriggerYPosition={closeIconTriggerYPosition}
+              onClose={() => handleCloseIconClick(false)}
+              theme={theme}
+              content={
+                <div className="sz:flex sz:flex-col sz:items-center sz:gap-[10px]">
+                  <div
+                    className={`sz:font-ycom sz:text-[16px] sz:mb-[2px] sz:text-center sz:leading-[16px] ${
+                      theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
+                    }`}
+                  >
+                    {t('layout.hideToggle')}
+                  </div>
+                  <div className="sz:flex sz:flex-col sz:items-center sz:gap-[10px]">
+                    <Button
+                      type="default"
+                      size="middle"
+                      className={`sz:w-full sz:text-[14px] sz:font-ycom`}
+                      onMouseEnter={() => setIsHoveringHideFromCurrentSite(true)}
+                      onMouseLeave={() => setIsHoveringHideFromCurrentSite(false)}
+                      style={{
+                        border: isHoveringHideFromCurrentSite
+                          ? '1px solid #32CCBC'
+                          : theme == 'dark'
+                          ? '1px solid #434343'
+                          : '1px solid #d9d9d9',
+                      }}
+                      onClick={handleHideToggleFromCurrentSite}
+                    >
+                      {t('layout.hideFromCurrentSite')}
+                    </Button>
+                    <Button
+                      type="default"
+                      size="middle"
+                      className={`sz:w-full sz:text-[14px] sz:font-ycom`}
+                      onMouseEnter={() => setIsHoveringHideFromAllSites(true)}
+                      onMouseLeave={() => setIsHoveringHideFromAllSites(false)}
+                      style={{
+                        border: isHoveringHideFromAllSites
+                          ? '1px solid #32CCBC'
+                          : theme == 'dark'
+                          ? '1px solid #434343'
+                          : '1px solid #d9d9d9',
+                      }}
+                      onClick={handleHideToggle}
+                    >
+                      {t('layout.hideFromAllSites')}
+                    </Button>
+                  </div>
+                </div>
+              }
+            />
+          )}
         </div>
       </motion.div>
     )

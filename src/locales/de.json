@@ -80,7 +80,11 @@
     "lightMode": "Hell",
     "darkMode": "Dunkel",
     "resetPosition": "Position zurücksetzen",
-    "menuButton": "Menü-Schaltfläche"
+    "menuButton": "Menü-Schaltfläche",
+    "hideFromCurrentSite": "Von aktueller Seite ausblenden",
+    "hideFromAllSites": "Von allen Seiten ausblenden",
+    "hiddenSites": "Versteckte Seiten",
+    "restore": "Zurück"
   },
   "language": {
     "English": "Englisch",

@@ -80,7 +80,11 @@
     "lightMode": "लाइट",
     "darkMode": "डार्क",
     "resetPosition": "पोज़ीशन रीसेट",
-    "menuButton": "मेनू बटन"
+    "menuButton": "मेनू बटन",
+    "hideFromCurrentSite": "वर्तमान साइट से छुपाएं",
+    "hideFromAllSites": "सभी साइटों से छुपाएं",
+    "hiddenSites": "छुपी हुई साइटें",
+    "restore": "वापस"
   },
   "language": {
     "English": "अंग्रेज़ी",

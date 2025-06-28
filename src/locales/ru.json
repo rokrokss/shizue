@@ -80,7 +80,11 @@
     "lightMode": "Светлая",
     "darkMode": "Тёмная",
     "resetPosition": "Сбросить положение",
-    "menuButton": "Кнопка меню"
+    "menuButton": "Кнопка меню",
+    "hideFromCurrentSite": "Скрыть с текущего сайта",
+    "hideFromAllSites": "Скрыть со всех сайтов",
+    "hiddenSites": "Скрытые сайты",
+    "restore": "Вернуть"
   },
   "language": {
     "English": "Английский",

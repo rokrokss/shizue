@@ -1,5 +1,10 @@
 import { Language, useLanguage, useTranslateTargetLanguage } from '@/hooks/language';
-import { toggleYPositionAtom, useShowToggle, useShowYoutubeCaptionToggle } from '@/hooks/layout';
+import {
+  toggleYPositionAtom,
+  useShowToggle,
+  useShowYoutubeCaptionToggle,
+  useToggleHiddenSiteList,
+} from '@/hooks/layout';
 import {
   useChatModel,
   useGeminiValidated,
@@ -13,7 +18,7 @@ import { getOS } from '@/lib/userOS';
 import { validateApiKey } from '@/lib/validateApiKey';
 import { debugLog } from '@/logs';
 import { SmileOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Input, Select, Tabs, Tag } from 'antd';
+import { Button, Checkbox, Input, List, Select, Tabs, Tag } from 'antd';
 import { useSetAtom } from 'jotai';
 import { useTranslation } from 'react-i18next';
 
@@ -37,6 +42,7 @@ const SettingsModalContent = () => {
   const setToggleYPosition = useSetAtom(toggleYPositionAtom);
   const [showYoutubeCaptionToggle, setShowYoutubeCaptionToggle] = useShowYoutubeCaptionToggle();
   const [selectedProvider, setSelectedProvider] = useState<ModelProvider>('openai-api-key');
+  const [toggleHiddenSiteList, setToggleHiddenSiteList] = useToggleHiddenSiteList();
 
   const handleSelectLanguage = (value: string) => {
     setLang(value as Language);
@@ -93,6 +99,10 @@ const SettingsModalContent = () => {
       setCanProceed(false);
     }
     setIsLoading(false);
+  };
+
+  const handleRemoveHiddenSite = (item: string) => {
+    setToggleHiddenSiteList(toggleHiddenSiteList.filter((site) => site !== item));
   };
 
   return (
@@ -183,6 +193,52 @@ const SettingsModalContent = () => {
                     value={userOS === 'mac' ? '⌘ + Shift + E' : 'Ctrl + Shift + E'}
                   />
                 </div>
+                {toggleHiddenSiteList.length > 0 && (
+                  <div className="sz:flex sz:flex-col sz:items-center sz:justify-center sz:gap-2 sz:w-full">
+                    <div
+                      className={`sz:text-base sz:w-full sz:text-center ${
+                        theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'
+                      }`}
+                    >
+                      {t('layout.hiddenSites')}
+                    </div>
+                    <List
+                      dataSource={toggleHiddenSiteList}
+                      bordered
+                      size="small"
+                      className={`sz:w-68 sz:overflow-auto sz:scrollbar-hidden ${
+                        toggleHiddenSiteList.length > 0 ? 'sz:max-h-[125px]' : ''
+                      }`}
+                      style={{
+                        scrollbarWidth: 'thin',
+                        scrollbarColor: `${theme == 'dark' ? '#111' : '#ddd'} transparent`,
+                      }}
+                      renderItem={(item) => (
+                        <List.Item
+                          className={`sz:font-ycom sz:text-small ${
+                            theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'
+                          }`}
+                        >
+                          <div className="sz:w-68 sz:text-small sz:font-ycom sz:flex sz:flex-row sz:items-center sz:justify-between">
+                            <div className="sz:text-small sz:font-ycom">
+                              {item.length > 24 ? `${item.slice(0, 23)}...` : item}
+                            </div>
+                            <div className="sz:text-small sz:font-ycom">
+                              <Button
+                                type="dashed"
+                                size="small"
+                                className="sz:text-[12px] sz:font-ycom"
+                                onClick={() => handleRemoveHiddenSite(item)}
+                              >
+                                {t('layout.restore')}
+                              </Button>
+                            </div>
+                          </div>
+                        </List.Item>
+                      )}
+                    />
+                  </div>
+                )}
               </div>
             ),
           },

@@ -80,7 +80,11 @@
     "lightMode": "ライト",
     "darkMode": "ダーク",
     "resetPosition": "位置をリセット",
-    "menuButton": "メニューボタン"
+    "menuButton": "メニューボタン",
+    "hideFromCurrentSite": "現在のサイトから非表示",
+    "hideFromAllSites": "すべてのサイトから非表示",
+    "hiddenSites": "非表示サイト",
+    "restore": "復元"
   },
   "language": {
     "English": "英語",

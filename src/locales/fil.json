@@ -80,7 +80,11 @@
     "lightMode": "Maliwanag",
     "darkMode": "Madilim",
     "resetPosition": "I-reset ang Posisyon",
-    "menuButton": "Menu Button"
+    "menuButton": "Menu Button",
+    "hideFromCurrentSite": "Itago sa kasalukuyang site",
+    "hideFromAllSites": "Itago sa lahat ng sites",
+    "hiddenSites": "Nakatagong Mga Site",
+    "restore": "Balik"
   },
   "language": {
     "English": "Ingles",
