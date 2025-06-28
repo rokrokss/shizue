@@ -54,9 +54,6 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 ### 🛡️ Secure & Private:
   - API keys and user data are intended to be handled securely within the extension.
 
-### 💖 Free & Open Source:
-  - Licensed under the MIT License. The codebase is available for inspection, modification, and contribution.
-
 <br/>
 
 # 🐳 Installation
@@ -94,4 +91,4 @@ For suggestions, feedback, or discussions, join me on [Discord](https://discord.
 
 # 📄 License
 
-Shizue is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+Shizue is licensed under the AGPL-3.0 License. See the [LICENSE](LICENSE) file for more details.
