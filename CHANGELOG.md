@@ -1,8 +1,16 @@
 # Changelog
 
+## v0.1.7
+
+- Added ability to hide menu on specific websites
+
 ## v0.1.6
 
 - Control Youtube caption size
+
+## v0.1.5
+
+- fix minor bugs
 
 ## v0.1.4
 
