@@ -1,7 +1,7 @@
 {
-  "extension_name": "শিজুয়ে",
+  "extension_name": "Shizue",
   "extension_description": "এআই সহকারী-ভিত্তিক ব্রাউজার উন্নতকরণ এক্সটেনশন",
-  "toggle_description": "শিজুয়ে টগল করুন",
+  "toggle_description": "Shizue টগল করুন",
   "overlayMenu": {
     "translateSettings": "অনুবাদ সেটিংস",
     "translatePage": "এই পৃষ্ঠাটি অনুবাদ করুন",
@@ -10,7 +10,7 @@
   },
   "onboarding": {
     "greeting_0": "স্বাগতম!",
-    "greeting_1": "আমি শিজুয়ে।",
+    "greeting_1": "আমি Shizue।",
     "greeting_2": "কয়েকটি ধাপ আগে।",
     "answer_0": "হ্যালো!",
     "continue": "চালিয়ে যান",
@@ -46,7 +46,7 @@
     "history": "ইতিহাস",
     "empty": "এখনও কোন বার্তা নেই",
     "newChat": "নতুন চ্যাট",
-    "summaryRequestText": "এই পৃষ্ঠাটি সংক্ষেপ করুন! শিজুয়ে!"
+    "summaryRequestText": "এই পৃষ্ঠাটি সংক্ষেপ করুন! Shizue!"
   },
   "footer": {
     "joinDiscord": "Discord-এ আমার সাথে যোগ দিন!",
@@ -112,7 +112,7 @@
     "Thai": "থাই"
   },
   "youtube": {
-    "aiCaption": "শিজুয়ে এআই ক্যাপশন",
+    "aiCaption": "Shizue এআই ক্যাপশন",
     "numCaptLines": "লাইনের সংখ্যা",
     "activate": "সক্রিয় করুন",
     "deactivate": "নিষ্ক্রিয় করুন",
