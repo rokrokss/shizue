@@ -195,7 +195,12 @@ const Toggle = () => {
     if (isDragging) return;
 
     if (!openAIValidated && !geminiValidated) {
-      debugLog('Translate page clicked but not able to translate');
+      debugLog(
+        'Translate page clicked but not able to translate, openAIValidated',
+        openAIValidated,
+        'geminiValidated',
+        geminiValidated
+      );
       return;
     }
 
@@ -206,7 +211,7 @@ const Toggle = () => {
     }
 
     setIsTranslationActive(!isTranslationActive);
-  }, [isDragging, isTranslationActive, targetLanguage]);
+  }, [isDragging, isTranslationActive, targetLanguage, openAIValidated, geminiValidated]);
 
   useEffect(() => {
     const messageListener = (message: any) => {
