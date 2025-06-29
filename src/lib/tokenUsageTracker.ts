@@ -8,7 +8,7 @@ export interface TokenUsageInfo {
   totalTokens: number;
 }
 
-// 공통 토큰 사용량 추출 함수
+// Common token usage extraction function
 export const extractTokenUsage = (response: AIMessageChunk | AIMessage): TokenUsageInfo | undefined => {
   const usage = response?.usage_metadata;
   if (usage) {
@@ -20,7 +20,7 @@ export const extractTokenUsage = (response: AIMessageChunk | AIMessage): TokenUs
   }
 };
 
-// 토큰 사용량을 데이터베이스에 기록
+// Record token usage to database
 export const trackTokenUsage = async (
   model: string,
   response: AIMessageChunk | AIMessage,
@@ -34,7 +34,7 @@ export const trackTokenUsage = async (
       return;
     }
 
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD 형식
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     const provider = model.includes('openai') ? 'openai' : 'gemini';
 
     await recordTokenUsage({
@@ -59,7 +59,7 @@ export const trackTokenUsage = async (
   }
 };
 
-// 스트리밍 응답에서 토큰 사용량 추적 (최종 chunk에서)
+// Track token usage from streaming response (final chunk)
 export const trackStreamingTokenUsage = async (
   model: string,
   finalResponse: AIMessageChunk,

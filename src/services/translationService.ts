@@ -3,7 +3,6 @@ import {
   MESSAGE_TRANSLATE_YOUTUBE_CAPTION,
 } from '@/config/constants';
 import { Caption, VideoMetadata } from '@/lib/youtube';
-import { debugLog } from '@/logs';
 import {
   BatchTranslationResult,
   YoutubeCaptionTranslationResult,
