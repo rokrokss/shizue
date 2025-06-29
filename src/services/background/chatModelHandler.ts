@@ -9,8 +9,9 @@ import { ActionType } from '@/hooks/global';
 import { db, loadThread } from '@/lib/indexDB';
 import { getModelInstance, ModelPreset } from '@/lib/models';
 import { getInitialAIMessage, getInitialSystemMessage } from '@/lib/prompts';
+import { trackStreamingTokenUsage } from '@/lib/tokenUsageTracker';
 import { debugLog, errorLog } from '@/logs';
-import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { AIMessage, AIMessageChunk, BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 
 function getChatModelPreset(): ModelPreset {
   const openaiKey = getCurrentOpenaiKey();
@@ -32,10 +33,11 @@ export class ChatModelHandler {
     let fullResponseContent = '';
 
     try {
+      const modelPreset = getChatModelPreset();
       const llm = getModelInstance({
         streaming: true,
         temperature: actionType === 'askForSummary' ? 0.3 : 0.7,
-        modelPreset: getChatModelPreset(),
+        modelPreset,
       });
       debugLog('ChatModelHandler [_executeStreamAndUpdate] messagesForModel:', messagesForModel);
       const stream = await llm.stream(
@@ -49,6 +51,8 @@ export class ChatModelHandler {
       );
 
       let buffer = '';
+      let lastChunk: AIMessageChunk | undefined;
+      
       const sendBufferToPort = async () => {
         const threshold = fullResponseContent ? STREAM_FLUSH_THRESHOLD_1 : STREAM_FLUSH_THRESHOLD_0;
         if (buffer.length >= threshold) {
@@ -60,15 +64,23 @@ export class ChatModelHandler {
       };
 
       for await (const chunk of stream) {
+        lastChunk = chunk; // 마지막 chunk 저장
         const delta = typeof chunk === 'string' ? chunk : (chunk.content as string) ?? '';
         buffer += delta;
         await sendBufferToPort();
       }
+      
       if (buffer) {
         fullResponseContent += buffer;
         await db.messages.update(messageId, { content: fullResponseContent, done: false });
         port.postMessage({ delta: buffer });
       }
+      
+      // 토큰 사용량 추적 (스트리밍 완료 후)
+      if (lastChunk) {
+        await trackStreamingTokenUsage(llm.model, lastChunk);
+      }
+
       port.postMessage({ done: true });
     } catch (err) {
       if (!abortController.signal.aborted) {
