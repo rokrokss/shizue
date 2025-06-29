@@ -1,8 +1,9 @@
 import { useThemeValue } from '@/hooks/layout';
+import { formatModelName } from '@/lib/models';
 import { debugLog } from '@/logs';
 import { DailyUsage, fetchUsageData } from '@/services/usageService';
 import { ReloadOutlined } from '@ant-design/icons';
-import { Alert, Button, Typography } from 'antd';
+import { Alert, Button } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -15,8 +16,6 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-
-const { Title } = Typography;
 
 interface ChartData {
   date: string;
@@ -71,7 +70,8 @@ const TokenUsageModalContent = () => {
 
     // Add actual token count for each model
     day.modelUsage.forEach((modelUsage) => {
-      chartItem[modelUsage.model] = modelUsage.totalTokens;
+      const modelName = formatModelName(modelUsage.model);
+      chartItem[modelName] = modelUsage.totalTokens;
     });
 
     return chartItem;
@@ -211,17 +211,21 @@ const TokenUsageModalContent = () => {
                 }}
                 iconType="circle"
               />
-              {allModels.map((model, index) => (
-                <Bar
-                  isAnimationActive={false}
-                  key={model}
-                  dataKey={model}
-                  stackId="tokens"
-                  fill={MODEL_COLORS[model as keyof typeof MODEL_COLORS] || MODEL_COLORS.default}
-                  name={model}
-                  radius={index === allModels.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
-                />
-              ))}
+              {allModels.map((model, index) => {
+                const modelName = formatModelName(model);
+                debugLog('TokenUsageTab [modelName]', modelName);
+                return (
+                  <Bar
+                    isAnimationActive={false}
+                    key={modelName}
+                    dataKey={modelName}
+                    stackId="tokens"
+                    fill={MODEL_COLORS[model as keyof typeof MODEL_COLORS] || MODEL_COLORS.default}
+                    name={modelName}
+                    radius={index === allModels.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
+                  />
+                );
+              })}
             </BarChart>
           </ResponsiveContainer>
         ) : (

@@ -30,6 +30,20 @@ export interface ModelOptions {
   responseFormat?: { type: 'json_object' };
 }
 
+export const formatModelName = (modelName: string) => {
+  if (modelName === 'gpt-4.1') {
+    return 'GPT 4.1';
+  } else if (modelName === 'gpt-4.1-mini') {
+    return 'GPT 4.1 Mini';
+  } else if (modelName === 'gemini-2.5-flash') {
+    return 'Gemini 2.5 Flash';
+  } else if (modelName === 'gemini-2.5-flash-lite-preview-06-17') {
+    return 'Gemini 2.5 Flash Lite';
+  }
+
+  return modelName;
+};
+
 const providerFromName = (modelName: string): ModelProvider =>
   modelName.includes('gemini') ? 'gemini-api-key' : 'openai-api-key';
 
