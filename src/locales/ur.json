@@ -1,7 +1,7 @@
 {
-  "extension_name": "شیزوے",
+  "extension_name": "Shizue",
   "extension_description": "AI اسسٹنٹ پر مبنی براؤزر بہتر کرنے والا ایکسٹینشن",
-  "toggle_description": "شیزوے کو ٹوگل کریں",
+  "toggle_description": "Shizue کو ٹوگل کریں",
   "overlayMenu": {
     "translateSettings": "ترجمہ کی ترتیبات",
     "translatePage": "اس صفحے کا ترجمہ کریں",
@@ -10,7 +10,7 @@
   },
   "onboarding": {
     "greeting_0": "خوش آمدید!",
-    "greeting_1": "میں شیزوے ہوں۔",
+    "greeting_1": "میں Shizue ہوں۔",
     "greeting_2": "پہلے کچھ قدم۔",
     "answer_0": "ہیلو!",
     "continue": "جاری رکھیں",
@@ -46,7 +46,7 @@
     "history": "تاریخ",
     "empty": "ابھی تک کوئی پیغام نہیں",
     "newChat": "نیا چیٹ",
-    "summaryRequestText": "اس صفحے کا خلاصہ کریں! شیزوے!"
+    "summaryRequestText": "اس صفحے کا خلاصہ کریں! Shizue!"
   },
   "footer": {
     "joinDiscord": "Discord پر میرے ساتھ شامل ہوں!",
@@ -112,7 +112,7 @@
     "Thai": "تھائی"
   },
   "youtube": {
-    "aiCaption": "شیزوے AI کیپشن",
+    "aiCaption": "Shizue AI کیپشن",
     "numCaptLines": "لائنوں کی تعداد",
     "activate": "فعال کریں",
     "deactivate": "غیر فعال کریں",

@@ -1,7 +1,7 @@
 {
-  "extension_name": "شیزو",
+  "extension_name": "Shizue",
   "extension_description": "افزونه بهبود مرورگر مبتنی بر دستیار هوش مصنوعی",
-  "toggle_description": "شیزو را تغییر دهید",
+  "toggle_description": "Shizue را تغییر دهید",
   "overlayMenu": {
     "translateSettings": "تنظیمات ترجمه",
     "translatePage": "این صفحه را ترجمه کنید",
@@ -10,7 +10,7 @@
   },
   "onboarding": {
     "greeting_0": "خوش آمدید!",
-    "greeting_1": "من شیزو هستم.",
+    "greeting_1": "من Shizue هستم.",
     "greeting_2": "چند مرحله اول.",
     "answer_0": "سلام!",
     "continue": "ادامه دهید",
@@ -46,7 +46,7 @@
     "history": "تاریخچه",
     "empty": "هنوز پیامی وجود ندارد",
     "newChat": "چت جدید",
-    "summaryRequestText": "خلاصه این صفحه! شیزو!"
+    "summaryRequestText": "خلاصه این صفحه! Shizue!"
   },
   "footer": {
     "joinDiscord": "به من در Discord بپیوندید!",
@@ -112,7 +112,7 @@
     "Thai": "تایلندی"
   },
   "youtube": {
-    "aiCaption": "زیرنویس هوش مصنوعی شیزو",
+    "aiCaption": "زیرنویس هوش مصنوعی Shizue",
     "numCaptLines": "تعداد خطوط",
     "activate": "فعال کنید",
     "deactivate": "غیرفعال کنید",
