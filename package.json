@@ -45,6 +45,7 @@
     "react-i18next": "^15.5.2",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.6.0",
+    "recharts": "^3.0.2",
     "remark-gfm": "^4.0.1",
     "webextension-polyfill": "^0.12.0",
     "zod": "^3.25.67"

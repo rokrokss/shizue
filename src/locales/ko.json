@@ -66,7 +66,33 @@
     "general": "일반",
     "models": "모델",
     "layout": "레이아웃",
-    "registered": "등록 상태"
+    "registered": "등록 상태",
+    "usage": "사용량"
+  },
+  "usage": {
+    "title": "토큰 사용량",
+    "chartTitle": "토큰 사용량 대시보드",
+    "dailyUsageChart": "일별 토큰 사용량 (최근 7일)",
+    "detailTable": "상세 사용량 내역",
+    "refresh": "새로고침",
+    "error": "오류",
+    "fetchError": "토큰 사용량을 불러오는 중 오류가 발생했습니다.",
+    "retry": "재시도",
+    "noData": "아직 사용량 데이터가 없습니다.",
+    "emptyStateMessage": "AI 모델을 사용하면 토큰 사용량이 여기에 표시됩니다.",
+    "date": "날짜",
+    "inputTokens": "입력 토큰",
+    "outputTokens": "출력 토큰",
+    "totalTokens": "총 토큰",
+    "requests": "요청 수",
+    "models": "사용된 모델",
+    "totalInputTokens": "총 입력 토큰",
+    "totalOutputTokens": "총 출력 토큰",
+    "totalRequests": "총 요청 수",
+    "localTracking": {
+      "title": "로컬 토큰 사용량 추적",
+      "description": "이 데이터는 익스텐션에서 직접 기록된 AI API 호출의 토큰 사용량입니다. OpenAI와 Gemini 모델 모두 지원하며, 별도의 Admin Key가 필요하지 않습니다."
+    }
   },
   "time": {
     "justNow": "방금 전",

@@ -10,6 +10,7 @@ import {
   getHtmlTranslationPrompt,
   getYoutubeCaptionTranslationPrompt,
 } from '@/lib/prompts';
+import { trackTokenUsage } from '@/lib/tokenUsageTracker';
 import { Caption, VideoMetadata } from '@/lib/youtube';
 import { debugLog, errorLog } from '@/logs';
 import { HumanMessage } from '@langchain/core/messages';
@@ -65,8 +66,13 @@ export class TranslationHandler {
         responseFormat: { type: 'json_object' },
       });
 
+      debugLog('TranslationHandler [translateYoutubeCaption] modelPreset:', getTranslationModelPreset());
+      debugLog('TranslationHandler [translateYoutubeCaption] llm:', llm);
+      
       debugLog('TranslationHandler [translateYoutubeCaption] prompt:', prompt);
       const response = await llm.invoke([new HumanMessage(prompt)]);
+      await trackTokenUsage(llm.model, response);
+      
       const rawResponseContent = (response.content as string)?.trim();
 
       debugLog(
@@ -153,7 +159,13 @@ export class TranslationHandler {
         streaming: false,
         modelPreset: getTranslationModelPreset(),
       });
+
+      debugLog('TranslationHandler [translateHtmlText] modelPreset:', getTranslationModelPreset());
+      debugLog('TranslationHandler [translateHtmlText] llm:', llm);
+      
       const response = await llm.invoke([new HumanMessage(prompt)]);
+
+      await trackTokenUsage(llm.model, response);
 
       debugLog('TranslationHandler [translateText] response:', response);
 
@@ -184,7 +196,13 @@ export class TranslationHandler {
         responseFormat: { type: 'json_object' },
       });
 
+      debugLog('TranslationHandler [translateHtmlTextBatch] modelPreset:', getTranslationModelPreset());
+      debugLog('TranslationHandler [translateHtmlTextBatch] llm:', llm);
+
       const response = await llm.invoke([new HumanMessage(batchPrompt)]);
+      
+      await trackTokenUsage(llm.model, response);
+      
       const rawResponseContent = (response.content as string)?.trim();
 
       debugLog(
