@@ -127,5 +127,8 @@
     "youtubeCaptionButton": "유튜브 자막 버튼",
     "bilingual": "이중 언어",
     "captionSizeRatio": "자막 크기"
+  },
+  "pdf": {
+    "translatePdf": "PDF 번역"
   }
 }

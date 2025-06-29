@@ -478,6 +478,7 @@ const Chat = () => {
         <SidePanelFullModal
           onClose={closeSettings}
           size="base"
+          minHeight="374px"
           content={<SettingsModalContent />}
         />
       )}

@@ -22,10 +22,10 @@ const SidePanelFullModal = ({
         className={
           size === 'base'
             ? `sz:rounded-xl sz:px-3 sz:pt-6 sz:pb-9 sz:shadow-xl sz:min-w-78 sz:max-h-full sz:relative ${
-                minHeight ? `sz:min-w-${minHeight}` : ''
+                minHeight ? `sz:min-w-[${minHeight}]` : ''
               }`
             : `sz:rounded-xl sz:px-3 sz:pt-6 sz:pb-9 sz:shadow-xl sz:w-7/8 sz:max-h-full sz:relative ${
-                minHeight ? `sz:min-w-${minHeight}` : ''
+                minHeight ? `sz:min-w-[${minHeight}]` : ''
               }`
         }
         style={{
