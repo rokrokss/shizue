@@ -94,7 +94,7 @@ const TokenUsageTab = ({ theme }: TokenUsageTabProps) => {
 
       return (
         <div
-          className={`sz:p-4 sz:rounded-lg sz:shadow-xl sz:border sz:font-ycom ${
+          className={`sz:p-4 sz:rounded-lg sz:border sz:font-ycom ${
             theme === 'dark'
               ? 'sz:bg-gray-800 sz:text-white sz:border-gray-600'
               : 'sz:bg-white sz:text-black sz:border-gray-200'
@@ -178,9 +178,7 @@ const TokenUsageTab = ({ theme }: TokenUsageTabProps) => {
           type="primary"
           size="small"
           className="sz:font-ycom"
-        >
-          {t('usage.refresh')}
-        </Button>
+        />
       </div>
 
       {allModels.length > 0 ? (
@@ -201,17 +199,17 @@ const TokenUsageTab = ({ theme }: TokenUsageTabProps) => {
               }}
             />
             <YAxis hide={true} />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<CustomTooltip />} isAnimationActive={false} />
             <Legend
               wrapperStyle={{
                 color: theme === 'dark' ? '#ccc' : '#666',
-                fontSize: '12px',
-                paddingTop: '12px',
+                fontSize: '10px',
               }}
-              iconType="rect"
+              iconType='circle'
             />
             {allModels.map((model, index) => (
               <Bar
+                isAnimationActive={false}
                 key={model}
                 dataKey={model}
                 stackId="tokens"
