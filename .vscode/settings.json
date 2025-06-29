@@ -38,5 +38,12 @@
   "i18n-ally.sortKeys": true,
   "i18n-ally.namespace": false,
   "i18n-ally.pathMatcher": "{locale}.json",
-  "cSpell.words": ["shizue", "sidepanel", "webcomponents", "ycom", "ddin"]
+  "cSpell.words": [
+    "ddin",
+    "Dexie",
+    "shizue",
+    "sidepanel",
+    "webcomponents",
+    "ycom"
+  ]
 }
