@@ -94,7 +94,7 @@ ${text}`;
 };
 
 export const getHtmlTranslationBatchPrompt = (
-  textBatch: string[],
+  textBatch: Record<string, string>,
   targetLanguage: Language
 ) => {
   debugLog('getHtmlTranslationBatchPrompt', targetLanguage);
@@ -121,7 +121,12 @@ ${JSON.stringify(textBatch)}
 
 ===Example of the EXACT JSON Output Format expected===
 {
-  "translations": ["translated_html_snippet_1", "translated_html_snippet_2", ..., "translated_html_snippet_n"]
+  "translations": {
+    "<nanoid1>": "translated_html_snippet_1",
+    "<nanoid2>": "translated_html_snippet_2",
+    ...
+    "<nanoidn>": "translated_html_snippet_n"
+  }
 }
   
 Ensure your output can be directly parsed by a JSON parser.`;
