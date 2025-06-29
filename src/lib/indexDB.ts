@@ -23,7 +23,7 @@ export interface ThreadMeta {
 
 export interface TokenUsage {
   id: string;
-  date: string; // YYYY-MM-DD 형식
+  date: string; // YYYY-MM-DD
   model: string;
   provider: 'openai' | 'gemini';
   inputTokens: number;
@@ -108,7 +108,7 @@ export const getInitialMessagesForAllThreads = async (): Promise<ThreadWithIniti
   return result;
 };
 
-// 토큰 사용량 관련 함수들
+// Token usage related functions
 export const recordTokenUsage = async (usage: Omit<TokenUsage, 'id'>) => {
   const id = crypto.randomUUID();
   await db.tokenUsage.add({ ...usage, id });

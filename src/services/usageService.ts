@@ -30,7 +30,6 @@ export interface UsageSummary {
   dailyUsage: DailyUsage[];
 }
 
-// 날짜 범위별 토큰 사용량 데이터 가져오기
 export const fetchUsageData = async (days: number = 7): Promise<DailyUsage[]> => {
   try {
     const endDate = new Date();
@@ -42,15 +41,15 @@ export const fetchUsageData = async (days: number = 7): Promise<DailyUsage[]> =>
 
     const usageRecords = await getTokenUsageByDateRange(startDateStr, endDateStr);
 
-    // 날짜별로 그룹화
+    // Group by date
     const dailyUsageMap = new Map<string, DailyUsage>();
 
-    // 빈 날짜들 먼저 초기화
+    // Initialize empty dates first
     for (let i = 0; i < days; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
       const dateStr = date.toISOString().split('T')[0];
-      
+
       dailyUsageMap.set(dateStr, {
         date: dateStr,
         inputTokens: 0,
@@ -62,7 +61,7 @@ export const fetchUsageData = async (days: number = 7): Promise<DailyUsage[]> =>
       });
     }
 
-    // 실제 사용량 데이터로 업데이트
+    // Update with actual usage data
     usageRecords.forEach((record) => {
       const existing = dailyUsageMap.get(record.date);
       if (existing) {
@@ -70,13 +69,13 @@ export const fetchUsageData = async (days: number = 7): Promise<DailyUsage[]> =>
         existing.outputTokens += record.outputTokens;
         existing.totalTokens += record.totalTokens;
         existing.requestCount += record.requestCount;
-        
+
         if (!existing.models.includes(record.model)) {
           existing.models.push(record.model);
         }
 
-        // 모델별 사용량 추가
-        let modelUsage = existing.modelUsage.find(m => m.model === record.model);
+        // Add model-specific usage
+        let modelUsage = existing.modelUsage.find((m) => m.model === record.model);
         if (!modelUsage) {
           modelUsage = {
             model: record.model,
@@ -95,9 +94,9 @@ export const fetchUsageData = async (days: number = 7): Promise<DailyUsage[]> =>
       }
     });
 
-    // Map을 배열로 변환하고 날짜순 정렬
-    return Array.from(dailyUsageMap.values()).sort((a, b) => 
-      new Date(a.date).getTime() - new Date(b.date).getTime()
+    // Convert Map to array and sort by date
+    return Array.from(dailyUsageMap.values()).sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
   } catch (error) {
     console.error('Error fetching usage data:', error);
@@ -105,7 +104,6 @@ export const fetchUsageData = async (days: number = 7): Promise<DailyUsage[]> =>
   }
 };
 
-// 전체 사용량 요약 가져오기
 export const fetchUsageSummary = async (days: number = 7): Promise<UsageSummary> => {
   try {
     const [totalUsage, dailyUsage] = await Promise.all([
@@ -123,7 +121,6 @@ export const fetchUsageSummary = async (days: number = 7): Promise<UsageSummary>
   }
 };
 
-// 특정 날짜의 상세 사용량 가져오기
 export const fetchDailyUsageDetail = async (date: string): Promise<TokenUsage[]> => {
   try {
     const usageRecords = await getTokenUsageByDateRange(date, date);

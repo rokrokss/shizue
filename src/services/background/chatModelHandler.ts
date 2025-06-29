@@ -52,7 +52,7 @@ export class ChatModelHandler {
 
       let buffer = '';
       let lastChunk: AIMessageChunk | undefined;
-      
+
       const sendBufferToPort = async () => {
         const threshold = fullResponseContent ? STREAM_FLUSH_THRESHOLD_1 : STREAM_FLUSH_THRESHOLD_0;
         if (buffer.length >= threshold) {
@@ -64,19 +64,19 @@ export class ChatModelHandler {
       };
 
       for await (const chunk of stream) {
-        lastChunk = chunk; // 마지막 chunk 저장
+        lastChunk = chunk;
         const delta = typeof chunk === 'string' ? chunk : (chunk.content as string) ?? '';
         buffer += delta;
         await sendBufferToPort();
       }
-      
+
       if (buffer) {
         fullResponseContent += buffer;
         await db.messages.update(messageId, { content: fullResponseContent, done: false });
         port.postMessage({ delta: buffer });
       }
-      
-      // 토큰 사용량 추적 (스트리밍 완료 후)
+
+      // Track token usage (after streaming is complete)
       if (lastChunk) {
         await trackStreamingTokenUsage(llm.model, lastChunk);
       }
