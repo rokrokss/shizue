@@ -201,6 +201,7 @@ const Toggle = () => {
         'geminiValidated',
         geminiValidated
       );
+      setPanelOpen();
       return;
     }
 
