@@ -119,5 +119,13 @@
     "youtubeCaptionButton": "Przycisk napisy YouTube",
     "bilingual": "Dwujęzyczny",
     "captionSizeRatio": "Rozmiar napisy"
+  },
+  "usage": {
+    "title": "Wykorzystanie Tokenów",
+    "total": "Łącznie",
+    "error": "Błąd",
+    "fetchError": "Wystąpił błąd podczas pobierania danych wykorzystania tokenów.",
+    "retry": "Spróbuj ponownie",
+    "noData": "Brak danych użycia."
   }
 }

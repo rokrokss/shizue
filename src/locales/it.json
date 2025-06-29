@@ -119,5 +119,13 @@
     "youtubeCaptionButton": "Pulsante sottotitoli YouTube",
     "bilingual": "Bilingue",
     "captionSizeRatio": "Dimensione sottotitoli"
+  },
+  "usage": {
+    "title": "Utilizzo Token",
+    "total": "Totale",
+    "error": "Errore",
+    "fetchError": "Si è verificato un errore durante il recupero dei dati di utilizzo dei token.",
+    "retry": "Riprova",
+    "noData": "Nessun dato di utilizzo ancora."
   }
 }

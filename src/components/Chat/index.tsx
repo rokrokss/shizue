@@ -2,6 +2,7 @@ import ChatContainer from '@/components/Chat/ChatContainer';
 import ChatGreeting from '@/components/Chat/ChatGreeting';
 import ChatInput from '@/components/Chat/ChatInput';
 import ThreadListModalContent from '@/components/Chat/ThreadListModalContent';
+import TokenUsageModalContent from '@/components/Chat/TokenUsageModalContent';
 import TopMenu from '@/components/Chat/TopRightMenu';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import SettingsModalContent from '@/components/Setting/SettingsModalContent';
@@ -34,6 +35,7 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [chatStatus, setChatStatus] = useAtom(chatStatusAtom);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isUsageOpen, setIsUsageOpen] = useState(false);
 
   const [threadId, setThreadId] = useAtom(threadIdAtom);
   const threadIdRef = useRef(threadId);
@@ -423,6 +425,14 @@ const Chat = () => {
     setThreadId(undefined);
   };
 
+  const handleOpenUsage = () => {
+    setIsUsageOpen(true);
+  };
+
+  const handleCloseUsage = () => {
+    setIsUsageOpen(false);
+  };
+
   return (
     <div
       className={`sz-chat sz:w-full sz:h-full sz:flex sz:flex-col sz:items-center ${
@@ -461,6 +471,7 @@ const Chat = () => {
           onCancel={handleCancel}
           onOpenHistory={handleOpenHistory}
           onNewChat={handleNewChat}
+          onOpenUsage={handleOpenUsage}
         />
       </div>
       {isSettingsOpen && (
@@ -475,6 +486,13 @@ const Chat = () => {
           onClose={handleCloseHistory}
           size="large"
           content={<ThreadListModalContent onClose={handleCloseHistory} />}
+        />
+      )}
+      {isUsageOpen && (
+        <SidePanelFullModal
+          onClose={handleCloseUsage}
+          size="large"
+          content={<TokenUsageModalContent />}
         />
       )}
     </div>

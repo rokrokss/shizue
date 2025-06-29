@@ -119,5 +119,13 @@
     "youtubeCaptionButton": "Botão de legenda do YouTube",
     "bilingual": "Bilingue",
     "captionSizeRatio": "Tamanho da legenda"
+  },
+  "usage": {
+    "title": "Utilização de Tokens",
+    "total": "Total",
+    "error": "Erro",
+    "fetchError": "Ocorreu um erro ao obter dados de utilização de tokens.",
+    "retry": "Tentar novamente",
+    "noData": "Ainda não há dados de utilização."
   }
 }

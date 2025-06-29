@@ -119,5 +119,13 @@
     "youtubeCaptionButton": "YouTube Altyazı Düğmesi",
     "bilingual": "İki Dilli",
     "captionSizeRatio": "Altyazı Boyutu"
+  },
+  "usage": {
+    "title": "Token Kullanımı",
+    "total": "Toplam",
+    "error": "Hata",
+    "fetchError": "Token kullanım verilerini alırken bir hata oluştu.",
+    "retry": "Yeniden Dene",
+    "noData": "Henüz kullanım verisi yok."
   }
 }

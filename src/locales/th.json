@@ -119,5 +119,13 @@
     "youtubeCaptionButton": "ปุ่มคำบรรยาย Youtube",
     "bilingual": "สองภาษา",
     "captionSizeRatio": "ขนาดคำบรรยาย"
+  },
+  "usage": {
+    "title": "การใช้โทเค็น",
+    "total": "รวม",
+    "error": "ข้อผิดพลาด",
+    "fetchError": "เกิดข้อผิดพลาดในการดึงข้อมูลการใช้โทเค็น",
+    "retry": "ลองอีกครั้ง",
+    "noData": "ยังไม่มีข้อมูลการใช้งาน"
   }
 }

@@ -119,5 +119,13 @@
     "youtubeCaptionButton": "YouTube-Untertitel-Schaltfläche",
     "bilingual": "Zweisprachig",
     "captionSizeRatio": "Untertitelgröße"
+  },
+  "usage": {
+    "title": "Token-Verbrauch",
+    "total": "Gesamt",
+    "error": "Fehler",
+    "fetchError": "Ein Fehler ist beim Abrufen der Token-Verbrauchsdaten aufgetreten.",
+    "retry": "Wiederholen",
+    "noData": "Noch keine Verbrauchsdaten vorhanden."
   }
 }

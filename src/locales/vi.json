@@ -119,5 +119,13 @@
     "youtubeCaptionButton": "Nút Chú thích Youtube",
     "bilingual": "Song ngữ",
     "captionSizeRatio": "Kích thước chú thích"
+  },
+  "usage": {
+    "title": "Sử dụng Token",
+    "total": "Tổng cộng",
+    "error": "Lỗi",
+    "fetchError": "Đã xảy ra lỗi khi lấy dữ liệu sử dụng token.",
+    "retry": "Thử lại",
+    "noData": "Chưa có dữ liệu sử dụng."
   }
 }

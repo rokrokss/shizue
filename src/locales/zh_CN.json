@@ -119,5 +119,13 @@
     "youtubeCaptionButton": "YouTube 字幕按钮",
     "bilingual": "双语",
     "captionSizeRatio": "字幕大小"
+  },
+  "usage": {
+    "title": "令牌使用量",
+    "total": "总计",
+    "error": "错误",
+    "fetchError": "获取令牌使用量数据时发生错误。",
+    "retry": "重试",
+    "noData": "暂无使用量数据。"
   }
 }

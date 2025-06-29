@@ -119,5 +119,13 @@
     "youtubeCaptionButton": "YouTube 字幕ボタン",
     "bilingual": "バイリンガル",
     "captionSizeRatio": "字幕サイズ"
+  },
+  "usage": {
+    "title": "トークン使用量",
+    "total": "合計",
+    "error": "エラー",
+    "fetchError": "トークン使用量の取得中にエラーが発生しました。",
+    "retry": "再試行",
+    "noData": "まだ使用量データがありません。"
   }
 }
