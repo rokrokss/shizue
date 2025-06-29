@@ -184,9 +184,8 @@ export class TranslationHandler {
 
     try {
       const targetLanguage = getTranslationTargetLanguage();
-      const serializedTextBatch = JSON.stringify(textBatch, null, 2);
 
-      const batchPrompt = getHtmlTranslationBatchPrompt(serializedTextBatch, targetLanguage);
+      const batchPrompt = getHtmlTranslationBatchPrompt(textBatch, targetLanguage);
 
       const llm = getModelInstance({
         temperature: 0.1,
