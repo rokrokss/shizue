@@ -21,9 +21,22 @@ export interface ThreadMeta {
   updatedAt: number;
 }
 
+export interface TokenUsage {
+  id: string;
+  date: string; // YYYY-MM-DD 형식
+  model: string;
+  provider: 'openai' | 'gemini';
+  inputTokens: number;
+  outputTokens: number;
+  totalTokens: number;
+  requestCount: number;
+  createdAt: number;
+}
+
 class DB extends Dexie {
   messages!: Table<Message, string>;
   threads!: Table<ThreadMeta, string>;
+  tokenUsage!: Table<TokenUsage, string>;
 
   constructor() {
     super('ShizueDB');
@@ -31,6 +44,12 @@ class DB extends Dexie {
       // 'pk, ...indexes'
       messages: 'id, threadId, createdAt',
       threads: 'id, updatedAt',
+    });
+    this.version(2).stores({
+      // 'pk, ...indexes'
+      messages: 'id, threadId, createdAt',
+      threads: 'id, updatedAt',
+      tokenUsage: 'id, date, model, provider, createdAt',
     });
   }
 }
@@ -87,4 +106,39 @@ export const getInitialMessagesForAllThreads = async (): Promise<ThreadWithIniti
   }
 
   return result;
+};
+
+// 토큰 사용량 관련 함수들
+export const recordTokenUsage = async (usage: Omit<TokenUsage, 'id'>) => {
+  const id = crypto.randomUUID();
+  await db.tokenUsage.add({ ...usage, id });
+};
+
+export const getTokenUsageByDateRange = async (startDate: string, endDate: string): Promise<TokenUsage[]> => {
+  return db.tokenUsage
+    .where('date')
+    .between(startDate, endDate, true, true)
+    .sortBy('createdAt');
+};
+
+export const getTokenUsageByDate = async (date: string): Promise<TokenUsage[]> => {
+  return db.tokenUsage.where('date').equals(date).toArray();
+};
+
+export const getTotalTokenUsage = async (): Promise<{
+  totalInputTokens: number;
+  totalOutputTokens: number;
+  totalTokens: number;
+  totalRequests: number;
+}> => {
+  const allUsage = await db.tokenUsage.toArray();
+  return allUsage.reduce(
+    (acc, usage) => ({
+      totalInputTokens: acc.totalInputTokens + usage.inputTokens,
+      totalOutputTokens: acc.totalOutputTokens + usage.outputTokens,
+      totalTokens: acc.totalTokens + usage.totalTokens,
+      totalRequests: acc.totalRequests + usage.requestCount,
+    }),
+    { totalInputTokens: 0, totalOutputTokens: 0, totalTokens: 0, totalRequests: 0 }
+  );
 };
