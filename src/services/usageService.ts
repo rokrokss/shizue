@@ -4,6 +4,14 @@ import {
   TokenUsage,
 } from '@/lib/indexDB';
 
+export interface ModelUsage {
+  model: string;
+  inputTokens: number;
+  outputTokens: number;
+  totalTokens: number;
+  requestCount: number;
+}
+
 export interface DailyUsage {
   date: string;
   inputTokens: number;
@@ -11,6 +19,7 @@ export interface DailyUsage {
   totalTokens: number;
   requestCount: number;
   models: string[];
+  modelUsage: ModelUsage[];
 }
 
 export interface UsageSummary {
@@ -49,6 +58,7 @@ export const fetchUsageData = async (days: number = 7): Promise<DailyUsage[]> =>
         totalTokens: 0,
         requestCount: 0,
         models: [],
+        modelUsage: [],
       });
     }
 
@@ -64,6 +74,24 @@ export const fetchUsageData = async (days: number = 7): Promise<DailyUsage[]> =>
         if (!existing.models.includes(record.model)) {
           existing.models.push(record.model);
         }
+
+        // 모델별 사용량 추가
+        let modelUsage = existing.modelUsage.find(m => m.model === record.model);
+        if (!modelUsage) {
+          modelUsage = {
+            model: record.model,
+            inputTokens: 0,
+            outputTokens: 0,
+            totalTokens: 0,
+            requestCount: 0,
+          };
+          existing.modelUsage.push(modelUsage);
+        }
+
+        modelUsage.inputTokens += record.inputTokens;
+        modelUsage.outputTokens += record.outputTokens;
+        modelUsage.totalTokens += record.totalTokens;
+        modelUsage.requestCount += record.requestCount;
       }
     });
 
