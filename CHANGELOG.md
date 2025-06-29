@@ -2,6 +2,7 @@
 
 ## v0.1.7
 
+- API Token Usage Monitoring
 - Added ability to hide menu on specific websites
 
 ## v0.1.6
