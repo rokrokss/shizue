@@ -66,33 +66,15 @@
     "general": "General",
     "models": "Models",
     "layout": "Layout",
-    "registered": "Registered",
-    "usage": "Usage"
+    "registered": "Registered"
   },
   "usage": {
     "title": "Token Usage",
-    "chartTitle": "Token Usage Dashboard",
-    "dailyUsageChart": "Daily Token Usage (Last 7 Days)",
-    "detailTable": "Detailed Usage History",
-    "refresh": "Refresh",
+    "total": "Total",
     "error": "Error",
-    "fetchError": "An error occurred while loading token usage data.",
+    "fetchError": "An error occurred while fetching token usage.",
     "retry": "Retry",
-    "noData": "No usage data available yet.",
-    "emptyStateMessage": "Token usage will appear here when you use AI models.",
-    "date": "Date",
-    "inputTokens": "Input Tokens",
-    "outputTokens": "Output Tokens",
-    "totalTokens": "Total Tokens",
-    "requests": "Requests",
-    "models": "Models Used",
-    "totalInputTokens": "Total Input Tokens",
-    "totalOutputTokens": "Total Output Tokens",
-    "totalRequests": "Total Requests",
-    "localTracking": {
-      "title": "Local Token Usage Tracking",
-      "description": "This data represents token usage from AI API calls recorded directly by the extension. Both OpenAI and Gemini models are supported, and no separate Admin Key is required."
-    }
+    "noData": "No usage data yet."
   },
   "time": {
     "justNow": "just now",

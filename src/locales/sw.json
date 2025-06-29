@@ -119,5 +119,13 @@
     "youtubeCaptionButton": "Kitufe cha Caption ya Youtube",
     "bilingual": "Lugha mbili",
     "captionSizeRatio": "Kichwa cha Caption"
+  },
+  "usage": {
+    "title": "Matumizi ya Token",
+    "total": "Jumla",
+    "error": "Hitilafu",
+    "fetchError": "Hitilafu imetokea wakati wa kupata data ya matumizi ya token.",
+    "retry": "Jaribu tena",
+    "noData": "Hakuna data ya matumizi bado."
   }
 }

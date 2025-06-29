@@ -1,7 +1,7 @@
 import Footer from '@/components/Footer';
 import { ChatStatus, isChatWaiting } from '@/hooks/chat';
 import { useThemeValue } from '@/hooks/layout';
-import { FolderOutlined, PauseOutlined, SmileOutlined } from '@ant-design/icons';
+import { FolderOutlined, LineChartOutlined, PauseOutlined, SmileOutlined } from '@ant-design/icons';
 import { Button, Input, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 
@@ -11,12 +11,14 @@ const ChatInput = ({
   onCancel,
   onOpenHistory,
   onNewChat,
+  onOpenUsage,
 }: {
   chatStatus: ChatStatus;
   onSubmit: (text: string) => Promise<void>;
   onCancel: () => Promise<void>;
   onOpenHistory: () => void;
   onNewChat: () => Promise<void>;
+  onOpenUsage: () => void;
 }) => {
   const { t } = useTranslation();
   const [chatInput, setChatInput] = useState('');
@@ -97,6 +99,35 @@ const ChatInput = ({
                 type="text"
                 icon={
                   <SmileOutlined
+                    style={{
+                      fontSize: '20px',
+                      color: 'rgba(0,0,0,0.88)',
+                      filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                    }}
+                  />
+                }
+                size="middle"
+              ></Button>
+            </Tooltip>
+            <Tooltip
+              placement="top"
+              title={
+                <div
+                  className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
+                    theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
+                  }`}
+                >
+                  {t('usage.title')}
+                </div>
+              }
+              color={theme == 'dark' ? '#505362' : 'white'}
+              className="sz:font-ycom"
+            >
+              <Button
+                onClick={() => onOpenUsage()}
+                type="text"
+                icon={
+                  <LineChartOutlined
                     style={{
                       fontSize: '20px',
                       color: 'rgba(0,0,0,0.88)',

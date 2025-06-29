@@ -8,8 +8,9 @@ export interface TokenUsageInfo {
   totalTokens: number;
 }
 
-// Common token usage extraction function
-export const extractTokenUsage = (response: AIMessageChunk | AIMessage): TokenUsageInfo | undefined => {
+export const extractTokenUsage = (
+  response: AIMessageChunk | AIMessage
+): TokenUsageInfo | undefined => {
   const usage = response?.usage_metadata;
   if (usage) {
     return {
@@ -20,7 +21,6 @@ export const extractTokenUsage = (response: AIMessageChunk | AIMessage): TokenUs
   }
 };
 
-// Record token usage to database
 export const trackTokenUsage = async (
   model: string,
   response: AIMessageChunk | AIMessage,
@@ -59,7 +59,6 @@ export const trackTokenUsage = async (
   }
 };
 
-// Track token usage from streaming response (final chunk)
 export const trackStreamingTokenUsage = async (
   model: string,
   finalResponse: AIMessageChunk,

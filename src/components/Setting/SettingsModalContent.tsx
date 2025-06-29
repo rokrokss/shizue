@@ -21,7 +21,6 @@ import { SmileOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Input, List, Select, Tabs, Tag } from 'antd';
 import { useSetAtom } from 'jotai';
 import { useTranslation } from 'react-i18next';
-import TokenUsageTab from './TokenUsageTab';
 
 const SettingsModalContent = () => {
   const { t } = useTranslation();
@@ -410,11 +409,6 @@ const SettingsModalContent = () => {
                 </div>
               </div>
             ),
-          },
-          {
-            key: 'usage',
-            label: t('settings.usage'),
-            children: <TokenUsageTab theme={theme} />,
           },
           {
             key: 'layout',

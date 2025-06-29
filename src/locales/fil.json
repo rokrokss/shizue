@@ -119,5 +119,13 @@
     "youtubeCaptionButton": "Youtube Caption Button",
     "bilingual": "Bilingual",
     "captionSizeRatio": "Caption Size"
+  },
+  "usage": {
+    "title": "Paggamit ng Token",
+    "total": "Kabuuan",
+    "error": "Error",
+    "fetchError": "May naganap na error habang kinukuha ang data ng token usage.",
+    "retry": "Subukan Muli",
+    "noData": "Walang data ng paggamit pa."
   }
 }

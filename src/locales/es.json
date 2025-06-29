@@ -119,5 +119,13 @@
     "youtubeCaptionButton": "Botón de subtítulos de YouTube",
     "bilingual": "Bilingüe",
     "captionSizeRatio": "Tamaño de subtítulos"
+  },
+  "usage": {
+    "title": "Uso de Tokens",
+    "total": "Total",
+    "error": "Error",
+    "fetchError": "Ocurrió un error al obtener los datos de uso de tokens.",
+    "retry": "Reintentar",
+    "noData": "Aún no hay datos de uso."
   }
 }

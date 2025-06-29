@@ -119,5 +119,13 @@
     "youtubeCaptionButton": "YouTube 字幕按鈕",
     "bilingual": "雙語",
     "captionSizeRatio": "字幕大小"
+  },
+  "usage": {
+    "title": "權杖使用量",
+    "total": "總計",
+    "error": "錯誤",
+    "fetchError": "擷取權杖使用量資料時發生錯誤。",
+    "retry": "重試",
+    "noData": "尚無使用量資料。"
   }
 }
