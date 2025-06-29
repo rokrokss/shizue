@@ -127,5 +127,8 @@
     "fetchError": "Hitilafu imetokea wakati wa kupata data ya matumizi ya token.",
     "retry": "Jaribu tena",
     "noData": "Hakuna data ya matumizi bado."
+  },
+  "pdf": {
+    "translatePdf": "Tafsiri PDF"
   }
 }

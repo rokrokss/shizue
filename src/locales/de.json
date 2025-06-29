@@ -127,5 +127,8 @@
     "fetchError": "Ein Fehler ist beim Abrufen der Token-Verbrauchsdaten aufgetreten.",
     "retry": "Wiederholen",
     "noData": "Noch keine Verbrauchsdaten vorhanden."
+  },
+  "pdf": {
+    "translatePdf": "PDF übersetzen"
   }
 }

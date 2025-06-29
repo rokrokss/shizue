@@ -127,5 +127,8 @@
     "fetchError": "May naganap na error habang kinukuha ang data ng token usage.",
     "retry": "Subukan Muli",
     "noData": "Walang data ng paggamit pa."
+  },
+  "pdf": {
+    "translatePdf": "Isalin ang PDF"
   }
 }
