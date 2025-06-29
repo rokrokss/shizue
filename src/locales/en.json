@@ -127,5 +127,8 @@
     "youtubeCaptionButton": "Youtube Caption Button",
     "bilingual": "Bilingual",
     "captionSizeRatio": "Caption Size"
+  },
+  "pdf": {
+    "translatePdf": "Translate PDF"
   }
 }
