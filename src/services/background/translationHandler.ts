@@ -14,6 +14,7 @@ import { trackTokenUsage } from '@/lib/tokenUsageTracker';
 import { Caption, VideoMetadata } from '@/lib/youtube';
 import { debugLog, errorLog } from '@/logs';
 import { HumanMessage } from '@langchain/core/messages';
+import { nanoid } from 'nanoid';
 
 export interface TranslationResult {
   success: boolean;
@@ -38,7 +39,7 @@ interface YoutubeCaptionTranslationJsonResponseFormat {
 }
 
 interface BatchTranslationJsonResponseFormat {
-  translations: string[];
+  translations: Record<string, string>;
 }
 
 function getTranslationModelPreset(): ModelPreset {
@@ -183,9 +184,12 @@ export class TranslationHandler {
 
     try {
       const targetLanguage = getTranslationTargetLanguage();
-      const serializedTextBatch = JSON.stringify(textBatch, null, 2);
-
-      const batchPrompt = getHtmlTranslationBatchPrompt(serializedTextBatch, targetLanguage);
+      const textBatchMap: Record<string, string> = {};
+      for (let i = 0; i < textBatch.length; i++) {
+        textBatchMap[nanoid(10)] = textBatch[i];
+      }
+      debugLog('TranslationHandler [translateHtmlTextBatch] textBatchMap:', textBatchMap);
+      const batchPrompt = getHtmlTranslationBatchPrompt(textBatchMap, targetLanguage);
 
       const llm = getModelInstance({
         temperature: 0.1,
@@ -227,8 +231,8 @@ export class TranslationHandler {
       if (
         !parsedResponse ||
         !parsedResponse.translations ||
-        !Array.isArray(parsedResponse.translations) ||
-        !parsedResponse.translations.every((item) => typeof item === 'string')
+        typeof parsedResponse.translations !== 'object' ||
+        Object.keys(parsedResponse.translations).length !== textBatch.length
       ) {
         const validationErrorMsg =
           "AI response is not a valid JSON object with a 'translations' array of strings.";
@@ -244,10 +248,10 @@ export class TranslationHandler {
         };
       }
 
-      const translatedTextsArray = parsedResponse.translations;
+      const translatedTextsMap = parsedResponse.translations;
 
-      if (translatedTextsArray.length !== textBatch.length) {
-        const countMismatchErrorMsg = `Number of translated texts (${translatedTextsArray.length}) does not match input batch size (${textBatch.length}).`;
+      if (Object.keys(translatedTextsMap).length !== textBatch.length) {
+        const countMismatchErrorMsg = `Number of translated texts (${Object.keys(translatedTextsMap).length}) does not match input batch size (${textBatch.length}).`;
         errorLog(
           'ChatModelHandler [translateHtmlTextBatch] Item count mismatch error:',
           countMismatchErrorMsg
@@ -260,7 +264,7 @@ export class TranslationHandler {
 
       return {
         success: true,
-        translatedTexts: translatedTextsArray,
+        translatedTexts: Object.values(translatedTextsMap),
       };
     } catch (err) {
       errorLog('TranslationHandler [translateHtmlTextBatch] general error:', err);

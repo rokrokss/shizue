@@ -94,7 +94,7 @@ ${text}`;
 };
 
 export const getHtmlTranslationBatchPrompt = (
-  serializedTextBatch: string,
+  textBatch: Record<string, string>,
   targetLanguage: Language
 ) => {
   debugLog('getHtmlTranslationBatchPrompt', targetLanguage);
@@ -117,11 +117,16 @@ Translate an array of HTML text snippets into **${targetLanguage}**.
 4.  **Maintain Order:** The order of translated snippets in the output "translations" array MUST exactly match the order of the input snippets.
 
 ===Input HTML Snippets (JSON array)===
-${serializedTextBatch}
+${JSON.stringify(textBatch)}
 
 ===Example of the EXACT JSON Output Format expected===
 {
-  "translations": ["translated_html_snippet_1", "translated_html_snippet_2", ..., "translated_html_snippet_n"]
+  "translations": {
+    "<nanoid1>": "translated_html_snippet_1",
+    "<nanoid2>": "translated_html_snippet_2",
+    ...
+    "<nanoidn>": "translated_html_snippet_n"
+  }
 }
   
 Ensure your output can be directly parsed by a JSON parser.`;
