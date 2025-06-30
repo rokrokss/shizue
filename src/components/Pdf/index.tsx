@@ -1,12 +1,16 @@
 import TopMenu from '@/components/Chat/TopRightMenu';
+import Footer from '@/components/Footer';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import SettingsModalContent from '@/components/Setting/SettingsModalContent';
+import { threadIdAtom } from '@/hooks/global';
 import { useThemeValue } from '@/hooks/layout';
 import { debugLog } from '@/logs';
-import { UploadOutlined } from '@ant-design/icons';
+import { HomeOutlined, UploadOutlined } from '@ant-design/icons';
 import type { UploadProps } from 'antd';
 import { Button, Upload } from 'antd';
+import { useSetAtom } from 'jotai';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const props: UploadProps = {
   name: 'file',
@@ -29,6 +33,8 @@ const props: UploadProps = {
 const Pdf = () => {
   const theme = useThemeValue();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const navigate = useNavigate();
+  const setThreadId = useSetAtom(threadIdAtom);
 
   const handleTopMenuSettingsClick = () => {
     setIsSettingsOpen(true);
@@ -38,6 +44,16 @@ const Pdf = () => {
     setIsSettingsOpen(false);
   };
 
+  const handleNavigateToChat = async () => {
+    debugLog('Pdf: Navigate to chat triggered');
+
+    setThreadId(undefined);
+
+    setTimeout(() => {
+      navigate('/');
+    }, 100);
+  };
+
   return (
     <div className="sz-sidepanel sz:flex sz:flex-col sz:h-screen sz:font-ycom">
       <div
@@ -45,6 +61,29 @@ const Pdf = () => {
           theme == 'dark' ? 'sz:bg-[#1C1D26]' : 'sz:bg-white'
         }`}
       >
+        <button
+          className={`
+            sz:fixed
+            sz:top-3
+            sz:left-4
+            sz:z-10
+            sz:p-[3px]
+            sz:rounded
+            sz:cursor-pointer
+            sz:flex
+            sz:flex-col
+            sz:gap-2
+            ${theme == 'dark' ? 'sz:bg-[#1C1D26]' : 'sz:bg-white'}
+          `}
+          onClick={() => handleNavigateToChat()}
+        >
+          <HomeOutlined
+            style={{
+              fontSize: 22,
+              filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+            }}
+          />
+        </button>
         <TopMenu onSettingsClick={handleTopMenuSettingsClick} />
 
         <div
@@ -55,7 +94,7 @@ const Pdf = () => {
             sz:flex-col
             sz:items-center
             sz:justify-start
-            sz:pt-10
+            sz:pt-15
           "
         >
           <Upload {...props}>
@@ -73,6 +112,9 @@ const Pdf = () => {
             content={<SettingsModalContent />}
           />
         )}
+      </div>
+      <div className="sz-sidepanel-footer sz:h-6 sz:w-full sz:flex sz:items-center sz:justify-center">
+        <Footer />
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import {
 import { useSetGeminiKey, useSetOpenAIKey } from '@/hooks/settings';
 import { ModelProvider } from '@/lib/models';
 import { validateApiKey } from '@/lib/validateApiKey';
+import { debugLog } from '@/logs';
 import { SmileOutlined } from '@ant-design/icons';
 import { Button, Input, Select } from 'antd';
 import { useState } from 'react';
@@ -70,6 +71,7 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
   };
 
   const onClickNext = () => {
+    debugLog('Onboarding: [onClickNext] navigate to /chat');
     navigate('/chat');
   };
 
