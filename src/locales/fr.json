@@ -129,6 +129,9 @@
     "noData": "Aucune donnée d'utilisation pour le moment."
   },
   "pdf": {
-    "translatePdf": "Traduire PDF"
+    "translatePdf": "Traduire le PDF"
+  },
+  "home": {
+    "title": "Aller à l'accueil"
   }
 }

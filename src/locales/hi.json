@@ -87,7 +87,7 @@
     "restore": "वापस"
   },
   "language": {
-    "English": "अंग्रेज़ी",
+    "English": "अंग्रे़ी",
     "Korean": "कोरियाई",
     "ChineseSimplified": "चीनी (सरल)",
     "ChineseTraditional": "चीनी (पारंपरिक)",
@@ -129,6 +129,9 @@
     "noData": "अभी तक कोई उपयोग डेटा नहीं है।"
   },
   "pdf": {
-    "translatePdf": "PDF का अनुवाद करें"
+    "translatePdf": "PDF अनुवाद करें"
+  },
+  "home": {
+    "title": "होम पर जाएं"
   }
 }

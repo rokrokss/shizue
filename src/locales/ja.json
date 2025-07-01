@@ -130,5 +130,8 @@
   },
   "pdf": {
     "translatePdf": "PDFを翻訳"
+  },
+  "home": {
+    "title": "ホームに移動"
   }
 }

@@ -134,7 +134,7 @@ const Toggle = () => {
 
     if (newOpen && translateSettingsPopoverTriggerRef.current) {
       const rect = translateSettingsPopoverTriggerRef.current.getBoundingClientRect();
-      setSettingsTriggerYPosition(rect.top);
+      setSettingsTriggerYPosition(rect.top + 34);
       debugLog('handleTranslateSettingsOpenChange: Settings trigger Y position:', rect.top);
     }
     setTranslateSettingsModalOpen(newOpen);
@@ -441,6 +441,7 @@ const Toggle = () => {
                   />
                 }
                 isPopoverOpen={translateSettingsModalOpen}
+                hideTooltip={translateSettingsModalOpen || closeIconModalOpen}
               />
 
               <OverlayMenuItem
@@ -448,6 +449,7 @@ const Toggle = () => {
                 icon={<PhotoIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
                 tooltipMessage={tooltipMessages[4]}
                 onClick={handlePdfClick}
+                hideTooltip={translateSettingsModalOpen || closeIconModalOpen}
               />
 
               <OverlayMenuItem
@@ -465,6 +467,7 @@ const Toggle = () => {
                 }
                 tooltipMessage={isTranslationActive ? tooltipMessages[3] : tooltipMessages[1]}
                 onClick={handleTranslatePage}
+                hideTooltip={translateSettingsModalOpen || closeIconModalOpen}
               />
 
               <OverlayMenuItem
@@ -472,6 +475,7 @@ const Toggle = () => {
                 icon={<BookIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
                 tooltipMessage={tooltipMessages[2]}
                 onClick={handleSummarizePage}
+                hideTooltip={translateSettingsModalOpen || closeIconModalOpen}
               />
             </OverlayMenu>
           </div>

@@ -130,5 +130,8 @@
   },
   "pdf": {
     "translatePdf": "Dịch PDF"
+  },
+  "home": {
+    "title": "Đi tới trang chủ"
   }
 }

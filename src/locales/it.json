@@ -130,5 +130,8 @@
   },
   "pdf": {
     "translatePdf": "Traduci PDF"
+  },
+  "home": {
+    "title": "Vai alla Home"
   }
 }

@@ -7,9 +7,10 @@ import { useThemeValue } from '@/hooks/layout';
 import { debugLog } from '@/logs';
 import { HomeOutlined, UploadOutlined } from '@ant-design/icons';
 import type { UploadProps } from 'antd';
-import { Button, Upload } from 'antd';
+import { Button, Tooltip, Upload } from 'antd';
 import { useSetAtom } from 'jotai';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 const props: UploadProps = {
@@ -35,6 +36,7 @@ const Pdf = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const navigate = useNavigate();
   const setThreadId = useSetAtom(threadIdAtom);
+  const { t } = useTranslation();
 
   const handleTopMenuSettingsClick = () => {
     setIsSettingsOpen(true);
@@ -61,8 +63,19 @@ const Pdf = () => {
           theme == 'dark' ? 'sz:bg-[#1C1D26]' : 'sz:bg-white'
         }`}
       >
-        <button
-          className={`
+        <Tooltip
+          title={
+            <div className={`sz:font-ycom ${theme == 'dark' ? 'sz:text-white' : 'sz:text-black'}`}>
+              {t('home.title')}
+            </div>
+          }
+          color={theme == 'dark' ? '#505362' : 'white'}
+          className="sz:font-ycom"
+          placement="bottomLeft"
+          arrow={false}
+        >
+          <button
+            className={`
             sz:fixed
             sz:top-3
             sz:left-4
@@ -75,15 +88,16 @@ const Pdf = () => {
             sz:gap-2
             ${theme == 'dark' ? 'sz:bg-[#1C1D26]' : 'sz:bg-white'}
           `}
-          onClick={() => handleNavigateToChat()}
-        >
-          <HomeOutlined
-            style={{
-              fontSize: 22,
-              filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
-            }}
-          />
-        </button>
+            onClick={() => handleNavigateToChat()}
+          >
+            <HomeOutlined
+              style={{
+                fontSize: 22,
+                filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+              }}
+            />
+          </button>
+        </Tooltip>
         <TopMenu onSettingsClick={handleTopMenuSettingsClick} />
 
         <div

@@ -130,5 +130,8 @@
   },
   "pdf": {
     "translatePdf": "Isalin ang PDF"
+  },
+  "home": {
+    "title": "Pumunta sa Tahanan"
   }
 }

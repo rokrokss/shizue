@@ -129,6 +129,9 @@
     "noData": "Henüz kullanım verisi yok."
   },
   "pdf": {
-    "translatePdf": "PDF'yi Çevir"
+    "translatePdf": "PDF Çevir"
+  },
+  "home": {
+    "title": "Ana Sayfaya Git"
   }
 }

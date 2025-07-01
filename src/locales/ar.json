@@ -129,6 +129,9 @@
     "noData": "لا توجد بيانات استخدام بعد."
   },
   "pdf": {
-    "translatePdf": "ترجم PDF"
+    "translatePdf": "ترجمة PDF"
+  },
+  "home": {
+    "title": "الانتقال إلى الرئيسية"
   }
 }
