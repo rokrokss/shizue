@@ -57,11 +57,13 @@ const Pdf = () => {
   };
 
   return (
-    <div className="sz-sidepanel sz:flex sz:flex-col sz:h-screen sz:font-ycom">
+    <div
+      className={`sz-sidepanel sz:flex sz:flex-col sz:h-screen sz:font-ycom ${
+        theme == 'dark' ? 'sz:bg-[#1C1D26]' : 'sz:bg-white'
+      }`}
+    >
       <div
-        className={`sz-pdf sz:w-full sz:h-full sz:flex sz:flex-col sz:items-center sz:font-ycom ${
-          theme == 'dark' ? 'sz:bg-[#1C1D26]' : 'sz:bg-white'
-        }`}
+        className={'sz-pdf sz:w-full sz:h-full sz:flex sz:flex-col sz:items-center sz:font-ycom'}
       >
         <Tooltip
           title={
