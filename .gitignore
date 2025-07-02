@@ -29,6 +29,3 @@ dist-ssr
 
 # wxt
 .wxt/*
-
-# uv
-.venv

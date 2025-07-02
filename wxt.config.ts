@@ -2,7 +2,6 @@ import tailwindcss from '@tailwindcss/vite';
 import { visualizer } from 'rollup-plugin-visualizer';
 import svgr from 'vite-plugin-svgr';
 import { defineConfig, type UserManifest } from 'wxt';
-import { viteStaticCopyPyodide } from './scripts/vite-plugin-pyodide-copy';
 import toUtf8 from './scripts/vite-plugin-to-utf8';
 
 export default defineConfig({
@@ -34,15 +33,6 @@ export default defineConfig({
           description: '__MSG_toggle_description__',
         },
       },
-      content_security_policy: {
-        extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
-      },
-      web_accessible_resources: [
-        {
-          resources: ['pyodide/*', 'pyodide_packages/*'],
-          matches: ['<all_urls>'],
-        },
-      ],
     };
     return manifest;
   },
@@ -54,11 +44,7 @@ export default defineConfig({
     },
   },
   vite: () => ({
-    optimizeDeps: {
-      exclude: ['pyodide'],
-    },
     plugins: [
-      viteStaticCopyPyodide() as any,
       svgr(),
       tailwindcss(),
       visualizer({
