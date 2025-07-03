@@ -127,5 +127,11 @@
     "fetchError": "Đã xảy ra lỗi khi lấy dữ liệu sử dụng token.",
     "retry": "Thử lại",
     "noData": "Chưa có dữ liệu sử dụng."
+  },
+  "pdf": {
+    "translatePdf": "Dịch PDF"
+  },
+  "home": {
+    "title": "Đi tới trang chủ"
   }
 }

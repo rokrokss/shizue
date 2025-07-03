@@ -127,5 +127,11 @@
     "fetchError": "Token kullanım verilerini alırken bir hata oluştu.",
     "retry": "Yeniden Dene",
     "noData": "Henüz kullanım verisi yok."
+  },
+  "pdf": {
+    "translatePdf": "PDF Çevir"
+  },
+  "home": {
+    "title": "Ana Sayfaya Git"
   }
 }

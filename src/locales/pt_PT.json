@@ -127,5 +127,11 @@
     "fetchError": "Ocorreu um erro ao obter dados de utilização de tokens.",
     "retry": "Tentar novamente",
     "noData": "Ainda não há dados de utilização."
+  },
+  "pdf": {
+    "translatePdf": "Traduzir PDF"
+  },
+  "home": {
+    "title": "Ir para o Início"
   }
 }

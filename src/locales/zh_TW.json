@@ -127,5 +127,11 @@
     "fetchError": "擷取權杖使用量資料時發生錯誤。",
     "retry": "重試",
     "noData": "尚無使用量資料。"
+  },
+  "pdf": {
+    "translatePdf": "翻譯PDF"
+  },
+  "home": {
+    "title": "前往主頁"
   }
 }

@@ -127,5 +127,11 @@
     "fetchError": "Wystąpił błąd podczas pobierania danych wykorzystania tokenów.",
     "retry": "Spróbuj ponownie",
     "noData": "Brak danych użycia."
+  },
+  "pdf": {
+    "translatePdf": "Przetłumacz PDF"
+  },
+  "home": {
+    "title": "Przejdź do strony głównej"
   }
 }
