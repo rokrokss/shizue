@@ -129,7 +129,10 @@
     "noData": "尚無使用量資料。"
   },
   "pdf": {
-    "translatePdf": "翻譯PDF"
+    "translatePdf": "翻譯PDF",
+    "selectPdfFile": "選擇PDF檔案",
+    "startTranslation": "開始翻譯",
+    "fileSizeExceeds": "檔案大小超過{SIZE_REPLACEMENT}MB。"
   },
   "home": {
     "title": "前往主頁"

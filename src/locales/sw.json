@@ -129,7 +129,10 @@
     "noData": "Hakuna data ya matumizi bado."
   },
   "pdf": {
-    "translatePdf": "Tafsiri PDF"
+    "translatePdf": "Tafsiri PDF",
+    "selectPdfFile": "Chagua faili la PDF",
+    "startTranslation": "Anza kutafsiri",
+    "fileSizeExceeds": "Ukubwa wa faili umezidi {SIZE_REPLACEMENT}MB."
   },
   "home": {
     "title": "Enda Nyumbani"

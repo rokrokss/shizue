@@ -129,7 +129,10 @@
     "captionSizeRatio": "자막 크기"
   },
   "pdf": {
-    "translatePdf": "PDF 번역"
+    "translatePdf": "PDF 번역",
+    "selectPdfFile": "PDF 파일 선택",
+    "startTranslation": "번역 시작하기",
+    "fileSizeExceeds": "파일 크기가 {SIZE_REPLACEMENT}MB를 초과해요."
   },
   "home": {
     "title": "홈으로 이동"

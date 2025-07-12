@@ -129,7 +129,10 @@
     "noData": "अभी तक कोई उपयोग डेटा नहीं है।"
   },
   "pdf": {
-    "translatePdf": "PDF अनुवाद करें"
+    "translatePdf": "PDF अनुवाद करें",
+    "selectPdfFile": "PDF फ़ाइल चुनें",
+    "startTranslation": "अनुवाद शुरू करें",
+    "fileSizeExceeds": "फ़ाइल साइज़ {SIZE_REPLACEMENT}MB से अधिक है।"
   },
   "home": {
     "title": "होम पर जाएं"

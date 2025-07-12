@@ -129,7 +129,10 @@
     "noData": "هنوز داده‌ای از استفاده موجود نیست."
   },
   "pdf": {
-    "translatePdf": "ترجمه PDF"
+    "translatePdf": "ترجمه PDF",
+    "selectPdfFile": "انتخاب فایل PDF",
+    "startTranslation": "شروع ترجمه",
+    "fileSizeExceeds": "حجم فایل از {SIZE_REPLACEMENT}MB فراتر رفته است."
   },
   "home": {
     "title": "رفتن به خانه"

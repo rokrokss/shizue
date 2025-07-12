@@ -129,7 +129,10 @@
     "noData": "এখনও কোনো ব্যবহারের ডেটা নেই।"
   },
   "pdf": {
-    "translatePdf": "PDF অনুবাদ করুন"
+    "translatePdf": "PDF অনুবাদ করুন",
+    "selectPdfFile": "PDF ফাইল নির্বাচন করুন",
+    "startTranslation": "অনুবাদ শুরু করুন",
+    "fileSizeExceeds": "ফাইলের আকার {SIZE_REPLACEMENT}MB অতিক্রম করেছে।"
   },
   "home": {
     "title": "হোমে যান"

@@ -129,7 +129,10 @@
     "noData": "Brak danych użycia."
   },
   "pdf": {
-    "translatePdf": "Przetłumacz PDF"
+    "translatePdf": "Przetłumacz PDF",
+    "selectPdfFile": "Wybierz plik PDF",
+    "startTranslation": "Rozpocznij tłumaczenie",
+    "fileSizeExceeds": "Rozmiar pliku przekracza {SIZE_REPLACEMENT}MB."
   },
   "home": {
     "title": "Przejdź do strony głównej"

@@ -129,7 +129,10 @@
     "noData": "Пока нет данных об использовании."
   },
   "pdf": {
-    "translatePdf": "Перевести PDF"
+    "translatePdf": "Перевести PDF",
+    "selectPdfFile": "Выбрать PDF файл",
+    "startTranslation": "Начать перевод",
+    "fileSizeExceeds": "Размер файла превышает {SIZE_REPLACEMENT}MB."
   },
   "home": {
     "title": "Перейти на главную"

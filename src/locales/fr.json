@@ -129,7 +129,10 @@
     "noData": "Aucune donnée d'utilisation pour le moment."
   },
   "pdf": {
-    "translatePdf": "Traduire le PDF"
+    "translatePdf": "Traduire PDF",
+    "selectPdfFile": "Sélectionner fichier PDF",
+    "startTranslation": "Commencer la traduction",
+    "fileSizeExceeds": "La taille du fichier dépasse {SIZE_REPLACEMENT}MB."
   },
   "home": {
     "title": "Aller à l'accueil"

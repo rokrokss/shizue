@@ -129,7 +129,10 @@
     "noData": "まだ使用量データがありません。"
   },
   "pdf": {
-    "translatePdf": "PDFを翻訳"
+    "translatePdf": "PDFを翻訳",
+    "selectPdfFile": "PDFファイルを選択",
+    "startTranslation": "翻訳を開始",
+    "fileSizeExceeds": "ファイルサイズが{SIZE_REPLACEMENT}MBを超えています。"
   },
   "home": {
     "title": "ホームに移動"

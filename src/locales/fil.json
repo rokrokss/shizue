@@ -129,7 +129,10 @@
     "noData": "Walang data ng paggamit pa."
   },
   "pdf": {
-    "translatePdf": "Isalin ang PDF"
+    "translatePdf": "Isalin ang PDF",
+    "selectPdfFile": "Piliin ang PDF File",
+    "startTranslation": "Simulan ang Pagsasalin",
+    "fileSizeExceeds": "Ang laki ng file ay lumampas sa {SIZE_REPLACEMENT}MB."
   },
   "home": {
     "title": "Pumunta sa Tahanan"

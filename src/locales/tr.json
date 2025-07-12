@@ -129,7 +129,10 @@
     "noData": "Henüz kullanım verisi yok."
   },
   "pdf": {
-    "translatePdf": "PDF Çevir"
+    "translatePdf": "PDF Çevir",
+    "selectPdfFile": "PDF Dosyası Seç",
+    "startTranslation": "Çeviriyi Başlat",
+    "fileSizeExceeds": "Dosya boyutu {SIZE_REPLACEMENT}MB'ı aşıyor."
   },
   "home": {
     "title": "Ana Sayfaya Git"
