@@ -3,3 +3,5 @@ pydantic
 uvicorn
 python-multipart
 python-dotenv
+gunicorn
+BabelDOC

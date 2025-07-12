@@ -37,7 +37,7 @@ interface TaskStatus {
   download_url?: string;
 }
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://shizue-pdf-translator.onrender.com';
 
 const { Dragger } = Upload;
 
@@ -170,6 +170,8 @@ const Pdf = () => {
         `${API_BASE_URL}/translate`,
         formData
       );
+
+      debugLog('Translation response:', response);
 
       if (response.status === 200) {
         const taskId = response.data.task_id;
