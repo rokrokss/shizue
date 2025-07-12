@@ -38,6 +38,7 @@ interface TaskStatus {
 }
 
 const API_BASE_URL = 'https://shizue-pdf-translator.onrender.com';
+// const API_BASE_URL = 'http://localhost:8000';
 
 const { Dragger } = Upload;
 
