@@ -96,6 +96,10 @@ def run_babeldoc_translation(
 
     try:
         result = subprocess.run(command, check=True, capture_output=True, text=True)
+        print("📋 subprocess output:")
+        print(f"Return code: {result.returncode}")
+        print(f"STDOUT:\n{result.stdout}")
+        print(f"STDERR:\n{result.stderr}")
         return True, "translation completed"
     except subprocess.CalledProcessError as e:
         return False, f"translation error: {str(e)}"
