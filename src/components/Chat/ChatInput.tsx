@@ -1,9 +1,17 @@
 import Footer from '@/components/Footer';
 import { ChatStatus, isChatWaiting } from '@/hooks/chat';
 import { useThemeValue } from '@/hooks/layout';
-import { FolderOutlined, LineChartOutlined, PauseOutlined, SmileOutlined } from '@ant-design/icons';
+import { debugLog } from '@/logs';
+import {
+  FilePdfOutlined,
+  FolderOutlined,
+  LineChartOutlined,
+  PauseOutlined,
+  SmileOutlined,
+} from '@ant-design/icons';
 import { Button, Input, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const ChatInput = ({
   chatStatus,
@@ -25,6 +33,7 @@ const ChatInput = ({
   const [isComposing, setIsComposing] = useState(false);
   const [isCancelHovered, setIsCancelHovered] = useState(false);
   const theme = useThemeValue();
+  const navigate = useNavigate();
 
   const handleSubmit = async (text: string) => {
     if (text !== '') {
@@ -44,6 +53,11 @@ const ChatInput = ({
       const currentValue = e.currentTarget.value.trim();
       handleSubmit(currentValue);
     }
+  };
+
+  const handlePdfClick = () => {
+    debugLog('ChatInput: [handlePdfClick] navigate to /shizue-pdf');
+    navigate('/shizue-pdf');
   };
 
   return (
@@ -128,6 +142,35 @@ const ChatInput = ({
                 type="text"
                 icon={
                   <LineChartOutlined
+                    style={{
+                      fontSize: '20px',
+                      color: 'rgba(0,0,0,0.88)',
+                      filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                    }}
+                  />
+                }
+                size="middle"
+              ></Button>
+            </Tooltip>
+            <Tooltip
+              placement="top"
+              title={
+                <div
+                  className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
+                    theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
+                  }`}
+                >
+                  {t('pdf.translatePdf')}
+                </div>
+              }
+              color={theme == 'dark' ? '#505362' : 'white'}
+              className="sz:font-ycom"
+            >
+              <Button
+                onClick={() => handlePdfClick()}
+                type="text"
+                icon={
+                  <FilePdfOutlined
                     style={{
                       fontSize: '20px',
                       color: 'rgba(0,0,0,0.88)',

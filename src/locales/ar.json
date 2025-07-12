@@ -127,5 +127,14 @@
     "fetchError": "حدث خطأ أثناء جلب بيانات استخدام الرموز.",
     "retry": "إعادة المحاولة",
     "noData": "لا توجد بيانات استخدام بعد."
+  },
+  "pdf": {
+    "translatePdf": "ترجمة PDF",
+    "selectPdfFile": "اختر ملف PDF",
+    "startTranslation": "بدء الترجمة",
+    "fileSizeExceeds": "يتجاوز حجم الملف {SIZE_REPLACEMENT}MB."
+  },
+  "home": {
+    "title": "الانتقال إلى الرئيسية"
   }
 }

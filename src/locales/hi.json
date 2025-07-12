@@ -87,7 +87,7 @@
     "restore": "वापस"
   },
   "language": {
-    "English": "अंग्रेज़ी",
+    "English": "अंग्रे़ी",
     "Korean": "कोरियाई",
     "ChineseSimplified": "चीनी (सरल)",
     "ChineseTraditional": "चीनी (पारंपरिक)",
@@ -127,5 +127,14 @@
     "fetchError": "टोकन उपयोग डेटा प्राप्त करने में एक त्रुटि हुई।",
     "retry": "पुनः प्रयास करें",
     "noData": "अभी तक कोई उपयोग डेटा नहीं है।"
+  },
+  "pdf": {
+    "translatePdf": "PDF अनुवाद करें",
+    "selectPdfFile": "PDF फ़ाइल चुनें",
+    "startTranslation": "अनुवाद शुरू करें",
+    "fileSizeExceeds": "फ़ाइल साइज़ {SIZE_REPLACEMENT}MB से अधिक है।"
+  },
+  "home": {
+    "title": "होम पर जाएं"
   }
 }

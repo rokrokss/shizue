@@ -127,5 +127,14 @@
     "youtubeCaptionButton": "Youtube Caption Button",
     "bilingual": "Bilingual",
     "captionSizeRatio": "Caption Size"
+  },
+  "pdf": {
+    "translatePdf": "Translate PDF",
+    "selectPdfFile": "Select PDF File",
+    "startTranslation": "Start Translation",
+    "fileSizeExceeds": "File size exceeds {SIZE_REPLACEMENT}MB."
+  },
+  "home": {
+    "title": "Go to Home"
   }
 }

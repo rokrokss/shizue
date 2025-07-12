@@ -29,3 +29,7 @@ dist-ssr
 
 # wxt
 .wxt/*
+
+# file output
+output
+uploads

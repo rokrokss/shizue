@@ -17,6 +17,7 @@ import { readStorage } from '@/lib/storageBackend';
 import { debugLog, errorLog } from '@/logs';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const SidePanelProvider = ({
   loadingComponent,
@@ -31,6 +32,7 @@ const SidePanelProvider = ({
   const setMessageAddedInPanel = useSetAtom(messageAddedInPanelAtom);
   const setActionType = useSetAtom(actionTypeAtom);
   const chatStatus = useAtomValue(chatStatusAtom);
+  const navigate = useNavigate();
 
   const rollbackActionType = useCallback(() => {
     setActionType('chat');
@@ -41,6 +43,8 @@ const SidePanelProvider = ({
     debugLog('initData', initData);
     if (isChatWaiting(chatStatus)) {
       debugLog('SidePanelProvider: [getInitData] skip initData for chatStatus', chatStatus);
+    } else if (initData?.actionType === 'chat' && window.location.hash === '#/shizue-pdf') {
+      debugLog('SidePanelProvider: [getInitData] skip initData for actionType chat and pdf url');
     } else if (initData?.actionType === 'askForSummary') {
       const { summaryTitle, summaryText, summaryPageLink } = initData;
 
@@ -49,8 +53,10 @@ const SidePanelProvider = ({
 
       let isNewThread = false;
 
+      const isInPdfPage = window.location.hash === '#/shizue-pdf';
+
       let tid = threadId;
-      if (!tid) {
+      if (!tid || isInPdfPage) {
         tid = await createThread(summaryTitle!.slice(0, 20));
         isNewThread = true;
       }
@@ -78,9 +84,24 @@ const SidePanelProvider = ({
       } else {
         setMessageAddedInPanel(Date.now());
       }
+
+      if (isInPdfPage) {
+        debugLog('SidePanelProvider: [getInitData] navigate to /');
+        navigate('/');
+      }
+    } else if (initData?.actionType === 'translatePdf') {
+      debugLog('SidePanelProvider: [getInitData] translatePdf');
+      const isInPdfPage = window.location.hash === '#/shizue-pdf';
+      debugLog('SidePanelProvider: [getInitData] isInPdfPage', isInPdfPage);
+      if (!isInPdfPage) {
+        debugLog('SidePanelProvider: [getInitData] navigate to /shizue-pdf');
+        setTimeout(() => {
+          navigate('/shizue-pdf');
+        }, 100);
+      }
     }
     rollbackActionType();
-  }, [threadId, setThreadId, rollbackActionType, setMessageAddedInPanel, chatStatus]);
+  }, [threadId, setThreadId, rollbackActionType, setMessageAddedInPanel, chatStatus, navigate]);
 
   const handleMessage = useCallback(
     async (request: any) => {
@@ -99,7 +120,7 @@ const SidePanelProvider = ({
   useEffect(() => {
     if (!sidePanelHydrated) return;
     getInitData();
-  }, [sidePanelHydrated, getInitData]);
+  }, [sidePanelHydrated, getInitData, navigate]);
 
   useEffect(() => {
     // This effect runs after the first render.

@@ -127,5 +127,14 @@
     "fetchError": "ٹوکن استعمال کی ڈیٹا حاصل کرنے میں خرابی ہوئی۔",
     "retry": "دوبارہ کوشش کریں",
     "noData": "ابھی تک کوئی استعمال کی ڈیٹا نہیں۔"
+  },
+  "pdf": {
+    "translatePdf": "PDF کا ترجمہ کریں",
+    "selectPdfFile": "PDF فائل منتخب کریں",
+    "startTranslation": "ترجمہ شروع کریں",
+    "fileSizeExceeds": "فائل کا سائز {SIZE_REPLACEMENT}MB سے زیادہ ہے۔"
+  },
+  "home": {
+    "title": "گھر جائیں"
   }
 }

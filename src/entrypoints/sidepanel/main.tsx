@@ -14,15 +14,15 @@ import { HashRouter } from 'react-router-dom';
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <JotaiProvider>
-      <SidePanelProvider loadingComponent={<EmptyPage />}>
-        <LanguageProvider loadingComponent={<EmptyPage />}>
-          <AntdProvider>
-            <HashRouter>
+      <HashRouter>
+        <SidePanelProvider loadingComponent={<EmptyPage />}>
+          <LanguageProvider loadingComponent={<EmptyPage />}>
+            <AntdProvider>
               <SidePanelRoutes />
-            </HashRouter>
-          </AntdProvider>
-        </LanguageProvider>
-      </SidePanelProvider>
+            </AntdProvider>
+          </LanguageProvider>
+        </SidePanelProvider>
+      </HashRouter>
     </JotaiProvider>
   </StrictMode>
 );

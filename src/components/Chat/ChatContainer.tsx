@@ -4,6 +4,7 @@ import { DotCycle } from '@/components/Loader/DotCycle';
 import { useThemeValue } from '@/hooks/layout';
 import useStreamText from '@/hooks/useStreamText';
 import { hashStringToIndex } from '@/lib/hash';
+import { debugLog } from '@/logs';
 import { LinkOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -34,6 +35,10 @@ const ChatContainer = ({
     return <Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>;
   };
 
+  useEffect(() => {
+    debugLog('messages', messages);
+  }, [messages]);
+
   return (
     <div
       className="
@@ -55,49 +60,56 @@ const ChatContainer = ({
       >
         {messages.map((m, idx) => {
           if (m.role === 'ai') {
+            const isDummyMessage =
+              (idx < messages.length - 1 &&
+                messages[idx + 1].role === 'ai' &&
+                m.content.trim() === '') ||
+              (idx > 0 && messages[idx - 1].role === 'ai' && m.content.trim() === '');
             const isRetryButtonVisible = showRetryButton(m);
             return (
-              <div
-                key={idx}
-                className="sz-message sz-message-ai sz:w-full sz:text-left sz:flex sz:flex-col"
-                style={{
-                  color: theme == 'dark' ? 'white' : 'black',
-                }}
-              >
+              !isDummyMessage && (
                 <div
-                  className="sz:flex sz:flex-col sz:text-left sz:w-full"
+                  key={idx}
+                  className="sz-message sz-message-ai sz:w-full sz:text-left sz:flex sz:flex-col"
                   style={{
-                    minHeight: isRetryButtonVisible ? 'auto' : '30px',
+                    color: theme == 'dark' ? 'white' : 'black',
                   }}
                 >
-                  {m.onInterrupt && !m.stopped ? (
-                    t('chat.connectionError')
-                  ) : idx === messages.length - 1 && !m.done ? (
-                    m.content.trim() ? (
-                      getMarkdownText(animatedText)
-                    ) : isRetryButtonVisible ? null : (
-                      <div className="sz:flex sz:flex-row sz:items-center sz:justify-start sz:pl-3 sz:text-xl">
-                        <DotCycle />
-                      </div>
-                    )
-                  ) : (
-                    getMarkdownText(m.content)
-                  )}
-                </div>
-
-                {isRetryButtonVisible ? (
-                  <div className="sz:text-xs sz:text-gray-500 sz:pl-0.5 sz:pt-1">
-                    <Button
-                      color="cyan"
-                      variant="outlined"
-                      size="small"
-                      onClick={() => onRetry(idx)}
-                    >
-                      {t('chat.retry')}
-                    </Button>
+                  <div
+                    className="sz:flex sz:flex-col sz:text-left sz:w-full"
+                    style={{
+                      minHeight: isRetryButtonVisible ? 'auto' : '30px',
+                    }}
+                  >
+                    {m.onInterrupt && !m.stopped ? (
+                      t('chat.connectionError')
+                    ) : idx === messages.length - 1 && !m.done ? (
+                      m.content.trim() ? (
+                        getMarkdownText(animatedText)
+                      ) : isRetryButtonVisible ? null : (
+                        <div className="sz:flex sz:flex-row sz:items-center sz:justify-start sz:pl-3 sz:text-xl">
+                          <DotCycle />
+                        </div>
+                      )
+                    ) : (
+                      getMarkdownText(m.content)
+                    )}
                   </div>
-                ) : null}
-              </div>
+
+                  {isRetryButtonVisible ? (
+                    <div className="sz:text-xs sz:text-gray-500 sz:pl-0.5 sz:pt-1">
+                      <Button
+                        color="cyan"
+                        variant="outlined"
+                        size="small"
+                        onClick={() => onRetry(idx)}
+                      >
+                        {t('chat.retry')}
+                      </Button>
+                    </div>
+                  ) : null}
+                </div>
+              )
             );
           }
 

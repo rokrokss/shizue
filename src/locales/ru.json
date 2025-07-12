@@ -127,5 +127,14 @@
     "fetchError": "Произошла ошибка при получении данных об использовании токенов.",
     "retry": "Повторить",
     "noData": "Пока нет данных об использовании."
+  },
+  "pdf": {
+    "translatePdf": "Перевести PDF",
+    "selectPdfFile": "Выбрать PDF файл",
+    "startTranslation": "Начать перевод",
+    "fileSizeExceeds": "Размер файла превышает {SIZE_REPLACEMENT}MB."
+  },
+  "home": {
+    "title": "Перейти на главную"
   }
 }

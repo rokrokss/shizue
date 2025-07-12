@@ -127,5 +127,14 @@
     "fetchError": "Đã xảy ra lỗi khi lấy dữ liệu sử dụng token.",
     "retry": "Thử lại",
     "noData": "Chưa có dữ liệu sử dụng."
+  },
+  "pdf": {
+    "translatePdf": "Dịch PDF",
+    "selectPdfFile": "Chọn tệp PDF",
+    "startTranslation": "Bắt đầu dịch",
+    "fileSizeExceeds": "Kích thước tệp vượt quá {SIZE_REPLACEMENT}MB."
+  },
+  "home": {
+    "title": "Đi tới trang chủ"
   }
 }
