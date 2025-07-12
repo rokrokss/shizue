@@ -9,10 +9,14 @@ export interface OverlayMenuItemProps {
   isPopoverOpen?: boolean;
   tooltipMessage: string;
   onClick?: () => void;
+  hideTooltip?: boolean;
 }
 
 const OverlayMenuItem = forwardRef<HTMLDivElement, OverlayMenuItemProps>(
-  ({ theme, icon, popoverContent, isPopoverOpen, tooltipMessage, onClick }, triggerRef) => {
+  (
+    { theme, icon, popoverContent, isPopoverOpen, tooltipMessage, onClick, hideTooltip },
+    triggerRef
+  ) => {
     return (
       <>
         <Tooltip
@@ -28,7 +32,7 @@ const OverlayMenuItem = forwardRef<HTMLDivElement, OverlayMenuItemProps>(
           }
           color={theme == 'dark' ? '#505362' : 'white'}
           mouseEnterDelay={0.03}
-          zIndex={2147483647}
+          zIndex={hideTooltip ? -1 : 2147483647}
         >
           <div
             className="sz:cursor-pointer sz:rounded-full sz:flex sz:items-center sz:justify-center"

@@ -127,5 +127,14 @@
     "fetchError": "خطایی در دریافت داده‌های استفاده از توکن رخ داد.",
     "retry": "تلاش مجدد",
     "noData": "هنوز داده‌ای از استفاده موجود نیست."
+  },
+  "pdf": {
+    "translatePdf": "ترجمه PDF",
+    "selectPdfFile": "انتخاب فایل PDF",
+    "startTranslation": "شروع ترجمه",
+    "fileSizeExceeds": "حجم فایل از {SIZE_REPLACEMENT}MB فراتر رفته است."
+  },
+  "home": {
+    "title": "رفتن به خانه"
   }
 }

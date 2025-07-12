@@ -33,6 +33,9 @@ export default defineConfig({
           description: '__MSG_toggle_description__',
         },
       },
+      content_security_policy: {
+        extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
+      },
     };
     return manifest;
   },

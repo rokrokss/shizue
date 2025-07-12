@@ -1,13 +1,13 @@
 import { STORAGE_GLOBAL_STATE } from '@/config/constants';
 import { chromeStorageBackend } from '@/lib/storageBackend';
-import { Atom, atom } from 'jotai';
+import { Atom, atom, useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
 export const sidePanelHydratedAtom = atom(false);
 
 export const messageAddedInPanelAtom = atom<number | null>(null);
 
-export type ActionType = 'chat' | 'askForSummary';
+export type ActionType = 'chat' | 'askForSummary' | 'translatePdf';
 
 export type GlobalState = {
   actionType: ActionType;
@@ -43,3 +43,5 @@ export const actionTypeAtom = atom(
     set(globalStateAtom, { ...globalState, actionType: newActionType });
   }
 );
+
+export const useActionType = () => useAtom(actionTypeAtom);

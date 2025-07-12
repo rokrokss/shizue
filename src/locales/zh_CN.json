@@ -127,5 +127,14 @@
     "fetchError": "获取令牌使用量数据时发生错误。",
     "retry": "重试",
     "noData": "暂无使用量数据。"
+  },
+  "pdf": {
+    "translatePdf": "翻译PDF",
+    "selectPdfFile": "选择PDF文件",
+    "startTranslation": "开始翻译",
+    "fileSizeExceeds": "文件大小超过{SIZE_REPLACEMENT}MB。"
+  },
+  "home": {
+    "title": "前往主页"
   }
 }

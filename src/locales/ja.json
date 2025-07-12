@@ -127,5 +127,14 @@
     "fetchError": "トークン使用量の取得中にエラーが発生しました。",
     "retry": "再試行",
     "noData": "まだ使用量データがありません。"
+  },
+  "pdf": {
+    "translatePdf": "PDFを翻訳",
+    "selectPdfFile": "PDFファイルを選択",
+    "startTranslation": "翻訳を開始",
+    "fileSizeExceeds": "ファイルサイズが{SIZE_REPLACEMENT}MBを超えています。"
+  },
+  "home": {
+    "title": "ホームに移動"
   }
 }

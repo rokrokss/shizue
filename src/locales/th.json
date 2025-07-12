@@ -127,5 +127,14 @@
     "fetchError": "เกิดข้อผิดพลาดในการดึงข้อมูลการใช้โทเค็น",
     "retry": "ลองอีกครั้ง",
     "noData": "ยังไม่มีข้อมูลการใช้งาน"
+  },
+  "pdf": {
+    "translatePdf": "แปล PDF",
+    "selectPdfFile": "เลือกไฟล์ PDF",
+    "startTranslation": "เริ่มแปล",
+    "fileSizeExceeds": "ขนาดไฟล์เกิน {SIZE_REPLACEMENT}MB."
+  },
+  "home": {
+    "title": "ไปยังหน้าแรก"
   }
 }

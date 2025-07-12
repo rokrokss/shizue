@@ -1,6 +1,7 @@
 import CharacterStanding from '@/components/Character/CharacterStanding';
 import TypingText from '@/components/Text/TypingText';
 import { Button } from 'antd';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function StepShortcut({
