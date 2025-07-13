@@ -11,12 +11,15 @@ import asyncio
 from dotenv import load_dotenv
 import logging
 from pathlib import Path
+import gc
+import psutil
 
 # Babeldoc imports
 from babeldoc.translator.translator import OpenAITranslator, set_translate_rate_limiter
 from babeldoc.format.pdf.translation_config import TranslationConfig, WatermarkOutputMode
 from babeldoc.docvision.doclayout import DocLayoutModel
 import babeldoc.format.pdf.high_level
+import babeldoc
 
 load_dotenv()
 
@@ -77,6 +80,17 @@ babeldoc.format.pdf.high_level.init()
 doc_layout_model = None  # Will be initialized lazily
 
 
+def force_cleanup_memory():
+    try:
+        gc.collect()
+        process = psutil.Process(os.getpid())
+        memory_info = process.memory_info()
+        print(f"Memory usage after cleanup: {memory_info.rss / 1024 / 1024:.2f} MB")
+        
+    except Exception as e:
+        print(f"Error in force cleanup: {e}")
+
+
 async def run_babeldoc_translation(
     input_path: str,
     output_path: str,
@@ -88,10 +102,15 @@ async def run_babeldoc_translation(
     task_id: str,
 ): 
     try:
-        # Initialize doc layout model if not already initialized
         global doc_layout_model
-        if doc_layout_model is None:
-            doc_layout_model = DocLayoutModel.load_onnx()
+        if doc_layout_model is not None:
+            try:
+                if hasattr(doc_layout_model, 'model'):
+                    del doc_layout_model.model
+                del doc_layout_model
+            except:
+                pass
+        doc_layout_model = DocLayoutModel.load_onnx()
         
         # Initialize translator
         translator = OpenAITranslator(
@@ -100,7 +119,7 @@ async def run_babeldoc_translation(
             model=model_name,
             base_url=base_url,
             api_key=api_key,
-            ignore_cache=False,
+            ignore_cache=True,
         )
 
         # Set translation rate limiter
@@ -114,17 +133,17 @@ async def run_babeldoc_translation(
             output_dir=output_path,
             translator=translator,
             debug=False,
-            lang_in="en",
+            lang_in="auto",
             lang_out=lang_out,
             no_dual=no_dual,
             no_mono=False,
-            qps=4,
+            qps=1,
             formular_font_pattern=None,
             formular_char_pattern=None,
             split_short_lines=False,
             short_line_split_factor=0.8,
             doc_layout_model=doc_layout_model,
-            skip_clean=True,
+            skip_clean=False,
             dual_translate_first=False,
             disable_rich_text_translate=False,
             enhance_compatibility=False,
@@ -132,7 +151,7 @@ async def run_babeldoc_translation(
             report_interval=0.1,
             min_text_length=1,
             watermark_output_mode=WatermarkOutputMode.NoWatermark,
-            split_strategy=TranslationConfig.create_max_pages_per_part_split_strategy(5),
+            split_strategy=TranslationConfig.create_max_pages_per_part_split_strategy(50),
             table_model=None,
             show_char_box=False,
             skip_scanned_detection=True,
@@ -174,6 +193,14 @@ async def run_babeldoc_translation(
     except Exception as e:
         logger.error(f"Translation failed: {str(e)}")
         return False, f"translation error: {str(e)}"
+
+    finally:
+        if translator and hasattr(translator, 'client'):
+            try:
+                if hasattr(translator.client, 'http_client'):
+                    await translator.client.http_client.aclose()
+            except Exception as e:
+                print(f"Error closing translator client: {e}")
 
 
 async def process_translation_task(
@@ -229,6 +256,7 @@ async def process_translation_task(
             if os.path.exists(input_path):
                 os.remove(input_path)
                 print(f"Input file deleted: {input_path}")
+            force_cleanup_memory()
         except Exception as e:
             print(f"Error deleting input file: {e}")
 
@@ -398,8 +426,8 @@ async def delete_task(task_id: str):
 
 
 if __name__ == "__main__":
-    babeldoc.assets.assets.generate_offline_assets_package(Path("./"))
-    babeldoc.assets.assets.restore_offline_assets_package(Path("./"))
+    # babeldoc.assets.assets.generate_offline_assets_package(Path("/app/"))
+    babeldoc.assets.assets.restore_offline_assets_package(Path("/app/"))
 
     import uvicorn
 
