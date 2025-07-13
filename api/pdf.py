@@ -183,7 +183,7 @@ async def auto_delete_task(task_id: str, delay_hours: int = 4):
             print(f"Deleted output directory: {task['output_dir']}")
 
         del tasks_status[task_id]
-        print(f"Task {task_id} successfully auto-deleted")
+        print(f"auto_delete_task: Task {task_id} deleted from tasks_status", tasks_status)
 
     except Exception as e:
         print(f"Error auto-deleting task {task_id}: {e}")
@@ -239,6 +239,7 @@ async def translate_pdf(
         "input_file": input_path,
         "output_dir": output_subdir,
     }
+    print(f"Task {task_id} added to tasks_status", tasks_status)
 
     background_tasks.add_task(
         process_translation_task,
@@ -265,6 +266,7 @@ async def translate_pdf(
 @app.get("/status/{task_id}", response_model=TaskStatus)
 async def get_task_status(task_id: str):
     if task_id not in tasks_status:
+        print(f"get_task_status: Task {task_id} not found in tasks_status", tasks_status)
         raise HTTPException(status_code=404, detail="task not found")
 
     task = tasks_status[task_id]
@@ -280,6 +282,7 @@ async def get_task_status(task_id: str):
 @app.get("/download/{task_id}")
 async def download_translated_file(task_id: str):
     if task_id not in tasks_status:
+        print(f"download_translated_file: Task {task_id} not found in tasks_status", tasks_status)
         raise HTTPException(status_code=404, detail="task not found")
 
     task = tasks_status[task_id]
