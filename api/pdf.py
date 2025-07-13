@@ -86,7 +86,8 @@ def run_babeldoc_translation(
         "--min-text-length",
         "1",
         "--max-pages-per-part",
-        "30",
+        "5",
+        "--skip-scanned-detection"
     ]
 
     if no_dual:
@@ -116,8 +117,12 @@ def process_translation_task(
     no_dual: bool,
 ):
     try:
-        tasks_status[task_id]["status"] = "processing"
-        tasks_status[task_id]["message"] = "translating..."
+        if task_id in tasks_status:
+            tasks_status[task_id]["status"] = "processing"
+            tasks_status[task_id]["message"] = "translating..."
+        else:
+            print(f"Task {task_id} not found when setting processing status")
+            return
 
         success, message = run_babeldoc_translation(
             input_path, output_path, model_name, base_url, api_key, lang_out, no_dual
@@ -147,6 +152,8 @@ def process_translation_task(
         if task_id in tasks_status:
             tasks_status[task_id]["status"] = "failed"
             tasks_status[task_id]["message"] = f"translation error: {str(e)}"
+        else:
+            print(f"Task {task_id} not found when setting error status: {str(e)}")
     finally:
         try:
             if os.path.exists(input_path):
