@@ -10,6 +10,7 @@ import shutil
 import asyncio
 from dotenv import load_dotenv
 import logging
+from pathlib import Path
 
 # Babeldoc imports
 from babeldoc.translator.translator import OpenAITranslator, set_translate_rate_limiter
@@ -397,6 +398,9 @@ async def delete_task(task_id: str):
 
 
 if __name__ == "__main__":
+    babeldoc.assets.assets.generate_offline_assets_package(Path("./"))
+    babeldoc.assets.assets.restore_offline_assets_package(Path("./"))
+
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
