@@ -8,8 +8,8 @@ regex==2023.10.3
 protobuf
 cffi==1.16.0
 bitarray>=3.0.0
-lazy_loader==0.3
-Levenshtein==0.23.0
+lazy_loader
+Levenshtein
 rapidfuzz==3.5.2
 click==8.1.7
 h11==0.14.0
@@ -49,7 +49,7 @@ tenacity>=9.0.0
 scikit-image>=0.25.2
 freetype-py>=2.5.1
 tiktoken>=0.9.0
-python-levenshtein>=0.27.1
+python-levenshtein
 opencv-python-headless>=4.10.0.84
 rapidocr-onnxruntime>=1.4.4
 pyzstd>=0.17.0
@@ -58,3 +58,4 @@ rtree>=1.4.0
 chardet>=5.2.0
 scipy>=1.15.3
 uharfbuzz>=0.50.2
+pip
