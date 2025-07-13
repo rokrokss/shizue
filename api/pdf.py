@@ -1,8 +1,7 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, Form, BackgroundTasks
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import subprocess
 import os
 import uuid
 from datetime import datetime
@@ -10,9 +9,27 @@ from typing import Optional
 import shutil
 import asyncio
 from dotenv import load_dotenv
+import logging
 
-# Load environment variables from .env file
+# Babeldoc imports
+from babeldoc.translator.translator import OpenAITranslator, set_translate_rate_limiter
+from babeldoc.format.pdf.translation_config import TranslationConfig, WatermarkOutputMode
+from babeldoc.docvision.doclayout import DocLayoutModel
+import babeldoc.format.pdf.high_level
+
 load_dotenv()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Disable verbose logging from external libraries
+logging.getLogger("httpx").setLevel("CRITICAL")
+logging.getLogger("httpx").propagate = False
+logging.getLogger("openai").setLevel("CRITICAL")
+logging.getLogger("openai").propagate = False
+logging.getLogger("httpcore").setLevel("CRITICAL")
+logging.getLogger("httpcore").propagate = False
 
 app = FastAPI(title="BabelDOC PDF Translation API", version="1.0.0")
 
@@ -37,7 +54,6 @@ MODEL_PRESETS = {
     },
 }
 
-
 class TranslationResponse(BaseModel):
     task_id: str
     status: str
@@ -55,8 +71,12 @@ class TaskStatus(BaseModel):
 
 tasks_status = {}
 
+# Initialize babeldoc components
+babeldoc.format.pdf.high_level.init()
+doc_layout_model = None  # Will be initialized lazily
 
-def run_babeldoc_translation(
+
+async def run_babeldoc_translation(
     input_path: str,
     output_path: str,
     model_name: str,
@@ -64,49 +84,98 @@ def run_babeldoc_translation(
     api_key: str,
     lang_out: str,
     no_dual: bool,
-):
-    command = [
-        "babeldoc",
-        "--files",
-        input_path,
-        "--openai",
-        "--openai-model",
-        model_name,
-        "--openai-base-url",
-        base_url,
-        "--openai-api-key",
-        api_key,
-        "--lang-out",
-        lang_out,
-        "--output",
-        output_path,
-        "--skip-clean",
-        "--watermark-output-mode",
-        "no_watermark",
-        "--min-text-length",
-        "1",
-        "--max-pages-per-part",
-        "5",
-        "--skip-scanned-detection"
-    ]
-
-    if no_dual:
-        command.append("--no-dual")
-
-    print("📦 command:", " ".join(command))
-
+    task_id: str,
+): 
     try:
-        result = subprocess.run(command, check=True, capture_output=True, text=True)
-        print("📋 subprocess output:")
-        print(f"Return code: {result.returncode}")
-        print(f"STDOUT:\n{result.stdout}")
-        print(f"STDERR:\n{result.stderr}")
+        # Initialize doc layout model if not already initialized
+        global doc_layout_model
+        if doc_layout_model is None:
+            doc_layout_model = DocLayoutModel.load_onnx()
+        
+        # Initialize translator
+        translator = OpenAITranslator(
+            lang_in="auto",
+            lang_out=lang_out,
+            model=model_name,
+            base_url=base_url,
+            api_key=api_key,
+            ignore_cache=False,
+        )
+
+        # Set translation rate limiter
+        set_translate_rate_limiter(4)  # QPS limit
+
+        # Create translation config
+        config = TranslationConfig(
+            input_file=input_path,
+            font=None,
+            pages=None,  # Translate all pages
+            output_dir=output_path,
+            translator=translator,
+            debug=False,
+            lang_in="en",
+            lang_out=lang_out,
+            no_dual=no_dual,
+            no_mono=False,
+            qps=4,
+            formular_font_pattern=None,
+            formular_char_pattern=None,
+            split_short_lines=False,
+            short_line_split_factor=0.8,
+            doc_layout_model=doc_layout_model,
+            skip_clean=True,
+            dual_translate_first=False,
+            disable_rich_text_translate=False,
+            enhance_compatibility=False,
+            use_alternating_pages_dual=False,
+            report_interval=0.1,
+            min_text_length=1,
+            watermark_output_mode=WatermarkOutputMode.NoWatermark,
+            split_strategy=TranslationConfig.create_max_pages_per_part_split_strategy(5),
+            table_model=None,
+            show_char_box=False,
+            skip_scanned_detection=True,
+            ocr_workaround=False,
+            custom_system_prompt=None,
+            working_dir=None,
+            add_formula_placehold_hint=False,
+            glossaries=[],
+            pool_max_workers=None,
+            auto_extract_glossary=True,
+            auto_enable_ocr_workaround=False,
+            primary_font_family=None,
+            only_include_translated_page=False,
+            save_auto_extracted_glossary=False,
+        )
+
+        # Update task status
+        if task_id in tasks_status:
+            tasks_status[task_id]["status"] = "processing"
+            tasks_status[task_id]["message"] = "translating..."
+
+        # Run translation
+        async for event in babeldoc.format.pdf.high_level.async_translate(config):
+            if event["type"] == "error":
+                logger.error(f"Translation error: {event['error']}")
+                return False, f"translation error: {event['error']}"
+            elif event["type"] == "finish":
+                result = event["translate_result"]
+                logger.info(f"Translation completed: {result}")
+                return True, "translation completed"
+            elif event["type"] == "progress_update":
+                # Update progress if needed
+                if task_id in tasks_status:
+                    progress = event.get("overall_progress", 0)
+                    tasks_status[task_id]["message"] = f"translating... {progress:.1f}%"
+
         return True, "translation completed"
-    except subprocess.CalledProcessError as e:
+
+    except Exception as e:
+        logger.error(f"Translation failed: {str(e)}")
         return False, f"translation error: {str(e)}"
 
 
-def process_translation_task(
+async def process_translation_task(
     task_id: str,
     input_path: str,
     output_path: str,
@@ -124,8 +193,8 @@ def process_translation_task(
             print(f"Task {task_id} not found when setting processing status")
             return
 
-        success, message = run_babeldoc_translation(
-            input_path, output_path, model_name, base_url, api_key, lang_out, no_dual
+        success, message = await run_babeldoc_translation(
+            input_path, output_path, model_name, base_url, api_key, lang_out, no_dual, task_id
         )
 
         if success:
@@ -201,7 +270,6 @@ async def health_check():
 
 @app.post("/translate", response_model=TranslationResponse)
 async def translate_pdf(
-    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     lang_out: str = Form("ko"),
     no_dual: bool = Form(False),
@@ -241,19 +309,22 @@ async def translate_pdf(
     }
     print(f"Task {task_id} added to tasks_status", tasks_status)
 
-    background_tasks.add_task(
-        process_translation_task,
-        task_id,
-        input_path,
-        output_subdir,
-        model_name,
-        base_url,
-        api_key,
-        lang_out,
-        no_dual,
+    # Create async task for translation
+    asyncio.create_task(
+        process_translation_task(
+            task_id,
+            input_path,
+            output_subdir,
+            model_name,
+            base_url,
+            api_key,
+            lang_out,
+            no_dual,
+        )
     )
 
-    background_tasks.add_task(auto_delete_task, task_id, 4)
+    # Create async task for auto-deletion
+    asyncio.create_task(auto_delete_task(task_id, 4))
 
     return TranslationResponse(
         task_id=task_id,
