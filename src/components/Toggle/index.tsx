@@ -16,8 +16,13 @@ import {
   MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
   MESSAGE_UPDATE_PANEL_INIT_DATA,
 } from '@/config/constants';
-import { Language } from '@/hooks/language';
-import { useShowToggle, useToggleHiddenSiteList, useToggleYPosition } from '@/hooks/layout';
+import { Language, useTranslateTargetLanguage } from '@/hooks/language';
+import {
+  useShowToggle,
+  useThemeValue,
+  useToggleHiddenSiteList,
+  useToggleYPosition,
+} from '@/hooks/layout';
 import {
   useGeminiValidatedValue,
   useOpenAIValidatedValue,
@@ -32,7 +37,7 @@ import { debugLog } from '@/logs';
 import { panelService } from '@/services/panelService';
 import { Button, Select } from 'antd';
 import { motion, PanInfo } from 'framer-motion';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const Toggle = () => {
@@ -105,6 +110,9 @@ const Toggle = () => {
       characterCountChat
     );
     setCharacterIndex(charIndex);
+    const newYPosition = constrain(toggleYPosition);
+    setToggleYPosition(newYPosition);
+    setMotionDivId(motionDivId + 1);
   }, []);
 
   useEffect(() => {
@@ -179,10 +187,20 @@ const Toggle = () => {
     setPanelOpen();
   };
 
+  const constrain = (yPosition: number) => {
+    const viewportHeight = window.innerHeight;
+    const toggleHeight = 90;
+    const minY = toggleHeight - viewportHeight;
+    const maxY = 18;
+
+    return Math.max(minY, Math.min(maxY, yPosition));
+  };
+
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     setIsDragging(false);
-    const newYPosition = toggleYPosition + info.offset.y;
+    const newYPosition = constrain(toggleYPosition + info.offset.y);
     setToggleYPosition(newYPosition);
+    setMotionDivId(motionDivId + 1);
     debugLog('Toggle: [handleDragEnd] newYPosition', newYPosition);
   };
 
