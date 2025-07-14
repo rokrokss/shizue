@@ -415,6 +415,7 @@ const Pdf = () => {
                   <div className="sz:flex sz:flex-row sz:gap-2 sz:items-center sz:justify-center sz:h-full">
                     {(taskStatus.status === 'completed' ||
                       taskStatus.status === 'pending' ||
+                      taskStatus.status === 'queued' ||
                       taskStatus.status === 'processing') && (
                       <Button
                         type="primary"
@@ -429,6 +430,7 @@ const Pdf = () => {
                     {(taskStatus.status === 'pending' ||
                       taskStatus.status === 'processing' ||
                       taskStatus.status === 'completed' ||
+                      taskStatus.status === 'queued' ||
                       taskStatus.status === 'failed') && (
                       <Button
                         icon={<DeleteOutlined />}
