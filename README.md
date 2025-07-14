@@ -28,6 +28,7 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 | Side Chat     | ![chat](doc/chat.gif)   | 
 | Bilingual Reading  | ![translate](doc/translate.gif) | 
 | AI Translation for Youtube Captions | ![youtube](doc/youtube.gif) |
+| PDF Translation | ![pdf](doc/pdf.gif) |
 | One-Click Page Summaries     | ![summarize](doc/summarize.gif)                                       |
 | Dark Mode | ![darkMode](doc/darkmode.gif) |
 
@@ -41,6 +42,9 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 
 ### 📺 LLM Translations for Youtube Captions:
   - Generate LLM based translations for Youtube captions in realtime.
+
+### 📖 PDF Translation with Structure Preservation:
+  - Translate PDF documents while preserving the original layout, formatting, and structure using LLM-powered translation.
 
 ### 📄 One-Click Page Summaries:
   - Generate concise summaries of web pages for quick content overview.
