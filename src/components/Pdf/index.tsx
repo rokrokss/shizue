@@ -15,7 +15,7 @@ import { languageOptions } from '@/lib/language';
 import { debugLog } from '@/logs';
 import { DeleteOutlined, DownloadOutlined, HomeOutlined, InboxOutlined } from '@ant-design/icons';
 import type { UploadFile, UploadProps } from 'antd';
-import { Button, Checkbox, message, Select, Tooltip, Upload } from 'antd';
+import { Button, Checkbox, message, Progress, Select, Tooltip, Upload } from 'antd';
 import axios, { type AxiosResponse } from 'axios';
 import { useSetAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
@@ -35,9 +35,11 @@ interface TaskStatus {
   message: string;
   file_name: string;
   download_url?: string;
+  created_at: string;
+  progress?: number;
 }
 
-const API_BASE_URL = 'https://shizue-pdf-translator.onrender.com';
+const API_BASE_URL = 'https://api-pdf-main.shizue.ai';
 // const API_BASE_URL = 'http://localhost:8000';
 
 const { Dragger } = Upload;
@@ -55,8 +57,11 @@ const Pdf = () => {
   const [taskStatus, setTaskStatus] = useState<TaskStatus | null>(null);
   const statusCheckInterval = useRef<NodeJS.Timeout | null>(null);
   const [pdfTranslationNoDual, setPdfTranslationNoDual] = usePdfTranslationNoDual();
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const deleteTask = async (taskId: string) => {
+    setIsDeleting(true);
     try {
       await axios.delete(`${API_BASE_URL}/tasks/${taskId}`);
       setTaskInfo(defaultTaskInfo);
@@ -64,6 +69,8 @@ const Pdf = () => {
       debugLog('Task deleted successfully');
     } catch (error) {
       debugLog('Error deleting task:', error);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -135,8 +142,8 @@ const Pdf = () => {
     accept: '.pdf',
     beforeUpload: (file) => {
       debugLog('File selected locally:', file);
-      if (file.size > 50 * 1024 * 1024) {
-        message.error(t('pdf.fileSizeExceeds').replace('{SIZE_REPLACEMENT}', '50'));
+      if (file.size > 20 * 1024 * 1024) {
+        message.error(t('pdf.fileSizeExceeds').replace('{SIZE_REPLACEMENT}', '20'));
         return false;
       }
       setSelectedFile(file);
@@ -162,6 +169,10 @@ const Pdf = () => {
     setIsLoading(true);
 
     try {
+      if (taskInfo.task_id) {
+        await deleteTask(taskInfo.task_id);
+      }
+
       const formData = new FormData();
       formData.append('file', selectedFile as unknown as File);
       formData.append('lang_out', targetLanguage);
@@ -195,6 +206,8 @@ const Pdf = () => {
       return;
     }
 
+    setIsDownloading(true);
+
     try {
       const response = await axios.get(`${API_BASE_URL}/download/${taskStatus.task_id}`, {
         responseType: 'blob',
@@ -213,6 +226,8 @@ const Pdf = () => {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       debugLog('Download error:', error);
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -387,7 +402,7 @@ const Pdf = () => {
                     : 'sz:bg-gray-50 sz:border-gray-200'
                 }`}
               >
-                <div className="sz:flex sz:flex-row sz:items-center sz:gap-2 sz:mb-2 sz:justify-between sz:h-full">
+                <div className="sz:flex sz:flex-row sz:items-center sz:gap-2 sz:justify-between sz:h-3/4">
                   <div
                     className={`sz:text-sm sz:flex sz:items-center sz:justify-center sz:h-full ${
                       theme == 'dark' ? 'sz:text-gray-300' : 'sz:text-gray-500'
@@ -406,7 +421,8 @@ const Pdf = () => {
                         icon={<DownloadOutlined />}
                         onClick={handleDownload}
                         className="sz:font-ycom sz:text-[14px]"
-                        loading={taskStatus.status !== 'completed'}
+                        loading={taskStatus.status !== 'completed' || isDownloading}
+                        disabled={isDeleting}
                       ></Button>
                     )}
 
@@ -418,10 +434,34 @@ const Pdf = () => {
                         icon={<DeleteOutlined />}
                         onClick={handleCancelTask}
                         className="sz:font-ycom sz:text-[14px]"
+                        disabled={isDownloading}
+                        loading={isDeleting}
                       />
                     )}
                   </div>
                 </div>
+                {(taskStatus.status === 'processing' ||
+                  taskStatus.status === 'queued' ||
+                  taskStatus.status === 'pending') && (
+                  <div>
+                    <Progress
+                      percent={Math.round(taskStatus.progress || 0)}
+                      size="small"
+                      strokeColor="#32CCBC"
+                      trailColor={theme === 'dark' ? '#434343' : '#f0f0f0'}
+                      showInfo={true}
+                      format={(percent) => (
+                        <span
+                          className={`sz:text-xs sz:font-ycom ${
+                            theme === 'dark' ? 'sz:text-gray-300' : 'sz:text-gray-600'
+                          }`}
+                        >
+                          {percent}%
+                        </span>
+                      )}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           )}
