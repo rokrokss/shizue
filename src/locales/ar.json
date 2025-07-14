@@ -132,7 +132,9 @@
     "translatePdf": "ترجمة PDF",
     "selectPdfFile": "اختر ملف PDF",
     "startTranslation": "بدء الترجمة",
-    "fileSizeExceeds": "يتجاوز حجم الملف {SIZE_REPLACEMENT}MB."
+    "fileSizeExceeds": "يتجاوز حجم الملف {SIZE_REPLACEMENT}MB.",
+    "translatorStarting": "بدء المترجم...",
+    "translationPersists": "تُحفظ عملية الترجمة ونتائجها حتى عند إغلاق اللوحة."
   },
   "home": {
     "title": "الانتقال إلى الرئيسية"

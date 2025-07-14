@@ -132,7 +132,9 @@
     "translatePdf": "PDF کا ترجمہ کریں",
     "selectPdfFile": "PDF فائل منتخب کریں",
     "startTranslation": "ترجمہ شروع کریں",
-    "fileSizeExceeds": "فائل کا سائز {SIZE_REPLACEMENT}MB سے زیادہ ہے۔"
+    "fileSizeExceeds": "فائل کا سائز {SIZE_REPLACEMENT}MB سے زیادہ ہے۔",
+    "translatorStarting": "مترجم شروع ہو رہا ہے...",
+    "translationPersists": "پینل بند کرنے کے بعد بھی ترجمہ کا عمل اور نتائج محفوظ رہتے ہیں۔"
   },
   "home": {
     "title": "گھر جائیں"

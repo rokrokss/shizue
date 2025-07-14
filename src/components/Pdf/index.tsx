@@ -171,6 +171,7 @@ const Pdf = () => {
     try {
       if (taskInfo.task_id) {
         await deleteTask(taskInfo.task_id);
+        setTaskStatus(null);
       }
 
       const formData = new FormData();
@@ -319,13 +320,12 @@ const Pdf = () => {
             sz:items-center
             sz:justify-start
             sz:pt-15
-            sz:gap-5
             sz:px-4
           "
         >
           <Dragger
             {...props}
-            className="sz:w-50 sz:flex sz:flex-col sz:items-center sz:justify-center sz:font-ycom"
+            className="sz:w-52 sz:flex sz:flex-col sz:items-center sz:justify-center sz:font-ycom sz:mb-5"
           >
             <InboxOutlined style={{ fontSize: 24, color: theme == 'dark' ? 'white' : 'grey' }} />
             <div
@@ -337,7 +337,7 @@ const Pdf = () => {
             </div>
           </Dragger>
 
-          <div className="sz:flex sz:flex-col sz:gap-4 sz:items-center">
+          <div className="sz:flex sz:flex-col sz:gap-3 sz:items-center">
             <div className="sz:flex sz:flex-col sz:items-center sz:gap-2">
               <div
                 className={`sz:text-sm ${
@@ -349,7 +349,7 @@ const Pdf = () => {
               <Select
                 value={targetLanguage}
                 onChange={handleSelectTargetLanguage}
-                className="sz:font-ycom sz:w-50"
+                className="sz:font-ycom sz:w-65"
                 options={languageOptions(t)}
                 optionRender={(option) => {
                   return (
@@ -364,11 +364,11 @@ const Pdf = () => {
                   );
                 }}
               />
-              <div className="sz:flex sz:flex-col sz:items-center sz:justify-center sz:w-50">
+              <div className="sz:flex sz:flex-col sz:items-center sz:justify-center sz:w-65">
                 <Checkbox
                   checked={!pdfTranslationNoDual}
                   onChange={handleTogglePdfTranslationNoDual}
-                  className={`sz:font-ycom sz:w-50 sz:flex sz:flex-row sz:items-center sz:justify-center ${
+                  className={`sz:font-ycom sz:w-65 sz:flex sz:flex-row sz:items-center sz:justify-center ${
                     theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'
                   }`}
                 >
@@ -381,7 +381,7 @@ const Pdf = () => {
               <div className="sz:flex sz:gap-2 sz:w-full">
                 <Button
                   type="primary"
-                  className="sz:font-ycom sz:text-[14px] sz:w-50"
+                  className="sz:font-ycom sz:text-[14px] sz:w-65"
                   onClick={handleProcessFile}
                   loading={
                     isLoading || ((taskStatus && taskStatus.status !== 'completed') as boolean)
@@ -394,7 +394,7 @@ const Pdf = () => {
           </div>
 
           {taskStatus && Math.round(taskStatus.progress || 0) > 0 && (
-            <div className="sz:flex sz:flex-col sz:gap-4 sz:items-center sz:w-full sz:max-w-md">
+            <div className="sz:flex sz:flex-col sz:gap-4 sz:items-center sz:w-full sz:max-w-md sz:mt-5">
               <div
                 className={`sz:p-4 sz:rounded-lg sz:border sz:w-full ${
                   theme == 'dark'
@@ -467,8 +467,26 @@ const Pdf = () => {
               </div>
             </div>
           )}
+          <div
+            className={`
+              sz:flex
+              sz:flex-col
+              sz:items-center
+              sz:justify-center
+              sz:mt-2
+              sz:text-xs
+              sz:w-75
+              sz:break-keep
+              sz:text-center
+              ${theme == 'dark' ? 'sz:text-gray-300' : 'sz:text-gray-500'}
+            `}
+          >
+            {(isLoading || taskStatus) &&
+              (taskStatus && Math.round(taskStatus.progress || 0) > 0
+                ? t('pdf.translationPersists')
+                : t('pdf.translatorStarting'))}
+          </div>
         </div>
-
         {isSettingsOpen && (
           <SidePanelFullModal
             onClose={closeSettings}

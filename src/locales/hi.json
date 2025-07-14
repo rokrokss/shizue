@@ -132,7 +132,9 @@
     "translatePdf": "PDF अनुवाद करें",
     "selectPdfFile": "PDF फ़ाइल चुनें",
     "startTranslation": "अनुवाद शुरू करें",
-    "fileSizeExceeds": "फ़ाइल साइज़ {SIZE_REPLACEMENT}MB से अधिक है।"
+    "fileSizeExceeds": "फ़ाइल साइज़ {SIZE_REPLACEMENT}MB से अधिक है।",
+    "translatorStarting": "अनुवादक शुरू हो रहा है...",
+    "translationPersists": "पैनल बंद होने पर भी अनुवाद प्रक्रिया और परिणाम संरक्षित रहते हैं।"
   },
   "home": {
     "title": "होम पर जाएं"

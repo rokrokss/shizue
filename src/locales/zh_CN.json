@@ -132,7 +132,9 @@
     "translatePdf": "翻译PDF",
     "selectPdfFile": "选择PDF文件",
     "startTranslation": "开始翻译",
-    "fileSizeExceeds": "文件大小超过{SIZE_REPLACEMENT}MB。"
+    "fileSizeExceeds": "文件大小超过{SIZE_REPLACEMENT}MB。",
+    "translatorStarting": "翻译器启动中...",
+    "translationPersists": "关闭面板后翻译过程和结果仍会保持。"
   },
   "home": {
     "title": "前往主页"
