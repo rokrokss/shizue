@@ -2,6 +2,10 @@
 
 ## v0.1.7
 
+- PDF Translation
+
+## v0.1.7
+
 - API Token Usage Monitoring
 - Added ability to hide menu on specific websites
 
