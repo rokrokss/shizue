@@ -108,7 +108,7 @@ class TranslationQueueManager:
         
         try:
             # 워커 서버에 번역 작업 요청
-            async with httpx.AsyncClient(timeout=60.0) as client:
+            async with httpx.AsyncClient(timeout=300.0) as client:
                 response = await client.post(
                     f"{WORKER_SERVER_URL}/process",
                     json=task_data
