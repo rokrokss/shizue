@@ -58,6 +58,7 @@ MODEL_PRESETS = {
     },
 }
 
+
 class TranslationResponse(BaseModel):
     task_id: str
     status: str
@@ -86,7 +87,7 @@ def force_cleanup_memory():
         process = psutil.Process(os.getpid())
         memory_info = process.memory_info()
         print(f"Memory usage after cleanup: {memory_info.rss / 1024 / 1024:.2f} MB")
-        
+
     except Exception as e:
         print(f"Error in force cleanup: {e}")
 
@@ -100,18 +101,18 @@ async def run_babeldoc_translation(
     lang_out: str,
     no_dual: bool,
     task_id: str,
-): 
+):
     try:
         global doc_layout_model
         if doc_layout_model is not None:
             try:
-                if hasattr(doc_layout_model, 'model'):
+                if hasattr(doc_layout_model, "model"):
                     del doc_layout_model.model
                 del doc_layout_model
             except:
                 pass
         doc_layout_model = DocLayoutModel.load_onnx()
-        
+
         # Initialize translator
         translator = OpenAITranslator(
             lang_in="auto",
@@ -137,7 +138,7 @@ async def run_babeldoc_translation(
             lang_out=lang_out,
             no_dual=no_dual,
             no_mono=False,
-            qps=1,
+            qps=4,
             formular_font_pattern=None,
             formular_char_pattern=None,
             split_short_lines=False,
@@ -195,9 +196,9 @@ async def run_babeldoc_translation(
         return False, f"translation error: {str(e)}"
 
     finally:
-        if translator and hasattr(translator, 'client'):
+        if translator and hasattr(translator, "client"):
             try:
-                if hasattr(translator.client, 'http_client'):
+                if hasattr(translator.client, "http_client"):
                     await translator.client.http_client.aclose()
             except Exception as e:
                 print(f"Error closing translator client: {e}")
@@ -222,7 +223,14 @@ async def process_translation_task(
             return
 
         success, message = await run_babeldoc_translation(
-            input_path, output_path, model_name, base_url, api_key, lang_out, no_dual, task_id
+            input_path,
+            output_path,
+            model_name,
+            base_url,
+            api_key,
+            lang_out,
+            no_dual,
+            task_id,
         )
 
         if success:
@@ -236,7 +244,9 @@ async def process_translation_task(
                 tasks_status[task_id]["status"] = "completed"
                 tasks_status[task_id]["message"] = "translation completed"
                 tasks_status[task_id]["download_url"] = f"/download/{task_id}"
-                tasks_status[task_id]["output_file"] = os.path.join(output_path, pdf_files[0])
+                tasks_status[task_id]["output_file"] = os.path.join(
+                    output_path, pdf_files[0]
+                )
             else:
                 tasks_status[task_id]["status"] = "failed"
                 tasks_status[task_id]["message"] = "translation file not found"
@@ -382,7 +392,10 @@ async def get_task_status(task_id: str):
 @app.get("/download/{task_id}")
 async def download_translated_file(task_id: str):
     if task_id not in tasks_status:
-        print(f"download_translated_file: Task {task_id} not found in tasks_status", tasks_status)
+        print(
+            f"download_translated_file: Task {task_id} not found in tasks_status",
+            tasks_status,
+        )
         raise HTTPException(status_code=404, detail="task not found")
 
     task = tasks_status[task_id]

@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  main-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.main
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app/
+    environment:
+      - WORKER_SERVER_URL=https://pdf-translate-worker-server-874178481066.asia-northeast3.run.app
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL}
+      - OPENAI_DEFAULT_MODEL=${OPENAI_DEFAULT_MODEL}
+      - GCS_BUCKET_NAME=${GCS_BUCKET_NAME}
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
+    depends_on:
+      - worker-server
+    restart: unless-stopped
+
+  worker-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./:/app/
+    environment:
+      - MAIN_SERVER_URL=https://api-pdf-main.shizue.ai
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL}
+      - OPENAI_DEFAULT_MODEL=${OPENAI_DEFAULT_MODEL}
+      - GCS_BUCKET_NAME=${GCS_BUCKET_NAME}
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
+    restart: unless-stopped

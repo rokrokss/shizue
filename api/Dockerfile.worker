@@ -1,0 +1,35 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    libgeos-dev \
+    libspatialindex-dev \
+    libfreetype6-dev \
+    pkg-config \
+    libfontconfig1-dev \
+    libharfbuzz-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY .cache /root/.cache
+COPY offline_assets_113acc2997e19c97a2977ccf91fc029d1b2ce1ba807e39de6da811c434ee61bf.zip .
+COPY shizue.json .
+
+COPY worker_server.py .
+COPY gcs_utils.py .
+COPY .env .
+
+EXPOSE 8001
+
+CMD ["uvicorn", "worker_server:app", "--host", "0.0.0.0", "--port", "8001"] 

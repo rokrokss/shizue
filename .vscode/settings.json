@@ -47,5 +47,6 @@
     "ycom",
     "babeldoc",
     "dotenv"
-  ]
+  ],
+  "python.analysis.typeCheckingMode": "off"
 }

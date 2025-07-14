@@ -1,0 +1,5 @@
+.cache
+offline_assets_*
+output
+uploads
+shizue.json

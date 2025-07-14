@@ -34,3 +34,7 @@ dist-ssr
 output
 uploads
 *.zip
+
+# python
+__pycache__
+.venv
