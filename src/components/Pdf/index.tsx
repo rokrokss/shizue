@@ -393,7 +393,7 @@ const Pdf = () => {
             )}
           </div>
 
-          {taskStatus && (
+          {taskStatus && Math.round(taskStatus.progress || 0) > 0 && (
             <div className="sz:flex sz:flex-col sz:gap-4 sz:items-center sz:w-full sz:max-w-md">
               <div
                 className={`sz:p-4 sz:rounded-lg sz:border sz:w-full ${
