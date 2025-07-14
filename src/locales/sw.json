@@ -132,7 +132,9 @@
     "translatePdf": "Tafsiri PDF",
     "selectPdfFile": "Chagua faili la PDF",
     "startTranslation": "Anza kutafsiri",
-    "fileSizeExceeds": "Ukubwa wa faili umezidi {SIZE_REPLACEMENT}MB."
+    "fileSizeExceeds": "Ukubwa wa faili umezidi {SIZE_REPLACEMENT}MB.",
+    "translatorStarting": "Inaanza kutafsiri...",
+    "translationPersists": "Mchakato na matokeo ya kutafsiri yanabaki hata kama paneli imefungwa."
   },
   "home": {
     "title": "Enda Nyumbani"

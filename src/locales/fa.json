@@ -132,7 +132,9 @@
     "translatePdf": "ترجمه PDF",
     "selectPdfFile": "انتخاب فایل PDF",
     "startTranslation": "شروع ترجمه",
-    "fileSizeExceeds": "حجم فایل از {SIZE_REPLACEMENT}MB فراتر رفته است."
+    "fileSizeExceeds": "حجم فایل از {SIZE_REPLACEMENT}MB فراتر رفته است.",
+    "translatorStarting": "مترجم در حال شروع است...",
+    "translationPersists": "فرآیند و نتایج ترجمه حتی با بسته شدن پنل حفظ می‌شود."
   },
   "home": {
     "title": "رفتن به خانه"

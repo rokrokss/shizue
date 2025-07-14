@@ -132,7 +132,9 @@
     "translatePdf": "Dịch PDF",
     "selectPdfFile": "Chọn tệp PDF",
     "startTranslation": "Bắt đầu dịch",
-    "fileSizeExceeds": "Kích thước tệp vượt quá {SIZE_REPLACEMENT}MB."
+    "fileSizeExceeds": "Kích thước tệp vượt quá {SIZE_REPLACEMENT}MB.",
+    "translatorStarting": "Đang khởi động trình dịch...",
+    "translationPersists": "Quá trình và kết quả dịch được bảo tồn ngay cả khi đóng bảng điều khiển."
   },
   "home": {
     "title": "Đi tới trang chủ"

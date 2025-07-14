@@ -132,7 +132,9 @@
     "translatePdf": "PDF Çevir",
     "selectPdfFile": "PDF Dosyası Seç",
     "startTranslation": "Çeviriyi Başlat",
-    "fileSizeExceeds": "Dosya boyutu {SIZE_REPLACEMENT}MB'ı aşıyor."
+    "fileSizeExceeds": "Dosya boyutu {SIZE_REPLACEMENT}MB'ı aşıyor.",
+    "translatorStarting": "Çevirici başlatılıyor...",
+    "translationPersists": "Panel kapatılsa bile çeviri süreci ve sonuçları korunur."
   },
   "home": {
     "title": "Ana Sayfaya Git"

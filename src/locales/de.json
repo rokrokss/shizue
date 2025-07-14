@@ -132,7 +132,9 @@
     "translatePdf": "PDF übersetzen",
     "selectPdfFile": "PDF-Datei auswählen",
     "startTranslation": "Übersetzung starten",
-    "fileSizeExceeds": "Dateigröße überschreitet {SIZE_REPLACEMENT}MB."
+    "fileSizeExceeds": "Dateigröße überschreitet {SIZE_REPLACEMENT}MB.",
+    "translatorStarting": "Übersetzer startet...",
+    "translationPersists": "Übersetzungsvorgang und -ergebnisse bleiben auch bei geschlossenem Panel erhalten."
   },
   "home": {
     "title": "Zur Startseite"

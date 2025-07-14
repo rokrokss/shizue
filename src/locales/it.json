@@ -132,7 +132,9 @@
     "translatePdf": "Traduci PDF",
     "selectPdfFile": "Seleziona file PDF",
     "startTranslation": "Inizia traduzione",
-    "fileSizeExceeds": "La dimensione del file supera {SIZE_REPLACEMENT}MB."
+    "fileSizeExceeds": "La dimensione del file supera {SIZE_REPLACEMENT}MB.",
+    "translatorStarting": "Avvio del traduttore...",
+    "translationPersists": "Il processo e i risultati di traduzione vengono mantenuti anche con il pannello chiuso."
   },
   "home": {
     "title": "Vai alla Home"
