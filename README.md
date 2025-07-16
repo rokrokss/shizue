@@ -21,18 +21,6 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 
 # 🌟 Features
 
-<br/>
-
-| Features | Screenshot                                                                                         | 
-| -------- |----------------------------------------------------------------------------------------------------| 
-| Side Chat     | ![chat](doc/chat.gif)   | 
-| Bilingual Reading  | ![translate](doc/translate.gif) | 
-| AI Translation for Youtube Captions | ![youtube](doc/youtube.gif) |
-| PDF Translation | ![pdf](doc/pdf.gif) |
-| One-Click Page Summaries     | ![summarize](doc/summarize.gif)                                       |
-| Dark Mode | ![darkMode](doc/darkmode.gif) |
-
-<br/>
 
 ### 💬 AI Chat Sidebar:
   - Quickly launch the sidebar using a keyboard shortcut to interact with LLMs via a side panel for queries, brainstorming, or information retrieval without navigating away from the current page.
