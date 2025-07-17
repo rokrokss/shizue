@@ -142,8 +142,8 @@ const Pdf = () => {
     accept: '.pdf',
     beforeUpload: (file) => {
       debugLog('File selected locally:', file);
-      if (file.size > 20 * 1024 * 1024) {
-        message.error(t('pdf.fileSizeExceeds').replace('{SIZE_REPLACEMENT}', '20'));
+      if (file.size > 40 * 1024 * 1024) {
+        message.error(t('pdf.fileSizeExceeds').replace('{SIZE_REPLACEMENT}', '40'));
         return false;
       }
       setSelectedFile(file);
