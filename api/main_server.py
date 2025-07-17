@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 # 환경 변수 설정
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")
-MAX_FILE_SIZE = int(os.getenv("MAX_FILE_SIZE", "20")) * 1024 * 1024  # 50MB
+MAX_FILE_SIZE = int(os.getenv("MAX_FILE_SIZE", "40")) * 1024 * 1024  # 50MB
 AUTO_DELETE_HOURS = int(os.getenv("AUTO_DELETE_HOURS", "4"))
 WORKER_SERVER_URL = os.getenv("WORKER_SERVER_URL", "http://localhost:8001")
 MAX_CONCURRENT_TASKS = int(os.getenv("MAX_CONCURRENT_TASKS", "1"))
