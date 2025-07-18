@@ -384,7 +384,10 @@ const Pdf = () => {
                   className="sz:font-ycom sz:text-[14px] sz:w-65"
                   onClick={handleProcessFile}
                   loading={
-                    isLoading || ((taskStatus && taskStatus.status !== 'completed') as boolean)
+                    isLoading ||
+                    ((taskStatus &&
+                      taskStatus.status !== 'completed' &&
+                      taskStatus.status !== 'failed') as boolean)
                   }
                 >
                   {t('pdf.startTranslation')}
@@ -482,6 +485,7 @@ const Pdf = () => {
             `}
           >
             {(isLoading || taskStatus) &&
+              !(taskStatus && taskStatus.status == 'failed') &&
               (taskStatus && Math.round(taskStatus.progress || 0) > 0
                 ? t('pdf.translationPersists')
                 : t('pdf.translatorStarting'))}
