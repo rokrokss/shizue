@@ -190,7 +190,7 @@ async def update_main_server_status(
         async with httpx.AsyncClient(timeout=30.0) as client:
             data = {
                 "task_id": task_id,
-                "status": status,
+                "status_str": status,
                 "message": message
             }
             if output_gcs_key:
@@ -205,13 +205,22 @@ async def update_main_server_status(
             
             if response.status_code == 200:
                 logger.debug(f"Status updated for task {task_id}: {status}")
+            elif response.status_code == 404:
+                logger.info(f"Task {task_id} not found in main server, cancelling task")
+                raise asyncio.CancelledError(f"Task {task_id} not found in main server")
             else:
                 logger.error(f"Failed to update status for task {task_id}: {response.status_code}")
+                raise asyncio.CancelledError(f"Main server returned error {response.status_code} for task {task_id}")
     
     except httpx.TimeoutException:
         logger.error(f"Timeout updating status for task {task_id}")
+        raise asyncio.CancelledError(f"Timeout updating status for task {task_id}")
+    except asyncio.CancelledError:
+        # Re-raise CancelledError to maintain cancellation chain
+        raise
     except Exception as e:
         logger.error(f"Error updating main server status: {e}")
+        raise asyncio.CancelledError(f"Error updating main server status for task {task_id}: {str(e)}")
 
 async def run_babeldoc_translation(
     input_gcs_key: str,

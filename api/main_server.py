@@ -95,6 +95,7 @@ class TranslationQueueManager:
                 if task_data:
                     # 비동기로 워커 서버에 작업 전송
                     asyncio.create_task(self._process_task_with_worker(task_data))
+                    await asyncio.sleep(2)  # 2초 대기
                 else:
                     # 큐가 비어있으면 잠시 대기
                     await asyncio.sleep(QUEUE_CHECK_INTERVAL)
@@ -108,7 +109,7 @@ class TranslationQueueManager:
         
         try:
             # 워커 서버에 번역 작업 요청
-            async with httpx.AsyncClient(timeout=300.0) as client:
+            async with httpx.AsyncClient(timeout=120.0) as client:
                 response = await client.post(
                     f"{WORKER_SERVER_URL}/process",
                     json=task_data
@@ -397,7 +398,7 @@ async def translate_pdf(
 @app.post("/update_task_status")
 async def update_task_status(
     task_id: str = Form(...),
-    status: str = Form(...),
+    status_str: str = Form(...),
     message: str = Form(...),
     output_gcs_key: Optional[str] = Form(None),
     progress: Optional[float] = Form(None)
@@ -410,7 +411,7 @@ async def update_task_status(
         )
     
     task = tasks_status[task_id]
-    task["status"] = status
+    task["status"] = status_str
     task["message"] = message
     
     if progress is not None:
@@ -418,10 +419,10 @@ async def update_task_status(
     
     if output_gcs_key:
         task["output_gcs_key"] = output_gcs_key
-        if status == "completed":
+        if status_str == "completed":
             task["download_url"] = f"/download/{task_id}"
     
-    logger.info(f"Task {task_id} status updated to {status}")
+    logger.info(f"Task {task_id} status updated to {status_str}")
     return {"message": "Status updated"}
 
 @app.get("/status/{task_id}", response_model=TaskStatus)
