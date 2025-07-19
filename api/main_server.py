@@ -95,7 +95,7 @@ class TranslationQueueManager:
                 if task_data:
                     # 비동기로 워커 서버에 작업 전송
                     asyncio.create_task(self._process_task_with_worker(task_data))
-                    await asyncio.sleep(2)  # 2초 대기
+                    await asyncio.sleep(5)  # 5초 대기
                 else:
                     # 큐가 비어있으면 잠시 대기
                     await asyncio.sleep(QUEUE_CHECK_INTERVAL)
