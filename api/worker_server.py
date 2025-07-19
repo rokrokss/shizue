@@ -527,11 +527,18 @@ async def process_translation(request: TranslationRequest):
     # 현재 처리 중인 작업이 있는지 확인 (서버리스에서는 보통 없지만 안전장치)
     current_task = resource_manager.get_current_task()
     if current_task:
-        logger.warning(f"Task {current_task} is already processing, rejecting new task {request.task_id}")
-        raise HTTPException(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail=f"Worker is busy with task {current_task}"
-        )
+        if current_task == request.task_id:
+            logger.info(f"Task {request.task_id} is already being processed, skipping duplicate request")
+            return {
+                "message": "Task already being processed",
+                "task_id": request.task_id
+            }
+        else:
+            logger.warning(f"Task {current_task} is already processing, rejecting new task {request.task_id}")
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail=f"Worker is busy with task {current_task}"
+            )
     
     # 동기적으로 번역 작업 처리 (서버리스에서는 응답을 기다림)
     await process_translation_task(request)
