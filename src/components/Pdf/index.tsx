@@ -162,7 +162,11 @@ const Pdf = () => {
   };
 
   const handleProcessFile = async () => {
-    if (!selectedFile || isLoading || (taskStatus && taskStatus.status !== 'completed')) {
+    if (
+      !selectedFile ||
+      isLoading ||
+      (taskStatus && taskStatus.status !== 'completed' && taskStatus.status !== 'failed')
+    ) {
       return;
     }
 
