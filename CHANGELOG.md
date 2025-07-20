@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.10
+
+- limit number of pages in PDF translation
+
 ## v0.1.9
 
 - increase PDF translation file limit to 40MB
