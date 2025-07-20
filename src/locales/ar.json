@@ -133,6 +133,7 @@
     "selectPdfFile": "اختر ملف PDF",
     "startTranslation": "بدء الترجمة",
     "fileSizeExceeds": "يتجاوز حجم الملف {SIZE_REPLACEMENT}MB.",
+    "pageCountExceeds": "عدد صفحات PDF يتجاوز {PAGE_REPLACEMENT} صفحة.",
     "translatorStarting": "بدء المترجم...",
     "translationPersists": "تُحفظ عملية الترجمة ونتائجها حتى عند إغلاق اللوحة."
   },

@@ -133,6 +133,7 @@
     "selectPdfFile": "選擇PDF檔案",
     "startTranslation": "開始翻譯",
     "fileSizeExceeds": "檔案大小超過{SIZE_REPLACEMENT}MB。",
+    "pageCountExceeds": "PDF頁數超過{PAGE_REPLACEMENT}頁。",
     "translatorStarting": "翻譯器啟動中...",
     "translationPersists": "關閉面板後翻譯過程和結果仍會保持。"
   },
