@@ -58,6 +58,25 @@ export default defineConfig({
       }),
       toUtf8(),
     ],
+    build: {
+      emptyOutDir: true,
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+          pure_funcs: ['console.log', 'console.info', 'console.debug'],
+        },
+        format: {
+          comments: false,
+        },
+      },
+      rollupOptions: {
+        treeshake: 'recommended',
+        cache: true,
+      },
+      sourcemap: false,
+    },
   }),
   i18n: {
     localesDir: 'src/locales',
