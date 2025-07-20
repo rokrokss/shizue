@@ -133,6 +133,7 @@
     "selectPdfFile": "PDF 파일 선택",
     "startTranslation": "번역 시작하기",
     "fileSizeExceeds": "파일 크기가 {SIZE_REPLACEMENT}MB를 초과해요.",
+    "pageCountExceeds": "PDF 페이지 수가 {PAGE_REPLACEMENT}페이지를 초과해요.",
     "translatorStarting": "번역기를 실행하는 중...",
     "translationPersists": "번역 과정과 결과는 패널을 닫아도 유지됩니다."
   },

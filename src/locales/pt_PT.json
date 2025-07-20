@@ -133,6 +133,7 @@
     "selectPdfFile": "Selecionar ficheiro PDF",
     "startTranslation": "Iniciar tradução",
     "fileSizeExceeds": "O tamanho do ficheiro excede {SIZE_REPLACEMENT}MB.",
+    "pageCountExceeds": "O número de páginas do PDF excede {PAGE_REPLACEMENT} páginas.",
     "translatorStarting": "A iniciar tradutor...",
     "translationPersists": "O processo e resultados de tradução são mantidos mesmo com o painel fechado."
   },

@@ -18,6 +18,7 @@ import type { UploadFile, UploadProps } from 'antd';
 import { Button, Checkbox, message, Progress, Select, Tooltip, Upload } from 'antd';
 import axios, { type AxiosResponse } from 'axios';
 import { useSetAtom } from 'jotai';
+import { PDFDocument } from 'pdf-lib';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -140,12 +141,32 @@ const Pdf = () => {
   const props: UploadProps = {
     name: 'file',
     accept: '.pdf',
-    beforeUpload: (file) => {
+    beforeUpload: async (file) => {
       debugLog('File selected locally:', file);
-      if (file.size > 40 * 1024 * 1024) {
-        message.error(t('pdf.fileSizeExceeds').replace('{SIZE_REPLACEMENT}', '40'));
+
+      // File size check
+      if (file.size > 20 * 1024 * 1024) {
+        message.error(t('pdf.fileSizeExceeds').replace('{SIZE_REPLACEMENT}', '20'));
         return false;
       }
+
+      // PDF page count check
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdfDoc = await PDFDocument.load(arrayBuffer);
+        const pageCount = pdfDoc.getPageCount();
+
+        debugLog('PDF page count:', pageCount);
+
+        if (pageCount > 30) {
+          message.error(t('pdf.pageCountExceeds').replace('{PAGE_REPLACEMENT}', '30'));
+          return false;
+        }
+      } catch (error) {
+        debugLog('Error reading PDF:', error);
+        return false;
+      }
+
       setSelectedFile(file);
       return false;
     },

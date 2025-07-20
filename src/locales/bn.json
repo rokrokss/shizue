@@ -133,6 +133,7 @@
     "selectPdfFile": "PDF ফাইল নির্বাচন করুন",
     "startTranslation": "অনুবাদ শুরু করুন",
     "fileSizeExceeds": "ফাইলের আকার {SIZE_REPLACEMENT}MB অতিক্রম করেছে।",
+    "pageCountExceeds": "PDF পৃষ্ঠা সংখ্যা {PAGE_REPLACEMENT} পৃষ্ঠা অতিক্রম করেছে।",
     "translatorStarting": "অনুবাদক শুরু হচ্ছে...",
     "translationPersists": "প্যানেল বন্ধ থাকলেও অনুবাদ প্রক্রিয়া ও ফলাফল সংরক্ষিত থাকে।"
   },

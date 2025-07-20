@@ -133,6 +133,7 @@
     "selectPdfFile": "Chọn tệp PDF",
     "startTranslation": "Bắt đầu dịch",
     "fileSizeExceeds": "Kích thước tệp vượt quá {SIZE_REPLACEMENT}MB.",
+    "pageCountExceeds": "Số trang PDF vượt quá {PAGE_REPLACEMENT} trang.",
     "translatorStarting": "Đang khởi động trình dịch...",
     "translationPersists": "Quá trình và kết quả dịch được bảo tồn ngay cả khi đóng bảng điều khiển."
   },
