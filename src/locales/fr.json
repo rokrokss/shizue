@@ -46,7 +46,10 @@
     "history": "Historique",
     "empty": "Aucun message pour l'instant",
     "newChat": "Nouvelle discussion",
-    "summaryRequestText": "Résume cette page ! Shizue !"
+    "summaryRequestText": "Résume cette page ! Shizue !",
+    "translateMode": "Mode de traduction",
+    "translateModeDescription": "Désormais, pour chaque message que j'envoie, veuillez fournir une traduction et une explication dans le format suivant :\n\n1. ✅ Traduction : Fournissez une traduction naturelle et appropriée au contexte.\n2. 📚 Mots/Expressions clés\n    – Mot : Nature / Signification\n    – Exemple du texte original\n3. 🧠 Explication grammaticale ou d'expression : Si nécessaire, fournissez une brève explication des expressions ou phrases clés.\n\n- Présentez la sortie dans un format organisé comme un dictionnaire.\n- Appliquez le formatage en gras au contenu important.\n- Omettez les explications inutiles et rédigez de manière claire et concise pour un apprentissage ciblé.\n- Maintenez ce format sauf si je donne des instructions supplémentaires.",
+    "activateTranslateMode": "Activer le mode traduction..📡 🤖 📡"
   },
   "footer": {
     "joinDiscord": "Rejoignez-moi sur Discord !",

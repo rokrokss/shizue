@@ -33,6 +33,7 @@ async function handleLoadThread(msg: any, sendResponse: (response?: any) => void
         actionType: m.actionType,
         summaryTitle: m.summaryTitle,
         summaryPageLink: m.summaryPageLink,
+        translateMode: m.translateMode ?? false,
         done: m.done,
         onInterrupt: m.onInterrupt,
         stopped: m.stopped,

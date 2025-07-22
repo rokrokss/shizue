@@ -8,6 +8,7 @@ export interface Message {
   actionType: ActionType;
   summaryTitle?: string;
   summaryPageLink?: string;
+  translateMode?: boolean;
   content: string;
   createdAt: number;
   done: boolean;

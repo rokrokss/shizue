@@ -35,6 +35,8 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
   const getThreadTitle = (thread: ThreadWithInitialMessages) => {
     if (thread.firstMessage?.actionType === 'askForSummary') {
       return t('overlayMenu.summarizePage') + ': ' + thread.firstMessage?.summaryTitle;
+    } else if (thread.firstMessage?.translateMode) {
+      return t('chat.activateTranslateMode');
     }
     return thread.firstMessage?.content;
   };

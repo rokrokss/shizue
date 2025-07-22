@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.11
+
+- robust translate mode in chat
+
 ## v0.1.10
 
 - limit number of pages in PDF translation

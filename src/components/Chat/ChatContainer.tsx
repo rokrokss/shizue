@@ -142,8 +142,10 @@ const ChatContainer = ({
                 sz:py-[8px]
               "
               >
-                {m.actionType === 'chat' ? (
-                  <div className="sz:flex sz:flex-col sz:whitespace-pre-wrap">{m.content}</div>
+                {m.actionType === 'chat' && !m.translateMode ? (
+                  <div className="sz:flex sz:flex-col sz:whitespace-pre-wrap sz:break-keep sz:text-left">
+                    {m.content}
+                  </div>
                 ) : m.actionType === 'askForSummary' ? (
                   <div className="sz:flex sz:flex-col">
                     {getMarkdownText(t('chat.summaryRequestText'))}
@@ -157,6 +159,10 @@ const ChatContainer = ({
                         </div>
                       </div>
                     </a>
+                  </div>
+                ) : m.translateMode ? (
+                  <div className="sz:flex sz:flex-col">
+                    {getMarkdownText(t('chat.activateTranslateMode'))}
                   </div>
                 ) : null}
               </div>
