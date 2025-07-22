@@ -22,6 +22,8 @@ const BlueChickenWatch = ({ scale, marginLeft }: { scale: number; marginLeft: st
 
   return (
     <div
+      data-set-margin="true"
+      className="sz:mr-[0px] sz:mb-[0px] sz:mt-[0px]"
       style={{
         width: `${frameWidth * scale}px`,
         height: `${frameHeight * scale}px`,

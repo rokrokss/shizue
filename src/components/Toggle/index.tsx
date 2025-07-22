@@ -78,6 +78,22 @@ const Toggle = () => {
     isHoveringClose ||
     closeIconModalOpen;
 
+  const [delayedVisible, setDelayedVisible] = useState(isVisible);
+
+  useEffect(() => {
+    if (isVisible) {
+      // 즉시 표시
+      setDelayedVisible(true);
+    } else {
+      // 0.2초 지연 후 숨김
+      const timeout = setTimeout(() => {
+        setDelayedVisible(false);
+      }, 200);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [isVisible]);
+
   const width = 43;
   const height = 43;
   const widthFull = 55;
@@ -277,7 +293,7 @@ const Toggle = () => {
         <div
           className="sz:flex sz:flex-col sz:items-end sz:z-2147483647"
           style={{
-            pointerEvents: isVisible ? 'auto' : 'none',
+            pointerEvents: delayedVisible ? 'auto' : 'none',
           }}
           ref={toggleRef}
         >
@@ -293,7 +309,7 @@ const Toggle = () => {
               sz:z-2147483647
               sz:overflow-hidden
               ${
-                isVisible
+                delayedVisible
                   ? 'sz:opacity-100 sz:translate-x-0 sz:pointer-events-auto sz:max-h-[500px]'
                   : 'sz:opacity-0 sz:translate-x-[8px] sz:pointer-events-none sz:max-h-0'
               }
@@ -321,7 +337,8 @@ const Toggle = () => {
                     content={
                       <div className="sz:flex sz:flex-col sz:items-center sz:gap-[10px]">
                         <div
-                          className={`sz:font-ycom sz:text-[16px] sz:mb-[2px] sz:text-center sz:leading-[16px] ${
+                          data-set-margin="true"
+                          className={`sz:font-ycom sz:text-[16px] sz:mb-[2px] sz:mt-0 sz:mr-0 sz:ml-0 sz:text-center sz:leading-[16px] ${
                             theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
                           }`}
                         >
@@ -503,7 +520,7 @@ const Toggle = () => {
             className="sz:flex sz:items-center sz:justify-center sz:cursor-pointer sz:shadow-lg sz:shadow-cyan-400/20 sz:z-2147483647"
             onClick={handleClick}
             style={{
-              width: isVisible ? `${widthFull}px` : `${width}px`,
+              width: delayedVisible ? `${widthFull}px` : `${width}px`,
               height: `${height}px`,
               transition: 'width 0.3s ease-in-out',
               background: 'linear-gradient( 135deg, #90F7EC 10%, #32CCBC 100%)',
@@ -517,12 +534,15 @@ const Toggle = () => {
             <CharacterPickToggle index={characterIndex} />
           </div>
           <div
-            className="sz:relative"
+            data-set-margin="true"
+            className="sz:relative sz:mr-0 sz:ml-0 sz:mb-0"
             style={{
-              opacity: isVisible && !closeIconModalOpen ? 1 : 0,
-              pointerEvents: isVisible && !closeIconModalOpen ? 'auto' : 'none',
-              width: isVisible && !closeIconModalOpen ? `${widthFull + 12}px` : `${width + 12}px`,
-              transition: isVisible && !closeIconModalOpen ? 'opacity 0.2s ease-in-out' : 'none',
+              opacity: delayedVisible && !closeIconModalOpen ? 1 : 0,
+              pointerEvents: delayedVisible && !closeIconModalOpen ? 'auto' : 'none',
+              width:
+                delayedVisible && !closeIconModalOpen ? `${widthFull + 12}px` : `${width + 12}px`,
+              transition:
+                delayedVisible && !closeIconModalOpen ? 'opacity 0.2s ease-in-out' : 'none',
               marginTop: '-4.5px',
             }}
             onMouseEnter={() => setIsHoveringClose(true)}
@@ -543,7 +563,8 @@ const Toggle = () => {
               content={
                 <div className="sz:flex sz:flex-col sz:items-center sz:gap-[10px]">
                   <div
-                    className={`sz:font-ycom sz:text-[16px] sz:mb-[2px] sz:text-center sz:leading-[16px] ${
+                    data-set-margin="true"
+                    className={`sz:font-ycom sz:text-[16px] sz:mb-[2px] sz:mt-0 sz:mr-0 sz:ml-0sz:text-center sz:leading-[16px] ${
                       theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
                     }`}
                   >
