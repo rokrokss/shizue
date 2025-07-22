@@ -113,12 +113,12 @@ const Pdf = () => {
 
     statusCheckInterval.current = setInterval(() => {
       checkTaskStatus(taskId);
-    }, 2000);
+    }, 3000);
   };
 
   useEffect(() => {
     if (taskInfo.task_id && taskInfo.task_id !== '') {
-      if (Date.now() - new Date(taskInfo.created_at).getTime() > 1000 * 60 * 60 * 3) {
+      if (Date.now() - new Date(taskInfo.created_at).getTime() > 1000 * 60 * 60 * 24) {
         deleteTask(taskInfo.task_id);
       } else {
         checkTaskStatus(taskInfo.task_id);
