@@ -46,7 +46,10 @@
     "history": "历史记录",
     "empty": "暂无消息",
     "newChat": "新聊天",
-    "summaryRequestText": "总结这个页面！Shizue！"
+    "summaryRequestText": "总结这个页面！Shizue！",
+    "translateMode": "翻译模式",
+    "translateModeDescription": "从现在开始，对于我发送的每一条消息，请按以下格式提供翻译和解释：\n\n1. ✅ 翻译文：提供自然且符合语境的翻译。\n2. 📚 核心词汇/表达整理\n    – 单词：词性 / 含义\n    – 原文中的例句\n3. 🧠 语法或表达解释：必要时，对核心表达或句型提供简单说明。\n\n- 输出要像词典一样条理清晰。\n- 重要内容要加粗处理。\n- 省略不必要的解释，简洁明了地编写，以便专注学习。\n- 除非我另行指示，否则请保持此格式。",
+    "activateTranslateMode": "激活翻译模式..📡 🤖 📡"
   },
   "footer": {
     "joinDiscord": "加入我的 Discord！",

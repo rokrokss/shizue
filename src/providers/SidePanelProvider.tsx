@@ -70,6 +70,7 @@ const SidePanelProvider = ({
         actionType: 'askForSummary',
         summaryTitle: summaryTitle,
         summaryPageLink: summaryPageLink,
+        translateMode: false,
         content: summarizePageTextPrompt,
         createdAt: Date.now(),
         done: true,

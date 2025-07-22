@@ -17,12 +17,14 @@ import { debugLog, errorLog } from '@/logs';
 import { chatService } from '@/services/chatService';
 import { useAtom, useAtomValue } from 'jotai';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface Message {
   role: 'human' | 'system' | 'ai';
   actionType: ActionType;
   summaryTitle?: string;
   summaryPageLink?: string;
+  translateMode?: boolean;
   content: string;
   done: boolean;
   onInterrupt: boolean;
@@ -45,6 +47,8 @@ const Chat = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const aiIndexRef = useRef<number>(-1);
   const actionType = useRef<ActionType>('chat');
+
+  const { t } = useTranslation();
 
   const scrollToBottom = useCallback(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -183,6 +187,49 @@ const Chat = () => {
       setThreadId(tid);
     }
     return tid;
+  };
+
+  const addTranslateModeMessage = async (tId: string) => {
+    const text = t('chat.translateModeDescription');
+
+    setMessages((prev) => {
+      actionType.current = 'chat';
+      aiIndexRef.current = prev.length + 1;
+      return [
+        ...prev,
+        {
+          role: 'human',
+          actionType: 'chat',
+          content: text,
+          done: true,
+          onInterrupt: false,
+          stopped: false,
+          translateMode: true,
+        },
+        {
+          role: 'ai',
+          actionType: 'chat',
+          content: '',
+          done: false,
+          onInterrupt: false,
+          stopped: false,
+        },
+      ];
+    });
+
+    await addMessage({
+      id: crypto.randomUUID(),
+      threadId: tId,
+      role: 'human',
+      actionType: 'chat',
+      content: text,
+      createdAt: Date.now(),
+      done: true,
+      onInterrupt: false,
+      stopped: false,
+      translateMode: true,
+    });
+    await touchThread(tId);
   };
 
   const addHumanMessage = async (tId: string, text: string) => {
@@ -433,6 +480,77 @@ const Chat = () => {
     setIsUsageOpen(false);
   };
 
+  const handleTranslateMode = async () => {
+    setChatStatus('waiting');
+
+    let tId = threadId;
+    if (!tId) {
+      tId = await createThread(t('chat.translateMode').slice(0, 20));
+      setThreadId(tId);
+    }
+
+    await addTranslateModeMessage(tId);
+    scrollToBottomThrottled();
+
+    startStream(
+      { threadId: tId, actionType: actionType.current },
+      {
+        onDelta: (delta) =>
+          setMessages((cur) => {
+            const idx = aiIndexRef.current;
+            const copy = [...cur];
+            copy[idx] = {
+              role: 'ai',
+              actionType: copy[idx].actionType,
+              content: copy[idx].content + delta,
+              done: false,
+              onInterrupt: false,
+              stopped: copy[idx].stopped,
+            };
+            scrollToBottomThrottled();
+            return copy;
+          }),
+        onDone: () => {
+          setMessages((cur) => {
+            const idx = aiIndexRef.current;
+            const copy = [...cur];
+            copy[idx] = {
+              role: 'ai',
+              actionType: copy[idx].actionType,
+              content: copy[idx].content,
+              done: true,
+              onInterrupt: false,
+              stopped: copy[idx].stopped,
+            };
+            return copy;
+          });
+          touchThread(tId);
+          setChatStatus('idle');
+          scrollToBottomThrottled();
+        },
+        onError: (err) => {
+          errorLog('Chat Stream error:', err);
+          setMessages((cur) => {
+            const idx = aiIndexRef.current;
+            const copy = [...cur];
+            copy[idx] = {
+              role: 'ai',
+              actionType: copy[idx].actionType,
+              content: copy[idx].content,
+              done: false,
+              onInterrupt: true,
+              stopped: copy[idx].stopped,
+            };
+            return copy;
+          });
+          touchThread(tId);
+          setChatStatus('idle');
+          scrollToBottomThrottled();
+        },
+      }
+    );
+  };
+
   return (
     <div
       className={`sz-chat sz:w-full sz:h-full sz:flex sz:flex-col sz:items-center ${
@@ -472,6 +590,7 @@ const Chat = () => {
           onOpenHistory={handleOpenHistory}
           onNewChat={handleNewChat}
           onOpenUsage={handleOpenUsage}
+          onTranslateMode={handleTranslateMode}
         />
       </div>
       {isSettingsOpen && (

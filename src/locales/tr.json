@@ -46,7 +46,10 @@
     "history": "Geçmiş",
     "empty": "Henüz mesaj yok",
     "newChat": "Yeni Sohbet",
-    "summaryRequestText": "Bu sayfayı özetle! Shizue!"
+    "summaryRequestText": "Bu sayfayı özetle! Shizue!",
+    "translateMode": "Çeviri Modu",
+    "translateModeDescription": "Bundan böyle gönderdiğim her mesaj için, lütfen aşağıdaki formatta çeviri ve açıklama sağlayın:\n\n1. ✅ Çeviri: Doğal ve bağlama uygun bir çeviri sağlayın.\n2. 📚 Anahtar Kelimeler/İfadeler\n    – Kelime: Kelime türü / Anlam\n    – Orijinal metinden örnek\n3. 🧠 Dilbilgisi veya İfade Açıklaması: Gerektiğinde, anahtar ifadeler veya cümleler için kısa bir açıklama sağlayın.\n\n- Çıktıyı sözlük benzeri düzenli bir formatta sunun.\n- Önemli içeriğe kalın biçimlendirme uygulayın.\n- Gereksiz açıklamaları atlayın ve odaklı öğrenme için temiz ve özlü yazın.\n- Ek talimatlar vermediğim sürece bu formatı koruyun.",
+    "activateTranslateMode": "Çeviri Modunu Etkinleştir..📡 🤖 📡"
   },
   "footer": {
     "joinDiscord": "Discord'da bana katılın!",
