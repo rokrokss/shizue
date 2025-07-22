@@ -299,6 +299,7 @@ const YoutubeCaptionToggle = () => {
         }}
       >
         <div
+          data-set-margin="true"
           className="
             sz-youtube-caption-toggle
             sz:flex
@@ -308,6 +309,7 @@ const YoutubeCaptionToggle = () => {
             sz:h-full
             sz:px-2
             sz:mx-2
+            sz:my-0
             sz:py-[2px]
             sz:rounded-lg
             sz:font-youtube
