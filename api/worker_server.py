@@ -237,6 +237,9 @@ async def run_babeldoc_translation(
     temp_output_dir = None
     translator = None
     
+    # 태스크마다 progress 초기화
+    last_progress = -1.0  # 첫 번째 업데이트를 위해 -1로 설정
+    
     try:
         # GCS에서 입력 파일 다운로드
         gcs_manager = get_gcs_manager()
@@ -351,14 +354,18 @@ async def run_babeldoc_translation(
                             return False, "No PDF files found in output directory", None
                     
                     elif event["type"] == "progress_update":
-                        # Update progress
-                        progress = event.get("overall_progress", 0)
-                        await update_main_server_status(
-                            task_id, 
-                            "processing", 
-                            f"Translating... {progress:.1f}%", 
-                            progress=progress
-                        )
+                        # Update progress only if it changed significantly (1% threshold)
+                        current_progress = event.get("overall_progress", 0)
+                        
+                        # 처음 업데이트이거나, 1% 이상 변했을 때만 업데이트
+                        if abs(current_progress - last_progress) >= 1.0:
+                            await update_main_server_status(
+                                task_id, 
+                                "processing", 
+                                f"Translating... {current_progress:.1f}%", 
+                                progress=current_progress
+                            )
+                            last_progress = current_progress
         
         except asyncio.TimeoutError:
             logger.error(f"Translation timeout for task {task_id}")

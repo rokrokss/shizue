@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 # 환경 변수 설정
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")
 MAX_FILE_SIZE = int(os.getenv("MAX_FILE_SIZE", "40")) * 1024 * 1024  # 50MB
-AUTO_DELETE_HOURS = int(os.getenv("AUTO_DELETE_HOURS", "4"))
+AUTO_DELETE_HOURS = int(os.getenv("AUTO_DELETE_HOURS", "24"))
 WORKER_SERVER_URL = os.getenv("WORKER_SERVER_URL", "http://localhost:8001")
 MAX_CONCURRENT_TASKS = int(os.getenv("MAX_CONCURRENT_TASKS", "1"))
 QUEUE_CHECK_INTERVAL = int(os.getenv("QUEUE_CHECK_INTERVAL", "5"))  # 5초마다 큐 체크
@@ -94,18 +94,25 @@ class TranslationQueueManager:
                 task_data = self.get_next_task()
                 if task_data:
                     # 비동기로 워커 서버에 작업 전송
-                    asyncio.create_task(self._process_task_with_worker(task_data))
-                    await asyncio.sleep(5)  # 5초 대기
-                else:
-                    # 큐가 비어있으면 잠시 대기
-                    await asyncio.sleep(QUEUE_CHECK_INTERVAL)
+                    asyncio.create_task(self._process_task_with_worker(task_data, retry_count=0))
             except Exception as e:
                 logger.error(f"Error in queue processor: {e}")
+            finally:
                 await asyncio.sleep(QUEUE_CHECK_INTERVAL)
     
-    async def _process_task_with_worker(self, task_data: dict):
+    async def _process_task_with_worker(self, task_data: dict, retry_count: int = 0):
         """워커 서버에 작업 전송"""
         task_id = task_data['task_id']
+        max_retries = 3
+        
+        # 최대 재시도 횟수 초과시 완전 실패 처리
+        if retry_count >= max_retries:
+            logger.error(f"Task {task_id} failed after {max_retries} retries")
+            if task_id in tasks_status:
+                tasks_status[task_id]["status"] = "failed"
+                tasks_status[task_id]["message"] = f"Worker server connection failed after {max_retries} retries"
+            self.complete_task(task_id)
+            return
         
         try:
             # 워커 서버에 번역 작업 요청
@@ -117,28 +124,39 @@ class TranslationQueueManager:
                 
                 if response.status_code == 200:
                     logger.info(f"Task {task_id} sent to worker server successfully")
+                    # 성공시에만 작업 완료 처리 (워커가 상태 업데이트 담당)
+                    self.complete_task(task_id)
+                    return
                 else:
                     logger.error(f"Worker server error for task {task_id}: {response.status_code} - {response.text}")
-                    # 워커 서버 오류 시 작업 상태 업데이트
-                    if task_id in tasks_status:
-                        tasks_status[task_id]["status"] = "failed"
-                        tasks_status[task_id]["message"] = f"Worker server error: {response.status_code}"
+                    # 5xx 서버 오류나 429 Too Many Requests는 재시도
+                    if response.status_code >= 500 or response.status_code == 429:
+                        raise Exception(f"Retryable error: {response.status_code}")
+                    else:
+                        # 4xx 클라이언트 오류는 재시도하지 않음
+                        if task_id in tasks_status:
+                            tasks_status[task_id]["status"] = "failed"
+                            tasks_status[task_id]["message"] = f"Worker server error: {response.status_code}"
+                        self.complete_task(task_id)
+                        return
         
         except httpx.TimeoutException:
-            logger.error(f"Worker server timeout for task {task_id}")
-            if task_id in tasks_status:
-                tasks_status[task_id]["status"] = "failed"
-                tasks_status[task_id]["message"] = "Worker server timeout"
+            logger.error(f"Worker server timeout for task {task_id} (attempt {retry_count + 1}/{max_retries})")
+            # 타임아웃은 재시도 가능한 오류
+            pass
         
         except Exception as e:
-            logger.error(f"Error sending task {task_id} to worker server: {e}")
-            if task_id in tasks_status:
-                tasks_status[task_id]["status"] = "failed"
-                tasks_status[task_id]["message"] = f"Worker server connection error: {str(e)}"
+            logger.error(f"Error sending task {task_id} to worker server (attempt {retry_count + 1}/{max_retries}): {e}")
+            # 연결 오류 등은 재시도 가능한 오류
+            pass
         
-        finally:
-            # 작업 완료 처리
-            self.complete_task(task_id)
+        # 재시도 로직: 백오프 전략 적용
+        backoff_delay = min(2 ** retry_count, 60)  # 최대 60초까지
+        logger.info(f"Retrying task {task_id} in {backoff_delay} seconds (attempt {retry_count + 1}/{max_retries})")
+        await asyncio.sleep(backoff_delay)
+        
+        # 재시도
+        await self._process_task_with_worker(task_data, retry_count + 1)
 
 # 글로벌 큐 매니저
 queue_manager = TranslationQueueManager()
