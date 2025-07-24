@@ -7,8 +7,8 @@ import TopMenu from '@/components/Chat/TopRightMenu';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import SettingsModalContent from '@/components/Setting/SettingsModalContent';
 import { MESSAGE_LOAD_THREAD } from '@/config/constants';
-import { chatStatusAtom, isChatIdle } from '@/hooks/chat';
-import { ActionType, messageAddedInPanelAtom, threadIdAtom } from '@/hooks/global';
+import { chatStatusAtom, isChatIdle, createThreadMessageCountAtom } from '@/hooks/chat';
+import { ActionType, threadIdAtom } from '@/hooks/global';
 import { useThemeValue } from '@/hooks/layout';
 import { useChromePortStream } from '@/hooks/portStream';
 import { convertFilesToBase64Array } from '@/lib/imageUtils';
@@ -43,7 +43,8 @@ const Chat = () => {
 
   const [threadId, setThreadId] = useAtom(threadIdAtom);
   const threadIdRef = useRef(threadId);
-  const messageAddedTimestamp = useAtomValue(messageAddedInPanelAtom);
+  const messageCountAtom = useMemo(() => createThreadMessageCountAtom(threadId), [threadId]);
+  const messageCount = useAtomValue(messageCountAtom);
   const { startStream, startRetryStream, cancelStream } = useChromePortStream();
 
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -70,6 +71,20 @@ const Chat = () => {
 
   const closeSettings = () => {
     setIsSettingsOpen(false);
+  };
+
+  const addAIMessage = () => {
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: 'ai',
+        actionType: 'chat',
+        content: '',
+        done: false,
+        onInterrupt: false,
+        stopped: false,
+      },
+    ]);
   };
 
   const handleRequestFromContextMenu = useCallback(
@@ -142,7 +157,7 @@ const Chat = () => {
         }
       );
     },
-    [messages, setChatStatus, startStream, scrollToBottomThrottled, setMessages]
+    [messages, setChatStatus, startStream, scrollToBottomThrottled, setMessages, addAIMessage]
   );
 
   const loadThreadBackground = useCallback(
@@ -151,6 +166,7 @@ const Chat = () => {
         .sendMessage({ action: MESSAGE_LOAD_THREAD, threadId: tId })
         .then((res: Message[]) => {
           setMessages(res);
+          debugLog('loadThreadBackground set messages', messages);
           if (res.length > 0) {
             if (
               res[res.length - 1].actionType === 'askForSummary' ||
@@ -287,20 +303,6 @@ const Chat = () => {
     await touchThread(tId);
   };
 
-  const addAIMessage = () => {
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: 'ai',
-        actionType: 'chat',
-        content: '',
-        done: false,
-        onInterrupt: false,
-        stopped: false,
-      },
-    ]);
-  };
-
   useEffect(() => {
     if (isChatIdle(chatStatus) && threadId) {
       cancelStream();
@@ -320,13 +322,10 @@ const Chat = () => {
   }, [threadId]);
 
   useEffect(() => {
-    if (messageAddedTimestamp) {
-      const currentThreadId = threadIdRef.current;
-      if (currentThreadId) {
-        loadThreadBackground(currentThreadId);
-      }
+    if (messageCount > 0 && threadId) {
+      loadThreadBackground(threadId);
     }
-  }, [messageAddedTimestamp]);
+  }, [messageCount, threadId, loadThreadBackground]);
 
   const handleSubmit = async (text: string, images?: File[]) => {
     setChatStatus('waiting');

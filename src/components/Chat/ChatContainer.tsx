@@ -149,6 +149,7 @@ const ChatContainer = ({
                     {m.images.map((imageBase64, imgIdx) => (
                       <img
                         src={imageBase64}
+                        key={`${idx}-image-${imgIdx}`}
                         alt={`Image ${imgIdx + 1}`}
                         className="sz:max-w-[200px] sz:max-h-[200px] sz:object-contain sz:rounded sz:border-gray-300 sz:border sz:cursor-pointer"
                         style={{
