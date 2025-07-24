@@ -12,7 +12,7 @@ import {
   TranslationOutlined,
 } from '@ant-design/icons';
 import { Button, Input, Tooltip, Upload } from 'antd';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,8 +24,6 @@ const ChatInput = ({
   onNewChat,
   onOpenUsage,
   onTranslateMode,
-  droppedImages,
-  onDroppedImagesChange,
 }: {
   chatStatus: ChatStatus;
   onSubmit: (text: string, images?: File[]) => Promise<void>;
@@ -34,8 +32,6 @@ const ChatInput = ({
   onNewChat: () => Promise<void>;
   onOpenUsage: () => void;
   onTranslateMode: () => Promise<void>;
-  droppedImages?: File[];
-  onDroppedImagesChange?: (images: File[]) => void;
 }) => {
   const { t } = useTranslation();
   const [chatInput, setChatInput] = useState('');
@@ -45,14 +41,6 @@ const ChatInput = ({
   const theme = useThemeValue();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (droppedImages && droppedImages.length > 0) {
-      setUploadedImages(prev => [...prev, ...droppedImages]);
-      if (onDroppedImagesChange) {
-        onDroppedImagesChange([]);
-      }
-    }
-  }, [droppedImages, onDroppedImagesChange]);
 
   const handleSubmit = async (text: string) => {
     if (text !== '' || uploadedImages.length > 0) {
@@ -106,6 +94,23 @@ const ChatInput = ({
           setUploadedImages((prev) => [...prev, file]);
         }
       }
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const files = Array.from(e.dataTransfer.files);
+    const imageFiles = files.filter((file) => file.type.startsWith('image/'));
+    
+    if (imageFiles.length > 0) {
+      setUploadedImages((prev) => [...prev, ...imageFiles]);
     }
   };
 
@@ -339,6 +344,8 @@ const ChatInput = ({
           onCompositionEnd={() => setIsComposing(false)}
           onKeyDown={handleKeyDown}
           onPaste={handlePaste}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
           placeholder={t('chat.askAnything')}
           autoSize
           className="
