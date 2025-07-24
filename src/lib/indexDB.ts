@@ -10,6 +10,7 @@ export interface Message {
   summaryPageLink?: string;
   translateMode?: boolean;
   content: string;
+  images?: string[];
   createdAt: number;
   done: boolean;
   onInterrupt: boolean;
@@ -47,6 +48,12 @@ class DB extends Dexie {
       threads: 'id, updatedAt',
     });
     this.version(2).stores({
+      // 'pk, ...indexes'
+      messages: 'id, threadId, createdAt',
+      threads: 'id, updatedAt',
+      tokenUsage: 'id, date, model, provider, createdAt',
+    });
+    this.version(3).stores({
       // 'pk, ...indexes'
       messages: 'id, threadId, createdAt',
       threads: 'id, updatedAt',

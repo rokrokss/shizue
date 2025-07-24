@@ -11,6 +11,10 @@ export const MESSAGE_TRANSLATE_HTML_TEXT_BATCH = 'translate_html_text_batch';
 export const MESSAGE_TRANSLATE_YOUTUBE_CAPTION = 'translate_youtube_caption';
 export const MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE = 'context_menu_translate_page';
 export const MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE = 'context_menu_summarize_page';
+export const MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE = 'context_menu_describe_image';
+export const MESSAGE_CONTEXT_MENU_EXTRACT_IMAGE_TEXT = 'context_menu_extract_image_text';
+export const MESSAGE_DESCRIBE_IMAGE_REQUEST = 'DESCRIBE_IMAGE_REQUEST';
+export const MESSAGE_DESCRIBE_IMAGE_FORWARD = 'DESCRIBE_IMAGE_FORWARD';
 
 /* port */
 export const PORT_LISTEN_PANEL_CLOSED_KEY = 'listen_panel_closed_key';

@@ -1,5 +1,7 @@
 import {
   MESSAGE_CANCEL_NOT_STARTED_MESSAGE,
+  MESSAGE_DESCRIBE_IMAGE_FORWARD,
+  MESSAGE_DESCRIBE_IMAGE_REQUEST,
   MESSAGE_LOAD_THREAD,
   MESSAGE_OPEN_PANEL,
   MESSAGE_PANEL_OPENED_PING_FROM_PANEL,
@@ -37,6 +39,7 @@ async function handleLoadThread(msg: any, sendResponse: (response?: any) => void
         done: m.done,
         onInterrupt: m.onInterrupt,
         stopped: m.stopped,
+        images: m.images,
       }))
   );
 }
@@ -78,6 +81,32 @@ async function handleTranslateYoutubeCaption(msg: any, sendResponse: (response?:
   sendResponse(translatedCaptions);
 }
 
+async function handleDescribeImageRequest(msg: any, sendResponse: (response?: any) => void) {
+  const { imageBase64, imageUrl } = msg;
+  
+  // 사이드패널을 열고 이미지 설명 요청을 전달
+  if (!getPanelOpened()) {
+    openPanel(undefined);
+  }
+  
+  // 사이드패널로 메시지 전달 (사이드패널이 열린 후 약간의 지연)
+  setTimeout(() => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: MESSAGE_DESCRIBE_IMAGE_FORWARD,
+          imageBase64,
+          imageUrl
+        }).catch(() => {
+          // 탭에 content script가 없는 경우 무시
+        });
+      }
+    });
+  }, 500);
+  
+  sendResponse({ status: 'success' });
+}
+
 export const messageHandlers = {
   [MESSAGE_LOAD_THREAD]: handleLoadThread,
   [MESSAGE_CANCEL_NOT_STARTED_MESSAGE]: handleLatestMessageForThread,
@@ -86,4 +115,5 @@ export const messageHandlers = {
   [MESSAGE_OPEN_PANEL]: handleOpenPanel,
   [MESSAGE_TRANSLATE_HTML_TEXT_BATCH]: handleTranslateHtmlTextBatch,
   [MESSAGE_TRANSLATE_YOUTUBE_CAPTION]: handleTranslateYoutubeCaption,
+  [MESSAGE_DESCRIBE_IMAGE_REQUEST]: handleDescribeImageRequest,
 };

@@ -131,7 +131,7 @@ export class ChatModelHandler {
 
       const threadHistory = await loadThread(threadId);
 
-      const memory = (await loadUserMemory()).text; // TODO
+      // const memory = (await loadUserMemory()).text; // TODO
 
       const currentLang = getCurrentLanguage();
       const initialSystemMessage = getInitialSystemMessage(currentLang);
@@ -140,9 +140,21 @@ export class ChatModelHandler {
       const messages = [
         new SystemMessage(initialSystemMessage),
         new AIMessage(initialAIMessage),
-        ...threadHistory.map((m) =>
-          m.role === 'human' ? new HumanMessage(m.content) : new AIMessage(m.content)
-        ),
+        ...threadHistory.map((m) => {
+          if (m.role === 'human') {
+            if (m.images && m.images.length > 0) {
+              return new HumanMessage({
+                content: [
+                  { type: "text", text: m.content },
+                  ...m.images.map(img => ({ type: "image_url", image_url: { url: img } }))
+                ]
+              });
+            } else {
+              return new HumanMessage(m.content);
+            }
+          }
+          return new AIMessage(m.content);
+        }),
       ];
 
       await this._executeStreamAndUpdate(messageId, messages, port, abortController, actionType);
@@ -195,7 +207,7 @@ export class ChatModelHandler {
         stopped: false,
       });
 
-      const memory = (await loadUserMemory()).text; // TODO
+      // const memory = (await loadUserMemory()).text; // TODO
 
       const currentLang = getCurrentLanguage();
       const initialSystemMessage = getInitialSystemMessage(currentLang);

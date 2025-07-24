@@ -19,3 +19,23 @@ export async function initPdfPageContent() {
     actionType: 'translatePdf',
   });
 }
+
+export async function initDescribeImageContent(imageBase64: string, imageUrl: string) {
+  const prevGlobalState = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
+  await setStorage(STORAGE_GLOBAL_STATE, {
+    ...(prevGlobalState ?? {}),
+    actionType: 'describeImage',
+    imageBase64: imageBase64,
+    imageUrl: imageUrl,
+  });
+}
+
+export async function initExtractImageTextContent(imageBase64: string, imageUrl: string) {
+  const prevGlobalState = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
+  await setStorage(STORAGE_GLOBAL_STATE, {
+    ...(prevGlobalState ?? {}),
+    actionType: 'extractImageText',
+    imageBase64: imageBase64,
+    imageUrl: imageUrl,
+  });
+}

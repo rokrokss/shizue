@@ -7,6 +7,7 @@ import { hashStringToIndex } from '@/lib/hash';
 import { debugLog } from '@/logs';
 import { LinkOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -15,10 +16,12 @@ const ChatContainer = ({
   messages,
   onRetry,
   scrollToBottom,
+  onImageDrop,
 }: {
   messages: Message[];
   onRetry: (messageIdxToRetry: number) => Promise<void>;
   scrollToBottom: () => void;
+  onImageDrop?: (files: File[]) => void;
 }) => {
   const { t } = useTranslation();
   const characterIndexes: number[] = [];
@@ -39,8 +42,27 @@ const ChatContainer = ({
     debugLog('messages', messages);
   }, [messages]);
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const files = Array.from(e.dataTransfer.files);
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+    
+    if (imageFiles.length > 0 && onImageDrop) {
+      onImageDrop(imageFiles);
+    }
+  };
+
   return (
     <div
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
       className="
         sz:px-4 
         sz:pt-15 
@@ -165,6 +187,20 @@ const ChatContainer = ({
                     {getMarkdownText(t('chat.activateTranslateMode'))}
                   </div>
                 ) : null}
+                {m.images && m.images.length > 0 && (
+                  <div className="sz:flex sz:flex-wrap sz:gap-2 sz:mt-2">
+                    {m.images.map((imageBase64, imgIdx) => (
+                      <img
+                        src={imageBase64}
+                        alt={`Image ${imgIdx + 1}`}
+                        className="sz:max-w-[200px] sz:max-h-[200px] sz:object-contain sz:rounded sz:border-gray-300 sz:border sz:cursor-pointer"
+                        style={{
+                          filter: theme === 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           );
