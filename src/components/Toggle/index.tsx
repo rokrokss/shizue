@@ -12,9 +12,10 @@ import TogglePopoverModal from '@/components/Modal/TogglePopoverModal';
 import OverlayMenu from '@/components/Toggle/OverlayMenu';
 import OverlayMenuItem from '@/components/Toggle/OverlayMenuItem';
 import {
+  MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE,
   MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE,
   MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
-  MESSAGE_UPDATE_PANEL_INIT_DATA,
+  MESSAGE_UPDATE_PANEL_INIT_DATA
 } from '@/config/constants';
 import { Language, useTranslateTargetLanguage } from '@/hooks/language';
 import {
@@ -29,7 +30,7 @@ import {
   useTranslateModel,
 } from '@/hooks/models';
 import { hashStringToIndex } from '@/lib/hash';
-import { initPdfPageContent, initSummarizePageContent } from '@/lib/initPanelData';
+import { initDescribeImageContent, initPdfPageContent, initSummarizePageContent } from '@/lib/initPanelData';
 import { languageOptions } from '@/lib/language';
 import { TranslateModel } from '@/lib/models';
 import { getPageTranslator } from '@/lib/pageTranslator';
@@ -192,7 +193,7 @@ const Toggle = () => {
     setTargetLanguage(language as Language);
   };
 
-  const handleSummarizePage = async () => {
+  const handleSummarizePage = useCallback(async () => {
     debugLog('Summarize page clicked');
     if (isDragging) return;
     const pageText = document.body.innerText;
@@ -201,7 +202,39 @@ const Toggle = () => {
       debugLog('handleSummarizePage: Panel not opened yet', err);
     });
     setPanelOpen();
-  };
+  }, [isDragging]);
+
+  const handleDescribeImage = useCallback(async (srcUrl: string) => {
+    debugLog('Describe image clicked', srcUrl);
+    if (isDragging) return;
+    
+    // 이미지를 다운로드하여 Base64로 변환
+    try {
+      const response = await fetch(srcUrl);
+      const blob = await response.blob();
+      const reader = new FileReader();
+      
+      reader.onload = async () => {
+        const base64 = reader.result as string;
+        // GlobalState에 이미지 데이터 저장
+        await initDescribeImageContent(base64, srcUrl);
+        void chrome.runtime.sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA }).catch((err) => {
+          debugLog('handleDescribeImage: Panel not opened yet', err);
+        });
+        setPanelOpen();
+      };
+      
+      reader.readAsDataURL(blob);
+    } catch (error) {
+      console.error('Failed to load image:', error);
+      // 에러 발생 시 URL만으로 처리
+      await initDescribeImageContent('', srcUrl);
+      void chrome.runtime.sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA }).catch((err) => {
+        debugLog('handleDescribeImage: Panel not opened yet', err);
+      });
+      setPanelOpen();
+    }
+  }, [isDragging]);
 
   const constrain = (yPosition: number) => {
     const viewportHeight = window.innerHeight;
@@ -266,6 +299,8 @@ const Toggle = () => {
         if (!isTranslationActiveRef.current) handleTranslatePage();
       } else if (message.action === MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE) {
         handleSummarizePage();
+      } else if (message.action === MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE) {
+        handleDescribeImage(message.srcUrl);
       }
     };
     chrome.runtime.onMessage.addListener(messageListener);
@@ -273,7 +308,7 @@ const Toggle = () => {
     return () => {
       chrome.runtime.onMessage.removeListener(messageListener);
     };
-  }, []);
+  }, [handleTranslatePage, handleSummarizePage, handleDescribeImage]);
 
   return (
     !isCurrentSiteHidden && (

@@ -7,7 +7,7 @@ export const sidePanelHydratedAtom = atom(false);
 
 export const messageAddedInPanelAtom = atom<number | null>(null);
 
-export type ActionType = 'chat' | 'askForSummary' | 'translatePdf';
+export type ActionType = 'chat' | 'askForSummary' | 'translatePdf' | 'describeImage' | 'extractImageText';
 
 export type GlobalState = {
   actionType: ActionType;
@@ -15,6 +15,8 @@ export type GlobalState = {
   summaryTitle?: string;
   summaryText?: string;
   summaryPageLink?: string;
+  imageBase64?: string;
+  imageUrl?: string;
 };
 
 export const defaultGlobalState: GlobalState = {

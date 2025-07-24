@@ -7,10 +7,12 @@ import {
   FolderOutlined,
   LineChartOutlined,
   PauseOutlined,
+  PictureOutlined,
   SmileOutlined,
   TranslationOutlined,
 } from '@ant-design/icons';
-import { Button, Input, Tooltip } from 'antd';
+import { Button, Input, Tooltip, Upload } from 'antd';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,26 +24,41 @@ const ChatInput = ({
   onNewChat,
   onOpenUsage,
   onTranslateMode,
+  droppedImages,
+  onDroppedImagesChange,
 }: {
   chatStatus: ChatStatus;
-  onSubmit: (text: string) => Promise<void>;
+  onSubmit: (text: string, images?: File[]) => Promise<void>;
   onCancel: () => Promise<void>;
   onOpenHistory: () => void;
   onNewChat: () => Promise<void>;
   onOpenUsage: () => void;
   onTranslateMode: () => Promise<void>;
+  droppedImages?: File[];
+  onDroppedImagesChange?: (images: File[]) => void;
 }) => {
   const { t } = useTranslation();
   const [chatInput, setChatInput] = useState('');
   const [isComposing, setIsComposing] = useState(false);
   const [isCancelHovered, setIsCancelHovered] = useState(false);
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const theme = useThemeValue();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (droppedImages && droppedImages.length > 0) {
+      setUploadedImages(prev => [...prev, ...droppedImages]);
+      if (onDroppedImagesChange) {
+        onDroppedImagesChange([]);
+      }
+    }
+  }, [droppedImages, onDroppedImagesChange]);
+
   const handleSubmit = async (text: string) => {
-    if (text !== '') {
-      onSubmit(text);
+    if (text !== '' || uploadedImages.length > 0) {
+      onSubmit(text, uploadedImages);
       setChatInput('');
+      setUploadedImages([]);
     }
   };
 
@@ -66,6 +83,30 @@ const ChatInput = ({
   const handleTranslateModeClick = () => {
     debugLog('ChatInput: [handleTranslateModeClick]');
     onTranslateMode();
+  };
+
+  const handleImageUpload = (file: File) => {
+    setUploadedImages((prev) => [...prev, file]);
+    return false;
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handlePaste = async (e: React.ClipboardEvent) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.type.indexOf('image') !== -1) {
+        const file = item.getAsFile();
+        if (file) {
+          setUploadedImages((prev) => [...prev, file]);
+        }
+      }
+    }
   };
 
   return (
@@ -218,14 +259,86 @@ const ChatInput = ({
                 size="middle"
               ></Button>
             </Tooltip>
+            <Tooltip
+              placement="top"
+              title={
+                <div
+                  className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
+                    theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
+                  }`}
+                >
+                  {t('chat.imageUpload')}
+                </div>
+              }
+              color={theme == 'dark' ? '#505362' : 'white'}
+              className="sz:font-ycom"
+            >
+              <Upload
+                beforeUpload={handleImageUpload}
+                accept="image/*"
+                showUploadList={false}
+                multiple
+              >
+                <Button
+                  type="text"
+                  icon={
+                    <PictureOutlined
+                      style={{
+                        fontSize: '20px',
+                        color: 'rgba(0,0,0,0.88)',
+                        filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                      }}
+                    />
+                  }
+                  size="middle"
+                ></Button>
+              </Upload>
+            </Tooltip>
           </div>
         </div>
+        {uploadedImages.length > 0 && (
+          <div className="sz:flex sz:flex-wrap sz:gap-2 sz:mb-2 sz:p-2">
+            {uploadedImages.map((file, index) => (
+              <div key={index} className="sz:relative sz:inline-block">
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt={`Preview ${index + 1}`}
+                  className="sz:w-16 sz:h-16 sz:object-cover sz:rounded sz:border"
+                />
+                <button
+                  onClick={() => handleRemoveImage(index)}
+                  className="
+                    sz:cursor-pointer 
+                    sz:absolute 
+                    sz:-top-[5px]
+                    sz:-right-[5px]
+                    sz:w-4 
+                    sz:h-4 
+                    sz:bg-gray-400 
+                    sz:text-white 
+                    sz:rounded-full 
+                    sz:text-[10px] 
+                    sz:flex 
+                    sz:items-center 
+                    sz:justify-center 
+                    sz:leading-none 
+                    sz:hover:bg-gray-500
+                  "
+                  type="button"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
         <Input.TextArea
           value={chatInput}
           onChange={(e) => setChatInput(e.target.value)}
           onCompositionStart={() => setIsComposing(true)}
           onCompositionEnd={() => setIsComposing(false)}
           onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
           placeholder={t('chat.askAnything')}
           autoSize
           className="

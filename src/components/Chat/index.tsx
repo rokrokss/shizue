@@ -6,11 +6,12 @@ import TokenUsageModalContent from '@/components/Chat/TokenUsageModalContent';
 import TopMenu from '@/components/Chat/TopRightMenu';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import SettingsModalContent from '@/components/Setting/SettingsModalContent';
-import { MESSAGE_LOAD_THREAD } from '@/config/constants';
+import { MESSAGE_DESCRIBE_IMAGE_FORWARD, MESSAGE_LOAD_THREAD } from '@/config/constants';
 import { chatStatusAtom, isChatIdle } from '@/hooks/chat';
 import { ActionType, messageAddedInPanelAtom, threadIdAtom } from '@/hooks/global';
 import { useThemeValue } from '@/hooks/layout';
 import { useChromePortStream } from '@/hooks/portStream';
+import { convertFilesToBase64Array } from '@/lib/imageUtils';
 import { addMessage, createThread, touchThread } from '@/lib/indexDB';
 import { throttleTrailing } from '@/lib/throttleTrailing';
 import { debugLog, errorLog } from '@/logs';
@@ -26,6 +27,7 @@ export interface Message {
   summaryPageLink?: string;
   translateMode?: boolean;
   content: string;
+  images?: string[];
   done: boolean;
   onInterrupt: boolean;
   stopped: boolean;
@@ -38,6 +40,7 @@ const Chat = () => {
   const [chatStatus, setChatStatus] = useAtom(chatStatusAtom);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isUsageOpen, setIsUsageOpen] = useState(false);
+  const [droppedImages, setDroppedImages] = useState<File[]>([]);
 
   const [threadId, setThreadId] = useAtom(threadIdAtom);
   const threadIdRef = useRef(threadId);
@@ -70,7 +73,7 @@ const Chat = () => {
     setIsSettingsOpen(false);
   };
 
-  const handleAskForSummary = async (tId: string) => {
+  const handleAskForSummary = useCallback(async (tId: string) => {
     debugLog('handleAskForSummary messages', messages);
     setChatStatus('waiting');
 
@@ -138,7 +141,7 @@ const Chat = () => {
         },
       }
     );
-  };
+  }, [messages, setChatStatus, startStream, scrollToBottomThrottled, setMessages]);
 
   const loadThreadBackground = useCallback(
     async (tId: string) => {
@@ -151,7 +154,7 @@ const Chat = () => {
           }
         });
     },
-    [setMessages, handleAskForSummary]
+    [handleAskForSummary]
   );
 
   const handleCancel = async () => {
@@ -232,7 +235,9 @@ const Chat = () => {
     await touchThread(tId);
   };
 
-  const addHumanMessage = async (tId: string, text: string) => {
+  const addHumanMessage = async (tId: string, text: string, images?: File[]) => {
+    const imageBase64Array = images && images.length > 0 ? await convertFilesToBase64Array(images) : undefined;
+    
     setMessages((prev) => {
       actionType.current = 'chat';
       aiIndexRef.current = prev.length + 1;
@@ -242,6 +247,7 @@ const Chat = () => {
           role: 'human',
           actionType: 'chat',
           content: text,
+          images: imageBase64Array,
           done: true,
           onInterrupt: false,
           stopped: false,
@@ -263,6 +269,7 @@ const Chat = () => {
       role: 'human',
       actionType: 'chat',
       content: text,
+      images: imageBase64Array,
       createdAt: Date.now(),
       done: true,
       onInterrupt: false,
@@ -304,6 +311,26 @@ const Chat = () => {
   }, [threadId]);
 
   useEffect(() => {
+    const messageListener = (message: any) => {
+      if (message.action === 'DESCRIBE_IMAGE_FORWARD') {
+        const { imageBase64, imageUrl } = message;
+        if (imageBase64) {
+          handleDescribeImage(imageBase64);
+        } else {
+          // imageBase64가 없는 경우 기본 텍스트로 대체
+          handleSubmit(`이 이미지에 대해 설명해주세요. 이미지 URL: ${imageUrl}`);
+        }
+      }
+    };
+
+    chrome.runtime.onMessage.addListener(messageListener);
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(messageListener);
+    };
+  }, []);
+
+  useEffect(() => {
     if (messageAddedTimestamp) {
       const currentThreadId = threadIdRef.current;
       if (currentThreadId) {
@@ -312,12 +339,12 @@ const Chat = () => {
     }
   }, [messageAddedTimestamp]);
 
-  const handleSubmit = async (text: string) => {
+  const handleSubmit = async (text: string, images?: File[]) => {
     setChatStatus('waiting');
 
     const tId = await checkIfThreadExists(text);
 
-    await addHumanMessage(tId, text);
+    await addHumanMessage(tId, text, images);
     scrollToBottomThrottled();
 
     startStream(
@@ -551,6 +578,45 @@ const Chat = () => {
     );
   };
 
+  const handleDescribeImage = async (imageBase64: string) => {
+    const text = '이 이미지에 대해 설명해주세요.';
+    const imageFile = await base64ToFile(imageBase64, 'image.png');
+    await handleSubmit(text, [imageFile]);
+  };
+
+  const base64ToFile = async (base64: string, filename: string): Promise<File> => {
+    const response = await fetch(base64);
+    const blob = await response.blob();
+    return new File([blob], filename, { type: blob.type });
+  };
+
+  const handleImageDrop = (files: File[]) => {
+    setDroppedImages(files);
+  };
+
+  // 이미지 설명 요청 처리
+  useEffect(() => {
+    const messageListener = (message: any) => {
+      if (message.action === MESSAGE_DESCRIBE_IMAGE_FORWARD) {
+        if (message.imageBase64) {
+          // Base64 이미지가 있는 경우 직접 처리
+          handleDescribeImage(message.imageBase64);
+        } else if (message.imageUrl) {
+          // URL만 있는 경우 텍스트로 처리
+          const text = `이 이미지에 대해 설명해주세요: ${message.imageUrl}`;
+          handleSubmit(text, []);
+        }
+      }
+    };
+    
+    if (typeof chrome !== 'undefined' && chrome.runtime) {
+      chrome.runtime.onMessage.addListener(messageListener);
+      return () => {
+        chrome.runtime.onMessage.removeListener(messageListener);
+      };
+    }
+  }, []);
+
   return (
     <div
       className={`sz-chat sz:w-full sz:h-full sz:flex sz:flex-col sz:items-center ${
@@ -576,6 +642,7 @@ const Chat = () => {
             messages={messages}
             onRetry={handleRetry}
             scrollToBottom={scrollToBottomThrottled}
+            onImageDrop={handleImageDrop}
           />
         ) : (
           <ChatGreeting />
@@ -591,6 +658,8 @@ const Chat = () => {
           onNewChat={handleNewChat}
           onOpenUsage={handleOpenUsage}
           onTranslateMode={handleTranslateMode}
+          droppedImages={droppedImages}
+          onDroppedImagesChange={setDroppedImages}
         />
       </div>
       {isSettingsOpen && (

@@ -4,7 +4,7 @@ import {
   PORT_LISTEN_PANEL_CLOSED_KEY,
   STORAGE_GLOBAL_STATE,
 } from '@/config/constants';
-import { chatStatusAtom } from '@/hooks/chat';
+import { chatStatusAtom, isChatWaiting } from '@/hooks/chat';
 import {
   actionTypeAtom,
   messageAddedInPanelAtom,
@@ -17,6 +17,7 @@ import { readStorage } from '@/lib/storageBackend';
 import { debugLog, errorLog } from '@/logs';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 const SidePanelProvider = ({
@@ -33,6 +34,7 @@ const SidePanelProvider = ({
   const setActionType = useSetAtom(actionTypeAtom);
   const chatStatus = useAtomValue(chatStatusAtom);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const rollbackActionType = useCallback(() => {
     setActionType('chat');
@@ -99,6 +101,87 @@ const SidePanelProvider = ({
         setTimeout(() => {
           navigate('/shizue-pdf');
         }, 100);
+      }
+    } else if (initData?.actionType === 'describeImage') {
+      const { imageBase64, imageUrl } = initData;
+
+      debugLog('SidePanelProvider: [getInitData] describeImage', imageUrl);
+      debugLog('SidePanelProvider: [getInitData] threadId', threadId);
+
+      let isNewThread = false;
+      const isInPdfPage = window.location.hash === '#/shizue-pdf';
+
+      let tid = threadId;
+      if (!tid || isInPdfPage) {
+        tid = await createThread('이미지 설명');
+        isNewThread = true;
+      }
+
+      // Base64 이미지 처리 (File 변환은 필요시에만)
+      await addMessage({
+        id: crypto.randomUUID(),
+        threadId: tid,
+        role: 'human',
+        actionType: 'chat',
+        content: t('chat.describeImageRequest'),
+        images: imageBase64 ? [imageBase64] : undefined,
+        createdAt: Date.now(),
+        done: true,
+        onInterrupt: false,
+        stopped: false,
+      });
+
+      debugLog('SidePanelProvider: [getInitData] setThreadId', tid);
+
+      if (isNewThread) {
+        setThreadId(tid);
+      } else {
+        setMessageAddedInPanel(Date.now());
+      }
+
+      if (isInPdfPage) {
+        debugLog('SidePanelProvider: [getInitData] navigate to /');
+        navigate('/');
+      }
+    } else if (initData?.actionType === 'extractImageText') {
+      const { imageBase64, imageUrl } = initData;
+
+      debugLog('SidePanelProvider: [getInitData] extractImageText', imageUrl);
+      debugLog('SidePanelProvider: [getInitData] threadId', threadId);
+
+      let isNewThread = false;
+      const isInPdfPage = window.location.hash === '#/shizue-pdf';
+
+      let tid = threadId;
+      if (!tid || isInPdfPage) {
+        tid = await createThread('이미지 텍스트 추출');
+        isNewThread = true;
+      }
+
+      await addMessage({
+        id: crypto.randomUUID(),
+        threadId: tid,
+        role: 'human',
+        actionType: 'chat',
+        content: t('chat.extractImageTextRequest'),
+        images: imageBase64 ? [imageBase64] : undefined,
+        createdAt: Date.now(),
+        done: true,
+        onInterrupt: false,
+        stopped: false,
+      });
+
+      debugLog('SidePanelProvider: [getInitData] setThreadId', tid);
+
+      if (isNewThread) {
+        setThreadId(tid);
+      } else {
+        setMessageAddedInPanel(Date.now());
+      }
+
+      if (isInPdfPage) {
+        debugLog('SidePanelProvider: [getInitData] navigate to /');
+        navigate('/');
       }
     }
     rollbackActionType();
