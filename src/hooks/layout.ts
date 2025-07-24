@@ -5,6 +5,7 @@ import {
   STORAGE_THEME,
   STORAGE_TOGGLE_HIDDEN_SITE_LIST,
   STORAGE_TOGGLE_Y_POSITION,
+  STORAGE_USE_YOUTUBE_KEYBOARD_NAVIGATE,
   STORAGE_YOUTUBE_CAPTION_SIZE_RATIO,
 } from '@/config/constants';
 import { chromeStorageBackend } from '@/lib/storageBackend';
@@ -18,6 +19,7 @@ export const defaultShowToggle = true;
 export const defaultToggleYPosition = -18;
 export const defaultShowYoutubeCaptionToggle = true;
 export const defaultShowYoutubeBilingualCaption = false;
+export const defaultUseYoutubeKeyboardNavigate = true;
 export const defaultCaptionSizeRatio = 1.0;
 export const defaultToggleHiddenSiteList: string[] = [];
 
@@ -56,6 +58,13 @@ export const youtubeShowBilingualCaptionAtom = atomWithStorage<boolean>(
   { getOnInit: true }
 );
 
+export const useYoutubeKeyboardNavigateAtom = atomWithStorage<boolean>(
+  STORAGE_USE_YOUTUBE_KEYBOARD_NAVIGATE,
+  defaultUseYoutubeKeyboardNavigate,
+  chromeStorageBackend('local'),
+  { getOnInit: true }
+);
+
 export const youtubeCaptionSizeRatioAtom = atomWithStorage<number>(
   STORAGE_YOUTUBE_CAPTION_SIZE_RATIO,
   defaultCaptionSizeRatio,
@@ -78,5 +87,6 @@ export const useToggleYPosition = () => useAtom(toggleYPositionAtom);
 export const useShowYoutubeCaptionToggle = () => useAtom(youtubeShowCaptionToggleAtom);
 export const useShowYoutubeCaptionToggleValue = () => useAtomValue(youtubeShowCaptionToggleAtom);
 export const useShowYoutubeBilingualCaption = () => useAtom(youtubeShowBilingualCaptionAtom);
+export const useUseYoutubeKeyboardNavigate = () => useAtom(useYoutubeKeyboardNavigateAtom);
 export const useYoutubeCaptionSizeRatio = () => useAtom(youtubeCaptionSizeRatioAtom);
 export const useToggleHiddenSiteList = () => useAtom(toggleHiddenSiteListAtom);

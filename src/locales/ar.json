@@ -121,7 +121,8 @@
     "deactivate": "تعطيل",
     "youtubeCaptionButton": "زر التعليقات التوضيحية لليوتيوب",
     "bilingual": "ثنائي اللغة",
-    "captionSizeRatio": "حجم التعليقات التوضيحية"
+    "captionSizeRatio": "حجم التعليقات التوضيحية",
+    "useKeyboardNavigate": "التنقل في الترجمة بـ A/D"
   },
   "usage": {
     "title": "استخدام الرموز",

@@ -121,7 +121,8 @@
     "deactivate": "無効",
     "youtubeCaptionButton": "YouTube 字幕ボタン",
     "bilingual": "バイリンガル",
-    "captionSizeRatio": "字幕サイズ"
+    "captionSizeRatio": "字幕サイズ",
+    "useKeyboardNavigate": "A/D キーで字幕ナビゲーション"
   },
   "usage": {
     "title": "トークン使用量",

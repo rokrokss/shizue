@@ -121,7 +121,8 @@
     "deactivate": "غیر فعال کریں",
     "youtubeCaptionButton": "یوٹیوب کیپشن بٹن",
     "bilingual": "دو لسانی",
-    "captionSizeRatio": "کیپشن سائز"
+    "captionSizeRatio": "کیپشن سائز",
+    "useKeyboardNavigate": "A/D کے ساتھ سب ٹائٹل نیویگیٹ کریں"
   },
   "usage": {
     "title": "ٹوکن کا استعمال",

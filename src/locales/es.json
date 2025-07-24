@@ -121,7 +121,8 @@
     "deactivate": "Desactivar",
     "youtubeCaptionButton": "Botón de subtítulos de YouTube",
     "bilingual": "Bilingüe",
-    "captionSizeRatio": "Tamaño de subtítulos"
+    "captionSizeRatio": "Tamaño de subtítulos",
+    "useKeyboardNavigate": "Navegar subtítulos con A/D"
   },
   "usage": {
     "title": "Uso de Tokens",

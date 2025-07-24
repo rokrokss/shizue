@@ -121,7 +121,8 @@
     "deactivate": "असक्रिय करें",
     "youtubeCaptionButton": "यूट्यूब कैप्शन बटन",
     "bilingual": "द्विभाषी",
-    "captionSizeRatio": "कैप्शन आकार"
+    "captionSizeRatio": "कैप्शन आकार",
+    "useKeyboardNavigate": "A/D के साथ उपशीर्षक नेविगेट करें"
   },
   "usage": {
     "title": "टोकन उपयोग",

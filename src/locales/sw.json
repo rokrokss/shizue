@@ -121,7 +121,8 @@
     "deactivate": "Ondoa",
     "youtubeCaptionButton": "Kitufe cha Caption ya Youtube",
     "bilingual": "Lugha mbili",
-    "captionSizeRatio": "Kichwa cha Caption"
+    "captionSizeRatio": "Kichwa cha Caption",
+    "useKeyboardNavigate": "Abiri Manukuu kwa A/D"
   },
   "usage": {
     "title": "Matumizi ya Token",

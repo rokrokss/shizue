@@ -121,7 +121,8 @@
     "deactivate": "Desativar",
     "youtubeCaptionButton": "Botão de legenda YouTube",
     "bilingual": "Bilingue",
-    "captionSizeRatio": "Tamanho da legenda"
+    "captionSizeRatio": "Tamanho da legenda",
+    "useKeyboardNavigate": "Navegar legendas com A/D"
   },
   "usage": {
     "title": "Uso de Tokens",

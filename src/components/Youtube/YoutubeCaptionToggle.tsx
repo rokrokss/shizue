@@ -3,6 +3,7 @@ import { Language, useTranslateTargetLanguage } from '@/hooks/language';
 import {
   useShowYoutubeBilingualCaption,
   useShowYoutubeCaptionToggleValue,
+  useUseYoutubeKeyboardNavigate,
   useYoutubeCaptionSizeRatio,
 } from '@/hooks/layout';
 import { useGeminiValidatedValue, useOpenAIValidatedValue } from '@/hooks/models';
@@ -55,6 +56,8 @@ const YoutubeCaptionToggle = () => {
   const showYoutubeCaptionToggle = useShowYoutubeCaptionToggleValue();
   const [showYoutubeBilingualCaption, setShowYoutubeBilingualCaption] =
     useShowYoutubeBilingualCaption();
+  const [useYoutubeKeyboardNavigate, setUseYoutubeKeyboardNavigate] =
+    useUseYoutubeKeyboardNavigate();
   const [captionSizeRatio, setCaptionSizeRatio] = useYoutubeCaptionSizeRatio();
   const openAIValidated = useOpenAIValidatedValue();
   const geminiValidated = useGeminiValidatedValue();
@@ -285,6 +288,27 @@ const YoutubeCaptionToggle = () => {
     setTargetLanguage(storedTargetLanguage);
   }, [storedTargetLanguage]);
 
+  // Add keyboard event handlers for 'a' and 'd' keys
+  useEffect(() => {
+    if (!isActivated || !useYoutubeKeyboardNavigate) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'KeyA') {
+        getCaptionInjector().handlePressKeyToNextChunk(true);
+      } else if (e.code === 'KeyD') {
+        getCaptionInjector().handlePressKeyToNextChunk(false);
+      }
+    };
+
+    // Add event listener to document
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Cleanup function
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isActivated, useYoutubeKeyboardNavigate]);
+
   return (
     isCaptionAvailable &&
     showYoutubeCaptionToggle && (
@@ -458,6 +482,32 @@ const YoutubeCaptionToggle = () => {
                           size="small"
                           checked={showYoutubeBilingualCaption}
                           onChange={setShowYoutubeBilingualCaption}
+                        />
+                      </div>
+                    ),
+                  },
+                  {
+                    key: 'useKeyboardNavigate',
+                    label: (
+                      <div
+                        className="
+                          sz:flex
+                          sz:flex-row
+                          sz:items-center
+                          sz:justify-between
+                          sz:gap-4
+                          sz:cursor-default
+                          sz:text-[13px]
+                        "
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <span className="sz:text-white">{t('youtube.useKeyboardNavigate')}</span>
+                        <Switch
+                          size="small"
+                          checked={useYoutubeKeyboardNavigate}
+                          onChange={setUseYoutubeKeyboardNavigate}
                         />
                       </div>
                     ),

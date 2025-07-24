@@ -121,7 +121,8 @@
     "deactivate": "ปิดใช้งาน",
     "youtubeCaptionButton": "ปุ่มคำบรรยาย Youtube",
     "bilingual": "สองภาษา",
-    "captionSizeRatio": "ขนาดคำบรรยาย"
+    "captionSizeRatio": "ขนาดคำบรรยาย",
+    "useKeyboardNavigate": "นำทางคำบรรยายด้วย A/D"
   },
   "usage": {
     "title": "การใช้โทเค็น",
