@@ -1,6 +1,13 @@
 # Changelog
 
-## v0.1.11
+## v0.1.14
+
+- Use images in chat
+- describe image
+- extract text from image
+- use A/D key to navigate Youtube captions
+
+## v0.1.13
 
 - robust translate mode in chat
 
