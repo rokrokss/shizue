@@ -1,10 +1,11 @@
 import {
+  STORAGE_ANTHROPIC_VALIDATED,
   STORAGE_CHAT_MODEL,
   STORAGE_GEMINI_VALIDATED,
   STORAGE_OPENAI_VALIDATED,
   STORAGE_TRANSLATE_MODEL,
 } from '@/config/constants';
-import { geminiKeyAtom, openAIKeyAtom } from '@/hooks/settings';
+import { anthropicKeyAtom, geminiKeyAtom, openAIKeyAtom } from '@/hooks/settings';
 import { ChatModel, TranslateModel } from '@/lib/models';
 import { chromeStorageBackend } from '@/lib/storageBackend';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
@@ -14,9 +15,12 @@ export const defaultOpenAIChatModel: ChatModel = 'gpt-4.1';
 export const defaultOpenAITranslateModel: TranslateModel = 'gpt-4.1-mini';
 export const defaultGeminiChatModel: ChatModel = 'gemini-2.5-flash';
 export const defaultGeminiTranslateModel: TranslateModel = 'gemini-2.5-flash-lite-preview-06-17';
+export const defaultAnthropicChatModel: ChatModel = 'claude-sonnet-4-20250514';
+export const defaultAnthropicTranslateModel: TranslateModel = 'claude-3-5-haiku-20241022';
 
 export const defaultOpenAIValidated = undefined;
 export const defaultGeminiValidated = undefined;
+export const defaultAnthropicValidated = undefined;
 
 export const chatModelAtom = atomWithStorage<ChatModel>(
   STORAGE_CHAT_MODEL,
@@ -44,6 +48,13 @@ export const geminiValidatedAtom = atomWithStorage<boolean | undefined>(
   { getOnInit: true }
 );
 
+export const anthropicValidatedAtom = atomWithStorage<boolean | undefined>(
+  STORAGE_ANTHROPIC_VALIDATED,
+  defaultAnthropicValidated,
+  chromeStorageBackend('local'),
+  { getOnInit: true }
+);
+
 export const openAIValidatedSafeAtom = atom(
   (get) => {
     const validated = get(openAIValidatedAtom);
@@ -66,13 +77,27 @@ export const geminiValidatedSafeAtom = atom(
   (_, set, value: boolean) => set(geminiValidatedAtom, value)
 );
 
+export const anthropicValidatedSafeAtom = atom(
+  (get) => {
+    const validated = get(anthropicValidatedAtom);
+    if (validated !== undefined) {
+      return validated;
+    }
+    return Boolean(get(anthropicKeyAtom));
+  },
+  (_, set, value: boolean) => set(anthropicValidatedAtom, value)
+);
+
 export const useChatModel = () => useAtom(chatModelAtom);
 export const useTranslateModel = () => useAtom(translateModelAtom);
 export const useSetChatModel = () => useSetAtom(chatModelAtom);
 export const useSetTranslateModel = () => useSetAtom(translateModelAtom);
 export const useOpenAIValidated = () => useAtom(openAIValidatedSafeAtom);
 export const useGeminiValidated = () => useAtom(geminiValidatedSafeAtom);
+export const useAnthropicValidated = () => useAtom(anthropicValidatedSafeAtom);
 export const useOpenAIValidatedValue = () => useAtomValue(openAIValidatedSafeAtom);
 export const useGeminiValidatedValue = () => useAtomValue(geminiValidatedSafeAtom);
+export const useAnthropicValidatedValue = () => useAtomValue(anthropicValidatedSafeAtom);
 export const useSetOpenAIValidated = () => useSetAtom(openAIValidatedSafeAtom);
 export const useSetGeminiValidated = () => useSetAtom(geminiValidatedSafeAtom);
+export const useSetAnthropicValidated = () => useSetAtom(anthropicValidatedSafeAtom);

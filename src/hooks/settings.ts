@@ -1,10 +1,11 @@
-import { STORAGE_GEMINI_KEY, STORAGE_OPENAI_KEY } from '@/config/constants';
+import { STORAGE_GEMINI_KEY, STORAGE_OPENAI_KEY, STORAGE_ANTHROPIC_KEY } from '@/config/constants';
 import { chromeStorageBackend } from '@/lib/storageBackend';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
 export const defaultOpenAIKey = '';
 export const defaultGeminiKey = '';
+export const defaultAnthropicKey = '';
 
 export const openAIKeyAtom = atomWithStorage<string>(
   STORAGE_OPENAI_KEY,
@@ -20,9 +21,19 @@ export const geminiKeyAtom = atomWithStorage<string>(
   { getOnInit: true }
 );
 
+export const anthropicKeyAtom = atomWithStorage<string>(
+  STORAGE_ANTHROPIC_KEY,
+  defaultAnthropicKey,
+  chromeStorageBackend('local'),
+  { getOnInit: true }
+);
+
 export const useOpenAIKey = () => useAtom(openAIKeyAtom);
 export const useOpenAIKeyValue = () => useAtomValue(openAIKeyAtom);
 export const useSetOpenAIKey = () => useSetAtom(openAIKeyAtom);
 export const useGeminiKey = () => useAtom(geminiKeyAtom);
 export const useGeminiKeyValue = () => useAtomValue(geminiKeyAtom);
 export const useSetGeminiKey = () => useSetAtom(geminiKeyAtom);
+export const useAnthropicKey = () => useAtom(anthropicKeyAtom);
+export const useAnthropicKeyValue = () => useAtomValue(anthropicKeyAtom);
+export const useSetAnthropicKey = () => useSetAtom(anthropicKeyAtom);

@@ -27,6 +27,7 @@
         "validate": "تحقق"
       },
       "geminiApiKey": "استخدام مفتاح Gemini API",
+      "anthropicApiKey": "استخدام مفتاح Anthropic API",
       "chatGPTWebApp": {
         "title": "قيد التطوير...",
         "description": "قد يكون غير مستقر بسبب التغييرات في سياسات OpenAI."

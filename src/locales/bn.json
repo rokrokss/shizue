@@ -27,6 +27,7 @@
         "validate": "যাচাই করুন"
       },
       "geminiApiKey": "Gemini API কী ব্যবহার করুন",
+      "anthropicApiKey": "Anthropic API কী ব্যবহার করুন",
       "chatGPTWebApp": {
         "title": "কাজ চলছে...",
         "description": "OpenAI-এর নীতিতে পরিবর্তনের কারণে অস্থিতিশীল হতে পারে।"

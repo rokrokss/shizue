@@ -27,6 +27,7 @@
         "validate": "Validieren"
       },
       "geminiApiKey": "Gemini API-Schlüssel verwenden",
+      "anthropicApiKey": "Anthropic API-Schlüssel verwenden",
       "chatGPTWebApp": {
         "title": "In Arbeit...",
         "description": "Kann aufgrund von Änderungen in den OpenAI-Richtlinien instabil sein."

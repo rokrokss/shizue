@@ -1,23 +1,32 @@
 import { STREAM_FLUSH_THRESHOLD_0, STREAM_FLUSH_THRESHOLD_1 } from '@/config/constants';
 import { getCurrentLanguage } from '@/entrypoints/background/states/language';
 import {
+  getCurrentAnthropicKey,
   getCurrentChatModel,
   getCurrentGeminiKey,
   getCurrentOpenaiKey,
 } from '@/entrypoints/background/states/models';
 import { ActionType } from '@/hooks/global';
 import { db, loadThread } from '@/lib/indexDB';
-import { getModelInstance, ModelPreset } from '@/lib/models';
+import { getModelInstance, ModelPreset, providerFromName } from '@/lib/models';
 import { getInitialAIMessage, getInitialSystemMessage } from '@/lib/prompts';
 import { trackStreamingTokenUsage } from '@/lib/tokenUsageTracker';
 import { debugLog, errorLog } from '@/logs';
-import { AIMessage, AIMessageChunk, BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { formatImagesForMessage } from '@/lib/imageFormatHelper';
+import {
+  AIMessage,
+  AIMessageChunk,
+  BaseMessage,
+  HumanMessage,
+  SystemMessage,
+} from '@langchain/core/messages';
 
 function getChatModelPreset(): ModelPreset {
   const openaiKey = getCurrentOpenaiKey();
   const geminiKey = getCurrentGeminiKey();
+  const anthropicKey = getCurrentAnthropicKey();
   const modelName = getCurrentChatModel();
-  return { openaiKey, geminiKey, modelName };
+  return { openaiKey, geminiKey, anthropicKey, modelName };
 }
 
 export class ChatModelHandler {
@@ -34,6 +43,7 @@ export class ChatModelHandler {
 
     try {
       const modelPreset = getChatModelPreset();
+      const provider = providerFromName(modelPreset.modelName);
       const llm = getModelInstance({
         streaming: true,
         temperature:
@@ -47,7 +57,7 @@ export class ChatModelHandler {
       debugLog('ChatModelHandler [_executeStreamAndUpdate] messagesForModel:', messagesForModel);
       const stream = await llm.stream(
         messagesForModel.map((m) => {
-          if (m.content == '') {
+          if (m.content == '' && provider === 'gemini-api-key') {
             m.content = ' ';
           }
           return m;
@@ -141,6 +151,7 @@ export class ChatModelHandler {
       const currentLang = getCurrentLanguage();
       const initialSystemMessage = getInitialSystemMessage(currentLang);
       const initialAIMessage = getInitialAIMessage(currentLang);
+      const modelName = getCurrentChatModel();
 
       const messages = [
         new SystemMessage(initialSystemMessage),
@@ -150,9 +161,9 @@ export class ChatModelHandler {
             if (m.images && m.images.length > 0) {
               return new HumanMessage({
                 content: [
-                  { type: "text", text: m.content },
-                  ...m.images.map(img => ({ type: "image_url", image_url: { url: img } }))
-                ]
+                  { type: 'text', text: m.content },
+                  ...formatImagesForMessage(m.images, modelName),
+                ],
               });
             } else {
               return new HumanMessage(m.content);
@@ -217,6 +228,7 @@ export class ChatModelHandler {
       const currentLang = getCurrentLanguage();
       const initialSystemMessage = getInitialSystemMessage(currentLang);
       const initialAIMessage = getInitialAIMessage(currentLang);
+      const modelName = getCurrentChatModel();
 
       const historyForModelInput = fullThreadHistory.slice(0, messageIdxToRetry);
 
@@ -229,7 +241,7 @@ export class ChatModelHandler {
               return new HumanMessage({
                 content: [
                   { type: 'text', text: m.content },
-                  ...m.images.map((img) => ({ type: 'image_url', image_url: { url: img } })),
+                  ...formatImagesForMessage(m.images, modelName),
                 ],
               });
             } else {

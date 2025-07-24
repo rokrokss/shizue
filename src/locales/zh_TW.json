@@ -27,6 +27,7 @@
         "validate": "驗證"
       },
       "geminiApiKey": "使用 Gemini API 金鑰",
+      "anthropicApiKey": "使用 Anthropic API 金鑰",
       "chatGPTWebApp": {
         "title": "開發中...",
         "description": "由於 OpenAI 政策的變更，可能不穩定。"

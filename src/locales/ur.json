@@ -27,6 +27,7 @@
         "validate": "تصدیق کریں"
       },
       "geminiApiKey": "Gemini API کلید استعمال کریں",
+      "anthropicApiKey": "Anthropic API کلید استعمال کریں",
       "chatGPTWebApp": {
         "title": "کام جاری ہے...",
         "description": "OpenAI کی پالیسیوں میں تبدیلیوں کی وجہ سے غیر مستحکم ہو سکتا ہے۔"

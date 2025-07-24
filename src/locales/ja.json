@@ -27,6 +27,7 @@
         "validate": "検証"
       },
       "geminiApiKey": "Gemini APIキーを使用",
+      "anthropicApiKey": "Anthropic APIキーを使用",
       "chatGPTWebApp": {
         "title": "開発中...",
         "description": "OpenAIのポリシー変更により不安定になる可能性があります。"

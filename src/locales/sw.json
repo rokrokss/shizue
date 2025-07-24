@@ -27,6 +27,7 @@
         "validate": "thibitisha"
       },
       "geminiApiKey": "Tumia Gemini API Key",
+      "anthropicApiKey": "Tumia Anthropic API Key",
       "chatGPTWebApp": {
         "title": "kazi inaendelea...",
         "description": "Inaweza kuwa isiyo thabiti kutokana na mabadiliko katika sera za OpenAI."

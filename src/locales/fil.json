@@ -27,6 +27,7 @@
         "validate": "i-validate"
       },
       "geminiApiKey": "Gamitin ang Gemini API Key",
+      "anthropicApiKey": "Gamitin ang Anthropic API Key",
       "chatGPTWebApp": {
         "title": "work in progress...",
         "description": "Maaaring hindi stable dahil sa mga pagbabago sa mga patakaran ng OpenAI."
