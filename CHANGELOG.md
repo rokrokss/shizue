@@ -6,6 +6,7 @@
 - describe image
 - extract text from image
 - use A/D key to navigate Youtube captions
+- support Anthropic
 
 ## v0.1.13
 
