@@ -36,7 +36,12 @@ export class ChatModelHandler {
       const modelPreset = getChatModelPreset();
       const llm = getModelInstance({
         streaming: true,
-        temperature: actionType === 'askForSummary' ? 0.3 : 0.7,
+        temperature:
+          actionType === 'askForSummary' ||
+          actionType === 'describeImage' ||
+          actionType === 'extractImageText'
+            ? 0.3
+            : 0.7,
         modelPreset,
       });
       debugLog('ChatModelHandler [_executeStreamAndUpdate] messagesForModel:', messagesForModel);

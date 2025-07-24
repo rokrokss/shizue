@@ -140,10 +140,28 @@ const ChatContainer = ({
                 sz:bg-gray-100 
                 sz:rounded-lg 
                 sz:px-[14px]
-                sz:py-[8px]
+                sz:pt-[9px]
+                sz:pb-[8px]
               "
               >
-                {m.actionType === 'chat' && !m.translateMode ? (
+                {m.images && m.images.length > 0 && (
+                  <div className="sz:flex sz:flex-wrap sz:gap-2 sz:mb-[8px] sz:mt-[7px]">
+                    {m.images.map((imageBase64, imgIdx) => (
+                      <img
+                        src={imageBase64}
+                        alt={`Image ${imgIdx + 1}`}
+                        className="sz:max-w-[200px] sz:max-h-[200px] sz:object-contain sz:rounded sz:border-gray-300 sz:border sz:cursor-pointer"
+                        style={{
+                          filter: theme === 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+                {(m.actionType === 'chat' ||
+                  m.actionType === 'extractImageText' ||
+                  m.actionType === 'describeImage') &&
+                !m.translateMode ? (
                   <div className="sz:flex sz:flex-col sz:whitespace-pre-wrap sz:break-keep sz:text-left">
                     {m.content}
                   </div>
@@ -166,20 +184,6 @@ const ChatContainer = ({
                     {getMarkdownText(t('chat.activateTranslateMode'))}
                   </div>
                 ) : null}
-                {m.images && m.images.length > 0 && (
-                  <div className="sz:flex sz:flex-wrap sz:gap-2 sz:mt-2">
-                    {m.images.map((imageBase64, imgIdx) => (
-                      <img
-                        src={imageBase64}
-                        alt={`Image ${imgIdx + 1}`}
-                        className="sz:max-w-[200px] sz:max-h-[200px] sz:object-contain sz:rounded sz:border-gray-300 sz:border sz:cursor-pointer"
-                        style={{
-                          filter: theme === 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
-                        }}
-                      />
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
           );

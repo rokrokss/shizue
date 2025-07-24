@@ -6,7 +6,7 @@ import TokenUsageModalContent from '@/components/Chat/TokenUsageModalContent';
 import TopMenu from '@/components/Chat/TopRightMenu';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import SettingsModalContent from '@/components/Setting/SettingsModalContent';
-import { MESSAGE_DESCRIBE_IMAGE_FORWARD, MESSAGE_LOAD_THREAD } from '@/config/constants';
+import { MESSAGE_LOAD_THREAD } from '@/config/constants';
 import { chatStatusAtom, isChatIdle } from '@/hooks/chat';
 import { ActionType, messageAddedInPanelAtom, threadIdAtom } from '@/hooks/global';
 import { useThemeValue } from '@/hooks/layout';
@@ -72,75 +72,78 @@ const Chat = () => {
     setIsSettingsOpen(false);
   };
 
-  const handleAskForSummary = useCallback(async (tId: string) => {
-    debugLog('handleAskForSummary messages', messages);
-    setChatStatus('waiting');
+  const handleRequestFromContextMenu = useCallback(
+    async (tId: string, requestedActionType: ActionType) => {
+      debugLog('handleRequestFromContextMenu messages', messages);
+      setChatStatus('waiting');
 
-    actionType.current = 'askForSummary';
-    aiIndexRef.current = messages.length + 1;
+      actionType.current = requestedActionType;
+      aiIndexRef.current = messages.length + 1;
 
-    addAIMessage();
+      addAIMessage();
 
-    scrollToBottomThrottled();
+      scrollToBottomThrottled();
 
-    startStream(
-      { threadId: tId, actionType: actionType.current },
-      {
-        onDelta: (delta) =>
-          setMessages((cur) => {
-            const idx = aiIndexRef.current;
-            const copy = [...cur];
-            copy[idx] = {
-              role: 'ai',
-              actionType: copy[idx].actionType,
-              content: copy[idx].content + delta,
-              done: false,
-              onInterrupt: false,
-              stopped: copy[idx].stopped,
-            };
+      startStream(
+        { threadId: tId, actionType: actionType.current },
+        {
+          onDelta: (delta) =>
+            setMessages((cur) => {
+              const idx = aiIndexRef.current;
+              const copy = [...cur];
+              copy[idx] = {
+                role: 'ai',
+                actionType: copy[idx].actionType,
+                content: copy[idx].content + delta,
+                done: false,
+                onInterrupt: false,
+                stopped: copy[idx].stopped,
+              };
+              scrollToBottomThrottled();
+              return copy;
+            }),
+          onDone: () => {
+            setMessages((cur) => {
+              const idx = aiIndexRef.current;
+              const copy = [...cur];
+              copy[idx] = {
+                role: 'ai',
+                actionType: copy[idx].actionType,
+                content: copy[idx].content,
+                done: true,
+                onInterrupt: false,
+                stopped: copy[idx].stopped,
+              };
+              return copy;
+            });
+            touchThread(tId);
+            setChatStatus('idle');
             scrollToBottomThrottled();
-            return copy;
-          }),
-        onDone: () => {
-          setMessages((cur) => {
-            const idx = aiIndexRef.current;
-            const copy = [...cur];
-            copy[idx] = {
-              role: 'ai',
-              actionType: copy[idx].actionType,
-              content: copy[idx].content,
-              done: true,
-              onInterrupt: false,
-              stopped: copy[idx].stopped,
-            };
-            return copy;
-          });
-          touchThread(tId);
-          setChatStatus('idle');
-          scrollToBottomThrottled();
-        },
-        onError: (err) => {
-          errorLog('Chat Stream error:', err);
-          setMessages((cur) => {
-            const idx = aiIndexRef.current;
-            const copy = [...cur];
-            copy[idx] = {
-              role: 'ai',
-              actionType: copy[idx].actionType,
-              content: copy[idx].content,
-              done: false,
-              onInterrupt: true,
-              stopped: copy[idx].stopped,
-            };
-            return copy;
-          });
-          touchThread(tId);
-          setChatStatus('idle');
-          scrollToBottomThrottled();
-        },
-      }
-    );
-  }, [messages, setChatStatus, startStream, scrollToBottomThrottled, setMessages]);
+          },
+          onError: (err) => {
+            errorLog('Chat Stream error:', err);
+            setMessages((cur) => {
+              const idx = aiIndexRef.current;
+              const copy = [...cur];
+              copy[idx] = {
+                role: 'ai',
+                actionType: copy[idx].actionType,
+                content: copy[idx].content,
+                done: false,
+                onInterrupt: true,
+                stopped: copy[idx].stopped,
+              };
+              return copy;
+            });
+            touchThread(tId);
+            setChatStatus('idle');
+            scrollToBottomThrottled();
+          },
+        }
+      );
+    },
+    [messages, setChatStatus, startStream, scrollToBottomThrottled, setMessages]
+  );
 
   const loadThreadBackground = useCallback(
     async (tId: string) => {
@@ -148,12 +151,18 @@ const Chat = () => {
         .sendMessage({ action: MESSAGE_LOAD_THREAD, threadId: tId })
         .then((res: Message[]) => {
           setMessages(res);
-          if (res.length > 0 && res[res.length - 1].actionType === 'askForSummary') {
-            handleAskForSummary(tId);
+          if (res.length > 0) {
+            if (
+              res[res.length - 1].actionType === 'askForSummary' ||
+              res[res.length - 1].actionType === 'describeImage' ||
+              res[res.length - 1].actionType === 'extractImageText'
+            ) {
+              handleRequestFromContextMenu(tId, res[res.length - 1].actionType);
+            }
           }
         });
     },
-    [handleAskForSummary]
+    [handleRequestFromContextMenu]
   );
 
   const handleCancel = async () => {
@@ -235,8 +244,9 @@ const Chat = () => {
   };
 
   const addHumanMessage = async (tId: string, text: string, images?: File[]) => {
-    const imageBase64Array = images && images.length > 0 ? await convertFilesToBase64Array(images) : undefined;
-    
+    const imageBase64Array =
+      images && images.length > 0 ? await convertFilesToBase64Array(images) : undefined;
+
     setMessages((prev) => {
       actionType.current = 'chat';
       aiIndexRef.current = prev.length + 1;
@@ -308,26 +318,6 @@ const Chat = () => {
     debugLog('threadId', threadId);
     debugLog('threadIdRef.current', threadIdRef.current);
   }, [threadId]);
-
-  useEffect(() => {
-    const messageListener = (message: any) => {
-      if (message.action === 'DESCRIBE_IMAGE_FORWARD') {
-        const { imageBase64, imageUrl } = message;
-        if (imageBase64) {
-          handleDescribeImage(imageBase64);
-        } else {
-          // imageBase64가 없는 경우 기본 텍스트로 대체
-          handleSubmit(`이 이미지에 대해 설명해주세요. 이미지 URL: ${imageUrl}`);
-        }
-      }
-    };
-
-    chrome.runtime.onMessage.addListener(messageListener);
-
-    return () => {
-      chrome.runtime.onMessage.removeListener(messageListener);
-    };
-  }, []);
 
   useEffect(() => {
     if (messageAddedTimestamp) {
@@ -577,42 +567,6 @@ const Chat = () => {
     );
   };
 
-  const handleDescribeImage = async (imageBase64: string) => {
-    const text = '이 이미지에 대해 설명해주세요.';
-    const imageFile = await base64ToFile(imageBase64, 'image.png');
-    await handleSubmit(text, [imageFile]);
-  };
-
-  const base64ToFile = async (base64: string, filename: string): Promise<File> => {
-    const response = await fetch(base64);
-    const blob = await response.blob();
-    return new File([blob], filename, { type: blob.type });
-  };
-
-
-  // 이미지 설명 요청 처리
-  useEffect(() => {
-    const messageListener = (message: any) => {
-      if (message.action === MESSAGE_DESCRIBE_IMAGE_FORWARD) {
-        if (message.imageBase64) {
-          // Base64 이미지가 있는 경우 직접 처리
-          handleDescribeImage(message.imageBase64);
-        } else if (message.imageUrl) {
-          // URL만 있는 경우 텍스트로 처리
-          const text = `이 이미지에 대해 설명해주세요: ${message.imageUrl}`;
-          handleSubmit(text, []);
-        }
-      }
-    };
-    
-    if (typeof chrome !== 'undefined' && chrome.runtime) {
-      chrome.runtime.onMessage.addListener(messageListener);
-      return () => {
-        chrome.runtime.onMessage.removeListener(messageListener);
-      };
-    }
-  }, []);
-
   return (
     <div
       className={`sz-chat sz:w-full sz:h-full sz:flex sz:flex-col sz:items-center ${
@@ -633,6 +587,7 @@ const Chat = () => {
         sz:scrollbar-hidden
       "
       >
+        {/* **** aiIndexRef: {aiIndexRef.current} **** */}
         {threadId && messages.length > 0 ? (
           <ChatContainer
             messages={messages}
