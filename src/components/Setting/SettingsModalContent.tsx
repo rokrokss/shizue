@@ -1,17 +1,20 @@
 import { Language, useLanguage, useTranslateTargetLanguage } from '@/hooks/language';
 import {
+  Theme,
   toggleYPositionAtom,
   useShowToggle,
   useShowYoutubeCaptionToggle,
+  useTheme,
   useToggleHiddenSiteList,
 } from '@/hooks/layout';
 import {
+  useAnthropicValidated,
   useChatModel,
   useGeminiValidated,
   useOpenAIValidated,
   useTranslateModel,
 } from '@/hooks/models';
-import { useSetGeminiKey, useSetOpenAIKey } from '@/hooks/settings';
+import { useSetAnthropicKey, useSetGeminiKey, useSetOpenAIKey } from '@/hooks/settings';
 import { languageOptions } from '@/lib/language';
 import { ChatModel, ModelProvider, TranslateModel } from '@/lib/models';
 import { getOS } from '@/lib/userOS';
@@ -20,6 +23,7 @@ import { debugLog } from '@/logs';
 import { SmileOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Input, List, Select, Tabs, Tag } from 'antd';
 import { useSetAtom } from 'jotai';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const SettingsModalContent = () => {
@@ -33,8 +37,10 @@ const SettingsModalContent = () => {
   const [isValidateHovered, setIsValidateHovered] = useState(false);
   const setOpenAIKey = useSetOpenAIKey();
   const setGeminiKey = useSetGeminiKey();
+  const setAnthropicKey = useSetAnthropicKey();
   const [openAIValidated, setOpenAIValidated] = useOpenAIValidated();
   const [geminiValidated, setGeminiValidated] = useGeminiValidated();
+  const [anthropicValidated, setAnthropicValidated] = useAnthropicValidated();
   const [chatModel, setChatModel] = useChatModel();
   const [translateModel, setTranslateModel] = useTranslateModel();
   const [theme, setTheme] = useTheme();
@@ -91,6 +97,9 @@ const SettingsModalContent = () => {
       } else if (selectedProvider === 'gemini-api-key') {
         setGeminiKey(apiKey);
         setGeminiValidated(true);
+      } else if (selectedProvider === 'anthropic-api-key') {
+        setAnthropicKey(apiKey);
+        setAnthropicValidated(true);
       }
       setIsInvalidApiKey(false);
       setCanProceed(true);
@@ -271,6 +280,11 @@ const SettingsModalContent = () => {
                         className: 'sz:font-ycom',
                       },
                       {
+                        value: 'anthropic-api-key',
+                        label: t('onboarding.selectProvider.anthropicApiKey'),
+                        className: 'sz:font-ycom',
+                      },
+                      {
                         value: 'chatgpt-webapp',
                         label: t('onboarding.selectProvider.chatGPTWebApp.title'),
                         className: 'sz:font-ycom',
@@ -282,7 +296,11 @@ const SettingsModalContent = () => {
                     <Input
                       className="sz:font-ycom sz:text-sm sz:mr-[5px] sz:h-8"
                       placeholder={
-                        selectedProvider === 'openai-api-key' ? 'sk-XXX......' : 'AIza......'
+                        selectedProvider === 'openai-api-key'
+                          ? 'sk-XXX......'
+                          : selectedProvider === 'gemini-api-key'
+                          ? 'AIza......'
+                          : 'sk-ant-XXX......'
                       }
                       value={apiKey}
                       onChange={(e) => setApiKey(e.target.value)}
@@ -314,9 +332,25 @@ const SettingsModalContent = () => {
                   >
                     {t('settings.registered')}
                   </div>
-                  <div className="sz:flex sz:flex-row sz:items-center sz:w-50 sz:mb-1 sz:wrap-normal sz:flex-wrap sz:gap-1">
-                    <Tag color={openAIValidated ? 'success' : 'default'}>OpenAI</Tag>
-                    <Tag color={geminiValidated ? 'success' : 'default'}>Gemini</Tag>
+                  <div className="sz:flex sz:flex-row sz:items-center sz:w-50 sz:mb-1 sz:wrap-normal sz:flex-wrap sz:gap-[1px]">
+                    <Tag
+                      style={{ fontSize: '11px' }}
+                      color={openAIValidated ? 'success' : 'default'}
+                    >
+                      OpenAI
+                    </Tag>
+                    <Tag
+                      style={{ fontSize: '11px' }}
+                      color={geminiValidated ? 'success' : 'default'}
+                    >
+                      Gemini
+                    </Tag>
+                    <Tag
+                      style={{ fontSize: '11px' }}
+                      color={anthropicValidated ? 'success' : 'default'}
+                    >
+                      Anthropic
+                    </Tag>
                   </div>
                   <div
                     className={`sz:text-base ${
@@ -353,6 +387,18 @@ const SettingsModalContent = () => {
                         label: 'Gemini 2.5 Flash Lite',
                         className: 'sz:font-ycom',
                         disabled: geminiValidated ? false : true,
+                      },
+                      {
+                        value: 'claude-sonnet-4-20250514',
+                        label: 'Claude Sonnet 4',
+                        className: 'sz:font-ycom',
+                        disabled: anthropicValidated ? false : true,
+                      },
+                      {
+                        value: 'claude-3-5-haiku-20241022',
+                        label: 'Claude Haiku 3.5',
+                        className: 'sz:font-ycom',
+                        disabled: anthropicValidated ? false : true,
                       },
                       {
                         value: 'wip',
@@ -397,6 +443,18 @@ const SettingsModalContent = () => {
                         label: 'Gemini 2.5 Flash Lite',
                         className: 'sz:font-ycom',
                         disabled: geminiValidated ? false : true,
+                      },
+                      {
+                        value: 'claude-sonnet-4-20250514',
+                        label: 'Claude Sonnet 4',
+                        className: 'sz:font-ycom',
+                        disabled: anthropicValidated ? false : true,
+                      },
+                      {
+                        value: 'claude-3-5-haiku-20241022',
+                        label: 'Claude Haiku 3.5',
+                        className: 'sz:font-ycom',
+                        disabled: anthropicValidated ? false : true,
                       },
                       {
                         value: 'wip',

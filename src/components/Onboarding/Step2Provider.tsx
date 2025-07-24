@@ -1,13 +1,18 @@
 import { useThemeValue } from '@/hooks/layout';
 import {
+  defaultAnthropicChatModel,
+  defaultAnthropicTranslateModel,
   defaultGeminiChatModel,
   defaultGeminiTranslateModel,
   defaultOpenAIChatModel,
   defaultOpenAITranslateModel,
+  useSetAnthropicValidated,
   useSetChatModel,
+  useSetGeminiValidated,
+  useSetOpenAIValidated,
   useSetTranslateModel,
 } from '@/hooks/models';
-import { useSetGeminiKey, useSetOpenAIKey } from '@/hooks/settings';
+import { useSetAnthropicKey, useSetGeminiKey, useSetOpenAIKey } from '@/hooks/settings';
 import { ModelProvider } from '@/lib/models';
 import { validateApiKey } from '@/lib/validateApiKey';
 import { debugLog } from '@/logs';
@@ -29,11 +34,13 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
   const [selectedProvider, setSelectedProvider] = useState<ModelProvider>('openai-api-key');
   const setOpenAIKey = useSetOpenAIKey();
   const setGeminiKey = useSetGeminiKey();
+  const setAnthropicKey = useSetAnthropicKey();
   const setChatModel = useSetChatModel();
   const setTranslateModel = useSetTranslateModel();
   const theme = useThemeValue();
   const setOpenAIValidated = useSetOpenAIValidated();
   const setGeminiValidated = useSetGeminiValidated();
+  const setAnthropicValidated = useSetAnthropicValidated();
   const lines = [
     t('onboarding.selectProvider.title'),
     t('onboarding.selectProvider.openaiApiKey.description_0'),
@@ -60,6 +67,11 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
         setChatModel(defaultGeminiChatModel);
         setTranslateModel(defaultGeminiTranslateModel);
         setGeminiValidated(true);
+      } else if (selectedProvider === 'anthropic-api-key') {
+        setAnthropicKey(apiKey);
+        setChatModel(defaultAnthropicChatModel);
+        setTranslateModel(defaultAnthropicTranslateModel);
+        setAnthropicValidated(true);
       }
       setIsInvalidApiKey(false);
       setCanProceed(true);
@@ -96,6 +108,11 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
             className: 'sz:font-ycom',
           },
           {
+            value: 'anthropic-api-key',
+            label: t('onboarding.selectProvider.anthropicApiKey'),
+            className: 'sz:font-ycom',
+          },
+          {
             value: 'chatgpt-webapp',
             label: t('onboarding.selectProvider.chatGPTWebApp.title'),
             className: 'sz:font-ycom',
@@ -121,7 +138,15 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
       </div>
       <div className="sz:flex sz:flex-row sz:items-center sz:w-80">
         <Input
-          placeholder={selectedProvider === 'openai-api-key' ? 'sk-XXX......' : 'AIza......'}
+          placeholder={
+            selectedProvider === 'openai-api-key'
+              ? 'sk-XXX......'
+              : selectedProvider === 'gemini-api-key'
+              ? 'AIza......'
+              : selectedProvider === 'anthropic-api-key'
+              ? 'sk-ant-XXX......'
+              : ''
+          }
           className="sz:font-ycom sz:mr-[5px]"
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}

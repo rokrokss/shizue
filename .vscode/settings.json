@@ -46,7 +46,8 @@
     "webcomponents",
     "ycom",
     "babeldoc",
-    "dotenv"
+    "dotenv",
+    "langchain"
   ],
   "python.analysis.typeCheckingMode": "off"
 }

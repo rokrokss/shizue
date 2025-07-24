@@ -27,7 +27,7 @@ export interface TokenUsage {
   id: string;
   date: string; // YYYY-MM-DD
   model: string;
-  provider: 'openai' | 'gemini';
+  provider: 'openai' | 'gemini' | 'anthropic';
   inputTokens: number;
   outputTokens: number;
   totalTokens: number;
@@ -54,6 +54,12 @@ class DB extends Dexie {
       tokenUsage: 'id, date, model, provider, createdAt',
     });
     this.version(3).stores({
+      // 'pk, ...indexes'
+      messages: 'id, threadId, createdAt',
+      threads: 'id, updatedAt',
+      tokenUsage: 'id, date, model, provider, createdAt',
+    });
+    this.version(4).stores({
       // 'pk, ...indexes'
       messages: 'id, threadId, createdAt',
       threads: 'id, updatedAt',

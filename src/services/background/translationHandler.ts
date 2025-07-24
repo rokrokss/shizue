@@ -2,6 +2,7 @@ import { getTranslationTargetLanguage } from '@/entrypoints/background/states/la
 import {
   getCurrentGeminiKey,
   getCurrentOpenaiKey,
+  getCurrentAnthropicKey,
   getCurrentTranslateModel,
 } from '@/entrypoints/background/states/models';
 import { ModelPreset, getModelInstance } from '@/lib/models';
@@ -44,8 +45,9 @@ interface BatchTranslationJsonResponseFormat {
 function getTranslationModelPreset(): ModelPreset {
   const openaiKey = getCurrentOpenaiKey();
   const geminiKey = getCurrentGeminiKey();
+  const anthropicKey = getCurrentAnthropicKey();
   const modelName = getCurrentTranslateModel();
-  return { openaiKey, geminiKey, modelName };
+  return { openaiKey, geminiKey, anthropicKey, modelName };
 }
 
 export class TranslationHandler {

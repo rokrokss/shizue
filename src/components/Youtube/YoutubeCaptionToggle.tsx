@@ -6,7 +6,11 @@ import {
   useUseYoutubeKeyboardNavigate,
   useYoutubeCaptionSizeRatio,
 } from '@/hooks/layout';
-import { useGeminiValidatedValue, useOpenAIValidatedValue } from '@/hooks/models';
+import {
+  useAnthropicValidatedValue,
+  useGeminiValidatedValue,
+  useOpenAIValidatedValue,
+} from '@/hooks/models';
 import { getCaptionInjector } from '@/lib/captionInjector';
 import { languageOptions } from '@/lib/language';
 import useAdObserver from '@/lib/useAdObserver';
@@ -61,6 +65,7 @@ const YoutubeCaptionToggle = () => {
   const [captionSizeRatio, setCaptionSizeRatio] = useYoutubeCaptionSizeRatio();
   const openAIValidated = useOpenAIValidatedValue();
   const geminiValidated = useGeminiValidatedValue();
+  const anthropicValidated = useAnthropicValidatedValue();
 
   const lastVideoIdRef = useRef<string | null>(null);
   const inFlightRef = useRef(false);
@@ -151,7 +156,7 @@ const YoutubeCaptionToggle = () => {
   };
 
   const handleDropdownOpenChange = (open: boolean) => {
-    if (!openAIValidated && !geminiValidated) {
+    if (!openAIValidated && !geminiValidated && !anthropicValidated) {
       debugLog('Youtube caption toggle clicked but not able to open translate settings');
       panelService.openPanel();
       return;

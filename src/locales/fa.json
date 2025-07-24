@@ -27,6 +27,7 @@
         "validate": "تأیید کنید"
       },
       "geminiApiKey": "از کلید API Gemini استفاده کنید",
+      "anthropicApiKey": "از کلید API Anthropic استفاده کنید",
       "chatGPTWebApp": {
         "title": "در حال کار...",
         "description": "ممکن است به دلیل تغییرات در سیاست‌های OpenAI ناپایدار باشد."

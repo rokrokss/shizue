@@ -27,6 +27,7 @@
         "validate": "Doğrula"
       },
       "geminiApiKey": "Gemini API Anahtarını Kullan",
+      "anthropicApiKey": "Anthropic API Anahtarını Kullan",
       "chatGPTWebApp": {
         "title": "Çalışmalar devam ediyor...",
         "description": "OpenAI politikalarındaki değişiklikler nedeniyle kararsız olabilir."

@@ -2,6 +2,7 @@ import {
   STORAGE_CHAT_MODEL,
   STORAGE_GEMINI_KEY,
   STORAGE_OPENAI_KEY,
+  STORAGE_ANTHROPIC_KEY,
   STORAGE_TRANSLATE_MODEL,
 } from '@/config/constants';
 import { ChatModel, TranslateModel } from '@/lib/models';
@@ -10,6 +11,7 @@ let currentChatModel: ChatModel = 'gpt-4.1';
 let currentTranslateModel: TranslateModel = 'gpt-4.1';
 let openaiKey: string | undefined = undefined;
 let geminiKey: string | undefined = undefined;
+let anthropicKey: string | undefined = undefined;
 
 export const getCurrentChatModel = () => currentChatModel;
 
@@ -18,6 +20,8 @@ export const getCurrentTranslateModel = () => currentTranslateModel;
 export const getCurrentOpenaiKey = () => openaiKey;
 
 export const getCurrentGeminiKey = () => geminiKey;
+
+export const getCurrentAnthropicKey = () => anthropicKey;
 
 export const changeChatModel = (model: ChatModel) => {
   currentChatModel = model;
@@ -33,6 +37,10 @@ export const changeOpenaiKey = (key: string) => {
 
 export const changeGeminiKey = (key: string) => {
   geminiKey = key;
+};
+
+export const changeAnthropicKey = (key: string) => {
+  anthropicKey = key;
 };
 
 export const modelListeners = () => {
@@ -56,6 +64,11 @@ export const modelListeners = () => {
     if (newGeminiKey) changeGeminiKey(newGeminiKey);
   });
 
+  chrome.storage.local.get(STORAGE_ANTHROPIC_KEY, (res) => {
+    const newAnthropicKey = res.ANTHROPIC_KEY as string;
+    if (newAnthropicKey) changeAnthropicKey(newAnthropicKey);
+  });
+
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area === 'local') {
       if (changes.CHAT_MODEL) {
@@ -73,6 +86,10 @@ export const modelListeners = () => {
       if (changes.GEMINI_KEY) {
         const newGeminiKey = changes.GEMINI_KEY.newValue as string;
         if (newGeminiKey) changeGeminiKey(newGeminiKey);
+      }
+      if (changes.ANTHROPIC_KEY) {
+        const newAnthropicKey = changes.ANTHROPIC_KEY.newValue as string;
+        if (newAnthropicKey) changeAnthropicKey(newAnthropicKey);
       }
     }
   });

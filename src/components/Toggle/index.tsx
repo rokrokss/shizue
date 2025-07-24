@@ -26,6 +26,7 @@ import {
   useToggleYPosition,
 } from '@/hooks/layout';
 import {
+  useAnthropicValidatedValue,
   useGeminiValidatedValue,
   useOpenAIValidatedValue,
   useTranslateModel,
@@ -72,6 +73,7 @@ const Toggle = () => {
   const [motionDivId, setMotionDivId] = useState(0);
   const openAIValidated = useOpenAIValidatedValue();
   const geminiValidated = useGeminiValidatedValue();
+  const anthropicValidated = useAnthropicValidatedValue();
   const [showToggle, setShowToggle] = useShowToggle();
   const [toggleHiddenSiteList, setToggleHiddenSiteList] = useToggleHiddenSiteList();
   const [isHoveringHideFromCurrentSite, setIsHoveringHideFromCurrentSite] = useState(false);
@@ -157,7 +159,7 @@ const Toggle = () => {
   };
 
   const handleTranslateSettingsOpenChange = (newOpen: boolean) => {
-    if (!openAIValidated && !geminiValidated) {
+    if (!openAIValidated && !geminiValidated && !anthropicValidated) {
       debugLog('Translate page clicked but not able to open translate settings');
       setPanelOpen();
       return;
@@ -309,12 +311,14 @@ const Toggle = () => {
 
     if (isDragging) return;
 
-    if (!openAIValidated && !geminiValidated) {
+    if (!openAIValidated && !geminiValidated && !anthropicValidated) {
       debugLog(
         'Translate page clicked but not able to translate, openAIValidated',
         openAIValidated,
         'geminiValidated',
-        geminiValidated
+        geminiValidated,
+        'anthropicValidated',
+        anthropicValidated
       );
       setPanelOpen();
       return;
@@ -327,7 +331,14 @@ const Toggle = () => {
     }
 
     setIsTranslationActive(!isTranslationActive);
-  }, [isDragging, isTranslationActive, targetLanguage, openAIValidated, geminiValidated]);
+  }, [
+    isDragging,
+    isTranslationActive,
+    targetLanguage,
+    openAIValidated,
+    geminiValidated,
+    anthropicValidated,
+  ]);
 
   useEffect(() => {
     const messageListener = (message: any) => {
@@ -496,6 +507,36 @@ const Toggle = () => {
                                     : 'rgba(55, 65, 81, 0.25)',
                                 },
                                 disabled: !geminiValidated,
+                              },
+                              {
+                                value: 'claude-sonnet-4-20250514',
+                                label: 'Claude Sonnet 4',
+                                className: 'sz:font-ycom',
+                                styles: {
+                                  color: anthropicValidated
+                                    ? theme == 'dark'
+                                      ? 'white'
+                                      : 'rgb(55, 65, 81)'
+                                    : theme == 'dark'
+                                    ? 'rgba(255, 255, 255, 0.25)'
+                                    : 'rgba(55, 65, 81, 0.25)',
+                                },
+                                disabled: !anthropicValidated,
+                              },
+                              {
+                                value: 'claude-3-5-haiku-20241022',
+                                label: 'Claude Haiku 3.5',
+                                className: 'sz:font-ycom',
+                                styles: {
+                                  color: anthropicValidated
+                                    ? theme == 'dark'
+                                      ? 'white'
+                                      : 'rgb(55, 65, 81)'
+                                    : theme == 'dark'
+                                    ? 'rgba(255, 255, 255, 0.25)'
+                                    : 'rgba(55, 65, 81, 0.25)',
+                                },
+                                disabled: !anthropicValidated,
                               },
                               {
                                 value: 'wip',

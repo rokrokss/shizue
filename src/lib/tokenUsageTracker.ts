@@ -35,7 +35,11 @@ export const trackTokenUsage = async (
     }
 
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-    const provider = model.includes('openai') ? 'openai' : 'gemini';
+    const provider = model.includes('openai')
+      ? 'openai'
+      : model.includes('claude')
+      ? 'anthropic'
+      : 'gemini';
 
     await recordTokenUsage({
       date: today,

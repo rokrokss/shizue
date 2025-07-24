@@ -27,6 +27,7 @@
         "validate": "सत्यापित करें"
       },
       "geminiApiKey": "Gemini API कुंजी का उपयोग करें",
+      "anthropicApiKey": "Anthropic API कुंजी का उपयोग करें",
       "chatGPTWebApp": {
         "title": "कार्य प्रगति पर है...",
         "description": "OpenAI की नीतियों में बदलाव के कारण अस्थिर हो सकता है।"
