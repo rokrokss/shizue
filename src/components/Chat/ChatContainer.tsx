@@ -16,12 +16,10 @@ const ChatContainer = ({
   messages,
   onRetry,
   scrollToBottom,
-  onImageDrop,
 }: {
   messages: Message[];
   onRetry: (messageIdxToRetry: number) => Promise<void>;
   scrollToBottom: () => void;
-  onImageDrop?: (files: File[]) => void;
 }) => {
   const { t } = useTranslation();
   const characterIndexes: number[] = [];
@@ -42,27 +40,8 @@ const ChatContainer = ({
     debugLog('messages', messages);
   }, [messages]);
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const files = Array.from(e.dataTransfer.files);
-    const imageFiles = files.filter(file => file.type.startsWith('image/'));
-    
-    if (imageFiles.length > 0 && onImageDrop) {
-      onImageDrop(imageFiles);
-    }
-  };
-
   return (
     <div
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
       className="
         sz:px-4 
         sz:pt-15 

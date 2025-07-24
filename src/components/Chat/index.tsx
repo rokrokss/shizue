@@ -40,7 +40,6 @@ const Chat = () => {
   const [chatStatus, setChatStatus] = useAtom(chatStatusAtom);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isUsageOpen, setIsUsageOpen] = useState(false);
-  const [droppedImages, setDroppedImages] = useState<File[]>([]);
 
   const [threadId, setThreadId] = useAtom(threadIdAtom);
   const threadIdRef = useRef(threadId);
@@ -590,9 +589,6 @@ const Chat = () => {
     return new File([blob], filename, { type: blob.type });
   };
 
-  const handleImageDrop = (files: File[]) => {
-    setDroppedImages(files);
-  };
 
   // 이미지 설명 요청 처리
   useEffect(() => {
@@ -642,7 +638,6 @@ const Chat = () => {
             messages={messages}
             onRetry={handleRetry}
             scrollToBottom={scrollToBottomThrottled}
-            onImageDrop={handleImageDrop}
           />
         ) : (
           <ChatGreeting />
@@ -658,8 +653,6 @@ const Chat = () => {
           onNewChat={handleNewChat}
           onOpenUsage={handleOpenUsage}
           onTranslateMode={handleTranslateMode}
-          droppedImages={droppedImages}
-          onDroppedImagesChange={setDroppedImages}
         />
       </div>
       {isSettingsOpen && (
