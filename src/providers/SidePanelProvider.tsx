@@ -108,12 +108,17 @@ const SidePanelProvider = ({
       debugLog('SidePanelProvider: [getInitData] describeImage', imageUrl);
       debugLog('SidePanelProvider: [getInitData] threadId', threadId);
 
+      if (!imageBase64) {
+        debugLog('SidePanelProvider: [getInitData] imageBase64 is undefined');
+        return;
+      }
+
       let isNewThread = false;
       const isInPdfPage = window.location.hash === '#/shizue-pdf';
 
       let tid = threadId;
       if (!tid || isInPdfPage) {
-        tid = await createThread('이미지 설명');
+        tid = await createThread(t('chat.describeImageRequest'));
         isNewThread = true;
       }
 
@@ -122,9 +127,9 @@ const SidePanelProvider = ({
         id: crypto.randomUUID(),
         threadId: tid,
         role: 'human',
-        actionType: 'chat',
+        actionType: 'describeImage',
         content: t('chat.describeImageRequest'),
-        images: imageBase64 ? [imageBase64] : undefined,
+        images: [imageBase64],
         createdAt: Date.now(),
         done: true,
         onInterrupt: false,
@@ -149,12 +154,17 @@ const SidePanelProvider = ({
       debugLog('SidePanelProvider: [getInitData] extractImageText', imageUrl);
       debugLog('SidePanelProvider: [getInitData] threadId', threadId);
 
+      if (!imageBase64) {
+        debugLog('SidePanelProvider: [getInitData] imageBase64 is undefined');
+        return;
+      }
+
       let isNewThread = false;
       const isInPdfPage = window.location.hash === '#/shizue-pdf';
 
       let tid = threadId;
       if (!tid || isInPdfPage) {
-        tid = await createThread('이미지 텍스트 추출');
+        tid = await createThread(t('chat.extractImageTextRequest'));
         isNewThread = true;
       }
 
@@ -162,9 +172,9 @@ const SidePanelProvider = ({
         id: crypto.randomUUID(),
         threadId: tid,
         role: 'human',
-        actionType: 'chat',
+        actionType: 'extractImageText',
         content: t('chat.extractImageTextRequest'),
-        images: imageBase64 ? [imageBase64] : undefined,
+        images: [imageBase64],
         createdAt: Date.now(),
         done: true,
         onInterrupt: false,
@@ -185,7 +195,7 @@ const SidePanelProvider = ({
       }
     }
     rollbackActionType();
-  }, [threadId, setThreadId, rollbackActionType, setMessageAddedInPanel, chatStatus, navigate]);
+  }, [threadId, setThreadId, rollbackActionType, setMessageAddedInPanel, chatStatus, navigate, t]);
 
   const handleMessage = useCallback(
     async (request: any) => {
