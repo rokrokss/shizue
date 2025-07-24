@@ -45,6 +45,7 @@ const Chat = () => {
   const threadIdRef = useRef(threadId);
   const messageCountAtom = useMemo(() => createThreadMessageCountAtom(threadId), [threadId]);
   const messageCount = useAtomValue(messageCountAtom);
+  const prevMessageCountRef = useRef(messageCount);
   const { startStream, startRetryStream, cancelStream } = useChromePortStream();
 
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -122,7 +123,7 @@ const Chat = () => {
 
   const handleRequestFromContextMenu = useCallback(
     async (tId: string, requestedActionType: ActionType) => {
-      debugLog('handleRequestFromContextMenu messages', messages);
+      debugLog('handleRequestFromContextMenu called');
       setChatStatus('waiting');
 
       actionType.current = requestedActionType;
@@ -165,7 +166,7 @@ const Chat = () => {
         }
       );
     },
-    [messages, setChatStatus, startStream, scrollToBottomThrottled, setMessages, addAIMessage]
+    [setChatStatus, startStream, scrollToBottomThrottled, setMessages, addAIMessage]
   );
 
   const loadThreadBackground = useCallback(
@@ -174,7 +175,7 @@ const Chat = () => {
         .sendMessage({ action: MESSAGE_LOAD_THREAD, threadId: tId })
         .then((res: Message[]) => {
           setMessages(res);
-          debugLog('loadThreadBackground set messages', messages);
+          debugLog('loadThreadBackground set messages', res);
           if (res.length > 0) {
             if (
               res[res.length - 1].actionType === 'askForSummary' ||
@@ -324,10 +325,12 @@ const Chat = () => {
   }, [threadId]);
 
   useEffect(() => {
-    if (messageCount > 0 && threadId) {
+    // Only load thread when messageCount actually increases (new message from outside)
+    if (messageCount > 0 && threadId && messageCount > prevMessageCountRef.current) {
       loadThreadBackground(threadId);
     }
-  }, [messageCount, threadId, loadThreadBackground]);
+    prevMessageCountRef.current = messageCount;
+  }, [messageCount, threadId]);
 
   const handleSubmit = async (text: string, images?: File[]) => {
     setChatStatus('waiting');
