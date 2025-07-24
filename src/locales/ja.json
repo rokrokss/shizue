@@ -6,6 +6,8 @@
     "translateSettings": "翻訳設定",
     "translatePage": "このページを翻訳",
     "summarizePage": "このページを要約",
+    "describeImage": "この画像を説明",
+    "extractImageText": "画像からテキストを抽出",
     "removeTranslation": "翻訳を削除"
   },
   "onboarding": {
@@ -48,8 +50,11 @@
     "newChat": "新しいチャット",
     "summaryRequestText": "このページを要約して！しずえ！",
     "translateMode": "翻訳モード",
+    "describeImageRequest": "この画像について説明してください。",
+    "extractImageTextRequest": "この画像からテキストを抽出してください。",
     "translateModeDescription": "これからは、私が送るすべてのメッセージに対して、次のような形式で翻訳と説明を提供してください：\n\n1. ✅ 翻訳文：自然で文脈に適した翻訳を提示してください。\n2. 📚 核心単語・表現整理\n    – 単語：品詞 / 意味\n    – 原文での例文\n3. 🧠 文法または表現説明：必要に応じて、核心表現や構文について簡単な説明を提供してください。\n\n- 出力は辞書のような整理された形で提供してください。\n- 重要な内容は太字処理をしてください。\n- 不要な解説は省略し、学習に集中できるよう簡潔で明確に作成してください。\n- 私が追加で指示しない限り、この形式を維持してください。",
-    "activateTranslateMode": "翻訳モードを有効にする..📡 🤖 📡"
+    "activateTranslateMode": "翻訳モードを有効にする..📡 🤖 📡",
+    "imageUpload": "画像添付"
   },
   "footer": {
     "joinDiscord": "Discordに参加してください！",

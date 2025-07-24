@@ -6,6 +6,8 @@
     "translateSettings": "Configuración de traducción",
     "translatePage": "Traducir esta página",
     "summarizePage": "Resumir esta página",
+    "describeImage": "Describir esta imagen",
+    "extractImageText": "Extraer texto de la imagen",
     "removeTranslation": "Eliminar traducción"
   },
   "onboarding": {
@@ -48,8 +50,11 @@
     "newChat": "Nuevo chat",
     "summaryRequestText": "¡Resume esta página! ¡Shizue!",
     "translateMode": "Modo de traducción",
+    "describeImageRequest": "Por favor, describe esta imagen.",
+    "extractImageTextRequest": "Por favor, extrae el texto de esta imagen.",
     "translateModeDescription": "De ahora en adelante, para cada mensaje que envíe, proporciona traducción y explicación en el siguiente formato:\n\n1. ✅ Traducción: Proporciona una traducción natural y contextualmente apropiada.\n2. 📚 Palabras/Expresiones clave\n    – Palabra: Tipo de palabra / Significado\n    – Ejemplo del texto original\n3. 🧠 Explicación gramatical o de expresión: Cuando sea necesario, proporciona una breve explicación de expresiones o frases clave.\n\n- Presenta la salida en un formato organizado como un diccionario.\n- Aplica formato en negrita al contenido importante.\n- Omite explicaciones innecesarias y escribe de forma limpia y concisa para un aprendizaje enfocado.\n- Mantén este formato a menos que proporcione instrucciones adicionales.",
-    "activateTranslateMode": "Activar modo traducción..📡 🤖 📡"
+    "activateTranslateMode": "Activar modo traducción..📡 🤖 📡",
+    "imageUpload": "Subir imagen"
   },
   "footer": {
     "joinDiscord": "¡Únete a mí en Discord!",

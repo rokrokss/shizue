@@ -6,6 +6,8 @@
     "translateSettings": "Mipangilio ya kutafsiri",
     "translatePage": "Tafsiri ukurasa huu",
     "summarizePage": "Muhtasari wa ukurasa huu",
+    "describeImage": "Eleza picha hii",
+    "extractImageText": "Toa maandishi kutoka kwenye picha",
     "removeTranslation": "Ondoa tafsiri"
   },
   "onboarding": {
@@ -48,8 +50,11 @@
     "newChat": "Ongea Mpya",
     "summaryRequestText": "Muhtasari wa ukurasa huu! Shizue!",
     "translateMode": "Hali ya Tafsiri",
+    "describeImageRequest": "Tafadhali eleza picha hii.",
+    "extractImageTextRequest": "Tafadhali toa maandishi kutoka kwenye picha hii.",
     "translateModeDescription": "Kuanzia sasa, kwa kila ujumbe nitakaoutuma, tafadhali toa tafsiri na maelezo katika umbizo lifuatalo:\n\n1. ✅ Tafsiri: Toa tafsiri ya asili na inayofaa kwa muktadha.\n2. 📚 Maneno/Misemo ya Msingi\n    – Neno: Aina ya neno / Maana\n    – Mfano kutoka kwa nakala halisi\n3. 🧠 Maelezo ya Sarufi au Msemo: Inapohitajika, toa maelezo mafupi ya misemo au vifungu vya muhimu.\n\n- Onyesha matokeo katika umbizo lililoanzana kama kamusi.\n- Tumia uandishi wa ujasiri kwa maudhui muhimu.\n- Epuka maelezo yasiyohitajika na andika kwa uwazi na ufupi kwa kujifunza kileng'enevu.\n- Dumisha umbizo hili isipokuwa nipe maelekezo ya ziada.",
-    "activateTranslateMode": "Amilisha Hali ya Tafsiri..📡 🤖 📡"
+    "activateTranslateMode": "Amilisha Hali ya Tafsiri..📡 🤖 📡",
+    "imageUpload": "Pakia picha"
   },
   "footer": {
     "joinDiscord": "Jiunge nami kwenye Discord!",
