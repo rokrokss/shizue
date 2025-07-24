@@ -15,13 +15,13 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <JotaiProvider>
       <HashRouter>
-        <SidePanelProvider loadingComponent={<EmptyPage />}>
-          <LanguageProvider loadingComponent={<EmptyPage />}>
+        <LanguageProvider loadingComponent={<EmptyPage />}>
+          <SidePanelProvider loadingComponent={<EmptyPage />}>
             <AntdProvider>
               <SidePanelRoutes />
             </AntdProvider>
-          </LanguageProvider>
-        </SidePanelProvider>
+          </SidePanelProvider>
+        </LanguageProvider>
       </HashRouter>
     </JotaiProvider>
   </StrictMode>
