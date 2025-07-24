@@ -7,7 +7,7 @@ import TopMenu from '@/components/Chat/TopRightMenu';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import SettingsModalContent from '@/components/Setting/SettingsModalContent';
 import { MESSAGE_LOAD_THREAD } from '@/config/constants';
-import { chatStatusAtom, isChatIdle, createThreadMessageCountAtom } from '@/hooks/chat';
+import { chatStatusAtom, createThreadMessageCountAtom, isChatIdle } from '@/hooks/chat';
 import { ActionType, threadIdAtom } from '@/hooks/global';
 import { useThemeValue } from '@/hooks/layout';
 import { useChromePortStream } from '@/hooks/portStream';
@@ -74,17 +74,50 @@ const Chat = () => {
   };
 
   const addAIMessage = () => {
-    setMessages((prev) => [
-      ...prev,
-      {
+    setMessages((prev) => {
+      aiIndexRef.current = prev.length;
+      return [
+        ...prev,
+        {
+          role: 'ai',
+          actionType: 'chat',
+          content: '',
+          done: false,
+          onInterrupt: false,
+          stopped: false,
+        },
+      ];
+    });
+  };
+
+  const updateAIMessage = (cur: Message[], updates: Partial<Message>) => {
+    const idx = aiIndexRef.current;
+    const copy = [...cur];
+    
+    // copy[idx]가 없으면 새로운 AI 메시지 객체 생성
+    if (!copy[idx]) {
+      copy[idx] = {
         role: 'ai',
-        actionType: 'chat',
+        actionType: actionType.current || 'chat',
         content: '',
         done: false,
         onInterrupt: false,
         stopped: false,
-      },
-    ]);
+        ...updates,
+      };
+    } else {
+      // 기존 메시지 업데이트
+      copy[idx] = {
+        ...copy[idx],
+        ...updates,
+        // 특정 필드들은 기본값 보장
+        actionType: updates.actionType || copy[idx].actionType || actionType.current || 'chat',
+        content: updates.content !== undefined ? updates.content : copy[idx].content || '',
+        stopped: updates.stopped !== undefined ? updates.stopped : copy[idx].stopped || false,
+      };
+    }
+    
+    return copy;
   };
 
   const handleRequestFromContextMenu = useCallback(
@@ -93,8 +126,6 @@ const Chat = () => {
       setChatStatus('waiting');
 
       actionType.current = requestedActionType;
-      aiIndexRef.current = messages.length + 1;
-
       addAIMessage();
 
       scrollToBottomThrottled();
@@ -104,52 +135,29 @@ const Chat = () => {
         {
           onDelta: (delta) =>
             setMessages((cur) => {
-              const idx = aiIndexRef.current;
-              const copy = [...cur];
-              copy[idx] = {
-                role: 'ai',
-                actionType: copy[idx].actionType,
-                content: copy[idx].content + delta,
+              const updatedMessages = updateAIMessage(cur, {
+                content: (cur[aiIndexRef.current]?.content || '') + delta,
                 done: false,
                 onInterrupt: false,
-                stopped: copy[idx].stopped,
-              };
+              });
               scrollToBottomThrottled();
-              return copy;
+              return updatedMessages;
             }),
           onDone: () => {
-            setMessages((cur) => {
-              const idx = aiIndexRef.current;
-              const copy = [...cur];
-              copy[idx] = {
-                role: 'ai',
-                actionType: copy[idx].actionType,
-                content: copy[idx].content,
-                done: true,
-                onInterrupt: false,
-                stopped: copy[idx].stopped,
-              };
-              return copy;
-            });
+            setMessages((cur) => updateAIMessage(cur, {
+              done: true,
+              onInterrupt: false,
+            }));
             touchThread(tId);
             setChatStatus('idle');
             scrollToBottomThrottled();
           },
           onError: (err) => {
             errorLog('Chat Stream error:', err);
-            setMessages((cur) => {
-              const idx = aiIndexRef.current;
-              const copy = [...cur];
-              copy[idx] = {
-                role: 'ai',
-                actionType: copy[idx].actionType,
-                content: copy[idx].content,
-                done: false,
-                onInterrupt: true,
-                stopped: copy[idx].stopped,
-              };
-              return copy;
-            });
+            setMessages((cur) => updateAIMessage(cur, {
+              done: false,
+              onInterrupt: true,
+            }));
             touchThread(tId);
             setChatStatus('idle');
             scrollToBottomThrottled();
@@ -187,19 +195,11 @@ const Chat = () => {
       messages[messages.length - 1].role === 'ai' &&
       !messages[messages.length - 1].done
     ) {
-      setMessages((cur) => {
-        const idx = aiIndexRef.current;
-        const copy = [...cur];
-        copy[idx] = {
-          role: 'ai',
-          actionType: 'chat',
-          content: copy[idx].content,
-          done: false,
-          onInterrupt: true,
-          stopped: true,
-        };
-        return copy;
-      });
+      setMessages((cur) => updateAIMessage(cur, {
+        done: false,
+        onInterrupt: true,
+        stopped: true,
+      }));
     }
     cancelStream();
     chatService.cancelNotStartedMessage(threadId!);
@@ -221,6 +221,7 @@ const Chat = () => {
 
     setMessages((prev) => {
       actionType.current = 'chat';
+      // human 메시지 + AI 메시지를 추가하므로 AI 메시지는 prev.length + 1 위치
       aiIndexRef.current = prev.length + 1;
       return [
         ...prev,
@@ -265,6 +266,7 @@ const Chat = () => {
 
     setMessages((prev) => {
       actionType.current = 'chat';
+      // human 메시지 + AI 메시지를 추가하므로 AI 메시지는 prev.length + 1 위치
       aiIndexRef.current = prev.length + 1;
       return [
         ...prev,
@@ -340,18 +342,13 @@ const Chat = () => {
       {
         onDelta: (delta) =>
           setMessages((cur) => {
-            const idx = aiIndexRef.current;
-            const copy = [...cur];
-            copy[idx] = {
-              role: 'ai',
-              actionType: copy[idx].actionType,
-              content: copy[idx].content + delta,
+            const updatedMessages = updateAIMessage(cur, {
+              content: (cur[aiIndexRef.current]?.content || '') + delta,
               done: false,
               onInterrupt: false,
-              stopped: copy[idx].stopped,
-            };
+            });
             scrollToBottomThrottled();
-            return copy;
+            return updatedMessages;
           }),
         onDone: () => {
           setMessages((cur) => {
@@ -402,19 +399,13 @@ const Chat = () => {
     actionType.current = messages[messageIdxToRetry - 1].actionType;
     aiIndexRef.current = messageIdxToRetry;
 
-    setMessages((cur) => {
-      const idx = aiIndexRef.current;
-      const copy = [...cur];
-      copy[idx] = {
-        role: 'ai',
-        actionType: 'chat',
-        content: '',
-        done: false,
-        onInterrupt: false,
-        stopped: false,
-      };
-      return copy;
-    }),
+    setMessages((cur) => updateAIMessage(cur, {
+      actionType: 'chat',
+      content: '',
+      done: false,
+      onInterrupt: false,
+      stopped: false,
+    })),
       startRetryStream(
         {
           threadId,
@@ -424,50 +415,27 @@ const Chat = () => {
         {
           onDelta: (delta) =>
             setMessages((cur) => {
-              const idx = aiIndexRef.current;
-              const copy = [...cur];
-              copy[idx] = {
-                role: 'ai',
-                actionType: copy[idx].actionType,
-                content: copy[idx].content + delta,
+              const updatedMessages = updateAIMessage(cur, {
+                content: (cur[aiIndexRef.current]?.content || '') + delta,
                 done: false,
                 onInterrupt: false,
-                stopped: copy[idx].stopped,
-              };
-              return copy;
+              });
+              return updatedMessages;
             }),
           onDone: () => {
-            setMessages((cur) => {
-              const idx = aiIndexRef.current;
-              const copy = [...cur];
-              copy[idx] = {
-                role: 'ai',
-                actionType: copy[idx].actionType,
-                content: copy[idx].content,
-                done: true,
-                onInterrupt: false,
-                stopped: copy[idx].stopped,
-              };
-              return copy;
-            });
+            setMessages((cur) => updateAIMessage(cur, {
+              done: true,
+              onInterrupt: false,
+            }));
             touchThread(threadId);
             setChatStatus('idle');
           },
           onError: (err) => {
             errorLog('Chat Stream error:', err);
-            setMessages((cur) => {
-              const idx = aiIndexRef.current;
-              const copy = [...cur];
-              copy[idx] = {
-                role: 'ai',
-                actionType: copy[idx].actionType,
-                content: copy[idx].content,
-                done: false,
-                onInterrupt: true,
-                stopped: copy[idx].stopped,
-              };
-              return copy;
-            });
+            setMessages((cur) => updateAIMessage(cur, {
+              done: false,
+              onInterrupt: true,
+            }));
             touchThread(threadId);
             setChatStatus('idle');
           },
@@ -512,18 +480,13 @@ const Chat = () => {
       {
         onDelta: (delta) =>
           setMessages((cur) => {
-            const idx = aiIndexRef.current;
-            const copy = [...cur];
-            copy[idx] = {
-              role: 'ai',
-              actionType: copy[idx].actionType,
-              content: copy[idx].content + delta,
+            const updatedMessages = updateAIMessage(cur, {
+              content: (cur[aiIndexRef.current]?.content || '') + delta,
               done: false,
               onInterrupt: false,
-              stopped: copy[idx].stopped,
-            };
+            });
             scrollToBottomThrottled();
-            return copy;
+            return updatedMessages;
           }),
         onDone: () => {
           setMessages((cur) => {
