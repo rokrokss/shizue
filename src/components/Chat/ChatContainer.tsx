@@ -4,10 +4,8 @@ import { DotCycle } from '@/components/Loader/DotCycle';
 import { useThemeValue } from '@/hooks/layout';
 import useStreamText from '@/hooks/useStreamText';
 import { hashStringToIndex } from '@/lib/hash';
-import { debugLog } from '@/logs';
 import { LinkOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -35,10 +33,6 @@ const ChatContainer = ({
   const getMarkdownText = (content: string) => {
     return <Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>;
   };
-
-  useEffect(() => {
-    debugLog('messages', messages);
-  }, [messages]);
 
   return (
     <div

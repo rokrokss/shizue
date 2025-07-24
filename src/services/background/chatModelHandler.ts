@@ -7,12 +7,12 @@ import {
   getCurrentOpenaiKey,
 } from '@/entrypoints/background/states/models';
 import { ActionType } from '@/hooks/global';
+import { formatImagesForMessage } from '@/lib/imageFormatHelper';
 import { db, loadThread } from '@/lib/indexDB';
 import { getModelInstance, ModelPreset, providerFromName } from '@/lib/models';
 import { getInitialAIMessage, getInitialSystemMessage } from '@/lib/prompts';
 import { trackStreamingTokenUsage } from '@/lib/tokenUsageTracker';
 import { debugLog, errorLog } from '@/logs';
-import { formatImagesForMessage } from '@/lib/imageFormatHelper';
 import {
   AIMessage,
   AIMessageChunk,
@@ -161,7 +161,7 @@ export class ChatModelHandler {
             if (m.images && m.images.length > 0) {
               return new HumanMessage({
                 content: [
-                  { type: 'text', text: m.content },
+                  ...(m.content ? [{ type: 'text', text: m.content }] : []),
                   ...formatImagesForMessage(m.images, modelName),
                 ],
               });
@@ -240,7 +240,7 @@ export class ChatModelHandler {
             if (m.images && m.images.length > 0) {
               return new HumanMessage({
                 content: [
-                  { type: 'text', text: m.content },
+                  ...(m.content ? [{ type: 'text', text: m.content }] : []),
                   ...formatImagesForMessage(m.images, modelName),
                 ],
               });
