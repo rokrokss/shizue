@@ -6,6 +6,8 @@
     "translateSettings": "Translate settings",
     "translatePage": "Translate this page",
     "summarizePage": "Summarize this page",
+    "describeImage": "Describe this image",
+    "extractImageText": "Extract text from image",
     "removeTranslation": "Remove translation"
   },
   "onboarding": {
@@ -48,8 +50,11 @@
     "newChat": "New Chat",
     "summaryRequestText": "Summarize this page! Shizue!",
     "translateMode": "Translate Mode",
+    "describeImageRequest": "Please describe this image.",
+    "extractImageTextRequest": "Please extract text from this image.",
     "translateModeDescription": "From now on, for every message I send, please provide translation and explanation in the following format:\n\n1. ✅ Translation: Provide a natural and contextually appropriate translation.\n2. 📚 Key Words/Expressions\n    – Word: Part of speech / Meaning\n    – Example from the original text\n3. 🧠 Grammar or Expression Explanation: When necessary, provide a brief explanation of key expressions or phrases.\n\n- Present the output in a dictionary-like organized format.\n- Apply bold formatting to important content.\n- Omit unnecessary explanations and write cleanly and concisely for focused learning.\n- Maintain this format unless I give additional instructions.",
-    "activateTranslateMode": "Activate Translate Mode..📡 🤖 📡"
+    "activateTranslateMode": "Activate Translate Mode..📡 🤖 📡",
+    "imageUpload": "Image Upload"
   },
   "footer": {
     "joinDiscord": "Join me on Discord!",
