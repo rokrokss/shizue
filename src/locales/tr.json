@@ -121,7 +121,8 @@
     "deactivate": "Pasif Et",
     "youtubeCaptionButton": "YouTube Altyazı Düğmesi",
     "bilingual": "İki Dilli",
-    "captionSizeRatio": "Altyazı Boyutu"
+    "captionSizeRatio": "Altyazı Boyutu",
+    "useKeyboardNavigate": "A/D ile Altyazı Gezinme"
   },
   "usage": {
     "title": "Token Kullanımı",

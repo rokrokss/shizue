@@ -121,7 +121,8 @@
     "deactivate": "Деактивировать",
     "youtubeCaptionButton": "Кнопка субтитров YouTube",
     "bilingual": "Двуязычный",
-    "captionSizeRatio": "Размер субтитров"
+    "captionSizeRatio": "Размер субтитров",
+    "useKeyboardNavigate": "Навигация по субтитрам с A/D"
   },
   "usage": {
     "title": "Использование токенов",

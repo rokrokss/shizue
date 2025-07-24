@@ -121,7 +121,8 @@
     "deactivate": "I-deactivate",
     "youtubeCaptionButton": "Youtube Caption Button",
     "bilingual": "Bilingual",
-    "captionSizeRatio": "Caption Size"
+    "captionSizeRatio": "Caption Size",
+    "useKeyboardNavigate": "I-navigate ang Subtitles gamit ang A/D"
   },
   "usage": {
     "title": "Paggamit ng Token",

@@ -121,7 +121,8 @@
     "deactivate": "Deaktivieren",
     "youtubeCaptionButton": "YouTube-Untertitel-Schaltfläche",
     "bilingual": "Zweisprachig",
-    "captionSizeRatio": "Untertitelgröße"
+    "captionSizeRatio": "Untertitelgröße",
+    "useKeyboardNavigate": "Untertitel mit A/D navigieren"
   },
   "usage": {
     "title": "Token-Verbrauch",

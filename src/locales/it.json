@@ -121,7 +121,8 @@
     "deactivate": "Disattiva",
     "youtubeCaptionButton": "Pulsante sottotitoli YouTube",
     "bilingual": "Bilingue",
-    "captionSizeRatio": "Dimensione sottotitoli"
+    "captionSizeRatio": "Dimensione sottotitoli",
+    "useKeyboardNavigate": "Naviga sottotitoli con A/D"
   },
   "usage": {
     "title": "Utilizzo Token",

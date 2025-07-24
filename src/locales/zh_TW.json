@@ -121,7 +121,8 @@
     "deactivate": "停用",
     "youtubeCaptionButton": "YouTube 字幕按鈕",
     "bilingual": "雙語",
-    "captionSizeRatio": "字幕大小"
+    "captionSizeRatio": "字幕大小",
+    "useKeyboardNavigate": "使用A/D鍵導航字幕"
   },
   "usage": {
     "title": "權杖使用量",

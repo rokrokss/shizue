@@ -90,6 +90,57 @@ export class CaptionInjector {
     }
   }
 
+  public handlePressKeyToNextChunk = (backward: boolean) => {
+    if (!this.videoElement) {
+      debugLog('[YouTube] handlePressKeyToNextChunk, no video element');
+      return;
+    }
+
+    const baseLanguage = this.transcriptMetadata[0]?.language;
+    if (!baseLanguage) {
+      debugLog('[YouTube] handlePressKeyToNextChunk, no base language');
+      return;
+    }
+
+    const baseCaptions = this.captionCache.get(baseLanguage);
+    if (!baseCaptions) {
+      debugLog('[YouTube] handlePressKeyToNextChunk, no base captions');
+      return;
+    }
+
+    debugLog('[YouTube] handlePressKeyToNextChunk, backward:', backward);
+    debugLog('[YouTube] handlePressKeyToNextChunk, baseCaptions:', baseCaptions);
+
+    const currentTime = this.videoElement.currentTime;
+    debugLog('[YouTube] handlePressKeyToNextChunk, currentTime:', currentTime);
+
+    let nextTime = -1;
+
+    if (!backward) {
+      for (let i = 0; i < baseCaptions.length; i++) {
+        const caption = baseCaptions[i];
+        if (caption.startTime > currentTime) {
+          debugLog('[YouTube] handlePressKeyToNextChunk, caption:', caption);
+          nextTime = caption.startTime;
+          break;
+        }
+      }
+    } else {
+      for (let i = baseCaptions.length - 1; i >= 0; i--) {
+        const caption = baseCaptions[i];
+        if (caption.endTime < currentTime) {
+          debugLog('[YouTube] handlePressKeyToNextChunk, caption:', caption);
+          nextTime = caption.startTime;
+          break;
+        }
+      }
+    }
+
+    if (nextTime !== -1) {
+      this.videoElement.currentTime = nextTime;
+    }
+  };
+
   private findCaptionIndex = (time: number): number | null => {
     const allCaptions = this.captionCache.get(this.targetLanguage) ?? [];
     if (allCaptions.length === 0) return null;

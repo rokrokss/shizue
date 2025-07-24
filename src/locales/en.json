@@ -129,7 +129,8 @@
     "deactivate": "Deactivate",
     "youtubeCaptionButton": "Youtube Caption Button",
     "bilingual": "Bilingual",
-    "captionSizeRatio": "Caption Size"
+    "captionSizeRatio": "Caption Size",
+    "useKeyboardNavigate": "Navigate Subtitles with A/D"
   },
   "pdf": {
     "translatePdf": "Translate PDF",

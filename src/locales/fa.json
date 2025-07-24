@@ -121,7 +121,8 @@
     "deactivate": "غیرفعال کنید",
     "youtubeCaptionButton": "دکمه زیرنویس یوتیوب",
     "bilingual": "دو زبانه",
-    "captionSizeRatio": "اندازه زیرنویس"
+    "captionSizeRatio": "اندازه زیرنویس",
+    "useKeyboardNavigate": "پیمایش زیرنویس با A/D"
   },
   "usage": {
     "title": "استفاده از توکن",

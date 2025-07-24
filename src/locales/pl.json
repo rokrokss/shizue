@@ -121,7 +121,8 @@
     "deactivate": "Dezaktywuj",
     "youtubeCaptionButton": "Przycisk napisy YouTube",
     "bilingual": "Dwujęzyczny",
-    "captionSizeRatio": "Rozmiar napisy"
+    "captionSizeRatio": "Rozmiar napisy",
+    "useKeyboardNavigate": "Nawiguj napisy z A/D"
   },
   "usage": {
     "title": "Wykorzystanie Tokenów",

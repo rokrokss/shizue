@@ -121,7 +121,8 @@
     "deactivate": "Vô hiệu hóa",
     "youtubeCaptionButton": "Nút Chú thích Youtube",
     "bilingual": "Song ngữ",
-    "captionSizeRatio": "Kích thước chú thích"
+    "captionSizeRatio": "Kích thước chú thích",
+    "useKeyboardNavigate": "Điều hướng phụ đề bằng A/D"
   },
   "usage": {
     "title": "Sử dụng Token",
