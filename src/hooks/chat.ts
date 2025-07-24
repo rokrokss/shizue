@@ -1,4 +1,4 @@
-import { getInitialMessagesForAllThreads, ThreadWithInitialMessages } from '@/lib/indexDB';
+import { getInitialMessagesForAllThreads, ThreadWithInitialMessages, db } from '@/lib/indexDB';
 import { liveQuery, Observable } from 'dexie';
 import { atom } from 'jotai';
 import { atomWithObservable } from 'jotai/utils';
@@ -19,3 +19,19 @@ export const initialMessagesForAllThreadsAtom = atomWithObservable<ThreadWithIni
   },
   { initialValue: [] }
 );
+
+export const createThreadMessageCountAtom = (threadId: string | undefined) => 
+  atomWithObservable<number>(
+    () => {
+      if (!threadId) {
+        return liveQuery(() => Promise.resolve(0));
+      }
+      
+      const observable: Observable<number> = liveQuery(async () => {
+        const count = await db.messages.where('threadId').equals(threadId).count();
+        return count;
+      });
+      return observable;
+    },
+    { initialValue: 0 }
+  );

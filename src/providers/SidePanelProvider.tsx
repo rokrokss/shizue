@@ -7,7 +7,6 @@ import {
 import { chatStatusAtom, isChatWaiting } from '@/hooks/chat';
 import {
   actionTypeAtom,
-  messageAddedInPanelAtom,
   sidePanelHydratedAtom,
   threadIdAtom,
 } from '@/hooks/global';
@@ -30,7 +29,6 @@ const SidePanelProvider = ({
   const [panelInitialized, setPanelInitialized] = useState(false);
   const [sidePanelHydrated, setSidePanelHydrated] = useAtom(sidePanelHydratedAtom);
   const [threadId, setThreadId] = useAtom(threadIdAtom);
-  const setMessageAddedInPanel = useSetAtom(messageAddedInPanelAtom);
   const setActionType = useSetAtom(actionTypeAtom);
   const chatStatus = useAtomValue(chatStatusAtom);
   const navigate = useNavigate();
@@ -84,8 +82,6 @@ const SidePanelProvider = ({
 
       if (isNewThread) {
         setThreadId(tid);
-      } else {
-        setMessageAddedInPanel(Date.now());
       }
 
       if (isInPdfPage) {
@@ -140,8 +136,6 @@ const SidePanelProvider = ({
 
       if (isNewThread) {
         setThreadId(tid);
-      } else {
-        setMessageAddedInPanel(Date.now());
       }
 
       if (isInPdfPage) {
@@ -185,8 +179,6 @@ const SidePanelProvider = ({
 
       if (isNewThread) {
         setThreadId(tid);
-      } else {
-        setMessageAddedInPanel(Date.now());
       }
 
       if (isInPdfPage) {
@@ -195,7 +187,7 @@ const SidePanelProvider = ({
       }
     }
     rollbackActionType();
-  }, [threadId, setThreadId, rollbackActionType, setMessageAddedInPanel, chatStatus, navigate, t]);
+  }, [threadId, setThreadId, rollbackActionType, chatStatus, navigate, t]);
 
   const handleMessage = useCallback(
     async (request: any) => {
