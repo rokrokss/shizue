@@ -149,5 +149,8 @@
   },
   "home": {
     "title": "Vai alla Home"
+  },
+  "memo": {
+    "memo": "Memo"
   }
 }

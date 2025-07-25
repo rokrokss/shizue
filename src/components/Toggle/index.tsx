@@ -1,5 +1,6 @@
 import BookIcon from '@/assets/icons/book.svg?react';
 import CloseIcon from '@/assets/icons/close.svg?react';
+import MemoIcon from '@/assets/icons/note.svg?react';
 import PhotoIcon from '@/assets/icons/photo.svg?react';
 import SettingIcon from '@/assets/icons/setting.svg?react';
 import TranslateIcon from '@/assets/icons/translate.svg?react';
@@ -35,6 +36,7 @@ import { hashStringToIndex } from '@/lib/hash';
 import {
   initDescribeImageContent,
   initExtractImageTextContent,
+  initMemoPageContent,
   initPdfPageContent,
   initSummarizePageContent,
 } from '@/lib/initPanelData';
@@ -114,6 +116,7 @@ const Toggle = () => {
     t('overlayMenu.summarizePage'),
     t('overlayMenu.removeTranslation'),
     t('pdf.translatePdf'),
+    t('memo.memo'),
   ];
 
   const getCurrentDomain = useCallback(() => {
@@ -306,6 +309,16 @@ const Toggle = () => {
     setPanelOpen();
   };
 
+  const handleMemoClick = async () => {
+    debugLog('handleMemoClick');
+    if (isDragging) return;
+    await initMemoPageContent();
+    void chrome.runtime.sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA }).catch((err) => {
+      debugLog('handleMemoClick: Panel not opened yet', err);
+    });
+    setPanelOpen();
+  };
+
   const handleTranslatePage = useCallback(async () => {
     debugLog('Translate page clicked');
 
@@ -394,7 +407,7 @@ const Toggle = () => {
               sz:overflow-hidden
               ${
                 delayedVisible
-                  ? 'sz:opacity-100 sz:translate-x-0 sz:pointer-events-auto sz:max-h-[500px]'
+                  ? 'sz:opacity-100 sz:translate-x-0 sz:pointer-events-auto sz:max-h-[600px]'
                   : 'sz:opacity-0 sz:translate-x-[8px] sz:pointer-events-none sz:max-h-0'
               }
             `}
@@ -403,6 +416,13 @@ const Toggle = () => {
             }}
           >
             <OverlayMenu>
+              <OverlayMenuItem
+                theme={theme}
+                icon={<MemoIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
+                tooltipMessage={tooltipMessages[5]}
+                onClick={handleMemoClick}
+                hideTooltip={translateSettingsModalOpen || closeIconModalOpen}
+              />
               <OverlayMenuItem
                 theme={theme}
                 icon={

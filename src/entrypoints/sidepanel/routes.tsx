@@ -1,3 +1,4 @@
+import Memo from '@/components/Memo';
 import { OnboardedRoute } from '@/components/Onboarding/OnboardedRoute';
 import Onboarding from '@/components/Onboarding/Onboarding';
 import Pdf from '@/components/Pdf';
@@ -22,6 +23,10 @@ export const SidePanelRoutes = () => {
           <Pdf />
         </OnboardedRoute>
       ),
+    },
+    {
+      path: '/shizue-memo',
+      element: <Memo />,
     },
     {
       path: '/onboarding',
