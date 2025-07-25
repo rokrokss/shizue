@@ -151,6 +151,24 @@
     "title": "Pumunta sa Tahanan"
   },
   "memo": {
-    "memo": "Memo"
+    "memo": "Memo",
+    "memoList": "Listahan ng Memo",
+    "newMemo": "Bagong Memo",
+    "save": "I-save",
+    "delete": "Tanggalin",
+    "pin": "I-pin",
+    "unpin": "I-unpin",
+    "edit": "I-edit",
+    "cancel": "Kanselahin",
+    "defaultTitle": "Bagong Memo",
+    "deleteConfirm": "Sigurado ka ba na gusto mong tanggalin ang memo na ito?",
+    "memoContentPlaceholder": "Ilagay ang nilalaman ng memo...",
+    "memoTitlePlaceholder": "Pamagat",
+    "selectMemoOr": "Pumili ng memo o",
+    "createNewMemo": "Gumawa ng bagong memo",
+    "noContent": "Walang nilalaman",
+    "noSearchResults": "Walang mga resulta ng paghahanap",
+    "noMemos": "Walang mga memo",
+    "searchMemo": "Maghanap ng memo"
   }
 }

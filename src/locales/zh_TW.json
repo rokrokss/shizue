@@ -151,6 +151,24 @@
     "title": "前往主頁"
   },
   "memo": {
-    "memo": "備忘錄"
+    "memo": "備忘錄",
+    "memoList": "備忘錄列表",
+    "newMemo": "新建備忘錄",
+    "save": "保存",
+    "delete": "刪除",
+    "pin": "置頂",
+    "unpin": "取消置頂",
+    "edit": "編輯",
+    "cancel": "取消",
+    "defaultTitle": "新建備忘錄",
+    "deleteConfirm": "確定要刪除這條備忘錄嗎？",
+    "memoContentPlaceholder": "請輸入備忘錄內容...",
+    "memoTitlePlaceholder": "標題",
+    "selectMemoOr": "選擇備忘錄或",
+    "createNewMemo": "創建新備忘錄",
+    "noContent": "無內容",
+    "noSearchResults": "無搜索結果",
+    "noMemos": "無備忘錄",
+    "searchMemo": "搜索備忘錄"
   }
 }

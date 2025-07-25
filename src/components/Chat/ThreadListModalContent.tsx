@@ -1,13 +1,31 @@
 import { initialMessagesForAllThreadsAtom } from '@/hooks/chat';
 import { threadIdAtom } from '@/hooks/global';
+import { getI8NLanguage, useLanguage } from '@/hooks/language';
 import { useThemeValue } from '@/hooks/layout';
 import { deleteThread, ThreadWithInitialMessages } from '@/lib/indexDB';
-import { getTimeString } from '@/lib/time';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { useAtom, useAtomValue } from 'jotai';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+
+// Import common locales
+import 'dayjs/locale/ar';
+import 'dayjs/locale/de';
+import 'dayjs/locale/en';
+import 'dayjs/locale/es';
+import 'dayjs/locale/fr';
+import 'dayjs/locale/ja';
+import 'dayjs/locale/ko';
+import 'dayjs/locale/pt';
+import 'dayjs/locale/ru';
+import 'dayjs/locale/zh';
+
+dayjs.extend(relativeTime);
+dayjs.extend(localizedFormat);
 
 const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
   const theme = useThemeValue();
@@ -16,6 +34,25 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
   const threadsWithMessages = useAtomValue(initialMessagesForAllThreadsAtom);
 
   const { t } = useTranslation();
+  const { lang } = useLanguage();
+
+  // Update dayjs locale when language changes
+  useEffect(() => {
+    const i18nLang = getI8NLanguage(lang);
+    // Map i18n language codes to dayjs locale codes
+    const dayjsLocale = i18nLang.replace('_', '-').toLowerCase();
+    try {
+      dayjs.locale(dayjsLocale);
+    } catch (e) {
+      // Fallback to primary language code if full locale not available
+      const primaryLang = dayjsLocale.split('-')[0];
+      try {
+        dayjs.locale(primaryLang);
+      } catch (e2) {
+        dayjs.locale('en');
+      }
+    }
+  }, [lang]);
 
   const handleDeleteThread = (id: string) => {
     if (id === threadId) {
@@ -100,7 +137,7 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
                           theme == 'dark' ? 'sz:text-[#ccc]' : 'sz:text-gray-500'
                         }`}
                       >
-                        {getTimeString(thread.updatedAt, t)}
+                        {dayjs(thread.updatedAt).fromNow()}
                       </div>
                     </div>
                     <div

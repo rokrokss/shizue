@@ -151,6 +151,24 @@
     "title": "前往主页"
   },
   "memo": {
-    "memo": "备忘录"
+    "memo": "备忘录",
+    "memoList": "备忘录列表",
+    "newMemo": "新建备忘录",
+    "save": "保存",
+    "delete": "删除",
+    "pin": "置顶",
+    "unpin": "取消置顶",
+    "edit": "编辑",
+    "cancel": "取消",
+    "defaultTitle": "新建备忘录",
+    "deleteConfirm": "确定要删除这条备忘录吗？",
+    "memoContentPlaceholder": "请输入备忘录内容...",
+    "memoTitlePlaceholder": "标题",
+    "selectMemoOr": "选择备忘录或",
+    "createNewMemo": "创建新备忘录",
+    "noContent": "无内容",
+    "noSearchResults": "无搜索结果",
+    "noMemos": "无备忘录",
+    "searchMemo": "搜索备忘录"
   }
 }

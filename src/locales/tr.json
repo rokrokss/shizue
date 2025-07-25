@@ -151,6 +151,24 @@
     "title": "Ana Sayfaya Git"
   },
   "memo": {
-    "memo": "Not"
+    "memo": "Not",
+    "memoList": "Not Listesi",
+    "newMemo": "Yeni Not",
+    "save": "Kaydet",
+    "delete": "Sil",
+    "pin": "Sabitle",
+    "unpin": "Sabitlemeyi Kaldır",
+    "edit": "Düzenle",
+    "cancel": "İptal",
+    "defaultTitle": "Yeni Not",
+    "deleteConfirm": "Bu notu silmek istediğinizden emin misiniz?",
+    "memoContentPlaceholder": "Not içeriğini girin...",
+    "memoTitlePlaceholder": "Başlık",
+    "selectMemoOr": "Bir not seçin veya",
+    "createNewMemo": "Yeni not oluştur",
+    "noContent": "İçerik yok",
+    "noSearchResults": "Arama sonucu yok",
+    "noMemos": "Not yok",
+    "searchMemo": "Not ara"
   }
 }

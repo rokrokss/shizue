@@ -151,6 +151,24 @@
     "title": "Enda Nyumbani"
   },
   "memo": {
-    "memo": "Memo"
+    "memo": "Memo",
+    "memoList": "Orodha ya Kumbuka",
+    "newMemo": "Memo Mpya",
+    "save": "Hifadhi",
+    "delete": "Futa",
+    "pin": "Bandika",
+    "unpin": "Ondoa Ubandikaji",
+    "edit": "Hariri",
+    "cancel": "Ghairi",
+    "defaultTitle": "Memo Mpya",
+    "deleteConfirm": "Je, una uhakika unataka kufuta memo hii?",
+    "memoContentPlaceholder": "Ingiza maudhui ya memo...",
+    "memoTitlePlaceholder": "Kichwa",
+    "selectMemoOr": "Chagua memo au",
+    "createNewMemo": "Unda memo mpya",
+    "noContent": "Hakuna maudhui",
+    "noSearchResults": "Hakuna matokeo ya utafutaji",
+    "noMemos": "Hakuna memo",
+    "searchMemo": "Tafuta memo"
   }
 }

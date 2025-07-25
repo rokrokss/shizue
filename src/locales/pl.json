@@ -151,6 +151,24 @@
     "title": "Przejdź do strony głównej"
   },
   "memo": {
-    "memo": "Notatka"
+    "memo": "Notatka",
+    "memoList": "Lista Notatek",
+    "newMemo": "Nowa Notatka",
+    "save": "Zapisz",
+    "delete": "Usuń",
+    "pin": "Przypnij",
+    "unpin": "Odepnij",
+    "edit": "Edytuj",
+    "cancel": "Anuluj",
+    "defaultTitle": "Nowa Notatka",
+    "deleteConfirm": "Czy na pewno chcesz usunąć tę notatkę?",
+    "memoContentPlaceholder": "Wprowadź treść notatki...",
+    "memoTitlePlaceholder": "Tytuł",
+    "selectMemoOr": "Wybierz notatkę lub",
+    "createNewMemo": "Utwórz nową notatkę",
+    "noContent": "Brak treści",
+    "noSearchResults": "Brak wyników wyszukiwania",
+    "noMemos": "Brak notatek",
+    "searchMemo": "Szukaj notatki"
   }
 }

@@ -151,6 +151,24 @@
     "title": "Go to Home"
   },
   "memo": {
-    "memo": "Memo"
+    "memo": "Memo",
+    "memoList": "Memo List",
+    "newMemo": "New Memo",
+    "save": "Save",
+    "delete": "Delete",
+    "pin": "Pin",
+    "unpin": "Unpin",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "defaultTitle": "New Memo",
+    "deleteConfirm": "Are you sure you want to delete this memo?",
+    "memoContentPlaceholder": "Enter memo content...",
+    "memoTitlePlaceholder": "Title",
+    "selectMemoOr": "Select a memo or",
+    "createNewMemo": "Create new memo",
+    "noContent": "No content",
+    "noSearchResults": "No search results",
+    "noMemos": "No memos",
+    "searchMemo": "Search memo"
   }
 }

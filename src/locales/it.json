@@ -151,6 +151,24 @@
     "title": "Vai alla Home"
   },
   "memo": {
-    "memo": "Memo"
+    "memo": "Memo",
+    "memoList": "Lista Memo",
+    "newMemo": "Nuovo Memo",
+    "save": "Salva",
+    "delete": "Elimina",
+    "pin": "Fissa",
+    "unpin": "Rimuovi",
+    "edit": "Modifica",
+    "cancel": "Annulla",
+    "defaultTitle": "Nuovo Memo",
+    "deleteConfirm": "Sei sicuro di voler eliminare questo memo?",
+    "memoContentPlaceholder": "Inserisci il contenuto del memo...",
+    "memoTitlePlaceholder": "Titolo",
+    "selectMemoOr": "Seleziona un memo o",
+    "createNewMemo": "Crea nuovo memo",
+    "noContent": "Nessun contenuto",
+    "noSearchResults": "Nessun risultato di ricerca",
+    "noMemos": "Nessun memo",
+    "searchMemo": "Cerca memo"
   }
 }

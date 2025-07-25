@@ -151,6 +151,24 @@
     "title": "گھر جائیں"
   },
   "memo": {
-    "memo": "میمو"
+    "memo": "میمو",
+    "memoList": "میمو فہرست",
+    "newMemo": "نیا میمو",
+    "save": "محفوظ کریں",
+    "delete": "حذف کریں",
+    "pin": "پن کریں",
+    "unpin": "ان پن کریں",
+    "edit": "ترمیم کریں",
+    "cancel": "منسوخ کریں",
+    "defaultTitle": "نیا میمو",
+    "deleteConfirm": "کیا آپ واقعی اس میمو کو حذف کرنا چاہتے ہیں؟",
+    "memoContentPlaceholder": "میمو کا مواد درج کریں...",
+    "memoTitlePlaceholder": "عنوان",
+    "selectMemoOr": "ایک میمو منتخب کریں یا",
+    "createNewMemo": "نیا میمو بنائیں",
+    "noContent": "کوئی مواد نہیں",
+    "noSearchResults": "کوئی تلاش کے نتائج نہیں",
+    "noMemos": "کوئی میمو نہیں",
+    "searchMemo": "میمو تلاش کریں"
   }
 }

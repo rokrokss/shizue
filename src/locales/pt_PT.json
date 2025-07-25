@@ -151,6 +151,24 @@
     "title": "Ir para o Início"
   },
   "memo": {
-    "memo": "Memo"
+    "memo": "Memo",
+    "memoList": "Lista de Notas",
+    "newMemo": "Novo Memo",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "pin": "Fixar",
+    "unpin": "Desafixar",
+    "edit": "Editar",
+    "cancel": "Cancelar",
+    "defaultTitle": "Novo Memo",
+    "deleteConfirm": "Tem a certeza de que pretende eliminar este memo?",
+    "memoContentPlaceholder": "Introduza o conteúdo do memo...",
+    "memoTitlePlaceholder": "Título",
+    "selectMemoOr": "Seleccione um memo ou",
+    "createNewMemo": "Criar novo memo",
+    "noContent": "Sem conteúdo",
+    "noSearchResults": "Sem resultados de pesquisa",
+    "noMemos": "Sem memos",
+    "searchMemo": "Pesquisar memo"
   }
 }

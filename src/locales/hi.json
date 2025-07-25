@@ -151,6 +151,24 @@
     "title": "होम पर जाएं"
   },
   "memo": {
-    "memo": "मेमो"
+    "memo": "मेमो",
+    "memoList": "मेमो सूची",
+    "newMemo": "नया मेमो",
+    "save": "सेव करें",
+    "delete": "डिलीट करें",
+    "pin": "पिन करें",
+    "unpin": "अनपिन करें",
+    "edit": "संपादित करें",
+    "cancel": "रद्द करें",
+    "defaultTitle": "नया मेमो",
+    "deleteConfirm": "क्या आप वाकई इस मेमो को हटाना चाहते हैं?",
+    "memoContentPlaceholder": "मेमो सामग्री दर्ज करें...",
+    "memoTitlePlaceholder": "शीर्षक",
+    "selectMemoOr": "एक मेमो चुनें या",
+    "createNewMemo": "नया मेमो बनाएं",
+    "noContent": "कोई सामग्री नहीं",
+    "noSearchResults": "कोई खोज परिणाम नहीं",
+    "noMemos": "कोई मेमो नहीं",
+    "searchMemo": "मेमो खोजें"
   }
 }
