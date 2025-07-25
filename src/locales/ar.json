@@ -151,6 +151,24 @@
     "title": "الانتقال إلى الرئيسية"
   },
   "memo": {
-    "memo": "مذكرة"
+    "memo": "مذكرة",
+    "memoList": "قائمة المذكرات",
+    "newMemo": "مذكرة جديدة",
+    "save": "حفظ",
+    "delete": "حذف",
+    "pin": "تثبيت",
+    "unpin": "إلغاء التثبيت",
+    "edit": "تحرير",
+    "cancel": "إلغاء",
+    "defaultTitle": "مذكرة جديدة",
+    "deleteConfirm": "هل أنت متأكد من أنك تريد حذف هذه المذكرة؟",
+    "memoContentPlaceholder": "أدخل محتوى المذكرة...",
+    "memoTitlePlaceholder": "العنوان",
+    "selectMemoOr": "اختر مذكرة أو",
+    "createNewMemo": "إنشاء مذكرة جديدة",
+    "noContent": "لا يوجد محتوى",
+    "noSearchResults": "لا توجد نتائج بحث",
+    "noMemos": "لا توجد مذكرات",
+    "searchMemo": "البحث في المذكرات"
   }
 }

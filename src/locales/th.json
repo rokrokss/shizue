@@ -151,6 +151,24 @@
     "title": "ไปยังหน้าแรก"
   },
   "memo": {
-    "memo": "บันทึก"
+    "memo": "บันทึก",
+    "memoList": "รายการบันทึก",
+    "newMemo": "บันทึกใหม่",
+    "save": "บันทึก",
+    "delete": "ลบ",
+    "pin": "ปักหมุด",
+    "unpin": "เลิกปักหมุด",
+    "edit": "แก้ไข",
+    "cancel": "ยกเลิก",
+    "defaultTitle": "บันทึกใหม่",
+    "deleteConfirm": "คุณแน่ใจหรือไม่ว่าต้องการลบบันทึกนี้?",
+    "memoContentPlaceholder": "กรอกเนื้อหาของบันทึก...",
+    "memoTitlePlaceholder": "หัวข้อ",
+    "selectMemoOr": "เลือกบันทึกหรือ",
+    "createNewMemo": "สร้างบันทึกใหม่",
+    "noContent": "ไม่มีเนื้อหา",
+    "noSearchResults": "ไม่มีผลการค้นหา",
+    "noMemos": "ไม่มีบันทึก",
+    "searchMemo": "ค้นหาบันทึก"
   }
 }

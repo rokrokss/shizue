@@ -151,6 +151,24 @@
     "title": "হোমে যান"
   },
   "memo": {
-    "memo": "মেমো"
+    "memo": "মেমো",
+    "memoList": "মেমো তালিকা",
+    "newMemo": "নতুন মেমো",
+    "save": "সংরক্ষণ",
+    "delete": "মুছুন",
+    "pin": "পিন করুন",
+    "unpin": "আনপিন করুন",
+    "edit": "সম্পাদনা",
+    "cancel": "বাতিল",
+    "defaultTitle": "নতুন মেমো",
+    "deleteConfirm": "আপনি কি নিশ্চিত যে আপনি এই মেমোটি মুছে ফেলতে চান?",
+    "memoContentPlaceholder": "মেমোর বিষয়বস্তু লিখুন...",
+    "memoTitlePlaceholder": "শিরোনাম",
+    "selectMemoOr": "একটি মেমো নির্বাচন করুন বা",
+    "createNewMemo": "নতুন মেমো তৈরি করুন",
+    "noContent": "কোনো বিষয়বস্তু নেই",
+    "noSearchResults": "কোনো অনুসন্ধান ফলাফল নেই",
+    "noMemos": "কোনো মেমো নেই",
+    "searchMemo": "মেমো অনুসন্ধান"
   }
 }

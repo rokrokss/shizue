@@ -151,6 +151,24 @@
     "title": "홈으로 이동"
   },
   "memo": {
-    "memo": "메모"
+    "memo": "메모",
+    "memoList": "메모 목록",
+    "newMemo": "새 메모",
+    "save": "저장",
+    "delete": "삭제",
+    "pin": "고정",
+    "unpin": "고정 해제",
+    "edit": "수정",
+    "cancel": "취소",
+    "defaultTitle": "새로운 메모",
+    "deleteConfirm": "이 메모를 삭제하시겠습니까?",
+    "memoContentPlaceholder": "메모 내용을 입력하세요...",
+    "memoTitlePlaceholder": "제목",
+    "selectMemoOr": "메모를 선택하거나",
+    "createNewMemo": "새 메모 만들기",
+    "noContent": "내용 없음",
+    "noSearchResults": "검색 결과가 없습니다.",
+    "noMemos": "메모가 없습니다.",
+    "searchMemo": "메모 검색"
   }
 }

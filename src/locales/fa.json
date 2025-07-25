@@ -151,6 +151,24 @@
     "title": "رفتن به خانه"
   },
   "memo": {
-    "memo": "یادداشت"
+    "memo": "یادداشت",
+    "memoList": "فهرست یادداشت",
+    "newMemo": "یادداشت جدید",
+    "save": "ذخیره",
+    "delete": "حذف",
+    "pin": "سنجاق کردن",
+    "unpin": "برداشتن سنجاق",
+    "edit": "ویرایش",
+    "cancel": "لغو",
+    "defaultTitle": "یادداشت جدید",
+    "deleteConfirm": "آیا مطمئن هستید که می‌خواهید این یادداشت را حذف کنید؟",
+    "memoContentPlaceholder": "محتوای یادداشت را وارد کنید...",
+    "memoTitlePlaceholder": "عنوان",
+    "selectMemoOr": "یک یادداشت انتخاب کنید یا",
+    "createNewMemo": "یادداشت جدید ایجاد کنید",
+    "noContent": "بدون محتوا",
+    "noSearchResults": "نتیجه جستجو یافت نشد",
+    "noMemos": "یادداشتی وجود ندارد",
+    "searchMemo": "جستجوی یادداشت"
   }
 }

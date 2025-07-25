@@ -35,10 +35,21 @@ export interface TokenUsage {
   createdAt: number;
 }
 
+export interface Memo {
+  id: string;
+  title: string;
+  content: string;
+  folder?: string;
+  isPinned: boolean;
+  createdAt: number;
+  updatedAt: number;
+}
+
 class DB extends Dexie {
   messages!: Table<Message, string>;
   threads!: Table<ThreadMeta, string>;
   tokenUsage!: Table<TokenUsage, string>;
+  memos!: Table<Memo, string>;
 
   constructor() {
     super('ShizueDB');
@@ -64,6 +75,13 @@ class DB extends Dexie {
       messages: 'id, threadId, createdAt',
       threads: 'id, updatedAt',
       tokenUsage: 'id, date, model, provider, createdAt',
+    });
+    this.version(5).stores({
+      // 'pk, ...indexes'
+      messages: 'id, threadId, createdAt',
+      threads: 'id, updatedAt',
+      tokenUsage: 'id, date, model, provider, createdAt',
+      memos: 'id, folder, isPinned, createdAt, updatedAt',
     });
   }
 }
@@ -128,11 +146,11 @@ export const recordTokenUsage = async (usage: Omit<TokenUsage, 'id'>) => {
   await db.tokenUsage.add({ ...usage, id });
 };
 
-export const getTokenUsageByDateRange = async (startDate: string, endDate: string): Promise<TokenUsage[]> => {
-  return db.tokenUsage
-    .where('date')
-    .between(startDate, endDate, true, true)
-    .sortBy('createdAt');
+export const getTokenUsageByDateRange = async (
+  startDate: string,
+  endDate: string
+): Promise<TokenUsage[]> => {
+  return db.tokenUsage.where('date').between(startDate, endDate, true, true).sortBy('createdAt');
 };
 
 export const getTokenUsageByDate = async (date: string): Promise<TokenUsage[]> => {
@@ -155,4 +173,63 @@ export const getTotalTokenUsage = async (): Promise<{
     }),
     { totalInputTokens: 0, totalOutputTokens: 0, totalTokens: 0, totalRequests: 0 }
   );
+};
+
+// Memo related functions
+export const addMemo = (memo: Memo) => db.memos.add(memo);
+
+export const updateMemo = async (id: string, updates: Partial<Memo>) => {
+  await db.memos.update(id, { ...updates, updatedAt: Date.now() });
+};
+
+export const deleteMemo = async (id: string) => {
+  await db.memos.delete(id);
+};
+
+export const getMemo = (id: string) => db.memos.get(id);
+
+export const listMemos = async (folder?: string) => {
+  let query = db.memos.orderBy('updatedAt').reverse();
+
+  if (folder) {
+    const memos = await query.toArray();
+    return memos.filter((memo) => memo.folder === folder);
+  }
+
+  return query.toArray();
+};
+
+export const searchMemos = async (searchTerm: string) => {
+  const allMemos = await db.memos.toArray();
+  const lowerSearchTerm = searchTerm.toLowerCase();
+
+  return allMemos
+    .filter(
+      (memo) =>
+        memo.title.toLowerCase().includes(lowerSearchTerm) ||
+        memo.content.toLowerCase().includes(lowerSearchTerm)
+    )
+    .sort((a, b) => b.updatedAt - a.updatedAt);
+};
+
+export const toggleMemoPinned = async (id: string) => {
+  const memo = await db.memos.get(id);
+  if (memo) {
+    await db.memos.update(id, { isPinned: !memo.isPinned, updatedAt: Date.now() });
+  }
+};
+
+export const createMemo = async (title: string, content: string = '', folder?: string) => {
+  const id = crypto.randomUUID();
+  const now = Date.now();
+  await db.memos.add({
+    id,
+    title,
+    content,
+    folder,
+    isPinned: false,
+    createdAt: now,
+    updatedAt: now,
+  });
+  return id;
 };

@@ -151,6 +151,24 @@
     "title": "ホームに移動"
   },
   "memo": {
-    "memo": "メモ"
+    "memo": "メモ",
+    "memoList": "メモ一覧",
+    "newMemo": "新しいメモ",
+    "save": "保存",
+    "delete": "削除",
+    "pin": "ピン留め",
+    "unpin": "ピン留め解除",
+    "edit": "編集",
+    "cancel": "キャンセル",
+    "defaultTitle": "新しいメモ",
+    "deleteConfirm": "このメモを削除しますか？",
+    "memoContentPlaceholder": "メモの内容を入力してください...",
+    "memoTitlePlaceholder": "タイトル",
+    "selectMemoOr": "メモを選択するか",
+    "createNewMemo": "新しいメモを作成",
+    "noContent": "内容なし",
+    "noSearchResults": "検索結果がありません",
+    "noMemos": "メモがありません",
+    "searchMemo": "メモを検索"
   }
 }

@@ -151,6 +151,24 @@
     "title": "Đi tới trang chủ"
   },
   "memo": {
-    "memo": "Ghi chú"
+    "memo": "Ghi chú",
+    "memoList": "Danh sách ghi chú",
+    "newMemo": "Ghi chú mới",
+    "save": "Lưu",
+    "delete": "Xóa",
+    "pin": "Ghim",
+    "unpin": "Bỏ ghim",
+    "edit": "Chỉnh sửa",
+    "cancel": "Hủy",
+    "defaultTitle": "Ghi chú mới",
+    "deleteConfirm": "Bạn có chắc chắn muốn xóa ghi chú này không?",
+    "memoContentPlaceholder": "Nhập nội dung ghi chú...",
+    "memoTitlePlaceholder": "Tiêu đề",
+    "selectMemoOr": "Chọn một ghi chú hoặc",
+    "createNewMemo": "Tạo ghi chú mới",
+    "noContent": "Không có nội dung",
+    "noSearchResults": "Không có kết quả tìm kiếm",
+    "noMemos": "Không có ghi chú",
+    "searchMemo": "Tìm kiếm ghi chú"
   }
 }
