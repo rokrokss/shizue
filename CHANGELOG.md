@@ -2,6 +2,7 @@
 
 ## v0.1.15
 
+- Memo App Feature
 - fix Chat duplicate issue
 
 ## v0.1.14
