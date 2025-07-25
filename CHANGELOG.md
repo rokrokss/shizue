@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.15
+
+- fix Chat duplicate issue
+
 ## v0.1.14
 
 - Use images in chat
