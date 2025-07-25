@@ -70,6 +70,7 @@ const ChatContainer = ({
                     color: theme == 'dark' ? 'white' : 'black',
                   }}
                 >
+                  {/* index: {idx} <br /> */}
                   <div
                     className="sz:flex sz:flex-col sz:text-left sz:w-full"
                     style={{
@@ -90,7 +91,13 @@ const ChatContainer = ({
                       getMarkdownText(m.content)
                     )}
                   </div>
-
+                  {/* <div className="sz:text-xs sz:text-gray-500 sz:pl-0.5 sz:pt-1">
+                    onInterrupt: {m.onInterrupt ? 'true' : 'false'} <br />
+                    stopped: {m.stopped ? 'true' : 'false'} <br />
+                    done: {m.done ? 'true' : 'false'} <br />
+                    role: {m.role} <br />
+                    actionType: {m.actionType}
+                  </div> */}
                   {isRetryButtonVisible ? (
                     <div className="sz:text-xs sz:text-gray-500 sz:pl-0.5 sz:pt-1">
                       <Button

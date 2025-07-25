@@ -12,10 +12,10 @@ import {
 } from '@/hooks/global';
 import { addMessage, createThread } from '@/lib/indexDB';
 import { getSummarizePageTextPrompt } from '@/lib/prompts';
-import { readStorage } from '@/lib/storageBackend';
+import { readStorage, setStorage } from '@/lib/storageBackend';
 import { debugLog, errorLog } from '@/logs';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -33,19 +33,42 @@ const SidePanelProvider = ({
   const chatStatus = useAtomValue(chatStatusAtom);
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const isProcessingActionRef = useRef(false);
 
-  const rollbackActionType = useCallback(() => {
+  const rollbackActionType = useCallback(async () => {
     setActionType('chat');
+    // Clear the action-specific data from global state to prevent duplicate processing
+    const prevGlobalState = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
+    await setStorage(STORAGE_GLOBAL_STATE, {
+      ...(prevGlobalState ?? {}),
+      actionType: 'chat',
+      summaryTitle: undefined,
+      summaryPageLink: undefined,
+      summaryText: undefined,
+      imageBase64: undefined,
+      imageUrl: undefined,
+    });
   }, [setActionType]);
 
   const getInitData = useCallback(async () => {
+    if (isProcessingActionRef.current) {
+      debugLog('SidePanelProvider: [getInitData] already processing action, skipping');
+      return;
+    }
+    
     const initData = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
     debugLog('initData', initData);
+    
     if (isChatWaiting(chatStatus)) {
       debugLog('SidePanelProvider: [getInitData] skip initData for chatStatus', chatStatus);
+      return;
     } else if (initData?.actionType === 'chat' && window.location.hash === '#/shizue-pdf') {
       debugLog('SidePanelProvider: [getInitData] skip initData for actionType chat and pdf url');
+      return;
     } else if (initData?.actionType === 'askForSummary') {
+      // Clear the action immediately to prevent duplicate processing
+      isProcessingActionRef.current = true;
+      await rollbackActionType();
       const { summaryTitle, summaryText, summaryPageLink } = initData;
 
       debugLog('SidePanelProvider: [getInitData] summaryTitle', summaryTitle);
@@ -99,6 +122,9 @@ const SidePanelProvider = ({
         }, 100);
       }
     } else if (initData?.actionType === 'describeImage') {
+      // Clear the action immediately to prevent duplicate processing
+      isProcessingActionRef.current = true;
+      await rollbackActionType();
       const { imageBase64, imageUrl } = initData;
 
       debugLog('SidePanelProvider: [getInitData] describeImage', imageUrl);
@@ -143,6 +169,9 @@ const SidePanelProvider = ({
         navigate('/');
       }
     } else if (initData?.actionType === 'extractImageText') {
+      // Clear the action immediately to prevent duplicate processing
+      isProcessingActionRef.current = true;
+      await rollbackActionType();
       const { imageBase64, imageUrl } = initData;
 
       debugLog('SidePanelProvider: [getInitData] extractImageText', imageUrl);
@@ -186,7 +215,7 @@ const SidePanelProvider = ({
         navigate('/');
       }
     }
-    rollbackActionType();
+    isProcessingActionRef.current = false;
   }, [threadId, setThreadId, rollbackActionType, chatStatus, navigate, t]);
 
   const handleMessage = useCallback(
@@ -206,7 +235,7 @@ const SidePanelProvider = ({
   useEffect(() => {
     if (!sidePanelHydrated) return;
     getInitData();
-  }, [sidePanelHydrated, getInitData, navigate]);
+  }, [sidePanelHydrated]);
 
   useEffect(() => {
     // This effect runs after the first render.
