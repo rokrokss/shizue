@@ -51,6 +51,7 @@ const Chat = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const aiIndexRef = useRef<number>(-1);
   const actionType = useRef<ActionType>('chat');
+  const isLoadingThreadRef = useRef(false);
 
   const { t } = useTranslation();
 
@@ -127,6 +128,7 @@ const Chat = () => {
       setChatStatus('waiting');
 
       actionType.current = requestedActionType;
+      debugLog('handleRequestFromContextMenu addAIMessage');
       addAIMessage();
 
       scrollToBottomThrottled();
@@ -145,20 +147,24 @@ const Chat = () => {
               return updatedMessages;
             }),
           onDone: () => {
-            setMessages((cur) => updateAIMessage(cur, {
-              done: true,
-              onInterrupt: false,
-            }));
+            setMessages((cur) =>
+              updateAIMessage(cur, {
+                done: true,
+                onInterrupt: false,
+              })
+            );
             touchThread(tId);
             setChatStatus('idle');
             scrollToBottomThrottled();
           },
           onError: (err) => {
             errorLog('Chat Stream error:', err);
-            setMessages((cur) => updateAIMessage(cur, {
-              done: false,
-              onInterrupt: true,
-            }));
+            setMessages((cur) =>
+              updateAIMessage(cur, {
+                done: false,
+                onInterrupt: true,
+              })
+            );
             touchThread(tId);
             setChatStatus('idle');
             scrollToBottomThrottled();
@@ -171,20 +177,34 @@ const Chat = () => {
 
   const loadThreadBackground = useCallback(
     async (tId: string) => {
+      if (isLoadingThreadRef.current) {
+        debugLog('loadThreadBackground skipped - already loading');
+        return;
+      }
+      isLoadingThreadRef.current = true;
+      debugLog('loadThreadBackground called with threadId:', tId);
       chrome.runtime
         .sendMessage({ action: MESSAGE_LOAD_THREAD, threadId: tId })
         .then((res: Message[]) => {
           setMessages(res);
           debugLog('loadThreadBackground set messages', res);
           if (res.length > 0) {
+            const lastMessage = res[res.length - 1];
+            // Check if the last message is a human message that needs an AI response
             if (
-              res[res.length - 1].actionType === 'askForSummary' ||
-              res[res.length - 1].actionType === 'describeImage' ||
-              res[res.length - 1].actionType === 'extractImageText'
+              lastMessage.role === 'human' &&
+              (lastMessage.actionType === 'askForSummary' ||
+                lastMessage.actionType === 'describeImage' ||
+                lastMessage.actionType === 'extractImageText')
             ) {
-              handleRequestFromContextMenu(tId, res[res.length - 1].actionType);
+              // Only trigger AI response if the last message is the human message
+              // (no AI message exists yet)
+              handleRequestFromContextMenu(tId, lastMessage.actionType);
             }
           }
+        })
+        .finally(() => {
+          isLoadingThreadRef.current = false;
         });
     },
     [handleRequestFromContextMenu]
