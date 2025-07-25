@@ -149,5 +149,8 @@
   },
   "home": {
     "title": "Đi tới trang chủ"
+  },
+  "memo": {
+    "memo": "Ghi chú"
   }
 }

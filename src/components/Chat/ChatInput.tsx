@@ -3,6 +3,7 @@ import { ChatStatus, isChatWaiting } from '@/hooks/chat';
 import { useThemeValue } from '@/hooks/layout';
 import { debugLog } from '@/logs';
 import {
+  EditOutlined,
   FilePdfOutlined,
   FolderOutlined,
   LineChartOutlined,
@@ -41,7 +42,6 @@ const ChatInput = ({
   const theme = useThemeValue();
   const navigate = useNavigate();
 
-
   const handleSubmit = async (text: string) => {
     if (text !== '' || uploadedImages.length > 0) {
       onSubmit(text, uploadedImages);
@@ -66,6 +66,11 @@ const ChatInput = ({
   const handlePdfClick = () => {
     debugLog('ChatInput: [handlePdfClick] navigate to /shizue-pdf');
     navigate('/shizue-pdf');
+  };
+
+  const handleMemoClick = () => {
+    debugLog('ChatInput: [handleMemoClick] navigate to /shizue-memo');
+    navigate('/shizue-memo');
   };
 
   const handleTranslateModeClick = () => {
@@ -108,7 +113,7 @@ const ChatInput = ({
 
     const files = Array.from(e.dataTransfer.files);
     const imageFiles = files.filter((file) => file.type.startsWith('image/'));
-    
+
     if (imageFiles.length > 0) {
       setUploadedImages((prev) => [...prev, ...imageFiles]);
     }
@@ -298,6 +303,35 @@ const ChatInput = ({
                   size="middle"
                 ></Button>
               </Upload>
+            </Tooltip>
+            <Tooltip
+              placement="top"
+              title={
+                <div
+                  className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
+                    theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
+                  }`}
+                >
+                  {t('memo.memo')}
+                </div>
+              }
+              color={theme == 'dark' ? '#505362' : 'white'}
+              className="sz:font-ycom"
+            >
+              <Button
+                onClick={() => handleMemoClick()}
+                type="text"
+                icon={
+                  <EditOutlined
+                    style={{
+                      fontSize: '20px',
+                      color: 'rgba(0,0,0,0.88)',
+                      filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                    }}
+                  />
+                }
+                size="middle"
+              ></Button>
             </Tooltip>
           </div>
         </div>

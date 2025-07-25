@@ -20,6 +20,14 @@ export async function initPdfPageContent() {
   });
 }
 
+export async function initMemoPageContent() {
+  const prevGlobalState = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
+  await setStorage(STORAGE_GLOBAL_STATE, {
+    ...(prevGlobalState ?? {}),
+    actionType: 'memo',
+  });
+}
+
 export async function initDescribeImageContent(imageBase64: string, imageUrl: string) {
   const prevGlobalState = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
   await setStorage(STORAGE_GLOBAL_STATE, {

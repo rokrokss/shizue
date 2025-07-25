@@ -7,7 +7,13 @@ export const sidePanelHydratedAtom = atom(false);
 
 export const messageAddedInPanelAtom = atom<number | null>(null);
 
-export type ActionType = 'chat' | 'askForSummary' | 'translatePdf' | 'describeImage' | 'extractImageText';
+export type ActionType =
+  | 'chat'
+  | 'askForSummary'
+  | 'translatePdf'
+  | 'describeImage'
+  | 'extractImageText'
+  | 'memo';
 
 export type GlobalState = {
   actionType: ActionType;

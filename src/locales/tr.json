@@ -149,5 +149,8 @@
   },
   "home": {
     "title": "Ana Sayfaya Git"
+  },
+  "memo": {
+    "memo": "Not"
   }
 }

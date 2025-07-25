@@ -149,5 +149,8 @@
   },
   "home": {
     "title": "Przejdź do strony głównej"
+  },
+  "memo": {
+    "memo": "Notatka"
   }
 }
