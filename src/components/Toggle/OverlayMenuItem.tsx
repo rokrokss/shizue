@@ -22,17 +22,18 @@ const OverlayMenuItem = forwardRef<HTMLDivElement, OverlayMenuItemProps>(
         <Tooltip
           placement="left"
           title={
-            <div
-              className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
-                theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
-              }`}
-            >
-              {tooltipMessage}
-            </div>
+            hideTooltip ? null : (
+              <div
+                className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
+                  theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
+                }`}
+              >
+                {tooltipMessage}
+              </div>
+            )
           }
           color={theme == 'dark' ? '#505362' : 'white'}
           mouseEnterDelay={0.03}
-          zIndex={hideTooltip ? -1 : 2147483647}
         >
           <div
             className="sz:cursor-pointer sz:rounded-full sz:flex sz:items-center sz:justify-center"
