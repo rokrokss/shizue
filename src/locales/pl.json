@@ -1,6 +1,6 @@
 {
   "extension_name": "Shizue",
-  "extension_description": "Rozszerzenie przeglądarki oparte na asystencie AI",
+  "extension_description": "Tłumacz AI, Asystent Supermocy LLM",
   "toggle_description": "Przełącz Shizue",
   "overlayMenu": {
     "translateSettings": "Ustawienia tłumaczenia",

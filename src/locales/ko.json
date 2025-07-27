@@ -1,6 +1,6 @@
 {
   "extension_name": "시즈에",
-  "extension_description": "AI 어시스턴트 기반 브라우저 강화 익스텐션",
+  "extension_description": "AI 번역가, LLM 슈퍼파워 어시스턴트",
   "toggle_description": "시즈에를 부릅니다.",
   "overlayMenu": {
     "translateSettings": "번역 설정",

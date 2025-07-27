@@ -1,6 +1,6 @@
 {
   "extension_name": "Shizue",
-  "extension_description": "এআই সহকারী-ভিত্তিক ব্রাউজার উন্নতকরণ এক্সটেনশন",
+  "extension_description": "AI অনুবাদক, LLM সুপারপাওয়ার সহায়ক",
   "toggle_description": "Shizue টগল করুন",
   "overlayMenu": {
     "translateSettings": "অনুবাদ সেটিংস",

@@ -1,6 +1,6 @@
 {
   "extension_name": "Shizue",
-  "extension_description": "إضافة لتحسين المتصفح تعتمد على مساعد الذكاء الاصطناعي",
+  "extension_description": "مترجم ذكي، مساعد خارق LLM",
   "toggle_description": "تبديل Shizue",
   "overlayMenu": {
     "translateSettings": "إعدادات الترجمة",

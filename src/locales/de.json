@@ -1,6 +1,6 @@
 {
   "extension_name": "Shizue",
-  "extension_description": "KI-Assistent-basierte Browser-Erweiterung",
+  "extension_description": "KI-Übersetzer, LLM-Superkraft-Assistent",
   "toggle_description": "Shizue umschalten",
   "overlayMenu": {
     "translateSettings": "Übersetzungseinstellungen",
