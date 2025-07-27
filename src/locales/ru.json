@@ -1,6 +1,6 @@
 {
   "extension_name": "Shizue",
-  "extension_description": "Расширение для улучшения браузера на базе AI-ассистента",
+  "extension_description": "ИИ-переводчик, LLM-суперассистент",
   "toggle_description": "Переключить Shizue",
   "overlayMenu": {
     "translateSettings": "Настройки перевода",

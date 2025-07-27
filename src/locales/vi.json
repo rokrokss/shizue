@@ -1,6 +1,6 @@
 {
   "extension_name": "Shizue",
-  "extension_description": "Tiện ích mở rộng trình duyệt dựa trên AI Assistant",
+  "extension_description": "Người dịch AI, Trợ lý siêu năng lực LLM",
   "toggle_description": "Chuyển đổi Shizue",
   "overlayMenu": {
     "translateSettings": "Cài đặt dịch thuật",

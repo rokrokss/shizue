@@ -1,6 +1,6 @@
 {
   "extension_name": "Shizue",
-  "extension_description": "Extension d'amélioration du navigateur basée sur un assistant IA",
+  "extension_description": "Traducteur IA, Assistant de Super Pouvoirs LLM",
   "toggle_description": "Activer/Désactiver Shizue",
   "overlayMenu": {
     "translateSettings": "Paramètres de traduction",

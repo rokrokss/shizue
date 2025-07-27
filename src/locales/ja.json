@@ -1,6 +1,6 @@
 {
   "extension_name": "しずえ",
-  "extension_description": "AIアシスタントベースのブラウザ強化拡張機能",
+  "extension_description": "AI翻訳者、LLMスーパーパワーアシスタント",
   "toggle_description": "しずえを切り替え",
   "overlayMenu": {
     "translateSettings": "翻訳設定",

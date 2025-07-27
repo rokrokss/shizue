@@ -1,6 +1,6 @@
 {
   "extension_name": "Shizue",
-  "extension_description": "Yapay Zeka Asistanı tabanlı tarayıcı geliştirme eklentisi",
+  "extension_description": "AI Çevirmen, LLM Süper Güç Asistanı",
   "toggle_description": "Shizue'yi Aç/Kapat",
   "overlayMenu": {
     "translateSettings": "Çeviri ayarları",

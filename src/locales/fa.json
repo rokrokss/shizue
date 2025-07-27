@@ -1,6 +1,6 @@
 {
   "extension_name": "Shizue",
-  "extension_description": "افزونه بهبود مرورگر مبتنی بر دستیار هوش مصنوعی",
+  "extension_description": "مترجم هوشمند، دستیار ابرقدرتی LLM",
   "toggle_description": "Shizue را تغییر دهید",
   "overlayMenu": {
     "translateSettings": "تنظیمات ترجمه",

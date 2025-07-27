@@ -1,6 +1,6 @@
 {
   "extension_name": "Shizue",
-  "extension_description": "Kiongeza kivinjari cha AI Assistant",
+  "extension_description": "Mtafsiri wa AI, Msaidizi wa Nguvu za LLM",
   "toggle_description": "Badilisha Shizue",
   "overlayMenu": {
     "translateSettings": "Mipangilio ya kutafsiri",

@@ -1,6 +1,6 @@
 {
   "extension_name": "Shizue",
-  "extension_description": "AI Assistant-based browser enhancement extension",
+  "extension_description": "AI Translator, LLM Superpower Assistant",
   "toggle_description": "Toggle Shizue",
   "overlayMenu": {
     "translateSettings": "Translate settings",

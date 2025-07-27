@@ -1,6 +1,6 @@
 {
   "extension_name": "Shizue",
-  "extension_description": "基於AI助手的瀏覽器增強擴充功能",
+  "extension_description": "AI翻譯員，LLM超能力助手",
   "toggle_description": "切換 Shizue",
   "overlayMenu": {
     "translateSettings": "翻譯設定",

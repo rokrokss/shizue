@@ -78,9 +78,3 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 # 💬 Community & Feedback
 
 For suggestions, feedback, or discussions, join me on [Discord](https://discord.gg/ukfPmxsyEy).
-
-<br/>
-
-# 📄 License
-
-Shizue is licensed under the AGPL-3.0 License. See the [LICENSE](LICENSE) file for more details.
