@@ -248,7 +248,7 @@ const Toggle = () => {
 
   const handleExtractImageText = useCallback(
     async (srcUrl: string) => {
-      debugLog('Describe image clicked', srcUrl);
+      debugLog('Extract image text clicked', srcUrl);
       if (isDragging) return;
 
       // 이미지를 다운로드하여 Base64로 변환
@@ -264,14 +264,14 @@ const Toggle = () => {
           void chrome.runtime
             .sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA })
             .catch((err) => {
-              debugLog('handleDescribeImage: Panel not opened yet', err);
+              debugLog('handleExtractImageText: Panel not opened yet', err);
             });
           setPanelOpen();
         };
 
         reader.readAsDataURL(blob);
       } catch (error) {
-        debugLog('handleDescribeImage: Failed to load image', error);
+        debugLog('handleExtractImageText: Failed to load image', error);
       }
     },
     [isDragging]

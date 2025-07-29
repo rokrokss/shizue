@@ -68,21 +68,29 @@ export class ChatModelHandler {
       let buffer = '';
       let lastChunk: AIMessageChunk | undefined;
 
-      const sendBufferToPort = async () => {
+      const sendBufferToPort = () => {
         const threshold = fullResponseContent ? STREAM_FLUSH_THRESHOLD_1 : STREAM_FLUSH_THRESHOLD_0;
         if (buffer.length >= threshold) {
-          fullResponseContent += buffer;
-          await db.messages.update(messageId, { content: fullResponseContent, done: false });
-          port.postMessage({ delta: buffer });
+          const currentBuffer = buffer;
+          fullResponseContent += currentBuffer;
           buffer = '';
+          // DB 업데이트와 포트 메시지는 비동기로 처리하되 순서는 보장
+          db.messages.update(messageId, { content: fullResponseContent, done: false }).catch((err) => {
+            errorLog('Failed to update message in DB:', err);
+          });
+          port.postMessage({ delta: currentBuffer });
         }
       };
 
       for await (const chunk of stream) {
         lastChunk = chunk;
         const delta = typeof chunk === 'string' ? chunk : (chunk.content as string) ?? '';
+        
+        // 빈 델타는 무시
+        if (!delta) continue;
+        
         buffer += delta;
-        await sendBufferToPort();
+        sendBufferToPort();
       }
 
       if (buffer) {
@@ -136,7 +144,7 @@ export class ChatModelHandler {
         id: messageId,
         threadId,
         role: 'ai',
-        actionType: 'chat',
+        actionType: actionType,
         content: '',
         createdAt: Date.now(),
         done: false,
