@@ -3,6 +3,7 @@
   "extension_description": "AI مترجم + LLM سپر پاور اسسٹنٹ",
   "toggle_description": "Shizue کو ٹوگل کریں",
   "overlayMenu": {
+    "shizue": "Shizue",
     "translateSettings": "ترجمہ کی ترتیبات",
     "translatePage": "اس صفحے کا ترجمہ کریں",
     "summarizePage": "اس صفحے کا خلاصہ کریں",

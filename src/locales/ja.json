@@ -3,6 +3,7 @@
   "extension_description": "AI翻訳者 + LLMスーパーパワーアシスタント",
   "toggle_description": "しずえを切り替え",
   "overlayMenu": {
+    "shizue": "しずえ",
     "translateSettings": "翻訳設定",
     "translatePage": "このページを翻訳",
     "summarizePage": "このページを要約",

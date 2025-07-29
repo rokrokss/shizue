@@ -3,6 +3,7 @@
   "extension_description": "AI Çevirmen + LLM Süper Güç Asistanı",
   "toggle_description": "Shizue'yi Aç/Kapat",
   "overlayMenu": {
+    "shizue": "Shizue",
     "translateSettings": "Çeviri ayarları",
     "translatePage": "Bu sayfayı çevir",
     "summarizePage": "Bu sayfayı özetle",

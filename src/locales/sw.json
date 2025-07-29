@@ -3,6 +3,7 @@
   "extension_description": "Mtafsiri wa AI + Msaidizi wa Nguvu za LLM",
   "toggle_description": "Badilisha Shizue",
   "overlayMenu": {
+    "shizue": "Shizue",
     "translateSettings": "Mipangilio ya kutafsiri",
     "translatePage": "Tafsiri ukurasa huu",
     "summarizePage": "Muhtasari wa ukurasa huu",
