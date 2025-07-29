@@ -1,6 +1,6 @@
 {
-  "extension_name": "Shizue",
-  "extension_description": "AI Translator, LLM Superpower Assistant",
+  "extension_name": "Shizue: AI Translator + LLM Superpower Assistant",
+  "extension_description": "AI Translator + LLM Superpower Assistant",
   "toggle_description": "Toggle Shizue",
   "overlayMenu": {
     "translateSettings": "Mga setting ng pagsasalin",

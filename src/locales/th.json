@@ -1,6 +1,6 @@
 {
-  "extension_name": "Shizue",
-  "extension_description": "AI แปลภาษา, ผู้ช่วยพิเศษ LLM",
+  "extension_name": "Shizue: ผู้แปลภาษา AI + ผู้ช่วย LLM ซุปเปอร์พาวเวอร์",
+  "extension_description": "AI แปลภาษา + ผู้ช่วยพิเศษ LLM",
   "toggle_description": "สลับการทำงาน Shizue",
   "overlayMenu": {
     "translateSettings": "การตั้งค่าการแปล",

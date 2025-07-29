@@ -1,6 +1,6 @@
 {
-  "extension_name": "Shizue",
-  "extension_description": "AI Çevirmen, LLM Süper Güç Asistanı",
+  "extension_name": "Shizue: AI Çevirmen + LLM Süper Güç Asistanı",
+  "extension_description": "AI Çevirmen + LLM Süper Güç Asistanı",
   "toggle_description": "Shizue'yi Aç/Kapat",
   "overlayMenu": {
     "translateSettings": "Çeviri ayarları",

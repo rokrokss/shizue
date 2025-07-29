@@ -1,6 +1,6 @@
 {
-  "extension_name": "Shizue",
-  "extension_description": "مترجم ذكي، مساعد خارق LLM",
+  "extension_name": "Shizue: مترجم الذكاء الاصطناعي + مساعد القوة الخارقة LLM",
+  "extension_description": "مترجم ذكي + مساعد خارق LLM",
   "toggle_description": "تبديل Shizue",
   "overlayMenu": {
     "translateSettings": "إعدادات الترجمة",
