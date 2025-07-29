@@ -4,166 +4,169 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Shizue is a Chrome extension that integrates Large Language Models (LLMs) into web browsing. Built with WXT (Web Extension Toolkit), React, TypeScript, and Tailwind CSS.
+Shizue is a Chrome extension that integrates Large Language Models (LLMs) into web browsing. Free, open-source alternative to commercial services like Sider, enabling users to use their own API keys for OpenAI, Anthropic Claude, and Google Gemini.
 
 ## Development Commands
 
-### Local Development
 ```bash
 pnpm dev              # Development mode with hot-reloading
-```
-
-### Building
-```bash
+pnpm dev:firefox      # Firefox development mode
 pnpm build            # Production build
+pnpm build:firefox    # Firefox production build
 pnpm zip              # Create distribution ZIP
-```
-
-### Code Quality
-```bash
 pnpm compile          # TypeScript type checking
 ```
 
-### Installation for Testing
-1. Build the extension: `pnpm build`
-2. Go to `chrome://extensions`
+### Testing Extension
+1. Build: `pnpm build`
+2. Navigate to `chrome://extensions`
 3. Enable "Developer mode"
-4. Click "Load unpacked" and select `dist/chrome-mv3/`
+4. Click "Load unpacked" → select `dist/chrome-mv3/`
+
+### Debugging
+- **Background Script**: chrome://extensions → Service Worker → Inspect
+- **Side Panel**: Right-click panel → Inspect
+- **Content Scripts**: Regular page DevTools
 
 ## Architecture
 
-### Directory Structure
-- **src/entrypoints/** - Extension entry points
-  - `background/` - Service worker (background script) handling core extension logic
-  - `sidepanel/` - React app for the sidebar UI
-  - `*.content/` - Content scripts injected into web pages
-- **src/components/** - React components organized by feature
-- **src/services/** - Business logic and API integrations
-- **src/hooks/** - Custom React hooks for state management
-- **src/lib/** - Utility functions and helpers
-- **src/providers/** - React context providers
-- **src/locales/** - i18n translation files
+### High-Level Component Architecture
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     Chrome Extension                          │
+├─────────────────────┬───────────────────┬───────────────────┤
+│  Background Script  │    Side Panel     │  Content Scripts  │
+│  (Service Worker)   │   (React App)     │  (Page Injection) │
+├─────────────────────┼───────────────────┼───────────────────┤
+│ • Message Router    │ • Chat UI         │ • Toggle Button   │
+│ • API Management    │ • PDF Translator  │ • YouTube Captions│
+│ • Context Menus     │ • Memo/Notes      │ • Page Overlay    │
+│ • State Sync        │ • Settings        │ • Translation UI  │
+└─────────────────────┴───────────────────┴───────────────────┘
+```
+
+### Component Communication Flow
+1. **Chrome Runtime Messages** coordinate between all components
+2. **Port Connections** stream data for real-time features (chat, translation)
+3. **Storage Events** sync settings across components
+4. **Background Script** acts as central message router and state coordinator
 
 ### Key Technologies
-- **WXT** - Modern web extension framework
-- **React 19** with TypeScript
-- **Tailwind CSS v4** - Styling
-- **Ant Design (antd)** - UI component library
-- **LangChain** - LLM integration (OpenAI, Anthropic, Google)
-- **Jotai** - State management
-- **Dexie** - IndexedDB wrapper for local storage
+- **WXT** - Web extension framework with hot reload
+- **React 19** + TypeScript + Tailwind CSS v4 + Ant Design
+- **LangChain** - Unified interface for OpenAI, Anthropic, Google models
+- **Jotai** - Atomic state management
+- **Dexie** - IndexedDB wrapper for threads, messages, memos
 
-### Extension Architecture
-1. **Background Script** (`src/entrypoints/background/index.ts`) - Manages:
-   - Message passing between components
-   - Context menu creation
-   - State synchronization
-   - API key validation
+### Core Components & Responsibilities
 
-2. **Side Panel** - Main UI for chat, PDF translation, and settings
-   - Routes: `/chat`, `/shizue-pdf`, `/shizue-memo`, `/onboarding`
-   - Uses React Router for navigation
+**Background Service Worker** (`src/entrypoints/background/index.ts`)
+- Central message router handling all inter-component communication
+- Context menu management (translate, summarize, image OCR)
+- API key validation and storage
+- Side panel lifecycle control
 
-3. **Content Scripts**:
-   - `toggle.content` - Floating toggle button on web pages
-   - `youtube-caption-toggle.content` - YouTube caption translation
+**Side Panel React App** (`src/entrypoints/sidepanel/`)
+- Routes: `/` (chat), `/shizue-pdf`, `/shizue-memo`, `/onboarding`
+- Streaming chat with thread management
+- PDF translation preserving layout
+- Memo system with auto-save and pinning
 
-4. **Message Passing** - Chrome runtime messages coordinate between:
-   - Background script (service worker)
-   - Side panel
-   - Content scripts
-   - Popup/toggle components
+**Content Scripts**
+- `toggle.content` - Floating button + overlay menu
+- `youtube-caption-toggle.content` - Real-time caption translation
 
-### State Management
-- **Jotai** atoms for local state
-- **Chrome Storage API** for persistent settings
-- **IndexedDB** (via Dexie) for chat history and large data
+### Critical Multi-File Patterns
 
-### LLM Integration
-- Supports OpenAI, Anthropic Claude, and Google Gemini
-- API keys stored in Chrome storage
-- LangChain for unified LLM interface
-- Token usage tracking in `src/lib/tokenUsageTracker.ts`
+**Message Flow Pattern**
+```
+User Action → Content Script → Background Script → Side Panel
+                                    ↓
+                              Chrome Storage
+```
 
-### Key Features Implementation
-- **Bilingual Translation**: `src/components/Translation/ShizueTranslationOverlay.ts`
-- **PDF Translation**: `src/components/Pdf/` with pdf-lib
-- **YouTube Captions**: `src/components/Youtube/` with custom caption injection
-- **Chat Interface**: `src/components/Chat/` with streaming responses
+**Service Architecture**
+- `services/chatService.ts` - LLM streaming, thread management
+- `services/translationService.ts` - Batch translation, format preservation
+- `services/background/messageHandlers.ts` - Central message processing
+- `services/background/chatModelHandler.ts` - Model creation, streaming
 
-### Build Configuration
-- **Vite** for bundling with Terser minification
-- **PostCSS** with Tailwind CSS
-- **TypeScript** with strict checking
-- **WXT** manages manifest generation and browser compatibility
+**State Management Layers**
+1. **Jotai Atoms** (`hooks/global.ts`) - UI state, current thread
+2. **Chrome Storage** - API keys, settings, preferences
+3. **IndexedDB** (`lib/indexDB.ts`) - Threads, messages, memos
 
-## Message Communication
+## Key Message Types & Storage
 
-### Message Actions (from `src/config/constants.ts`)
-Key message types for inter-component communication:
-- `MESSAGE_SET_PANEL_OPEN_OR_NOT` - Toggle side panel visibility
-- `MESSAGE_OPEN_PANEL` - Open the side panel
-- `MESSAGE_LOAD_THREAD` - Load chat thread from IndexedDB
-- `MESSAGE_TRANSLATE_HTML_TEXT_BATCH` - Batch translate HTML text
-- `MESSAGE_TRANSLATE_YOUTUBE_CAPTION` - Translate YouTube captions
-- `MESSAGE_CONTEXT_MENU_*` - Context menu actions (translate, summarize, etc.)
+### Critical Message Actions (`src/config/constants.ts`)
+```typescript
+MESSAGE_SET_PANEL_OPEN_OR_NOT    // Toggle side panel
+MESSAGE_TRANSLATE_HTML_TEXT_BATCH // Batch translate with formatting
+MESSAGE_CONTEXT_MENU_*           // Context menu actions:
+  - TRANSLATE_PAGE               // Full page translation
+  - SUMMARIZE_PAGE               // AI page summary
+  - DESCRIBE_IMAGE               // Image description
+  - EXTRACT_IMAGE_TEXT           // OCR text extraction
+```
 
-### Storage Keys
-Chrome storage keys for persistent data:
-- `STORAGE_*_KEY` - API keys (OpenAI, Gemini, Anthropic)
-- `STORAGE_*_MODEL` - Selected models for chat/translation
-- `STORAGE_LANGUAGE` - UI language
-- `STORAGE_TRANSLATE_TARGET_LANGUAGE` - Translation target language
-- `STORAGE_USER_MEMORY` - User preferences/memory
-- `STORAGE_THEME` - Light/dark theme
+### Storage Keys Pattern
+```typescript
+STORAGE_*_KEY                    // API keys (OpenAI, Gemini, Anthropic)
+STORAGE_*_MODEL                  // Selected models
+STORAGE_*_VALIDATED              // API key validation status
+STORAGE_USER_MEMORY              // User context for AI
+STORAGE_PDF_TRANSLATE_TASK_INFO  // PDF translation state
+```
 
-## Supported Models
+## Core Features
 
-### Chat Models
-- OpenAI: `gpt-4.1`, `gpt-4.1-mini`
-- Google: `gemini-2.5-flash`, `gemini-2.5-flash-lite-preview-06-17`
-- Anthropic: `claude-sonnet-4-20250514`, `claude-3-5-haiku-20241022`
+### 1. AI Chat with Streaming
+- **Models**: GPT-4.1, Gemini 2.5 Flash, Claude Sonnet 4
+- **Streaming**: Via port connections with background script
+- **Thread Management**: IndexedDB storage with Dexie
 
-### Model Integration
-- Models are created via LangChain wrappers in `src/lib/models.ts`
-- API key validation in `src/lib/validateApiKey.ts`
-- Token tracking in `src/lib/tokenUsageTracker.ts`
+### 2. Bilingual Translation
+- **Overlay**: Side-by-side translation preserving formatting
+- **Batch Processing**: Efficient DOM manipulation
+- **Context Menu**: Right-click to translate any page
 
-## Testing & Debugging
+### 3. PDF Translation
+- **Library**: pdf-lib for structure preservation
+- **WASM Support**: Enabled in CSP for performance
+- **Route**: `/shizue-pdf` in side panel
 
-### Chrome Extension Development
-1. Load unpacked extension from `dist/chrome-mv3/`
-2. Use Chrome DevTools for debugging:
-   - Background script: chrome://extensions → Service Worker
-   - Side panel: Right-click panel → Inspect
-   - Content scripts: Regular page DevTools
+### 4. YouTube Caption Translation
+- **Real-time**: Translates as captions appear
+- **Caching**: Reduces API calls for repeated content
+- **Keyboard Navigation**: Optional YouTube shortcuts
 
-### Keyboard Shortcuts
-- Default toggle: `Ctrl+Shift+E` (Windows/Linux) or `Cmd+Shift+E` (Mac)
+### 5. Memo System
+- **Features**: Auto-save, pinning, search
+- **Storage**: IndexedDB with sync to Chrome storage
+- **Route**: `/shizue-memo` in side panel
 
-## Important Implementation Details
+### 6. Context Menu Actions
+- Translate/Summarize pages
+- Describe images with AI
+- Extract text from images (OCR)
+
+## Build & Performance
+
+### Bundle Optimization
+- **Visualization**: `pnpm build` → check `dist/stats.html`
+- **Tree-shaking**: Enabled via Rollup
+- **Minification**: Terser with comment removal
+- **Source Maps**: Disabled in production
 
 ### Content Security Policy
-- Configured in `wxt.config.ts` to allow WASM for PDF processing
-- `script-src 'self' 'wasm-unsafe-eval'`
+```javascript
+// wxt.config.ts
+content_security_policy: {
+  extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+}
+```
 
 ### Internationalization
-- 24 supported languages in `src/locales/`
-- Uses `@wxt-dev/i18n` module
-- Default locale: English
-
-### PDF Translation
-- Uses `pdf-lib` for PDF manipulation
-- Preserves original layout and formatting
-- Accessible via `/shizue-pdf` route
-
-### YouTube Caption Translation
-- Custom caption injection system
-- Real-time translation with caching
-- Keyboard navigation support option
-
-### Performance Considerations
-- Bundle visualization available at `dist/stats.html` after build
-- Tree-shaking enabled with Rollup
-- Minification with Terser
-- No source maps in production builds
+- **Languages**: 23 supported (ar, bn, de, en, es, fr, ja, ko, zh_CN, etc.)
+- **Module**: `@wxt-dev/i18n` with dynamic switching
+- **Files**: `src/locales/*.json`
