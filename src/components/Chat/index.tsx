@@ -136,16 +136,17 @@ const Chat = () => {
       startStream(
         { threadId: tId, actionType: actionType.current },
         {
-          onDelta: (delta) =>
+          onDelta: (delta) => {
             setMessages((cur) => {
               const updatedMessages = updateAIMessage(cur, {
                 content: (cur[aiIndexRef.current]?.content || '') + delta,
                 done: false,
                 onInterrupt: false,
               });
-              scrollToBottomThrottled();
               return updatedMessages;
-            }),
+            });
+            scrollToBottomThrottled();
+          },
           onDone: () => {
             setMessages((cur) =>
               updateAIMessage(cur, {
@@ -207,7 +208,7 @@ const Chat = () => {
           isLoadingThreadRef.current = false;
         });
     },
-    [handleRequestFromContextMenu]
+    [handleRequestFromContextMenu, setMessages]
   );
 
   const handleCancel = async () => {
