@@ -23,7 +23,7 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 
 
 ### 💬 AI Chat Sidebar:
-  - Quickly launch the sidebar using a keyboard shortcut to interact with LLMs via a side panel for queries, brainstorming, or information retrieval without navigating away from the current page.
+  - Quickly launch the sidebar using a keyboard shortcut (default: Ctrl/Cmd+Shift+E) to interact with LLMs via a side panel for queries, brainstorming, or information retrieval without navigating away from the current page.
 
 ### 🌐 Bilingual Reading:
   - View web content in two languages side-by-side, aiding in language learning or comprehension of foreign-language texts.
@@ -34,11 +34,26 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 ### 📖 PDF Translation with Structure Preservation:
   - Translate PDF documents while preserving the original layout, formatting, and structure using LLM-powered translation.
 
+### 📝 Memo & Note-taking:
+  - Create, edit, and manage personal notes directly within the extension. Features auto-save, pinning important memos, and organized note management.
+
 ### 📄 One-Click Page Summaries:
   - Generate concise summaries of web pages for quick content overview.
 
+### 🖱️ Context Menu Actions:
+  - Right-click on any page to translate or summarize it instantly
+  - Right-click on images to describe their content or extract text (OCR) using AI
+
+### 🌍 Multi-language Support:
+  - Available in 23 languages including English, Spanish, French, German, Japanese, Chinese, Korean, Arabic, Hindi, and more.
+
+### 🤖 Multiple AI Model Support:
+  - **OpenAI**: GPT 4.1, GPT 4.1 Mini
+  - **Google**: Gemini 2.5 Flash, Gemini 2.5 Flash Lite
+  - **Anthropic**: Claude Sonnet 4, Claude Haiku 3.5
+
 ### 🔑 Use Your Own API Keys:
-  - Supports personal OpenAI/Gemini API keys for direct and the most cost-effective usage of models. Users are billed directly by those vendors.
+  - Supports personal OpenAI/Gemini/Anthropic API keys for direct and the most cost-effective usage of models. Users are billed directly by those vendors.
 
 ### 🎨 Color Themes:
   - Offers Light and Dark mode options for interface customization.
