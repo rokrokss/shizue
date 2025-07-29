@@ -3,6 +3,7 @@
   "extension_description": "مترجم ذكي + مساعد خارق LLM",
   "toggle_description": "تبديل Shizue",
   "overlayMenu": {
+    "shizue": "Shizue",
     "translateSettings": "إعدادات الترجمة",
     "translatePage": "ترجمة هذه الصفحة",
     "summarizePage": "تلخيص هذه الصفحة",

@@ -3,6 +3,7 @@
   "extension_description": "AI แปลภาษา + ผู้ช่วยพิเศษ LLM",
   "toggle_description": "สลับการทำงาน Shizue",
   "overlayMenu": {
+    "shizue": "Shizue",
     "translateSettings": "การตั้งค่าการแปล",
     "translatePage": "แปลหน้านี้",
     "summarizePage": "สรุปหน้านี้",

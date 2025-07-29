@@ -3,6 +3,7 @@
   "extension_description": "مترجم هوشمند + دستیار ابرقدرتی LLM",
   "toggle_description": "Shizue را تغییر دهید",
   "overlayMenu": {
+    "shizue": "Shizue",
     "translateSettings": "تنظیمات ترجمه",
     "translatePage": "این صفحه را ترجمه کنید",
     "summarizePage": "خلاصه این صفحه",

@@ -3,6 +3,7 @@
   "extension_description": "Người dịch AI + Trợ lý siêu năng lực LLM",
   "toggle_description": "Chuyển đổi Shizue",
   "overlayMenu": {
+    "shizue": "Shizue",
     "translateSettings": "Cài đặt dịch thuật",
     "translatePage": "Dịch trang này",
     "summarizePage": "Tóm tắt trang này",

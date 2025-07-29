@@ -3,6 +3,7 @@
   "extension_description": "Traduttore AI + Assistente Superpoteri LLM",
   "toggle_description": "Attiva/Disattiva Shizue",
   "overlayMenu": {
+    "shizue": "Shizue",
     "translateSettings": "Impostazioni di traduzione",
     "translatePage": "Traduci questa pagina",
     "summarizePage": "Riassumi questa pagina",

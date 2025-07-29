@@ -9,32 +9,43 @@ import { createI18n } from '@wxt-dev/i18n';
 export const createContextMenu = async () => {
   const i18n = createI18n();
 
+  if (chrome.contextMenus) {
+    chrome.contextMenus.removeAll();
+  }
+
+  // Create parent menu with custom title "Shizue"
+  chrome.contextMenus.create({
+    id: 'shizue-parent',
+    title: i18n.t('overlayMenu.shizue'),
+    contexts: ['all'],
+  });
+
   const contextMenuItems: chrome.contextMenus.CreateProperties[] = [
     {
       id: 'translatePage',
+      parentId: 'shizue-parent',
       title: i18n.t('overlayMenu.translatePage'),
       contexts: ['page'],
     },
     {
       id: 'summarizePage',
+      parentId: 'shizue-parent',
       title: i18n.t('overlayMenu.summarizePage'),
       contexts: ['page'],
     },
     {
       id: 'describeImage',
+      parentId: 'shizue-parent',
       title: i18n.t('overlayMenu.describeImage'),
       contexts: ['image'],
     },
     {
       id: 'extractImageText',
+      parentId: 'shizue-parent',
       title: i18n.t('overlayMenu.extractImageText'),
       contexts: ['image'],
     },
   ];
-
-  if (chrome.contextMenus) {
-    chrome.contextMenus.removeAll();
-  }
 
   for (const item of contextMenuItems) {
     chrome.contextMenus.create(item);

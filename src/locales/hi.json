@@ -3,6 +3,7 @@
   "extension_description": "AI अनुवादक + LLM सुपरपावर सहायक",
   "toggle_description": "Shizue टॉगल करें",
   "overlayMenu": {
+    "shizue": "Shizue",
     "translateSettings": "अनुवाद सेटिंग्स",
     "translatePage": "इस पेज का अनुवाद करें",
     "summarizePage": "इस पेज का सारांश करें",

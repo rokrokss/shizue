@@ -3,6 +3,7 @@
   "extension_description": "AI 번역가 + LLM 슈퍼파워 어시스턴트",
   "toggle_description": "시즈에를 부릅니다.",
   "overlayMenu": {
+    "shizue": "시즈에",
     "translateSettings": "번역 설정",
     "translatePage": "페이지 번역",
     "summarizePage": "페이지 요약",

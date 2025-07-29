@@ -3,6 +3,7 @@
   "extension_description": "KI-Übersetzer + LLM-Superkraft-Assistent",
   "toggle_description": "Shizue umschalten",
   "overlayMenu": {
+    "shizue": "Shizue",
     "translateSettings": "Übersetzungseinstellungen",
     "translatePage": "Diese Seite übersetzen",
     "summarizePage": "Diese Seite zusammenfassen",

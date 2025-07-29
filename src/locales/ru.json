@@ -3,6 +3,7 @@
   "extension_description": "ИИ-переводчик + LLM-суперассистент",
   "toggle_description": "Переключить Shizue",
   "overlayMenu": {
+    "shizue": "Shizue",
     "translateSettings": "Настройки перевода",
     "translatePage": "Перевести эту страницу",
     "summarizePage": "Суммировать эту страницу",

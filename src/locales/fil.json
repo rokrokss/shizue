@@ -3,6 +3,7 @@
   "extension_description": "AI Translator + LLM Superpower Assistant",
   "toggle_description": "Toggle Shizue",
   "overlayMenu": {
+    "shizue": "Shizue",
     "translateSettings": "Mga setting ng pagsasalin",
     "translatePage": "Isalin ang pahinang ito",
     "summarizePage": "Ibuod ang pahinang ito",

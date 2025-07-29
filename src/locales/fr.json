@@ -3,6 +3,7 @@
   "extension_description": "Traducteur IA + Assistant de Super Pouvoirs LLM",
   "toggle_description": "Activer/Désactiver Shizue",
   "overlayMenu": {
+    "shizue": "Shizue",
     "translateSettings": "Paramètres de traduction",
     "translatePage": "Traduire cette page",
     "summarizePage": "Résumer cette page",
