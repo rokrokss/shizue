@@ -1,6 +1,6 @@
 {
-  "extension_name": "Shizue",
-  "extension_description": "AI अनुवादक, LLM सुपरपावर सहायक",
+  "extension_name": "Shizue: AI अनुवादक + LLM सुपरपावर सहायक",
+  "extension_description": "AI अनुवादक + LLM सुपरपावर सहायक",
   "toggle_description": "Shizue टॉगल करें",
   "overlayMenu": {
     "translateSettings": "अनुवाद सेटिंग्स",

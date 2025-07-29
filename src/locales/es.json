@@ -1,6 +1,6 @@
 {
-  "extension_name": "Shizue",
-  "extension_description": "Traductor IA, Asistente de Súper Poderes LLM",
+  "extension_name": "Shizue: Traductor IA + Asistente de Súper Poderes LLM",
+  "extension_description": "Traductor IA + Asistente de Súper Poderes LLM",
   "toggle_description": "Alternar Shizue",
   "overlayMenu": {
     "translateSettings": "Configuración de traducción",
