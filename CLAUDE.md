@@ -10,9 +10,7 @@ Shizue is a Chrome extension that integrates Large Language Models (LLMs) into w
 
 ```bash
 pnpm dev              # Development mode with hot-reloading
-pnpm dev:firefox      # Firefox development mode
 pnpm build            # Production build
-pnpm build:firefox    # Firefox production build
 pnpm zip              # Create distribution ZIP
 pnpm compile          # TypeScript type checking
 ```
