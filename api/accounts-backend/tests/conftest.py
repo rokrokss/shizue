@@ -1,25 +1,31 @@
 import asyncio
+import os
+import uuid
+from typing import AsyncGenerator, Generator
+from unittest.mock import MagicMock, patch
+
+# Set test environment variables before importing settings
+os.environ["DATABASE_URL"] = "postgresql+asyncpg://test:test@localhost:5432/test_db"
+os.environ["REDIS_URL"] = "redis://localhost:6379/1"
+os.environ["JWT_SECRET_KEY"] = "test-secret-key-for-testing-only"
+os.environ["GOOGLE_CLIENT_ID"] = "test-google-client-id"
+os.environ["GOOGLE_CLIENT_SECRET"] = "test-google-client-secret"
+os.environ["GOOGLE_REDIRECT_URI"] = "https://test.shizue.ai/api/v1/auth/google/callback"
+os.environ["ALLOWED_ORIGINS"] = '["http://localhost:3000", "http://localhost:8000"]'
+
 import pytest
 import pytest_asyncio
-from typing import AsyncGenerator, Generator
-from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from sqlalchemy.pool import NullPool
-import os
-from unittest.mock import patch, MagicMock
-
-from app.main import app
-from app.core.database import Base, get_db
 from app.core.config import settings
-from app.models.user import User
+from app.core.database import Base, get_db
 from app.core.security import create_access_token, create_refresh_token
-import uuid
+from app.main import app
+from app.models.user import User
+from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
+                                    create_async_engine)
+from sqlalchemy.pool import NullPool
 
-
-# Override settings for testing
-settings.TESTING = True
-settings.DATABASE_URL = "postgresql+asyncpg://test:test@localhost:5432/test_db"
-settings.REDIS_URL = "redis://localhost:6379/1"
+# Settings are already configured via environment variables above
 
 
 @pytest.fixture(scope="session")
@@ -38,22 +44,22 @@ async def test_db():
         settings.DATABASE_URL,
         poolclass=NullPool,
     )
-    
+
     # Create tables
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    
+
     # Create session factory
     async_session = async_sessionmaker(
         engine, class_=AsyncSession, expire_on_commit=False
     )
-    
+
     yield async_session
-    
+
     # Drop tables after tests
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
-    
+
     await engine.dispose()
 
 
@@ -68,14 +74,15 @@ async def db_session(test_db) -> AsyncGenerator[AsyncSession, None]:
 @pytest_asyncio.fixture
 async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
     """Create a test client."""
+
     async def override_get_db():
         yield db_session
-    
+
     app.dependency_overrides[get_db] = override_get_db
-    
+
     async with AsyncClient(app=app, base_url="http://test") as ac:
         yield ac
-    
+
     app.dependency_overrides.clear()
 
 
@@ -90,7 +97,7 @@ async def test_user(db_session: AsyncSession) -> User:
         profile_picture="https://example.com/photo.jpg",
         locale="en",
         is_active=True,
-        is_premium=False
+        is_premium=False,
     )
     db_session.add(user)
     await db_session.commit()
@@ -120,7 +127,9 @@ def mock_redis():
 def mock_google_oauth():
     """Mock Google OAuth service."""
     with patch("app.services.google_oauth.google_oauth") as mock:
-        mock.get_authorization_url.return_value = "https://accounts.google.com/oauth/authorize?..."
+        mock.get_authorization_url.return_value = (
+            "https://accounts.google.com/oauth/authorize?..."
+        )
         mock.verify_and_get_user_info.return_value = {
             "google_id": "test_google_id_123",
             "email": "test@example.com",
@@ -131,8 +140,8 @@ def mock_google_oauth():
             "tokens": {
                 "access_token": "google_access_token",
                 "refresh_token": "google_refresh_token",
-                "expires_in": 3600
-            }
+                "expires_in": 3600,
+            },
         }
         yield mock
 

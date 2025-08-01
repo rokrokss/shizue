@@ -1,0 +1,13 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: local
+    hooks:
+      - id: api-quality-check
+        name: API Quality Check (format, lint, check, test)
+        entry: bash -c 'cd api && make format && make check && make test'
+        language: system
+        files: ^api/.*\.py$
+        pass_filenames: false
+        stages: [pre-commit]
+        always_run: false
