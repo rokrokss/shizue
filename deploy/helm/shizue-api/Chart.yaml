@@ -12,8 +12,8 @@ home: https://github.com/shizue/accounts-api
 sources:
   - https://github.com/shizue/accounts-api
 maintainers:
-  - name: pizzaman
-    email: pizzaman@example.com
+  - name: rokrokss
+    email: q0115643@gmail.com
 dependencies:
   - name: postgresql
     version: "12.x.x"
