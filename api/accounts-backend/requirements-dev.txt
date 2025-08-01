@@ -1,0 +1,19 @@
+# Development tools
+black==24.8.0
+isort==5.13.2
+flake8==7.0.0
+mypy==1.8.0
+
+# Type stubs
+types-redis==4.6.0
+sqlalchemy-stubs==0.4
+
+# Testing tools
+pytest==7.4.4
+pytest-asyncio==0.23.3
+pytest-cov==4.1.0
+httpx==0.26.0
+
+# Security tools
+bandit==1.7.6
+safety==3.0.1
