@@ -1,13 +1,14 @@
+from typing import Any, Dict
+
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
-from typing import Dict, Any
 
 
 def custom_openapi(app: FastAPI) -> Dict[str, Any]:
     """Generate custom OpenAPI schema with enhanced documentation."""
     if app.openapi_schema:
         return app.openapi_schema
-    
+
     openapi_schema = get_openapi(
         title="Shizue Accounts API",
         version="1.0.0",
@@ -88,7 +89,7 @@ API는 일관된 에러 응답 형식을 사용합니다:
             },
         ],
     )
-    
+
     # Add security schemes
     openapi_schema["components"]["securitySchemes"] = {
         "bearerAuth": {
@@ -98,21 +99,21 @@ API는 일관된 에러 응답 형식을 사용합니다:
             "description": "JWT token obtained from OAuth login",
         }
     }
-    
+
     # Add global security requirement for protected endpoints
     for path, path_item in openapi_schema["paths"].items():
         # Skip auth endpoints and health check
         if path.startswith("/v1/auth") or path == "/health":
             continue
-            
+
         for method in path_item:
             if method in ["get", "post", "put", "patch", "delete"]:
                 if "security" not in path_item[method]:
                     path_item[method]["security"] = [{"bearerAuth": []}]
-    
+
     # Add examples
     add_response_examples(openapi_schema)
-    
+
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
@@ -148,7 +149,7 @@ def add_response_examples(schema: Dict[str, Any]) -> None:
                                 "is_active": True,
                                 "is_premium": False,
                                 "created_at": "2024-01-01T00:00:00Z",
-                                "last_login_at": "2024-01-01T12:00:00Z"
+                                "last_login_at": "2024-01-01T12:00:00Z",
                             }
                         }
                     }
@@ -165,36 +166,31 @@ def add_response_examples(schema: Dict[str, Any]) -> None:
                                 "total_messages": 150,
                                 "total_tokens": 45000,
                                 "models": {
-                                    "gpt-4": {
-                                        "messages": 50,
-                                        "tokens": 25000
-                                    },
-                                    "claude-3": {
-                                        "messages": 100,
-                                        "tokens": 20000
-                                    }
+                                    "gpt-4": {"messages": 50, "tokens": 25000},
+                                    "claude-3": {"messages": 100, "tokens": 20000},
                                 },
                                 "daily_breakdown": [
                                     {
                                         "date": "2024-01-01",
                                         "messages": 10,
-                                        "tokens": 3000
+                                        "tokens": 3000,
                                     }
-                                ]
+                                ],
                             }
                         }
                     }
                 }
             }
-        }
+        },
     }
-    
+
     # Apply examples to schema
     for path, methods in examples.items():
         if path in schema["paths"]:
-            for method, responses in methods.items():
+            for method, responses in methods.items():  # type: ignore[attr-defined]
                 if method in schema["paths"][path]:
-                    for status_code, response_data in responses.items():
-                        if "responses" in schema["paths"][path][method]:
-                            if status_code in schema["paths"][path][method]["responses"]:
-                                schema["paths"][path][method]["responses"][status_code].update(response_data)
+                    if hasattr(responses, "items"):
+                        for status_code, response_data in responses.items():
+                            if "responses" in schema["paths"][path][method]:
+                                if status_code in schema["paths"][path][method]["responses"]:
+                                    schema["paths"][path][method]["responses"][status_code].update(response_data)

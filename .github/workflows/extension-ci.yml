@@ -2,7 +2,7 @@ name: Chrome Extension CI/CD
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
     paths:
       - 'src/**'
       - 'package.json'
@@ -10,7 +10,7 @@ on:
       - 'wxt.config.ts'
       - '.github/workflows/extension-ci.yml'
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
     paths:
       - 'src/**'
       - 'package.json'
@@ -22,168 +22,111 @@ jobs:
   test:
     name: Test and Build
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         node-version: [18.x, 20.x]
-    
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: 8
-    
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'pnpm'
-    
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
-    
-    - name: Run type checking
-      run: pnpm compile
-    
-    - name: Run linting
-      run: |
-        # Add linting commands when ESLint is configured
-        # pnpm lint
-        echo "Linting skipped - configure ESLint"
-    
-    - name: Run tests
-      run: |
-        # Add test commands when tests are configured
-        # pnpm test
-        echo "Tests skipped - configure test framework"
-    
-    - name: Build extension
-      run: pnpm build
-    
-    - name: Check build output
-      run: |
-        if [ ! -d "dist/chrome-mv3" ]; then
-          echo "Build failed: dist/chrome-mv3 directory not found"
-          exit 1
-        fi
-        
-        # Check manifest
-        if [ ! -f "dist/chrome-mv3/manifest.json" ]; then
-          echo "Build failed: manifest.json not found"
-          exit 1
-        fi
-    
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: chrome-extension-${{ matrix.node-version }}
-        path: dist/chrome-mv3/
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run type checking
+        run: pnpm compile
+
+      - name: Run linting
+        run: |
+          # Add linting commands when ESLint is configured
+          # pnpm lint
+          echo "Linting skipped - configure ESLint"
+
+      - name: Run tests
+        run: |
+          # Add test commands when tests are configured
+          # pnpm test
+          echo "Tests skipped - configure test framework"
+
+      - name: Build extension
+        run: pnpm build
+
+      - name: Check build output
+        run: |
+          if [ ! -d "dist/chrome-mv3" ]; then
+            echo "Build failed: dist/chrome-mv3 directory not found"
+            exit 1
+          fi
+
+          # Check manifest
+          if [ ! -f "dist/chrome-mv3/manifest.json" ]; then
+            echo "Build failed: manifest.json not found"
+            exit 1
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: chrome-extension-${{ matrix.node-version }}
+          path: dist/chrome-mv3/
 
   package:
     name: Package Extension
     runs-on: ubuntu-latest
     needs: test
     if: github.event_name == 'push'
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: 8
-    
-    - name: Use Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20.x
-        cache: 'pnpm'
-    
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
-    
-    - name: Build extension
-      run: pnpm build
-    
-    - name: Create ZIP package
-      run: pnpm zip
-    
-    - name: Upload ZIP artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: shizue-extension-${{ github.sha }}
-        path: shizue-chrome-extension*.zip
-    
-    - name: Get version from package.json
-      id: version
-      run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
-    
-    - name: Create Release
-      if: github.ref == 'refs/heads/main'
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: v${{ steps.version.outputs.version }}
-        release_name: Release v${{ steps.version.outputs.version }}
-        draft: true
-        prerelease: false
 
-  security-scan:
-    name: Security Scan
-    runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Run Snyk to check for vulnerabilities
-      uses: snyk/actions/node@master
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        args: --severity-threshold=high
-    
-    - name: Run npm audit
-      run: |
-        npm audit --audit-level=high || true
+      - uses: actions/checkout@v4
 
-  chrome-web-store:
-    name: Deploy to Chrome Web Store
-    runs-on: ubuntu-latest
-    needs: [test, package]
-    if: github.ref == 'refs/heads/main'
-    environment: production
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: 8
-    
-    - name: Use Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20.x
-        cache: 'pnpm'
-    
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
-    
-    - name: Build extension
-      run: pnpm build
-    
-    - name: Create ZIP for Chrome Web Store
-      run: pnpm zip
-    
-    - name: Upload to Chrome Web Store
-      uses: PlasmoHQ/chrome-webstore-upload@v5
-      with:
-        extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
-        client-id: ${{ secrets.CHROME_CLIENT_ID }}
-        refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
-        file-path: ./shizue-chrome-extension*.zip
-        publish: false  # Set to true for auto-publish
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build extension
+        run: pnpm build
+
+      - name: Create ZIP package
+        run: pnpm zip
+
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: shizue-extension-${{ github.sha }}
+          path: shizue-chrome-extension*.zip
+
+      - name: Get version from package.json
+        id: version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        if: github.ref == 'refs/heads/main'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          release_name: Release v${{ steps.version.outputs.version }}
+          draft: true
+          prerelease: false

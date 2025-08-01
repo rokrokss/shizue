@@ -9,7 +9,7 @@ updates:
       time: "09:00"
     open-pull-requests-limit: 5
     reviewers:
-      - "pizzaman"
+      - "rokrokss"
     labels:
       - "dependencies"
       - "backend"
@@ -37,7 +37,7 @@ updates:
       time: "09:00"
     open-pull-requests-limit: 5
     reviewers:
-      - "pizzaman"
+      - "rokrokss"
     labels:
       - "dependencies"
       - "frontend"
@@ -73,7 +73,7 @@ updates:
       day: "monday"
       time: "09:00"
     reviewers:
-      - "pizzaman"
+      - "rokrokss"
     labels:
       - "dependencies"
       - "ci/cd"
@@ -89,7 +89,7 @@ updates:
       day: "monday"
       time: "09:00"
     reviewers:
-      - "pizzaman"
+      - "rokrokss"
     labels:
       - "dependencies"
       - "docker"

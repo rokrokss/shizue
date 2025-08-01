@@ -1,0 +1,147 @@
+[project]
+name = "shizue-api"
+version = "0.1.0"
+description = "Shizue Backend APIs Workspace"
+requires-python = ">=3.12,<3.13"
+
+# 공통 의존성 (모든 프로젝트에서 사용)
+dependencies = [
+    # Web Framework
+    "fastapi==0.109.0",
+    "uvicorn[standard]==0.27.0",
+    "gunicorn==21.2.0",
+    "python-multipart==0.0.6",
+    
+    # Data Validation
+    "pydantic==2.5.3",
+    "pydantic-settings==2.1.0",
+    
+    # HTTP & Network
+    "httpx==0.26.0",
+    "python-dotenv==1.0.0",
+    
+    # Database
+    "redis==5.0.1",
+    
+    # Testing (공통)
+    "pytest==7.4.4",
+    "pytest-asyncio==0.23.3",
+    "pytest-cov==4.1.0",
+]
+
+[dependency-groups]
+# 개발 도구
+dev = [
+    "black==24.8.0",
+    "isort==5.13.2", 
+    "flake8==7.0.0",
+    "mypy==1.8.0",
+    "taskipy>=1.12.2",
+    "bandit==1.7.5",
+    "safety==3.0.1",
+    "pre-commit>=3.5.0",
+]
+
+# accounts-backend 전용
+# example: uv add "pydantic[email]" --group accounts
+accounts = [
+    "sqlalchemy==2.0.25",
+    "asyncpg==0.30.0",
+    "alembic==1.13.1",
+    "python-jose[cryptography]==3.3.0",
+    "passlib[bcrypt]==1.7.4",
+    "authlib==1.3.0",
+    "prometheus-client==0.19.0",
+    "sentry-sdk[fastapi]==1.39.2",
+    "pydantic[email]==2.5.3",
+    "email-validator>=2.0.0",
+]
+
+# pdf-translation 전용
+pdf = [
+    # PDF & Document Processing
+    "babeldoc==0.4.15",
+    "pymupdf>=1.25.1",
+    
+    # AI & ML
+    "openai>=1.59.3",
+    "tiktoken>=0.9.0",
+    "onnx>=1.18.0",
+    "onnxruntime>=1.16.1",
+    "huggingface-hub",
+    
+    # Image Processing
+    "scikit-image>=0.25.2",
+    "opencv-python-headless>=4.10.0.84",
+    "rapidocr-onnxruntime>=1.4.4",
+    "freetype-py>=2.5.1",
+    
+    # Data Processing
+    "numpy>=2.0.2",
+    "scipy>=1.15.3",
+    "msgpack",
+    "orjson",
+    
+    # Other utilities
+    "xsdata[cli,lxml,soap]>=24.12",
+    "python-levenshtein>=0.27.1",
+    "pyzstd>=0.17.0",
+    "chardet",
+    "rtree",
+    "uharfbuzz",
+    "pygments",
+    "rich>=13.9.4",
+    "tqdm",
+    "tenacity",
+    "peewee",
+    "psutil",
+    "bitstring",
+    "bitarray",
+    "configargparse",
+    "toml",
+    "rapidfuzz",
+    "lazy_loader",
+    
+    # Cloud Storage
+    "google-cloud-storage==2.13.0",
+]
+
+[tool.uv]
+# 의존성 충돌 해결
+override-dependencies = [
+    # 버전 통일
+    "pydantic==2.5.3",
+    "httpx==0.26.0",
+    "psutil>=7.0.0",
+]
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.black]
+line-length = 120
+target-version = ['py312']
+
+[tool.isort]
+profile = "black"
+line_length = 120
+
+[tool.pytest.ini_options]
+testpaths = ["accounts-backend/tests", "pdf-translation/tests"]
+python_files = ["test_*.py", "*_test.py"]
+asyncio_mode = "auto"
+
+[tool.taskipy.tasks]
+# 개발 서버 실행
+dev-accounts = "cd accounts-backend && uvicorn app.main:app --reload --port 8000"
+dev-pdf = "cd pdf-translation && python main_server.py"
+
+# 코드 포매팅
+format = "isort . && black ."
+lint = "flake8 . --max-line-length=120 --exclude=__pycache__,venv,.venv"
+check = "task format && task lint"
+
+# 테스트
+test-accounts = "pytest accounts-backend/tests -v"
+test-pdf = "pytest pdf-translation/tests -v"
+test = "task test-accounts && task test-pdf"
