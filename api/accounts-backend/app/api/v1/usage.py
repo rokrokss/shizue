@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import and_, func, select
+from sqlalchemy import Integer, and_, cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -211,7 +211,7 @@ async def get_model_usage(
                 func.count(APIUsage.id).label("messages"),
                 func.sum(APIUsage.tokens_input + APIUsage.tokens_output).label("tokens"),
                 func.avg(APIUsage.latency_ms).label("avg_latency"),
-                func.sum(func.cast(APIUsage.status_code >= 400, int)).label("errors"),
+                func.sum(cast(APIUsage.status_code >= 400, Integer)).label("errors"),
             )
             .where(
                 and_(

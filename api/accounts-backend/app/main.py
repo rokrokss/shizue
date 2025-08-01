@@ -2,6 +2,7 @@ import logging
 import sys
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
+from functools import lru_cache
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -147,7 +148,12 @@ async def root():
 
 
 # Custom OpenAPI schema
-app.openapi = lambda: custom_openapi(app)
+@lru_cache()
+def get_openapi():
+    return custom_openapi(app)
+
+
+app.openapi = get_openapi
 
 if __name__ == "__main__":
     import uvicorn

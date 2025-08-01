@@ -16,26 +16,19 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel
 
-from gcs_utils import cleanup_temp_directory, cleanup_temp_file, get_gcs_manager
-
 load_dotenv()
 
+import babeldoc.assets.assets
 import babeldoc.format.pdf.high_level
 from babeldoc.docvision.doclayout import DocLayoutModel
-from babeldoc.format.pdf.translation_config import (
-    TranslationConfig,
-    WatermarkOutputMode,
-)
-
-# Babeldoc imports
+from babeldoc.format.pdf.translation_config import TranslationConfig, WatermarkOutputMode
 from babeldoc.translator.translator import OpenAITranslator, set_translate_rate_limiter
 
 import babeldoc
+from gcs_utils import cleanup_temp_directory, cleanup_temp_file, get_gcs_manager
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Disable verbose logging from external libraries
@@ -185,9 +178,7 @@ async def lifespan(app: FastAPI):
         resource_manager.clear_current_task()
 
 
-app = FastAPI(
-    title="BabelDOC PDF Translation Worker", version="1.0.0", lifespan=lifespan
-)
+app = FastAPI(title="BabelDOC PDF Translation Worker", version="1.0.0", lifespan=lifespan)
 
 
 async def update_main_server_status(
@@ -204,11 +195,9 @@ async def update_main_server_status(
             if output_gcs_key:
                 data["output_gcs_key"] = output_gcs_key
             if progress is not None:
-                data["progress"] = progress
+                data["progress"] = str(progress)
 
-            response = await client.post(
-                f"{MAIN_SERVER_URL}/update_task_status", data=data
-            )
+            response = await client.post(f"{MAIN_SERVER_URL}/update_task_status", json=data)
 
             if response.status_code == 200:
                 logger.debug(f"Status updated for task {task_id}: {status}")
@@ -216,12 +205,8 @@ async def update_main_server_status(
                 logger.info(f"Task {task_id} not found in main server, cancelling task")
                 raise asyncio.CancelledError(f"Task {task_id} not found in main server")
             else:
-                logger.error(
-                    f"Failed to update status for task {task_id}: {response.status_code}"
-                )
-                raise asyncio.CancelledError(
-                    f"Main server returned error {response.status_code} for task {task_id}"
-                )
+                logger.error(f"Failed to update status for task {task_id}: {response.status_code}")
+                raise asyncio.CancelledError(f"Main server returned error {response.status_code} for task {task_id}")
 
     except httpx.TimeoutException:
         logger.error(f"Timeout updating status for task {task_id}")
@@ -231,9 +216,7 @@ async def update_main_server_status(
         raise
     except Exception as e:
         logger.error(f"Error updating main server status: {e}")
-        raise asyncio.CancelledError(
-            f"Error updating main server status for task {task_id}: {str(e)}"
-        )
+        raise asyncio.CancelledError(f"Error updating main server status for task {task_id}: {str(e)}")
 
 
 async def run_babeldoc_translation(
@@ -308,9 +291,7 @@ async def run_babeldoc_translation(
             report_interval=0.1,
             min_text_length=1,
             watermark_output_mode=WatermarkOutputMode.NoWatermark,
-            split_strategy=TranslationConfig.create_max_pages_per_part_split_strategy(
-                50
-            ),
+            split_strategy=TranslationConfig.create_max_pages_per_part_split_strategy(50),
             table_model=None,
             show_char_box=False,
             skip_scanned_detection=True,
@@ -328,21 +309,15 @@ async def run_babeldoc_translation(
         )
 
         # Update status to processing
-        await update_main_server_status(
-            task_id, "processing", "Translation started", progress=0.0
-        )
+        await update_main_server_status(task_id, "processing", "Translation started", progress=0.0)
 
         # Run translation with timeout
         try:
             async with asyncio.timeout(TASK_TIMEOUT_SECONDS):
-                async for event in babeldoc.format.pdf.high_level.async_translate(
-                    config
-                ):
+                async for event in babeldoc.format.pdf.high_level.async_translate(config):
                     if event["type"] == "error":
                         logger.error(f"Translation error: {event['error']}")
-                        await update_main_server_status(
-                            task_id, "failed", f"Translation error: {event['error']}"
-                        )
+                        await update_main_server_status(task_id, "failed", f"Translation error: {event['error']}")
                         return False, f"Translation error: {event['error']}", None
 
                     elif event["type"] == "finish":
@@ -351,35 +326,21 @@ async def run_babeldoc_translation(
 
                         # 번역 완료된 파일을 GCS에 업로드
                         pdf_files = sorted(
-                            [
-                                f
-                                for f in os.listdir(temp_output_dir)
-                                if f.endswith(".pdf")
-                            ],
-                            key=lambda x: os.path.getmtime(
-                                os.path.join(temp_output_dir, x)
-                            ),
+                            [f for f in os.listdir(temp_output_dir) if f.endswith(".pdf")],
+                            key=lambda x: os.path.getmtime(os.path.join(temp_output_dir, x)),
                             reverse=True,
                         )
 
                         if pdf_files:
-                            output_file_path = os.path.join(
-                                temp_output_dir, pdf_files[0]
-                            )
+                            output_file_path = os.path.join(temp_output_dir, pdf_files[0])
                             output_gcs_key = f"{output_gcs_prefix}/{pdf_files[0]}"
 
                             # GCS에 업로드
-                            if gcs_manager.upload_file(
-                                output_file_path, output_gcs_key
-                            ):
-                                logger.info(
-                                    f"Output file uploaded to GCS: {output_gcs_key}"
-                                )
+                            if gcs_manager.upload_file(output_file_path, output_gcs_key):
+                                logger.info(f"Output file uploaded to GCS: {output_gcs_key}")
                                 return True, "Translation completed", output_gcs_key
                             else:
-                                logger.error(
-                                    f"Failed to upload output file to GCS: {output_gcs_key}"
-                                )
+                                logger.error(f"Failed to upload output file to GCS: {output_gcs_key}")
                                 return (
                                     False,
                                     "Failed to upload output file to GCS",
@@ -412,9 +373,7 @@ async def run_babeldoc_translation(
 
     except Exception as e:
         logger.error(f"Translation failed for task {task_id}: {str(e)}")
-        await update_main_server_status(
-            task_id, "failed", f"Translation error: {str(e)}"
-        )
+        await update_main_server_status(task_id, "failed", f"Translation error: {str(e)}")
         return False, f"Translation error: {str(e)}", None
 
     finally:
@@ -464,9 +423,7 @@ async def process_translation_task(request: TranslationRequest):
         model_config = MODEL_PRESETS[provider]
 
         if not model_config["api_key"]:
-            await update_main_server_status(
-                request.task_id, "failed", "OpenAI API key not configured"
-            )
+            await update_main_server_status(request.task_id, "failed", "OpenAI API key not configured")
             return
 
         success, message, output_gcs_key = await run_babeldoc_translation(
@@ -475,7 +432,7 @@ async def process_translation_task(request: TranslationRequest):
             model_config["default_model"],
             model_config["base_url"],
             model_config["api_key"],
-            request.lang_out,
+            request.lang_out or "en",  # Default to English if not specified
             request.no_dual,
             request.task_id,
         )
@@ -492,21 +449,15 @@ async def process_translation_task(request: TranslationRequest):
 
                 # 작업 완료 시간 로그
                 task_duration = asyncio.get_event_loop().time() - task_start_time
-                logger.info(
-                    f"Translation completed for task {request.task_id} in {task_duration:.2f}s"
-                )
+                logger.info(f"Translation completed for task {request.task_id} in {task_duration:.2f}s")
             else:
-                await update_main_server_status(
-                    request.task_id, "failed", "Translation file not found"
-                )
+                await update_main_server_status(request.task_id, "failed", "Translation file not found")
         else:
             await update_main_server_status(request.task_id, "failed", message)
 
     except Exception as e:
         logger.error(f"Error processing translation task {request.task_id}: {e}")
-        await update_main_server_status(
-            request.task_id, "failed", f"Translation error: {str(e)}"
-        )
+        await update_main_server_status(request.task_id, "failed", f"Translation error: {str(e)}")
 
     finally:
         # 현재 작업 정리
@@ -561,25 +512,19 @@ async def process_translation(request: TranslationRequest):
 
     # 요청 유효성 검증
     if not request.task_id or not request.input_gcs_key:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Missing required fields"
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Missing required fields")
 
     # 현재 처리 중인 작업이 있는지 확인 (서버리스에서는 보통 없지만 안전장치)
     current_task = resource_manager.get_current_task()
     if current_task:
         if current_task == request.task_id:
-            logger.info(
-                f"Task {request.task_id} is already being processed, skipping duplicate request"
-            )
+            logger.info(f"Task {request.task_id} is already being processed, skipping duplicate request")
             return {
                 "message": "Task already being processed",
                 "task_id": request.task_id,
             }
         else:
-            logger.warning(
-                f"Task {current_task} is already processing, rejecting new task {request.task_id}"
-            )
+            logger.warning(f"Task {current_task} is already processing, rejecting new task {request.task_id}")
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail=f"Worker is busy with task {current_task}",

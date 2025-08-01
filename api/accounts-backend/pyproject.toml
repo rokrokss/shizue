@@ -38,7 +38,7 @@ dev = [
     "httpx==0.26.0",
     "bandit==1.7.6",
     "safety",
-    "taskipy==1.12.2",
+    "taskipy>=1.12.2",
 ]
 
 [tool.isort]

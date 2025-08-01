@@ -117,7 +117,7 @@ async def get_user_stats(current_user: User = Depends(get_current_user), db: Asy
         )
 
         # Cache the stats for 5 minutes
-        await cache.set_user_stats(str(current_user.id), stats.dict(), expire=300)
+        await cache.set_user_stats(str(current_user.id), stats.dict(), ttl=300)
 
         return stats
 
@@ -134,8 +134,8 @@ async def delete_current_user(current_user: User = Depends(get_current_user), db
     """Delete current user account (soft delete)"""
     try:
         # Soft delete user
-        current_user.is_active = False
-        current_user.deleted_at = datetime.now(timezone.utc)
+        setattr(current_user, "is_active", False)
+        setattr(current_user, "deleted_at", datetime.now(timezone.utc))
 
         # Deactivate all auth tokens
         from app.models.auth_token import AuthToken
@@ -146,8 +146,8 @@ async def delete_current_user(current_user: User = Depends(get_current_user), db
         tokens = result.scalars().all()
 
         for token in tokens:
-            token.is_active = False
-            token.revoked_at = datetime.now(timezone.utc)
+            setattr(token, "is_active", False)
+            setattr(token, "revoked_at", datetime.now(timezone.utc))
 
         await db.commit()
 

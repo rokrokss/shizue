@@ -16,19 +16,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from pydantic import BaseModel
 
-from gcs_utils import (
-    cleanup_task_related_temp_files,
-    cleanup_temp_file,
-    generate_gcs_key,
-    get_gcs_manager,
-)
+from gcs_utils import cleanup_task_related_temp_files, cleanup_temp_file, generate_gcs_key, get_gcs_manager
 
 load_dotenv()
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # 환경 변수 설정
@@ -53,9 +46,7 @@ class TranslationQueueManager:
         """큐에 작업 추가"""
         with self.lock:
             self.queue.append(task_data)
-            logger.info(
-                f"Task {task_data['task_id']} added to queue. Queue size: {len(self.queue)}"
-            )
+            logger.info(f"Task {task_data['task_id']} added to queue. Queue size: {len(self.queue)}")
 
     def get_next_task(self) -> Optional[dict]:
         """큐에서 다음 작업 가져오기"""
@@ -63,9 +54,7 @@ class TranslationQueueManager:
             if self.queue and len(self.processing_tasks) < MAX_CONCURRENT_TASKS:
                 task_data = self.queue.popleft()
                 self.processing_tasks.add(task_data["task_id"])
-                logger.info(
-                    f"Task {task_data['task_id']} started processing. Processing: {len(self.processing_tasks)}"
-                )
+                logger.info(f"Task {task_data['task_id']} started processing. Processing: {len(self.processing_tasks)}")
                 return task_data
         return None
 
@@ -73,9 +62,7 @@ class TranslationQueueManager:
         """작업 완료 처리"""
         with self.lock:
             self.processing_tasks.discard(task_id)
-            logger.info(
-                f"Task {task_id} completed. Processing: {len(self.processing_tasks)}"
-            )
+            logger.info(f"Task {task_id} completed. Processing: {len(self.processing_tasks)}")
 
     def get_queue_status(self) -> dict:
         """큐 상태 반환"""
@@ -107,9 +94,7 @@ class TranslationQueueManager:
                 task_data = self.get_next_task()
                 if task_data:
                     # 비동기로 워커 서버에 작업 전송
-                    asyncio.create_task(
-                        self._process_task_with_worker(task_data, retry_count=0)
-                    )
+                    asyncio.create_task(self._process_task_with_worker(task_data, retry_count=0))
             except Exception as e:
                 logger.error(f"Error in queue processor: {e}")
             finally:
@@ -125,18 +110,14 @@ class TranslationQueueManager:
             logger.error(f"Task {task_id} failed after {max_retries} retries")
             if task_id in tasks_status:
                 tasks_status[task_id]["status"] = "failed"
-                tasks_status[task_id][
-                    "message"
-                ] = f"Worker server connection failed after {max_retries} retries"
+                tasks_status[task_id]["message"] = f"Worker server connection failed after {max_retries} retries"
             self.complete_task(task_id)
             return
 
         try:
             # 워커 서버에 번역 작업 요청
             async with httpx.AsyncClient(timeout=120.0) as client:
-                response = await client.post(
-                    f"{WORKER_SERVER_URL}/process", json=task_data
-                )
+                response = await client.post(f"{WORKER_SERVER_URL}/process", json=task_data)
 
                 if response.status_code == 200:
                     logger.info(f"Task {task_id} sent to worker server successfully")
@@ -144,9 +125,7 @@ class TranslationQueueManager:
                     self.complete_task(task_id)
                     return
                 else:
-                    logger.error(
-                        f"Worker server error for task {task_id}: {response.status_code} - {response.text}"
-                    )
+                    logger.error(f"Worker server error for task {task_id}: {response.status_code} - {response.text}")
                     # 5xx 서버 오류나 429 Too Many Requests는 재시도
                     if response.status_code >= 500 or response.status_code == 429:
                         raise Exception(f"Retryable error: {response.status_code}")
@@ -154,16 +133,12 @@ class TranslationQueueManager:
                         # 4xx 클라이언트 오류는 재시도하지 않음
                         if task_id in tasks_status:
                             tasks_status[task_id]["status"] = "failed"
-                            tasks_status[task_id][
-                                "message"
-                            ] = f"Worker server error: {response.status_code}"
+                            tasks_status[task_id]["message"] = f"Worker server error: {response.status_code}"
                         self.complete_task(task_id)
                         return
 
         except httpx.TimeoutException:
-            logger.error(
-                f"Worker server timeout for task {task_id} (attempt {retry_count + 1}/{max_retries})"
-            )
+            logger.error(f"Worker server timeout for task {task_id} (attempt {retry_count + 1}/{max_retries})")
             # 타임아웃은 재시도 가능한 오류
             pass
 
@@ -176,9 +151,7 @@ class TranslationQueueManager:
 
         # 재시도 로직: 백오프 전략 적용
         backoff_delay = min(2**retry_count, 60)  # 최대 60초까지
-        logger.info(
-            f"Retrying task {task_id} in {backoff_delay} seconds (attempt {retry_count + 1}/{max_retries})"
-        )
+        logger.info(f"Retrying task {task_id} in {backoff_delay} seconds (attempt {retry_count + 1}/{max_retries})")
         await asyncio.sleep(backoff_delay)
 
         # 재시도
@@ -276,29 +249,21 @@ async def auto_delete_task(task_id: str, delay_hours: int = AUTO_DELETE_HOURS):
             if success:
                 logger.info(f"Deleted input file from GCS: {task['input_gcs_key']}")
             else:
-                logger.warning(
-                    f"Failed to delete input file from GCS: {task['input_gcs_key']}"
-                )
+                logger.warning(f"Failed to delete input file from GCS: {task['input_gcs_key']}")
 
         # GCS에서 출력 파일들 삭제 (디렉터리 전체)
         if "output_gcs_prefix" in task:
             success = gcs_manager.delete_files_with_prefix(task["output_gcs_prefix"])
             if success:
-                logger.info(
-                    f"Deleted output files from GCS with prefix: {task['output_gcs_prefix']}"
-                )
+                logger.info(f"Deleted output files from GCS with prefix: {task['output_gcs_prefix']}")
             else:
-                logger.warning(
-                    f"Failed to delete output files from GCS with prefix: {task['output_gcs_prefix']}"
-                )
+                logger.warning(f"Failed to delete output files from GCS with prefix: {task['output_gcs_prefix']}")
         elif "output_gcs_key" in task:
             success = gcs_manager.delete_file(task["output_gcs_key"])
             if success:
                 logger.info(f"Deleted output file from GCS: {task['output_gcs_key']}")
             else:
-                logger.warning(
-                    f"Failed to delete output file from GCS: {task['output_gcs_key']}"
-                )
+                logger.warning(f"Failed to delete output file from GCS: {task['output_gcs_key']}")
 
         # 작업 관련 임시 파일들 정리
         cleanup_task_related_temp_files(task_id)
@@ -390,7 +355,7 @@ async def translate_pdf(
         )
 
     task_id = str(uuid.uuid4())
-    filename = file.filename
+    filename = file.filename or "unknown.pdf"
 
     try:
         # GCS에 파일 업로드
@@ -472,9 +437,7 @@ async def update_task_status(
 ):
     """워커 서버에서 호출하는 상태 업데이트 엔드포인트"""
     if task_id not in tasks_status:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
 
     task = tasks_status[task_id]
     task["status"] = status_str
@@ -496,9 +459,7 @@ async def update_task_status(
 async def get_task_status(task_id: str):
     """작업 상태 조회"""
     if task_id not in tasks_status:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
 
     task = tasks_status[task_id]
 
@@ -523,21 +484,15 @@ async def get_task_status(task_id: str):
 async def download_translated_file(task_id: str):
     """번역된 파일 다운로드"""
     if task_id not in tasks_status:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
 
     task = tasks_status[task_id]
 
     if task["status"] != "completed":
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Translation not completed"
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Translation not completed")
 
     if "output_gcs_key" not in task:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Translation file not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Translation file not found")
 
     try:
         # GCS에서 파일을 임시로 다운로드
@@ -614,21 +569,15 @@ async def delete_task(task_id: str):
         if "output_gcs_prefix" in task:
             success = gcs_manager.delete_files_with_prefix(task["output_gcs_prefix"])
             if success:
-                logger.info(
-                    f"Deleted output files from GCS with prefix: {task['output_gcs_prefix']}"
-                )
+                logger.info(f"Deleted output files from GCS with prefix: {task['output_gcs_prefix']}")
             else:
-                logger.warning(
-                    f"Failed to delete output files with prefix: {task['output_gcs_prefix']}"
-                )
+                logger.warning(f"Failed to delete output files with prefix: {task['output_gcs_prefix']}")
         elif "output_gcs_key" in task:
             success = gcs_manager.delete_file(task["output_gcs_key"])
             if success:
                 logger.info(f"Deleted output file from GCS: {task['output_gcs_key']}")
             else:
-                logger.warning(
-                    f"Failed to delete output file: {task['output_gcs_key']}"
-                )
+                logger.warning(f"Failed to delete output file: {task['output_gcs_key']}")
         else:
             logger.info(f"No output files found for task {task_id}")
 

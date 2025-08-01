@@ -5,7 +5,6 @@ import tempfile
 import time
 import uuid
 from functools import wraps
-from pathlib import Path
 from typing import BinaryIO, Optional
 
 from dotenv import load_dotenv
@@ -15,9 +14,7 @@ from google.cloud.exceptions import GoogleCloudError, NotFound
 load_dotenv()
 
 # 로깅 설정
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # 환경 변수 기본값 설정
@@ -39,9 +36,7 @@ def retry_on_failure(max_retries: int = DEFAULT_RETRY_ATTEMPTS):
                     if attempt == max_retries - 1:
                         logger.error(f"Final attempt failed for {func.__name__}: {e}")
                         raise
-                    logger.warning(
-                        f"Attempt {attempt + 1} failed for {func.__name__}: {e}"
-                    )
+                    logger.warning(f"Attempt {attempt + 1} failed for {func.__name__}: {e}")
                     time.sleep(2**attempt)  # 지수 백오프
             return None
 
@@ -63,9 +58,7 @@ class GCSManager:
             raise ValueError("GCS_BUCKET_NAME environment variable is required")
 
         if not self.credentials_path:
-            raise ValueError(
-                "GOOGLE_APPLICATION_CREDENTIALS environment variable is required"
-            )
+            raise ValueError("GOOGLE_APPLICATION_CREDENTIALS environment variable is required")
 
         if not self.project_id:
             raise ValueError("GCP_PROJECT_ID environment variable is required")
@@ -76,18 +69,14 @@ class GCSManager:
         """GCS 클라이언트 초기화"""
         try:
             # 서비스 계정 키 파일 사용
-            self.client = storage.Client.from_service_account_json(
-                self.credentials_path, project=self.project_id
-            )
+            self.client = storage.Client.from_service_account_json(self.credentials_path, project=self.project_id)
 
             # 버킷 존재 확인
             self.bucket = self.client.bucket(self.bucket_name)
             if not self.bucket.exists():
                 raise ValueError(f"Bucket {self.bucket_name} does not exist")
 
-            logger.info(
-                f"GCS client initialized successfully for bucket: {self.bucket_name}"
-            )
+            logger.info(f"GCS client initialized successfully for bucket: {self.bucket_name}")
 
         except Exception as e:
             logger.error(f"Error initializing GCS client: {e}")
@@ -260,9 +249,7 @@ class GCSManager:
 
             logger.info(f"Deleted {deleted_count} files with prefix: {prefix}")
             if failed_count > 0:
-                logger.warning(
-                    f"Failed to delete {failed_count} files with prefix: {prefix}"
-                )
+                logger.warning(f"Failed to delete {failed_count} files with prefix: {prefix}")
                 return False
 
             return True
@@ -320,9 +307,7 @@ class GCSManager:
             return None
 
     @retry_on_failure(max_retries=2)
-    def generate_signed_url(
-        self, gcs_key: str, expiration: int = 3600
-    ) -> Optional[str]:
+    def generate_signed_url(self, gcs_key: str, expiration: int = 3600) -> Optional[str]:
         """파일 다운로드를 위한 signed URL 생성"""
         try:
             if not self._validate_gcs_key(gcs_key):
@@ -334,9 +319,7 @@ class GCSManager:
                 logger.error(f"File not found for signed URL: {gcs_key}")
                 return None
 
-            url = blob.generate_signed_url(
-                version="v4", expiration=expiration, method="GET"
-            )
+            url = blob.generate_signed_url(version="v4", expiration=expiration, method="GET")
             logger.info(f"Signed URL generated for {gcs_key}")
             return url
 
@@ -436,14 +419,10 @@ def cleanup_task_related_temp_files(task_id: str):
                         cleaned_count += 1
                         logger.debug(f"Task-related temp file cleaned up: {file_path}")
                     except Exception as e:
-                        logger.warning(
-                            f"Error cleaning up task temp file {file_path}: {e}"
-                        )
+                        logger.warning(f"Error cleaning up task temp file {file_path}: {e}")
 
         if cleaned_count > 0:
-            logger.info(
-                f"Cleaned up {cleaned_count} task-related temp files for {task_id}"
-            )
+            logger.info(f"Cleaned up {cleaned_count} task-related temp files for {task_id}")
 
     except Exception as e:
         logger.error(f"Error cleaning up task-related temp files for {task_id}: {e}")
@@ -463,9 +442,7 @@ def validate_environment():
             missing_vars.append(var)
 
     if missing_vars:
-        raise ValueError(
-            f"Missing required environment variables: {', '.join(missing_vars)}"
-        )
+        raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
 
     # 자격 증명 파일 존재 확인
     cred_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")

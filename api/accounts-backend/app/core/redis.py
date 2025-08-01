@@ -69,6 +69,41 @@ class RedisCache:
         key = f"user:profile:{user_id}"
         return await self.set(key, profile, ttl)
 
+    async def delete_user_profile(self, user_id: str) -> bool:
+        """Delete user profile from cache"""
+        key = f"user:profile:{user_id}"
+        return await self.delete(key)
+
+    async def get_user_stats(self, user_id: str) -> Optional[dict]:
+        """Get user stats from cache"""
+        key = f"user:stats:{user_id}"
+        return await self.get(key)
+
+    async def set_user_stats(self, user_id: str, stats: dict, ttl: int = 3600) -> bool:
+        """Cache user stats (default 1 hour)"""
+        key = f"user:stats:{user_id}"
+        return await self.set(key, stats, ttl)
+
+    async def delete_user_stats(self, user_id: str) -> bool:
+        """Delete user stats from cache"""
+        key = f"user:stats:{user_id}"
+        return await self.delete(key)
+
+    async def get_oauth_state(self, state: str) -> Optional[dict]:
+        """Get OAuth state from cache"""
+        key = f"oauth:state:{state}"
+        return await self.get(key)
+
+    async def set_oauth_state(self, state: str, data: dict, ttl: int = 600) -> bool:
+        """Cache OAuth state (default 10 minutes)"""
+        key = f"oauth:state:{state}"
+        return await self.set(key, data, ttl)
+
+    async def delete_oauth_state(self, state: str) -> bool:
+        """Delete OAuth state from cache"""
+        key = f"oauth:state:{state}"
+        return await self.delete(key)
+
     async def invalidate_user_cache(self, user_id: str):
         """Invalidate all user-related cache"""
         pattern = f"user:*:{user_id}"

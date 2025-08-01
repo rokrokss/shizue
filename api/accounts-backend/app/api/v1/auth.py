@@ -130,7 +130,7 @@ async def callback_google(
             user.name = user_data.get("name", user.name)
             user.profile_picture = user_data.get("picture", user.profile_picture)
             user.locale = user_data.get("locale", user.locale)
-            user.last_login_at = datetime.now(timezone.utc)
+            setattr(user, "last_login_at", datetime.now(timezone.utc))
             await db.commit()
 
         # Generate tokens
@@ -246,7 +246,7 @@ async def refresh_token(request: RefreshTokenRequest, db: AsyncSession = Depends
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(
     refresh_token: Optional[str] = None,
-    response: Response = None,
+    response: Optional[Response] = None,
     db: AsyncSession = Depends(get_db),
 ):
     """Logout user and revoke tokens"""
@@ -260,8 +260,8 @@ async def logout(
             auth_token = result.scalar_one_or_none()
 
             if auth_token:
-                auth_token.is_active = False
-                auth_token.revoked_at = datetime.now(timezone.utc)
+                setattr(auth_token, "is_active", False)
+                setattr(auth_token, "revoked_at", datetime.now(timezone.utc))
                 await db.commit()
 
                 # Clear user cache

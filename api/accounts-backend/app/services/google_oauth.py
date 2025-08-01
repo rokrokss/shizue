@@ -30,7 +30,7 @@ class GoogleOAuthService:
             response = await client.get(GOOGLE_DISCOVERY_URL)
             response.raise_for_status()
             self._discovery_doc = response.json()
-            return self._discovery_doc
+            return self._discovery_doc or {}
 
     async def get_authorization_url(self, state: str) -> str:
         """Get Google OAuth authorization URL"""

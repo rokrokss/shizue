@@ -33,8 +33,6 @@ help:
 sync:
 	@echo "🔄 Installing all dependencies with uv..."
 	@uv sync --all-groups
-	@uv pip install -e accounts-backend
-	@uv pip install -e pdf-translation
 	@echo "✅ All dependencies installed!"
 
 # =============================================================================
