@@ -27,6 +27,13 @@
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[yml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "yaml.format.enable": true,
   "html.validate.styles": false,
   "css.validate": false,
   "i18n-ally.localesPaths": ["src/locales"],
