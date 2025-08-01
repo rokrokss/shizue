@@ -1,11 +1,11 @@
+import json
+from datetime import datetime, timedelta, timezone
+
 import pytest
+from app.models.api_usage import APIUsage
+from app.models.user import User
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime, timezone, timedelta
-import json
-
-from app.models.user import User
-from app.models.api_usage import APIUsage
 
 
 class TestUsageAPI:

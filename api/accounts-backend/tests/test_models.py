@@ -1,10 +1,10 @@
-import pytest
-from datetime import datetime, timezone, timedelta
 import uuid
+from datetime import datetime, timedelta, timezone
 
-from app.models.user import User
-from app.models.auth_token import AuthToken
+import pytest
 from app.models.api_usage import APIUsage
+from app.models.auth_token import AuthToken
+from app.models.user import User
 
 
 class TestUserModel:

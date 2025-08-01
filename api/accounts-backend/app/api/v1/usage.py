@@ -3,15 +3,15 @@ import logging
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import and_, func, select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.api_usage import APIUsage
 from app.models.user import User
-from app.schemas.usage import ModelUsage, UsageCreate, UsageRecord, UsageSummary
+from app.schemas.usage import (ModelUsage, UsageCreate, UsageRecord,
+                               UsageSummary)
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import and_, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 

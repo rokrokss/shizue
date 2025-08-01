@@ -1,17 +1,12 @@
-import pytest
 from datetime import datetime, timedelta, timezone
-from jose import jwt
-from app.core.security import (
-    create_access_token,
-    create_refresh_token,
-    verify_token,
-    hash_token,
-    verify_password,
-    get_password_hash,
-    generate_state_token,
-    generate_device_id,
-)
+
+import pytest
 from app.core.config import settings
+from app.core.security import (create_access_token, create_refresh_token,
+                               generate_device_id, generate_state_token,
+                               get_password_hash, hash_token, verify_password,
+                               verify_token)
+from jose import jwt
 
 
 class TestSecurity:

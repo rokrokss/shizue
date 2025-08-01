@@ -3,15 +3,14 @@ import sys
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-
 from app.api.v1.api import api_router
 from app.core.config import settings
 from app.core.database import Base, engine
 from app.core.openapi import custom_openapi
 from app.core.redis import redis_client
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 # Configure logging
 logging.basicConfig(

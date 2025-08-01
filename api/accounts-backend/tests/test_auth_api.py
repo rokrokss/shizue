@@ -1,12 +1,12 @@
+import uuid
+from unittest.mock import MagicMock, patch
+
 import pytest
+from app.core.security import create_refresh_token, hash_token
+from app.models.auth_token import AuthToken
+from app.models.user import User
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
-from unittest.mock import patch, MagicMock
-import uuid
-
-from app.models.user import User
-from app.models.auth_token import AuthToken
-from app.core.security import create_refresh_token, hash_token
 
 
 class TestAuthAPI:
@@ -90,7 +90,7 @@ class TestAuthAPI:
         assert response.status_code == 307
 
         # Check user was not duplicated
-        from sqlalchemy import select, func
+        from sqlalchemy import func, select
 
         result = await db_session.execute(
             select(func.count(User.id)).where(User.google_id == test_user.google_id)

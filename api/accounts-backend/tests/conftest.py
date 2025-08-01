@@ -1,20 +1,20 @@
 import asyncio
+import os
+import uuid
+from typing import AsyncGenerator, Generator
+from unittest.mock import MagicMock, patch
+
 import pytest
 import pytest_asyncio
-from typing import AsyncGenerator, Generator
-from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from sqlalchemy.pool import NullPool
-import os
-from unittest.mock import patch, MagicMock
-
-from app.main import app
-from app.core.database import Base, get_db
 from app.core.config import settings
-from app.models.user import User
+from app.core.database import Base, get_db
 from app.core.security import create_access_token, create_refresh_token
-import uuid
-
+from app.main import app
+from app.models.user import User
+from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
+                                    create_async_engine)
+from sqlalchemy.pool import NullPool
 
 # Override settings for testing
 settings.TESTING = True

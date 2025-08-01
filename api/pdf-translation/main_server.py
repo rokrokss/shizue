@@ -1,25 +1,22 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, Form, status
-from fastapi.responses import Response
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-import os
-import uuid
-from datetime import datetime
-from typing import Optional, Dict, Any, List
 import asyncio
-import httpx
 import logging
-from urllib.parse import quote
-from gcs_utils import (
-    get_gcs_manager,
-    generate_gcs_key,
-    cleanup_temp_file,
-    cleanup_task_related_temp_files,
-)
-from contextlib import asynccontextmanager
-from collections import deque
+import os
 import threading
+import uuid
+from collections import deque
+from contextlib import asynccontextmanager
+from datetime import datetime
+from typing import Any, Dict, List, Optional
+from urllib.parse import quote
+
+import httpx
 from dotenv import load_dotenv
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
+from gcs_utils import (cleanup_task_related_temp_files, cleanup_temp_file,
+                       generate_gcs_key, get_gcs_manager)
+from pydantic import BaseModel
 
 load_dotenv()
 

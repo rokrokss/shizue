@@ -1,32 +1,33 @@
-from fastapi import FastAPI, HTTPException, status
-from pydantic import BaseModel
-import os
 import asyncio
-import httpx
-import logging
-from pathlib import Path
 import gc
-import psutil
-from typing import Optional
-import tempfile
-from contextlib import asynccontextmanager
-from gcs_utils import get_gcs_manager, cleanup_temp_file, cleanup_temp_directory
-import threading
+import logging
+import os
 import signal
 import sys
+import tempfile
+import threading
+from contextlib import asynccontextmanager
+from pathlib import Path
+from typing import Optional
+
+import httpx
+import psutil
 from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, status
+from gcs_utils import (cleanup_temp_directory, cleanup_temp_file,
+                       get_gcs_manager)
+from pydantic import BaseModel
 
 load_dotenv()
 
-# Babeldoc imports
-from babeldoc.translator.translator import OpenAITranslator, set_translate_rate_limiter
-from babeldoc.format.pdf.translation_config import (
-    TranslationConfig,
-    WatermarkOutputMode,
-)
-from babeldoc.docvision.doclayout import DocLayoutModel
-import babeldoc.format.pdf.high_level
 import babeldoc
+import babeldoc.format.pdf.high_level
+from babeldoc.docvision.doclayout import DocLayoutModel
+from babeldoc.format.pdf.translation_config import (TranslationConfig,
+                                                    WatermarkOutputMode)
+# Babeldoc imports
+from babeldoc.translator.translator import (OpenAITranslator,
+                                            set_translate_rate_limiter)
 
 # Configure logging
 logging.basicConfig(

@@ -2,9 +2,8 @@ import logging
 from typing import Any, Dict, Optional
 
 import httpx
-from authlib.integrations.httpx_client import AsyncOAuth2Client
-
 from app.core.config import settings
+from authlib.integrations.httpx_client import AsyncOAuth2Client
 
 logger = logging.getLogger(__name__)
 

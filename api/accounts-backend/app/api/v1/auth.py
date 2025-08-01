@@ -2,26 +2,21 @@ import logging
 from datetime import datetime, timezone
 from typing import Optional
 
+from app.core.config import settings
+from app.core.database import get_db
+from app.core.redis import cache
+from app.core.security import (create_access_token, create_refresh_token,
+                               generate_device_id, generate_state_token,
+                               hash_token, verify_token)
+from app.models.auth_token import AuthToken
+from app.models.user import User
+from app.schemas.auth import (LoginURLResponse, RefreshTokenRequest,
+                              TokenResponse)
+from app.services.google_oauth import google_oauth
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.core.config import settings
-from app.core.database import get_db
-from app.core.redis import cache
-from app.core.security import (
-    create_access_token,
-    create_refresh_token,
-    generate_device_id,
-    generate_state_token,
-    hash_token,
-    verify_token,
-)
-from app.models.auth_token import AuthToken
-from app.models.user import User
-from app.schemas.auth import LoginURLResponse, RefreshTokenRequest, TokenResponse
-from app.services.google_oauth import google_oauth
 
 logger = logging.getLogger(__name__)
 
