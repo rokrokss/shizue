@@ -4,17 +4,17 @@ on:
   push:
     branches: [main, develop]
     paths:
-      - 'api/accounts-backend/**'
+      - 'api/**'
       - '.github/workflows/backend-ci.yml'
   pull_request:
     branches: [main, develop]
     paths:
-      - 'api/accounts-backend/**'
+      - 'api/**'
       - '.github/workflows/backend-ci.yml'
 
 defaults:
   run:
-    working-directory: api/accounts-backend
+    working-directory: api
 
 jobs:
   test:
@@ -54,33 +54,41 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Cache dependencies
-        uses: actions/cache@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          enable-cache: true
+          cache-dependency-glob: "**/pyproject.toml"
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          uv sync --all-groups
+          uv pip install -e accounts-backend
+          uv pip install -e pdf-translation
 
       - name: Run linting
         run: |
-          pip install flake8 black isort
-          # Check code formatting with diff output
-          black --check --diff app/ || (echo "::error::Code formatting issues found. Run 'black app/' locally to fix." && exit 1)
-          # Check import sorting
-          isort --check-only --diff app/ || (echo "::error::Import sorting issues found. Run 'isort app/' locally to fix." && exit 1)
-          # Run flake8 linting
-          flake8 app/ --max-line-length=120 --exclude=__pycache__
+          # Check code formatting for accounts-backend
+          uv run black --check --diff accounts-backend/app/ || (echo "::error::Code formatting issues found. Run 'black accounts-backend/app/' locally to fix." && exit 1)
+          # Check import sorting for accounts-backend
+          uv run isort --check-only --diff accounts-backend/app/ || (echo "::error::Import sorting issues found. Run 'isort accounts-backend/app/' locally to fix." && exit 1)
+          # Run flake8 linting for accounts-backend
+          uv run flake8 accounts-backend/app/ --max-line-length=120 --exclude=__pycache__
+          
+          # Check pdf-translation if it has Python files
+          if [ -d "pdf-translation" ] && find pdf-translation -name "*.py" -type f | grep -q .; then
+            uv run black --check --diff pdf-translation/ || true
+            uv run isort --check-only --diff pdf-translation/ || true
+            uv run flake8 pdf-translation/ --max-line-length=120 --exclude=__pycache__ || true
+          fi
 
       - name: Run type checking
         run: |
-          pip install mypy
-          mypy app/ --ignore-missing-imports
+          uv run mypy accounts-backend/app/ --ignore-missing-imports
+          # Type check pdf-translation if it has type hints
+          if [ -d "pdf-translation" ] && find pdf-translation -name "*.py" -type f | grep -q .; then
+            uv run mypy pdf-translation/ --ignore-missing-imports || true
+          fi
 
       - name: Run tests
         env:
@@ -94,8 +102,15 @@ jobs:
           CHROME_EXTENSION_REDIRECT_URI: chrome-extension://test_extension_id/callback
           TESTING: true
         run: |
-          # Run tests with coverage
-          pytest -v --cov=app --cov-report=xml --cov-report=term-missing
+          # Run tests for accounts-backend
+          cd accounts-backend && uv run pytest -v --cov=app --cov-report=xml --cov-report=term-missing
+          cd ..
+          
+          # Run tests for pdf-translation if they exist
+          if [ -d "pdf-translation/tests" ]; then
+            cd pdf-translation && uv run pytest -v --cov=. --cov-report=xml --cov-report=term-missing || true
+            cd ..
+          fi
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -107,11 +122,14 @@ jobs:
 
       - name: Run security scan
         run: |
-          pip install bandit safety
-          # Scan for security issues
-          bandit -r app/ -f json -o bandit-report.json || true
+          # Scan for security issues in accounts-backend
+          uv run bandit -r accounts-backend/app/ -f json -o accounts-backend-bandit-report.json || true
+          # Scan pdf-translation
+          if [ -d "pdf-translation" ] && find pdf-translation -name "*.py" -type f | grep -q .; then
+            uv run bandit -r pdf-translation/ -f json -o pdf-translation-bandit-report.json || true
+          fi
           # Check for known vulnerabilities
-          safety check --json || true
+          uv run safety check --json || true
 
   build:
     name: Build Docker Image

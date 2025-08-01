@@ -1,6 +1,9 @@
 {
   "version": "0.2",
   "language": "en",
+  "enableGlobDot": true,
+  "gitignoreRoot": ".",
+  "useGitignore": true,
   "words": [
     "ddin",
     "Dexie",
@@ -58,6 +61,26 @@
     ".pytest_cache",
     ".mypy_cache",
     "coverage.xml",
-    "*.log"
-  ]
+    "*.log",
+    "*.lock",
+    "uv.lock",
+    "pnpm-lock.yaml",
+    "package-lock.json",
+    "**/*.min.js",
+    "**/*.min.css",
+    "**/vendor/**",
+    "**/migrations/**",
+    "*.pdf",
+    "*.png",
+    "*.jpg",
+    "*.jpeg",
+    "*.gif",
+    "*.ico",
+    "*.woff",
+    "*.woff2",
+    "*.ttf",
+    "*.eot"
+  ],
+  "dictionaries": ["en", "en-gb", "companies", "softwareTerms", "typescript", "python", "node", "html", "css", "bash"],
+  "import": []
 }
