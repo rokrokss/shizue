@@ -74,10 +74,10 @@ jobs:
       - name: Run linting
         run: |
           pip install flake8 black isort
-          # Check code formatting
-          black --check app/
+          # Check code formatting with diff output
+          black --check --diff app/ || (echo "::error::Code formatting issues found. Run 'black app/' locally to fix." && exit 1)
           # Check import sorting
-          isort --check-only app/
+          isort --check-only --diff app/ || (echo "::error::Import sorting issues found. Run 'isort app/' locally to fix." && exit 1)
           # Run flake8 linting
           flake8 app/ --max-line-length=120 --exclude=__pycache__
 
