@@ -19,6 +19,7 @@
     "Codecov",
     "flake8",
     "isort",
+    "appuser",
     "isready",
     "mypy",
     "pycache",

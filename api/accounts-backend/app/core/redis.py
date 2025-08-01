@@ -3,14 +3,13 @@ import logging
 from typing import Any, Optional
 
 import redis.asyncio as redis
+
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
 # Create Redis client
-redis_client = redis.from_url(
-    settings.REDIS_URL, encoding="utf-8", decode_responses=True
-)
+redis_client = redis.from_url(settings.REDIS_URL, encoding="utf-8", decode_responses=True)
 
 
 class RedisCache:
@@ -65,9 +64,7 @@ class RedisCache:
         key = f"user:profile:{user_id}"
         return await self.get(key)
 
-    async def set_user_profile(
-        self, user_id: str, profile: dict, ttl: int = 3600
-    ) -> bool:
+    async def set_user_profile(self, user_id: str, profile: dict, ttl: int = 3600) -> bool:
         """Cache user profile (default 1 hour)"""
         key = f"user:profile:{user_id}"
         return await self.set(key, profile, ttl)

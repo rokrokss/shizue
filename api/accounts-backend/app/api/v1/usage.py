@@ -3,15 +3,15 @@ import logging
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import and_, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.api_usage import APIUsage
 from app.models.user import User
-from app.schemas.usage import (ModelUsage, UsageCreate, UsageRecord,
-                               UsageSummary)
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import and_, func, select
-from sqlalchemy.ext.asyncio import AsyncSession
+from app.schemas.usage import ModelUsage, UsageCreate, UsageRecord, UsageSummary
 
 logger = logging.getLogger(__name__)
 
@@ -107,9 +107,7 @@ async def get_usage_history(
 async def get_usage_summary(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
-    period: str = Query(
-        default="month", regex="^(day|week|month)$", description="Time period"
-    ),
+    period: str = Query(default="month", regex="^(day|week|month)$", description="Time period"),
 ):
     """Get usage summary for specified period"""
     try:
@@ -126,9 +124,7 @@ async def get_usage_summary(
         total_result = await db.execute(
             select(
                 func.count(APIUsage.id).label("total_messages"),
-                func.sum(APIUsage.tokens_input + APIUsage.tokens_output).label(
-                    "total_tokens"
-                ),
+                func.sum(APIUsage.tokens_input + APIUsage.tokens_output).label("total_tokens"),
             ).where(
                 and_(
                     APIUsage.user_id == current_user.id,
@@ -143,9 +139,7 @@ async def get_usage_summary(
             select(
                 APIUsage.model,
                 func.count(APIUsage.id).label("messages"),
-                func.sum(APIUsage.tokens_input + APIUsage.tokens_output).label(
-                    "tokens"
-                ),
+                func.sum(APIUsage.tokens_input + APIUsage.tokens_output).label("tokens"),
             )
             .where(
                 and_(
@@ -156,19 +150,14 @@ async def get_usage_summary(
             .group_by(APIUsage.model)
         )
 
-        models = {
-            row.model: {"messages": row.messages, "tokens": row.tokens}
-            for row in model_result
-        }
+        models = {row.model: {"messages": row.messages, "tokens": row.tokens} for row in model_result}
 
         # Get daily breakdown
         daily_result = await db.execute(
             select(
                 func.date(APIUsage.created_at).label("date"),
                 func.count(APIUsage.id).label("messages"),
-                func.sum(APIUsage.tokens_input + APIUsage.tokens_output).label(
-                    "tokens"
-                ),
+                func.sum(APIUsage.tokens_input + APIUsage.tokens_output).label("tokens"),
             )
             .where(
                 and_(
@@ -209,9 +198,7 @@ async def get_usage_summary(
 async def get_model_usage(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
-    days: int = Query(
-        default=30, ge=1, le=365, description="Number of days to analyze"
-    ),
+    days: int = Query(default=30, ge=1, le=365, description="Number of days to analyze"),
 ):
     """Get usage statistics by model"""
     try:
@@ -222,9 +209,7 @@ async def get_model_usage(
             select(
                 APIUsage.model,
                 func.count(APIUsage.id).label("messages"),
-                func.sum(APIUsage.tokens_input + APIUsage.tokens_output).label(
-                    "tokens"
-                ),
+                func.sum(APIUsage.tokens_input + APIUsage.tokens_output).label("tokens"),
                 func.avg(APIUsage.latency_ms).label("avg_latency"),
                 func.sum(func.cast(APIUsage.status_code >= 400, int)).label("errors"),
             )
@@ -246,9 +231,7 @@ async def get_model_usage(
                     model=row.model,
                     messages=row.messages,
                     tokens=row.tokens or 0,
-                    avg_latency_ms=(
-                        round(row.avg_latency, 2) if row.avg_latency else None
-                    ),
+                    avg_latency_ms=(round(row.avg_latency, 2) if row.avg_latency else None),
                     error_rate=round(error_rate, 2),
                 )
             )

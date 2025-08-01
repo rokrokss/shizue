@@ -1,15 +1,16 @@
 import logging
 from datetime import datetime, timedelta, timezone
 
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.core.redis import cache
 from app.models.api_usage import APIUsage
 from app.models.user import User
 from app.schemas.user import UserProfile, UserStats, UserUpdate
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 
@@ -54,9 +55,7 @@ async def update_current_user(
 
 
 @router.get("/me/stats", response_model=UserStats)
-async def get_user_stats(
-    current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
-):
+async def get_user_stats(current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     """Get user usage statistics"""
     try:
         # Try to get from cache first
@@ -68,9 +67,7 @@ async def get_user_stats(
         total_result = await db.execute(
             select(
                 func.count(APIUsage.id).label("total_messages"),
-                func.sum(APIUsage.tokens_input + APIUsage.tokens_output).label(
-                    "total_tokens"
-                ),
+                func.sum(APIUsage.tokens_input + APIUsage.tokens_output).label("total_tokens"),
             ).where(APIUsage.user_id == current_user.id)
         )
         total_data = total_result.one()
@@ -79,9 +76,7 @@ async def get_user_stats(
         model_result = await db.execute(
             select(
                 APIUsage.model,
-                func.sum(APIUsage.tokens_input + APIUsage.tokens_output).label(
-                    "tokens"
-                ),
+                func.sum(APIUsage.tokens_input + APIUsage.tokens_output).label("tokens"),
             )
             .where(APIUsage.user_id == current_user.id)
             .group_by(APIUsage.model)
@@ -94,9 +89,7 @@ async def get_user_stats(
             select(
                 func.date(APIUsage.created_at).label("date"),
                 func.count(APIUsage.id).label("messages"),
-                func.sum(APIUsage.tokens_input + APIUsage.tokens_output).label(
-                    "tokens"
-                ),
+                func.sum(APIUsage.tokens_input + APIUsage.tokens_output).label("tokens"),
             )
             .where(
                 APIUsage.user_id == current_user.id,
@@ -137,9 +130,7 @@ async def get_user_stats(
 
 
 @router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_current_user(
-    current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
-):
+async def delete_current_user(current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     """Delete current user account (soft delete)"""
     try:
         # Soft delete user
@@ -150,9 +141,7 @@ async def delete_current_user(
         from app.models.auth_token import AuthToken
 
         result = await db.execute(
-            select(AuthToken).where(
-                AuthToken.user_id == current_user.id, AuthToken.is_active == True
-            )
+            select(AuthToken).where(AuthToken.user_id == current_user.id, AuthToken.is_active.is_(True))
         )
         tokens = result.scalars().all()
 

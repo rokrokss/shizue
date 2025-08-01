@@ -41,6 +41,4 @@ class UserStats(BaseModel):
     total_messages: int = Field(default=0, description="Total messages sent")
     total_tokens: int = Field(default=0, description="Total tokens used")
     models_used: dict = Field(default_factory=dict, description="Token usage by model")
-    last_30_days: dict = Field(
-        default_factory=dict, description="Usage in last 30 days"
-    )
+    last_30_days: dict = Field(default_factory=dict, description="Usage in last 30 days")

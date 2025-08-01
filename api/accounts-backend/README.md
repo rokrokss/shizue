@@ -38,7 +38,7 @@ nano .env.production
 
 ## 필요 사항
 
-- Python 3.11+
+- Python 3.12
 - PostgreSQL 15+
 - Redis 7+
 - Docker & Docker Compose (권장)
@@ -76,6 +76,9 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 2. 의존성 설치:
 ```bash
 pip install -r requirements.txt
+
+# 개발 도구 설치 (선택사항)
+pip install ".[dev]"  # 또는 uv pip install -e ".[dev]"
 ```
 
 3. 환경 변수 설정:
@@ -122,7 +125,48 @@ uvicorn app.main:app --reload
 
 ## 개발
 
-### 테스트 실행
+### 개발 명령어
+
+#### Makefile 사용 (권장)
+```bash
+# 코드 포매팅
+make format
+
+# 코드 검사
+make check
+
+# 테스트 실행
+make local-test
+
+# 개발 서버 실행
+make run
+
+# CI 검사 (포매팅 체크 + 린팅 + 테스트)
+make ci
+```
+
+#### taskipy 사용 (Python 스크립트)
+```bash
+# taskipy 설치 필요
+pip install taskipy
+
+# 코드 포매팅
+task format
+
+# 코드 검사
+task check
+
+# 테스트 실행
+task test
+
+# 개발 서버 실행
+task dev
+
+# 전체 검사
+task all
+```
+
+### Docker 테스트 실행
 ```bash
 make test
 ```

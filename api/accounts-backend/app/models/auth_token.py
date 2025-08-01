@@ -1,9 +1,10 @@
 import uuid
 
-from app.core.database import Base
 from sqlalchemy import Column, DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
+
+from app.core.database import Base
 
 
 class AuthToken(Base):

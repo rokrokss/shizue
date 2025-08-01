@@ -14,20 +14,23 @@ import httpx
 import psutil
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, status
-from gcs_utils import (cleanup_temp_directory, cleanup_temp_file,
-                       get_gcs_manager)
 from pydantic import BaseModel
+
+from gcs_utils import cleanup_temp_directory, cleanup_temp_file, get_gcs_manager
 
 load_dotenv()
 
-import babeldoc
 import babeldoc.format.pdf.high_level
 from babeldoc.docvision.doclayout import DocLayoutModel
-from babeldoc.format.pdf.translation_config import (TranslationConfig,
-                                                    WatermarkOutputMode)
+from babeldoc.format.pdf.translation_config import (
+    TranslationConfig,
+    WatermarkOutputMode,
+)
+
 # Babeldoc imports
-from babeldoc.translator.translator import (OpenAITranslator,
-                                            set_translate_rate_limiter)
+from babeldoc.translator.translator import OpenAITranslator, set_translate_rate_limiter
+
+import babeldoc
 
 # Configure logging
 logging.basicConfig(

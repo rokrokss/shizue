@@ -33,6 +33,12 @@
   "[yml]": {
     "editor.defaultFormatter": "redhat.vscode-yaml"
   },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
   "yaml.format.enable": true,
   "html.validate.styles": false,
   "css.validate": false,

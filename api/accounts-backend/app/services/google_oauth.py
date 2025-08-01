@@ -2,8 +2,9 @@ import logging
 from typing import Any, Dict, Optional
 
 import httpx
-from app.core.config import settings
 from authlib.integrations.httpx_client import AsyncOAuth2Client
+
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -77,9 +78,7 @@ class GoogleOAuthService:
         userinfo_endpoint = discovery["userinfo_endpoint"]
 
         async with httpx.AsyncClient() as client:
-            response = await client.get(
-                userinfo_endpoint, headers={"Authorization": f"Bearer {access_token}"}
-            )
+            response = await client.get(userinfo_endpoint, headers={"Authorization": f"Bearer {access_token}"})
             response.raise_for_status()
             return response.json()
 

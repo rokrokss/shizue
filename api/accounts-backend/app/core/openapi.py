@@ -191,10 +191,5 @@ def add_response_examples(schema: Dict[str, Any]) -> None:
                 if method in schema["paths"][path]:
                     for status_code, response_data in responses.items():
                         if "responses" in schema["paths"][path][method]:
-                            if (
-                                status_code
-                                in schema["paths"][path][method]["responses"]
-                            ):
-                                schema["paths"][path][method]["responses"][
-                                    status_code
-                                ].update(response_data)
+                            if status_code in schema["paths"][path][method]["responses"]:
+                                schema["paths"][path][method]["responses"][status_code].update(response_data)

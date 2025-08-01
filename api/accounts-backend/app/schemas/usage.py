@@ -14,9 +14,7 @@ class UsageRecord(BaseModel):
     tokens_input: int = Field(default=0, description="Input tokens")
     tokens_output: int = Field(default=0, description="Output tokens")
     tokens_total: int = Field(..., description="Total tokens")
-    latency_ms: Optional[int] = Field(
-        None, description="Response latency in milliseconds"
-    )
+    latency_ms: Optional[int] = Field(None, description="Response latency in milliseconds")
     status_code: int = Field(..., description="HTTP status code")
     error_message: Optional[str] = Field(None, description="Error message if failed")
     created_at: datetime
@@ -45,9 +43,7 @@ class UsageSummary(BaseModel):
     total_messages: int = Field(default=0, description="Total messages")
     total_tokens: int = Field(default=0, description="Total tokens")
     models: dict = Field(default_factory=dict, description="Usage by model")
-    daily_breakdown: Optional[List[dict]] = Field(
-        None, description="Daily usage breakdown"
-    )
+    daily_breakdown: Optional[List[dict]] = Field(None, description="Daily usage breakdown")
 
 
 class ModelUsage(BaseModel):

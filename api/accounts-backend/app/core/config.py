@@ -36,7 +36,7 @@ class Settings(BaseSettings):
         if isinstance(v, str):
             try:
                 return json.loads(v)
-            except:
+            except json.JSONDecodeError:
                 return [origin.strip() for origin in v.split(",")]
         return v
 

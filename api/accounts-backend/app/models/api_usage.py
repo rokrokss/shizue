@@ -1,10 +1,11 @@
 import uuid
 
-from app.core.database import Base
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.sql import func
+
+from app.core.database import Base
 
 
 class APIUsage(Base):

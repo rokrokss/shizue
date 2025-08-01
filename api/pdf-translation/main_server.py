@@ -14,9 +14,14 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
-from gcs_utils import (cleanup_task_related_temp_files, cleanup_temp_file,
-                       generate_gcs_key, get_gcs_manager)
 from pydantic import BaseModel
+
+from gcs_utils import (
+    cleanup_task_related_temp_files,
+    cleanup_temp_file,
+    generate_gcs_key,
+    get_gcs_manager,
+)
 
 load_dotenv()
 
