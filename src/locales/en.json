@@ -34,6 +34,17 @@
         "description": "May be unstable due to changes in OpenAI's policies."
       }
     },
+    "step1": {
+      "title": "Sign in to Shizue",
+      "description": "Create an account to save your settings and sync across devices",
+      "privacy": "We respect your privacy. Your data is secure.",
+      "whyLogin": {
+        "title": "Why sign in?",
+        "backup": "Automatic backup of your settings",
+        "sync": "Sync across multiple devices",
+        "usage": "Track your API usage"
+      }
+    },
     "selectLanguage": {
       "title": "Choose Your Language"
     },
@@ -171,5 +182,10 @@
     "noSearchResults": "No search results",
     "noMemos": "No memos",
     "searchMemo": "Search memo"
+  },
+  "auth": {
+    "loginWithGoogle": "Sign in with Google",
+    "logout": "Sign out",
+    "welcome": "Welcome back"
   }
 }

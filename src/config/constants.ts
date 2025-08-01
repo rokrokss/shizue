@@ -14,6 +14,16 @@ export const MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE = 'context_menu_summarize_page'
 export const MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE = 'context_menu_describe_image';
 export const MESSAGE_CONTEXT_MENU_EXTRACT_IMAGE_TEXT = 'context_menu_extract_image_text';
 
+/* auth messages */
+export const MESSAGE_AUTH_LOGIN = 'auth_login';
+export const MESSAGE_AUTH_LOGOUT = 'auth_logout';
+export const MESSAGE_AUTH_CHECK_STATUS = 'auth_check_status';
+export const MESSAGE_AUTH_REFRESH_TOKEN = 'auth_refresh_token';
+export const MESSAGE_AUTH_GET_USER_INFO = 'auth_get_user_info';
+
+/* api mode messages */
+export const MESSAGE_API_MODE_SWITCH = 'api_mode_switch';
+
 /* port */
 export const PORT_LISTEN_PANEL_CLOSED_KEY = 'listen_panel_closed_key';
 export const PORT_STREAM_MESSAGE = 'stream_message_key';
@@ -42,6 +52,16 @@ export const STORAGE_YOUTUBE_CAPTION_SIZE_RATIO = 'YOUTUBE_CAPTION_SIZE_RATIO';
 export const STORAGE_TOGGLE_HIDDEN_SITE_LIST = 'TOGGLE_HIDDEN_SITE_LIST';
 export const STORAGE_PDF_TRANSLATE_TASK_INFO = 'PDF_TRANSLATE_TASK_INFO';
 export const STORAGE_PDF_TRANSLATE_NO_DUAL = 'PDF_TRANSLATE_NO_DUAL';
+
+/* auth storage */
+export const STORAGE_AUTH_TOKEN = 'AUTH_TOKEN';
+export const STORAGE_REFRESH_TOKEN = 'REFRESH_TOKEN';
+export const STORAGE_USER_INFO = 'USER_INFO';
+export const STORAGE_AUTH_EXPIRY = 'AUTH_EXPIRY';
+
+/* api mode storage */
+export const STORAGE_API_MODE = 'API_MODE';
+export const STORAGE_API_MODE_PREFERENCE = 'API_MODE_PREFERENCE';
 
 /* parameters */
 export const STREAM_FLUSH_THRESHOLD_0 = 5;

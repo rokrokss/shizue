@@ -1,0 +1,52 @@
+# Caddyfile for Shizue API
+# Caddy automatically handles HTTPS certificates
+
+# API 도메인 설정 (실제 도메인으로 변경하세요)
+api.shizue.app {
+    # API 프록시
+    reverse_proxy api:8000 {
+        # 헤더 설정
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+        
+        # 헬스체크
+        health_uri /health
+        health_interval 30s
+        health_timeout 5s
+    }
+    
+    # CORS 헤더 (Chrome Extension용)
+    header {
+        Access-Control-Allow-Origin chrome-extension://*
+        Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type, Authorization"
+        Access-Control-Max-Age 86400
+    }
+    
+    # 보안 헤더
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy strict-origin-when-cross-origin
+    }
+    
+    # Rate limiting (요청 제한)
+    rate_limit {
+        zone dynamic 100r/m
+    }
+    
+    # 로그
+    log {
+        output file /var/log/caddy/access.log {
+            roll_size 10mb
+            roll_keep 5
+        }
+    }
+}
+
+# HTTP에서 HTTPS로 자동 리다이렉트
+http://api.shizue.app {
+    redir https://api.shizue.app{uri} permanent
+}
