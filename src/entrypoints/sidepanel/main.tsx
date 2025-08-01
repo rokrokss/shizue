@@ -5,6 +5,7 @@ import { SidePanelRoutes } from '@/entrypoints/sidepanel/routes';
 import AntdProvider from '@/providers/AntdProvider';
 import LanguageProvider from '@/providers/LanguageProvider';
 import SidePanelProvider from '@/providers/SidePanelProvider';
+import { AuthProvider } from '@/components/Auth/AuthProvider';
 import '@ant-design/v5-patch-for-react-19';
 import { Provider as JotaiProvider } from 'jotai';
 import { StrictMode } from 'react';
@@ -14,15 +15,17 @@ import { HashRouter } from 'react-router-dom';
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <JotaiProvider>
-      <HashRouter>
-        <LanguageProvider loadingComponent={<EmptyPage />}>
-          <SidePanelProvider loadingComponent={<EmptyPage />}>
-            <AntdProvider>
-              <SidePanelRoutes />
-            </AntdProvider>
-          </SidePanelProvider>
-        </LanguageProvider>
-      </HashRouter>
+      <AuthProvider>
+        <HashRouter>
+          <LanguageProvider loadingComponent={<EmptyPage />}>
+            <SidePanelProvider loadingComponent={<EmptyPage />}>
+              <AntdProvider>
+                <SidePanelRoutes />
+              </AntdProvider>
+            </SidePanelProvider>
+          </LanguageProvider>
+        </HashRouter>
+      </AuthProvider>
     </JotaiProvider>
   </StrictMode>
 );
