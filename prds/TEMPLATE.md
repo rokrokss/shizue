@@ -68,16 +68,16 @@ User Action → Content Script → Background Script → Side Panel
 
 ### API 통합
 - **사용 모델**: GPT-4o | Claude-3.5 Sonnet | Gemini 2.5 Flash
-- **예상 토큰 사용량**: 
+- **예상 토큰 사용량**:
 - **스트리밍 필요 여부**: Yes | No
-- **Rate Limiting 고려사항**: 
+- **Rate Limiting 고려사항**:
 - **에러 처리 전략**:
 
 ## UI/UX 명세
 
 ### 화면 흐름
-1. 
-2. 
+1.
+2.
 
 ### 컴포넌트 구조
 ```
@@ -96,23 +96,23 @@ ComponentName/
 
 ### Background Script 변경사항
 **파일**: `src/entrypoints/background/index.ts`
-- [ ] 
+- [ ]
 
 ### Side Panel 변경사항
 **파일**: `src/entrypoints/sidepanel/`
-- [ ] 
+- [ ]
 
 ### Content Script 변경사항
 **파일**: `src/entrypoints/content/`
-- [ ] 
+- [ ]
 
 ### 서비스 레이어
 **파일**: `src/services/`
-- [ ] 
+- [ ]
 
 ### 상태 관리
 **Jotai Atoms**: `src/hooks/global.ts`
-- [ ] 
+- [ ]
 
 ## 데이터 저장 전략
 <!-- 서버와 로컬 저장소 간의 데이터 분리 전략 명시 -->
@@ -143,7 +143,7 @@ ComponentName/
 ## 테스트 계획
 
 ### 단위 테스트
-- [ ] 
+- [ ]
 
 ### 통합 테스트
 - [ ] Chrome Extension 로드 테스트
@@ -157,16 +157,16 @@ ComponentName/
 
 ### 테스트 환경
 - Chrome 버전: 120+
-- 테스트 데이터: 
-- OS: Windows, macOS, Linux 
+- 테스트 데이터:
+- OS: Windows, macOS, Linux
 
 ## 위험 및 고려사항
 
 ### 성능
-- **메모리 사용량**: 
-- **API 호출 빈도**: 
-- **번들 크기 영향**: 
-- **Service Worker 재시작 영향**: 
+- **메모리 사용량**:
+- **API 호출 빈도**:
+- **번들 크기 영향**:
+- **Service Worker 재시작 영향**:
 
 ### 보안
 - [ ] API 키 안전한 저장
@@ -175,10 +175,10 @@ ComponentName/
 - [ ] 인증 상태 관리
 
 ### 호환성
-- **최소 Chrome 버전**: 
-- **Manifest V3 준수**: 
-- **기존 기능 영향**: 
-- **다른 Extension과의 충돌**: 
+- **최소 Chrome 버전**:
+- **Manifest V3 준수**:
+- **기존 기능 영향**:
+- **다른 Extension과의 충돌**:
 
 ## 성능 최적화
 <!-- 캐싱 전략, 배치 처리, 지연 로딩 등 -->
@@ -189,18 +189,18 @@ ComponentName/
 ## 구현 단계
 
 ### Phase 1: 기초 구현 (X일)
-- [ ] 
+- [ ]
 
 ### Phase 2: UI 통합 (X일)
-- [ ] 
+- [ ]
 
 ### Phase 3: 테스트 및 개선 (X일)
-- [ ] 
+- [ ]
 
 ## 모니터링 및 분석
-- **추적할 메트릭**: 
-- **성공/실패 기준**: 
-- **사용자 피드백 수집 방법**: 
+- **추적할 메트릭**:
+- **성공/실패 기준**:
+- **사용자 피드백 수집 방법**:
 
 ## 참고 사항
 <!-- 추가 컨텍스트, 디자인 링크, 관련 논의 등 -->

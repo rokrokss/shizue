@@ -43,12 +43,12 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
     const dayjsLocale = i18nLang.replace('_', '-').toLowerCase();
     try {
       dayjs.locale(dayjsLocale);
-    } catch (e) {
+    } catch {
       // Fallback to primary language code if full locale not available
       const primaryLang = dayjsLocale.split('-')[0];
       try {
         dayjs.locale(primaryLang);
-      } catch (e2) {
+      } catch {
         dayjs.locale('en');
       }
     }
@@ -148,8 +148,8 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
                             ? 'white'
                             : 'black'
                           : theme == 'dark'
-                          ? '#ccc'
-                          : '#777',
+                            ? '#ccc'
+                            : '#777',
                       }}
                     >
                       <div className="sz:text-sm sz:overflow-hidden sz:text-ellipsis sz:whitespace-nowrap sz:pt-[3px]">

@@ -123,7 +123,7 @@ ${serializedTextBatch}
 {
   "translations": ["translated_html_snippet_1", "translated_html_snippet_2", ..., "translated_html_snippet_n"]
 }
-  
+
 Ensure your output can be directly parsed by a JSON parser.`;
 };
 
@@ -162,7 +162,7 @@ ${JSON.stringify(captions.map((c) => c.text))}
 {
   "translations": ["translated_line_1", "translated_line_2", ..., "translated_line_n"]
 }
-  
+
 **Final Check before generating:** Does my output array have exactly ${
     captions.length
   } items? If not, I must correct it.

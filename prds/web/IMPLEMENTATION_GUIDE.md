@@ -258,8 +258,8 @@ export default nextConfig
 `lib/i18n/locales.ts`:
 ```typescript
 export const locales = [
-  'ar', 'bn', 'de', 'en', 'es', 'fa', 'fil', 'fr', 
-  'hi', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'pt-PT', 
+  'ar', 'bn', 'de', 'en', 'es', 'fa', 'fil', 'fr',
+  'hi', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'pt-PT',
   'ru', 'sw', 'th', 'tr', 'ur', 'vi', 'zh-CN', 'zh-TW'
 ] as const
 
@@ -507,7 +507,7 @@ import { notFound } from 'next/navigation'
 import { locales } from '@/lib/i18n/locales'
 import '@/styles/globals.css'
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-inter'
@@ -523,7 +523,7 @@ export async function generateMetadata({
   params: { locale: string }
 }): Promise<Metadata> {
   const messages = await getMessages(locale)
-  
+
   return {
     title: messages.metadata.title as string,
     description: messages.metadata.description as string,
@@ -736,19 +736,19 @@ export function Hero() {
             <Badge variant="secondary">{t('badges.openSource')}</Badge>
             <Badge variant="secondary">{t('badges.privacy')}</Badge>
           </div>
-          
+
           <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-6xl">
             {t('title')}
           </h1>
-          
+
           <p className="mb-10 text-lg text-muted-foreground sm:text-xl">
             {t('subtitle')}
           </p>
-          
+
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Button size="lg" asChild>
-              <a 
-                href="https://chrome.google.com/webstore/detail/shizue" 
+              <a
+                href="https://chrome.google.com/webstore/detail/shizue"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center"
@@ -759,8 +759,8 @@ export function Hero() {
               </a>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <a 
-                href="https://microsoftedge.microsoft.com/addons/detail/shizue" 
+              <a
+                href="https://microsoftedge.microsoft.com/addons/detail/shizue"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -768,7 +768,7 @@ export function Hero() {
               </a>
             </Button>
           </div>
-          
+
           <div className="mt-16">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -899,7 +899,7 @@ export function Features() {
             {t('title')}
           </h2>
         </div>
-        
+
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => (
             <motion.div
@@ -935,7 +935,7 @@ import { locales } from '@/lib/i18n/locales'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://shizue.ai'
-  
+
   const routes = locales.flatMap(locale => [
     {
       url: `${baseUrl}/${locale}`,
@@ -944,7 +944,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     }
   ])
-  
+
   return routes
 }
 ```
@@ -1087,7 +1087,7 @@ describe('FeatureCard', () => {
         highlight="Test highlight"
       />
     )
-    
+
     expect(screen.getByText('Test Feature')).toBeInTheDocument()
     expect(screen.getByText('Test description')).toBeInTheDocument()
     expect(screen.getByText('Test highlight')).toBeInTheDocument()
@@ -1104,17 +1104,17 @@ import { test, expect } from '@playwright/test'
 test.describe('Homepage', () => {
   test('should load and display hero section', async ({ page }) => {
     await page.goto('/')
-    
+
     await expect(page.locator('h1')).toContainText('Translate, Chat, and Browse with AI Power')
     await expect(page.locator('text=Add to Chrome')).toBeVisible()
   })
-  
+
   test('should change language', async ({ page }) => {
     await page.goto('/')
-    
+
     await page.click('button:has-text("English")')
     await page.click('text=한국어')
-    
+
     await expect(page).toHaveURL('/ko')
     await expect(page.locator('h1')).toContainText('AI로 번역하고 대화하며 브라우징하세요')
   })

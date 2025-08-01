@@ -189,7 +189,7 @@ export const deleteMemo = async (id: string) => {
 export const getMemo = (id: string) => db.memos.get(id);
 
 export const listMemos = async (folder?: string) => {
-  let query = db.memos.orderBy('updatedAt').reverse();
+  const query = db.memos.orderBy('updatedAt').reverse();
 
   if (folder) {
     const memos = await query.toArray();

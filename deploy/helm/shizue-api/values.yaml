@@ -1,0 +1,132 @@
+# Default values for shizue-api.
+replicaCount: 3
+
+image:
+  repository: shizue/shizue-accounts-api
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/limit-rps: "10"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+  hosts:
+    - host: api.shizue.app
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: shizue-api-tls
+      hosts:
+        - api.shizue.app
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Application configuration
+config:
+  appName: "Shizue Accounts API"
+  appVersion: "1.0.0"
+  host: "0.0.0.0"
+  port: "8000"
+  debug: false
+  jwtAlgorithm: "HS256"
+  accessTokenExpireMinutes: 30
+  refreshTokenExpireDays: 30
+  allowedOrigins: '["chrome-extension://*"]'
+
+# Secrets - should be overridden in production
+secrets:
+  jwtSecretKey: "CHANGE_ME_IN_PRODUCTION"
+  googleClientId: "YOUR_GOOGLE_CLIENT_ID"
+  googleClientSecret: "YOUR_GOOGLE_CLIENT_SECRET"
+  googleRedirectUri: "https://api.shizue.app/v1/auth/callback/google"
+  chromeExtensionId: "YOUR_CHROME_EXTENSION_ID"
+  chromeExtensionRedirectUri: "chrome-extension://YOUR_CHROME_EXTENSION_ID/callback"
+  sentryDsn: ""
+
+# PostgreSQL configuration
+postgresql:
+  enabled: true
+  auth:
+    username: shizue
+    password: "CHANGE_ME_IN_PRODUCTION"
+    database: shizue_accounts
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+
+# Redis configuration
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    password: "CHANGE_ME_IN_PRODUCTION"
+  master:
+    persistence:
+      enabled: true
+      size: 1Gi
+
+# Health check configuration
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 5

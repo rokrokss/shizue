@@ -1,7 +1,8 @@
-import { STORAGE_GLOBAL_STATE } from '@/config/constants';
+import { STORAGE_GLOBAL_STATE, STORAGE_USER_INFO, STORAGE_API_MODE } from '@/config/constants';
 import { chromeStorageBackend } from '@/lib/storageBackend';
 import { Atom, atom, useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
+import type { UserInfo } from '@/services/authService';
 
 export const sidePanelHydratedAtom = atom(false);
 
@@ -53,3 +54,28 @@ export const actionTypeAtom = atom(
 );
 
 export const useActionType = () => useAtom(actionTypeAtom);
+
+// Auth related atoms
+export const authStateAtom = atom<{
+  isAuthenticated: boolean;
+  isLoading: boolean;
+}>({
+  isAuthenticated: false,
+  isLoading: true,
+});
+
+export const userInfoAtom = atomWithStorage<UserInfo | null>(
+  STORAGE_USER_INFO,
+  null,
+  chromeStorageBackend('local'),
+  { getOnInit: false }
+);
+
+export type ApiMode = 'shizue' | 'user-key';
+
+export const apiModeAtom = atomWithStorage<ApiMode>(
+  STORAGE_API_MODE,
+  'user-key', // Default to user's own API key
+  chromeStorageBackend('local'),
+  { getOnInit: false }
+);

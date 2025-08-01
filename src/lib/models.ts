@@ -66,8 +66,8 @@ const throwIfMissing = (key: string | undefined, provider: ModelProvider) => {
       provider === 'openai-api-key'
         ? 'OpenAI'
         : provider === 'gemini-api-key'
-        ? 'Gemini'
-        : 'Anthropic';
+          ? 'Gemini'
+          : 'Anthropic';
     const msg = `${providerName} API key is not set.`;
     errorLog(msg);
     throw new Error(msg);

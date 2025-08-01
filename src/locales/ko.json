@@ -34,6 +34,17 @@
         "description": "OpenAI 정책 변경으로 인해 불안정할 수 있습니다."
       }
     },
+    "step1": {
+      "title": "Shizue에 로그인",
+      "description": "계정을 만들어 설정을 저장하고 여러 기기에서 동기화하세요",
+      "privacy": "개인정보를 존중합니다. 데이터는 안전하게 보호됩니다.",
+      "whyLogin": {
+        "title": "왜 로그인이 필요한가요?",
+        "backup": "설정 자동 백업",
+        "sync": "여러 기기 간 동기화",
+        "usage": "API 사용량 추적"
+      }
+    },
     "selectLanguage": {
       "title": "언어를 선택하세요."
     },
@@ -69,6 +80,13 @@
     "aiProvider": "AI 제공자",
     "chatModel": "대화 모델",
     "translateModel": "번역 모델",
+    "providerPreference": "선호 공급자",
+    "automaticSelection": "자동 (사용 가능한 최상)",
+    "chatModelSize": "대화 모델 크기",
+    "translateModelSize": "번역 모델 크기",
+    "largeModel": "대형 (더 강력함)",
+    "smallModel": "소형 (더 빠르고 저렴함)",
+    "currentModel": "현재 사용 중",
     "sourceLanguage": "원본 언어",
     "targetLanguage": "대상 언어",
     "translateTargetLanguage": "번역 대상 언어",
@@ -171,5 +189,10 @@
     "noSearchResults": "검색 결과가 없습니다.",
     "noMemos": "메모가 없습니다.",
     "searchMemo": "메모 검색"
+  },
+  "auth": {
+    "loginWithGoogle": "Google로 로그인",
+    "logout": "로그아웃",
+    "welcome": "다시 오신 것을 환영합니다"
   }
 }

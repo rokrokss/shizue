@@ -1,0 +1,117 @@
+version: '3.8'
+
+services:
+  # Caddy - 자동 HTTPS를 제공하는 웹 서버
+  caddy:
+    image: caddy:2-alpine
+    container_name: shizue-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+    networks:
+      - shizue-network
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: shizue-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-shizue}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-shizue_accounts}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backup:/backup  # 백업 폴더
+    networks:
+      - shizue-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-shizue}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: shizue-redis
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD} --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - shizue-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI Application
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: shizue-api
+    restart: unless-stopped
+    environment:
+      # Database
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-shizue}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-shizue_accounts}
+
+      # Redis
+      REDIS_URL: redis://default:${REDIS_PASSWORD}@redis:6379/0
+
+      # Application settings
+      APP_NAME: "Shizue Accounts API"
+      APP_VERSION: "1.0.0"
+      DEBUG: "false"
+      HOST: "0.0.0.0"
+      PORT: "8000"
+
+      # Security
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ALGORITHM: "HS256"
+      ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+      REFRESH_TOKEN_EXPIRE_DAYS: "30"
+
+      # Google OAuth
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
+
+      # Chrome Extension
+      CHROME_EXTENSION_ID: ${CHROME_EXTENSION_ID}
+      CHROME_EXTENSION_REDIRECT_URI: ${CHROME_EXTENSION_REDIRECT_URI}
+
+      # CORS
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-'["chrome-extension://*"]'}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - shizue-network
+    # 로그 설정
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  postgres_data:
+  redis_data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  shizue-network:
+    driver: bridge

@@ -3,7 +3,6 @@ import { chromeStorageBackend } from '@/lib/storageBackend';
 import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
-
 export interface TaskInfo {
   task_id: string;
   created_at: string;

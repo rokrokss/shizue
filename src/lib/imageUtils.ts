@@ -14,5 +14,5 @@ export const convertFileToBase64 = (file: File): Promise<string> => {
 };
 
 export const convertFilesToBase64Array = async (files: File[]): Promise<string[]> => {
-  return Promise.all(files.map(file => convertFileToBase64(file)));
+  return Promise.all(files.map((file) => convertFileToBase64(file)));
 };

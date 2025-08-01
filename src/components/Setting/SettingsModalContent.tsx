@@ -299,8 +299,8 @@ const SettingsModalContent = () => {
                         selectedProvider === 'openai-api-key'
                           ? 'sk-XXX......'
                           : selectedProvider === 'gemini-api-key'
-                          ? 'AIza......'
-                          : 'sk-ant-XXX......'
+                            ? 'AIza......'
+                            : 'sk-ant-XXX......'
                       }
                       value={apiKey}
                       onChange={(e) => setApiKey(e.target.value)}

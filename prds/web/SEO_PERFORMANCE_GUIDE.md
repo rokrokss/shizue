@@ -32,7 +32,7 @@ export async function generateMetadata({
   params: { locale: string }
 }): Promise<Metadata> {
   const baseUrl = 'https://shizue.ai'
-  
+
   // 언어별 대체 URL 생성
   const alternateUrls = locales.reduce((acc, loc) => {
     acc[loc] = `${baseUrl}/${loc}`
@@ -93,7 +93,7 @@ export const runtime = 'edge'
 
 export async function generateOGImage(locale: string) {
   const config = localeConfigs[locale as keyof typeof localeConfigs]
-  
+
   // 언어별 폰트 로드
   const fontData = await fetch(
     new URL(`/fonts/${config.code}.ttf`, import.meta.url)
@@ -175,7 +175,7 @@ export function OrganizationSchema() {
 ```typescript
 export function SoftwareApplicationSchema({ locale }: { locale: string }) {
   const t = useTranslations('metadata')
-  
+
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
@@ -303,7 +303,7 @@ export async function GET(
 ) {
   const { locale } = params
   const baseUrl = 'https://shizue.ai'
-  
+
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
             xmlns:xhtml="http://www.w3.org/1999/xhtml">
@@ -313,9 +313,9 @@ export async function GET(
         <changefreq>monthly</changefreq>
         <priority>1.0</priority>
         ${locales.map(l => `
-          <xhtml:link 
-            rel="alternate" 
-            hreflang="${l}" 
+          <xhtml:link
+            rel="alternate"
+            hreflang="${l}"
             href="${baseUrl}/${l}" />
         `).join('')}
       </url>
@@ -338,7 +338,7 @@ import { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
   const baseUrl = 'https://shizue.ai'
-  
+
   return {
     rules: [
       {
@@ -484,12 +484,12 @@ export function Features() {
     <section>
       {/* 중요한 콘텐츠는 바로 렌더링 */}
       <h2>Features</h2>
-      
+
       {/* 덜 중요한 콘텐츠는 지연 로딩 */}
       <Suspense fallback={<LoadingSpinner />}>
         <InteractiveDemo />
       </Suspense>
-      
+
       <Suspense fallback={<div>Loading animations...</div>}>
         <FeatureAnimation />
       </Suspense>
@@ -566,13 +566,13 @@ const fs = require('fs')
 async function subsetFont(inputPath, outputPath, characters) {
   const font = await fontkit.open(inputPath)
   const subset = await font.createSubset()
-  
+
   // 필요한 문자만 포함
   for (const char of characters) {
     const glyph = font.glyphForCodePoint(char.codePointAt(0))
     if (glyph) subset.includeGlyph(glyph)
   }
-  
+
   const buffer = await subset.encode()
   fs.writeFileSync(outputPath, buffer)
 }
@@ -654,7 +654,7 @@ export async function GET(
   { params }: { params: { locale: string } }
 ) {
   const translations = await getTranslations(params.locale)
-  
+
   return NextResponse.json(translations, {
     headers: {
       'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
@@ -678,7 +678,7 @@ export default async function RootLayout({
   params: { locale: string }
 }) {
   const criticalCSS = await getCriticalCSS()
-  
+
   return (
     <html lang={locale}>
       <head>
@@ -700,20 +700,20 @@ export function ResourceHints() {
       {/* DNS 프리페치 */}
       <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
       <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-      
+
       {/* 프리커넥트 */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-      
+
       {/* 중요 리소스 프리로드 */}
-      <link 
-        rel="preload" 
-        href="/fonts/inter-var.woff2" 
-        as="font" 
-        type="font/woff2" 
-        crossOrigin="anonymous" 
+      <link
+        rel="preload"
+        href="/fonts/inter-var.woff2"
+        as="font"
+        type="font/woff2"
+        crossOrigin="anonymous"
       />
-      
+
       {/* 다음 페이지 프리페치 */}
       <link rel="prefetch" href="/api/features" />
     </>
@@ -814,9 +814,9 @@ export function measureComponent(name: string) {
       const start = performance.now()
       const result = originalMethod.apply(this, args)
       const end = performance.now()
-      
+
       perfMonitor.track(`component_${name}`, end - start)
-      
+
       return result
     }
 
@@ -842,15 +842,15 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-      
+
       - name: Install dependencies
         run: |
           npm install -g @lhci/cli@0.12.x
           pnpm install
-      
+
       - name: Build application
         run: pnpm build
-      
+
       - name: Run Lighthouse CI
         run: |
           lhci autorun --config=lighthouserc.js
@@ -899,7 +899,7 @@ import { test, expect } from '@playwright/test'
 test.describe('Performance', () => {
   test('meets Core Web Vitals', async ({ page }) => {
     await page.goto('/')
-    
+
     // LCP 측정
     const lcp = await page.evaluate(() => {
       return new Promise((resolve) => {
@@ -910,9 +910,9 @@ test.describe('Performance', () => {
         }).observe({ type: 'largest-contentful-paint', buffered: true })
       })
     })
-    
+
     expect(lcp).toBeLessThan(2500)
-    
+
     // CLS 측정
     const cls = await page.evaluate(() => {
       return new Promise((resolve) => {
@@ -925,32 +925,32 @@ test.describe('Performance', () => {
           }
           resolve(clsValue)
         }).observe({ type: 'layout-shift', buffered: true })
-        
+
         // 5초 후 측정 종료
         setTimeout(() => resolve(clsValue), 5000)
       })
     })
-    
+
     expect(cls).toBeLessThan(0.1)
   })
-  
+
   test('bundle size is optimized', async ({ page }) => {
     const coverage = await page.coverage.startJSCoverage()
     await page.goto('/')
     await page.waitForLoadState('networkidle')
-    
+
     const jsCoverage = await page.coverage.stopJSCoverage()
-    
+
     let totalBytes = 0
     let usedBytes = 0
-    
+
     for (const entry of jsCoverage) {
       totalBytes += entry.text.length
       for (const range of entry.ranges) {
         usedBytes += range.end - range.start - 1
       }
     }
-    
+
     const unusedPercentage = ((totalBytes - usedBytes) / totalBytes) * 100
     expect(unusedPercentage).toBeLessThan(50)
   })

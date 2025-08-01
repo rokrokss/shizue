@@ -1,0 +1,73 @@
+name: Chrome Extension CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'src/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'wxt.config.ts'
+      - '.github/workflows/extension-ci.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'src/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'wxt.config.ts'
+      - '.github/workflows/extension-ci.yml'
+
+jobs:
+  test:
+    name: Test and Build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run type checking
+        run: pnpm compile
+
+      - name: Check code formatting
+        run: pnpm format:check
+
+      - name: Run linting
+        run: pnpm lint
+
+      - name: Run tests
+        run: pnpm test -- --run
+
+      - name: Build extension
+        run: pnpm build
+
+      - name: Check build output
+        run: |
+          if [ ! -d "dist/chrome-mv3" ]; then
+            echo "Build failed: dist/chrome-mv3 directory not found"
+            exit 1
+          fi
+
+          # Check manifest
+          if [ ! -f "dist/chrome-mv3/manifest.json" ]; then
+            echo "Build failed: manifest.json not found"
+            exit 1
+          fi

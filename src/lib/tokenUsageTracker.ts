@@ -38,8 +38,8 @@ export const trackTokenUsage = async (
     const provider = model.includes('openai')
       ? 'openai'
       : model.includes('claude')
-      ? 'anthropic'
-      : 'gemini';
+        ? 'anthropic'
+        : 'gemini';
 
     await recordTokenUsage({
       date: today,
@@ -65,7 +65,7 @@ export const trackTokenUsage = async (
 
 export const trackStreamingTokenUsage = async (
   model: string,
-  finalResponse: AIMessageChunk,
+  finalResponse: AIMessageChunk
 ): Promise<void> => {
   await trackTokenUsage(model, finalResponse, 1);
 };

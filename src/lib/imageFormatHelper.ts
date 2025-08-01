@@ -16,12 +16,9 @@ export const parseDataUrl = (dataUrl: string): { mediaType: string; base64Data: 
   };
 };
 
-export const formatImageForProvider = (
-  imageDataUrl: string,
-  modelName: string
-): ImageContent => {
+export const formatImageForProvider = (imageDataUrl: string, modelName: string): ImageContent => {
   const provider = providerFromName(modelName);
-  
+
   if (provider === 'anthropic-api-key') {
     // Anthropic expects a different format
     const { mediaType, base64Data } = parseDataUrl(imageDataUrl);
@@ -42,9 +39,6 @@ export const formatImageForProvider = (
   }
 };
 
-export const formatImagesForMessage = (
-  images: string[],
-  modelName: string
-): ImageContent[] => {
+export const formatImagesForMessage = (images: string[], modelName: string): ImageContent[] => {
   return images.map((img) => formatImageForProvider(img, modelName));
 };

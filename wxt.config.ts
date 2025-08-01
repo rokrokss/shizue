@@ -11,7 +11,7 @@ export default defineConfig({
   publicDir: 'src/public',
   entrypointsDir: 'entrypoints',
   manifestVersion: 3,
-  manifest: ({ browser, manifestVersion, mode, command }) => {
+  manifest: () => {
     const manifest: UserManifest = {
       name: '__MSG_extension_name__',
       description: '__MSG_extension_description__',
