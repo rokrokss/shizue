@@ -1,6 +1,6 @@
 @layer theme, base, components, utilities;
-@import "tailwindcss/theme.css" layer(theme) prefix(sz);
-@import "tailwindcss/utilities.css" layer(utilities) prefix(sz);
+@import 'tailwindcss/theme.css' layer(theme) prefix(sz);
+@import 'tailwindcss/utilities.css' layer(utilities) prefix(sz);
 
 @layer base {
   /* TODO: use shadowDOM for overlay */
@@ -8,10 +8,10 @@
     margin: 0 !important;
   } */
   .shizue-preflight {
-    @import "tailwindcss/preflight" important;
+    @import 'tailwindcss/preflight' important;
   }
   .sz-ant--tooltip {
-    @import "tailwindcss/preflight" important;
+    @import 'tailwindcss/preflight' important;
   }
 }
 
@@ -45,11 +45,15 @@
 
 @theme {
   --font-ycom: 'Ycomputer-Regular', 'sans-serif';
-  --font-mono: 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace';
-  --font-sans: 'ui-sans-serif', 'system-ui', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-mono:
+    'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono',
+    'Courier New', 'monospace';
+  --font-sans:
+    'ui-sans-serif', 'system-ui', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
   --font-ddin: 'D-DIN', 'ui-sans-serif', 'system-ui', 'sans-serif';
   --font-youtube: Roboto, Arial, Helvetica, sans-serif;
-  --color-sz-cyan: #32CCBC;
+  --color-sz-cyan: #32ccbc;
 }
 
 @utility scrollbar-hidden {

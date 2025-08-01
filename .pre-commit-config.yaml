@@ -1,0 +1,85 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: local
+    hooks:
+      # Frontend (Chrome Extension) checks - REQUIRED
+      - id: frontend-format
+        name: Frontend - Format Code (Prettier)
+        entry: pnpm format
+        language: system
+        files: ^src/.*\.(ts|tsx|js|jsx|json|css|md)$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: frontend-lint
+        name: Frontend - Lint (ESLint)
+        entry: pnpm lint
+        language: system
+        files: ^src/.*\.(ts|tsx|js|jsx)$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: frontend-typecheck
+        name: Frontend - Type Check (TypeScript)
+        entry: pnpm compile
+        language: system
+        files: ^src/.*\.(ts|tsx)$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: frontend-test
+        name: Frontend - Run Tests (Vitest)
+        entry: pnpm test --run
+        language: system
+        files: ^src/.*\.(ts|tsx|js|jsx)$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      # Backend (API) checks - REQUIRED
+      - id: api-format
+        name: API - Format Code (isort & black)
+        entry: bash -c "cd api && make format"
+        language: system
+        files: ^api/.*\.py$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: api-lint
+        name: API - Lint (flake8 & mypy)
+        entry: bash -c "cd api && make lint"
+        language: system
+        files: ^api/.*\.py$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: api-typecheck
+        name: API - Type Check (check formatting & linting)
+        entry: bash -c "cd api && make check"
+        language: system
+        files: ^api/.*\.py$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: api-test
+        name: API - Run Tests (pytest)
+        entry: bash -c "cd api && make test"
+        language: system
+        files: ^api/.*\.py$
+        pass_filenames: false
+        stages: [pre-commit]
+
+  # Additional hooks from external repos
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        exclude: ^deploy/k8s/.*\.yaml$
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-json
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+        args: ['--fix=lf']

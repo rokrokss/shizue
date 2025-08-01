@@ -1,0 +1,11 @@
+dist/
+node_modules/
+.wxt/
+pnpm-lock.yaml
+package-lock.json
+*.gen.ts
+api/
+deploy/
+web-ext.config.ts
+coverage/
+.nyc_output/

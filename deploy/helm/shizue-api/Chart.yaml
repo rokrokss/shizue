@@ -1,0 +1,25 @@
+apiVersion: v2
+name: shizue-api
+description: Shizue Accounts API Helm Chart
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - shizue
+  - api
+  - accounts
+home: https://github.com/shizue/accounts-api
+sources:
+  - https://github.com/shizue/accounts-api
+maintainers:
+  - name: rokrokss
+    email: q0115643@gmail.com
+dependencies:
+  - name: postgresql
+    version: "12.x.x"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: postgresql.enabled
+  - name: redis
+    version: "17.x.x"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: redis.enabled

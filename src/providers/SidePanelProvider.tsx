@@ -5,11 +5,7 @@ import {
   STORAGE_GLOBAL_STATE,
 } from '@/config/constants';
 import { chatStatusAtom, isChatWaiting } from '@/hooks/chat';
-import {
-  actionTypeAtom,
-  sidePanelHydratedAtom,
-  threadIdAtom,
-} from '@/hooks/global';
+import { actionTypeAtom, sidePanelHydratedAtom, threadIdAtom } from '@/hooks/global';
 import { addMessage, createThread } from '@/lib/indexDB';
 import { getSummarizePageTextPrompt } from '@/lib/prompts';
 import { readStorage, setStorage } from '@/lib/storageBackend';
@@ -55,15 +51,20 @@ const SidePanelProvider = ({
       debugLog('SidePanelProvider: [getInitData] already processing action, skipping');
       return;
     }
-    
+
     const initData = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
     debugLog('initData', initData);
-    
+
     if (isChatWaiting(chatStatus)) {
       debugLog('SidePanelProvider: [getInitData] skip initData for chatStatus', chatStatus);
       return;
-    } else if (initData?.actionType === 'chat' && (window.location.hash === '#/shizue-pdf' || window.location.hash === '#/shizue-memo')) {
-      debugLog('SidePanelProvider: [getInitData] skip initData for actionType chat and pdf or memo url');
+    } else if (
+      initData?.actionType === 'chat' &&
+      (window.location.hash === '#/shizue-pdf' || window.location.hash === '#/shizue-memo')
+    ) {
+      debugLog(
+        'SidePanelProvider: [getInitData] skip initData for actionType chat and pdf or memo url'
+      );
       return;
     } else if (initData?.actionType === 'askForSummary') {
       // Clear the action immediately to prevent duplicate processing

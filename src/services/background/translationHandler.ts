@@ -68,13 +68,16 @@ export class TranslationHandler {
         responseFormat: { type: 'json_object' },
       });
 
-      debugLog('TranslationHandler [translateYoutubeCaption] modelPreset:', getTranslationModelPreset());
+      debugLog(
+        'TranslationHandler [translateYoutubeCaption] modelPreset:',
+        getTranslationModelPreset()
+      );
       debugLog('TranslationHandler [translateYoutubeCaption] llm:', llm);
-      
+
       debugLog('TranslationHandler [translateYoutubeCaption] prompt:', prompt);
       const response = await llm.invoke([new HumanMessage(prompt)]);
       await trackTokenUsage(llm.model, response);
-      
+
       const rawResponseContent = (response.content as string)?.trim();
 
       debugLog(
@@ -163,7 +166,7 @@ export class TranslationHandler {
       });
 
       debugLog('TranslationHandler [translateHtmlText] llm:', llm);
-      
+
       const response = await llm.invoke([new HumanMessage(prompt)]);
 
       await trackTokenUsage(llm.model, response);
@@ -200,9 +203,9 @@ export class TranslationHandler {
       debugLog('TranslationHandler [translateHtmlTextBatch] llm:', llm);
 
       const response = await llm.invoke([new HumanMessage(batchPrompt)]);
-      
+
       await trackTokenUsage(llm.model, response);
-      
+
       const rawResponseContent = (response.content as string)?.trim();
 
       debugLog(

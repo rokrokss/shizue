@@ -75,20 +75,22 @@ export class ChatModelHandler {
           fullResponseContent += currentBuffer;
           buffer = '';
           // DB 업데이트와 포트 메시지는 비동기로 처리하되 순서는 보장
-          db.messages.update(messageId, { content: fullResponseContent, done: false }).catch((err) => {
-            errorLog('Failed to update message in DB:', err);
-          });
+          db.messages
+            .update(messageId, { content: fullResponseContent, done: false })
+            .catch((err) => {
+              errorLog('Failed to update message in DB:', err);
+            });
           port.postMessage({ delta: currentBuffer });
         }
       };
 
       for await (const chunk of stream) {
         lastChunk = chunk;
-        const delta = typeof chunk === 'string' ? chunk : (chunk.content as string) ?? '';
-        
+        const delta = typeof chunk === 'string' ? chunk : ((chunk.content as string) ?? '');
+
         // 빈 델타는 무시
         if (!delta) continue;
-        
+
         buffer += delta;
         sendBufferToPort();
       }

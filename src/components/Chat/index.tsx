@@ -95,7 +95,7 @@ const Chat = () => {
   const updateAIMessage = (cur: Message[], updates: Partial<Message>) => {
     const idx = aiIndexRef.current;
     const copy = [...cur];
-    
+
     // copy[idx]가 없으면 새로운 AI 메시지 객체 생성
     if (!copy[idx]) {
       copy[idx] = {
@@ -118,7 +118,7 @@ const Chat = () => {
         stopped: updates.stopped !== undefined ? updates.stopped : copy[idx].stopped || false,
       };
     }
-    
+
     return copy;
   };
 
@@ -217,11 +217,13 @@ const Chat = () => {
       messages[messages.length - 1].role === 'ai' &&
       !messages[messages.length - 1].done
     ) {
-      setMessages((cur) => updateAIMessage(cur, {
-        done: false,
-        onInterrupt: true,
-        stopped: true,
-      }));
+      setMessages((cur) =>
+        updateAIMessage(cur, {
+          done: false,
+          onInterrupt: true,
+          stopped: true,
+        })
+      );
     }
     cancelStream();
     chatService.cancelNotStartedMessage(threadId!);
@@ -423,48 +425,55 @@ const Chat = () => {
     actionType.current = messages[messageIdxToRetry - 1].actionType;
     aiIndexRef.current = messageIdxToRetry;
 
-    setMessages((cur) => updateAIMessage(cur, {
-      actionType: 'chat',
-      content: '',
-      done: false,
-      onInterrupt: false,
-      stopped: false,
-    })),
-      startRetryStream(
-        {
-          threadId,
-          messageIdxToRetry: messageIdxToRetry,
-          actionType: actionType.current,
-        },
-        {
-          onDelta: (delta) =>
-            setMessages((cur) => {
-              const updatedMessages = updateAIMessage(cur, {
-                content: (cur[aiIndexRef.current]?.content || '') + delta,
-                done: false,
-                onInterrupt: false,
-              });
-              return updatedMessages;
-            }),
-          onDone: () => {
-            setMessages((cur) => updateAIMessage(cur, {
+    setMessages((cur) =>
+      updateAIMessage(cur, {
+        actionType: 'chat',
+        content: '',
+        done: false,
+        onInterrupt: false,
+        stopped: false,
+      })
+    );
+
+    startRetryStream(
+      {
+        threadId,
+        messageIdxToRetry: messageIdxToRetry,
+        actionType: actionType.current,
+      },
+      {
+        onDelta: (delta) =>
+          setMessages((cur) => {
+            const updatedMessages = updateAIMessage(cur, {
+              content: (cur[aiIndexRef.current]?.content || '') + delta,
+              done: false,
+              onInterrupt: false,
+            });
+            return updatedMessages;
+          }),
+        onDone: () => {
+          setMessages((cur) =>
+            updateAIMessage(cur, {
               done: true,
               onInterrupt: false,
-            }));
-            touchThread(threadId);
-            setChatStatus('idle');
-          },
-          onError: (err) => {
-            errorLog('Chat Stream error:', err);
-            setMessages((cur) => updateAIMessage(cur, {
+            })
+          );
+          touchThread(threadId);
+          setChatStatus('idle');
+        },
+        onError: (err) => {
+          errorLog('Chat Stream error:', err);
+          setMessages((cur) =>
+            updateAIMessage(cur, {
               done: false,
               onInterrupt: true,
-            }));
-            touchThread(threadId);
-            setChatStatus('idle');
-          },
-        }
-      );
+            })
+          );
+          touchThread(threadId);
+          setChatStatus('idle');
+        },
+      }
+    );
   };
 
   const handleOpenHistory = () => {

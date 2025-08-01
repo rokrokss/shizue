@@ -478,8 +478,8 @@ const Toggle = () => {
                                       ? 'white'
                                       : 'rgb(55, 65, 81)'
                                     : theme == 'dark'
-                                    ? 'rgba(255, 255, 255, 0.25)'
-                                    : 'rgba(55, 65, 81, 0.25)',
+                                      ? 'rgba(255, 255, 255, 0.25)'
+                                      : 'rgba(55, 65, 81, 0.25)',
                                 },
                                 disabled: !openAIValidated,
                               },
@@ -493,8 +493,8 @@ const Toggle = () => {
                                       ? 'white'
                                       : 'rgb(55, 65, 81)'
                                     : theme == 'dark'
-                                    ? 'rgba(255, 255, 255, 0.25)'
-                                    : 'rgba(55, 65, 81, 0.25)',
+                                      ? 'rgba(255, 255, 255, 0.25)'
+                                      : 'rgba(55, 65, 81, 0.25)',
                                 },
                                 disabled: !openAIValidated,
                               },
@@ -508,8 +508,8 @@ const Toggle = () => {
                                       ? 'white'
                                       : 'rgb(55, 65, 81)'
                                     : theme == 'dark'
-                                    ? 'rgba(255, 255, 255, 0.25)'
-                                    : 'rgba(55, 65, 81, 0.25)',
+                                      ? 'rgba(255, 255, 255, 0.25)'
+                                      : 'rgba(55, 65, 81, 0.25)',
                                 },
                                 disabled: !geminiValidated,
                               },
@@ -523,8 +523,8 @@ const Toggle = () => {
                                       ? 'white'
                                       : 'rgb(55, 65, 81)'
                                     : theme == 'dark'
-                                    ? 'rgba(255, 255, 255, 0.25)'
-                                    : 'rgba(55, 65, 81, 0.25)',
+                                      ? 'rgba(255, 255, 255, 0.25)'
+                                      : 'rgba(55, 65, 81, 0.25)',
                                 },
                                 disabled: !geminiValidated,
                               },
@@ -538,8 +538,8 @@ const Toggle = () => {
                                       ? 'white'
                                       : 'rgb(55, 65, 81)'
                                     : theme == 'dark'
-                                    ? 'rgba(255, 255, 255, 0.25)'
-                                    : 'rgba(55, 65, 81, 0.25)',
+                                      ? 'rgba(255, 255, 255, 0.25)'
+                                      : 'rgba(55, 65, 81, 0.25)',
                                 },
                                 disabled: !anthropicValidated,
                               },
@@ -553,8 +553,8 @@ const Toggle = () => {
                                       ? 'white'
                                       : 'rgb(55, 65, 81)'
                                     : theme == 'dark'
-                                    ? 'rgba(255, 255, 255, 0.25)'
-                                    : 'rgba(55, 65, 81, 0.25)',
+                                      ? 'rgba(255, 255, 255, 0.25)'
+                                      : 'rgba(55, 65, 81, 0.25)',
                                 },
                                 disabled: !anthropicValidated,
                               },
@@ -715,8 +715,8 @@ const Toggle = () => {
                         border: isHoveringHideFromCurrentSite
                           ? '1px solid #32CCBC'
                           : theme == 'dark'
-                          ? '1px solid #434343'
-                          : '1px solid #d9d9d9',
+                            ? '1px solid #434343'
+                            : '1px solid #d9d9d9',
                       }}
                       onClick={handleHideToggleFromCurrentSite}
                     >
@@ -732,8 +732,8 @@ const Toggle = () => {
                         border: isHoveringHideFromAllSites
                           ? '1px solid #32CCBC'
                           : theme == 'dark'
-                          ? '1px solid #434343'
-                          : '1px solid #d9d9d9',
+                            ? '1px solid #434343'
+                            : '1px solid #d9d9d9',
                       }}
                       onClick={handleHideToggle}
                     >

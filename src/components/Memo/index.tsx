@@ -54,12 +54,12 @@ const Memo = () => {
     const dayjsLocale = i18nLang.replace('_', '-').toLowerCase();
     try {
       dayjs.locale(dayjsLocale);
-    } catch (e) {
+    } catch {
       // Fallback to primary language code if full locale not available
       const primaryLang = dayjsLocale.split('-')[0];
       try {
         dayjs.locale(primaryLang);
-      } catch (e2) {
+      } catch {
         dayjs.locale('en');
       }
     }
@@ -351,7 +351,7 @@ const Memo = () => {
             sz:flex-col
             sz:pt-11
             sz:px-4
-            sz:font-ddin 
+            sz:font-ddin
           "
         >
           {/* 메모 편집기 */}
@@ -363,9 +363,9 @@ const Memo = () => {
                   className={`
                     sz:pt-2
                     sz:pb-1
-                    sz:border-b 
-                    sz:flex 
-                    sz:items-center 
+                    sz:border-b
+                    sz:flex
+                    sz:items-center
                     sz:justify-between
                     ${theme === 'dark' ? 'sz:border-gray-700' : 'sz:border-gray-200'}
                   `}
@@ -396,9 +396,9 @@ const Memo = () => {
                 {/* 메모 정보 */}
                 <div
                   className={`
-                    sz:py-3 
-                    sz:border-t 
-                    sz:text-xs 
+                    sz:py-3
+                    sz:border-t
+                    sz:text-xs
                     sz:text-gray-500
                     ${theme === 'dark' ? 'sz:border-gray-700' : 'sz:border-gray-200'}
                   `}

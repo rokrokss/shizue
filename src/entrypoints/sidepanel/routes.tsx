@@ -3,6 +3,7 @@ import { OnboardedRoute } from '@/components/Onboarding/OnboardedRoute';
 import Onboarding from '@/components/Onboarding/Onboarding';
 import Pdf from '@/components/Pdf';
 import SidePanel from '@/components/SidePanel';
+import { Settings } from '@/components/Settings/Settings';
 import { Navigate, useRoutes } from 'react-router-dom';
 
 export const SidePanelRoutes = () => {
@@ -27,6 +28,14 @@ export const SidePanelRoutes = () => {
     {
       path: '/shizue-memo',
       element: <Memo />,
+    },
+    {
+      path: '/settings',
+      element: (
+        <OnboardedRoute>
+          <Settings />
+        </OnboardedRoute>
+      ),
     },
     {
       path: '/onboarding',

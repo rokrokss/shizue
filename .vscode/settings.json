@@ -27,6 +27,19 @@
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[yml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "yaml.format.enable": true,
   "html.validate.styles": false,
   "css.validate": false,
   "i18n-ally.localesPaths": ["src/locales"],
@@ -38,16 +51,7 @@
   "i18n-ally.sortKeys": true,
   "i18n-ally.namespace": false,
   "i18n-ally.pathMatcher": "{locale}.json",
-  "cSpell.words": [
-    "ddin",
-    "Dexie",
-    "shizue",
-    "sidepanel",
-    "webcomponents",
-    "ycom",
-    "babeldoc",
-    "dotenv",
-    "langchain"
-  ],
+  "cSpell.enabled": true,
+  "cSpell.language": "en",
   "python.analysis.typeCheckingMode": "off"
 }

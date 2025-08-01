@@ -274,9 +274,8 @@ export class PageTranslator {
     }
 
     try {
-      const translatedTextResult = await translationService.translateHtmlTextBatch(
-        validTextsForApi
-      );
+      const translatedTextResult =
+        await translationService.translateHtmlTextBatch(validTextsForApi);
 
       if (!this.isActive) {
         debugLog(

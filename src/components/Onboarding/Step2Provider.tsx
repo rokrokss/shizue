@@ -142,10 +142,10 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
             selectedProvider === 'openai-api-key'
               ? 'sk-XXX......'
               : selectedProvider === 'gemini-api-key'
-              ? 'AIza......'
-              : selectedProvider === 'anthropic-api-key'
-              ? 'sk-ant-XXX......'
-              : ''
+                ? 'AIza......'
+                : selectedProvider === 'anthropic-api-key'
+                  ? 'sk-ant-XXX......'
+                  : ''
           }
           className="sz:font-ycom sz:mr-[5px]"
           value={apiKey}

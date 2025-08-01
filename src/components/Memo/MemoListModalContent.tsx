@@ -1,17 +1,8 @@
 import { getI8NLanguage, useLanguage } from '@/hooks/language';
 import { useThemeValue } from '@/hooks/layout';
-import {
-  deleteMemo,
-  listMemos,
-  toggleMemoPinned,
-  type Memo
-} from '@/lib/indexDB';
+import { deleteMemo, listMemos, toggleMemoPinned, type Memo } from '@/lib/indexDB';
 import { debugLog } from '@/logs';
-import {
-  DeleteOutlined,
-  PlusOutlined,
-  PushpinOutlined
-} from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined, PushpinOutlined } from '@ant-design/icons';
 import { Button, Input } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -40,12 +31,12 @@ interface MemoListModalContentProps {
   selectedMemoId?: string;
 }
 
-const MemoListModalContent = ({ 
-  onClose, 
-  onSelectMemo, 
+const MemoListModalContent = ({
+  onClose,
+  onSelectMemo,
   onCreateMemo,
   onDeleteMemo,
-  selectedMemoId 
+  selectedMemoId,
 }: MemoListModalContentProps) => {
   const theme = useThemeValue();
   const [hoveredMemoId, setHoveredMemoId] = useState<string | null>(null);
@@ -62,12 +53,12 @@ const MemoListModalContent = ({
     const dayjsLocale = i18nLang.replace('_', '-').toLowerCase();
     try {
       dayjs.locale(dayjsLocale);
-    } catch (e) {
+    } catch {
       // Fallback to primary language code if full locale not available
       const primaryLang = dayjsLocale.split('-')[0];
       try {
         dayjs.locale(primaryLang);
-      } catch (e2) {
+      } catch {
         dayjs.locale('en');
       }
     }
@@ -119,11 +110,12 @@ const MemoListModalContent = ({
 
   const filteredMemos = useMemo(() => {
     if (!searchTerm) return memos;
-    
+
     const lowerSearchTerm = searchTerm.toLowerCase();
-    return memos.filter(memo => 
-      memo.title.toLowerCase().includes(lowerSearchTerm) ||
-      memo.content.toLowerCase().includes(lowerSearchTerm)
+    return memos.filter(
+      (memo) =>
+        memo.title.toLowerCase().includes(lowerSearchTerm) ||
+        memo.content.toLowerCase().includes(lowerSearchTerm)
     );
   }, [memos, searchTerm]);
 
@@ -144,7 +136,7 @@ const MemoListModalContent = ({
       >
         {t('memo.memoList')}
       </div>
-      
+
       <div className="sz:mb-4 sz:space-y-3">
         <Input
           placeholder={t('memo.searchMemo')}
@@ -214,9 +206,7 @@ const MemoListModalContent = ({
                           {memo.title}
                         </div>
                         {memo.isPinned && (
-                          <PushpinOutlined 
-                            className="sz:text-blue-500 sz:text-xs sz:flex-shrink-0" 
-                          />
+                          <PushpinOutlined className="sz:text-blue-500 sz:text-xs sz:flex-shrink-0" />
                         )}
                       </div>
                       <div
@@ -235,8 +225,8 @@ const MemoListModalContent = ({
                             ? 'white'
                             : 'black'
                           : theme == 'dark'
-                          ? '#ccc'
-                          : '#777',
+                            ? '#ccc'
+                            : '#777',
                       }}
                     >
                       <div className="sz:text-sm sz:overflow-hidden sz:text-ellipsis sz:whitespace-nowrap sz:pt-[3px]">
@@ -277,7 +267,9 @@ const MemoListModalContent = ({
           })
         ) : (
           <div className="sz:text-center sz:py-8">
-            <p className={`sz:text-sm ${theme === 'dark' ? 'sz:text-gray-400' : 'sz:text-gray-500'}`}>
+            <p
+              className={`sz:text-sm ${theme === 'dark' ? 'sz:text-gray-400' : 'sz:text-gray-500'}`}
+            >
               {searchTerm ? t('memo.noSearchResults') : t('memo.noMemos')}
             </p>
           </div>
