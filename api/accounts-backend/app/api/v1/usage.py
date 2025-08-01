@@ -11,8 +11,7 @@ from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.api_usage import APIUsage
 from app.models.user import User
-from app.schemas.usage import (ModelUsage, UsageCreate, UsageRecord,
-                               UsageSummary)
+from app.schemas.usage import ModelUsage, UsageCreate, UsageRecord, UsageSummary
 
 logger = logging.getLogger(__name__)
 

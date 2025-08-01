@@ -38,22 +38,22 @@ async def test_db():
         settings.DATABASE_URL,
         poolclass=NullPool,
     )
-    
+
     # Create tables
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    
+
     # Create session factory
     async_session = async_sessionmaker(
         engine, class_=AsyncSession, expire_on_commit=False
     )
-    
+
     yield async_session
-    
+
     # Drop tables after tests
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
-    
+
     await engine.dispose()
 
 
@@ -68,14 +68,15 @@ async def db_session(test_db) -> AsyncGenerator[AsyncSession, None]:
 @pytest_asyncio.fixture
 async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
     """Create a test client."""
+
     async def override_get_db():
         yield db_session
-    
+
     app.dependency_overrides[get_db] = override_get_db
-    
+
     async with AsyncClient(app=app, base_url="http://test") as ac:
         yield ac
-    
+
     app.dependency_overrides.clear()
 
 
@@ -90,7 +91,7 @@ async def test_user(db_session: AsyncSession) -> User:
         profile_picture="https://example.com/photo.jpg",
         locale="en",
         is_active=True,
-        is_premium=False
+        is_premium=False,
     )
     db_session.add(user)
     await db_session.commit()
@@ -120,7 +121,9 @@ def mock_redis():
 def mock_google_oauth():
     """Mock Google OAuth service."""
     with patch("app.services.google_oauth.google_oauth") as mock:
-        mock.get_authorization_url.return_value = "https://accounts.google.com/oauth/authorize?..."
+        mock.get_authorization_url.return_value = (
+            "https://accounts.google.com/oauth/authorize?..."
+        )
         mock.verify_and_get_user_info.return_value = {
             "google_id": "test_google_id_123",
             "email": "test@example.com",
@@ -131,8 +134,8 @@ def mock_google_oauth():
             "tokens": {
                 "access_token": "google_access_token",
                 "refresh_token": "google_refresh_token",
-                "expires_in": 3600
-            }
+                "expires_in": 3600,
+            },
         }
         yield mock
 
