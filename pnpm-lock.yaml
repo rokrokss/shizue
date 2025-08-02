@@ -22,16 +22,16 @@ importers:
         version: 0.27.9(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@langchain/anthropic':
         specifier: ^0.3.24
-        version: 0.3.24(@langchain/core@0.3.59(openai@4.103.0(ws@8.18.1)(zod@3.25.67)))
+        version: 0.3.24(@langchain/core@0.3.66(openai@4.103.0(ws@8.18.1)(zod@3.25.67)))
       '@langchain/core':
-        specifier: ^0.3.59
-        version: 0.3.59(openai@4.103.0(ws@8.18.1)(zod@3.25.67))
+        specifier: ^0.3.66
+        version: 0.3.66(openai@4.103.0(ws@8.18.1)(zod@3.25.67))
       '@langchain/google-genai':
         specifier: ^0.2.12
-        version: 0.2.12(@langchain/core@0.3.59(openai@4.103.0(ws@8.18.1)(zod@3.25.67)))
+        version: 0.2.12(@langchain/core@0.3.66(openai@4.103.0(ws@8.18.1)(zod@3.25.67)))
       '@langchain/openai':
         specifier: ^0.5.13
-        version: 0.5.13(@langchain/core@0.3.59(openai@4.103.0(ws@8.18.1)(zod@3.25.67)))(ws@8.18.1)
+        version: 0.5.13(@langchain/core@0.3.66(openai@4.103.0(ws@8.18.1)(zod@3.25.67)))(ws@8.18.1)
       '@tailwindcss/vite':
         specifier: ^4.1.7
         version: 4.1.7(vite@6.3.5(@types/node@22.15.21)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.0))
@@ -846,8 +846,8 @@ packages:
     peerDependencies:
       '@langchain/core': '>=0.3.58 <0.4.0'
 
-  '@langchain/core@0.3.59':
-    resolution: {integrity: sha512-YAvnx0z3A8z5MvyjZzjC9ZxXZYM20ivFdUeLzANSPCoPCNIQ1/EppWP82RI24PcmWkNtuXsFVaj5juWiIpZvxg==}
+  '@langchain/core@0.3.66':
+    resolution: {integrity: sha512-d3SgSDOlgOjdIbReIXVQl9HaQzKqO/5+E+o3kJwoKXLGP9dxi7+lMyaII7yv7G8/aUxMWLwFES9zc1jFoeJEZw==}
     engines: {node: '>=18'}
 
   '@langchain/google-genai@0.2.12':
@@ -1983,8 +1983,8 @@ packages:
     resolution: {integrity: sha512-5IKcdX0nnYavi6G7TtOhwkYzyjfJlatbjMjuLSfE2kYT5pMDOilZ4OvMhi637CcDICTmz3wARPoyhqyX1Y+XvA==}
     engines: {node: ^14.18.0 || >=16.10.0}
 
-  console-table-printer@2.14.3:
-    resolution: {integrity: sha512-X5OCFnjYlXzRuC8ac5hPA2QflRjJvNKJocMhlnqK/Ap7q3DHXr0NJ0TGzwmEKOiOdJrjsSwEd0m+a32JAYPrKQ==}
+  console-table-printer@2.14.6:
+    resolution: {integrity: sha512-MCBl5HNVaFuuHW6FGbL/4fB7N/ormCy+tQ+sxTrF6QtSbSNETvPuOVbkJBhzDgYhvjWGrTma4eYJa37ZuoQsPw==}
 
   convert-source-map@1.9.0:
     resolution: {integrity: sha512-ASFBup0Mz1uyiIjANan1jzLQami9z1PoYSZCiiYW2FczPbenXc45FZdBZLzOT+r6+iciuEModtmCti+hjaAk0A==}
@@ -3136,11 +3136,20 @@ packages:
     resolution: {integrity: sha512-7Bp3TpsE+L+TARSnnDpk3xg8Idi8RwSLdj6CMbNWoOARIrGrbuLGusV0dYwbZOm4bB3jHNxSw8Wk/ByDqJEnDw==}
     engines: {node: '>=18'}
 
-  langsmith@0.3.33:
-    resolution: {integrity: sha512-imNIaBL6+ElE5eMzNHYwFxo6W/6rHlqcaUjCYoIeGdCYWlARxE3CTGKul5DJnaUgGP2CTLFeNXyvRx5HWC/4KQ==}
+  langsmith@0.3.50:
+    resolution: {integrity: sha512-yosW6sR0EFnMnYKKyBmcqTNknDVOs+dUfcswWk80JoRxox6WEyel7hmSkSzabP/GmTs0hXbrtc+lZwpJWSnI0w==}
     peerDependencies:
+      '@opentelemetry/api': '*'
+      '@opentelemetry/exporter-trace-otlp-proto': '*'
+      '@opentelemetry/sdk-trace-base': '*'
       openai: '*'
     peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
+      '@opentelemetry/exporter-trace-otlp-proto':
+        optional: true
+      '@opentelemetry/sdk-trace-base':
+        optional: true
       openai:
         optional: true
 
@@ -4437,8 +4446,8 @@ packages:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
 
-  simple-wcswidth@1.1.1:
-    resolution: {integrity: sha512-R3q3/eoeNBp24CNTASEUrffXi0j9TwPIEvSStlvSrsFimM17sV5EHcMOc86j3K+UWZyLYvH0hRmYGCpCoaJ4vw==}
+  simple-wcswidth@1.1.2:
+    resolution: {integrity: sha512-j7piyCjAeTDSjzTSQ7DokZtMNwNlEAyxqSZeCS+CXH7fJ4jx3FuJ/mTW3mE+6JLs4VJBbcll0Kjn+KXI5t21Iw==}
 
   sirv@3.0.1:
     resolution: {integrity: sha512-FoqMu0NCGBLCcAkS1qA+XJIQTR6/JHfQXl+uGteNCQ76T91DMUjPa9xfmeqMY3z80nLSg9yQmNjK0Px6RWsH/A==}
@@ -5161,8 +5170,8 @@ packages:
   zip-dir@2.0.0:
     resolution: {integrity: sha512-uhlsJZWz26FLYXOD6WVuq+fIcZ3aBPGo/cFdiLlv3KNwpa52IF3ISV8fLhQLiqVu5No3VhlqlgthN6gehil1Dg==}
 
-  zod-to-json-schema@3.24.5:
-    resolution: {integrity: sha512-/AuWwMP+YqiPbsJx5D6TfgRTc4kTLjsh5SOcd4bLsfUg2RcEXrFMJl1DGgdHy2aCfsIA/cr/1JM0xcB2GZji8g==}
+  zod-to-json-schema@3.24.6:
+    resolution: {integrity: sha512-h/z3PKvcTcTetyjl1fkj79MHNEjm+HpD6NXheWjzOekY7kV+lwDYnHw+ivHkijnCSMz1yJaWBD9vu/Fcmk+vEg==}
     peerDependencies:
       zod: ^3.24.1
 
@@ -5754,38 +5763,41 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@langchain/anthropic@0.3.24(@langchain/core@0.3.59(openai@4.103.0(ws@8.18.1)(zod@3.25.67)))':
+  '@langchain/anthropic@0.3.24(@langchain/core@0.3.66(openai@4.103.0(ws@8.18.1)(zod@3.25.67)))':
     dependencies:
       '@anthropic-ai/sdk': 0.56.0
-      '@langchain/core': 0.3.59(openai@4.103.0(ws@8.18.1)(zod@3.25.67))
+      '@langchain/core': 0.3.66(openai@4.103.0(ws@8.18.1)(zod@3.25.67))
       fast-xml-parser: 4.5.3
 
-  '@langchain/core@0.3.59(openai@4.103.0(ws@8.18.1)(zod@3.25.67))':
+  '@langchain/core@0.3.66(openai@4.103.0(ws@8.18.1)(zod@3.25.67))':
     dependencies:
       '@cfworker/json-schema': 4.1.1
       ansi-styles: 5.2.0
       camelcase: 6.3.0
       decamelize: 1.2.0
       js-tiktoken: 1.0.20
-      langsmith: 0.3.33(openai@4.103.0(ws@8.18.1)(zod@3.25.67))
+      langsmith: 0.3.50(openai@4.103.0(ws@8.18.1)(zod@3.25.67))
       mustache: 4.2.0
       p-queue: 6.6.2
       p-retry: 4.6.2
       uuid: 10.0.0
       zod: 3.25.67
-      zod-to-json-schema: 3.24.5(zod@3.25.67)
+      zod-to-json-schema: 3.24.6(zod@3.25.67)
     transitivePeerDependencies:
+      - '@opentelemetry/api'
+      - '@opentelemetry/exporter-trace-otlp-proto'
+      - '@opentelemetry/sdk-trace-base'
       - openai
 
-  '@langchain/google-genai@0.2.12(@langchain/core@0.3.59(openai@4.103.0(ws@8.18.1)(zod@3.25.67)))':
+  '@langchain/google-genai@0.2.12(@langchain/core@0.3.66(openai@4.103.0(ws@8.18.1)(zod@3.25.67)))':
     dependencies:
       '@google/generative-ai': 0.24.1
-      '@langchain/core': 0.3.59(openai@4.103.0(ws@8.18.1)(zod@3.25.67))
+      '@langchain/core': 0.3.66(openai@4.103.0(ws@8.18.1)(zod@3.25.67))
       uuid: 11.1.0
 
-  '@langchain/openai@0.5.13(@langchain/core@0.3.59(openai@4.103.0(ws@8.18.1)(zod@3.25.67)))(ws@8.18.1)':
+  '@langchain/openai@0.5.13(@langchain/core@0.3.66(openai@4.103.0(ws@8.18.1)(zod@3.25.67)))(ws@8.18.1)':
     dependencies:
-      '@langchain/core': 0.3.59(openai@4.103.0(ws@8.18.1)(zod@3.25.67))
+      '@langchain/core': 0.3.66(openai@4.103.0(ws@8.18.1)(zod@3.25.67))
       js-tiktoken: 1.0.20
       openai: 4.103.0(ws@8.18.1)(zod@3.25.32)
       zod: 3.25.32
@@ -7018,9 +7030,9 @@ snapshots:
 
   consola@3.4.2: {}
 
-  console-table-printer@2.14.3:
+  console-table-printer@2.14.6:
     dependencies:
-      simple-wcswidth: 1.1.1
+      simple-wcswidth: 1.1.2
 
   convert-source-map@1.9.0: {}
 
@@ -8253,11 +8265,11 @@ snapshots:
 
   ky@1.8.1: {}
 
-  langsmith@0.3.33(openai@4.103.0(ws@8.18.1)(zod@3.25.67)):
+  langsmith@0.3.50(openai@4.103.0(ws@8.18.1)(zod@3.25.67)):
     dependencies:
       '@types/uuid': 10.0.0
       chalk: 4.1.2
-      console-table-printer: 2.14.3
+      console-table-printer: 2.14.6
       p-queue: 6.6.2
       p-retry: 4.6.2
       semver: 7.7.2
@@ -9986,7 +9998,7 @@ snapshots:
 
   signal-exit@4.1.0: {}
 
-  simple-wcswidth@1.1.1: {}
+  simple-wcswidth@1.1.2: {}
 
   sirv@3.0.1:
     dependencies:
@@ -10855,7 +10867,7 @@ snapshots:
       async: 3.2.6
       jszip: 3.10.1
 
-  zod-to-json-schema@3.24.5(zod@3.25.67):
+  zod-to-json-schema@3.24.6(zod@3.25.67):
     dependencies:
       zod: 3.25.67
 
