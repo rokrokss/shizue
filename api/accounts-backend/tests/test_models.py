@@ -93,7 +93,7 @@ class TestAuthTokenModel:
         user_id = uuid.uuid4()
         expires = datetime.now(timezone.utc) + timedelta(days=30)
         token = AuthToken(
-            user_id=user_id, 
+            user_id=user_id,
             refresh_token_hash="hash123",
             expires_at=expires
         )
@@ -101,7 +101,7 @@ class TestAuthTokenModel:
         # Check that token is not expired
         assert token.expires_at is not None
         assert token.is_expired is False
-        
+
         # Test with expired token
         expired_token = AuthToken(
             user_id=user_id,
@@ -116,7 +116,7 @@ class TestAuthTokenModel:
         user_id = uuid.uuid4()
         expires = datetime.now(timezone.utc) + timedelta(days=30)
         token = AuthToken(
-            user_id=user_id, 
+            user_id=user_id,
             refresh_token_hash="hash123",
             expires_at=expires
         )

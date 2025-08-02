@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
-import { 
-  MESSAGE_AUTH_LOGIN, 
-  MESSAGE_AUTH_LOGOUT, 
-  MESSAGE_AUTH_CHECK_STATUS, 
+import {
+  MESSAGE_AUTH_LOGIN,
+  MESSAGE_AUTH_LOGOUT,
+  MESSAGE_AUTH_CHECK_STATUS,
   MESSAGE_AUTH_GET_USER_INFO,
   STORAGE_USER_INFO,
 } from '@/config/constants';
@@ -25,7 +25,7 @@ export function useAuth(): UseAuthReturn {
   // Check authentication status on mount
   useEffect(() => {
     checkAuthStatus();
-    
+
     // Listen for storage changes (e.g., login/logout from another tab)
     const handleStorageChange = (changes: { [key: string]: chrome.storage.StorageChange }) => {
       if (changes[STORAGE_USER_INFO]) {
@@ -40,7 +40,7 @@ export function useAuth(): UseAuthReturn {
     };
 
     chrome.storage.onChanged.addListener(handleStorageChange);
-    
+
     return () => {
       chrome.storage.onChanged.removeListener(handleStorageChange);
     };
@@ -49,12 +49,12 @@ export function useAuth(): UseAuthReturn {
   const checkAuthStatus = useCallback(async () => {
     try {
       setIsLoading(true);
-      
+
       // Check auth status
-      const statusResponse = await chrome.runtime.sendMessage({ 
-        action: MESSAGE_AUTH_CHECK_STATUS 
+      const statusResponse = await chrome.runtime.sendMessage({
+        action: MESSAGE_AUTH_CHECK_STATUS,
       });
-      
+
       if (statusResponse.error) {
         setIsAuthenticated(false);
         setUser(null);
@@ -65,10 +65,10 @@ export function useAuth(): UseAuthReturn {
 
       // Get user info if authenticated
       if (statusResponse.isAuthenticated) {
-        const userResponse = await chrome.runtime.sendMessage({ 
-          action: MESSAGE_AUTH_GET_USER_INFO 
+        const userResponse = await chrome.runtime.sendMessage({
+          action: MESSAGE_AUTH_GET_USER_INFO,
         });
-        
+
         if (userResponse.userInfo) {
           setUser(userResponse.userInfo);
         }
@@ -85,9 +85,9 @@ export function useAuth(): UseAuthReturn {
   const login = useCallback(async () => {
     try {
       setIsLoading(true);
-      
-      const response = await chrome.runtime.sendMessage({ 
-        action: MESSAGE_AUTH_LOGIN 
+
+      const response = await chrome.runtime.sendMessage({
+        action: MESSAGE_AUTH_LOGIN,
       });
 
       if (response.error) {
@@ -108,9 +108,9 @@ export function useAuth(): UseAuthReturn {
   const logout = useCallback(async () => {
     try {
       setIsLoading(true);
-      
-      await chrome.runtime.sendMessage({ 
-        action: MESSAGE_AUTH_LOGOUT 
+
+      await chrome.runtime.sendMessage({
+        action: MESSAGE_AUTH_LOGOUT,
       });
 
       setUser(null);

@@ -9,7 +9,11 @@ const useAdObserver = (onAdStart: () => void, onAdEnd: () => void) => {
       const playingNow =
         (adModule.textContent?.trim().length ?? 0) > 0 || adModule.childElementCount > 0;
 
-      playingNow ? onAdStart() : onAdEnd();
+      if (playingNow) {
+        onAdStart();
+      } else {
+        onAdEnd();
+      }
     };
 
     compute();

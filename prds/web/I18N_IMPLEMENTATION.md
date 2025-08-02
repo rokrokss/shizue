@@ -79,9 +79,9 @@ pnpm add -D @types/negotiator negotiator
 #### 타입 정의
 `types/i18n.d.ts`:
 ```typescript
-export type Locale = 
-  | 'ar' | 'bn' | 'de' | 'en' | 'es' | 'fa' | 'fil' | 'fr' 
-  | 'hi' | 'it' | 'ja' | 'ko' | 'pl' | 'pt-BR' | 'pt-PT' 
+export type Locale =
+  | 'ar' | 'bn' | 'de' | 'en' | 'es' | 'fa' | 'fil' | 'fr'
+  | 'hi' | 'it' | 'ja' | 'ko' | 'pl' | 'pt-BR' | 'pt-PT'
   | 'ru' | 'sw' | 'th' | 'tr' | 'ur' | 'vi' | 'zh-CN' | 'zh-TW'
 
 export interface LocaleConfig {
@@ -101,8 +101,8 @@ export interface LocaleConfig {
 import { LocaleConfig } from '@/types/i18n'
 
 export const locales = [
-  'ar', 'bn', 'de', 'en', 'es', 'fa', 'fil', 'fr', 
-  'hi', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'pt-PT', 
+  'ar', 'bn', 'de', 'en', 'es', 'fa', 'fil', 'fr',
+  'hi', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'pt-PT',
   'ru', 'sw', 'th', 'tr', 'ur', 'vi', 'zh-CN', 'zh-TW'
 ] as const
 
@@ -531,8 +531,8 @@ export default async function RootLayout({
   const font = fontMap[locale as keyof typeof fontMap]
 
   return (
-    <html 
-      lang={locale} 
+    <html
+      lang={locale}
       dir={localeConfig.dir}
       className={font?.variable}
     >
@@ -583,10 +583,10 @@ export function LanguageSelector() {
       const segments = pathname.split('/')
       segments[1] = newLocale
       const newPathname = segments.join('/')
-      
+
       // 쿠키에 선택한 언어 저장
       document.cookie = `locale=${newLocale};path=/;max-age=${365 * 24 * 60 * 60}`
-      
+
       router.push(newPathname)
       setIsOpen(false)
     })
@@ -604,8 +604,8 @@ export function LanguageSelector() {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           size="sm"
           disabled={isPending}
           className={cn(
@@ -618,7 +618,7 @@ export function LanguageSelector() {
           <span className="hidden sm:inline">{currentLocale.nativeName}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent 
+      <DropdownMenuContent
         align={currentLocale.dir === 'rtl' ? 'start' : 'end'}
         className="w-[300px] max-h-[60vh] overflow-y-auto"
       >
@@ -630,7 +630,7 @@ export function LanguageSelector() {
             {locales.map((loc) => {
               const config = localeConfigs[loc as keyof typeof localeConfigs]
               const isActive = locale === loc
-              
+
               return (
                 <DropdownMenuItem
                   key={loc}
@@ -753,7 +753,7 @@ import { cache } from 'react'
 // 네임스페이스별 번역 로딩
 export const loadTranslations = cache(async (locale: string, namespaces: string[]) => {
   const translations: Record<string, any> = {}
-  
+
   for (const namespace of namespaces) {
     try {
       const module = await import(`@/messages/${locale}/${namespace}.json`)
@@ -769,7 +769,7 @@ export const loadTranslations = cache(async (locale: string, namespaces: string[
       }
     }
   }
-  
+
   return translations
 })
 ```
@@ -815,7 +815,7 @@ describe('i18n Configuration', () => {
 
   test('all locales have translation files', async () => {
     const messagesDir = path.join(process.cwd(), 'messages')
-    
+
     for (const locale of locales) {
       const filePath = path.join(messagesDir, `${locale}.json`)
       const exists = await fs.access(filePath).then(() => true).catch(() => false)
@@ -825,12 +825,12 @@ describe('i18n Configuration', () => {
 
   test('translation files have required keys', async () => {
     const requiredKeys = ['metadata.title', 'metadata.description', 'hero.title']
-    
+
     for (const locale of locales) {
       const filePath = path.join(process.cwd(), 'messages', `${locale}.json`)
       const content = await fs.readFile(filePath, 'utf-8')
       const translations = JSON.parse(content)
-      
+
       requiredKeys.forEach(key => {
         const value = key.split('.').reduce((obj, k) => obj?.[k], translations)
         expect(value).toBeTruthy()
@@ -854,20 +854,20 @@ test.describe('Internationalization', () => {
         value: 'ko-KR'
       })
     })
-    
+
     await page.goto('/')
     await expect(page).toHaveURL('/ko')
   })
 
   test('language selector works', async ({ page }) => {
     await page.goto('/en')
-    
+
     // 언어 선택기 열기
     await page.click('button:has-text("English")')
-    
+
     // 한국어 선택
     await page.click('text=한국어')
-    
+
     // URL과 콘텐츠 확인
     await expect(page).toHaveURL('/ko')
     await expect(page.locator('h1')).toContainText('AI로 번역하고')
@@ -875,19 +875,19 @@ test.describe('Internationalization', () => {
 
   test('preserves path on language change', async ({ page }) => {
     await page.goto('/en#features')
-    
+
     await page.click('button:has-text("English")')
     await page.click('text=日本語')
-    
+
     await expect(page).toHaveURL('/ja#features')
   })
 
   test('RTL languages display correctly', async ({ page }) => {
     await page.goto('/ar')
-    
+
     const html = page.locator('html')
     await expect(html).toHaveAttribute('dir', 'rtl')
-    
+
     // RTL 레이아웃 확인
     const header = page.locator('header')
     await expect(header).toHaveCSS('direction', 'rtl')
@@ -919,12 +919,12 @@ import path from 'path'
 async function checkTranslationStatus() {
   const baseMessages = await import('@/messages/en.json')
   const baseKeys = extractKeys(baseMessages.default)
-  
+
   const status: Record<string, number> = {}
-  
+
   for (const locale of locales) {
     if (locale === 'en') continue
-    
+
     try {
       const messages = await import(`@/messages/${locale}.json`)
       const keys = extractKeys(messages.default)
@@ -934,16 +934,16 @@ async function checkTranslationStatus() {
       status[locale] = 0
     }
   }
-  
+
   console.table(status)
 }
 
 function extractKeys(obj: any, prefix = ''): Set<string> {
   const keys = new Set<string>()
-  
+
   for (const [key, value] of Object.entries(obj)) {
     const fullKey = prefix ? `${prefix}.${key}` : key
-    
+
     if (typeof value === 'object' && value !== null) {
       const nestedKeys = extractKeys(value, fullKey)
       nestedKeys.forEach(k => keys.add(k))
@@ -951,7 +951,7 @@ function extractKeys(obj: any, prefix = ''): Set<string> {
       keys.add(fullKey)
     }
   }
-  
+
   return keys
 }
 ```

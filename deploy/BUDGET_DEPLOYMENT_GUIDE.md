@@ -27,16 +27,16 @@ Shizue Accounts API를 무료 또는 저렴하게 배포하는 방법들입니�
    ```bash
    # Railway CLI 설치
    npm install -g @railway/cli
-   
+
    # 로그인
    railway login
-   
+
    # 프로젝트 생성
    railway init
-   
+
    # PostgreSQL 추가
    railway add postgresql
-   
+
    # Redis 추가
    railway add redis
    ```
@@ -302,14 +302,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Backup Database
       env:
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
       run: |
         # pg_dump 실행
         pg_dump $DATABASE_URL > backup.sql
-        
+
     - name: Upload to S3/Google Drive
       # S3 또는 Google Drive에 업로드
 ```
@@ -385,11 +385,11 @@ jobs:
         fetch('/health')
             .then(r => r.json())
             .then(data => {
-                document.getElementById('status').innerHTML = 
+                document.getElementById('status').innerHTML =
                     `✅ API is ${data.status}`;
             })
             .catch(() => {
-                document.getElementById('status').innerHTML = 
+                document.getElementById('status').innerHTML =
                     '❌ API is down';
             });
     </script>

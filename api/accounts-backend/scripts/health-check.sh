@@ -31,7 +31,7 @@ fi
 echo -e "\n${YELLOW}Database Connection:${NC}"
 if docker-compose -f docker-compose.prod.yml exec -T postgres pg_isready > /dev/null 2>&1; then
     echo -e "${GREEN}✓ PostgreSQL is ready${NC}"
-    
+
     # 데이터베이스 크기
     DB_SIZE=$(docker-compose -f docker-compose.prod.yml exec -T postgres psql -U shizue -d shizue_accounts -t -c "SELECT pg_size_pretty(pg_database_size('shizue_accounts'));" | tr -d ' ')
     echo "  Database size: $DB_SIZE"
@@ -43,7 +43,7 @@ fi
 echo -e "\n${YELLOW}Redis Connection:${NC}"
 if docker-compose -f docker-compose.prod.yml exec -T redis redis-cli ping > /dev/null 2>&1; then
     echo -e "${GREEN}✓ Redis is ready${NC}"
-    
+
     # Redis 메모리 사용량
     REDIS_MEMORY=$(docker-compose -f docker-compose.prod.yml exec -T redis redis-cli info memory | grep used_memory_human | cut -d: -f2 | tr -d '\r')
     echo "  Memory usage: $REDIS_MEMORY"

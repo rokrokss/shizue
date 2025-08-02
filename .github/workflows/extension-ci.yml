@@ -47,17 +47,14 @@ jobs:
       - name: Run type checking
         run: pnpm compile
 
+      - name: Check code formatting
+        run: pnpm format:check
+
       - name: Run linting
-        run: |
-          # Add linting commands when ESLint is configured
-          # pnpm lint
-          echo "Linting skipped - configure ESLint"
+        run: pnpm lint
 
       - name: Run tests
-        run: |
-          # Add test commands when tests are configured
-          # pnpm test
-          echo "Tests skipped - configure test framework"
+        run: pnpm test --run
 
       - name: Build extension
         run: pnpm build

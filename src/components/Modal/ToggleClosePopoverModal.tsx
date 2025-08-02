@@ -15,11 +15,11 @@ const ToggleClosePopoverModal = ({
   settingsTriggerYPosition: number;
   theme: Theme;
 }) => {
-  if (typeof window === 'undefined') return null;
-
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const handleMouseDownCapture = (e: MouseEvent) => {
       if (!e.isTrusted) return;
 
@@ -54,6 +54,8 @@ const ToggleClosePopoverModal = ({
     document.addEventListener('mousedown', handleMouseDownCapture, true);
     return () => document.removeEventListener('mousedown', handleMouseDownCapture, true);
   }, [onClose]);
+
+  if (typeof window === 'undefined') return null;
 
   return createPortal(
     <div

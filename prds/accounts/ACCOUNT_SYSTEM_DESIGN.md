@@ -145,19 +145,19 @@ CREATE INDEX idx_auth_tokens_user ON auth_tokens(user_id, revoked_at);
 ```yaml
 # Google OAuth 시작
 POST /v1/auth/google/authorize
-Response: 
+Response:
   {
     "authorization_url": "https://accounts.google.com/o/oauth2/v2/auth?..."
   }
 
 # OAuth 콜백 처리
 POST /v1/auth/google/callback
-Body: 
+Body:
   {
     "code": "string",
     "state": "string"
   }
-Response: 
+Response:
   {
     "access_token": "eyJ...",
     "refresh_token": "eyJ...",
@@ -172,9 +172,9 @@ Response:
 
 # 토큰 갱신
 POST /v1/auth/refresh
-Headers: 
+Headers:
   Authorization: Bearer {refresh_token}
-Response: 
+Response:
   {
     "access_token": "eyJ...",
     "expires_in": 3600
@@ -182,18 +182,18 @@ Response:
 
 # 로그아웃
 POST /v1/auth/logout
-Headers: 
+Headers:
   Authorization: Bearer {access_token}
-Response: 
+Response:
   {
     "success": true
   }
 
 # 현재 사용자 정보
 GET /v1/auth/me
-Headers: 
+Headers:
   Authorization: Bearer {access_token}
-Response: 
+Response:
   {
     "id": "uuid",
     "email": "user@example.com",
@@ -208,9 +208,9 @@ Response:
 ```yaml
 # 설정 조회
 GET /v1/settings
-Headers: 
+Headers:
   Authorization: Bearer {access_token}
-Response: 
+Response:
   {
     "theme": "dark",
     "language": "ko",
@@ -220,13 +220,13 @@ Response:
 
 # 설정 업데이트
 PUT /v1/settings/{key}
-Headers: 
+Headers:
   Authorization: Bearer {access_token}
-Body: 
+Body:
   {
     "value": any
   }
-Response: 
+Response:
   {
     "key": "theme",
     "value": "dark"
@@ -238,13 +238,13 @@ Response:
 ```yaml
 # 사용량 통계 조회
 GET /v1/usage/stats
-Headers: 
+Headers:
   Authorization: Bearer {access_token}
-Query: 
+Query:
   - start_date: "2025-01-01" (ISO 8601)
   - end_date: "2025-01-31" (ISO 8601)
   - group_by: "day" | "week" | "month"
-Response: 
+Response:
   {
     "total_tokens": 150000,
     "total_requests": 450,
@@ -271,9 +271,9 @@ Response:
 
 # 사용량 기록
 POST /v1/usage/track
-Headers: 
+Headers:
   Authorization: Bearer {access_token}
-Body: 
+Body:
   {
     "model": "gpt-4",
     "tokens_input": 500,
@@ -307,7 +307,7 @@ Body:
 
 #### Access Token
 - **수명**: 1시간
-- **페이로드**: 
+- **페이로드**:
   ```json
   {
     "user_id": "uuid",
@@ -354,10 +354,10 @@ class SecureTokenStorage {
       'token_expiry': Date.now() + (tokens.expires_in * 1000)
     });
   }
-  
+
   // 메모리 캐싱으로 성능 최적화
   private tokenCache = new Map<string, CachedToken>();
-  
+
   async getValidToken(): Promise<string> {
     // 1. 메모리 캐시 확인
     // 2. Chrome Storage 확인
@@ -374,32 +374,32 @@ class SecureTokenStorage {
 // src/services/authService.ts
 class AuthService {
   private authTabId: number | null = null;
-  
+
   async login(): Promise<AuthTokens> {
     // 1. 새 탭에서 OAuth 시작
     const { url } = await fetch('https://api.shizue.ai/v1/auth/google/authorize')
       .then(res => res.json());
-    
+
     const tab = await chrome.tabs.create({ url });
     this.authTabId = tab.id;
-    
+
     // 2. 토큰 수신 대기
     return this.waitForToken();
   }
-  
+
   private async waitForToken(): Promise<AuthTokens> {
     return new Promise((resolve, reject) => {
       // URL 변경 감지
       chrome.tabs.onUpdated.addListener(function listener(tabId, info, tab) {
-        if (tabId === this.authTabId && 
+        if (tabId === this.authTabId &&
             info.url?.includes('shizue.ai/auth/success')) {
           const urlParams = new URLSearchParams(new URL(info.url).search);
           const token = urlParams.get('token');
           const refreshToken = urlParams.get('refresh_token');
-          
+
           chrome.tabs.remove(tabId);
           chrome.tabs.onUpdated.removeListener(listener);
-          
+
           resolve({
             access_token: token!,
             refresh_token: refreshToken!,
@@ -407,7 +407,7 @@ class AuthService {
           });
         }
       });
-      
+
       // 30초 타임아웃
       setTimeout(() => reject(new Error('Auth timeout')), 30000);
     });
@@ -422,30 +422,30 @@ class AuthService {
 class TokenManager {
   private refreshPromise: Promise<string> | null = null;
   private tokenCache: Map<string, TokenInfo> = new Map();
-  
+
   async getValidToken(): Promise<string> {
     // 1. 메모리 캐시 확인
     const cached = this.getCachedToken();
     if (cached && !this.isExpiringSoon(cached)) {
       return cached.token;
     }
-    
+
     // 2. Chrome Storage 확인
     const stored = await this.getStoredToken();
     if (stored && !this.isExpiringSoon(stored)) {
       this.cacheToken(stored);
       return stored.token;
     }
-    
+
     // 3. 토큰 갱신 (Race condition 방지)
     return this.refreshWithSingleton();
   }
-  
+
   private isExpiringSoon(token: TokenInfo): boolean {
     const BUFFER_TIME = 5 * 60 * 1000; // 5분
     return token.expiry < Date.now() + BUFFER_TIME;
   }
-  
+
   private async refreshWithSingleton(): Promise<string> {
     if (!this.refreshPromise) {
       this.refreshPromise = this.doRefresh()
@@ -453,26 +453,26 @@ class TokenManager {
     }
     return this.refreshPromise;
   }
-  
+
   private async doRefresh(): Promise<string> {
     const stored = await chrome.storage.local.get(['refresh_token']);
     if (!stored.refresh_token) {
       throw new Error('No refresh token');
     }
-    
+
     const response = await fetch('https://api.shizue.ai/v1/auth/refresh', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${stored.refresh_token}`
       }
     });
-    
+
     if (!response.ok) {
       throw new Error('Token refresh failed');
     }
-    
+
     const { access_token, expires_in } = await response.json();
-    
+
     await this.saveToken(access_token, expires_in);
     return access_token;
   }
@@ -491,7 +491,7 @@ const AUTH_REQUIRED_ACTIONS = new Set([
 ]);
 
 export async function handleMessage(
-  message: any, 
+  message: any,
   sender: chrome.runtime.MessageSender
 ): Promise<any> {
   // 인증이 필요한 액션인지 확인
@@ -503,13 +503,13 @@ export async function handleMessage(
     } catch (error) {
       // 인증 실패 시 Side Panel 열어서 로그인 유도
       await chrome.sidePanel.open({ windowId: sender.tab?.windowId });
-      return { 
-        error: 'AUTH_REQUIRED', 
-        needsLogin: true 
+      return {
+        error: 'AUTH_REQUIRED',
+        needsLogin: true
       };
     }
   }
-  
+
   // 인증 불필요한 요청 처리
   return processPublicRequest(message);
 }
@@ -539,12 +539,12 @@ interface AuthCache {
 // 인증 상태 캐싱으로 불필요한 API 호출 방지
 class AuthStateCache {
   private cache: AuthCache | null = null;
-  
+
   async checkAuthStatus(): Promise<boolean> {
     if (this.cache && this.isValid(this.cache)) {
       return this.cache.isAuthenticated;
     }
-    
+
     const status = await this.verifyWithBackend();
     this.updateCache(status);
     return status.isAuthenticated;
@@ -572,12 +572,12 @@ class AuthStateCache {
    class UsageTracker {
      private queue: UsageData[] = [];
      private timer: NodeJS.Timeout | null = null;
-     
+
      track(data: UsageData) {
        this.queue.push(data);
        this.scheduleBatch();
      }
-     
+
      private scheduleBatch() {
        if (!this.timer) {
          this.timer = setTimeout(() => {
@@ -617,7 +617,7 @@ class AuthStateCache {
          POSTGRES_PASSWORD: secure_password
        ports:
          - "5432:5432"
-     
+
      redis:
        image: redis:7-alpine
        ports:
@@ -665,7 +665,7 @@ class AuthStateCache {
        'STORAGE_ANTHROPIC_API_KEY',
        'STORAGE_GEMINI_API_KEY'
      ]);
-     
+
      return Object.values(storage).some(key => !!key);
    }
    ```

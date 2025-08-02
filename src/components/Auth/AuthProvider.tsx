@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect } from 'react';
-import { useAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 import { authStateAtom, userInfoAtom } from '@/hooks/global';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -28,8 +28,8 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const auth = useAuth();
-  const [authState, setAuthState] = useAtom(authStateAtom);
-  const [userInfo, setUserInfo] = useAtom(userInfoAtom);
+  const setAuthState = useSetAtom(authStateAtom);
+  const setUserInfo = useSetAtom(userInfoAtom);
 
   // Sync auth state to atoms
   useEffect(() => {
@@ -40,9 +40,5 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUserInfo(auth.user);
   }, [auth.isAuthenticated, auth.isLoading, auth.user, setAuthState, setUserInfo]);
 
-  return (
-    <AuthContext.Provider value={auth}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 }

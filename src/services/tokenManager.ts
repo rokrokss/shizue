@@ -1,9 +1,4 @@
-import {
-  STORAGE_AUTH_TOKEN,
-  STORAGE_REFRESH_TOKEN,
-  STORAGE_AUTH_EXPIRY,
-  MESSAGE_AUTH_REFRESH_TOKEN,
-} from '@/config/constants';
+import { STORAGE_AUTH_TOKEN, STORAGE_REFRESH_TOKEN, STORAGE_AUTH_EXPIRY } from '@/config/constants';
 
 interface TokenInfo {
   token: string;
@@ -55,10 +50,7 @@ export class TokenManager {
 
   private async getStoredToken(): Promise<TokenInfo | null> {
     try {
-      const result = await chrome.storage.local.get([
-        STORAGE_AUTH_TOKEN,
-        STORAGE_AUTH_EXPIRY,
-      ]);
+      const result = await chrome.storage.local.get([STORAGE_AUTH_TOKEN, STORAGE_AUTH_EXPIRY]);
 
       if (result[STORAGE_AUTH_TOKEN] && result[STORAGE_AUTH_EXPIRY]) {
         return {
@@ -80,7 +72,7 @@ export class TokenManager {
 
   private cacheToken(tokenInfo: TokenInfo): void {
     this.tokenCache.set('access_token', tokenInfo);
-    
+
     // Schedule automatic refresh before expiry
     this.scheduleTokenRefresh(tokenInfo.expiry);
   }
@@ -92,7 +84,7 @@ export class TokenManager {
     }
 
     this.refreshPromise = this.doRefresh();
-    
+
     try {
       const token = await this.refreshPromise;
       return token;
@@ -103,8 +95,9 @@ export class TokenManager {
 
   private async doRefresh(): Promise<string> {
     try {
-      const { [STORAGE_REFRESH_TOKEN]: refresh_token } = await chrome.storage.local.get(STORAGE_REFRESH_TOKEN);
-      
+      const { [STORAGE_REFRESH_TOKEN]: refresh_token } =
+        await chrome.storage.local.get(STORAGE_REFRESH_TOKEN);
+
       if (!refresh_token) {
         throw new Error('No refresh token available');
       }
@@ -112,7 +105,7 @@ export class TokenManager {
       const response = await fetch(`${this.API_BASE_URL}/v1/auth/refresh`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${refresh_token}`,
+          Authorization: `Bearer ${refresh_token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -127,7 +120,7 @@ export class TokenManager {
       }
 
       const { access_token, expires_in } = await response.json();
-      const expiry = Date.now() + (expires_in * 1000);
+      const expiry = Date.now() + expires_in * 1000;
 
       // Save new token
       await chrome.storage.local.set({
@@ -158,7 +151,7 @@ export class TokenManager {
 
     if (delay > 0) {
       this.refreshTimer = setTimeout(() => {
-        this.refreshToken().catch(error => {
+        this.refreshToken().catch((error) => {
           console.error('Scheduled token refresh failed:', error);
         });
       }, delay) as unknown as number;
@@ -181,7 +174,7 @@ export class TokenManager {
 
   async clearTokens(): Promise<void> {
     this.tokenCache.clear();
-    
+
     if (this.refreshTimer) {
       clearTimeout(this.refreshTimer);
       this.refreshTimer = null;
@@ -197,14 +190,14 @@ export class TokenManager {
   // For background script message handling
   static async handleRefreshMessage(): Promise<any> {
     const tokenManager = TokenManager.getInstance();
-    
+
     try {
       const token = await tokenManager.refreshToken();
-      return { success: true, token };
+      return { success: true, access_token: token };
     } catch (error) {
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

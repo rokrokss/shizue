@@ -100,7 +100,7 @@ $CMD
 if [ $? -eq 0 ]; then
     echo ""
     echo -e "${GREEN}All tests passed!${NC}"
-    
+
     # If coverage was generated, show the report location
     if [ -n "$COVERAGE" ]; then
         echo -e "${YELLOW}Coverage report generated at: htmlcov/index.html${NC}"

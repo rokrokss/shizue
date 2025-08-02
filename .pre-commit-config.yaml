@@ -3,11 +3,50 @@
 repos:
   - repo: local
     hooks:
-      - id: api-quality-check
-        name: API Quality Check (format, lint, check, test)
-        entry: bash -c 'cd api && make format && make check && make test'
+      # Frontend (Chrome Extension) checks - REQUIRED
+      - id: frontend-format
+        name: Frontend - Format Code (Prettier)
+        entry: pnpm format
         language: system
-        files: ^api/.*\.py$
+        files: ^src/.*\.(ts|tsx|js|jsx|json|css|md)$
         pass_filenames: false
         stages: [pre-commit]
-        always_run: false
+
+      - id: frontend-lint
+        name: Frontend - Lint (ESLint)
+        entry: pnpm lint
+        language: system
+        files: ^src/.*\.(ts|tsx|js|jsx)$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: frontend-typecheck
+        name: Frontend - Type Check (TypeScript)
+        entry: pnpm compile
+        language: system
+        files: ^src/.*\.(ts|tsx)$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: frontend-test
+        name: Frontend - Run Tests (Vitest)
+        entry: pnpm test --run
+        language: system
+        files: ^src/.*\.(ts|tsx|js|jsx)$
+        pass_filenames: false
+        stages: [pre-commit]
+
+  # Additional hooks from external repos
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        exclude: ^deploy/k8s/.*\.yaml$
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-json
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+        args: ['--fix=lf']

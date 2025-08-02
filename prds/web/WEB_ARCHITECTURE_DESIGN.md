@@ -293,7 +293,7 @@ const inter = Inter({
 export async function generateMetadata({ params }) {
   const locale = params.locale
   const messages = await getMessages(locale)
-  
+
   return {
     title: messages.seo.title,
     description: messages.seo.description,

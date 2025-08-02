@@ -61,7 +61,7 @@ docker exec -i $CONTAINER_NAME psql -U $POSTGRES_USER $POSTGRES_DB < $RESTORE_FI
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}Database restored successfully!${NC}"
-    
+
     # 임시 파일 정리
     if [ "$RESTORE_FILE" = "/tmp/restore.sql" ]; then
         rm $RESTORE_FILE

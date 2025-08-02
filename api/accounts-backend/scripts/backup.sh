@@ -35,17 +35,17 @@ docker exec $CONTAINER_NAME pg_dump -U $POSTGRES_USER $POSTGRES_DB > $BACKUP_FIL
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}Backup completed: $BACKUP_FILE${NC}"
-    
+
     # 백업 파일 압축
     gzip $BACKUP_FILE
     echo -e "${GREEN}Backup compressed: ${BACKUP_FILE}.gz${NC}"
-    
+
     # 오래된 백업 파일 삭제
     echo -e "${YELLOW}Cleaning up old backups...${NC}"
     cd $BACKUP_DIR
     ls -t *.gz | tail -n +$((MAX_BACKUPS + 1)) | xargs -r rm
     cd ..
-    
+
     echo -e "${GREEN}Backup process completed successfully!${NC}"
 else
     echo -e "${RED}Backup failed!${NC}"

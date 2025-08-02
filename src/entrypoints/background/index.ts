@@ -26,7 +26,7 @@ export default defineBackground(() => {
       if (AUTH_REQUIRED_ACTIONS.has(action)) {
         const authService = AuthService.getInstance();
         const isAuthenticated = await authService.checkAuthStatus();
-        
+
         if (!isAuthenticated) {
           // Open side panel for login
           const tabId = sender.tab?.id;
@@ -36,13 +36,13 @@ export default defineBackground(() => {
           sendResponse({ error: 'AUTH_REQUIRED', needsLogin: true });
           return;
         }
-        
+
         // Add auth token to message for authenticated requests
         const tokenManager = TokenManager.getInstance();
         try {
           const token = await tokenManager.getValidToken();
           msg.authToken = token;
-        } catch (error) {
+        } catch {
           // Token refresh failed, need to re-login
           const tabId = sender.tab?.id;
           if (tabId) {

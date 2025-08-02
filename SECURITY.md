@@ -42,7 +42,7 @@
 ### 1. Authentication & Authorization
 
 - **OAuth 2.0**: Google OAuth를 통한 안전한 인증
-- **JWT Tokens**: 
+- **JWT Tokens**:
   - Access Token: 30분 만료
   - Refresh Token: 30일 만료, 데이터베이스 저장
   - 토큰 무효화 지원
@@ -89,7 +89,7 @@
 ### 5. Dependency Management
 
 - **Automated Updates**: Dependabot for security patches
-- **Vulnerability Scanning**: 
+- **Vulnerability Scanning**:
   - Snyk integration
   - npm audit
   - Safety (Python)

@@ -347,20 +347,20 @@ const ChatInput = ({
                 <button
                   onClick={() => handleRemoveImage(index)}
                   className="
-                    sz:cursor-pointer 
-                    sz:absolute 
+                    sz:cursor-pointer
+                    sz:absolute
                     sz:-top-[5px]
                     sz:-right-[5px]
-                    sz:w-4 
-                    sz:h-4 
-                    sz:bg-gray-400 
-                    sz:text-white 
-                    sz:rounded-full 
-                    sz:text-[10px] 
-                    sz:flex 
-                    sz:items-center 
-                    sz:justify-center 
-                    sz:leading-none 
+                    sz:w-4
+                    sz:h-4
+                    sz:bg-gray-400
+                    sz:text-white
+                    sz:rounded-full
+                    sz:text-[10px]
+                    sz:flex
+                    sz:items-center
+                    sz:justify-center
+                    sz:leading-none
                     sz:hover:bg-gray-500
                   "
                   type="button"

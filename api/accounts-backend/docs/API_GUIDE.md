@@ -250,7 +250,7 @@ Authorization: Bearer {access_token}
 async function login() {
   const response = await fetch('http://localhost:8000/v1/auth/login/google');
   const { authorization_url } = await response.json();
-  
+
   // 새 탭에서 Google 로그인
   chrome.tabs.create({ url: authorization_url });
 }
@@ -262,11 +262,11 @@ async function getUserProfile(accessToken: string) {
       'Authorization': `Bearer ${accessToken}`
     }
   });
-  
+
   if (!response.ok) {
     throw new Error('Failed to fetch profile');
   }
-  
+
   return response.json();
 }
 
@@ -279,11 +279,11 @@ async function refreshToken(refreshToken: string) {
     },
     body: JSON.stringify({ refresh_token: refreshToken })
   });
-  
+
   if (!response.ok) {
     throw new Error('Failed to refresh token');
   }
-  
+
   return response.json();
 }
 
@@ -297,11 +297,11 @@ async function recordUsage(accessToken: string, usage: any) {
     },
     body: JSON.stringify(usage)
   });
-  
+
   if (!response.ok) {
     throw new Error('Failed to record usage');
   }
-  
+
   return response.json();
 }
 ```
@@ -322,13 +322,13 @@ class ShizueAPI:
             self.session.headers.update({
                 "Authorization": f"Bearer {access_token}"
             })
-    
+
     def login_google(self) -> str:
         """Get Google OAuth login URL"""
         response = self.session.get(f"{BASE_URL}/v1/auth/login/google")
         response.raise_for_status()
         return response.json()["authorization_url"]
-    
+
     def refresh_token(self, refresh_token: str) -> Dict[str, Any]:
         """Refresh access token"""
         response = self.session.post(
@@ -337,21 +337,21 @@ class ShizueAPI:
         )
         response.raise_for_status()
         data = response.json()
-        
+
         # Update session with new token
         self.access_token = data["access_token"]
         self.session.headers.update({
             "Authorization": f"Bearer {self.access_token}"
         })
-        
+
         return data
-    
+
     def get_profile(self) -> Dict[str, Any]:
         """Get current user profile"""
         response = self.session.get(f"{BASE_URL}/v1/users/me")
         response.raise_for_status()
         return response.json()
-    
+
     def record_usage(self, model: str, tokens_in: int, tokens_out: int) -> Dict[str, Any]:
         """Record API usage"""
         response = self.session.post(

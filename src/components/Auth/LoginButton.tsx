@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Avatar, Dropdown, Spin } from 'antd';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useAuthContext } from './AuthProvider';
-import { useTranslation } from '@wxt-dev/i18n/react';
+import { useTranslation } from 'react-i18next';
 
 export function LoginButton() {
   const { t } = useTranslation();
@@ -14,12 +14,7 @@ export function LoginButton() {
 
   if (!isAuthenticated) {
     return (
-      <Button 
-        type="primary" 
-        icon={<UserOutlined />}
-        onClick={login}
-        loading={isLoading}
-      >
+      <Button type="primary" icon={<UserOutlined />} onClick={login} loading={isLoading}>
         {t('auth.loginWithGoogle')}
       </Button>
     );
@@ -44,8 +39,8 @@ export function LoginButton() {
 
   return (
     <Dropdown menu={{ items: menuItems }} placement="bottomRight" trigger={['click']}>
-      <Avatar 
-        src={user?.profile_picture} 
+      <Avatar
+        src={user?.profile_picture}
         icon={<UserOutlined />}
         style={{ cursor: 'pointer' }}
         size="small"

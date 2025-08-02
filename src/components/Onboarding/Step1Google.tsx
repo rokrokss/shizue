@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Typography, Space } from 'antd';
 import { GoogleOutlined, UserOutlined } from '@ant-design/icons';
-import { useTranslation } from '@wxt-dev/i18n/react';
+import { useTranslation } from 'react-i18next';
 import { useAuthContext } from '@/components/Auth/AuthProvider';
 
 const { Title, Text } = Typography;
@@ -29,14 +29,12 @@ export const Step1Google: React.FC<Step1GoogleProps> = ({ onNext }) => {
     <div className="flex flex-col items-center justify-center px-8 py-16">
       <Space direction="vertical" size={32} align="center" className="w-full max-w-md">
         <UserOutlined style={{ fontSize: 64, color: '#1890ff' }} />
-        
+
         <div className="text-center">
           <Title level={2} className="mb-4">
             {t('onboarding.step1.title')}
           </Title>
-          <Text className="text-gray-600">
-            {t('onboarding.step1.description')}
-          </Text>
+          <Text className="text-gray-600">{t('onboarding.step1.description')}</Text>
         </div>
 
         <Space direction="vertical" size={16} className="w-full">
@@ -51,7 +49,7 @@ export const Step1Google: React.FC<Step1GoogleProps> = ({ onNext }) => {
           >
             {t('auth.loginWithGoogle')}
           </Button>
-          
+
           <Text type="secondary" className="text-center text-xs">
             {t('onboarding.step1.privacy')}
           </Text>

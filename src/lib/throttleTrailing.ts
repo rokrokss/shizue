@@ -19,11 +19,14 @@ export const throttleTrailing = <T extends (...args: any[]) => void>(func: T, wa
       lastArgs = args;
       if (timeout) clearTimeout(timeout);
 
-      timeout = setTimeout(() => {
-        if (lastArgs) invoke(lastArgs);
-        lastArgs = null;
-        isThrottling = false;
-      }, wait - (now - lastCallTime));
+      timeout = setTimeout(
+        () => {
+          if (lastArgs) invoke(lastArgs);
+          lastArgs = null;
+          isThrottling = false;
+        },
+        wait - (now - lastCallTime)
+      );
     }
   };
 

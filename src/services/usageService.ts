@@ -1,8 +1,4 @@
-import {
-  getTokenUsageByDateRange,
-  getTotalTokenUsage,
-  TokenUsage,
-} from '@/lib/indexDB';
+import { getTokenUsageByDateRange, getTotalTokenUsage, TokenUsage } from '@/lib/indexDB';
 
 export interface ModelUsage {
   model: string;

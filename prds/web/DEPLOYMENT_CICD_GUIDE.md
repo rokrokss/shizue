@@ -292,7 +292,7 @@ jobs:
         run: |
           npm install -g @next/bundle-analyzer
           ANALYZE=true pnpm build
-          
+
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -502,7 +502,7 @@ jobs:
       - name: Check Translation Keys
         run: |
           node scripts/validate-translations.js
-          
+
       - name: Translation Coverage Report
         run: |
           node scripts/translation-coverage.js
@@ -696,7 +696,7 @@ const nextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   swcMinify: true,
-  
+
   experimental: {
     optimizeCss: true,
     optimizePackageImports: [
@@ -765,7 +765,7 @@ vercel env add API_KEY --secret api-key
 export function middleware(request: NextRequest) {
   const proto = request.headers.get('x-forwarded-proto')
   const host = request.headers.get('host')
-  
+
   if (proto !== 'https' && process.env.NODE_ENV === 'production') {
     return NextResponse.redirect(
       `https://${host}${request.nextUrl.pathname}`,

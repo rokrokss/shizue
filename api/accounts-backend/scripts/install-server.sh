@@ -14,7 +14,7 @@ NC='\033[0m'
 echo -e "${BLUE}=== Shizue API Server Setup ===${NC}"
 
 # Root 권한 확인
-if [ "$EUID" -ne 0 ]; then 
+if [ "$EUID" -ne 0 ]; then
    echo -e "${RED}Please run as root (use sudo)${NC}"
    exit 1
 fi

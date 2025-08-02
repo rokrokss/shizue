@@ -58,24 +58,24 @@ class Settings(BaseSettings):
     # 데이터베이스
     DATABASE_URL: str = "postgresql+asyncpg://shizue:shizue123@localhost/shizue"
     REDIS_URL: str = "redis://localhost:6379"
-    
+
     # JWT
     JWT_SECRET_KEY: str = "your-secret-key-change-this"
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_DAYS: int = 30
-    
+
     # Google OAuth
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
     GOOGLE_REDIRECT_URI: str = "https://api.shizue.ai/v1/auth/google/callback"
-    
+
     # CORS
     ALLOWED_ORIGINS: list[str] = [
         "chrome-extension://YOUR_EXTENSION_ID",
         "http://localhost:3000"
     ]
-    
+
     class Config:
         env_file = ".env"
 
@@ -192,11 +192,11 @@ export class AuthService {
     // 1. 백엔드에서 OAuth URL 가져오기
     const response = await fetch('https://api.shizue.ai/v1/auth/google/authorize');
     const { authorization_url } = await response.json();
-    
+
     // 2. 새 탭에서 OAuth 시작
     const tab = await chrome.tabs.create({ url: authorization_url });
     this.authTabId = tab.id;
-    
+
     // 3. 콜백 대기
     return this.waitForCallback();
   }
@@ -211,14 +211,14 @@ export class AuthService {
         if (tabId === this.authTabId && info.url?.includes('/auth/success')) {
           clearTimeout(timeout);
           chrome.tabs.onUpdated.removeListener(listener);
-          
+
           const url = new URL(info.url);
           const tokens = {
             access_token: url.searchParams.get('access_token')!,
             refresh_token: url.searchParams.get('refresh_token')!,
             expires_in: parseInt(url.searchParams.get('expires_in')!)
           };
-          
+
           chrome.tabs.remove(tabId);
           resolve(tokens);
         }
@@ -228,7 +228,7 @@ export class AuthService {
 
   async logout(): Promise<void> {
     const { access_token } = await chrome.storage.local.get('access_token');
-    
+
     if (access_token) {
       await fetch('https://api.shizue.ai/v1/auth/logout', {
         method: 'POST',
@@ -237,10 +237,10 @@ export class AuthService {
         }
       });
     }
-    
+
     await chrome.storage.local.remove([
-      'access_token', 
-      'refresh_token', 
+      'access_token',
+      'refresh_token',
       'token_expiry',
       'user_info'
     ]);
@@ -301,7 +301,7 @@ export class TokenManager {
 
   private async doRefresh(): Promise<string> {
     const { refresh_token } = await chrome.storage.local.get('refresh_token');
-    
+
     if (!refresh_token) {
       throw new Error('No refresh token available');
     }
@@ -326,7 +326,7 @@ export class TokenManager {
     });
 
     this.tokenCache.set('access_token', { token: access_token, expiry });
-    
+
     return access_token;
   }
 }
@@ -348,7 +348,7 @@ const AUTH_REQUIRED_ACTIONS = new Set([
 ]);
 
 export async function handleMessage(
-  message: any, 
+  message: any,
   sender: chrome.runtime.MessageSender,
   sendResponse: (response?: any) => void
 ): Promise<boolean> {
@@ -393,8 +393,8 @@ export function LoginButton() {
 
   if (!isAuthenticated) {
     return (
-      <Button 
-        type="primary" 
+      <Button
+        type="primary"
         icon={<UserOutlined />}
         onClick={login}
       >
@@ -422,8 +422,8 @@ export function LoginButton() {
 
   return (
     <Dropdown menu={{ items: menuItems }} placement="bottomRight">
-      <Avatar 
-        src={user?.profile_picture} 
+      <Avatar
+        src={user?.profile_picture}
         icon={<UserOutlined />}
         style={{ cursor: 'pointer' }}
       />

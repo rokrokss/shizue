@@ -1,4 +1,3 @@
-import logging
 import sys
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
@@ -8,19 +7,19 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from app.api.health import router as health_router
 from app.api.v1.api import api_router
+from app.api.versioning import create_version_info_router, version_router
 from app.core.config import settings
 from app.core.database import Base, engine
+from app.core.events import event_bus, initialize_default_handlers
+from app.core.logging import logger, setup_logging
 from app.core.openapi import custom_openapi
 from app.core.redis import redis_client
+from app.middleware.correlation import CorrelationMiddleware, ErrorHandlingMiddleware, RequestLoggingMiddleware
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO if not settings.DEBUG else logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler(sys.stdout)],
-)
-logger = logging.getLogger(__name__)
+# Configure structured logging
+setup_logging(level="DEBUG" if settings.DEBUG else "INFO")
 
 
 @asynccontextmanager
@@ -34,17 +33,38 @@ async def lifespan(app: FastAPI):
         # In production, use Alembic migrations instead
         if settings.DEBUG:
             await conn.run_sync(Base.metadata.create_all)
+    logger.info("Database connection established")
 
     # Test Redis connection
     await redis_client.ping()
     logger.info("Redis connection established")
 
+    # Initialize event bus with default handlers
+    initialize_default_handlers()
+    logger.info("Event bus initialized")
+
+    # Log startup complete
+    logger.info(
+        "Application startup complete",
+        app_name=settings.APP_NAME,
+        version=settings.APP_VERSION,
+        environment=settings.ENVIRONMENT,
+        debug=settings.DEBUG,
+    )
+
     yield
 
     # Shutdown
     logger.info("Shutting down...")
+
+    # Clear event bus
+    event_bus.clear_event_store()
+
+    # Close connections
     await redis_client.close()
     await engine.dispose()
+
+    logger.info("Application shutdown complete")
 
 
 # Create FastAPI app
@@ -57,27 +77,26 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Configure CORS
+# Add middleware in correct order (bottom to top execution)
+# 1. Error handling (outermost)
+app.add_middleware(ErrorHandlingMiddleware)
+
+# 2. CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
-    expose_headers=["X-Request-ID"],
+    expose_headers=["X-Request-ID", "X-Correlation-ID", "X-API-Version"],
 )
 
+# 3. Correlation and request tracking
+app.add_middleware(CorrelationMiddleware)
 
-# Request ID middleware
-@app.middleware("http")
-async def add_request_id(request: Request, call_next):
-    import uuid
-
-    request_id = str(uuid.uuid4())
-    request.state.request_id = request_id
-    response = await call_next(request)
-    response.headers["X-Request-ID"] = request_id
-    return response
+# 4. Request logging (if debug mode)
+if settings.DEBUG:
+    app.add_middleware(RequestLoggingMiddleware)
 
 
 # HTTP exception handler
@@ -111,30 +130,22 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 
-# Health check endpoint
-@app.get("/health")
-async def health_check():
-    """Health check endpoint"""
-    try:
-        # Check database
-        async with engine.connect() as conn:
-            await conn.execute("SELECT 1")
+# Include routers
+# Health check endpoints (no version prefix)
+app.include_router(health_router)
 
-        # Check Redis
-        await redis_client.ping()
+# Version information endpoints
+app.include_router(create_version_info_router())
 
-        return {
-            "status": "healthy",
-            "service": settings.APP_NAME,
-            "version": settings.APP_VERSION,
-        }
-    except Exception as e:
-        logger.error(f"Health check failed: {e}")
-        return JSONResponse(status_code=503, content={"status": "unhealthy", "error": str(e)})
+# API v1 endpoints
+v1_router = version_router("v1", tags=["v1"])
+v1_router.include_router(api_router)
+app.include_router(v1_router)
 
-
-# Include API router
-app.include_router(api_router, prefix="/v1")
+# API v2 endpoints (future)
+# v2_router = version_router("v2", tags=["v2"], deprecated=False)
+# v2_router.include_router(api_router_v2)
+# app.include_router(v2_router)
 
 
 # Root endpoint

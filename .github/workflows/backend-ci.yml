@@ -72,7 +72,7 @@ jobs:
           uv run isort --check-only --diff accounts-backend/app/ || (echo "::error::Import sorting issues found. Run 'isort accounts-backend/app/' locally to fix." && exit 1)
           # Run flake8 linting for accounts-backend
           uv run flake8 accounts-backend/app/ --max-line-length=120 --exclude=__pycache__
-          
+
           # Check pdf-translation if it has Python files
           if [ -d "pdf-translation" ] && find pdf-translation -name "*.py" -type f | grep -q .; then
             uv run black --check --diff pdf-translation/ || true
@@ -103,7 +103,7 @@ jobs:
           # Run tests for accounts-backend
           cd accounts-backend && uv run pytest -v --cov=app --cov-report=xml --cov-report=term-missing
           cd ..
-          
+
           # Run tests for pdf-translation if they exist
           if [ -d "pdf-translation/tests" ]; then
             cd pdf-translation && uv run pytest -v --cov=. --cov-report=xml --cov-report=term-missing || true

@@ -52,7 +52,7 @@ uv pip install -e pdf-translation
 cd accounts-backend
 uv run uvicorn app.main:app --reload --port 8000
 
-# pdf-translation 실행  
+# pdf-translation 실행
 cd ../pdf-translation
 uv run python main_server.py
 ```
@@ -114,7 +114,7 @@ uv add package-name
 cd api/
 uv add package-name --group accounts
 
-# pdf-translation 전용  
+# pdf-translation 전용
 uv add package-name --group pdf
 ```
 
