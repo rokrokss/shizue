@@ -94,7 +94,7 @@ pytest-asyncio==0.23.3
     # via shizue-api
 pytest-cov==4.1.0
     # via shizue-api
-python-dotenv==1.0.0
+python-dotenv==1.1.1
     # via
     #   pydantic-settings
     #   shizue-api
