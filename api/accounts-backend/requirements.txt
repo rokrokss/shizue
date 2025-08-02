@@ -100,7 +100,7 @@ python-dotenv==1.0.0
     #   shizue-api
     #   uvicorn
 python-jose==3.3.0
-python-multipart==0.0.6
+python-multipart==0.0.20
     # via shizue-api
 pyyaml==6.0.2
     # via uvicorn
