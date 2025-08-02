@@ -55,7 +55,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v4
+        uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
           cache-dependency-glob: "**/pyproject.toml"
@@ -147,7 +147,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Install uv for export
-        uses: astral-sh/setup-uv@v4
+        uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
 
@@ -185,7 +185,7 @@ jobs:
       #       type=sha,prefix={{branch}}-
 
       # - name: Install uv for export
-      #   uses: astral-sh/setup-uv@v4
+      #   uses: astral-sh/setup-uv@v6
       #   with:
       #     enable-cache: true
 
