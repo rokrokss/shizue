@@ -34,7 +34,7 @@ cryptography==45.0.5
     #   python-jose
 ecdsa==0.19.1
     # via python-jose
-fastapi==0.109.0
+fastapi==0.116.1
     # via
     #   sentry-sdk
     #   shizue-api
