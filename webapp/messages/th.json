@@ -1,0 +1,158 @@
+{
+  "metadata": {
+    "title": "Shizue - Free AI Browser Extension",
+    "description": "Enhance your browsing with AI power. Free, open-source, use your own API keys."
+  },
+  "header": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "download": "Download",
+    "docs": "Documentation",
+    "community": "Community"
+  },
+  "hero": {
+    "title": "Translate, Chat, and Browse with AI Power",
+    "subtitle": "Free open-source Chrome extension that lets you use your own API keys to save costs",
+    "cta": {
+      "chrome": "Add to Chrome",
+      "edge": "Add to Edge",
+      "firefox": "Coming to Firefox",
+      "safari": "Coming to Safari"
+    },
+    "badges": {
+      "free": "Free",
+      "openSource": "Open Source",
+      "privacy": "Privacy Protected"
+    }
+  },
+  "features": {
+    "title": "Everything You Need for AI-Enhanced Browsing",
+    "bilingual": {
+      "title": "Bilingual Web Translation",
+      "description": "Side-by-side translation preserving layout",
+      "languages": "23 languages supported"
+    },
+    "chat": {
+      "title": "AI Chat Sidebar",
+      "description": "Chat with AI while browsing",
+      "models": "GPT-4.1, Claude, Gemini"
+    },
+    "pdf": {
+      "title": "PDF Document Translation",
+      "description": "Translate PDFs keeping structure intact",
+      "format": "Layout preservation"
+    },
+    "youtube": {
+      "title": "YouTube Caption Translation",
+      "description": "Real-time subtitle translation",
+      "cache": "Fast response with caching"
+    },
+    "image": {
+      "title": "Image Text Extraction",
+      "description": "Extract and translate text from images",
+      "ocr": "OCR + AI translation"
+    },
+    "memo": {
+      "title": "Smart Notes",
+      "description": "Take notes while browsing",
+      "sync": "Auto-save & search"
+    }
+  },
+  "models": {
+    "title": "Choose Your Favorite AI Models",
+    "subtitle": "Use your own API keys - no middleman fees"
+  },
+  "howItWorks": {
+    "title": "Get Started in 3 Simple Steps",
+    "step1": {
+      "title": "Install",
+      "description": "Add from Chrome Web Store"
+    },
+    "step2": {
+      "title": "Set API Key",
+      "description": "Enter your OpenAI/Claude/Gemini key"
+    },
+    "step3": {
+      "title": "Start Using",
+      "description": "AI features on every webpage"
+    }
+  },
+  "comparison": {
+    "title": "Why Choose Shizue?",
+    "price": "Price",
+    "models": "Latest Models",
+    "privacy": "Privacy",
+    "source": "Source Code",
+    "usage": "Usage Limits",
+    "shizue": {
+      "price": "$0 (Your own API)",
+      "models": "All models available",
+      "privacy": "100% Protected",
+      "source": "Open Source",
+      "usage": "No limits"
+    },
+    "competitor": {
+      "price": "$10-30/month",
+      "models": "Limited selection",
+      "privacy": "Data goes through servers",
+      "source": "Closed source",
+      "usage": "Monthly limits"
+    }
+  },
+  "testimonials": {
+    "title": "What Users Are Saying"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "items": {
+      "apiKey": {
+        "question": "How do I get an API key?",
+        "answer": "You can get API keys directly from OpenAI, Anthropic (Claude), or Google (Gemini) websites. Each provider offers their own pricing."
+      },
+      "cost": {
+        "question": "How much do API keys cost?",
+        "answer": "API costs vary by provider and usage. Typically, casual users spend $5-20/month, much less than subscription services."
+      },
+      "languages": {
+        "question": "Which languages are supported?",
+        "answer": "We support 23 languages including English, Spanish, French, German, Japanese, Korean, Chinese, and more."
+      },
+      "privacy": {
+        "question": "Is my data safe?",
+        "answer": "Yes! Your API keys are stored locally in your browser. Translations go directly to AI providers without passing through our servers."
+      },
+      "browsers": {
+        "question": "Which browsers are supported?",
+        "answer": "Currently Chrome and Edge. Firefox and Safari support coming soon."
+      }
+    }
+  },
+  "finalCta": {
+    "title": "Start Using AI in Your Browser Today",
+    "subtitle": "No credit card, no subscription, just your API keys",
+    "button": "Add to Chrome - It's Free",
+    "links": {
+      "github": "View on GitHub",
+      "discord": "Join Discord",
+      "docs": "Read Documentation"
+    }
+  },
+  "footer": {
+    "product": "Product",
+    "resources": "Resources",
+    "community": "Community",
+    "legal": "Legal",
+    "links": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "download": "Download",
+      "documentation": "Documentation",
+      "blog": "Blog",
+      "github": "GitHub",
+      "discord": "Discord",
+      "twitter": "Twitter",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    }
+  }
+}

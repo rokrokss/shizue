@@ -1,0 +1,329 @@
+{
+  "metadata": {
+    "title": "Shizue - Free AI Browser Extension",
+    "description": "Enhance your browsing with AI power. Free, open-source, use your own API keys."
+  },
+  "header": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "download": "Download",
+    "docs": "Documentation",
+    "community": "Community",
+    "blog": "Blog",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Translate, Chat, and Browse with AI Power",
+    "subtitle": "Free open-source Chrome extension that lets you use your own API keys to save costs",
+    "cta": {
+      "chrome": "Add to Chrome",
+      "edge": "Add to Edge",
+      "firefox": "Coming to Firefox",
+      "safari": "Coming to Safari"
+    },
+    "badges": {
+      "free": "Free",
+      "openSource": "Open Source",
+      "privacy": "Privacy Protected"
+    }
+  },
+  "features": {
+    "badge": "AI-Powered Features",
+    "title": "Everything You Need for AI-Enhanced Browsing",
+    "subtitle": "Powerful tools to enhance your web experience with AI",
+    "items": {
+      "translation": {
+        "title": "Bilingual Web Translation",
+        "description": "Side-by-side translation preserving original layout. Support for 23 languages with accurate context-aware translations."
+      },
+      "chat": {
+        "title": "AI Chat Sidebar",
+        "description": "Chat with GPT-4, Claude, or Gemini while browsing. Get instant answers and assistance without switching tabs."
+      },
+      "pdf": {
+        "title": "PDF Document Translation",
+        "description": "Translate entire PDF documents while keeping the original structure and formatting intact."
+      },
+      "youtube": {
+        "title": "YouTube Caption Translation",
+        "description": "Real-time subtitle translation for YouTube videos. Cached for instant response on repeated content."
+      },
+      "ocr": {
+        "title": "Image Text Extraction",
+        "description": "Extract and translate text from images using advanced OCR technology combined with AI translation."
+      },
+      "notes": {
+        "title": "Smart Notes & Memos",
+        "description": "Take notes while browsing with auto-save, search, and organization features. Never lose an important thought."
+      }
+    }
+  },
+  "models": {
+    "title": "Choose Your Favorite AI Models",
+    "subtitle": "Use your own API keys - no middleman fees",
+    "note": "All models are accessed directly through their official APIs. You only pay for what you use.",
+    "openai": {
+      "badge": "Most Popular",
+      "description": "State-of-the-art language model with advanced reasoning and creative capabilities",
+      "features": {
+        "0": "Most capable",
+        "1": "Best reasoning",
+        "2": "Creative writing"
+      }
+    },
+    "anthropic": {
+      "badge": "Best for Code",
+      "description": "Constitutional AI with strong coding abilities and thoughtful responses",
+      "features": {
+        "0": "Safe & helpful",
+        "1": "Long context",
+        "2": "Coding expert"
+      }
+    },
+    "google": {
+      "badge": "Fastest",
+      "description": "Lightning-fast model with vision capabilities and cost-effective pricing",
+      "features": {
+        "0": "Fast responses",
+        "1": "Multimodal",
+        "2": "Cost-effective"
+      }
+    }
+  },
+  "howItWorks": {
+    "title": "Get Started in 3 Simple Steps",
+    "step1": {
+      "title": "Install",
+      "description": "Add from Chrome Web Store"
+    },
+    "step2": {
+      "title": "Set API Key",
+      "description": "Enter your OpenAI/Claude/Gemini key"
+    },
+    "step3": {
+      "title": "Start Using",
+      "description": "AI features on every webpage"
+    }
+  },
+  "comparison": {
+    "title": "Why Choose Shizue?",
+    "price": "Price",
+    "models": "Latest Models",
+    "privacy": "Privacy",
+    "source": "Source Code",
+    "usage": "Usage Limits",
+    "shizue": {
+      "price": "$0 (Your own API)",
+      "models": "All models available",
+      "privacy": "100% Protected",
+      "source": "Open Source",
+      "usage": "No limits"
+    },
+    "competitor": {
+      "price": "$10-30/month",
+      "models": "Limited selection",
+      "privacy": "Data goes through servers",
+      "source": "Closed source",
+      "usage": "Monthly limits"
+    }
+  },
+  "testimonials": {
+    "title": "What Users Are Saying"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "items": {
+      "apiKey": {
+        "question": "How do I get an API key?",
+        "answer": "You can get API keys directly from OpenAI, Anthropic (Claude), or Google (Gemini) websites. Each provider offers their own pricing."
+      },
+      "cost": {
+        "question": "How much do API keys cost?",
+        "answer": "API costs vary by provider and usage. Typically, casual users spend $5-20/month, much less than subscription services."
+      },
+      "languages": {
+        "question": "Which languages are supported?",
+        "answer": "We support 23 languages including English, Spanish, French, German, Japanese, Korean, Chinese, and more."
+      },
+      "privacy": {
+        "question": "Is my data safe?",
+        "answer": "Yes! Your API keys are stored locally in your browser. Translations go directly to AI providers without passing through our servers."
+      },
+      "browsers": {
+        "question": "Which browsers are supported?",
+        "answer": "Currently Chrome and Edge. Firefox and Safari support coming soon."
+      }
+    }
+  },
+  "finalCta": {
+    "title": "Start Using AI in Your Browser Today",
+    "subtitle": "No credit card, no subscription, just your API keys",
+    "button": "Add to Chrome - It's Free",
+    "links": {
+      "github": "View on GitHub",
+      "discord": "Join Discord",
+      "docs": "Read Documentation"
+    }
+  },
+  "footer": {
+    "product": "Product",
+    "resources": "Resources",
+    "community": "Community",
+    "legal": "Legal",
+    "links": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "download": "Download",
+      "documentation": "Documentation",
+      "blog": "Blog",
+      "github": "GitHub",
+      "discord": "Discord",
+      "twitter": "Twitter",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "contact": "Contact Us"
+    }
+  },
+  "contact": {
+    "metadata": {
+      "title": "Contact Us - Shizue",
+      "description": "Get in touch with the Shizue team. We'd love to hear from you!"
+    },
+    "title": "Contact Us",
+    "subtitle": "Have questions or feedback? We'd love to hear from you.",
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "Your name",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "subject": "Subject",
+      "subjectPlaceholder": "What's this about?",
+      "message": "Message",
+      "messagePlaceholder": "Tell us what's on your mind...",
+      "send": "Send Message",
+      "sending": "Sending..."
+    }
+  },
+  "blog": {
+    "metadata": {
+      "title": "Blog - Shizue",
+      "description": "Latest updates, tutorials, and insights about Shizue AI browser extension"
+    },
+    "title": "Blog",
+    "subtitle": "Latest updates, tutorials, and insights from the Shizue team",
+    "readMore": "Read more",
+    "readTime": "min read",
+    "backToBlog": "Back to Blog",
+    "author": "Author",
+    "noPosts": "No posts found in this category.",
+    "filter": {
+      "all": "All Posts"
+    },
+    "categories": {
+      "announcement": "Announcement",
+      "tutorial": "Tutorial",
+      "feature": "Feature",
+      "update": "Update"
+    }
+  },
+  "liveDemo": {
+    "badge": "See It In Action",
+    "title": "Experience Real-Time Translation",
+    "subtitle": "Watch how Shizue transforms any webpage into your language instantly",
+    "steps": {
+      "original": "Original Page",
+      "select": "Click Shizue",
+      "translate": "Processing",
+      "result": "Translated"
+    },
+    "play": "Play Demo",
+    "pause": "Pause",
+    "tryNow": "Try It Now - It's Free"
+  },
+  "stats": {
+    "title": "Trusted by Users Worldwide",
+    "subtitle": "Join thousands who are breaking language barriers every day",
+    "users": "Active Users",
+    "usersDesc": "Growing community",
+    "languages": "Languages",
+    "languagesDesc": "Supported",
+    "translations": "Translations",
+    "translationsDesc": "Processed monthly",
+    "speed": "Response Time",
+    "speedDesc": "Lightning fast"
+  },
+  "supportedSites": {
+    "badge": "Works Everywhere",
+    "title": "Translate Any Website",
+    "subtitle": "From social media to academic papers, Shizue works seamlessly across the web",
+    "moreInfo": "And thousands more...",
+    "allWebsites": "Works on ALL websites"
+  },
+  "beforeAfter": {
+    "badge": "See The Difference",
+    "title": "Before & After Shizue",
+    "subtitle": "Experience seamless bilingual browsing with preserved formatting",
+    "showOriginal": "Show Original",
+    "showTranslation": "Show Translation",
+    "original": "Original",
+    "translated": "Translated",
+    "withShizue": "With Shizue",
+    "withoutShizue": "Without Shizue",
+    "features": {
+      "instant": "Instant Translation",
+      "instantDesc": "One-click translation",
+      "preserve": "Layout Preserved",
+      "preserveDesc": "Original design intact",
+      "bilingual": "Side-by-Side View",
+      "bilingualDesc": "Compare both versions"
+    }
+  },
+  "useCases": {
+    "badge": "For Everyone",
+    "title": "Who Uses Shizue?",
+    "subtitle": "From students to professionals, Shizue helps people access global content",
+    "examples": "Examples",
+    "items": {
+      "education": {
+        "title": "Students & Educators",
+        "description": "Access educational content from around the world",
+        "examples": "Research papers|Online courses|Educational videos"
+      },
+      "business": {
+        "title": "Business Professionals",
+        "description": "Stay informed about global markets and trends",
+        "examples": "Market reports|International news|Competitor analysis"
+      },
+      "development": {
+        "title": "Developers",
+        "description": "Read documentation and code in any language",
+        "examples": "API documentation|GitHub repos|Stack Overflow"
+      },
+      "shopping": {
+        "title": "Online Shoppers",
+        "description": "Shop from international stores with confidence",
+        "examples": "Product reviews|Size guides|Shipping info"
+      },
+      "news": {
+        "title": "News Readers",
+        "description": "Get perspectives from global news sources",
+        "examples": "International news|Local perspectives|Breaking stories"
+      },
+      "research": {
+        "title": "Researchers",
+        "description": "Access academic content without language barriers",
+        "examples": "Scientific papers|Journals|Conference proceedings"
+      },
+      "travel": {
+        "title": "Travelers",
+        "description": "Plan trips and understand local information",
+        "examples": "Travel guides|Local reviews|Transportation info"
+      },
+      "social": {
+        "title": "Social Media Users",
+        "description": "Connect with people globally",
+        "examples": "International posts|Comments|Community discussions"
+      }
+    }
+  }
+}
