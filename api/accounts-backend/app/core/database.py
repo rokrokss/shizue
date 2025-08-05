@@ -1,5 +1,4 @@
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import declarative_base
 
 from app.core.config import settings
 
@@ -29,8 +28,7 @@ AsyncSessionLocal = async_sessionmaker(
     autoflush=False,
 )
 
-# Create base class for models
-Base = declarative_base()
+# Base is imported from app.core.base
 
 
 # Dependency to get database session

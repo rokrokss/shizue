@@ -1,0 +1,22 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://shizue.ai/sitemap.xml
+
+# Crawl-delay for courtesy
+Crawl-delay: 1
+
+# Disallow API routes
+Disallow: /api/
+
+# Allow all static assets
+Allow: /images/
+Allow: /fonts/
+Allow: /icons/
+
+# Block access to development files
+Disallow: /.next/
+Disallow: /node_modules/
+Disallow: /_next/static/development/

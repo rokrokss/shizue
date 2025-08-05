@@ -14,31 +14,4 @@ services:
       RELOAD: "true"
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
-  # Development tools
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: shizue-pgadmin
-    restart: unless-stopped
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@shizue.dev
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - "5050:80"
-    depends_on:
-      - postgres
-    profiles:
-      - dev-tools
-
-  # Redis Commander for Redis GUI
-  redis-commander:
-    image: rediscommander/redis-commander:latest
-    container_name: shizue-redis-commander
-    restart: unless-stopped
-    environment:
-      REDIS_HOSTS: local:redis:6379:0:${REDIS_PASSWORD:-redis_password}
-    ports:
-      - "8081:8081"
-    depends_on:
-      - redis
-    profiles:
-      - dev-tools
+  # Development tools removed - using DataGrip instead

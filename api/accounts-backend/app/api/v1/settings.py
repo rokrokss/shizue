@@ -1,11 +1,15 @@
 """User settings API endpoints."""
 
+import asyncio
 import json
+from functools import lru_cache
 from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import ORJSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.cache import CacheLevel, CacheTTL, cached
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.core.encryption import encryption_service
@@ -14,59 +18,89 @@ from app.schemas.model_mapping import ModelProvider, ModelSize
 from app.schemas.settings import ApiKeyRequest, ApiKeyResponse, UserSettings, UserSettingsUpdate
 from app.services.model_service import model_service
 
-router = APIRouter(tags=["settings"])
+router = APIRouter(tags=["settings"], default_response_class=ORJSONResponse)
+
+
+@lru_cache(maxsize=128)
+def _parse_settings_json(settings_json: str) -> UserSettings:
+    """Parse and cache user settings from JSON string."""
+    try:
+        settings_dict = json.loads(settings_json)
+        return UserSettings(**settings_dict)
+    except (json.JSONDecodeError, TypeError):
+        return UserSettings()
 
 
 def _get_user_settings(user: User) -> UserSettings:
     """Parse user settings from JSON string."""
     if not user.settings:
         return UserSettings()
-
-    try:
-        settings_dict = json.loads(user.settings)
-        return UserSettings(**settings_dict)
-    except (json.JSONDecodeError, TypeError):
-        return UserSettings()
+    return _parse_settings_json(user.settings)
 
 
 async def _save_user_settings(user: User, settings: UserSettings, db: AsyncSession) -> None:
-    """Save user settings to database."""
-    # Encrypt API keys before saving
+    """Save user settings to database with concurrent encryption."""
+    # Encrypt API keys concurrently
     if settings.api_keys:
+        tasks = []
         if settings.api_keys.openai:
-            settings.api_keys.openai = encryption_service.encrypt(settings.api_keys.openai)
+            tasks.append(asyncio.to_thread(encryption_service.encrypt, settings.api_keys.openai))
         if settings.api_keys.gemini:
-            settings.api_keys.gemini = encryption_service.encrypt(settings.api_keys.gemini)
+            tasks.append(asyncio.to_thread(encryption_service.encrypt, settings.api_keys.gemini))
         if settings.api_keys.anthropic:
-            settings.api_keys.anthropic = encryption_service.encrypt(settings.api_keys.anthropic)
+            tasks.append(asyncio.to_thread(encryption_service.encrypt, settings.api_keys.anthropic))
+
+        if tasks:
+            encrypted_keys = await asyncio.gather(*tasks)
+            idx = 0
+            if settings.api_keys.openai:
+                settings.api_keys.openai = encrypted_keys[idx]
+                idx += 1
+            if settings.api_keys.gemini:
+                settings.api_keys.gemini = encrypted_keys[idx]
+                idx += 1
+            if settings.api_keys.anthropic:
+                settings.api_keys.anthropic = encrypted_keys[idx]
 
     user.settings = settings.json()
     await db.commit()
 
+    # Clear cache for this user's settings
+    _parse_settings_json.cache_clear()
 
-@router.get("", response_model=UserSettings)
+
+@router.get("", response_model=UserSettings, response_class=ORJSONResponse)
+@cached(
+    ttl=CacheTTL.MEDIUM,
+    key_builder=lambda current_user, **kwargs: f"user:settings:{current_user.id}",
+    level=CacheLevel.MEMORY,
+)
 async def get_settings(
     current_user: User = Depends(get_current_user),
 ) -> UserSettings:
-    """Get user settings with automatic model migration."""
+    """Get user settings with automatic model migration and caching."""
     settings = _get_user_settings(current_user)
 
-    # Decrypt API keys for response (but mask them)
+    # Decrypt and mask API keys concurrently
     if settings.api_keys:
+        tasks = []
+        keys_to_decrypt = []
+
         if settings.api_keys.openai:
-            decrypted = encryption_service.decrypt(settings.api_keys.openai)
-            if decrypted:
-                settings.api_keys.openai = encryption_service.mask_api_key(decrypted)
-
+            tasks.append(asyncio.to_thread(encryption_service.decrypt, settings.api_keys.openai))
+            keys_to_decrypt.append("openai")
         if settings.api_keys.gemini:
-            decrypted = encryption_service.decrypt(settings.api_keys.gemini)
-            if decrypted:
-                settings.api_keys.gemini = encryption_service.mask_api_key(decrypted)
-
+            tasks.append(asyncio.to_thread(encryption_service.decrypt, settings.api_keys.gemini))
+            keys_to_decrypt.append("gemini")
         if settings.api_keys.anthropic:
-            decrypted = encryption_service.decrypt(settings.api_keys.anthropic)
-            if decrypted:
-                settings.api_keys.anthropic = encryption_service.mask_api_key(decrypted)
+            tasks.append(asyncio.to_thread(encryption_service.decrypt, settings.api_keys.anthropic))
+            keys_to_decrypt.append("anthropic")
+
+        if tasks:
+            decrypted_keys = await asyncio.gather(*tasks)
+            for i, key_name in enumerate(keys_to_decrypt):
+                if decrypted_keys[i]:
+                    setattr(settings.api_keys, key_name, encryption_service.mask_api_key(decrypted_keys[i]))
 
     # Determine available providers based on validated API keys
     available_providers = set()
@@ -104,7 +138,7 @@ async def get_settings(
     return settings
 
 
-@router.put("", response_model=UserSettings)
+@router.put("", response_model=UserSettings, response_class=ORJSONResponse)
 async def update_settings(
     settings: UserSettings,
     current_user: User = Depends(get_current_user),
@@ -112,10 +146,14 @@ async def update_settings(
 ) -> UserSettings:
     """Update all user settings."""
     await _save_user_settings(current_user, settings, db)
+    # Invalidate cache after update
+    from app.core.cache import multi_cache
+
+    await multi_cache.delete(f"user:settings:{current_user.id}")
     return await get_settings(current_user)
 
 
-@router.patch("", response_model=UserSettings)
+@router.patch("", response_model=UserSettings, response_class=ORJSONResponse)
 async def patch_settings(
     settings_update: UserSettingsUpdate,
     current_user: User = Depends(get_current_user),
@@ -139,10 +177,14 @@ async def patch_settings(
                 setattr(current_settings, field, value)
 
     await _save_user_settings(current_user, current_settings, db)
+    # Invalidate cache after update
+    from app.core.cache import multi_cache
+
+    await multi_cache.delete(f"user:settings:{current_user.id}")
     return await get_settings(current_user)
 
 
-@router.post("/api-keys", response_model=ApiKeyResponse)
+@router.post("/api-keys", response_model=ApiKeyResponse, response_class=ORJSONResponse)
 async def update_api_key(
     request: ApiKeyRequest,
     current_user: User = Depends(get_current_user),
@@ -194,7 +236,12 @@ async def delete_api_key(
     return {"message": f"API key for {provider} deleted successfully"}
 
 
-@router.get("/models")
+@router.get("/models", response_class=ORJSONResponse)
+@cached(
+    ttl=CacheTTL.LONG,
+    key_builder=lambda size, provider, current_user, **kwargs: f"models:{current_user.id}:{size}:{provider}",
+    level=CacheLevel.MEMORY,
+)
 async def get_available_models(
     size: Optional[str] = None,
     provider: Optional[str] = None,
@@ -231,7 +278,7 @@ async def get_available_models(
     }
 
 
-@router.post("/migrate")
+@router.post("/migrate", response_class=ORJSONResponse)
 async def migrate_settings(
     local_settings: Dict[str, Any],
     current_user: User = Depends(get_current_user),

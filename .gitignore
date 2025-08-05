@@ -38,3 +38,11 @@ uploads
 # python
 __pycache__
 .venv
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+*.py[cod]
+*$py.class
+test.db
+*.db

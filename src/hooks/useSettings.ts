@@ -6,6 +6,8 @@ import { useEffect, useState, useCallback } from 'react';
 import SettingsService from '@/services/settingsService';
 import { UserSettings, UserSettingsUpdate } from '@/types/settings';
 import { AuthService } from '@/services/authService';
+import { Language } from '@/hooks/language';
+import { Theme } from '@/hooks/layout';
 
 export function useSettings() {
   const [settings, setSettings] = useState<UserSettings | null>(null);
@@ -135,18 +137,25 @@ export function useSettings() {
 export function useLanguage() {
   const { settings, updateSettings } = useSettings();
 
-  const setLanguage = useCallback(
-    async (language: string) => {
+  const setLang = useCallback(
+    async (language: Language) => {
+      // Import i18n and getI8NLanguage dynamically to avoid circular imports
+      const { default: i18n } = await import('@/i18n');
+      const { getI8NLanguage } = await import('@/hooks/language');
+
       await updateSettings({
         general: { language },
       });
+
+      // Update i18n language
+      i18n.changeLanguage(getI8NLanguage(language));
     },
     [updateSettings]
   );
 
   return {
-    language: settings?.general?.language || 'English',
-    setLanguage,
+    lang: (settings?.general?.language as Language) || 'English',
+    setLang,
   };
 }
 
@@ -154,7 +163,7 @@ export function useTheme() {
   const { settings, updateSettings } = useSettings();
 
   const setTheme = useCallback(
-    async (theme: string) => {
+    async (theme: Theme) => {
       await updateSettings({
         layout: { theme },
       });
@@ -162,10 +171,12 @@ export function useTheme() {
     [updateSettings]
   );
 
-  return {
-    theme: settings?.layout?.theme || 'light',
-    setTheme,
-  };
+  return [(settings?.layout?.theme as Theme) || 'light', setTheme] as const;
+}
+
+export function useThemeValue() {
+  const { settings } = useSettings();
+  return (settings?.layout?.theme as Theme) || 'light';
 }
 
 export function useChatModel() {
@@ -180,10 +191,7 @@ export function useChatModel() {
     [updateSettings]
   );
 
-  return {
-    chatModel: settings?.models?.chatModel || 'gpt-4.1-mini',
-    setChatModel,
-  };
+  return [settings?.models?.chatModel || 'gpt-4.1-mini', setChatModel] as const;
 }
 
 export function useTranslateModel() {
@@ -198,10 +206,7 @@ export function useTranslateModel() {
     [updateSettings]
   );
 
-  return {
-    translateModel: settings?.models?.translateModel || 'gpt-4.1-mini',
-    setTranslateModel,
-  };
+  return [settings?.models?.translateModel || 'gpt-4.1-mini', setTranslateModel] as const;
 }
 
 export function useApiKeys() {

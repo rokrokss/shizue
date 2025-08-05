@@ -79,8 +79,7 @@ export const toggleHiddenSiteListAtom = atomWithStorage<string[]>(
   { getOnInit: true }
 );
 
-export const useTheme = () => useAtom(themeAtom);
-export const useThemeValue = () => useAtomValue(themeAtom);
+// useTheme and useThemeValue moved to hooks/useSettings.ts
 export const useShowToggle = () => useAtom(showToggleAtom);
 export const useShowToggleValue = () => useAtomValue(showToggleAtom);
 export const useToggleYPosition = () => useAtom(toggleYPositionAtom);

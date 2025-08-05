@@ -1,16 +1,19 @@
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from functools import lru_cache
+from typing import Any, Dict
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.responses import JSONResponse, ORJSONResponse
 
 from app.api.health import router as health_router
 from app.api.v1.api import api_router
 from app.api.versioning import create_version_info_router, version_router
+from app.core.base import Base
 from app.core.config import settings
-from app.core.database import Base, engine
+from app.core.database import engine
 from app.core.events import event_bus, initialize_default_handlers
 from app.core.logging import logger, setup_logging
 from app.core.openapi import custom_openapi
@@ -66,7 +69,7 @@ async def lifespan(app: FastAPI):
     logger.info("Application shutdown complete")
 
 
-# Create FastAPI app
+# Create FastAPI app with optimizations
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
@@ -74,13 +77,17 @@ app = FastAPI(
     redoc_url="/redoc" if settings.DEBUG else None,
     openapi_url="/openapi.json" if settings.DEBUG else None,
     lifespan=lifespan,
+    default_response_class=ORJSONResponse,  # Faster JSON serialization
 )
 
 # Add middleware in correct order (bottom to top execution)
 # 1. Error handling (outermost)
 app.add_middleware(ErrorHandlingMiddleware)
 
-# 2. CORS
+# 2. GZip compression for responses
+app.add_middleware(GZipMiddleware, minimum_size=500)
+
+# 3. CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ALLOWED_ORIGINS,
@@ -88,12 +95,13 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
     expose_headers=["X-Request-ID", "X-Correlation-ID", "X-API-Version"],
+    max_age=3600,  # Cache preflight requests for 1 hour
 )
 
-# 3. Correlation and request tracking
+# 4. Correlation and request tracking
 app.add_middleware(CorrelationMiddleware)
 
-# 4. Request logging (if debug mode)
+# 5. Request logging (if debug mode)
 if settings.DEBUG:
     app.add_middleware(RequestLoggingMiddleware)
 
@@ -147,14 +155,20 @@ app.include_router(v1_router)
 # app.include_router(v2_router)
 
 
-# Root endpoint
-@app.get("/")
-async def root():
+# Cache root response
+@lru_cache(maxsize=1)
+def get_root_response() -> Dict[str, Any]:
     return {
         "message": f"Welcome to {settings.APP_NAME}",
         "version": settings.APP_VERSION,
         "docs": "/docs" if settings.DEBUG else None,
     }
+
+
+# Root endpoint
+@app.get("/", response_class=ORJSONResponse)
+async def root():
+    return get_root_response()
 
 
 # Custom OpenAPI schema
@@ -175,5 +189,3 @@ if __name__ == "__main__":
         reload=settings.DEBUG,
         log_level="debug" if settings.DEBUG else "info",
     )
-
-# test

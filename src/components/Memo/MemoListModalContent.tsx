@@ -1,5 +1,6 @@
-import { getI8NLanguage, useLanguage } from '@/hooks/language';
-import { useThemeValue } from '@/hooks/layout';
+import { getI8NLanguage } from '@/hooks/language';
+import { useLanguage } from '@/hooks/useSettings';
+import { useThemeValue } from '@/hooks/useSettings';
 import { deleteMemo, listMemos, toggleMemoPinned, type Memo } from '@/lib/indexDB';
 import { debugLog } from '@/logs';
 import { DeleteOutlined, PlusOutlined, PushpinOutlined } from '@ant-design/icons';

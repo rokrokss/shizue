@@ -4,7 +4,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, Uuid
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.sql import func
 
-from app.core.database import Base
+from app.core.base import Base
 
 
 class APIUsage(Base):

@@ -9,7 +9,7 @@ import SettingsModalContent from '@/components/Setting/SettingsModalContent';
 import { MESSAGE_LOAD_THREAD } from '@/config/constants';
 import { chatStatusAtom, createThreadMessageCountAtom, isChatIdle } from '@/hooks/chat';
 import { ActionType, threadIdAtom } from '@/hooks/global';
-import { useThemeValue } from '@/hooks/layout';
+import { useThemeValue } from '@/hooks/useSettings';
 import { useChromePortStream } from '@/hooks/portStream';
 import { convertFilesToBase64Array } from '@/lib/imageUtils';
 import { addMessage, createThread, touchThread } from '@/lib/indexDB';

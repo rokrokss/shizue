@@ -1,19 +1,15 @@
-import { Language, useLanguage, useTranslateTargetLanguage } from '@/hooks/language';
+import { Language, useTranslateTargetLanguage } from '@/hooks/language';
+import { useLanguage } from '@/hooks/useSettings';
 import {
   Theme,
   toggleYPositionAtom,
   useShowToggle,
   useShowYoutubeCaptionToggle,
-  useTheme,
   useToggleHiddenSiteList,
 } from '@/hooks/layout';
-import {
-  useAnthropicValidated,
-  useChatModel,
-  useGeminiValidated,
-  useOpenAIValidated,
-  useTranslateModel,
-} from '@/hooks/models';
+import { useTheme } from '@/hooks/useSettings';
+import { useAnthropicValidated, useGeminiValidated, useOpenAIValidated } from '@/hooks/models';
+import { useChatModel, useTranslateModel } from '@/hooks/useSettings';
 import { useSetAnthropicKey, useSetGeminiKey, useSetOpenAIKey } from '@/hooks/settings';
 import { languageOptions } from '@/lib/language';
 import { ChatModel, ModelProvider, TranslateModel } from '@/lib/models';

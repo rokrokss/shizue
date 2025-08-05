@@ -17,7 +17,8 @@ os.environ["ALLOWED_ORIGINS"] = '["http://localhost:3000", "http://localhost:800
 import pytest
 import pytest_asyncio
 from app.core.config import settings
-from app.core.database import Base, get_db
+from app.core.base import Base
+from app.core.database import get_db
 from app.core.security import create_access_token, create_refresh_token
 from app.main import app
 from app.models.user import User
@@ -84,6 +85,12 @@ async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
 
 
 @pytest_asyncio.fixture
+async def async_session(db_session: AsyncSession) -> AsyncSession:
+    """Alias for db_session to match test expectations."""
+    yield db_session
+
+
+@pytest_asyncio.fixture
 async def test_user(db_session: AsyncSession) -> User:
     """Create a test user."""
     user = User(
@@ -94,7 +101,6 @@ async def test_user(db_session: AsyncSession) -> User:
         profile_picture="https://example.com/photo.jpg",
         locale="en",
         is_active=True,
-        is_premium=False,
     )
     db_session.add(user)
     await db_session.commit()

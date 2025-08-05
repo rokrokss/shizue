@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
 import { AuthService } from '../authService';
+import { STORAGE_AUTH_TOKEN, STORAGE_USER_INFO, STORAGE_AUTH_EXPIRY } from '@/config/constants';
 
 // Mock chrome API
 const mockChrome = {
@@ -32,7 +33,9 @@ describe('AuthService', () => {
   beforeEach(() => {
     // Reset all mocks
     vi.clearAllMocks();
-    // Get singleton instance
+    // Clear the singleton to reset cache
+    (AuthService as any).instance = null;
+    // Get new singleton instance
     authService = AuthService.getInstance();
   });
 
@@ -91,7 +94,12 @@ describe('AuthService', () => {
       expect(result).toEqual(mockAuthResponse);
 
       // Verify chrome APIs were called correctly
-      expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('/v1/auth/login/google'));
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.stringContaining('/v1/auth/login/google'),
+        expect.objectContaining({
+          signal: expect.any(AbortSignal),
+        })
+      );
       expect(mockChrome.tabs.create).toHaveBeenCalledWith({ url: mockAuthUrl });
       expect(mockChrome.tabs.remove).toHaveBeenCalledWith(mockTabId);
       expect(mockChrome.storage.local.set).toHaveBeenCalled();
@@ -206,8 +214,8 @@ describe('AuthService', () => {
 
       // Mock storage to return valid token
       mockChrome.storage.local.get.mockResolvedValueOnce({
-        AUTH_TOKEN: 'valid-token',
-        AUTH_EXPIRY: futureExpiry,
+        [STORAGE_AUTH_TOKEN]: 'valid-token',
+        [STORAGE_AUTH_EXPIRY]: futureExpiry,
       });
 
       const isAuthenticated = await authService.checkAuthStatus();
@@ -219,8 +227,8 @@ describe('AuthService', () => {
 
       // Mock storage to return expired token
       mockChrome.storage.local.get.mockResolvedValueOnce({
-        AUTH_TOKEN: 'expired-token',
-        AUTH_EXPIRY: pastExpiry,
+        [STORAGE_AUTH_TOKEN]: 'expired-token',
+        [STORAGE_AUTH_EXPIRY]: pastExpiry,
       });
 
       const isAuthenticated = await authService.checkAuthStatus();
@@ -247,7 +255,7 @@ describe('AuthService', () => {
 
       // Mock storage to return user info
       mockChrome.storage.local.get.mockResolvedValueOnce({
-        USER_INFO: mockUserInfo,
+        [STORAGE_USER_INFO]: mockUserInfo,
       });
 
       const userInfo = await authService.getUserInfo();
@@ -266,10 +274,12 @@ describe('AuthService', () => {
   describe('getAccessToken', () => {
     it('should return access token when available', async () => {
       const mockToken = 'mock-access-token';
+      const futureExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes from now
 
-      // Mock storage to return token
+      // Mock storage to return token with expiry
       mockChrome.storage.local.get.mockResolvedValueOnce({
-        AUTH_TOKEN: mockToken,
+        [STORAGE_AUTH_TOKEN]: mockToken,
+        [STORAGE_AUTH_EXPIRY]: futureExpiry,
       });
 
       const token = await authService.getAccessToken();

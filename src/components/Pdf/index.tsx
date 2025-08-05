@@ -4,7 +4,7 @@ import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import SettingsModalContent from '@/components/Setting/SettingsModalContent';
 import { threadIdAtom } from '@/hooks/global';
 import { Language, useTranslateTargetLanguage } from '@/hooks/language';
-import { useThemeValue } from '@/hooks/layout';
+import { useThemeValue } from '@/hooks/useSettings';
 import {
   defaultTaskInfo,
   TaskInfo,

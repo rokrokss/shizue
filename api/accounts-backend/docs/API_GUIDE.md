@@ -109,7 +109,7 @@ Authorization: Bearer {access_token}
   "profile_picture": "https://example.com/photo.jpg",
   "locale": "en",
   "is_active": true,
-  "is_premium": false,
+  "subscription_tier": "free",
   "created_at": "2024-01-01T00:00:00Z",
   "last_login_at": "2024-01-01T12:00:00Z"
 }

@@ -1,11 +1,13 @@
+import asyncio
 import logging
 from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
-from fastapi.responses import RedirectResponse
-from sqlalchemy import select
+from fastapi.responses import ORJSONResponse, RedirectResponse
+from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.core.config import settings
 from app.core.database import get_db
@@ -31,6 +33,7 @@ router = APIRouter()
 @router.get(
     "/login/google",
     response_model=LoginURLResponse,
+    response_class=ORJSONResponse,
     summary="Google 로그인 URL 생성",
     description="""
     Google OAuth 2.0 로그인을 위한 인증 URL을 생성합니다.
@@ -105,8 +108,12 @@ async def callback_google(
                 detail="Email not verified with Google",
             )
 
-        # Find or create user
-        result = await db.execute(select(User).where(User.google_id == user_data["google_id"]))
+        # Find or create user with optimized query
+        result = await db.execute(
+            select(User)
+            .where(User.google_id == user_data["google_id"])
+            .options(selectinload(User.subscription))  # Eager load if needed
+        )
         user = result.scalar_one_or_none()
 
         if not user:
@@ -126,16 +133,18 @@ async def callback_google(
             # Track new user registration
             logger.info(f"New user registered: {user.email}")
         else:
-            # Update existing user info
+            # Update existing user info with batch update
             user.name = user_data.get("name", user.name)
             user.profile_picture = user_data.get("picture", user.profile_picture)
             user.locale = user_data.get("locale", user.locale)
-            setattr(user, "last_login_at", datetime.now(timezone.utc))
+            user.last_login_at = datetime.now(timezone.utc)
             await db.commit()
 
-        # Generate tokens
-        access_token = create_access_token(data={"sub": str(user.id)})
-        refresh_token = create_refresh_token(data={"sub": str(user.id)})
+        # Generate tokens and cache concurrently
+        access_token, refresh_token = await asyncio.gather(
+            asyncio.to_thread(create_access_token, data={"sub": str(user.id)}),
+            asyncio.to_thread(create_refresh_token, data={"sub": str(user.id)}),
+        )
 
         # Generate device ID for this session
         device_id = generate_device_id()
@@ -148,10 +157,12 @@ async def callback_google(
             user_agent="Chrome Extension",  # This will be passed from extension
         )
         db.add(auth_token)
-        await db.commit()
 
-        # Cache user profile
-        await cache.set_user_profile(str(user.id), user.to_dict())
+        # Commit and cache concurrently
+        await asyncio.gather(
+            db.commit(),
+            cache.set_user_profile(str(user.id), user.to_dict()),
+        )
 
         # Redirect to extension with tokens
         redirect_url = (
@@ -173,6 +184,7 @@ async def callback_google(
 @router.post(
     "/refresh",
     response_model=TokenResponse,
+    response_class=ORJSONResponse,
     summary="액세스 토큰 갱신",
     description="""
     만료된 액세스 토큰을 리프레시 토큰을 사용하여 갱신합니다.
@@ -201,13 +213,15 @@ async def refresh_token(request: RefreshTokenRequest, db: AsyncSession = Depends
         if not user_id:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload")
 
-        # Check if refresh token exists in database
+        # Check if refresh token exists in database with optimized query
         token_hash = hash_token(request.refresh_token)
         result = await db.execute(
             select(AuthToken).where(
-                AuthToken.token_hash == token_hash,
-                AuthToken.user_id == user_id,
-                AuthToken.is_active.is_(True),
+                and_(
+                    AuthToken.token_hash == token_hash,
+                    AuthToken.user_id == user_id,
+                    AuthToken.is_active.is_(True),
+                )
             )
         )
         auth_token = result.scalar_one_or_none()
@@ -251,20 +265,27 @@ async def logout(
     """Logout user and revoke tokens"""
     try:
         if refresh_token:
-            # Revoke specific refresh token
+            # Revoke specific refresh token with optimized query
             token_hash = hash_token(refresh_token)
             result = await db.execute(
-                select(AuthToken).where(AuthToken.token_hash == token_hash, AuthToken.is_active.is_(True))
+                select(AuthToken).where(
+                    and_(
+                        AuthToken.token_hash == token_hash,
+                        AuthToken.is_active.is_(True),
+                    )
+                )
             )
             auth_token = result.scalar_one_or_none()
 
             if auth_token:
-                setattr(auth_token, "is_active", False)
-                setattr(auth_token, "revoked_at", datetime.now(timezone.utc))
-                await db.commit()
+                auth_token.is_active = False
+                auth_token.revoked_at = datetime.now(timezone.utc)
 
-                # Clear user cache
-                await cache.delete_user_profile(str(auth_token.user_id))
+                # Commit and clear cache concurrently
+                await asyncio.gather(
+                    db.commit(),
+                    cache.delete_user_profile(str(auth_token.user_id)),
+                )
 
         return Response(status_code=status.HTTP_204_NO_CONTENT)
 

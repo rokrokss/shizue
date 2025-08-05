@@ -20,14 +20,12 @@ class TestUserModel:
             profile_picture="https://example.com/photo.jpg",
             locale="en",
             is_active=True,
-            is_premium=False,
-            created_via="google_oauth"
+            created_via="google_oauth",
         )
 
         assert user.google_id == "test_google_123"
         assert user.email == "test@example.com"
         assert user.is_active is True
-        assert user.is_premium is False
         assert user.created_via == "google_oauth"
 
     @pytest.mark.unit
@@ -45,7 +43,6 @@ class TestUserModel:
             locale="en",
             timezone="UTC",
             is_active=True,
-            is_premium=False,
             created_at=now,
             last_login_at=now,
         )
@@ -56,7 +53,7 @@ class TestUserModel:
         assert user_dict["google_id"] == "test_google_123"
         assert user_dict["email"] == "test@example.com"
         assert user_dict["is_active"] is True
-        assert user_dict["is_premium"] is False
+        assert user_dict["subscription_tier"] == "free"  # Default tier
         assert user_dict["created_at"] == now.isoformat()
         assert user_dict["last_login_at"] == now.isoformat()
 

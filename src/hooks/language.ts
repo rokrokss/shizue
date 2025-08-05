@@ -1,5 +1,4 @@
 import { STORAGE_LANGUAGE, STORAGE_TRANSLATE_TARGET_LANGUAGE } from '@/config/constants';
-import i18n from '@/i18n';
 import { determineAppLanguage } from '@/lib/language';
 import { chromeStorageBackend } from '@/lib/storageBackend';
 import { useAtom, useAtomValue } from 'jotai';
@@ -101,16 +100,7 @@ export const getI8NLanguage = (language: Language) => {
   }
 };
 
-export const useLanguage = () => {
-  const [lang, setLangRaw] = useAtom(languageAtom);
-
-  const setLang = (newLang: typeof lang) => {
-    setLangRaw(newLang);
-    i18n.changeLanguage(getI8NLanguage(newLang));
-  };
-
-  return { lang, setLang };
-};
+// useLanguage moved to hooks/useSettings.ts
 
 export const useTranslateTargetLanguageValue = () => useAtomValue(targetLanguageAtom);
 export const useTranslateTargetLanguage = () => useAtom(targetLanguageAtom);

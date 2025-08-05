@@ -1,5 +1,5 @@
 import CharacterStanding from '@/components/Character/CharacterStanding';
-import { useThemeValue } from '@/hooks/layout';
+import { useThemeValue } from '@/hooks/useSettings';
 import { useTranslation } from 'react-i18next';
 
 const ChatGreeting = () => {

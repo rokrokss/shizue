@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import UUID4, BaseModel, EmailStr, Field
+from pydantic import UUID4, BaseModel, ConfigDict, EmailStr, Field
 
 
 class UserBase(BaseModel):
@@ -15,16 +15,15 @@ class UserBase(BaseModel):
 class UserProfile(UserBase):
     """User profile response"""
 
+    model_config = ConfigDict(from_attributes=True)
+
     id: UUID4
     google_id: str
     profile_picture: Optional[str] = None
     is_active: bool = True
-    is_premium: bool = False
+    subscription_tier: str = Field(default="free", description="Current subscription tier")
     created_at: datetime
     last_login_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
 
 
 class UserUpdate(BaseModel):

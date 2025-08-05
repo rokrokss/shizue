@@ -3,3 +3,5 @@ api/accounts-backend/requirements.txt
 
 .env
 .env.production
+
+.coverage

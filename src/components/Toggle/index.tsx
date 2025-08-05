@@ -20,18 +20,14 @@ import {
   MESSAGE_UPDATE_PANEL_INIT_DATA,
 } from '@/config/constants';
 import { Language, useTranslateTargetLanguage } from '@/hooks/language';
-import {
-  useShowToggle,
-  useThemeValue,
-  useToggleHiddenSiteList,
-  useToggleYPosition,
-} from '@/hooks/layout';
+import { useShowToggle, useToggleHiddenSiteList, useToggleYPosition } from '@/hooks/layout';
+import { useThemeValue } from '@/hooks/useSettings';
 import {
   useAnthropicValidatedValue,
   useGeminiValidatedValue,
   useOpenAIValidatedValue,
-  useTranslateModel,
 } from '@/hooks/models';
+import { useTranslateModel } from '@/hooks/useSettings';
 import { hashStringToIndex } from '@/lib/hash';
 import {
   initDescribeImageContent,

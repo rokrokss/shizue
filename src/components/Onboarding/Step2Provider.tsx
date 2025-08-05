@@ -1,4 +1,4 @@
-import { useThemeValue } from '@/hooks/layout';
+import { useThemeValue } from '@/hooks/useSettings';
 import {
   defaultAnthropicChatModel,
   defaultAnthropicTranslateModel,

@@ -30,6 +30,8 @@ export class AuthService {
   private static instance: AuthService;
   private authTabId: number | null = null;
   private readonly API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.shizue.ai';
+  private refreshPromise: Promise<AuthTokens> | null = null;
+  private tokenCache: Map<string, { token: string; expiry: number }> = new Map();
 
   private constructor() {}
 
@@ -42,8 +44,15 @@ export class AuthService {
 
   async login(): Promise<AuthResponse> {
     try {
-      // 1. Get OAuth authorization URL from backend
-      const authUrlResponse = await fetch(`${this.API_BASE_URL}/v1/auth/login/google`);
+      // 1. Get OAuth authorization URL from backend with abort controller
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+      const authUrlResponse = await fetch(`${this.API_BASE_URL}/v1/auth/login/google`, {
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+
       if (!authUrlResponse.ok) {
         throw new Error('Failed to get authorization URL');
       }
@@ -150,6 +159,12 @@ export class AuthService {
 
   async checkAuthStatus(): Promise<boolean> {
     try {
+      // Check cache first
+      const cachedToken = this.tokenCache.get('access_token');
+      if (cachedToken && cachedToken.expiry > Date.now() + 5 * 60 * 1000) {
+        return true;
+      }
+
       const { [STORAGE_AUTH_TOKEN]: access_token, [STORAGE_AUTH_EXPIRY]: expiry } =
         await chrome.storage.local.get([STORAGE_AUTH_TOKEN, STORAGE_AUTH_EXPIRY]);
 
@@ -157,9 +172,14 @@ export class AuthService {
         return false;
       }
 
+      // Update cache
+      this.tokenCache.set('access_token', { token: access_token, expiry });
+
       // Check if token is expired (with 5 minute buffer)
       const bufferTime = 5 * 60 * 1000; // 5 minutes
       if (expiry < Date.now() + bufferTime) {
+        // If token is about to expire, try to refresh it proactively
+        this.refreshTokenIfNeeded();
         return false;
       }
 
@@ -182,8 +202,25 @@ export class AuthService {
 
   async getAccessToken(): Promise<string | null> {
     try {
-      const { [STORAGE_AUTH_TOKEN]: access_token } =
-        await chrome.storage.local.get(STORAGE_AUTH_TOKEN);
+      // Check cache first
+      const cachedToken = this.tokenCache.get('access_token');
+      if (cachedToken && cachedToken.expiry > Date.now()) {
+        return cachedToken.token;
+      }
+
+      const { [STORAGE_AUTH_TOKEN]: access_token, [STORAGE_AUTH_EXPIRY]: expiry } =
+        await chrome.storage.local.get([STORAGE_AUTH_TOKEN, STORAGE_AUTH_EXPIRY]);
+
+      if (access_token && expiry) {
+        // Update cache
+        this.tokenCache.set('access_token', { token: access_token, expiry });
+
+        // Check if token needs refresh
+        if (expiry < Date.now() + 5 * 60 * 1000) {
+          return this.refreshTokenIfNeeded();
+        }
+      }
+
       return access_token || null;
     } catch (error) {
       console.error('Failed to get access token:', error);
@@ -203,12 +240,71 @@ export class AuthService {
   }
 
   private async clearAuthData(): Promise<void> {
+    // Clear cache
+    this.tokenCache.clear();
+    this.refreshPromise = null;
+
     await chrome.storage.local.remove([
       STORAGE_AUTH_TOKEN,
       STORAGE_REFRESH_TOKEN,
       STORAGE_AUTH_EXPIRY,
       STORAGE_USER_INFO,
     ]);
+  }
+
+  private async refreshTokenIfNeeded(): Promise<string | null> {
+    // Avoid multiple concurrent refresh requests
+    if (this.refreshPromise) {
+      const result = await this.refreshPromise;
+      return result.access_token;
+    }
+
+    const storageData = await chrome.storage.local.get(STORAGE_REFRESH_TOKEN);
+    const refresh_token = storageData?.[STORAGE_REFRESH_TOKEN];
+
+    if (!refresh_token) {
+      return null;
+    }
+
+    this.refreshPromise = this.refreshToken(refresh_token);
+
+    try {
+      const tokens = await this.refreshPromise;
+      return tokens.access_token;
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      return null;
+    } finally {
+      this.refreshPromise = null;
+    }
+  }
+
+  private async refreshToken(refreshToken: string): Promise<AuthTokens> {
+    const response = await fetch(`${this.API_BASE_URL}/v1/auth/refresh`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Token refresh failed');
+    }
+
+    const tokens = await response.json();
+
+    // Save new tokens
+    const expiry = Date.now() + tokens.expires_in * 1000;
+    await chrome.storage.local.set({
+      [STORAGE_AUTH_TOKEN]: tokens.access_token,
+      [STORAGE_AUTH_EXPIRY]: expiry,
+    });
+
+    // Update cache
+    this.tokenCache.set('access_token', { token: tokens.access_token, expiry });
+
+    return tokens;
   }
 
   // Message handler for background script

@@ -1,7 +1,8 @@
 import { initialMessagesForAllThreadsAtom } from '@/hooks/chat';
 import { threadIdAtom } from '@/hooks/global';
-import { getI8NLanguage, useLanguage } from '@/hooks/language';
-import { useThemeValue } from '@/hooks/layout';
+import { getI8NLanguage } from '@/hooks/language';
+import { useLanguage } from '@/hooks/useSettings';
+import { useThemeValue } from '@/hooks/useSettings';
 import { deleteThread, ThreadWithInitialMessages } from '@/lib/indexDB';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button } from 'antd';

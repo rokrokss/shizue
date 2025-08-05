@@ -20,6 +20,7 @@ export default defineConfig({
       },
       author: { email: 'hello@shizue.ai' },
       permissions: ['storage', 'sidePanel', 'activeTab', 'contextMenus'],
+      host_permissions: ['http://localhost:8000/*', 'https://api.shizue.ai/*'],
       default_locale: 'en',
       side_panel: {
         default_path: 'sidepanel.html',

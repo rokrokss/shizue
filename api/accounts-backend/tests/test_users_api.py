@@ -25,7 +25,7 @@ class TestUsersAPI:
         assert data["email"] == test_user.email
         assert data["name"] == test_user.name
         assert data["google_id"] == test_user.google_id
-        assert data["is_premium"] is False
+        assert data["subscription_tier"] == "free"  # Default tier
 
     @pytest.mark.integration
     async def test_get_current_user_profile_unauthorized(self, client: AsyncClient):

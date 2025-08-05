@@ -97,6 +97,7 @@ accounts-check:
 # Test accounts-backend
 accounts-test:
 	@echo "🧪 Testing accounts-backend..."
+	@rm -f accounts-backend/.coverage
 	@cd accounts-backend && uv run pytest -v --cov=app --cov-report=term-missing -m "unit or not integration"
 
 # Run accounts-backend server

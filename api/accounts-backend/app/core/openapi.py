@@ -147,7 +147,7 @@ def add_response_examples(schema: Dict[str, Any]) -> None:
                                 "profile_picture": "https://example.com/photo.jpg",
                                 "locale": "en",
                                 "is_active": True,
-                                "is_premium": False,
+                                "subscription_tier": "free",
                                 "created_at": "2024-01-01T00:00:00Z",
                                 "last_login_at": "2024-01-01T12:00:00Z",
                             }

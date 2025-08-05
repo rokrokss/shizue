@@ -88,8 +88,7 @@ export const anthropicValidatedSafeAtom = atom(
   (_, set, value: boolean) => set(anthropicValidatedAtom, value)
 );
 
-export const useChatModel = () => useAtom(chatModelAtom);
-export const useTranslateModel = () => useAtom(translateModelAtom);
+// useChatModel and useTranslateModel moved to hooks/useSettings.ts
 export const useSetChatModel = () => useSetAtom(chatModelAtom);
 export const useSetTranslateModel = () => useSetAtom(translateModelAtom);
 export const useOpenAIValidated = () => useAtom(openAIValidatedSafeAtom);

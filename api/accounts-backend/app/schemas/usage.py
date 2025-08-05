@@ -1,11 +1,13 @@
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import UUID4, BaseModel, Field
+from pydantic import UUID4, BaseModel, ConfigDict, Field
 
 
 class UsageRecord(BaseModel):
     """API usage record"""
+
+    model_config = ConfigDict(from_attributes=True)
 
     id: UUID4
     user_id: UUID4
@@ -18,9 +20,6 @@ class UsageRecord(BaseModel):
     status_code: int = Field(..., description="HTTP status code")
     error_message: Optional[str] = Field(None, description="Error message if failed")
     created_at: datetime
-
-    class Config:
-        from_attributes = True
 
 
 class UsageCreate(BaseModel):

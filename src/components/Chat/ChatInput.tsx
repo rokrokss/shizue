@@ -1,6 +1,6 @@
 import Footer from '@/components/Footer';
 import { ChatStatus, isChatWaiting } from '@/hooks/chat';
-import { useThemeValue } from '@/hooks/layout';
+import { useThemeValue } from '@/hooks/useSettings';
 import { debugLog } from '@/logs';
 import {
   EditOutlined,

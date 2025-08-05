@@ -3,7 +3,7 @@ import uuid
 from sqlalchemy import Column, DateTime, ForeignKey, String, Uuid
 from sqlalchemy.sql import func
 
-from app.core.database import Base
+from app.core.base import Base
 
 
 class AuthToken(Base):

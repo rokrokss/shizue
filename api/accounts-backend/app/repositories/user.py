@@ -59,10 +59,6 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
 
         return user
 
-    async def get_premium_users(self, skip: int = 0, limit: int = 100):
-        """Get all premium users."""
-        return await self.get_all(skip=skip, limit=limit, is_premium=True)
-
     async def get_active_users(self, skip: int = 0, limit: int = 100):
         """Get all active users."""
         return await self.get_all(skip=skip, limit=limit, is_active=True)

@@ -1,4 +1,4 @@
-import { useThemeValue } from '@/hooks/layout';
+import { useThemeValue } from '@/hooks/useSettings';
 import { debugLog } from '@/logs';
 import { ConfigProvider, theme } from 'antd';
 import { ReactNode, useEffect } from 'react';

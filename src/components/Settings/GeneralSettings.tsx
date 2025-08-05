@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card, Select, Switch, Space, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { useLanguage } from '@/hooks/language';
-import { useTheme } from '@/hooks/layout';
+import { useLanguage } from '@/hooks/useSettings';
+import { useTheme } from '@/hooks/useSettings';
 
 const { Text } = Typography;
 
