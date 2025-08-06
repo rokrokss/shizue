@@ -270,7 +270,7 @@ async def get_available_models(
     filtered_models = {}
     for model_id, model_info in models.items():
         if model_info.provider.value in available_providers:
-            filtered_models[model_id] = model_info.dict()
+            filtered_models[model_id] = model_info.model_dump()
 
     return {
         "models": filtered_models,

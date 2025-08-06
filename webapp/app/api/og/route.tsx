@@ -1,15 +1,17 @@
-import { ImageResponse } from 'next/og'
-import { NextRequest } from 'next/server'
+import { ImageResponse } from 'next/og';
+import { NextRequest } from 'next/server';
 
-export const runtime = 'edge'
+export const runtime = 'edge';
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(request.url);
 
     // Get parameters
-    const title = searchParams.get('title') || 'Shizue'
-    const description = searchParams.get('description') || 'AI-powered browser extension for translation, chat, and web browsing'
+    const title = searchParams.get('title') || 'Shizue';
+    const description =
+      searchParams.get('description') ||
+      'AI-powered browser extension for translation, chat, and web browsing';
     // const locale = searchParams.get('locale') || 'en' // Reserved for future use
 
     // We'll use the default font for now, since we don't have Inter font files yet
@@ -25,7 +27,8 @@ export async function GET(request: NextRequest) {
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: '#0a0a0a',
-            backgroundImage: 'radial-gradient(circle at 25px 25px, #1a1a1a 2%, transparent 2%), radial-gradient(circle at 75px 75px, #1a1a1a 2%, transparent 2%)',
+            backgroundImage:
+              'radial-gradient(circle at 25px 25px, #1a1a1a 2%, transparent 2%), radial-gradient(circle at 75px 75px, #1a1a1a 2%, transparent 2%)',
             backgroundSize: '100px 100px',
           }}
         >
@@ -202,10 +205,10 @@ export async function GET(request: NextRequest) {
         width: 1200,
         height: 630,
       }
-    )
+    );
   } catch {
     return new Response(`Failed to generate the image`, {
       status: 500,
-    })
+    });
   }
 }

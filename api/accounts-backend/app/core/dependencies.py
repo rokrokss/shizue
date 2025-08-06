@@ -47,15 +47,63 @@ async def get_current_user(
     # Try to get user from cache first
     cached_user = await cache.get_user_profile(user_id)
     if cached_user:
-        return User(**cached_user)
+        # Check if user is active (important for soft-deleted users)
+        if cached_user.get("is_active") is False:
+            # User is soft-deleted, clear cache and treat as not found
+            await cache.delete_user_profile(user_id)
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found",
+            )
+
+        # Convert string IDs to UUID if necessary
+        if isinstance(cached_user.get("id"), str):
+            import uuid
+
+            cached_user["id"] = uuid.UUID(cached_user["id"])
+
+        # Remove computed properties that don't have setters
+        cached_user_data = cached_user.copy()
+        cached_user_data.pop("subscription_tier", None)
+
+        return User(**cached_user_data)
 
     # Get user from database
-    from sqlalchemy import select
+    import uuid
 
-    result = await db.execute(select(User).where(User.id == user_id, User.is_active.is_(True)))
+    from sqlalchemy import select
+    from sqlalchemy.orm import selectinload
+
+    from app.models.user_subscription import UserSubscription
+
+    # Convert user_id string to UUID
+    try:
+        user_uuid = uuid.UUID(user_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid user ID format",
+        )
+
+    result = await db.execute(
+        select(User)
+        .where(User.id == user_uuid)
+        .options(
+            selectinload(User.subscriptions).selectinload(UserSubscription.subscription_plan)
+        )  # Eager load subscriptions and plans
+    )
     user = result.scalar_one_or_none()
 
     if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+
+    # Check if user is active (for soft-deleted users)
+    if not user.is_active:
+        # Clear any cached data for this inactive user
+        await cache.delete_user_profile(user_id)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found",

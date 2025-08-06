@@ -5,7 +5,7 @@ import react from 'eslint-plugin-react';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist/*', 'node_modules/*', '.wxt/*', '**/*.gen.ts', 'api/*'] },
+  { ignores: ['dist/*', 'node_modules/*', '.wxt/*', '**/*.gen.ts', 'api/*', 'webapp/coverage/**', '**/coverage/**', 'webapp/.next/**', 'webapp/playwright-report/**'] },
   {
     files: ['**/*.{ts,tsx}'],
     extends: [js.configs.recommended, ...tseslint.configs.recommended],

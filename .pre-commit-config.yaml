@@ -1,42 +1,100 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+#
+# Usage:
+#   pre-commit install          # Install hooks
+#   pre-commit run --all-files  # Run on all files
+#   pre-commit run --hook-stage manual --all-files  # Run manual stage (tests)
+#
 repos:
+  # =============================================================================
+  # Chrome Extension (Frontend) Hooks
+  # =============================================================================
   - repo: local
     hooks:
-      # Frontend (Chrome Extension) checks - REQUIRED
-      - id: frontend-format
-        name: Frontend - Format Code (Prettier)
-        entry: pnpm format
+      # Format check - Prettier
+      - id: extension-format
+        name: Extension - Format Check (Prettier)
+        entry: pnpm format:check
         language: system
-        files: ^src/.*\.(ts|tsx|js|jsx|json|css|md)$
+        files: ^(src|wxt\.config\.ts|tailwind\.config\.js|postcss\.config\.js|vitest\.config\.ts)/.*\.(ts|tsx|js|jsx|json|css|md)$
         pass_filenames: false
         stages: [pre-commit]
 
-      - id: frontend-lint
-        name: Frontend - Lint (ESLint)
+      # Lint - ESLint
+      - id: extension-lint
+        name: Extension - Lint (ESLint)
         entry: pnpm lint
         language: system
         files: ^src/.*\.(ts|tsx|js|jsx)$
         pass_filenames: false
         stages: [pre-commit]
 
-      - id: frontend-typecheck
-        name: Frontend - Type Check (TypeScript)
+      # Type check - TypeScript
+      - id: extension-typecheck
+        name: Extension - Type Check (TypeScript)
         entry: pnpm compile
         language: system
-        files: ^src/.*\.(ts|tsx)$
+        files: ^(src|wxt\.config\.ts)/.*\.(ts|tsx)$
         pass_filenames: false
         stages: [pre-commit]
 
-      - id: frontend-test
-        name: Frontend - Run Tests (Vitest)
-        entry: pnpm test --run
+      # Test - Vitest (manual stage for performance)
+      - id: extension-test
+        name: Extension - Run Tests (Vitest)
+        entry: pnpm vitest run
         language: system
-        files: ^src/.*\.(ts|tsx|js|jsx)$
+        files: ^src/.*\.(ts|tsx|js|jsx|test\.|spec\.).*$
+        pass_filenames: false
+        stages: [manual]
+
+  # =============================================================================
+  # Webapp Hooks
+  # =============================================================================
+  - repo: local
+    hooks:
+      # Format check - Prettier
+      - id: webapp-format
+        name: Webapp - Format Check (Prettier)
+        entry: bash -c "cd webapp && npm run format"
+        language: system
+        files: ^webapp/.*\.(ts|tsx|js|jsx|json|md)$
         pass_filenames: false
         stages: [pre-commit]
 
-      # Backend (API) checks - REQUIRED
+      # Lint - Next.js ESLint
+      - id: webapp-lint
+        name: Webapp - Lint (Next.js ESLint)
+        entry: bash -c "cd webapp && npm run lint"
+        language: system
+        files: ^webapp/.*\.(ts|tsx|js|jsx)$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      # Type check - TypeScript
+      - id: webapp-typecheck
+        name: Webapp - Type Check (TypeScript)
+        entry: bash -c "cd webapp && npm run typecheck"
+        language: system
+        files: ^webapp/.*\.(ts|tsx)$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      # Test - Jest (manual stage for performance)
+      - id: webapp-test
+        name: Webapp - Run Tests (Jest)
+        entry: bash -c "cd webapp && npm run test:ci"
+        language: system
+        files: ^webapp/.*\.(ts|tsx|js|jsx|test\.|spec\.).*$
+        pass_filenames: false
+        stages: [manual]
+
+  # =============================================================================
+  # Backend API Hooks
+  # =============================================================================
+  - repo: local
+    hooks:
+      # Format - isort & black
       - id: api-format
         name: API - Format Code (isort & black)
         entry: bash -c "cd api && make format"
@@ -45,6 +103,7 @@ repos:
         pass_filenames: false
         stages: [pre-commit]
 
+      # Lint - flake8 & mypy
       - id: api-lint
         name: API - Lint (flake8 & mypy)
         entry: bash -c "cd api && make lint"
@@ -53,33 +112,114 @@ repos:
         pass_filenames: false
         stages: [pre-commit]
 
-      - id: api-typecheck
-        name: API - Type Check (check formatting & linting)
+      # Check formatting and linting
+      - id: api-check
+        name: API - Check Format & Lint
         entry: bash -c "cd api && make check"
         language: system
         files: ^api/.*\.py$
         pass_filenames: false
         stages: [pre-commit]
 
+      # Test - pytest (manual stage for performance)
       - id: api-test
         name: API - Run Tests (pytest)
         entry: bash -c "cd api && make test"
         language: system
         files: ^api/.*\.py$
         pass_filenames: false
-        stages: [pre-commit]
+        stages: [manual]
+        # Note: Requires PostgreSQL and Redis to be running
 
-  # Additional hooks from external repos
+  # =============================================================================
+  # General Repository Hooks
+  # =============================================================================
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
+      # Whitespace and formatting
       - id: trailing-whitespace
+        exclude: \.(svg|snap)$
       - id: end-of-file-fixer
-      - id: check-yaml
-        exclude: ^deploy/k8s/.*\.yaml$
-      - id: check-added-large-files
-        args: ['--maxkb=1000']
-      - id: check-json
-      - id: check-merge-conflict
+        exclude: \.(svg|snap)$
       - id: mixed-line-ending
         args: ['--fix=lf']
+        exclude: \.(svg|snap)$
+
+      # File checks
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+        exclude: \.(png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|pdf)$
+      - id: check-case-conflict
+      - id: check-symlinks
+      - id: destroyed-symlinks
+
+      # Content checks
+      - id: check-merge-conflict
+      - id: check-yaml
+        exclude: ^(deploy/k8s/.*\.yaml|\.github/workflows/.*\.yml)$
+        args: ['--unsafe']  # Allow custom tags
+      - id: check-json
+        exclude: ^(tsconfig.*\.json|webapp/tsconfig\.json)$
+      - id: check-toml
+      - id: check-xml
+
+      # Python specific
+      - id: check-ast
+        files: ^api/.*\.py$
+      - id: debug-statements
+        files: ^api/.*\.py$
+      - id: check-docstring-first
+        files: ^api/.*\.py$
+
+      # Security
+      - id: detect-private-key
+      - id: detect-aws-credentials
+        args: ['--allow-missing-credentials']
+
+  # =============================================================================
+  # Additional Security and Quality Checks
+  # =============================================================================
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0
+    hooks:
+      - id: python-check-blanket-noqa
+        files: ^api/.*\.py$
+      - id: python-check-blanket-type-ignore
+        files: ^api/.*\.py$
+      - id: python-no-eval
+        files: ^api/.*\.py$
+      - id: python-no-log-warn
+        files: ^api/.*\.py$
+      - id: python-use-type-annotations
+        files: ^api/.*\.py$
+      - id: text-unicode-replacement-char
+
+  # =============================================================================
+  # Markdown and Documentation
+  # =============================================================================
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.43.0
+    hooks:
+      - id: markdownlint
+        args: ['--fix', '--disable', 'MD013', 'MD033', 'MD041']
+        exclude: ^(CHANGELOG\.md|webapp/.*\.md)$
+
+# =============================================================================
+# Configuration Notes
+# =============================================================================
+#
+# Performance Tips:
+# - Use `stages: [manual]` for slow operations like tests
+# - Run manual stage with: pre-commit run --hook-stage manual --all-files
+# - Use `pass_filenames: false` to avoid argument list too long errors
+#
+# Monorepo Structure:
+# - Extension: Root level (src/, pnpm)
+# - Webapp: webapp/ directory (npm)
+# - API: api/ directory (uv, make)
+#
+# Skip hooks in CI:
+# - Set SKIP environment variable: SKIP=webapp-test,api-test
+# - Or use: pre-commit run --all-files --hook-stage pre-commit
+#

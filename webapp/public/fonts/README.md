@@ -9,6 +9,7 @@ You can download these fonts from:
 https://fonts.google.com/specimen/Inter
 
 Or use the following commands:
+
 ```bash
 # Download Inter font files
 curl -L "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip" -o inter.zip

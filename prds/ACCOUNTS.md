@@ -1,6 +1,7 @@
 # PRD-001: ACCOUNTS (계정 시스템 및 프리미엄 구독)
 
 ## 메타데이터
+
 - **PRD 번호**: 001
 - **작성일**: 2025-07-30
 - **최종 업데이트**: 2025-08-02
@@ -11,9 +12,11 @@
 - **의존성**: 없음 (신규 백엔드 인프라 구축 완료)
 
 ## 개요
+
 모든 사용자가 Shizue 계정을 필수로 가입하고, 자신의 API Key를 입력해야 서비스를 사용할 수 있도록 합니다. 향후 프리티어와 프리미엄 구독 모델을 도입할 예정입니다.
 
 ### 영향받는 컴포넌트
+
 - [x] Background Script (Service Worker) - 인증 관리, API 라우팅
 - [x] Side Panel (React App) - 로그인 UI, 계정 설정, 구독 관리
 - [x] Content Scripts - 로그인 상태 반영
@@ -21,6 +24,7 @@
 - [ ] IndexedDB - 계정 연동 메타데이터만
 
 ### 신규 필요 인프라
+
 - [x] Backend API Server
 - [x] Database (PostgreSQL/MySQL)
 - [x] Redis Cache
@@ -29,17 +33,20 @@
 ## 배경 및 목표
 
 ### 문제 정의
+
 - 사용자 관리 시스템 부재로 서비스 개선 어려움
 - 사용 통계 수집 불가로 제품 개선 방향 파악 어려움
 - 향후 수익 모델 도입을 위한 기반 부재
 - 멀티 디바이스 동기화 등 서버 기능 제공 불가
 
 ### 사용자 스토리
+
 - As a **신규 사용자**, I want to **Google 계정으로 가입하고 내 API Key를 등록하여 서비스를 사용**할 수 있어야 한다
 - As a **기존 사용자**, I want to **계정을 만들고 기존 API Key를 계속 사용**할 수 있어야 한다
 - As a **등록된 사용자**, I want to **여러 기기에서 내 설정을 동기화**할 수 있어야 한다 (API Key 제외)
 
 ### 성공 지표
+
 - [x] Google OAuth 로그인 구현 완료
 - [x] JWT 기반 인증 시스템 구축
 - [x] API Key 암호화 저장 (AES-256)
@@ -51,6 +58,7 @@
 ## 기술 사양
 
 ### Chrome API 권한
+
 ```json
 // manifest.json에 추가 필요한 권한 - identity API 사용하지 않음
 {
@@ -58,8 +66,8 @@
     // 기존 권한 유지
   ],
   "host_permissions": [
-    "https://api.shizue.ai/*",  // 백엔드 API 호출용
-    "http://localhost:3000/*"   // 개발 환경
+    "https://api.shizue.ai/*", // 백엔드 API 호출용
+    "http://localhost:3000/*" // 개발 환경
   ]
 }
 ```
@@ -67,6 +75,7 @@
 ### Chrome Extension OAuth 구현 전략
 
 **웹 기반 OAuth vs chrome.identity API**:
+
 - 선택: **웹 기반 OAuth** (더 많은 제어와 유연성)
 - 이유:
   - chrome.identity는 Google 계정에 의존적
@@ -74,6 +83,7 @@
   - 더 나은 에러 처리와 사용자 경험 제공
 
 **구현 아키텍처**:
+
 ```typescript
 // OAuth 플로우 시퀀스
 1. Side Panel에서 로그인 버튼 클릭
@@ -91,10 +101,11 @@
 **문제점**: Service Worker는 5분 후 자동 종료되어 메모리 상태 손실
 
 **해결 방안**:
+
 ```typescript
 // src/services/tokenManager.ts
 class TokenManager {
-  private tokenCache: Map<string, {token: string, expiry: number}> = new Map();
+  private tokenCache: Map<string, { token: string; expiry: number }> = new Map();
 
   async getAccessToken(): Promise<string> {
     // 1. 메모리 캐시 확인
@@ -108,7 +119,7 @@ class TokenManager {
     if (stored.auth_token && stored.token_expiry > Date.now()) {
       this.tokenCache.set('access_token', {
         token: stored.auth_token,
-        expiry: stored.token_expiry
+        expiry: stored.token_expiry,
       });
       return stored.auth_token;
     }
@@ -134,13 +145,14 @@ class TokenManager {
 ```
 
 ### 메시지 타입
+
 ```typescript
 // 인증 관련 메시지
-MESSAGE_AUTH_LOGIN = "auth-login"
-MESSAGE_AUTH_LOGOUT = "auth-logout"
-MESSAGE_AUTH_CHECK_STATUS = "auth-check-status"
-MESSAGE_AUTH_REFRESH_TOKEN = "auth-refresh-token"
-MESSAGE_AUTH_GET_USER_INFO = "auth-get-user-info"
+MESSAGE_AUTH_LOGIN = 'auth-login';
+MESSAGE_AUTH_LOGOUT = 'auth-logout';
+MESSAGE_AUTH_CHECK_STATUS = 'auth-check-status';
+MESSAGE_AUTH_REFRESH_TOKEN = 'auth-refresh-token';
+MESSAGE_AUTH_GET_USER_INFO = 'auth-get-user-info';
 
 // 구독 관련 메시지 (향후 구현)
 // MESSAGE_SUBSCRIPTION_STATUS = "subscription-status"
@@ -148,16 +160,17 @@ MESSAGE_AUTH_GET_USER_INFO = "auth-get-user-info"
 // MESSAGE_SUBSCRIPTION_CANCEL = "subscription-cancel"
 
 // API 라우팅 메시지
-MESSAGE_API_MODE_SWITCH = "api-mode-switch" // Shizue API <-> User API Key
+MESSAGE_API_MODE_SWITCH = 'api-mode-switch'; // Shizue API <-> User API Key
 ```
 
 ### 스토리지 키
+
 ```typescript
 // 인증 관련 스토리지
-STORAGE_AUTH_TOKEN = "auth-token" // JWT access token
-STORAGE_REFRESH_TOKEN = "refresh-token"
-STORAGE_USER_INFO = "user-info" // 이메일, 이름, 프로필 사진
-STORAGE_AUTH_EXPIRY = "auth-expiry"
+STORAGE_AUTH_TOKEN = 'auth-token'; // JWT access token
+STORAGE_REFRESH_TOKEN = 'refresh-token';
+STORAGE_USER_INFO = 'user-info'; // 이메일, 이름, 프로필 사진
+STORAGE_AUTH_EXPIRY = 'auth-expiry';
 
 // 구독 관련 스토리지 (향후 구현)
 // STORAGE_SUBSCRIPTION_STATUS = "subscription-status" // free | premium | enterprise
@@ -165,20 +178,21 @@ STORAGE_AUTH_EXPIRY = "auth-expiry"
 // STORAGE_SUBSCRIPTION_FEATURES = "subscription-features" // 사용 가능한 기능 목록
 
 // API 모드 스토리지
-STORAGE_API_MODE = "api-mode" // "shizue" | "user-key"
-STORAGE_API_MODE_PREFERENCE = "api-mode-preference" // 사용자 선호 설정
+STORAGE_API_MODE = 'api-mode'; // "shizue" | "user-key"
+STORAGE_API_MODE_PREFERENCE = 'api-mode-preference'; // 사용자 선호 설정
 ```
 
 ### 백엔드 API 엔드포인트
+
 ```typescript
 // Base URL: https://api.shizue.ai
 // API Docs: https://api.shizue.ai/docs (FastAPI 자동 생성)
 
 // 인증 API
-POST   /v1/auth/google/callback     // Google OAuth 콜백
-POST   /v1/auth/refresh             // 토큰 갱신
-POST   /v1/auth/logout              // 로그아웃
-GET    /v1/auth/me                  // 현재 사용자 정보
+POST / v1 / auth / google / callback; // Google OAuth 콜백
+POST / v1 / auth / refresh; // 토큰 갱신
+POST / v1 / auth / logout; // 로그아웃
+GET / v1 / auth / me; // 현재 사용자 정보
 
 // 구독 API (향후 구현)
 // GET    /v1/subscription/status      // 구독 상태 조회
@@ -186,14 +200,15 @@ GET    /v1/auth/me                  // 현재 사용자 정보
 // POST   /v1/subscription/cancel      // 구독 취소
 
 // 사용량 API
-GET    /v1/usage/stats             // 사용량 통계 조회
+GET / v1 / usage / stats; // 사용량 통계 조회
 
 // LLM 프록시 API (비동기 스트리밍)
-POST   /v1/chat/completions         // OpenAI 호환 엔드포인트
-POST   /v1/chat/stream              // SSE 스트리밍 엔드포인트
+POST / v1 / chat / completions; // OpenAI 호환 엔드포인트
+POST / v1 / chat / stream; // SSE 스트리밍 엔드포인트
 ```
 
 ### 메시지 흐름 - 로그인
+
 ```
 User Click Login → Side Panel → 새 탭/팝업 열기 → shizue.ai/auth/google
                                                           ↓
@@ -211,6 +226,7 @@ User Click Login → Side Panel → 새 탭/팝업 열기 → shizue.ai/auth/goo
 ```
 
 ### 메시지 흐름 - API 호출
+
 ```
 // Shizue API 모드
 Chat Request → chatService → Background Script → Backend API (with JWT)
@@ -226,6 +242,7 @@ Chat Request → chatService → LLM Provider API 직접 호출
 ```
 
 ### API 통합
+
 - **현재 구현**:
   - 사용자 본인의 API Key 필수 입력
   - 서버는 인증과 설정 동기화만 담당
@@ -244,6 +261,7 @@ Chat Request → chatService → LLM Provider API 직접 호출
 ## UI/UX 명세
 
 ### 화면 흐름
+
 1. **플로팅 버튼 클릭 시**
    - 인증 여부 관계없이 Side Panel 열림
    - 미인증 시 온보딩 플로우 자동 시작
@@ -261,6 +279,7 @@ Chat Request → chatService → LLM Provider API 직접 호출
    - 설정 동기화 옵션
 
 ### 컴포넌트 구조
+
 ```
 src/components/
 ├── auth/
@@ -278,6 +297,7 @@ src/components/
 ```
 
 ### 다국어 지원
+
 - [x] 새로운 번역 키 추가 필요
 - [x] 지원 언어: 모든 기존 23개 언어
 - 주요 번역 키:
@@ -288,7 +308,9 @@ src/components/
 ## 구현 상세
 
 ### Background Script 변경사항
+
 **파일**: `src/entrypoints/background/index.ts`
+
 - [x] 새로운 `AuthService` 클래스 추가
   - 웹 기반 OAuth 플로우 지원 (새 탭 열기, 토큰 수신)
   - JWT 토큰 관리 및 자동 갱신
@@ -297,10 +319,12 @@ src/components/
 - [x] `APIRoutingService` 추가
   - Shizue API vs User API Key 라우팅 로직
   - 헤더에 인증 토큰 추가
-- [x] 메시지 핸들러 추가 (MESSAGE_AUTH_*, MESSAGE_SUBSCRIPTION_*)
+- [x] 메시지 핸들러 추가 (MESSAGE*AUTH*_, MESSAGE*SUBSCRIPTION*_)
 
 ### Side Panel 변경사항
+
 **파일**: `src/entrypoints/sidepanel/`
+
 - [x] 새 라우트: `/settings/account`
 - [x] `AuthProvider` 컨텍스트 추가
 - [x] 온보딩 플로우 재설계
@@ -312,61 +336,73 @@ src/components/
 - [x] 헤더에 사용자 프로필 UI 추가
 
 ### Content Script 변경사항
+
 **파일**: `src/entrypoints/content/`
+
 - [x] 플로팅 버튼은 항상 표시
 - [x] 클릭 시 Side Panel 열기 (기존 동작 유지)
 
 ### 서비스 레이어
+
 **새 파일**: `src/services/authService.ts`
+
 ```typescript
 class AuthService {
   private readonly API_BASE_URL = 'https://api.shizue.ai';
   private readonly AUTH_URL = 'https://shizue.ai/auth';
 
-  async login(): Promise<AuthToken> // 새 탭에서 OAuth 플로우 시작
-  async handleAuthCallback(token: string): Promise<void> // 토큰 수신 처리
-  async logout(): Promise<void>
-  async refreshToken(): Promise<AuthToken>
-  async checkAuthStatus(): Promise<boolean>
-  async getUserInfo(): Promise<UserInfo>
+  async login(): Promise<AuthToken>; // 새 탭에서 OAuth 플로우 시작
+  async handleAuthCallback(token: string): Promise<void>; // 토큰 수신 처리
+  async logout(): Promise<void>;
+  async refreshToken(): Promise<AuthToken>;
+  async checkAuthStatus(): Promise<boolean>;
+  async getUserInfo(): Promise<UserInfo>;
 
   // Private methods
-  private listenForAuthToken(): Promise<string> // postMessage 리스너
-  private extractTokenFromUrl(url: string): string | null
+  private listenForAuthToken(): Promise<string>; // postMessage 리스너
+  private extractTokenFromUrl(url: string): string | null;
 }
 ```
 
 **새 파일**: `src/services/usageService.ts`
+
 ```typescript
 class UsageService {
-  async getUsageStats(): Promise<UsageStats>
-  async trackUsage(model: string, tokens: number): Promise<void>
+  async getUsageStats(): Promise<UsageStats>;
+  async trackUsage(model: string, tokens: number): Promise<void>;
 }
 ```
 
 **수정**: `src/services/chatService.ts`
+
 - [x] API 라우팅 로직 추가
 - [x] Shizue API 엔드포인트 통합
 - [x] 인증 헤더 자동 추가
 
 ### 상태 관리
+
 **Jotai Atoms**: `src/hooks/global.ts`
+
 - [x] `authStateAtom`: 로그인 상태
 - [x] `userInfoAtom`: 사용자 정보
 - [x] `apiModeAtom`: API 모드 (shizue | user-key)
 - [ ] `subscriptionAtom`: 구독 상태 (향후 구현)
 
 ## 데이터 저장 전략
+
 계정 시스템 도입으로 인한 서버와 로컬 저장소 간의 데이터 분리 전략
 
 ### API Key 사용자 (100% 로컬)
+
 **Chrome Storage**:
+
 - [x] API Keys (OpenAI, Gemini, Anthropic) - 로컬 암호화 저장
 - [x] 사용자 설정 (언어, 테마, UI 설정)
 - [x] 번역 타겟 언어
 - [x] 토글 버튼 설정 및 숨김 사이트 목록
 
 **IndexedDB**:
+
 - [x] 모든 채팅 스레드 & 메시지
 - [x] 모든 메모 데이터
 - [x] 토큰 사용량 통계
@@ -376,15 +412,18 @@ class UsageService {
 **서버 저장**: ❌ 없음 (완전한 프라이버시 보장)
 
 ### Shizue 계정 사용자 (하이브리드)
+
 **서버 저장 (api.shizue.ai)**:
 
 필수 데이터:
+
 - [x] 사용자 프로필 (Google ID, 이메일, 이름, 프로필 사진)
 - [x] 사용량 통계 (모델별 사용 횟수, 집계된 통계만)
 - [x] 계정 설정 (선호 언어, UI 테마)
 - [ ] 구독 정보 (향후 구현)
 
 선택적 동기화 (사용자 설정에 따라):
+
 - [x] 채팅 메타데이터 (스레드 ID, 제목, 마지막 업데이트 시간)
 - [x] 메모 메타데이터 (제목, 폴더, 핀 상태)
 - [x] 사용자 메모리 (USER_MEMORY) - AI 컨텍스트용
@@ -392,6 +431,7 @@ class UsageService {
 **로컬 저장 (Chrome Extension)**:
 
 Chrome Storage:
+
 - [x] JWT Access Token (임시, 1시간 만료)
 - [x] Refresh Token (임시, 30일 만료)
 - [x] UI 설정 (빠른 접근용 캐시)
@@ -399,6 +439,7 @@ Chrome Storage:
 - [x] 동기화 설정 (어떤 데이터를 동기화할지)
 
 IndexedDB:
+
 - [x] 채팅 데이터 전체 (로컬 캐시, 성능 최적화)
 - [x] 메모 데이터 전체 (로컬 캐시)
 - [x] 번역 캐시 (영구 보관)
@@ -407,17 +448,20 @@ IndexedDB:
 ### 계정 시스템 구조
 
 **모든 사용자는 Shizue 계정 + API Key 필수**:
+
 1. Google OAuth로 가입/로그인 필요
 2. 최소 하나 이상의 API Key 등록 필수
 3. 가입 시점부터 새로운 데이터 저장 시작 (기존 로컬 데이터는 유지)
 
 **현재 구현 범위**:
+
 - 사용자 본인의 API Key로 직접 LLM 호출
 - 서버는 계정 관리와 설정 동기화만 담당
 - API Key는 로컬에만 저장 (Chrome Storage)
 - API Key는 절대 서버로 전송하지 않음
 
 **향후 확장 계획**:
+
 - Shizue API 프록시 서비스 도입
 - 무료 크레딧 시스템
 - 프리미엄 구독으로 무제한 사용
@@ -426,23 +470,27 @@ IndexedDB:
 ### 프라이버시 및 보안
 
 **데이터 암호화**:
+
 - 로컬: Chrome Storage API 자체 암호화
 - 전송: HTTPS + JWT Bearer Token
 - 서버: 민감 데이터 AES-256 암호화 (선택적)
 
 **사용자 제어권**:
+
 - [x] 데이터 내보내기 (JSON/CSV)
 - [x] 선택적 서버 저장 토글
 - [x] 언제든 로컬 전용 모드 전환
 - [x] 계정 삭제 시 모든 서버 데이터 즉시 삭제
 
 **GDPR/개인정보보호법 준수**:
+
 - [x] 데이터 이동성 보장
 - [x] 삭제 권한 보장
 - [x] 데이터 처리 목적 명시
 - [x] 최소 데이터 수집 원칙
 
 ### Storage Service 구현
+
 ```typescript
 // src/services/unifiedStorageService.ts
 class UnifiedStorageService {
@@ -459,7 +507,7 @@ class UnifiedStorageService {
     if (this.shouldSyncToServer(key)) {
       await Promise.all([
         this.saveServer(key, data),
-        this.saveLocal(key, data) // 로컬 캐시
+        this.saveLocal(key, data), // 로컬 캐시
       ]);
     } else {
       await this.saveLocal(key, data);
@@ -482,6 +530,7 @@ class UnifiedStorageService {
 ## 백엔드 아키텍처
 
 ### 기술 스택
+
 - **Framework**: FastAPI (Python 3.11+)
 - **ASGI Server**: Uvicorn + Gunicorn
 - **Database**: PostgreSQL (Supabase 또는 Neon)
@@ -502,6 +551,7 @@ class UnifiedStorageService {
 - **Monitoring**: Sentry, Prometheus + Grafana
 
 ### 보안 미들웨어 설정
+
 ```python
 # src/middleware/security.py
 from fastapi import FastAPI
@@ -542,6 +592,7 @@ async def chat_completions():
 ```
 
 ### 에러 처리 및 로깅
+
 ```python
 # src/middleware/error_handler.py
 import logging
@@ -582,11 +633,12 @@ class StructuredLogger:
             "user_id": user_id,
             "endpoint": endpoint,
             "tokens_used": tokens,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(datetime.UTC).isoformat()
         })
 ```
 
 ### Redis 캐싱 전략
+
 ```python
 # src/services/cache.py
 import redis.asyncio as redis
@@ -619,6 +671,7 @@ class CacheService:
 ```
 
 ### 데이터베이스 스키마 (SQLAlchemy 모델)
+
 ```python
 # models/user.py
 class User(Base):
@@ -661,6 +714,7 @@ class APIUsage(Base):
 ## 성능 최적화 전략
 
 ### 인증 상태 캐싱
+
 ```typescript
 // 인증 체크 최적화
 interface AuthCache {
@@ -692,6 +746,7 @@ async function checkAuth(): Promise<boolean> {
 ```
 
 ### Content Scripts 인증 최적화
+
 ```typescript
 // 모든 진입점에서의 인증 처리
 const AUTH_REQUIRED_ACTIONS = {
@@ -708,7 +763,7 @@ const AUTH_REQUIRED_ACTIONS = {
 
 // Background Script에서 중앙 집중 처리
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  if (AUTH_REQUIRED_ACTIONS[message.action] && !await checkAuth()) {
+  if (AUTH_REQUIRED_ACTIONS[message.action] && !(await checkAuth())) {
     // Side Panel 열고 로그인 유도
     chrome.sidePanel.open();
     sendResponse({ error: 'AUTH_REQUIRED', needsLogin: true });
@@ -720,11 +775,12 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 ```
 
 ### 토큰 사전 갱신
+
 ```typescript
 // 만료 5분 전 자동 갱신
 class TokenRefreshScheduler {
   scheduleRefresh(expiryTime: number) {
-    const refreshTime = expiryTime - (5 * 60 * 1000); // 5분 전
+    const refreshTime = expiryTime - 5 * 60 * 1000; // 5분 전
     const delay = refreshTime - Date.now();
 
     if (delay > 0) {
@@ -737,6 +793,7 @@ class TokenRefreshScheduler {
 ```
 
 ### API 호출 최적화
+
 ```typescript
 // 배치 처리로 네트워크 요청 최소화
 class BatchAPIClient {
@@ -765,7 +822,7 @@ class BatchAPIClient {
     const batch = this.queue.splice(0, 10); // 최대 10개
     const response = await fetch('/v1/batch', {
       method: 'POST',
-      body: JSON.stringify(batch)
+      body: JSON.stringify(batch),
     });
 
     // 개별 응답 처리
@@ -774,6 +831,7 @@ class BatchAPIClient {
 ```
 
 ### 원본 SQL 스키마
+
 ```sql
 -- 사용자 테이블
 CREATE TABLE users (
@@ -813,11 +871,13 @@ CREATE TABLE api_usage (
 ## 테스트 계획 (TDD - Test Driven Development)
 
 ### 테스트 전략
+
 **Red-Green-Refactor 사이클**을 따라 모든 기능을 테스트 우선으로 개발합니다.
 
 ### 백엔드 테스트 (Python/FastAPI)
 
 #### 1. 단위 테스트 (pytest + pytest-asyncio)
+
 ```python
 # tests/unit/test_auth_service.py
 class TestAuthService:
@@ -841,6 +901,7 @@ class TestAuthService:
 ```
 
 #### 2. API 엔드포인트 테스트 (TestClient)
+
 ```python
 # tests/api/test_auth_endpoints.py
 class TestAuthEndpoints:
@@ -858,6 +919,7 @@ class TestAuthEndpoints:
 ```
 
 #### 3. 통합 테스트 (pytest + testcontainers)
+
 ```python
 # tests/integration/test_subscription_flow.py
 class TestSubscriptionFlow:
@@ -877,6 +939,7 @@ class TestSubscriptionFlow:
 ### Chrome Extension 테스트 (TypeScript/Jest)
 
 #### 1. 단위 테스트
+
 ```typescript
 // src/services/__tests__/authService.test.ts
 describe('AuthService', () => {
@@ -895,6 +958,7 @@ describe('AuthService', () => {
 ```
 
 #### 2. Background Script 테스트
+
 ```typescript
 // src/entrypoints/background/__tests__/messageHandlers.test.ts
 describe('Message Handlers', () => {
@@ -907,6 +971,7 @@ describe('Message Handlers', () => {
 ```
 
 #### 3. React 컴포넌트 테스트 (React Testing Library)
+
 ```typescript
 // src/components/auth/__tests__/LoginButton.test.tsx
 describe('LoginButton', () => {
@@ -925,6 +990,7 @@ describe('LoginButton', () => {
 ```
 
 ### E2E 테스트 (Playwright)
+
 ```typescript
 // e2e/auth.spec.ts
 test.describe('Authentication Flow', () => {
@@ -940,11 +1006,13 @@ test.describe('Authentication Flow', () => {
 ```
 
 ### 테스트 커버리지 목표
+
 - **단위 테스트**: 90% 이상
 - **통합 테스트**: 핵심 플로우 100%
 - **E2E 테스트**: Critical User Journey 100%
 
 ### CI/CD 파이프라인 테스트
+
 ```yaml
 # .github/workflows/test.yml
 - Backend: pytest --cov=app --cov-report=xml
@@ -953,6 +1021,7 @@ test.describe('Authentication Flow', () => {
 ```
 
 ### 테스트 환경
+
 - **Backend**: Python 3.11+, pytest, testcontainers
 - **Extension**: Jest, React Testing Library
 - **E2E**: Playwright with Chrome
@@ -961,11 +1030,13 @@ test.describe('Authentication Flow', () => {
 ## 위험 및 고려사항
 
 ### 성능
+
 - **토큰 갱신 오버헤드**: Background script에서 효율적 관리
 - **API 프록시 레이턴시**: 엣지 함수 사용으로 최소화
 - **번들 크기 영향**: Auth 라이브러리 최소화 (~50KB 예상)
 
 ### 보안
+
 - [x] JWT 안전한 저장 (Chrome Storage 암호화)
 - [x] PKCE를 사용한 OAuth 2.0 플로우
 - [x] API Rate Limiting
@@ -973,11 +1044,13 @@ test.describe('Authentication Flow', () => {
 - [x] XSS/CSRF 보호
 
 ### 호환성
+
 - **최소 Chrome 버전**: 88+ (기본 Extension API만 사용)
 - **Manifest V3 준수**: Service Worker에서 인증 관리
 - **기존 기능 영향**: API 키 사용자는 영향 없음
 
 ### 프라이버시
+
 - [x] GDPR 준수 (EU)
 - [x] CCPA 준수 (California)
 - [x] 개인정보보호법 준수 (한국)
@@ -987,6 +1060,7 @@ test.describe('Authentication Flow', () => {
 ## 에러 처리 및 복구 전략
 
 ### 인증 에러 처리
+
 ```typescript
 // src/services/errorHandler.ts
 class AuthErrorHandler {
@@ -1014,10 +1088,7 @@ class AuthErrorHandler {
     }
   }
 
-  private async retryWithBackoff(
-    fn: () => Promise<any>,
-    maxRetries: number = 3
-  ): Promise<any> {
+  private async retryWithBackoff(fn: () => Promise<any>, maxRetries: number = 3): Promise<any> {
     let lastError;
 
     for (let i = 0; i < maxRetries; i++) {
@@ -1026,7 +1097,7 @@ class AuthErrorHandler {
       } catch (error) {
         lastError = error;
         const delay = Math.min(1000 * Math.pow(2, i), 10000);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
 
@@ -1036,6 +1107,7 @@ class AuthErrorHandler {
 ```
 
 ### 사용자 경험 최적화
+
 ```typescript
 // 로딩 상태 관리
 interface LoadingState {
@@ -1051,26 +1123,28 @@ const ERROR_MESSAGES = {
     AUTH_REQUIRED: '로그인이 필요합니다',
     TOKEN_EXPIRED: '세션이 만료되었습니다. 다시 로그인해주세요',
     NETWORK_ERROR: '네트워크 연결을 확인해주세요',
-    SERVER_ERROR: '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요'
+    SERVER_ERROR: '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요',
   },
   en: {
     AUTH_REQUIRED: 'Login required',
     TOKEN_EXPIRED: 'Session expired. Please login again',
     NETWORK_ERROR: 'Please check your network connection',
-    SERVER_ERROR: 'Temporary error occurred. Please try again later'
-  }
+    SERVER_ERROR: 'Temporary error occurred. Please try again later',
+  },
 };
 ```
 
 ### 복구 시나리오
 
 **시나리오 1: 토큰 만료**
+
 1. API 호출 시 401 에러 감지
 2. Refresh Token으로 자동 갱신 시도
 3. 성공 시 원래 요청 재시도
 4. 실패 시 재로그인 프롬프트
 
 **시나리오 2: 네트워크 끊김**
+
 1. 네트워크 에러 감지
 2. 오프라인 모드 활성화
 3. 로컬 데이터만으로 동작
@@ -1078,6 +1152,7 @@ const ERROR_MESSAGES = {
 5. 온라인 복귀 시 자동 동기화
 
 **시나리오 3: 서버 장애**
+
 1. 503 에러 또는 타임아웃 감지
 2. 캐시된 데이터로 폴백
 3. 읽기 전용 모드 전환
@@ -1085,6 +1160,7 @@ const ERROR_MESSAGES = {
 5. 백그라운드에서 health check
 
 ### 데이터 일관성 보장
+
 ```typescript
 // 낙관적 업데이트와 롤백
 class OptimisticUpdate {
@@ -1110,6 +1186,7 @@ class OptimisticUpdate {
 ## 법적 준비사항
 
 ### 필수 문서
+
 1. **개인정보처리방침 (Privacy Policy)**
    - 한국어, 영어 필수
    - 주요 언어별 번역 (23개 언어)
@@ -1126,24 +1203,27 @@ class OptimisticUpdate {
    - 로컬 저장 데이터 설명
 
 ### 동의 획득 UI
+
 ```typescript
 // Step0.5: 약관 동의 (신규)
 interface ConsentStep {
-  termsAccepted: boolean;      // 이용약관 (필수)
-  privacyAccepted: boolean;     // 개인정보처리방침 (필수)
-  marketingAccepted?: boolean;  // 마케팅 수신 (선택)
-  consentDate: string;          // ISO 8601
-  consentVersion: string;       // "1.0.0"
+  termsAccepted: boolean; // 이용약관 (필수)
+  privacyAccepted: boolean; // 개인정보처리방침 (필수)
+  marketingAccepted?: boolean; // 마케팅 수신 (선택)
+  consentDate: string; // ISO 8601
+  consentVersion: string; // "1.0.0"
 }
 ```
 
 ### Google OAuth 요구사항
+
 - OAuth 동의 화면 구성 완료
 - 개인정보처리방침 URL 등록
 - 이용약관 URL 등록
 - 최소 권한 요청 (email, profile)
 
 ### 지역별 대응
+
 - **EU**: GDPR 대표자 지정 검토
 - **미국**: CCPA "Do Not Sell" 링크
 - **한국**: 14세 미만 가입 제한
@@ -1155,12 +1235,14 @@ interface ConsentStep {
 ### 단계별 롤아웃
 
 **Phase 0: 인프라 준비 (1주)**
+
 - 백엔드 서버 구축 및 테스트
 - 데이터베이스 설정 및 마이그레이션
 - Google OAuth 설정 및 검증
 - 모니터링 시스템 구축
 
 **Phase 1: Alpha 테스트 (1주)**
+
 - 대상: 내부 팀 5-10명
 - 목표: 핵심 기능 검증
 - 성공 기준:
@@ -1169,6 +1251,7 @@ interface ConsentStep {
   - API 응답 시간 < 200ms
 
 **Phase 2: Beta 테스트 (2주)**
+
 - 대상: 초대된 사용자 100명
 - 배포 방법: Chrome Web Store 비공개 베타
 - 모니터링 지표:
@@ -1178,6 +1261,7 @@ interface ConsentStep {
   - 성능 메트릭
 
 **Phase 3: Canary 배포 (1주)**
+
 - 대상: 전체 사용자의 5%
 - 점진적 확대: 5% → 10% → 25% → 50%
 - 롤백 조건:
@@ -1186,6 +1270,7 @@ interface ConsentStep {
   - 사용자 불만 급증
 
 **Phase 4: 전체 배포**
+
 - 모든 사용자에게 적용
 - 24시간 집중 모니터링
 - 핫픽스 대기 체제
@@ -1193,32 +1278,35 @@ interface ConsentStep {
 ### 모니터링 대시보드
 
 **실시간 지표**:
+
 ```typescript
 interface MonitoringMetrics {
   // 인증 지표
-  authSuccessRate: number;      // 목표: > 99%
-  tokenRefreshRate: number;      // 목표: > 99%
-  loginDuration: number;         // 목표: < 3초
+  authSuccessRate: number; // 목표: > 99%
+  tokenRefreshRate: number; // 목표: > 99%
+  loginDuration: number; // 목표: < 3초
 
   // 성능 지표
-  apiResponseTime: number;       // 목표: < 200ms (p95)
-  errorRate: number;             // 목표: < 0.1%
+  apiResponseTime: number; // 목표: < 200ms (p95)
+  errorRate: number; // 목표: < 0.1%
 
   // 사용자 지표
   dailyActiveUsers: number;
-  conversionRate: number;        // 설치 → 로그인
-  retentionRate: number;         // 7일 재방문율
+  conversionRate: number; // 설치 → 로그인
+  retentionRate: number; // 7일 재방문율
 }
 ```
 
 ### 롤백 계획
 
 **자동 롤백 트리거**:
+
 - 인증 성공률 < 90% (5분 지속)
 - API 에러율 > 5% (5분 지속)
 - 서버 응답 시간 > 1초 (p95, 10분 지속)
 
 **롤백 프로세스**:
+
 ```bash
 # 1. Extension 롤백 (Chrome Web Store)
 - 이전 버전으로 즉시 롤백
@@ -1238,11 +1326,11 @@ interface MonitoringMetrics {
 ### 오프라인 모드 지원
 
 **읽기 전용 모드**:
+
 ```typescript
 class OfflineMode {
   async isOffline(): Promise<boolean> {
-    return !navigator.onLine ||
-           !(await this.checkBackendHealth());
+    return !navigator.onLine || !(await this.checkBackendHealth());
   }
 
   async handleOffline() {
@@ -1254,6 +1342,7 @@ class OfflineMode {
 ```
 
 **Graceful Degradation**:
+
 - Level 1: 서버 지연 시 → 로컬 캐시 우선
 - Level 2: 인증 실패 시 → 읽기 전용 모드
 - Level 3: 완전 오프라인 → 기본 기능만
@@ -1261,6 +1350,7 @@ class OfflineMode {
 ### 핫픽스 프로세스
 
 **긴급 패치 절차**:
+
 1. 문제 감지 (자동 알림 또는 사용자 리포트)
 2. 원인 분석 (최대 30분)
 3. 패치 개발 및 테스트 (최대 2시간)
@@ -1268,11 +1358,13 @@ class OfflineMode {
 5. 전체 배포 또는 롤백 결정
 
 **커뮤니케이션**:
+
 - Status Page 업데이트
 - Extension 내 배너 표시
 - 주요 이슈는 이메일 발송
 
 ### 백로그 (향후 구현)
+
 - Payment System (Stripe)
 - Shizue API 프록시 서비스
 - 무료 크레딧 시스템
@@ -1283,12 +1375,14 @@ class OfflineMode {
 ### 즉시 필수 전환
 
 **업데이트 후 동작 방식**:
+
 - 플로팅 버튼은 정상적으로 표시
 - 플로팅 버튼 클릭 → Side Panel 열림
 - Side Panel에서 온보딩/로그인 화면 표시
 - 로그인 완료 전까지 모든 기능 사용 불가
 
 **온보딩 플로우**:
+
 1. Shizue 소개 화면
 2. Google 로그인 (필수)
 3. API Key 입력 (필수)
@@ -1297,11 +1391,13 @@ class OfflineMode {
 ### 기존 사용자 혜택
 
 **얼리버드 보상** (첫 30일 내 가입):
+
 - 향후 프리미엄 기능 출시 시 특별 할인
 - "Early Adopter" 뱃지
 - 베타 기능 우선 접근권
 
 **계정 전환 시 장점**:
+
 - 설정 자동 백업 및 동기화
 - 사용량 통계 및 비용 분석
 - 여러 기기에서 동일한 환경
@@ -1310,6 +1406,7 @@ class OfflineMode {
 ### 전환 메시지
 
 **필수 전환 메시지**:
+
 ```
 "Shizue 이용 약관이 변경되었습니다.
 계속 사용하려면 로그인이 필요합니다.
@@ -1326,6 +1423,7 @@ class OfflineMode {
 ### 기술적 구현
 
 **필수 전환 로직**:
+
 ```typescript
 // background/index.ts
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
@@ -1349,6 +1447,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 ```
 
 **Side Panel 온보딩 처리**:
+
 ```typescript
 // sidepanel/App.tsx
 function App() {
@@ -1363,13 +1462,14 @@ function App() {
 ```
 
 **플로팅 버튼 동작**:
+
 ```typescript
 // toggle.content/index.tsx
 function handleFloatingButtonClick() {
   // 인증 상태와 관계없이 Side Panel 열기
   chrome.runtime.sendMessage({
     action: MESSAGE_SET_PANEL_OPEN_OR_NOT,
-    open: true
+    open: true,
   });
 }
 ```
@@ -1379,6 +1479,7 @@ function handleFloatingButtonClick() {
 ### Phase 1: 전체 구현 (3-4주)
 
 **Week 1: 백엔드 인프라**
+
 - [x] FastAPI 프로젝트 설정 및 구조화
 - [x] SQLAlchemy 모델 및 마이그레이션 설정
 - [x] 데이터베이스 스키마 구현
@@ -1388,6 +1489,7 @@ function handleFloatingButtonClick() {
 - [x] 비동기 API 엔드포인트 구현
 
 **Week 2: Extension 통합**
+
 - [x] AuthService 구현
 - [x] Background script 인증 로직
 - [x] 로그인 UI 구현
@@ -1396,6 +1498,7 @@ function handleFloatingButtonClick() {
 - [x] 기존 사용자 전환 플로우
 
 **Week 3-4: 마무리 및 테스트**
+
 - [x] 설정 동기화 구현 (API Key 제외)
 - [x] 사용량 통계 시스템
 - [x] 단계별 전환 UI (배너, 모달)
@@ -1406,6 +1509,7 @@ function handleFloatingButtonClick() {
 ## 성공 지표 모니터링
 
 ### 핵심 지표
+
 - **가입 전환율**: Extension 설치 → 계정 생성
 - **프리미엄 전환율**: 무료 → 유료
 - **이탈율**: 주간/월간 활성 사용자
@@ -1413,12 +1517,14 @@ function handleFloatingButtonClick() {
 - **에러율**: 인증 실패, API 에러
 
 ### 모니터링 도구
+
 - Google Analytics 4
 - Sentry (에러 추적)
 - Stripe Dashboard (결제)
 - Custom Dashboard (API 사용량)
 
 ## 참고 사항
+
 - Google Cloud Console에서 OAuth 2.0 클라이언트 ID 생성 필요
   - Authorized redirect URIs: https://shizue.ai/auth/callback
   - Authorized JavaScript origins: https://shizue.ai
@@ -1427,6 +1533,7 @@ function handleFloatingButtonClick() {
 - Stripe 계정 및 제품/가격 설정 필요
 
 ## 체크리스트 (구현 전)
+
 - [x] Google OAuth 앱 생성
 - [x] Stripe 계정 설정
 - [x] Python 3.11+ 환경 설정
@@ -1436,6 +1543,7 @@ function handleFloatingButtonClick() {
 - [x] 환경 변수 설정 (.env 파일)
 
 ## 체크리스트 (구현 후)
+
 - [x] OAuth 플로우 전체 테스트
 - [ ] 결제 플로우 테스트 (Stripe 통합 대기)
 - [x] 기존 사용자 마이그레이션 테스트
@@ -1449,30 +1557,35 @@ function handleFloatingButtonClick() {
 ### 완료된 기능 ✅
 
 #### 1. 인증 시스템
+
 - **Google OAuth 2.0**: 웹 기반 OAuth 플로우 구현
 - **JWT 토큰 관리**: Access/Refresh 토큰 자동 갱신
 - **세션 관리**: Redis 캐싱으로 성능 최적화
 - **Chrome Extension 통합**: postMessage로 토큰 전달
 
 #### 2. 사용자 설정 관리
+
 - **서버 동기화**: localStorage → 서버 마이그레이션 완료
 - **암호화**: API Key AES-256 암호화 저장
 - **오프라인 지원**: 로컬 캐싱 및 동기화 큐
 - **설정 API**: GET/PUT/PATCH/migrate 엔드포인트
 
 #### 3. 모델 매핑 시스템 (신규)
+
 - **추상화된 선택**: Large/Small 모델 크기 선택
 - **자동 업그레이드**: 새 모델 출시 시 자동 적용
 - **공급자 선호도**: OpenAI/Gemini/Anthropic 선택
 - **마이그레이션**: 기존 모델 선택 자동 변환
 
 #### 4. 백엔드 인프라
+
 - **FastAPI**: 비동기 Python 웹 프레임워크
 - **PostgreSQL**: 사용자 데이터 저장
 - **Redis**: 세션 캐싱 및 속도 제한
 - **Docker**: 컨테이너화 및 배포 준비
 
 #### 5. 프론트엔드 통합
+
 - **React Hooks**: useAuth, useSettings 커스텀 훅
 - **서비스 레이어**: AuthService, SettingsService 싱글톤
 - **UI 컴포넌트**: 로그인 버튼, 설정 모달 업데이트

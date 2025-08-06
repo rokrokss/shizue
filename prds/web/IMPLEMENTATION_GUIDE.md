@@ -350,9 +350,7 @@ export const config = {
     "subtitle": "Free open-source Chrome extension that lets you use your own API keys to save costs",
     "cta": {
       "chrome": "Add to Chrome",
-      "edge": "Add to Edge",
-      "firefox": "Coming to Firefox",
-      "safari": "Coming to Safari"
+      "edge": "Add to Edge"
     },
     "badges": {
       "free": "Free",
@@ -458,7 +456,7 @@ export const config = {
       },
       "browsers": {
         "question": "Which browsers are supported?",
-        "answer": "Currently Chrome and Edge. Firefox and Safari support coming soon."
+        "answer": "Chrome and Edge browsers are supported."
       }
     }
   },

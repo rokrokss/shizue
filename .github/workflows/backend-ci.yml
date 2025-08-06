@@ -2,12 +2,12 @@ name: Backend CI/CD
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, feature/account-and-webapp]
     paths:
       - 'api/**'
       - '.github/workflows/backend-ci.yml'
   pull_request:
-    branches: [main, develop]
+    branches: [main, develop, feature/account-and-webapp]
     paths:
       - 'api/**'
       - '.github/workflows/backend-ci.yml'
@@ -28,10 +28,11 @@ jobs:
           POSTGRES_USER: test
           POSTGRES_PASSWORD: test
           POSTGRES_DB: test_db
+          POSTGRES_HOST_AUTH_METHOD: trust # Allow connections without password for CI
         ports:
           - 5432:5432
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U test -d test_db"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -55,14 +56,51 @@ jobs:
           python-version: '3.12'
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v4
+        uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
-          cache-dependency-glob: "**/pyproject.toml"
+          cache-dependency-glob: |
+            api/uv.lock
+            api/pyproject.toml
 
       - name: Install dependencies
         run: |
           uv sync --all-groups
+
+      - name: Check database connectivity
+        env:
+          DATABASE_URL: postgresql+asyncpg://test:test@localhost:5432/test_db
+          REDIS_URL: redis://localhost:6379/1
+        run: |
+          # Wait for PostgreSQL to be ready
+          for i in {1..30}; do
+            if pg_isready -h localhost -p 5432 -U test; then
+              echo "PostgreSQL is ready"
+              break
+            fi
+            echo "Waiting for PostgreSQL... ($i/30)"
+            sleep 1
+          done
+
+          # Test Redis connection
+          redis-cli -h localhost -p 6379 ping || echo "Redis ping failed"
+
+      - name: Initialize database
+        env:
+          DATABASE_URL: postgresql+asyncpg://test:test@localhost:5432/test_db
+          REDIS_URL: redis://localhost:6379/1
+          JWT_SECRET_KEY: test_secret_key_for_ci
+          GOOGLE_CLIENT_ID: test_client_id
+          GOOGLE_CLIENT_SECRET: test_client_secret
+          GOOGLE_REDIRECT_URI: http://localhost:8000/v1/auth/callback/google
+          CHROME_EXTENSION_ID: test_extension_id
+          CHROME_EXTENSION_REDIRECT_URI: chrome-extension://test_extension_id/callback
+          TESTING: true
+        run: |
+          cd accounts-backend
+          # Create tables using the init script
+          uv run python scripts/init_test_db.py
+          cd ..
 
       - name: Run linting
         run: |
@@ -100,9 +138,20 @@ jobs:
           CHROME_EXTENSION_ID: test_extension_id
           CHROME_EXTENSION_REDIRECT_URI: chrome-extension://test_extension_id/callback
           TESTING: true
+          PYTHONPATH: /home/runner/work/shizue/shizue/api/accounts-backend
         run: |
           # Run tests for accounts-backend
-          cd accounts-backend && uv run pytest -v --cov=app --cov-report=xml --cov-report=term-missing
+          cd accounts-backend
+          # Show test environment
+          echo "Python version: $(uv run python --version)"
+          echo "Working directory: $(pwd)"
+          echo "Database URL: ${DATABASE_URL}"
+
+          # Run tests with more detailed output on failure
+          uv run pytest -v --cov=app --cov-report=xml --cov-report=term-missing --tb=short || {
+            echo "Tests failed. Showing last 100 lines of test output:"
+            exit 1
+          }
           cd ..
 
           # Run tests for pdf-translation if they exist
@@ -147,9 +196,12 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Install uv for export
-        uses: astral-sh/setup-uv@v4
+        uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
+          cache-dependency-glob: |
+            api/uv.lock
+            api/pyproject.toml
 
       - name: Export requirements
         run: |

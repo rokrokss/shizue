@@ -1,25 +1,25 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { useTranslations, useLocale } from 'next-intl'
-import { BlogPost } from '@/lib/blog-data'
-import { CalendarDays, Clock, ArrowRight } from 'lucide-react'
-import { OptimizedImage } from '@/components/ui/optimized-image'
+import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
+import { BlogPost } from '@/lib/blog-data';
+import { CalendarDays, Clock, ArrowRight } from 'lucide-react';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 
 interface BlogCardProps {
-  post: BlogPost
+  post: BlogPost;
 }
 
 export function BlogCard({ post }: BlogCardProps) {
-  const t = useTranslations('blog')
-  const locale = useLocale()
+  const t = useTranslations('blog');
+  const locale = useLocale();
 
   // 날짜 포맷팅
   const formattedDate = new Date(post.date).toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
-  })
+    day: 'numeric',
+  });
 
   return (
     <article className="group flex flex-col h-full overflow-hidden rounded-lg border bg-card hover:shadow-lg transition-shadow">
@@ -45,9 +45,7 @@ export function BlogCard({ post }: BlogCardProps) {
           {post.title}
         </h3>
 
-        <p className="text-muted-foreground mb-4 line-clamp-3 flex-1">
-          {post.excerpt}
-        </p>
+        <p className="text-muted-foreground mb-4 line-clamp-3 flex-1">{post.excerpt}</p>
 
         {/* 메타 정보 */}
         <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
@@ -57,7 +55,9 @@ export function BlogCard({ post }: BlogCardProps) {
           </div>
           <div className="flex items-center gap-1">
             <Clock className="h-4 w-4" />
-            <span>{post.readTime} {t('readTime')}</span>
+            <span>
+              {post.readTime} {t('readTime')}
+            </span>
           </div>
         </div>
 
@@ -71,5 +71,5 @@ export function BlogCard({ post }: BlogCardProps) {
         </Link>
       </div>
     </article>
-  )
+  );
 }

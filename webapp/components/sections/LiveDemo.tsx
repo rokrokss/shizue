@@ -1,56 +1,52 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useTranslations } from 'next-intl'
-import { motion } from 'framer-motion'
-import { Play, Pause, RotateCcw } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { motion } from 'framer-motion';
+import { Play, Pause, RotateCcw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 export function LiveDemo() {
-  const t = useTranslations('liveDemo')
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [currentStep, setCurrentStep] = useState(0)
+  const t = useTranslations('liveDemo');
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
 
   const demoSteps = [
     { id: 'original', label: t('steps.original') },
     { id: 'select', label: t('steps.select') },
     { id: 'translate', label: t('steps.translate') },
-    { id: 'result', label: t('steps.result') }
-  ]
+    { id: 'result', label: t('steps.result') },
+  ];
 
   const handlePlayPause = () => {
-    setIsPlaying(!isPlaying)
+    setIsPlaying(!isPlaying);
     if (!isPlaying) {
       // Start animation sequence
-      let step = 0
+      let step = 0;
       const interval = setInterval(() => {
-        step++
-        setCurrentStep(step)
+        step++;
+        setCurrentStep(step);
         if (step >= demoSteps.length - 1) {
-          clearInterval(interval)
-          setIsPlaying(false)
+          clearInterval(interval);
+          setIsPlaying(false);
         }
-      }, 2000)
+      }, 2000);
     }
-  }
+  };
 
   const handleReset = () => {
-    setCurrentStep(0)
-    setIsPlaying(false)
-  }
+    setCurrentStep(0);
+    setIsPlaying(false);
+  };
 
   return (
     <section className="py-16 sm:py-24 bg-muted/30">
       <div className="container">
         <div className="text-center mb-12">
           <Badge className="mb-4">{t('badge')}</Badge>
-          <h2 className="text-3xl font-bold sm:text-4xl mb-4">
-            {t('title')}
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {t('subtitle')}
-          </p>
+          <h2 className="text-3xl font-bold sm:text-4xl mb-4">{t('title')}</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t('subtitle')}</p>
         </div>
 
         <div className="max-w-5xl mx-auto">
@@ -77,16 +73,16 @@ export function LiveDemo() {
                 initial={{ opacity: 1 }}
                 animate={{
                   opacity: currentStep >= 2 ? 0.3 : 1,
-                  scale: currentStep >= 2 ? 0.95 : 1
+                  scale: currentStep >= 2 ? 0.95 : 1,
                 }}
                 transition={{ duration: 0.5 }}
                 className="space-y-4"
               >
                 <h3 className="text-2xl font-bold">Welcome to Our Platform</h3>
                 <p className="text-muted-foreground">
-                  Discover the power of AI-enhanced browsing with real-time translation,
-                  intelligent chat assistance, and seamless multilingual support.
-                  Transform your web experience today.
+                  Discover the power of AI-enhanced browsing with real-time translation, intelligent
+                  chat assistance, and seamless multilingual support. Transform your web experience
+                  today.
                 </p>
               </motion.div>
 
@@ -104,7 +100,7 @@ export function LiveDemo() {
                 <motion.div
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   className="absolute top-4 right-4"
                 >
                   <div className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium shadow-lg">
@@ -123,9 +119,8 @@ export function LiveDemo() {
                 >
                   <h3 className="text-2xl font-bold">우리 플랫폼에 오신 것을 환영합니다</h3>
                   <p className="text-muted-foreground">
-                    실시간 번역, 지능형 채팅 지원 및 원활한 다국어 지원으로
-                    AI 강화 브라우징의 힘을 발견하세요.
-                    오늘 웹 경험을 변화시키세요.
+                    실시간 번역, 지능형 채팅 지원 및 원활한 다국어 지원으로 AI 강화 브라우징의 힘을
+                    발견하세요. 오늘 웹 경험을 변화시키세요.
                   </p>
                 </motion.div>
               )}
@@ -142,9 +137,11 @@ export function LiveDemo() {
                         index <= currentStep ? 'text-foreground' : 'text-muted-foreground'
                       }`}
                     >
-                      <div className={`w-2 h-2 rounded-full ${
-                        index <= currentStep ? 'bg-primary' : 'bg-muted-foreground/30'
-                      }`} />
+                      <div
+                        className={`w-2 h-2 rounded-full ${
+                          index <= currentStep ? 'bg-primary' : 'bg-muted-foreground/30'
+                        }`}
+                      />
                       {step.label}
                     </div>
                   ))}
@@ -160,10 +157,7 @@ export function LiveDemo() {
                   >
                     <RotateCcw className="h-4 w-4" />
                   </Button>
-                  <Button
-                    size="sm"
-                    onClick={handlePlayPause}
-                  >
+                  <Button size="sm" onClick={handlePlayPause}>
                     {isPlaying ? (
                       <>
                         <Pause className="h-4 w-4 mr-1" />
@@ -184,7 +178,11 @@ export function LiveDemo() {
           {/* Try It Now CTA */}
           <div className="text-center mt-8">
             <Button size="lg" asChild>
-              <a href="https://chrome.google.com/webstore/detail/shizue" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://chrome.google.com/webstore/detail/shizue"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 {t('tryNow')}
               </a>
             </Button>
@@ -192,5 +190,5 @@ export function LiveDemo() {
         </div>
       </div>
     </section>
-  )
+  );
 }

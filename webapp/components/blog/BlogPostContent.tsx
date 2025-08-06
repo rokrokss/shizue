@@ -1,25 +1,25 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { useTranslations, useLocale } from 'next-intl'
-import { BlogPost } from '@/lib/blog-data'
-import { CalendarDays, Clock, ArrowLeft, User } from 'lucide-react'
-import { OptimizedImage } from '@/components/ui/optimized-image'
-import { Button } from '@/components/ui/button'
+import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
+import { BlogPost } from '@/lib/blog-data';
+import { CalendarDays, Clock, ArrowLeft, User } from 'lucide-react';
+import { OptimizedImage } from '@/components/ui/optimized-image';
+import { Button } from '@/components/ui/button';
 
 interface BlogPostContentProps {
-  post: BlogPost
+  post: BlogPost;
 }
 
 export function BlogPostContent({ post }: BlogPostContentProps) {
-  const t = useTranslations('blog')
-  const locale = useLocale()
+  const t = useTranslations('blog');
+  const locale = useLocale();
 
   const formattedDate = new Date(post.date).toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
-  })
+    day: 'numeric',
+  });
 
   return (
     <article className="container mx-auto px-4 py-16 max-w-4xl">
@@ -52,7 +52,9 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
           </div>
           <div className="flex items-center gap-1">
             <Clock className="h-4 w-4" />
-            <span>{post.readTime} {t('readTime')}</span>
+            <span>
+              {post.readTime} {t('readTime')}
+            </span>
           </div>
         </div>
       </header>
@@ -91,7 +93,7 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
         </div>
       </div>
     </article>
-  )
+  );
 }
 
 // 마크다운 스타일의 콘텐츠를 간단한 HTML로 변환
@@ -111,5 +113,5 @@ function formatContent(content: string): string {
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/`(.+?)`/g, '<code>$1</code>')
     .replace(/^(?!<[h|p|u|o|l])/gm, '<p>')
-    .replace(/(?<![>])$/gm, '</p>')
+    .replace(/(?<![>])$/gm, '</p>');
 }

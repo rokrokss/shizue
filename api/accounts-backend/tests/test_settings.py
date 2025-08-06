@@ -8,7 +8,7 @@ from httpx import AsyncClient
 @pytest.mark.asyncio
 async def test_get_settings_unauthenticated(client: AsyncClient):
     """Test getting settings without authentication."""
-    response = await client.get("/v1/settings")
+    response = await client.get("/api/v1/settings")
     assert response.status_code == 401
 
 
@@ -16,7 +16,7 @@ async def test_get_settings_unauthenticated(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_get_settings_authenticated(client: AsyncClient, auth_headers: dict):
     """Test getting settings with authentication."""
-    response = await client.get("/v1/settings", headers=auth_headers)
+    response = await client.get("/api/v1/settings", headers=auth_headers)
     assert response.status_code == 200
 
     data = response.json()
@@ -57,7 +57,7 @@ async def test_update_settings(client: AsyncClient, auth_headers: dict):
         }
     }
 
-    response = await client.put("/v1/settings", json=settings, headers=auth_headers)
+    response = await client.put("/api/v1/settings", json=settings, headers=auth_headers)
     assert response.status_code == 200
 
     data = response.json()
@@ -84,7 +84,7 @@ async def test_patch_settings(client: AsyncClient, auth_headers: dict):
         }
     }
 
-    response = await client.patch("/v1/settings", json=update, headers=auth_headers)
+    response = await client.patch("/api/v1/settings", json=update, headers=auth_headers)
     assert response.status_code == 200
 
     data = response.json()
@@ -101,7 +101,7 @@ async def test_update_api_key(client: AsyncClient, auth_headers: dict):
         "key": "sk-proj-abcdef123456"
     }
 
-    response = await client.post("/v1/settings/api-keys", json=request, headers=auth_headers)
+    response = await client.post("/api/v1/settings/api-keys", json=request, headers=auth_headers)
     assert response.status_code == 200
 
     data = response.json()
@@ -119,7 +119,7 @@ async def test_update_invalid_api_key_provider(client: AsyncClient, auth_headers
         "key": "test-key"
     }
 
-    response = await client.post("/v1/settings/api-keys", json=request, headers=auth_headers)
+    response = await client.post("/api/v1/settings/api-keys", json=request, headers=auth_headers)
     assert response.status_code == 400
     assert "Invalid provider" in response.json()["detail"]
 
@@ -133,15 +133,15 @@ async def test_delete_api_key(client: AsyncClient, auth_headers: dict):
         "provider": "gemini",
         "key": "AIza-test-key"
     }
-    await client.post("/v1/settings/api-keys", json=request, headers=auth_headers)
+    await client.post("/api/v1/settings/api-keys", json=request, headers=auth_headers)
 
     # Then delete it
-    response = await client.delete("/v1/settings/api-keys/gemini", headers=auth_headers)
+    response = await client.delete("/api/v1/settings/api-keys/gemini", headers=auth_headers)
     assert response.status_code == 200
     assert "deleted successfully" in response.json()["message"]
 
     # Verify it's deleted
-    response = await client.get("/v1/settings", headers=auth_headers)
+    response = await client.get("/api/v1/settings", headers=auth_headers)
     data = response.json()
     assert data["apiKeys"]["gemini"] is None
     assert data["apiKeys"]["geminiValidated"] == False
@@ -165,7 +165,7 @@ async def test_migrate_settings(client: AsyncClient, auth_headers: dict):
         "PDF_TRANSLATE_NO_DUAL": True
     }
 
-    response = await client.post("/v1/settings/migrate", json=local_settings, headers=auth_headers)
+    response = await client.post("/api/v1/settings/migrate", json=local_settings, headers=auth_headers)
     assert response.status_code == 200
 
     data = response.json()

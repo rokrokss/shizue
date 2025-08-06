@@ -2,20 +2,28 @@ name: Chrome Extension CI/CD
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, feature/account-and-webapp]
     paths:
       - 'src/**'
       - 'package.json'
       - 'pnpm-lock.yaml'
       - 'wxt.config.ts'
+      - 'tsconfig.json'
+      - 'tailwind.config.js'
+      - 'postcss.config.js'
+      - 'vitest.config.ts'
       - '.github/workflows/extension-ci.yml'
   pull_request:
-    branches: [main, develop]
+    branches: [main, develop, feature/account-and-webapp]
     paths:
       - 'src/**'
       - 'package.json'
       - 'pnpm-lock.yaml'
       - 'wxt.config.ts'
+      - 'tsconfig.json'
+      - 'tailwind.config.js'
+      - 'postcss.config.js'
+      - 'vitest.config.ts'
       - '.github/workflows/extension-ci.yml'
 
 jobs:
@@ -25,13 +33,14 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [20.x]
+        browser: [chrome]
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
           version: 9
 
@@ -45,29 +54,202 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run type checking
-        run: pnpm compile
+        run: |
+          # Check TypeScript for extension code only
+          pnpm exec tsc --noEmit
 
       - name: Check code formatting
-        run: pnpm format:check
+        run: |
+          pnpm format:check || {
+            echo "Code formatting issues found. Run 'pnpm format' locally to fix."
+            exit 1
+          }
 
       - name: Run linting
-        run: pnpm lint
+        run: |
+          pnpm lint || {
+            echo "Linting issues found. Run 'pnpm lint:fix' locally to fix."
+            exit 1
+          }
 
-      - name: Run tests
-        run: pnpm test -- --run
+      - name: Run unit tests with coverage
+        run: |
+          pnpm test:coverage || {
+            echo "Tests failed. Please check the test output above."
+            exit 1
+          }
 
-      - name: Build extension
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage/lcov.info
+          flags: extension
+          name: extension-coverage-node-${{ matrix.node-version }}
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Build extension for ${{ matrix.browser }}
+        run: |
+          pnpm build
+
+      - name: Validate manifest
+        run: |
+          BROWSER="${{ matrix.browser }}"
+          MANIFEST_PATH="dist/chrome-mv3/manifest.json"
+
+          if [ ! -f "$MANIFEST_PATH" ]; then
+            echo "Build failed: manifest.json not found at $MANIFEST_PATH"
+            exit 1
+          fi
+
+          # Validate manifest structure
+          node -e "
+            const manifest = require('./$MANIFEST_PATH');
+            console.log('Extension name:', manifest.name);
+            console.log('Extension version:', manifest.version);
+            console.log('Manifest version:', manifest.manifest_version);
+
+            // Basic validation
+            if (!manifest.name || !manifest.version) {
+              console.error('Invalid manifest: missing name or version');
+              process.exit(1);
+            }
+
+            if (manifest.manifest_version !== 3 && manifest.manifest_version !== 2) {
+              console.error('Invalid manifest version:', manifest.manifest_version);
+              process.exit(1);
+            }
+          "
+
+      - name: Check extension size
+        run: |
+          BROWSER="${{ matrix.browser }}"
+          DIST_DIR="dist/chrome-mv3"
+
+          SIZE=$(du -sh $DIST_DIR | cut -f1)
+          echo "Extension size for $BROWSER: $SIZE"
+
+          # Check if size is reasonable (less than 10MB)
+          SIZE_MB=$(du -sm $DIST_DIR | cut -f1)
+          if [ "$SIZE_MB" -gt 10 ]; then
+            echo "Warning: Extension size is larger than 10MB"
+            echo "Consider optimizing assets and removing unused dependencies"
+          fi
+
+  bundle-analysis:
+    name: Bundle Analysis
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build with stats
         run: pnpm build
 
-      - name: Check build output
+      - name: Analyze bundle
         run: |
-          if [ ! -d "dist/chrome-mv3" ]; then
-            echo "Build failed: dist/chrome-mv3 directory not found"
-            exit 1
+          if [ -f "dist/stats.html" ]; then
+            echo "Bundle analysis report generated"
+            # Extract size information
+            node -e "
+              const fs = require('fs');
+              const path = require('path');
+
+              function getDirectorySize(dir) {
+                let size = 0;
+                const files = fs.readdirSync(dir);
+                for (const file of files) {
+                  const filePath = path.join(dir, file);
+                  const stat = fs.statSync(filePath);
+                  if (stat.isDirectory()) {
+                    size += getDirectorySize(filePath);
+                  } else {
+                    size += stat.size;
+                  }
+                }
+                return size;
+              }
+
+              const chromeSize = getDirectorySize('dist/chrome-mv3');
+              console.log('Chrome extension size:', (chromeSize / 1024 / 1024).toFixed(2), 'MB');
+
+              // Check for large files
+              function findLargeFiles(dir, threshold = 500 * 1024) {
+                const largeFiles = [];
+                const files = fs.readdirSync(dir);
+                for (const file of files) {
+                  const filePath = path.join(dir, file);
+                  const stat = fs.statSync(filePath);
+                  if (stat.isFile() && stat.size > threshold) {
+                    largeFiles.push({
+                      path: filePath,
+                      size: (stat.size / 1024).toFixed(2) + ' KB'
+                    });
+                  } else if (stat.isDirectory()) {
+                    largeFiles.push(...findLargeFiles(filePath, threshold));
+                  }
+                }
+                return largeFiles;
+              }
+
+              const largeFiles = findLargeFiles('dist/chrome-mv3');
+              if (largeFiles.length > 0) {
+                console.log('\\nLarge files detected (>500KB):');
+                largeFiles.forEach(f => console.log('  -', f.path, ':', f.size));
+              }
+            "
           fi
 
-          # Check manifest
-          if [ ! -f "dist/chrome-mv3/manifest.json" ]; then
-            echo "Build failed: manifest.json not found"
-            exit 1
-          fi
+      - name: Upload bundle analysis
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-analysis
+          path: dist/stats.html
+          retention-days: 7
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run npm audit
+        run: pnpm audit --audit-level=moderate || true
+
+      - name: Check for known vulnerabilities
+        run: |
+          npx better-npm-audit audit --level moderate || true
+
+      - name: License check
+        run: |
+          npx license-checker --production --summary || true

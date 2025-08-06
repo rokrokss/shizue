@@ -1,5 +1,6 @@
+import json
 from datetime import datetime
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from pydantic import UUID4, BaseModel, ConfigDict, Field
 
@@ -19,7 +20,36 @@ class UsageRecord(BaseModel):
     latency_ms: Optional[int] = Field(None, description="Response latency in milliseconds")
     status_code: int = Field(..., description="HTTP status code")
     error_message: Optional[str] = Field(None, description="Error message if failed")
+    metadata: Optional[dict] = Field(None, description="Request metadata")
     created_at: datetime
+
+    @classmethod
+    def model_validate(cls, obj: Any, *, from_attributes: bool = True) -> "UsageRecord":
+        """Custom model_validate to handle request_metadata -> metadata conversion"""
+        data = {
+            "id": obj.id,
+            "user_id": obj.user_id,
+            "model": obj.model,
+            "endpoint": obj.endpoint,
+            "tokens_input": obj.tokens_input,
+            "tokens_output": obj.tokens_output,
+            "tokens_total": obj.tokens_total,
+            "latency_ms": obj.latency_ms,
+            "status_code": obj.status_code,
+            "error_message": obj.error_message,
+            "created_at": obj.created_at,
+        }
+
+        # Convert request_metadata JSON string to metadata dict
+        if obj.request_metadata:
+            try:
+                data["metadata"] = json.loads(obj.request_metadata)
+            except (json.JSONDecodeError, TypeError):
+                data["metadata"] = None
+        else:
+            data["metadata"] = None
+
+        return cls(**data)
 
 
 class UsageCreate(BaseModel):

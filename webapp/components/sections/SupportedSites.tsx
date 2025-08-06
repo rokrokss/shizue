@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import { useTranslations } from 'next-intl'
-import { motion } from 'framer-motion'
-import { Badge } from '@/components/ui/badge'
+import { useTranslations } from 'next-intl';
+import { motion } from 'framer-motion';
+import { Badge } from '@/components/ui/badge';
 
 export function SupportedSites() {
-  const t = useTranslations('supportedSites')
+  const t = useTranslations('supportedSites');
 
   // Major websites that would benefit from translation
   const sites = [
@@ -20,20 +20,16 @@ export function SupportedSites() {
     { name: 'BBC', logo: '📰' },
     { name: 'CNN', logo: '📺' },
     { name: 'Amazon', logo: '🛒' },
-    { name: 'LinkedIn', logo: '💼' }
-  ]
+    { name: 'LinkedIn', logo: '💼' },
+  ];
 
   return (
     <section className="py-16 sm:py-24 bg-muted/30">
       <div className="container">
         <div className="text-center mb-12">
           <Badge className="mb-4">{t('badge')}</Badge>
-          <h2 className="text-3xl font-bold sm:text-4xl mb-4">
-            {t('title')}
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {t('subtitle')}
-          </p>
+          <h2 className="text-3xl font-bold sm:text-4xl mb-4">{t('title')}</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t('subtitle')}</p>
         </div>
 
         <div className="max-w-4xl mx-auto">
@@ -61,5 +57,5 @@ export function SupportedSites() {
         </div>
       </div>
     </section>
-  )
+  );
 }

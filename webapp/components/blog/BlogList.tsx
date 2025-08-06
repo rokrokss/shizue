@@ -1,27 +1,28 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useTranslations } from 'next-intl'
-import { BlogCard } from './BlogCard'
-import { blogPosts } from '@/lib/blog-data'
+import { useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { BlogCard } from './BlogCard';
+import { blogPosts } from '@/lib/blog-data';
 
 export function BlogList() {
-  const t = useTranslations('blog')
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const t = useTranslations('blog');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   // 카테고리 추출
-  const categories = ['all', ...new Set(blogPosts.map(post => post.category))]
+  const categories = ['all', ...new Set(blogPosts.map((post) => post.category))];
 
   // 필터링된 포스트
-  const filteredPosts = selectedCategory === 'all'
-    ? blogPosts
-    : blogPosts.filter(post => post.category === selectedCategory)
+  const filteredPosts =
+    selectedCategory === 'all'
+      ? blogPosts
+      : blogPosts.filter((post) => post.category === selectedCategory);
 
   return (
     <div>
       {/* 카테고리 필터 */}
       <div className="flex flex-wrap justify-center gap-2 mb-12">
-        {categories.map(category => (
+        {categories.map((category) => (
           <button
             key={category}
             onClick={() => setSelectedCategory(category)}
@@ -38,7 +39,7 @@ export function BlogList() {
 
       {/* 블로그 포스트 그리드 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {filteredPosts.map(post => (
+        {filteredPosts.map((post) => (
           <BlogCard key={post.id} post={post} />
         ))}
       </div>
@@ -50,5 +51,5 @@ export function BlogList() {
         </div>
       )}
     </div>
-  )
+  );
 }

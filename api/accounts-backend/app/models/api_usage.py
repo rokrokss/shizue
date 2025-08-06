@@ -45,6 +45,15 @@ class APIUsage(Base):
         return f"<APIUsage user_id={self.user_id} model={self.model}>"
 
     def to_dict(self):
+        import json
+
+        metadata = None
+        if self.request_metadata:
+            try:
+                metadata = json.loads(self.request_metadata)
+            except (json.JSONDecodeError, TypeError):
+                metadata = None
+
         return {
             "id": str(self.id),
             "user_id": str(self.user_id),
@@ -56,5 +65,6 @@ class APIUsage(Base):
             "latency_ms": self.latency_ms,
             "status_code": self.status_code,
             "error_message": self.error_message,
+            "metadata": metadata,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }

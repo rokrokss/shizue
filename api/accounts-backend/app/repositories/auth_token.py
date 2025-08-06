@@ -174,7 +174,7 @@ class AuthTokenRepository(BaseRepository[AuthToken, TokenCreate, TokenUpdate]):
                 await self.revoke_token(oldest.id)
 
         # Create new token
-        token_dict = token_data.dict()
+        token_dict = token_data.model_dump() if hasattr(token_data, "model_dump") else token_data.dict()
         token_dict["user_id"] = user_id
         return await self.create(TokenCreate(**token_dict))
 

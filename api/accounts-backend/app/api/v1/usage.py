@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
+from app.core.redis import cache
 from app.models.api_usage import APIUsage
 from app.models.user import User
 from app.schemas.usage import ModelUsage, UsageCreate, UsageRecord, UsageSummary
@@ -44,11 +45,9 @@ async def create_usage_record(
         await db.refresh(usage_record)
 
         # Invalidate user stats cache
-        from app.core.redis import cache
-
         await cache.delete_user_stats(str(current_user.id))
 
-        return UsageRecord.from_orm(usage_record)
+        return UsageRecord.model_validate(usage_record)
 
     except Exception as e:
         logger.error(f"Failed to create usage record: {e}")
@@ -93,7 +92,7 @@ async def get_usage_history(
         result = await db.execute(query)
         usage_records = result.scalars().all()
 
-        return [UsageRecord.from_orm(record) for record in usage_records]
+        return [UsageRecord.model_validate(record) for record in usage_records]
 
     except Exception as e:
         logger.error(f"Failed to get usage history: {e}")

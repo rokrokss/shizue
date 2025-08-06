@@ -1,36 +1,32 @@
-'use client'
+'use client';
 
-import { useTranslations } from 'next-intl'
-import { memo, useMemo } from 'react'
-import { motion } from 'framer-motion'
-import { Button } from '@/components/ui/button'
-import { Chrome, Github, MessageSquare, FileText } from 'lucide-react'
-import Link from 'next/link'
+import { useTranslations } from 'next-intl';
+import { memo, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Chrome, Github, MessageSquare, FileText } from 'lucide-react';
+import Link from 'next/link';
 
 export const FinalCTA = memo(() => {
-  const t = useTranslations('finalCta')
+  const t = useTranslations('finalCta');
 
-  const motionVariants = useMemo(() => ({
-    initial: { opacity: 0, y: 20 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    transition: { duration: 0.5 }
-  }), [])
+  const motionVariants = useMemo(
+    () => ({
+      initial: { opacity: 0, y: 20 },
+      whileInView: { opacity: 1, y: 0 },
+      viewport: { once: true },
+      transition: { duration: 0.5 },
+    }),
+    []
+  );
 
   return (
     <section className="relative overflow-hidden py-20 sm:py-32">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary/10" />
       <div className="container relative z-10">
-        <motion.div
-          {...motionVariants}
-          className="mx-auto max-w-3xl text-center"
-        >
-          <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-5xl">
-            {t('title')}
-          </h2>
-          <p className="mb-8 text-lg text-muted-foreground sm:text-xl">
-            {t('subtitle')}
-          </p>
+        <motion.div {...motionVariants} className="mx-auto max-w-3xl text-center">
+          <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-5xl">{t('title')}</h2>
+          <p className="mb-8 text-lg text-muted-foreground sm:text-xl">{t('subtitle')}</p>
 
           <Button size="lg" className="mb-8" asChild>
             <a
@@ -74,7 +70,7 @@ export const FinalCTA = memo(() => {
         </motion.div>
       </div>
     </section>
-  )
-})
+  );
+});
 
-FinalCTA.displayName = 'FinalCTA'
+FinalCTA.displayName = 'FinalCTA';

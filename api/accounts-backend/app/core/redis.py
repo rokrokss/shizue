@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from typing import Any, Optional
 
 import redis.asyncio as redis
@@ -8,8 +9,16 @@ from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
-# Create Redis client
-redis_client = redis.from_url(settings.REDIS_URL, encoding="utf-8", decode_responses=True)
+# Create Redis client with error handling for CI environment
+try:
+    redis_client = redis.from_url(settings.REDIS_URL, encoding="utf-8", decode_responses=True)
+except Exception as e:
+    logger.warning(f"Failed to create Redis client: {e}")
+    # In testing mode, create a dummy client
+    if os.getenv("TESTING"):
+        redis_client = None
+    else:
+        raise
 
 
 class RedisCache:
@@ -20,17 +29,22 @@ class RedisCache:
 
     async def get(self, key: str) -> Optional[Any]:
         """Get value from cache"""
+        if not self.client:
+            return None
         try:
             value = await self.client.get(key)
             if value:
                 return json.loads(value)
             return None
         except Exception as e:
-            logger.error(f"Redis get error for key {key}: {e}")
+            if not os.getenv("TESTING"):
+                logger.error(f"Redis get error for key {key}: {e}")
             return None
 
     async def set(self, key: str, value: Any, ttl: Optional[int] = None) -> bool:
         """Set value in cache with optional TTL"""
+        if not self.client:
+            return False
         try:
             serialized = json.dumps(value)
             if ttl:
@@ -39,7 +53,8 @@ class RedisCache:
                 await self.client.set(key, serialized)
             return True
         except Exception as e:
-            logger.error(f"Redis set error for key {key}: {e}")
+            if not os.getenv("TESTING"):
+                logger.error(f"Redis set error for key {key}: {e}")
             return False
 
     async def delete(self, key: str) -> bool:

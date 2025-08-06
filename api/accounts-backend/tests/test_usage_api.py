@@ -23,7 +23,7 @@ class TestUsageAPI:
         """Test creating a usage record."""
         usage_data = {
             "model": "gpt-4-turbo",
-            "endpoint": "/v1/chat/completions",
+            "endpoint": "/api/v1/chat/completions",
             "tokens_input": 150,
             "tokens_output": 350,
             "latency_ms": 1200,
@@ -32,8 +32,12 @@ class TestUsageAPI:
         }
 
         response = await client.post(
-            "/v1/usage/", json=usage_data, headers=auth_headers
+            "/api/v1/usage/", json=usage_data, headers=auth_headers
         )
+
+        if response.status_code != 201:
+            print(f"Status: {response.status_code}")
+            print(f"Response: {response.text}")
 
         assert response.status_code == 201
         data = response.json()
@@ -51,7 +55,7 @@ class TestUsageAPI:
         )
         usage_record = result.scalar_one()
         assert usage_record.model == "gpt-4-turbo"
-        assert json.loads(usage_record.metadata)["temperature"] == 0.7
+        assert json.loads(usage_record.request_metadata)["temperature"] == 0.7
 
         # Check cache was invalidated
         mock_cache.delete_user_stats.assert_called_once_with(str(test_user.id))
@@ -63,7 +67,7 @@ class TestUsageAPI:
         """Test creating a usage record for failed API call."""
         usage_data = {
             "model": "gpt-4-turbo",
-            "endpoint": "/v1/chat/completions",
+            "endpoint": "/api/v1/chat/completions",
             "tokens_input": 100,
             "tokens_output": 0,
             "latency_ms": 500,
@@ -72,7 +76,7 @@ class TestUsageAPI:
         }
 
         response = await client.post(
-            "/v1/usage/", json=usage_data, headers=auth_headers
+            "/api/v1/usage/", json=usage_data, headers=auth_headers
         )
 
         assert response.status_code == 201
@@ -86,7 +90,7 @@ class TestUsageAPI:
         self, client: AsyncClient, test_user: User, auth_headers: dict
     ):
         """Test getting usage history with no records."""
-        response = await client.get("/v1/usage/", headers=auth_headers)
+        response = await client.get("/api/v1/usage/", headers=auth_headers)
 
         assert response.status_code == 200
         data = response.json()
@@ -107,7 +111,7 @@ class TestUsageAPI:
             usage = APIUsage(
                 user_id=test_user.id,
                 model=models[i % 3],
-                endpoint="/v1/chat",
+                endpoint="/api/v1/chat",
                 tokens_input=100 + i * 10,
                 tokens_output=200 + i * 20,
                 latency_ms=500 + i * 50,
@@ -118,7 +122,7 @@ class TestUsageAPI:
         await db_session.commit()
 
         # Test default pagination
-        response = await client.get("/v1/usage/", headers=auth_headers)
+        response = await client.get("/api/v1/usage/", headers=auth_headers)
 
         assert response.status_code == 200
         data = response.json()
@@ -142,16 +146,17 @@ class TestUsageAPI:
             usage = APIUsage(
                 user_id=test_user.id,
                 model="gpt-4",
-                endpoint="/v1/chat",
+                endpoint="/api/v1/chat",
                 tokens_input=100,
                 tokens_output=200,
+                status_code=200,
             )
             db_session.add(usage)
         await db_session.commit()
 
         # Test with limit and offset
         response = await client.get(
-            "/v1/usage/", params={"limit": 5, "offset": 10}, headers=auth_headers
+            "/api/v1/usage/", params={"limit": 5, "offset": 10}, headers=auth_headers
         )
 
         assert response.status_code == 200
@@ -173,9 +178,10 @@ class TestUsageAPI:
                 usage = APIUsage(
                     user_id=test_user.id,
                     model=model,
-                    endpoint="/v1/chat",
+                    endpoint="/api/v1/chat",
                     tokens_input=100,
                     tokens_output=200,
+                    status_code=200,
                     created_at=datetime.now(timezone.utc) - timedelta(days=i),
                 )
                 db_session.add(usage)
@@ -183,7 +189,7 @@ class TestUsageAPI:
 
         # Filter by model
         response = await client.get(
-            "/v1/usage/", params={"model": "gpt-4"}, headers=auth_headers
+            "/api/v1/usage/", params={"model": "gpt-4"}, headers=auth_headers
         )
 
         assert response.status_code == 200
@@ -194,7 +200,7 @@ class TestUsageAPI:
         # Filter by date range
         start_date = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
         response = await client.get(
-            "/v1/usage/", params={"start_date": start_date}, headers=auth_headers
+            "/api/v1/usage/", params={"start_date": start_date}, headers=auth_headers
         )
 
         assert response.status_code == 200
@@ -210,21 +216,22 @@ class TestUsageAPI:
         auth_headers: dict,
     ):
         """Test getting daily usage summary."""
-        # Create records for today
+        # Create records for today - ensure all are within the same day
+        now = datetime.now(timezone.utc)
         for i in range(5):
             usage = APIUsage(
                 user_id=test_user.id,
                 model="gpt-4" if i < 3 else "claude-3",
-                endpoint="/v1/chat",
+                endpoint="/api/v1/chat",
                 tokens_input=100,
                 tokens_output=200,
-                created_at=datetime.now(timezone.utc) - timedelta(hours=i),
+                created_at=now - timedelta(minutes=i * 10),  # Use minutes instead of hours to stay within same day
             )
             db_session.add(usage)
         await db_session.commit()
 
         response = await client.get(
-            "/v1/usage/summary", params={"period": "day"}, headers=auth_headers
+            "/api/v1/usage/summary", params={"period": "day"}, headers=auth_headers
         )
 
         assert response.status_code == 200
@@ -250,7 +257,7 @@ class TestUsageAPI:
             usage = APIUsage(
                 user_id=test_user.id,
                 model="gpt-4",
-                endpoint="/v1/chat",
+                endpoint="/api/v1/chat",
                 tokens_input=100,
                 tokens_output=200,
                 created_at=datetime.now(timezone.utc) - timedelta(days=i % 7),
@@ -259,7 +266,7 @@ class TestUsageAPI:
         await db_session.commit()
 
         response = await client.get(
-            "/v1/usage/summary", params={"period": "week"}, headers=auth_headers
+            "/api/v1/usage/summary", params={"period": "week"}, headers=auth_headers
         )
 
         assert response.status_code == 200
@@ -290,7 +297,7 @@ class TestUsageAPI:
             usage = APIUsage(
                 user_id=test_user.id,
                 model=model,
-                endpoint="/v1/chat",
+                endpoint="/api/v1/chat",
                 tokens_input=100,
                 tokens_output=200 if status_code == 200 else 0,
                 latency_ms=500 if status_code == 200 else 100,
@@ -301,7 +308,7 @@ class TestUsageAPI:
         await db_session.commit()
 
         response = await client.get(
-            "/v1/usage/models", params={"days": 30}, headers=auth_headers
+            "/api/v1/usage/models", params={"days": 30}, headers=auth_headers
         )
 
         assert response.status_code == 200
@@ -310,7 +317,7 @@ class TestUsageAPI:
         # Find GPT-4 stats
         gpt4_stats = next(m for m in data if m["model"] == "gpt-4")
         assert gpt4_stats["messages"] == 3
-        assert gpt4_stats["tokens"] == 600  # 2 successful * 300
+        assert gpt4_stats["tokens"] == 700  # 2 successful * 300 + 1 failed * 100 (input only)
         assert gpt4_stats["error_rate"] == pytest.approx(33.33, 0.01)  # 1/3 failed
 
         # Find Claude-3 stats

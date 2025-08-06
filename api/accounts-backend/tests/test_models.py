@@ -130,7 +130,7 @@ class TestAPIUsageModel:
         usage = APIUsage(
             user_id=user_id,
             model="gpt-4",
-            endpoint="/v1/chat",
+            endpoint="/api/v1/chat",
             tokens_input=100,
             tokens_output=200,
             latency_ms=500,
@@ -149,7 +149,7 @@ class TestAPIUsageModel:
         usage = APIUsage(
             user_id=uuid.uuid4(),
             model="gpt-4",
-            endpoint="/v1/chat",
+            endpoint="/api/v1/chat",
             tokens_input=150,
             tokens_output=350,
         )
@@ -172,7 +172,7 @@ class TestAPIUsageModel:
             id=usage_id,
             user_id=user_id,
             model="gpt-4",
-            endpoint="/v1/chat",
+            endpoint="/api/v1/chat",
             tokens_input=100,
             tokens_output=200,
             latency_ms=500,
@@ -194,5 +194,5 @@ class TestAPIUsageModel:
     def test_api_usage_repr(self):
         """Test API usage string representation."""
         user_id = uuid.uuid4()
-        usage = APIUsage(user_id=user_id, model="gpt-4", endpoint="/v1/chat")
+        usage = APIUsage(user_id=user_id, model="gpt-4", endpoint="/api/v1/chat")
         assert repr(usage) == f"<APIUsage user_id={user_id} model=gpt-4>"

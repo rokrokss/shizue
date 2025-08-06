@@ -18,9 +18,7 @@
     "imageAlt": "AI 채팅, 번역 기능, 이중 언어 웹 브라우징 기능을 보여주는 Shizue 브라우저 확장 프로그램 인터페이스",
     "cta": {
       "chrome": "Chrome에 추가",
-      "edge": "Edge에 추가",
-      "firefox": "Firefox 지원 예정",
-      "safari": "Safari 지원 예정"
+      "edge": "Edge에 추가"
     },
     "badges": {
       "free": "무료",
@@ -152,7 +150,7 @@
       },
       "browsers": {
         "question": "어떤 브라우저를 지원하나요?",
-        "answer": "현재 Chrome과 Edge를 지원합니다. Firefox와 Safari 지원은 곧 제공될 예정입니다."
+        "answer": "Chrome과 Edge 브라우저를 지원합니다."
       }
     }
   },

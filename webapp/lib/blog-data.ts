@@ -1,17 +1,17 @@
 export interface BlogPost {
-  id: string
-  slug: string
-  title: string
-  excerpt: string
-  content: string
-  category: string
-  thumbnail: string
-  date: string
-  readTime: number
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  thumbnail: string;
+  date: string;
+  readTime: number;
   author: {
-    name: string
-    avatar: string
-  }
+    name: string;
+    avatar: string;
+  };
 }
 
 // 샘플 블로그 포스트 데이터
@@ -20,7 +20,8 @@ export const blogPosts: BlogPost[] = [
     id: '1',
     slug: 'introducing-shizue-ai-browser-extension',
     title: 'Introducing Shizue: Your AI-Powered Browser Companion',
-    excerpt: 'Discover how Shizue transforms your browsing experience with real-time translation, AI chat, and smart features that respect your privacy.',
+    excerpt:
+      'Discover how Shizue transforms your browsing experience with real-time translation, AI chat, and smart features that respect your privacy.',
     content: `
 # Introducing Shizue: Your AI-Powered Browser Companion
 
@@ -61,14 +62,15 @@ Join thousands of users who are already enhancing their browsing experience with
     readTime: 5,
     author: {
       name: 'Shizue Team',
-      avatar: '/placeholder.jpg'
-    }
+      avatar: '/placeholder.jpg',
+    },
   },
   {
     id: '2',
     slug: 'youtube-caption-translation-guide',
     title: 'How to Translate YouTube Captions in Real-Time with Shizue',
-    excerpt: 'Learn how to use Shizue\'s powerful caption translation feature to watch YouTube videos in any language.',
+    excerpt:
+      "Learn how to use Shizue's powerful caption translation feature to watch YouTube videos in any language.",
     content: `
 # How to Translate YouTube Captions in Real-Time with Shizue
 
@@ -102,14 +104,15 @@ Start exploring global content without language barriers today!
     readTime: 3,
     author: {
       name: 'Shizue Team',
-      avatar: '/placeholder.jpg'
-    }
+      avatar: '/placeholder.jpg',
+    },
   },
   {
     id: '3',
     slug: 'pdf-translation-preserving-layout',
     title: 'Translating PDFs While Preserving Original Layout',
-    excerpt: 'Shizue\'s PDF translation feature maintains document structure and formatting for professional results.',
+    excerpt:
+      "Shizue's PDF translation feature maintains document structure and formatting for professional results.",
     content: `
 # Translating PDFs While Preserving Original Layout
 
@@ -146,7 +149,7 @@ Experience seamless PDF translation that respects the original design.
     readTime: 4,
     author: {
       name: 'Shizue Team',
-      avatar: '/placeholder.jpg'
-    }
-  }
-]
+      avatar: '/placeholder.jpg',
+    },
+  },
+];

@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from app.core.security import create_refresh_token, hash_token
 from app.models.auth_token import AuthToken
+from datetime import datetime, timedelta, timezone
 from app.models.user import User
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,9 +14,9 @@ class TestAuthAPI:
     """Test authentication API endpoints."""
 
     @pytest.mark.integration
-    async def test_login_google(self, client: AsyncClient, mock_cache):
+    async def test_login_google(self, client: AsyncClient, mock_cache, mock_google_oauth):
         """Test Google OAuth login URL generation."""
-        response = await client.get("/v1/auth/login/google")
+        response = await client.get("/api/v1/auth/login/google")
 
         assert response.status_code == 200
         data = response.json()
@@ -38,7 +39,7 @@ class TestAuthAPI:
         mock_cache.get_oauth_state.return_value = {"provider": "google"}
 
         response = await client.get(
-            "/v1/auth/callback/google",
+            "/api/v1/auth/callback/google",
             params={"code": "test_code", "state": "test_state"},
         )
 
@@ -83,7 +84,7 @@ class TestAuthAPI:
         )
 
         response = await client.get(
-            "/v1/auth/callback/google",
+            "/api/v1/auth/callback/google",
             params={"code": "test_code", "state": "test_state"},
         )
 
@@ -104,7 +105,7 @@ class TestAuthAPI:
         mock_cache.get_oauth_state.return_value = None
 
         response = await client.get(
-            "/v1/auth/callback/google",
+            "/api/v1/auth/callback/google",
             params={"code": "test_code", "state": "invalid_state"},
         )
 
@@ -122,7 +123,7 @@ class TestAuthAPI:
         )
 
         response = await client.get(
-            "/v1/auth/callback/google",
+            "/api/v1/auth/callback/google",
             params={"code": "test_code", "state": "test_state"},
         )
 
@@ -140,15 +141,16 @@ class TestAuthAPI:
         # Store token in database
         auth_token = AuthToken(
             user_id=test_user.id,
-            token_hash=hash_token(refresh_token),
+            refresh_token_hash=hash_token(refresh_token),
             device_id="test_device",
             user_agent="Test Agent",
+            expires_at=datetime.now(timezone.utc) + timedelta(days=30),
         )
         db_session.add(auth_token)
         await db_session.commit()
 
         response = await client.post(
-            "/v1/auth/refresh", json={"refresh_token": refresh_token}
+            "/api/v1/auth/refresh", json={"refresh_token": refresh_token}
         )
 
         assert response.status_code == 200
@@ -156,13 +158,13 @@ class TestAuthAPI:
         assert "access_token" in data
         assert "refresh_token" in data
         assert data["token_type"] == "Bearer"
-        assert data["expires_in"] == 1800  # 30 minutes
+        assert data["expires_in"] == 3600  # 60 minutes
 
     @pytest.mark.integration
     async def test_refresh_token_invalid(self, client: AsyncClient):
         """Test refreshing with invalid refresh token."""
         response = await client.post(
-            "/v1/auth/refresh", json={"refresh_token": "invalid_token"}
+            "/api/v1/auth/refresh", json={"refresh_token": "invalid_token"}
         )
 
         assert response.status_code == 401
@@ -175,7 +177,7 @@ class TestAuthAPI:
         refresh_token = create_refresh_token(data={"sub": str(test_user.id)})
 
         response = await client.post(
-            "/v1/auth/refresh", json={"refresh_token": refresh_token}
+            "/api/v1/auth/refresh", json={"refresh_token": refresh_token}
         )
 
         assert response.status_code == 401
@@ -190,15 +192,16 @@ class TestAuthAPI:
         refresh_token = create_refresh_token(data={"sub": str(test_user.id)})
         auth_token = AuthToken(
             user_id=test_user.id,
-            token_hash=hash_token(refresh_token),
+            refresh_token_hash=hash_token(refresh_token),
             device_id="test_device",
             user_agent="Test Agent",
+            expires_at=datetime.now(timezone.utc) + timedelta(days=30),
         )
         db_session.add(auth_token)
         await db_session.commit()
 
         response = await client.post(
-            "/v1/auth/logout", params={"refresh_token": refresh_token}
+            "/api/v1/auth/logout", params={"refresh_token": refresh_token}
         )
 
         assert response.status_code == 204
@@ -214,7 +217,7 @@ class TestAuthAPI:
     @pytest.mark.integration
     async def test_logout_without_token(self, client: AsyncClient):
         """Test logout without refresh token."""
-        response = await client.post("/v1/auth/logout")
+        response = await client.post("/api/v1/auth/logout")
 
         # Should still return success
         assert response.status_code == 204

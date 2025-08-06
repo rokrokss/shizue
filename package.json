@@ -23,6 +23,10 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
+    "test:all": "./scripts/test-all.sh",
+    "pre-commit": "pre-commit run --all-files",
+    "pre-commit:install": "pre-commit install",
+    "ci:local": "./test-ci-local.sh",
     "postinstall": "wxt prepare"
   },
   "dependencies": {

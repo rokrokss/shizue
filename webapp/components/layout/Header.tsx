@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { useLocale, useTranslations } from 'next-intl'
-import { Button } from '@/components/ui/button'
-import { LanguageSelector } from './LanguageSelector'
-import { Chrome } from 'lucide-react'
+import Link from 'next/link';
+import { useLocale, useTranslations } from 'next-intl';
+import { Button } from '@/components/ui/button';
+import { LanguageSelector } from './LanguageSelector';
+import { Chrome } from 'lucide-react';
 
 export function Header() {
-  const t = useTranslations('header')
-  const locale = useLocale()
+  const t = useTranslations('header');
+  const locale = useLocale();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -65,5 +65,5 @@ export function Header() {
         </div>
       </div>
     </header>
-  )
+  );
 }

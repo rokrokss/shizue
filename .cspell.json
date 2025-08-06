@@ -47,7 +47,10 @@
     "starlette",
     "uvloop",
     "httptools",
-    "aioredis"
+    "aioredis",
+    "vitest",
+    "webextension",
+    "fernet"
   ],
   "ignorePaths": [
     "node_modules",
@@ -81,6 +84,17 @@
     "*.ttf",
     "*.eot"
   ],
-  "dictionaries": ["en", "en-gb", "companies", "softwareTerms", "typescript", "python", "node", "html", "css", "bash"],
+  "dictionaries": [
+    "en",
+    "en-gb",
+    "companies",
+    "softwareTerms",
+    "typescript",
+    "python",
+    "node",
+    "html",
+    "css",
+    "bash"
+  ],
   "import": []
 }

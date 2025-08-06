@@ -1,22 +1,26 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Home, ArrowLeft } from 'lucide-react'
-import { useTranslations, useLocale } from 'next-intl'
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Home, ArrowLeft } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
 
 export default function NotFound() {
-  const t = useTranslations('notFound')
-  const locale = useLocale()
+  const t = useTranslations('notFound');
+  const locale = useLocale();
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center space-y-6 px-4">
         <div className="space-y-2">
           <h1 className="text-9xl font-bold text-primary">404</h1>
-          <h2 className="text-2xl font-semibold">{t('title', { defaultValue: 'Page Not Found' })}</h2>
+          <h2 className="text-2xl font-semibold">
+            {t('title', { defaultValue: 'Page Not Found' })}
+          </h2>
           <p className="text-muted-foreground max-w-md mx-auto">
-            {t('description', { defaultValue: "The page you're looking for doesn't exist or has been moved." })}
+            {t('description', {
+              defaultValue: "The page you're looking for doesn't exist or has been moved.",
+            })}
           </p>
         </div>
 
@@ -43,5 +47,5 @@ export default function NotFound() {
         </div>
       </div>
     </div>
-  )
+  );
 }

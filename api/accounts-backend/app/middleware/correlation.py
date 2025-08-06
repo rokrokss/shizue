@@ -129,13 +129,16 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
             # Log with correlation context
             correlation_id = getattr(request.state, "correlation_id", None)
 
+            import traceback
+
             logger.error(
-                "Unhandled exception",
+                f"Unhandled exception: {str(e)}",
                 error_type=type(e).__name__,
                 error_message=str(e),
                 path=request.url.path,
                 method=request.method,
                 correlation_id=correlation_id,
+                traceback=traceback.format_exc(),
                 exc_info=True,
             )
 

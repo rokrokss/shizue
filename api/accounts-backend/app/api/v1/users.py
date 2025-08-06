@@ -20,7 +20,7 @@ router = APIRouter()
 @router.get("/me", response_model=UserProfile)
 async def get_current_user_profile(current_user: User = Depends(get_current_user)):
     """Get current user profile"""
-    return UserProfile.from_orm(current_user)
+    return UserProfile.model_validate(current_user)
 
 
 @router.patch("/me", response_model=UserProfile)
@@ -31,19 +31,30 @@ async def update_current_user(
 ):
     """Update current user profile"""
     try:
-        # Update user fields
-        update_data = user_update.dict(exclude_unset=True)
-        for field, value in update_data.items():
-            setattr(current_user, field, value)
+        # Import needed for eager loading
+        from sqlalchemy import select, update
+        from sqlalchemy.orm import selectinload
 
-        # Save to database
-        await db.commit()
-        await db.refresh(current_user)
+        from app.models.user_subscription import UserSubscription
+
+        # Update user fields in database
+        update_data = user_update.model_dump(exclude_unset=True)
+        if update_data:
+            await db.execute(update(User).where(User.id == current_user.id).values(**update_data))
+            await db.commit()
+
+        # Reload user with eager loading for subscriptions
+        result = await db.execute(
+            select(User)
+            .where(User.id == current_user.id)
+            .options(selectinload(User.subscriptions).selectinload(UserSubscription.subscription_plan))
+        )
+        updated_user = result.scalar_one()
 
         # Update cache
-        await cache.set_user_profile(str(current_user.id), current_user.to_dict())
+        await cache.set_user_profile(str(updated_user.id), updated_user.to_dict())
 
-        return UserProfile.from_orm(current_user)
+        return UserProfile.model_validate(updated_user)
 
     except Exception as e:
         logger.error(f"Failed to update user profile: {e}")
@@ -117,7 +128,7 @@ async def get_user_stats(current_user: User = Depends(get_current_user), db: Asy
         )
 
         # Cache the stats for 5 minutes
-        await cache.set_user_stats(str(current_user.id), stats.dict(), ttl=300)
+        await cache.set_user_stats(str(current_user.id), stats.model_dump(), ttl=300)
 
         return stats
 
@@ -133,21 +144,23 @@ async def get_user_stats(current_user: User = Depends(get_current_user), db: Asy
 async def delete_current_user(current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     """Delete current user account (soft delete)"""
     try:
-        # Soft delete user
-        setattr(current_user, "is_active", False)
-        setattr(current_user, "deleted_at", datetime.now(timezone.utc))
+        from sqlalchemy import update
 
-        # Deactivate all auth tokens
         from app.models.auth_token import AuthToken
 
-        result = await db.execute(
-            select(AuthToken).where(AuthToken.user_id == current_user.id, AuthToken.is_active.is_(True))
+        # Soft delete user
+        await db.execute(
+            update(User)
+            .where(User.id == current_user.id)
+            .values(is_active=False, deleted_at=datetime.now(timezone.utc))
         )
-        tokens = result.scalars().all()
 
-        for token in tokens:
-            setattr(token, "is_active", False)
-            setattr(token, "revoked_at", datetime.now(timezone.utc))
+        # Deactivate all auth tokens
+        await db.execute(
+            update(AuthToken)
+            .where(AuthToken.user_id == current_user.id, AuthToken.is_active.is_(True))
+            .values(is_active=False, revoked_at=datetime.now(timezone.utc))
+        )
 
         await db.commit()
 

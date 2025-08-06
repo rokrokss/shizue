@@ -5,17 +5,14 @@ export function StructuredData({ locale }: { locale: string }) {
     name: 'Shizue',
     url: 'https://shizue.ai',
     logo: 'https://shizue.ai/icons/icon-512x512.png',
-    sameAs: [
-      'https://twitter.com/shizue_ai',
-      'https://github.com/shizue-ai',
-    ],
+    sameAs: ['https://twitter.com/shizue_ai', 'https://github.com/shizue-ai'],
     contactPoint: {
       '@type': 'ContactPoint',
       email: 'support@shizue.ai',
       contactType: 'customer support',
       availableLanguage: ['en', 'ko', 'ja', 'zh', 'es', 'fr', 'de'],
     },
-  }
+  };
 
   const softwareData = {
     '@context': 'https://schema.org',
@@ -23,7 +20,7 @@ export function StructuredData({ locale }: { locale: string }) {
     name: 'Shizue',
     applicationCategory: 'BrowserApplication',
     applicationSubCategory: 'Productivity',
-    operatingSystem: 'Chrome, Edge, Firefox, Safari',
+    operatingSystem: 'Chrome, Edge',
     softwareVersion: '1.0.0',
     offers: {
       '@type': 'Offer',
@@ -39,7 +36,8 @@ export function StructuredData({ locale }: { locale: string }) {
       worstRating: '1',
     },
     url: `https://shizue.ai/${locale}`,
-    description: 'AI-powered browser extension for translation, chat, and web browsing with support for GPT-4, Claude, and Gemini',
+    description:
+      'AI-powered browser extension for translation, chat, and web browsing with support for GPT-4, Claude, and Gemini',
     screenshot: [
       'https://shizue.ai/images/hero/shizue-interface.png',
       'https://shizue.ai/images/screenshots/chat.png',
@@ -59,19 +57,38 @@ export function StructuredData({ locale }: { locale: string }) {
     dateModified: new Date().toISOString(),
     license: 'https://opensource.org/licenses/MIT',
     inLanguage: [
-      'ar', 'bn', 'de', 'en', 'es', 'fa', 'fil', 'fr',
-      'hi', 'it', 'ja', 'ko', 'pl', 'pt', 'ru', 'sw',
-      'th', 'tr', 'ur', 'vi', 'zh'
+      'ar',
+      'bn',
+      'de',
+      'en',
+      'es',
+      'fa',
+      'fil',
+      'fr',
+      'hi',
+      'it',
+      'ja',
+      'ko',
+      'pl',
+      'pt',
+      'ru',
+      'sw',
+      'th',
+      'tr',
+      'ur',
+      'vi',
+      'zh',
     ],
     author: organizationData,
-  }
+  };
 
   const webPageData = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
     url: `https://shizue.ai/${locale}`,
     name: 'Shizue - AI Browser Extension',
-    description: 'Free, open-source browser extension that brings AI power to your browsing experience',
+    description:
+      'Free, open-source browser extension that brings AI power to your browsing experience',
     inLanguage: locale,
     isPartOf: {
       '@type': 'WebSite',
@@ -100,7 +117,7 @@ export function StructuredData({ locale }: { locale: string }) {
         },
       ],
     },
-  }
+  };
 
   const faqData = {
     '@context': 'https://schema.org',
@@ -131,9 +148,9 @@ export function StructuredData({ locale }: { locale: string }) {
         },
       },
     ],
-  }
+  };
 
-  const structuredData = [organizationData, softwareData, webPageData, faqData]
+  const structuredData = [organizationData, softwareData, webPageData, faqData];
 
   return (
     <>
@@ -145,5 +162,5 @@ export function StructuredData({ locale }: { locale: string }) {
         />
       ))}
     </>
-  )
+  );
 }

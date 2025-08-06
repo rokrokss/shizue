@@ -2,20 +2,37 @@ import asyncio
 import os
 import uuid
 from typing import AsyncGenerator
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
+import sys
 
 # Set test environment variables before importing settings
-# Use SQLite for testing to avoid external dependencies
-os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///./test.db"
-os.environ["REDIS_URL"] = "redis://localhost:6379/1"
-os.environ["JWT_SECRET_KEY"] = "test-secret-key-for-testing-only"
-os.environ["GOOGLE_CLIENT_ID"] = "test-google-client-id"
-os.environ["GOOGLE_CLIENT_SECRET"] = "test-google-client-secret"
-os.environ["GOOGLE_REDIRECT_URI"] = "https://test.shizue.ai/api/v1/auth/google/callback"
-os.environ["ALLOWED_ORIGINS"] = '["http://localhost:3000", "http://localhost:8000"]'
+# Only set if not already provided (allows CI to override)
+if "DATABASE_URL" not in os.environ:
+    # Use SQLite for local testing to avoid external dependencies
+    os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///./test.db"
+if "REDIS_URL" not in os.environ:
+    os.environ["REDIS_URL"] = "redis://localhost:6379/1"
+
+# Set TESTING flag to ensure test mode
+os.environ["TESTING"] = "true"
+if "JWT_SECRET_KEY" not in os.environ:
+    os.environ["JWT_SECRET_KEY"] = "test-secret-key-for-testing-only"
+if "GOOGLE_CLIENT_ID" not in os.environ:
+    os.environ["GOOGLE_CLIENT_ID"] = "test-google-client-id"
+if "GOOGLE_CLIENT_SECRET" not in os.environ:
+    os.environ["GOOGLE_CLIENT_SECRET"] = "test-google-client-secret"
+if "GOOGLE_REDIRECT_URI" not in os.environ:
+    os.environ["GOOGLE_REDIRECT_URI"] = "https://test.shizue.ai/api/v1/auth/google/callback"
+if "ALLOWED_ORIGINS" not in os.environ:
+    os.environ["ALLOWED_ORIGINS"] = '["http://localhost:3000", "http://localhost:8000"]'
 
 import pytest
 import pytest_asyncio
+
+# Initialize logging before importing app modules
+# Don't modify logger configuration - let the app handle it
+# The app will detect TESTING=true environment variable and use appropriate format
+
 from app.core.config import settings
 from app.core.base import Base
 from app.core.database import get_db
@@ -28,6 +45,9 @@ from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
 from sqlalchemy.pool import NullPool
 
 # Settings are already configured via environment variables above
+
+# Configure pytest-asyncio
+pytest_plugins = ('pytest_asyncio',)
 
 
 # Note: pytest-asyncio now provides its own event_loop fixture,
@@ -66,7 +86,9 @@ async def db_session(test_db) -> AsyncGenerator[AsyncSession, None]:
     """Get a test database session."""
     async with test_db() as session:
         yield session
-        await session.rollback()
+        # Only rollback if the session is still active
+        if session.is_active:
+            await session.rollback()
 
 
 @pytest_asyncio.fixture
@@ -129,11 +151,11 @@ def mock_redis():
 @pytest.fixture
 def mock_google_oauth():
     """Mock Google OAuth service."""
-    with patch("app.services.google_oauth.google_oauth") as mock:
-        mock.get_authorization_url.return_value = (
-            "https://accounts.google.com/oauth/authorize?..."
+    with patch("app.api.v1.auth.google_oauth") as mock:
+        mock.get_authorization_url = AsyncMock(
+            return_value="https://accounts.google.com/oauth/authorize?..."
         )
-        mock.verify_and_get_user_info.return_value = {
+        mock.verify_and_get_user_info = AsyncMock(return_value={
             "google_id": "test_google_id_123",
             "email": "test@example.com",
             "email_verified": True,
@@ -145,20 +167,29 @@ def mock_google_oauth():
                 "refresh_token": "google_refresh_token",
                 "expires_in": 3600,
             },
-        }
+        })
         yield mock
 
 
 @pytest.fixture
 def mock_cache():
     """Mock cache service."""
-    with patch("app.core.redis.cache") as mock:
-        mock.get_user_profile.return_value = None
-        mock.set_user_profile.return_value = True
-        mock.delete_user_profile.return_value = True
-        mock.get_user_stats.return_value = None
-        mock.set_user_stats.return_value = True
-        mock.get_oauth_state.return_value = {"provider": "google"}
-        mock.set_oauth_state.return_value = True
-        mock.delete_oauth_state.return_value = True
-        yield mock
+    # Create a single mock object to use everywhere
+    mock_cache_obj = MagicMock()
+    mock_cache_obj.get_user_profile = AsyncMock(return_value=None)
+    mock_cache_obj.set_user_profile = AsyncMock(return_value=True)
+    mock_cache_obj.delete_user_profile = AsyncMock(return_value=True)
+    mock_cache_obj.get_user_stats = AsyncMock(return_value=None)
+    mock_cache_obj.set_user_stats = AsyncMock(return_value=True)
+    mock_cache_obj.delete_user_stats = AsyncMock(return_value=True)
+    mock_cache_obj.get_oauth_state = AsyncMock(return_value={"provider": "google"})
+    mock_cache_obj.set_oauth_state = AsyncMock(return_value=True)
+    mock_cache_obj.delete_oauth_state = AsyncMock(return_value=True)
+
+    # Patch all possible locations where cache might be imported
+    with patch("app.api.v1.auth.cache", mock_cache_obj), \
+         patch("app.api.v1.usage.cache", mock_cache_obj), \
+         patch("app.api.v1.users.cache", mock_cache_obj), \
+         patch("app.core.dependencies.cache", mock_cache_obj), \
+         patch("app.core.redis.cache", mock_cache_obj):
+        yield mock_cache_obj

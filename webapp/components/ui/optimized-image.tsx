@@ -1,9 +1,9 @@
-import Image, { ImageProps } from 'next/image'
-import { useState } from 'react'
-import { cn } from '@/lib/utils'
+import Image, { ImageProps } from 'next/image';
+import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 interface OptimizedImageProps extends Omit<ImageProps, 'onLoad'> {
-  fallback?: string
+  fallback?: string;
 }
 
 export function OptimizedImage({
@@ -13,14 +13,12 @@ export function OptimizedImage({
   fallback = '/images/placeholder.jpg',
   ...props
 }: OptimizedImageProps) {
-  const [isLoading, setIsLoading] = useState(true)
-  const [hasError, setHasError] = useState(false)
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   return (
     <div className={cn('relative overflow-hidden', className)}>
-      {isLoading && (
-        <div className="absolute inset-0 bg-muted animate-pulse" />
-      )}
+      {isLoading && <div className="absolute inset-0 bg-muted animate-pulse" />}
       <Image
         src={hasError ? fallback : src}
         alt={alt}
@@ -31,11 +29,11 @@ export function OptimizedImage({
         )}
         onLoad={() => setIsLoading(false)}
         onError={() => {
-          setIsLoading(false)
-          setHasError(true)
+          setIsLoading(false);
+          setHasError(true);
         }}
         {...props}
       />
     </div>
-  )
+  );
 }

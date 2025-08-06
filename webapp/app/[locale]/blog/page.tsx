@@ -1,25 +1,23 @@
-import { Metadata } from 'next'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { BlogList } from '@/components/blog/BlogList'
+import { Metadata } from 'next';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { BlogList } from '@/components/blog/BlogList';
 
 export async function generateMetadata(props: {
-  params: Promise<{ locale: string }>
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const params = await props.params
-  const t = await getTranslations({ locale: params.locale, namespace: 'blog' })
+  const params = await props.params;
+  const t = await getTranslations({ locale: params.locale, namespace: 'blog' });
 
   return {
     title: t('metadata.title'),
     description: t('metadata.description'),
-  }
+  };
 }
 
-export default async function BlogPage(props: {
-  params: Promise<{ locale: string }>
-}) {
-  const params = await props.params
-  setRequestLocale(params.locale)
-  const t = await getTranslations({ locale: params.locale, namespace: 'blog' })
+export default async function BlogPage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
+  setRequestLocale(params.locale);
+  const t = await getTranslations({ locale: params.locale, namespace: 'blog' });
 
   return (
     <div className="container mx-auto px-4 py-16">
@@ -29,5 +27,5 @@ export default async function BlogPage(props: {
       </p>
       <BlogList />
     </div>
-  )
+  );
 }

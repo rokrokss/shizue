@@ -87,9 +87,9 @@ def upgrade() -> None:
         "auth_tokens",
         sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column("user_id", postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column("token_hash", sa.String(length=64), nullable=False),
+        sa.Column("refresh_token_hash", sa.String(length=255), nullable=False),
         sa.Column("device_id", sa.String(length=100), nullable=True),
-        sa.Column("user_agent", sa.String(length=500), nullable=True),
+        sa.Column("user_agent", sa.String(length=255), nullable=True),
         sa.Column("ip_address", sa.String(length=45), nullable=True),
         sa.Column(
             "created_at",
@@ -100,13 +100,13 @@ def upgrade() -> None:
         sa.Column("expires_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("last_used_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("revoked_at", sa.DateTime(timezone=True), nullable=True),
-        sa.Column("is_active", sa.Boolean(), nullable=True, server_default="true"),
+        sa.Column("is_active", sa.Boolean(), nullable=False, server_default="true"),
         sa.Column("usage_count", sa.Integer(), nullable=True, server_default="0"),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        op.f("ix_auth_tokens_token_hash"), "auth_tokens", ["token_hash"], unique=True
+        op.f("ix_auth_tokens_refresh_token_hash"), "auth_tokens", ["refresh_token_hash"], unique=True
     )
     op.create_index(
         op.f("ix_auth_tokens_user_id"), "auth_tokens", ["user_id"], unique=False
@@ -223,7 +223,7 @@ def downgrade() -> None:
     op.drop_table("api_usage")
 
     op.drop_index(op.f("ix_auth_tokens_user_id"), table_name="auth_tokens")
-    op.drop_index(op.f("ix_auth_tokens_token_hash"), table_name="auth_tokens")
+    op.drop_index(op.f("ix_auth_tokens_refresh_token_hash"), table_name="auth_tokens")
     op.drop_table("auth_tokens")
 
     op.drop_index(op.f("ix_users_google_id"), table_name="users")

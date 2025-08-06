@@ -1,50 +1,55 @@
-'use client'
+'use client';
 
-import { useLocale } from 'next-intl'
-import { useRouter, usePathname } from 'next/navigation'
-import { useCallback, memo } from 'react'
+import { useLocale } from 'next-intl';
+import { useRouter, usePathname } from 'next/navigation';
+import { useCallback, memo } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
-import { locales, localeNames } from '@/lib/i18n/locales'
-import { Globe } from 'lucide-react'
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { locales, localeNames } from '@/lib/i18n/locales';
+import { Globe } from 'lucide-react';
 
-const LanguageMenuItem = memo(({
-  locale,
-  currentLocale,
-  onClick
-}: {
-  locale: string
-  currentLocale: string
-  onClick: (locale: string) => void
-}) => {
-  const handleClick = useCallback(() => onClick(locale), [locale, onClick])
+const LanguageMenuItem = memo(
+  ({
+    locale,
+    currentLocale,
+    onClick,
+  }: {
+    locale: string;
+    currentLocale: string;
+    onClick: (locale: string) => void;
+  }) => {
+    const handleClick = useCallback(() => onClick(locale), [locale, onClick]);
 
-  return (
-    <DropdownMenuItem
-      onClick={handleClick}
-      className={currentLocale === locale ? 'bg-accent' : ''}
-    >
-      {localeNames[locale as keyof typeof localeNames]}
-    </DropdownMenuItem>
-  )
-})
+    return (
+      <DropdownMenuItem
+        onClick={handleClick}
+        className={currentLocale === locale ? 'bg-accent' : ''}
+      >
+        {localeNames[locale as keyof typeof localeNames]}
+      </DropdownMenuItem>
+    );
+  }
+);
 
-LanguageMenuItem.displayName = 'LanguageMenuItem'
+LanguageMenuItem.displayName = 'LanguageMenuItem';
 
 export const LanguageSelector = memo(() => {
-  const locale = useLocale()
-  const router = useRouter()
-  const pathname = usePathname()
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const handleLocaleChange = useCallback((newLocale: string) => {
-    const newPathname = pathname.replace(`/${locale}`, `/${newLocale}`)
-    router.push(newPathname)
-  }, [locale, pathname, router])
+  const handleLocaleChange = useCallback(
+    (newLocale: string) => {
+      const newPathname = pathname.replace(`/${locale}`, `/${newLocale}`);
+      router.push(newPathname);
+    },
+    [locale, pathname, router]
+  );
 
   return (
     <DropdownMenu>
@@ -65,7 +70,7 @@ export const LanguageSelector = memo(() => {
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
-})
+  );
+});
 
-LanguageSelector.displayName = 'LanguageSelector'
+LanguageSelector.displayName = 'LanguageSelector';

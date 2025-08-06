@@ -1,43 +1,49 @@
-'use client'
+'use client';
 
-import { useTranslations } from 'next-intl'
-import { memo, useMemo } from 'react'
-import { Check, X } from 'lucide-react'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl';
+import { memo, useMemo } from 'react';
+import { Check, X } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { motion } from 'framer-motion';
 
 const comparisonItems = [
   { id: 'price', shizue: true, competitor: false },
   { id: 'models', shizue: true, competitor: false },
   { id: 'privacy', shizue: true, competitor: false },
   { id: 'source', shizue: true, competitor: false },
-  { id: 'usage', shizue: true, competitor: false }
-] as const
+  { id: 'usage', shizue: true, competitor: false },
+] as const;
 
 export const Comparison = memo(() => {
-  const t = useTranslations('comparison')
+  const t = useTranslations('comparison');
 
-  const containerVariants = useMemo(() => ({
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  }), [])
+  const containerVariants = useMemo(
+    () => ({
+      hidden: { opacity: 0 },
+      visible: {
+        opacity: 1,
+        transition: {
+          staggerChildren: 0.1,
+        },
+      },
+    }),
+    []
+  );
 
-  const itemVariants = useMemo(() => ({
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.5
-      }
-    }
-  }), [])
+  const itemVariants = useMemo(
+    () => ({
+      hidden: { opacity: 0, scale: 0.95 },
+      visible: {
+        opacity: 1,
+        scale: 1,
+        transition: {
+          duration: 0.5,
+        },
+      },
+    }),
+    []
+  );
 
   return (
     <section id="comparison" className="py-20 sm:py-32 bg-muted/50">
@@ -49,9 +55,7 @@ export const Comparison = memo(() => {
           transition={{ duration: 0.5 }}
           className="mx-auto max-w-2xl text-center"
         >
-          <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
-            {t('title')}
-          </h2>
+          <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">{t('title')}</h2>
         </motion.div>
 
         <motion.div
@@ -82,9 +86,7 @@ export const Comparison = memo(() => {
                     {t('recommended')}
                   </Badge>
                   <h3 className="mb-2 text-2xl font-bold">Shizue</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {t('shizue.subtitle')}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{t('shizue.subtitle')}</p>
                 </div>
                 <div className="space-y-4 p-6 pt-0">
                   {comparisonItems.map((item) => (
@@ -92,12 +94,8 @@ export const Comparison = memo(() => {
                       key={item.id}
                       className="flex h-[72px] items-center justify-between rounded-lg bg-muted/50 px-4"
                     >
-                      <span className="text-sm">
-                        {t(`shizue.${item.id}`)}
-                      </span>
-                      {item.shizue && (
-                        <Check className="h-5 w-5 text-green-500" />
-                      )}
+                      <span className="text-sm">{t(`shizue.${item.id}`)}</span>
+                      {item.shizue && <Check className="h-5 w-5 text-green-500" />}
                     </div>
                   ))}
                 </div>
@@ -109,9 +107,7 @@ export const Comparison = memo(() => {
                 <div className="p-6">
                   <div className="mb-2 h-6" />
                   <h3 className="mb-2 text-2xl font-bold">{t('competitor.title')}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {t('competitor.subtitle')}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{t('competitor.subtitle')}</p>
                 </div>
                 <div className="space-y-4 p-6 pt-0">
                   {comparisonItems.map((item) => (
@@ -119,12 +115,8 @@ export const Comparison = memo(() => {
                       key={item.id}
                       className="flex h-[72px] items-center justify-between rounded-lg bg-muted/50 px-4"
                     >
-                      <span className="text-sm">
-                        {t(`competitor.${item.id}`)}
-                      </span>
-                      {!item.competitor && (
-                        <X className="h-5 w-5 text-red-500" />
-                      )}
+                      <span className="text-sm">{t(`competitor.${item.id}`)}</span>
+                      {!item.competitor && <X className="h-5 w-5 text-red-500" />}
                     </div>
                   ))}
                 </div>
@@ -134,7 +126,7 @@ export const Comparison = memo(() => {
         </motion.div>
       </div>
     </section>
-  )
-})
+  );
+});
 
-Comparison.displayName = 'Comparison'
+Comparison.displayName = 'Comparison';

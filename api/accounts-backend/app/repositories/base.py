@@ -60,7 +60,11 @@ class BaseRepository(ABC, Generic[ModelType, CreateSchemaType, UpdateSchemaType]
     async def create(self, obj_in: CreateSchemaType) -> ModelType:
         """Create a new record."""
         # Convert schema to dict
-        obj_data = obj_in.dict() if hasattr(obj_in, "dict") else obj_in
+        obj_data = (
+            obj_in.model_dump()
+            if hasattr(obj_in, "model_dump")
+            else (obj_in.dict() if hasattr(obj_in, "dict") else obj_in)
+        )
 
         # Create model instance
         db_obj = self.model(**obj_data)

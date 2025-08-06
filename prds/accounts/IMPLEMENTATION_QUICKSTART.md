@@ -31,14 +31,14 @@ services:
       POSTGRES_USER: shizue
       POSTGRES_PASSWORD: shizue123
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - '6379:6379'
 
 volumes:
   postgres_data:
@@ -131,13 +131,13 @@ from app.core.config import settings
 
 def create_access_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now(datetime.UTC) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire, "type": "access"})
     return jwt.encode(to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 
 def create_refresh_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    expire = datetime.now(datetime.UTC) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
     to_encode.update({"exp": expire, "type": "refresh"})
     return jwt.encode(to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 
@@ -216,7 +216,7 @@ export class AuthService {
           const tokens = {
             access_token: url.searchParams.get('access_token')!,
             refresh_token: url.searchParams.get('refresh_token')!,
-            expires_in: parseInt(url.searchParams.get('expires_in')!)
+            expires_in: parseInt(url.searchParams.get('expires_in')!),
           };
 
           chrome.tabs.remove(tabId);
@@ -233,8 +233,8 @@ export class AuthService {
       await fetch('https://api.shizue.ai/v1/auth/logout', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${access_token}`
-        }
+          Authorization: `Bearer ${access_token}`,
+        },
       });
     }
 
@@ -242,7 +242,7 @@ export class AuthService {
       'access_token',
       'refresh_token',
       'token_expiry',
-      'user_info'
+      'user_info',
     ]);
   }
 }
@@ -267,7 +267,8 @@ export class TokenManager {
   async getValidToken(): Promise<string> {
     // 1. 메모리 캐시 확인
     const cached = this.tokenCache.get('access_token');
-    if (cached && cached.expiry > Date.now() + 300000) { // 5분 버퍼
+    if (cached && cached.expiry > Date.now() + 300000) {
+      // 5분 버퍼
       return cached.token;
     }
 
@@ -276,7 +277,7 @@ export class TokenManager {
     if (stored.access_token && stored.token_expiry > Date.now() + 300000) {
       this.tokenCache.set('access_token', {
         token: stored.access_token,
-        expiry: stored.token_expiry
+        expiry: stored.token_expiry,
       });
       return stored.access_token;
     }
@@ -309,8 +310,8 @@ export class TokenManager {
     const response = await fetch('https://api.shizue.ai/v1/auth/refresh', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${refresh_token}`
-      }
+        Authorization: `Bearer ${refresh_token}`,
+      },
     });
 
     if (!response.ok) {
@@ -318,11 +319,11 @@ export class TokenManager {
     }
 
     const { access_token, expires_in } = await response.json();
-    const expiry = Date.now() + (expires_in * 1000);
+    const expiry = Date.now() + expires_in * 1000;
 
     await chrome.storage.local.set({
-      'access_token': access_token,
-      'token_expiry': expiry
+      access_token: access_token,
+      token_expiry: expiry,
     });
 
     this.tokenCache.set('access_token', { token: access_token, expiry });
@@ -344,7 +345,7 @@ const tokenManager = TokenManager.getInstance();
 const AUTH_REQUIRED_ACTIONS = new Set([
   MESSAGE_TRANSLATE_HTML_TEXT_BATCH,
   MESSAGE_RUN_GRAPH_STREAM,
-  MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE
+  MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
 ]);
 
 export async function handleMessage(
@@ -393,11 +394,7 @@ export function LoginButton() {
 
   if (!isAuthenticated) {
     return (
-      <Button
-        type="primary"
-        icon={<UserOutlined />}
-        onClick={login}
-      >
+      <Button type="primary" icon={<UserOutlined />} onClick={login}>
         Google로 로그인
       </Button>
     );
@@ -407,26 +404,22 @@ export function LoginButton() {
     {
       key: 'profile',
       label: user?.email,
-      disabled: true
+      disabled: true,
     },
     {
-      type: 'divider'
+      type: 'divider',
     },
     {
       key: 'logout',
       label: '로그아웃',
       icon: <LogoutOutlined />,
-      onClick: logout
-    }
+      onClick: logout,
+    },
   ];
 
   return (
     <Dropdown menu={{ items: menuItems }} placement="bottomRight">
-      <Avatar
-        src={user?.profile_picture}
-        icon={<UserOutlined />}
-        style={{ cursor: 'pointer' }}
-      />
+      <Avatar src={user?.profile_picture} icon={<UserOutlined />} style={{ cursor: 'pointer' }} />
     </Dropdown>
   );
 }
@@ -435,6 +428,7 @@ export function LoginButton() {
 ## 🔥 즉시 실행 가능한 명령어
 
 ### Backend 실행
+
 ```bash
 # 1. 환경 변수 설정
 cat > .env << EOF
@@ -453,6 +447,7 @@ uvicorn app.main:app --reload
 ```
 
 ### Extension 실행
+
 ```bash
 # 1. 의존성 설치
 pnpm install
@@ -470,24 +465,28 @@ pnpm build
 ## 📋 체크리스트
 
 ### Day 1 - 기본 설정
+
 - [ ] Google Cloud Console에서 OAuth 2.0 클라이언트 생성
 - [ ] 백엔드 프로젝트 생성 및 Docker 실행
 - [ ] 기본 API 엔드포인트 생성 (/health)
 - [ ] CORS 설정 확인
 
 ### Day 2 - 인증 구현
+
 - [ ] JWT 토큰 생성/검증 구현
 - [ ] Google OAuth 콜백 처리
 - [ ] 사용자 테이블 생성 및 저장
 - [ ] Refresh Token 로직 구현
 
 ### Day 3 - Extension 통합
+
 - [ ] AuthService 구현
 - [ ] TokenManager 구현
 - [ ] Background Script 수정
 - [ ] 로그인 UI 구현
 
 ### Day 4 - 테스트 및 마무리
+
 - [ ] E2E 인증 플로우 테스트
 - [ ] 에러 처리 구현
 - [ ] 기존 사용자 마이그레이션 로직
@@ -507,10 +506,7 @@ pnpm build
 3. **Extension Manifest**
    ```json
    {
-     "host_permissions": [
-       "https://api.shizue.ai/*",
-       "http://localhost:8000/*"
-     ]
+     "host_permissions": ["https://api.shizue.ai/*", "http://localhost:8000/*"]
    }
    ```
 

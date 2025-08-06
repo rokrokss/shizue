@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
@@ -22,6 +22,7 @@ from app.core.security import (
 )
 from app.models.auth_token import AuthToken
 from app.models.user import User
+from app.models.user_subscription import UserSubscription
 from app.schemas.auth import LoginURLResponse, RefreshTokenRequest, TokenResponse
 from app.services.google_oauth import google_oauth
 
@@ -65,7 +66,7 @@ async def login_google():
         state = generate_state_token()
 
         # Store state in cache (expires in 10 minutes)
-        await cache.set_oauth_state(state, {"provider": "google"}, expire=600)
+        await cache.set_oauth_state(state, {"provider": "google"}, ttl=600)
 
         # Get authorization URL
         authorization_url = await google_oauth.get_authorization_url(state)
@@ -112,7 +113,9 @@ async def callback_google(
         result = await db.execute(
             select(User)
             .where(User.google_id == user_data["google_id"])
-            .options(selectinload(User.subscription))  # Eager load if needed
+            .options(
+                selectinload(User.subscriptions).selectinload(UserSubscription.subscription_plan)
+            )  # Eager load subscriptions and plans
         )
         user = result.scalar_one_or_none()
 
@@ -128,7 +131,14 @@ async def callback_google(
             )
             db.add(user)
             await db.commit()
-            await db.refresh(user)
+
+            # Reload user with eager loading for subscriptions
+            result = await db.execute(
+                select(User)
+                .where(User.id == user.id)
+                .options(selectinload(User.subscriptions).selectinload(UserSubscription.subscription_plan))
+            )
+            user = result.scalar_one()
 
             # Track new user registration
             logger.info(f"New user registered: {user.email}")
@@ -139,6 +149,14 @@ async def callback_google(
             user.locale = user_data.get("locale", user.locale)
             user.last_login_at = datetime.now(timezone.utc)
             await db.commit()
+
+            # Reload user with eager loading for subscriptions (to ensure consistency)
+            result = await db.execute(
+                select(User)
+                .where(User.id == user.id)
+                .options(selectinload(User.subscriptions).selectinload(UserSubscription.subscription_plan))
+            )
+            user = result.scalar_one()
 
         # Generate tokens and cache concurrently
         access_token, refresh_token = await asyncio.gather(
@@ -152,9 +170,10 @@ async def callback_google(
         # Store refresh token in database
         auth_token = AuthToken(
             user_id=user.id,
-            token_hash=hash_token(refresh_token),
+            refresh_token_hash=hash_token(refresh_token),
             device_id=device_id,
             user_agent="Chrome Extension",  # This will be passed from extension
+            expires_at=datetime.now(timezone.utc) + timedelta(days=30),
         )
         db.add(auth_token)
 
@@ -218,7 +237,7 @@ async def refresh_token(request: RefreshTokenRequest, db: AsyncSession = Depends
         result = await db.execute(
             select(AuthToken).where(
                 and_(
-                    AuthToken.token_hash == token_hash,
+                    AuthToken.refresh_token_hash == token_hash,
                     AuthToken.user_id == user_id,
                     AuthToken.is_active.is_(True),
                 )
@@ -232,9 +251,7 @@ async def refresh_token(request: RefreshTokenRequest, db: AsyncSession = Depends
                 detail="Refresh token not found or revoked",
             )
 
-        # Update last used timestamp
-        auth_token.last_used_at = datetime.now(timezone.utc)
-        auth_token.usage_count += 1
+        # Keep the token active (no need to update usage stats)
         await db.commit()
 
         # Generate new access token
@@ -270,7 +287,7 @@ async def logout(
             result = await db.execute(
                 select(AuthToken).where(
                     and_(
-                        AuthToken.token_hash == token_hash,
+                        AuthToken.refresh_token_hash == token_hash,
                         AuthToken.is_active.is_(True),
                     )
                 )

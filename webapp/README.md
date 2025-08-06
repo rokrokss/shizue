@@ -30,6 +30,7 @@ pnpm start
 ## 🌍 Internationalization
 
 The app supports 23 languages:
+
 - Arabic (ar), Bengali (bn), German (de), English (en), Spanish (es)
 - Persian (fa), Filipino (fil), French (fr), Hindi (hi), Italian (it)
 - Japanese (ja), Korean (ko), Polish (pl), Portuguese (pt-BR, pt-PT)
@@ -74,6 +75,7 @@ vercel --prod
 ```
 
 **Environment variables to set in Vercel:**
+
 - `NEXT_PUBLIC_SITE_URL`: Your production URL (e.g., https://shizue.ai)
 
 ### Docker

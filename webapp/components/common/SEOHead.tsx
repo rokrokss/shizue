@@ -1,15 +1,15 @@
-import { useLocale } from 'next-intl'
+import { useLocale } from 'next-intl';
 
 interface SEOHeadProps {
-  title?: string
-  description?: string
-  image?: string
-  url?: string
-  type?: 'website' | 'article'
-  publishedTime?: string
-  modifiedTime?: string
-  author?: string
-  keywords?: string[]
+  title?: string;
+  description?: string;
+  image?: string;
+  url?: string;
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string;
+  keywords?: string[];
 }
 
 export function SEOHead({
@@ -23,19 +23,17 @@ export function SEOHead({
   author,
   keywords,
 }: SEOHeadProps) {
-  const locale = useLocale()
-  const baseUrl = 'https://shizue.ai'
-  const fullUrl = url || `${baseUrl}/${locale}`
-  const ogImage = image || `/og-${locale}.png`
+  const locale = useLocale();
+  const baseUrl = 'https://shizue.ai';
+  const fullUrl = url || `${baseUrl}/${locale}`;
+  const ogImage = image || `/og-${locale}.png`;
 
   return (
     <>
       {/* Basic meta tags */}
       {title && <meta property="og:title" content={title} />}
       {description && <meta property="og:description" content={description} />}
-      {keywords && keywords.length > 0 && (
-        <meta name="keywords" content={keywords.join(', ')} />
-      )}
+      {keywords && keywords.length > 0 && <meta name="keywords" content={keywords.join(', ')} />}
 
       {/* Open Graph */}
       <meta property="og:type" content={type} />
@@ -47,12 +45,8 @@ export function SEOHead({
       {/* Article specific */}
       {type === 'article' && (
         <>
-          {publishedTime && (
-            <meta property="article:published_time" content={publishedTime} />
-          )}
-          {modifiedTime && (
-            <meta property="article:modified_time" content={modifiedTime} />
-          )}
+          {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+          {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
           {author && <meta property="article:author" content={author} />}
         </>
       )}
@@ -66,7 +60,10 @@ export function SEOHead({
 
       {/* Additional SEO tags */}
       <link rel="canonical" href={fullUrl} />
-      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      <meta
+        name="robots"
+        content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      />
     </>
-  )
+  );
 }

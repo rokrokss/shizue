@@ -17,7 +17,7 @@ class TestUsersAPI:
         self, client: AsyncClient, test_user: User, auth_headers: dict
     ):
         """Test getting current user profile."""
-        response = await client.get("/v1/users/me", headers=auth_headers)
+        response = await client.get("/api/v1/users/me", headers=auth_headers)
 
         assert response.status_code == 200
         data = response.json()
@@ -30,7 +30,7 @@ class TestUsersAPI:
     @pytest.mark.integration
     async def test_get_current_user_profile_unauthorized(self, client: AsyncClient):
         """Test getting profile without authentication."""
-        response = await client.get("/v1/users/me")
+        response = await client.get("/api/v1/users/me")
 
         assert response.status_code == 401
         assert "Authentication required" in response.json()["detail"]
@@ -48,7 +48,7 @@ class TestUsersAPI:
         update_data = {"name": "Updated Name", "locale": "es"}
 
         response = await client.patch(
-            "/v1/users/me", json=update_data, headers=auth_headers
+            "/api/v1/users/me", json=update_data, headers=auth_headers
         )
 
         assert response.status_code == 200
@@ -61,8 +61,8 @@ class TestUsersAPI:
         assert test_user.name == "Updated Name"
         assert test_user.locale == "es"
 
-        # Check cache was updated
-        mock_cache.set_user_profile.assert_called_once()
+        # Check cache was updated (called twice: once in get_current_user, once in update)
+        assert mock_cache.set_user_profile.call_count == 2
 
     @pytest.mark.integration
     async def test_update_current_user_partial(
@@ -72,7 +72,7 @@ class TestUsersAPI:
         original_name = test_user.name
 
         response = await client.patch(
-            "/v1/users/me", json={"locale": "fr"}, headers=auth_headers
+            "/api/v1/users/me", json={"locale": "fr"}, headers=auth_headers
         )
 
         assert response.status_code == 200
@@ -87,7 +87,7 @@ class TestUsersAPI:
         """Test getting user stats with no usage."""
         mock_cache.get_user_stats.return_value = None
 
-        response = await client.get("/v1/users/me/stats", headers=auth_headers)
+        response = await client.get("/api/v1/users/me/stats", headers=auth_headers)
 
         assert response.status_code == 200
         data = response.json()
@@ -113,7 +113,7 @@ class TestUsersAPI:
             usage = APIUsage(
                 user_id=test_user.id,
                 model="gpt-4" if i < 3 else "claude-3",
-                endpoint="/v1/chat",
+                endpoint="/api/v1/chat",
                 tokens_input=100,
                 tokens_output=200,
                 latency_ms=500,
@@ -122,7 +122,7 @@ class TestUsersAPI:
             db_session.add(usage)
         await db_session.commit()
 
-        response = await client.get("/v1/users/me/stats", headers=auth_headers)
+        response = await client.get("/api/v1/users/me/stats", headers=auth_headers)
 
         assert response.status_code == 200
         data = response.json()
@@ -147,7 +147,7 @@ class TestUsersAPI:
         }
         mock_cache.get_user_stats.return_value = cached_stats
 
-        response = await client.get("/v1/users/me/stats", headers=auth_headers)
+        response = await client.get("/api/v1/users/me/stats", headers=auth_headers)
 
         assert response.status_code == 200
         data = response.json()
@@ -164,31 +164,45 @@ class TestUsersAPI:
     ):
         """Test deleting current user account."""
         # Create an auth token for the user
+        from datetime import datetime, timedelta, timezone
         from app.core.security import create_refresh_token, hash_token
 
         refresh_token = create_refresh_token(data={"sub": str(test_user.id)})
         auth_token = AuthToken(
             user_id=test_user.id,
-            token_hash=hash_token(refresh_token),
+            refresh_token_hash=hash_token(refresh_token),
             device_id="test_device",
-            user_agent="Test Agent",
+            expires_at=datetime.now(timezone.utc) + timedelta(days=30),
         )
         db_session.add(auth_token)
         await db_session.commit()
 
-        response = await client.delete("/v1/users/me", headers=auth_headers)
+        response = await client.delete("/api/v1/users/me", headers=auth_headers)
+
+        if response.status_code != 204:
+            print(f"Response status: {response.status_code}")
+            print(f"Response body: {response.text}")
 
         assert response.status_code == 204
 
         # Check user was soft deleted
-        await db_session.refresh(test_user)
-        assert test_user.is_active is False
-        assert test_user.deleted_at is not None
+        from sqlalchemy import select
+        from app.models.user import User
+
+        result = await db_session.execute(
+            select(User).where(User.id == test_user.id)
+        )
+        updated_user = result.scalar_one()
+        assert updated_user.is_active is False
+        assert updated_user.deleted_at is not None
 
         # Check auth tokens were revoked
-        await db_session.refresh(auth_token)
-        assert auth_token.is_active is False
-        assert auth_token.revoked_at is not None
+        result = await db_session.execute(
+            select(AuthToken).where(AuthToken.id == auth_token.id)
+        )
+        updated_token = result.scalar_one()
+        assert updated_token.is_active is False
+        assert updated_token.revoked_at is not None
 
         # Check cache was cleared
         mock_cache.delete_user_profile.assert_called_once_with(str(test_user.id))

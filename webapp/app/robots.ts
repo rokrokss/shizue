@@ -1,4 +1,4 @@
-import { MetadataRoute } from 'next'
+import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -17,9 +17,9 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: 'Bingbot',
         allow: '/',
         crawlDelay: 0,
-      }
+      },
     ],
     sitemap: 'https://shizue.ai/sitemap.xml',
     host: 'https://shizue.ai',
-  }
+  };
 }

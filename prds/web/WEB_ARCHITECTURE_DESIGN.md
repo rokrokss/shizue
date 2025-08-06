@@ -222,7 +222,6 @@ interface HeroProps {
     cta: {
       chrome: string
       edge: string
-      firefox: string
     }
   }
 }

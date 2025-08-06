@@ -1,6 +1,6 @@
-import React from 'react'
-import { render } from '@testing-library/react'
-import { NextIntlClientProvider } from 'next-intl'
+import React from 'react';
+import { render } from '@testing-library/react';
+import { NextIntlClientProvider } from 'next-intl';
 
 // Mock messages
 const messages = {
@@ -27,7 +27,8 @@ const messages = {
       openSource: 'Open Source',
       privacy: 'Privacy Protected',
     },
-    imageAlt: 'Shizue browser extension interface showing AI chat, translation features, and bilingual web browsing capabilities',
+    imageAlt:
+      'Shizue browser extension interface showing AI chat, translation features, and bilingual web browsing capabilities',
   },
   features: {
     badge: 'AI-Powered Features',
@@ -78,21 +79,18 @@ const messages = {
       terms: 'Terms of Service',
     },
   },
-}
+};
 
-export function renderWithIntl(
-  ui: React.ReactElement,
-  { locale = 'en', ...renderOptions } = {}
-) {
+export function renderWithIntl(ui: React.ReactElement, { locale = 'en', ...renderOptions } = {}) {
   const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <NextIntlClientProvider locale={locale} messages={messages}>
       {children}
     </NextIntlClientProvider>
-  )
+  );
 
-  return render(ui, { wrapper: Wrapper, ...renderOptions })
+  return render(ui, { wrapper: Wrapper, ...renderOptions });
 }
 
 // Re-export everything
-export * from '@testing-library/react'
-export { default as userEvent } from '@testing-library/user-event'
+export * from '@testing-library/react';
+export { default as userEvent } from '@testing-library/user-event';

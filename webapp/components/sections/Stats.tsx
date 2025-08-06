@@ -1,49 +1,45 @@
-'use client'
+'use client';
 
-import { useTranslations } from 'next-intl'
-import { motion } from 'framer-motion'
-import { Users, Globe, Languages, Zap } from 'lucide-react'
+import { useTranslations } from 'next-intl';
+import { motion } from 'framer-motion';
+import { Users, Globe, Languages, Zap } from 'lucide-react';
 
 export function Stats() {
-  const t = useTranslations('stats')
+  const t = useTranslations('stats');
 
   const stats = [
     {
       icon: Users,
       value: '50K+',
       label: t('users'),
-      description: t('usersDesc')
+      description: t('usersDesc'),
     },
     {
       icon: Globe,
       value: '23',
       label: t('languages'),
-      description: t('languagesDesc')
+      description: t('languagesDesc'),
     },
     {
       icon: Languages,
       value: '10M+',
       label: t('translations'),
-      description: t('translationsDesc')
+      description: t('translationsDesc'),
     },
     {
       icon: Zap,
       value: '<100ms',
       label: t('speed'),
-      description: t('speedDesc')
-    }
-  ]
+      description: t('speedDesc'),
+    },
+  ];
 
   return (
     <section className="py-16 sm:py-24">
       <div className="container">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold sm:text-4xl mb-4">
-            {t('title')}
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {t('subtitle')}
-          </p>
+          <h2 className="text-3xl font-bold sm:text-4xl mb-4">{t('title')}</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t('subtitle')}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -66,5 +62,5 @@ export function Stats() {
         </div>
       </div>
     </section>
-  )
+  );
 }

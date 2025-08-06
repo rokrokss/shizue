@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Column, DateTime, ForeignKey, String, Uuid
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, Uuid
 from sqlalchemy.sql import func
 
 from app.core.base import Base
@@ -18,6 +18,10 @@ class AuthToken(Base):
     )
     refresh_token_hash = Column(String(255), unique=True, nullable=False, index=True)
     device_id = Column(String(100))  # Optional device identifier
+    user_agent = Column(String(255))  # User agent string
+
+    # Status
+    is_active = Column(Boolean, default=True, nullable=False)
 
     # Expiration
     expires_at = Column(DateTime(timezone=True), nullable=False)
