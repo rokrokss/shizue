@@ -6,8 +6,8 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.cache import CacheTTL
 from app.core.logging import logger
+from app.core.unified_cache import CacheTTL
 from app.models.user import User
 from app.repositories.base import BaseRepository
 from app.schemas.user import UserCreate, UserUpdate

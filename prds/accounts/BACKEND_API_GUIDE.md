@@ -28,7 +28,6 @@ Shizue Accounts Backend는 Chrome 확장 프로그램 Shizue의 사용자 인증
 ### 1. 요구사항
 - Python 3.11+
 - PostgreSQL 또는 SQLite (개발용)
-- Redis (선택사항, 캐싱용)
 - UV (패키지 매니저)
 
 ### 2. 설치 및 실행
@@ -226,9 +225,6 @@ JWT_REFRESH_TOKEN_EXPIRE_DAYS=30
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
 GOOGLE_REDIRECT_URI=http://localhost:8000/v1/auth/callback/google
-
-# Redis (선택사항)
-REDIS_URL=redis://localhost:6379
 
 # Chrome Extension
 CHROME_EXTENSION_ID=your-extension-id
@@ -437,8 +433,7 @@ kill -9 $(lsof -t -i:8000)
 alembic downgrade base
 alembic upgrade head
 
-# 캐시 삭제
-redis-cli FLUSHALL
+# 캐시는 자동으로 메모리에서 관리됨
 ```
 
 ## 연락처 및 지원

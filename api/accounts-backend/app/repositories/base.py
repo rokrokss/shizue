@@ -7,8 +7,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta
 
-from app.core.cache import CacheLevel, CacheTTL, multi_cache
 from app.core.logging import logger
+from app.core.unified_cache import CacheTTL, cache
 
 ModelType = TypeVar("ModelType", bound=DeclarativeMeta)
 CreateSchemaType = TypeVar("CreateSchemaType")
@@ -21,14 +21,14 @@ class BaseRepository(ABC, Generic[ModelType, CreateSchemaType, UpdateSchemaType]
     def __init__(self, model: Type[ModelType], db_session: AsyncSession):
         self.model = model
         self.db = db_session
-        self.cache = multi_cache
+        self.cache = cache
 
     async def get(self, id: Any, use_cache: bool = True) -> Optional[ModelType]:
         """Get a single record by ID."""
         # Try cache first if enabled
         if use_cache:
             cache_key = self._get_cache_key(id)
-            cached_value = await self.cache.get(cache_key, CacheLevel.REDIS)
+            cached_value = await self.cache.get(cache_key)
             if cached_value:
                 return self.model(**cached_value)
 
@@ -164,7 +164,7 @@ class BaseRepository(ABC, Generic[ModelType, CreateSchemaType, UpdateSchemaType]
         record_dict = {  # type: ignore[attr-defined]
             column.name: getattr(record, column.name) for column in record.__table__.columns
         }
-        await self.cache.set(cache_key, record_dict, ttl=CacheTTL.MEDIUM, level=CacheLevel.REDIS)
+        await self.cache.set(cache_key, record_dict, ttl=CacheTTL.MEDIUM)
 
     async def _invalidate_cache(self, id: Any) -> None:
         """Invalidate cache for a record."""
@@ -244,7 +244,7 @@ class ReadOnlyRepository(Generic[ModelType]):
     def __init__(self, model: Type[ModelType], db_session: AsyncSession):
         self.model = model
         self.db = db_session
-        self.cache = multi_cache
+        self.cache = cache
 
     async def get(self, id: Any) -> Optional[ModelType]:
         """Get a single record by ID."""

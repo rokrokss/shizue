@@ -6,8 +6,8 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.core.redis import cache
 from app.core.security import verify_token
+from app.core.unified_cache import cache
 from app.models.user import User
 
 logger = logging.getLogger(__name__)
@@ -47,26 +47,29 @@ async def get_current_user(
     # Try to get user from cache first
     cached_user = await cache.get_user_profile(user_id)
     if cached_user:
-        # Check if user is active (important for soft-deleted users)
-        if cached_user.get("is_active") is False:
-            # User is soft-deleted, clear cache and treat as not found
+        # Check if user is active
+        if not cached_user.get("is_active", True):
             await cache.delete_user_profile(user_id)
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="User not found",
             )
 
-        # Convert string IDs to UUID if necessary
-        if isinstance(cached_user.get("id"), str):
-            import uuid
+        # Optimized user object creation
+        try:
+            # Convert string IDs to UUID if necessary
+            if isinstance(cached_user.get("id"), str):
+                import uuid
 
-            cached_user["id"] = uuid.UUID(cached_user["id"])
+                cached_user["id"] = uuid.UUID(cached_user["id"])
 
-        # Remove computed properties that don't have setters
-        cached_user_data = cached_user.copy()
-        cached_user_data.pop("subscription_tier", None)
+            # Remove computed properties
+            cached_user_data = {k: v for k, v in cached_user.items() if k != "subscription_tier"}
 
-        return User(**cached_user_data)
+            return User(**cached_user_data)
+        except Exception as e:
+            logger.warning(f"Failed to create user from cache: {e}")
+            # Clear corrupted cache and fall through to DB
 
     # Get user from database
     import uuid
@@ -100,17 +103,21 @@ async def get_current_user(
             detail="User not found",
         )
 
-    # Check if user is active (for soft-deleted users)
+    # Check if user is active (optimized)
     if not user.is_active:
-        # Clear any cached data for this inactive user
         await cache.delete_user_profile(user_id)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found",
         )
 
-    # Cache user profile
-    await cache.set_user_profile(user_id, user.to_dict())
+    # Cache user profile efficiently
+    try:
+        user_dict = user.to_dict()
+        await cache.set_user_profile(user_id, user_dict)
+        logger.debug(f"Cached user profile for {user_id}")
+    except Exception as e:
+        logger.warning(f"Failed to cache user profile: {e}")
 
     return user
 

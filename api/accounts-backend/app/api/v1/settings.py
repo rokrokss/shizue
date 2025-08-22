@@ -9,10 +9,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import ORJSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.cache import CacheLevel, CacheTTL, cached
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.core.encryption import encryption_service
+from app.core.unified_cache import CacheTTL, cached
 from app.models.user import User
 from app.schemas.model_mapping import ModelProvider, ModelSize
 from app.schemas.settings import ApiKeyRequest, ApiKeyResponse, UserSettings, UserSettingsUpdate
@@ -73,7 +73,6 @@ async def _save_user_settings(user: User, settings: UserSettings, db: AsyncSessi
 @cached(
     ttl=CacheTTL.MEDIUM,
     key_builder=lambda current_user, **kwargs: f"user:settings:{current_user.id}",
-    level=CacheLevel.MEMORY,
 )
 async def get_settings(
     current_user: User = Depends(get_current_user),
@@ -147,9 +146,9 @@ async def update_settings(
     """Update all user settings."""
     await _save_user_settings(current_user, settings, db)
     # Invalidate cache after update
-    from app.core.cache import multi_cache
+    from app.core.unified_cache import cache
 
-    await multi_cache.delete(f"user:settings:{current_user.id}")
+    await cache.delete(f"user:settings:{current_user.id}")
     return await get_settings(current_user)
 
 
@@ -178,9 +177,9 @@ async def patch_settings(
 
     await _save_user_settings(current_user, current_settings, db)
     # Invalidate cache after update
-    from app.core.cache import multi_cache
+    from app.core.unified_cache import cache
 
-    await multi_cache.delete(f"user:settings:{current_user.id}")
+    await cache.delete(f"user:settings:{current_user.id}")
     return await get_settings(current_user)
 
 
@@ -240,7 +239,6 @@ async def delete_api_key(
 @cached(
     ttl=CacheTTL.LONG,
     key_builder=lambda size, provider, current_user, **kwargs: f"models:{current_user.id}:{size}:{provider}",
-    level=CacheLevel.MEMORY,
 )
 async def get_available_models(
     size: Optional[str] = None,

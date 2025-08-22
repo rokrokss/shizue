@@ -6,6 +6,7 @@ from app.core.security import create_refresh_token, hash_token
 from app.models.auth_token import AuthToken
 from datetime import datetime, timedelta, timezone
 from app.models.user import User
+from app.models.oauth_state import OAuthState
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -14,7 +15,7 @@ class TestAuthAPI:
     """Test authentication API endpoints."""
 
     @pytest.mark.integration
-    async def test_login_google(self, client: AsyncClient, mock_cache, mock_google_oauth):
+    async def test_login_google(self, client: AsyncClient, db_session: AsyncSession, mock_google_oauth):
         """Test Google OAuth login URL generation."""
         response = await client.get("/api/v1/auth/login/google")
 
@@ -23,8 +24,11 @@ class TestAuthAPI:
         assert "authorization_url" in data
         assert "accounts.google.com" in data["authorization_url"]
 
-        # Check that state was stored in cache
-        mock_cache.set_oauth_state.assert_called_once()
+        # Check that state was stored in database
+        from sqlalchemy import select
+        result = await db_session.execute(select(OAuthState))
+        oauth_state = result.scalar_one_or_none()
+        assert oauth_state is not None
 
     @pytest.mark.integration
     async def test_callback_google_new_user(
@@ -32,11 +36,12 @@ class TestAuthAPI:
         client: AsyncClient,
         db_session: AsyncSession,
         mock_google_oauth,
-        mock_cache,
     ):
         """Test Google OAuth callback for new user."""
-        # Mock cache to return valid state
-        mock_cache.get_oauth_state.return_value = {"provider": "google"}
+        # Create valid OAuth state in database
+        oauth_state = OAuthState(state="test_state")
+        db_session.add(oauth_state)
+        await db_session.commit()
 
         response = await client.get(
             "/api/v1/auth/callback/google",
@@ -73,10 +78,12 @@ class TestAuthAPI:
         db_session: AsyncSession,
         test_user: User,
         mock_google_oauth,
-        mock_cache,
     ):
         """Test Google OAuth callback for existing user."""
-        mock_cache.get_oauth_state.return_value = {"provider": "google"}
+        # Create valid OAuth state in database
+        oauth_state = OAuthState(state="test_state")
+        db_session.add(oauth_state)
+        await db_session.commit()
 
         # Update mock to return existing user's google_id
         mock_google_oauth.verify_and_get_user_info.return_value["google_id"] = (
@@ -100,9 +107,9 @@ class TestAuthAPI:
         assert count == 1
 
     @pytest.mark.integration
-    async def test_callback_google_invalid_state(self, client: AsyncClient, mock_cache):
+    async def test_callback_google_invalid_state(self, client: AsyncClient, db_session: AsyncSession):
         """Test Google OAuth callback with invalid state."""
-        mock_cache.get_oauth_state.return_value = None
+        # Don't create any OAuth state in database
 
         response = await client.get(
             "/api/v1/auth/callback/google",
@@ -114,10 +121,13 @@ class TestAuthAPI:
 
     @pytest.mark.integration
     async def test_callback_google_unverified_email(
-        self, client: AsyncClient, mock_google_oauth, mock_cache
+        self, client: AsyncClient, db_session: AsyncSession, mock_google_oauth
     ):
         """Test Google OAuth callback with unverified email."""
-        mock_cache.get_oauth_state.return_value = {"provider": "google"}
+        # Create valid OAuth state in database
+        oauth_state = OAuthState(state="test_state")
+        db_session.add(oauth_state)
+        await db_session.commit()
         mock_google_oauth.verify_and_get_user_info.return_value["email_verified"] = (
             False
         )

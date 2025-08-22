@@ -216,9 +216,8 @@ if [ -d "api" ]; then
 
     # Unit tests (if database is available)
     echo -n "Unit tests... "
-    if docker ps | grep -q postgres && docker ps | grep -q redis; then
+    if docker ps | grep -q postgres; then
         export DATABASE_URL="postgresql+asyncpg://test:test@localhost:5432/test_db"
-        export REDIS_URL="redis://localhost:6379/1"
         export TESTING="true"
         export JWT_SECRET_KEY="test_secret_key"
 
@@ -319,10 +318,6 @@ else
 fi
 
 echo -n "Cache connectivity... "
-if docker ps | grep -q redis; then
-    print_status "success" "Redis running"
-else
-    print_status "warning" "Redis not running"
 fi
 
 echo ""

@@ -13,10 +13,6 @@ data:
   POSTGRES_DB: "shizue_accounts"
   POSTGRES_HOST: "postgres-service"
   POSTGRES_PORT: "5432"
-  # Redis
-  REDIS_HOST: "redis-service"
-  REDIS_PORT: "6379"
-  REDIS_DB: "0"
   # JWT
   JWT_ALGORITHM: "HS256"
   ACCESS_TOKEN_EXPIRE_MINUTES: "30"

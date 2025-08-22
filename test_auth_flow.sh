@@ -62,12 +62,6 @@ else
     echo -e "${RED}✗ PostgreSQL 컨테이너가 실행되지 않습니다${NC}"
 fi
 
-if docker ps | grep -q "shizue-redis"; then
-    echo -e "${GREEN}✓ Redis 컨테이너 실행 중${NC}"
-else
-    echo -e "${RED}✗ Redis 컨테이너가 실행되지 않습니다${NC}"
-fi
-
 # 6. Chrome Extension 빌드 확인
 echo -e "\n${YELLOW}6. Chrome Extension 빌드 확인${NC}"
 if [ -f "dist/chrome-mv3/manifest.json" ]; then
@@ -100,4 +94,3 @@ echo ""
 echo "🔗 유용한 링크:"
 echo "   - API 문서: http://localhost:8000/docs"
 echo "   - PostgreSQL: localhost:5432 (shizue / shizue_password)"
-echo "   - Redis: localhost:6379"

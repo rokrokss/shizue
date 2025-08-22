@@ -55,7 +55,6 @@ cp deploy/k8s/secret.yaml deploy/k8s/secret-prod.yaml
 
 수정해야 할 값들:
 - `POSTGRES_PASSWORD`: 강력한 비밀번호
-- `REDIS_PASSWORD`: 강력한 비밀번호
 - `JWT_SECRET_KEY`: 무작위 생성된 키 (최소 32자)
 - `GOOGLE_CLIENT_ID`: Google OAuth Client ID
 - `GOOGLE_CLIENT_SECRET`: Google OAuth Client Secret
@@ -90,9 +89,6 @@ kubectl apply -f deploy/k8s/configmap.yaml
 ```bash
 # PostgreSQL 배포
 kubectl apply -f deploy/k8s/postgres.yaml
-
-# Redis 배포
-kubectl apply -f deploy/k8s/redis.yaml
 
 # 상태 확인
 kubectl get pods -n shizue
@@ -171,10 +167,6 @@ secrets:
 postgresql:
   auth:
     password: "strong-database-password"
-
-redis:
-  auth:
-    password: "strong-redis-password"
 ```
 
 ### 3. Helm 설치
@@ -279,13 +271,6 @@ kubectl logs <pod-name> -n shizue
 ```bash
 # 데이터베이스 접속 테스트
 kubectl run -it --rm debug --image=postgres:15 --restart=Never -n shizue -- psql -h postgres-service -U shizue -d shizue_accounts
-```
-
-#### 3. Redis 연결 실패
-
-```bash
-# Redis 접속 테스트
-kubectl run -it --rm debug --image=redis:7 --restart=Never -n shizue -- redis-cli -h redis-service -a $REDIS_PASSWORD
 ```
 
 ### 성능 튜닝

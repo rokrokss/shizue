@@ -39,17 +39,6 @@ else
     echo -e "${RED}✗ PostgreSQL is not ready${NC}"
 fi
 
-# 4. Redis 연결 체크
-echo -e "\n${YELLOW}Redis Connection:${NC}"
-if docker-compose -f docker-compose.prod.yml exec -T redis redis-cli ping > /dev/null 2>&1; then
-    echo -e "${GREEN}✓ Redis is ready${NC}"
-
-    # Redis 메모리 사용량
-    REDIS_MEMORY=$(docker-compose -f docker-compose.prod.yml exec -T redis redis-cli info memory | grep used_memory_human | cut -d: -f2 | tr -d '\r')
-    echo "  Memory usage: $REDIS_MEMORY"
-else
-    echo -e "${RED}✗ Redis is not ready${NC}"
-fi
 
 # 5. 디스크 사용량
 echo -e "\n${YELLOW}Disk Usage:${NC}"

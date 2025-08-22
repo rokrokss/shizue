@@ -3,6 +3,7 @@
 ## Overview
 
 This document describes the testing infrastructure and procedures for the Shizue project, which includes:
+
 - Chrome Extension (TypeScript/React)
 - Backend API (Python/FastAPI)
 - Webapp (Next.js)
@@ -32,6 +33,7 @@ Runs all tests across all components with detailed reporting:
 ```
 
 Features:
+
 - Environment verification
 - Pre-commit hook checks
 - Extension tests (TypeScript, lint, format, unit, build)
@@ -50,6 +52,7 @@ Simulates GitHub Actions CI environment locally:
 ```
 
 Features:
+
 - Tests all components as they would run in CI
 - Timeout handling for builds
 - Color-coded output
@@ -64,7 +67,8 @@ cd api && ./run-tests-ci.sh
 ```
 
 Requirements:
-- PostgreSQL and Redis running
+
+- PostgreSQL running
 - Environment variables configured
 
 ### 4. Extension/Webapp CI Test (`scripts/run-ci-tests.sh`)
@@ -109,18 +113,21 @@ SKIP=webapp-test,api-test git commit -m "message"
 ### Available Hooks
 
 #### Extension Hooks
+
 - `extension-format`: Prettier format check
 - `extension-lint`: ESLint
 - `extension-typecheck`: TypeScript compilation
 - `extension-test`: Vitest (manual stage)
 
 #### Webapp Hooks
+
 - `webapp-format`: Prettier format check
 - `webapp-lint`: Next.js ESLint
 - `webapp-typecheck`: TypeScript compilation
 - `webapp-test`: Jest (manual stage)
 
 #### Backend API Hooks
+
 - `api-format`: isort & black formatting
 - `api-lint`: flake8 & mypy
 - `api-check`: Format and lint verification
@@ -209,13 +216,9 @@ docker run -d --name test-postgres \
   -e POSTGRES_DB=test_db \
   postgres:15
 
-docker run -d --name test-redis \
-  -p 6379:6379 \
-  redis:7
-
 # Stop and remove
-docker stop test-postgres test-redis
-docker rm test-postgres test-redis
+docker stop test-postgres
+docker rm test-postgres
 ```
 
 ### Using Docker Compose
@@ -255,7 +258,6 @@ docker-compose down
 
 ```bash
 export DATABASE_URL="postgresql+asyncpg://test:test@localhost:5432/test_db"
-export REDIS_URL="redis://localhost:6379/1"
 export JWT_SECRET_KEY="test_secret_key"
 export GOOGLE_CLIENT_ID="test_client_id"
 export GOOGLE_CLIENT_SECRET="test_client_secret"
@@ -274,16 +276,19 @@ export NODE_ENV="test"
 ### Common Issues
 
 1. **TypeScript errors in webapp**
+
    ```bash
    cd webapp && pnpm exec tsc --noEmit
    ```
 
 2. **Python formatting issues**
+
    ```bash
    cd api && make format
    ```
 
 3. **Pre-commit hook failures**
+
    ```bash
    # Update hooks
    pre-commit autoupdate
@@ -293,7 +298,7 @@ export NODE_ENV="test"
    ```
 
 4. **Database connection errors**
-   - Ensure PostgreSQL and Redis are running
+   - Ensure PostgreSQL are running
    - Check environment variables
    - Verify port availability
 

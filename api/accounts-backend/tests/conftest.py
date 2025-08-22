@@ -10,8 +10,6 @@ import sys
 if "DATABASE_URL" not in os.environ:
     # Use SQLite for local testing to avoid external dependencies
     os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///./test.db"
-if "REDIS_URL" not in os.environ:
-    os.environ["REDIS_URL"] = "redis://localhost:6379/1"
 
 # Set TESTING flag to ensure test mode
 os.environ["TESTING"] = "true"
@@ -40,14 +38,13 @@ from app.core.security import create_access_token, create_refresh_token
 from app.main import app
 from app.models.user import User
 from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
-                                    create_async_engine)
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
 # Settings are already configured via environment variables above
 
 # Configure pytest-asyncio
-pytest_plugins = ('pytest_asyncio',)
+pytest_plugins = ("pytest_asyncio",)
 
 
 # Note: pytest-asyncio now provides its own event_loop fixture,
@@ -68,9 +65,7 @@ async def test_db():
         await conn.run_sync(Base.metadata.create_all)
 
     # Create session factory
-    async_session = async_sessionmaker(
-        engine, class_=AsyncSession, expire_on_commit=False
-    )
+    async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
     yield async_session
 
@@ -138,36 +133,25 @@ async def auth_headers(test_user: User) -> dict:
 
 
 @pytest.fixture
-def mock_redis():
-    """Mock Redis client."""
-    with patch("app.core.redis.redis_client") as mock:
-        mock.get.return_value = None
-        mock.set.return_value = True
-        mock.delete.return_value = True
-        mock.ping.return_value = True
-        yield mock
-
-
-@pytest.fixture
 def mock_google_oauth():
     """Mock Google OAuth service."""
     with patch("app.api.v1.auth.google_oauth") as mock:
-        mock.get_authorization_url = AsyncMock(
-            return_value="https://accounts.google.com/oauth/authorize?..."
+        mock.get_authorization_url = AsyncMock(return_value="https://accounts.google.com/oauth/authorize?...")
+        mock.verify_and_get_user_info = AsyncMock(
+            return_value={
+                "google_id": "test_google_id_123",
+                "email": "test@example.com",
+                "email_verified": True,
+                "name": "Test User",
+                "picture": "https://example.com/photo.jpg",
+                "locale": "en",
+                "tokens": {
+                    "access_token": "google_access_token",
+                    "refresh_token": "google_refresh_token",
+                    "expires_in": 3600,
+                },
+            }
         )
-        mock.verify_and_get_user_info = AsyncMock(return_value={
-            "google_id": "test_google_id_123",
-            "email": "test@example.com",
-            "email_verified": True,
-            "name": "Test User",
-            "picture": "https://example.com/photo.jpg",
-            "locale": "en",
-            "tokens": {
-                "access_token": "google_access_token",
-                "refresh_token": "google_refresh_token",
-                "expires_in": 3600,
-            },
-        })
         yield mock
 
 
@@ -182,14 +166,14 @@ def mock_cache():
     mock_cache_obj.get_user_stats = AsyncMock(return_value=None)
     mock_cache_obj.set_user_stats = AsyncMock(return_value=True)
     mock_cache_obj.delete_user_stats = AsyncMock(return_value=True)
-    mock_cache_obj.get_oauth_state = AsyncMock(return_value={"provider": "google"})
-    mock_cache_obj.set_oauth_state = AsyncMock(return_value=True)
-    mock_cache_obj.delete_oauth_state = AsyncMock(return_value=True)
+    # OAuth state methods removed - now using database
 
     # Patch all possible locations where cache might be imported
-    with patch("app.api.v1.auth.cache", mock_cache_obj), \
-         patch("app.api.v1.usage.cache", mock_cache_obj), \
-         patch("app.api.v1.users.cache", mock_cache_obj), \
-         patch("app.core.dependencies.cache", mock_cache_obj), \
-         patch("app.core.redis.cache", mock_cache_obj):
+    with (
+        patch("app.api.v1.auth.cache", mock_cache_obj),
+        patch("app.api.v1.usage.cache", mock_cache_obj),
+        patch("app.api.v1.users.cache", mock_cache_obj),
+        patch("app.core.dependencies.cache", mock_cache_obj),
+        patch("app.core.unified_cache.cache", mock_cache_obj),
+    ):
         yield mock_cache_obj

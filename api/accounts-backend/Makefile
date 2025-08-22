@@ -60,8 +60,6 @@ logs-api:
 logs-postgres:
 	docker-compose logs -f postgres
 
-logs-redis:
-	docker-compose logs -f redis
 
 # Access containers
 shell:
@@ -70,8 +68,6 @@ shell:
 db-shell:
 	docker-compose exec postgres psql -U shizue -d shizue_accounts
 
-redis-cli:
-	docker-compose exec redis redis-cli -a redis_password
 
 # Run tests
 test:
@@ -87,6 +83,20 @@ migrate-create:
 
 migrate-down:
 	docker-compose exec api alembic downgrade -1
+
+# Performance monitoring
+perf-monitor:
+	@echo "📊 Cache Statistics:"
+	@curl -s http://localhost:8000/health | jq '.cache_stats' || echo "Service not running"
+	@echo "\n📈 System Metrics:"
+	@docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}"
+
+# Cache management
+cache-stats:
+	@curl -s http://localhost:8000/health | jq '.cache_stats' || echo "Service not running"
+
+cache-clear:
+	@curl -X POST http://localhost:8000/admin/cache/clear || echo "Service not running"
 
 # Clean up
 clean:

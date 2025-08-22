@@ -23,7 +23,7 @@ Shizue Accounts API를 무료 또는 저렴하게 배포하는 방법들입니�
 1. [Railway](https://railway.app) 가입
 2. GitHub 연동
 3. 새 프로젝트 생성
-4. PostgreSQL과 Redis 추가:
+4. PostgreSQL 추가:
    ```bash
    # Railway CLI 설치
    npm install -g @railway/cli
@@ -36,9 +36,6 @@ Shizue Accounts API를 무료 또는 저렴하게 배포하는 방법들입니�
 
    # PostgreSQL 추가
    railway add postgresql
-
-   # Redis 추가
-   railway add redis
    ```
 
 5. 환경 변수 설정:
@@ -228,7 +225,6 @@ Railway가 가장 간단하므로 자세히 설명합니다:
 Railway 대시보드에서 설정:
 ```
 DATABASE_URL=${{POSTGRES.DATABASE_URL}}
-REDIS_URL=${{REDIS.REDIS_URL}}
 JWT_SECRET_KEY=<generate-random-key>
 GOOGLE_CLIENT_ID=<your-google-client-id>
 GOOGLE_CLIENT_SECRET=<your-google-client-secret>
@@ -339,13 +335,7 @@ jobs:
    ALTER DATABASE shizue_accounts SET autovacuum_vacuum_scale_factor = 0.1;
    ```
 
-2. **Redis 메모리 최적화**:
-   ```
-   maxmemory 100mb
-   maxmemory-policy allkeys-lru
-   ```
-
-3. **로그 로테이션**:
+2. **로그 로테이션**:
    ```bash
    # /etc/logrotate.d/shizue
    /var/log/shizue/*.log {
@@ -417,7 +407,6 @@ docker volume prune -f
 ```
 
 ### 느린 응답
-- Redis 캐시 확인
 - 데이터베이스 인덱스 최적화
 - CDN 사용 (Cloudflare)
 

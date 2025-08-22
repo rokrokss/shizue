@@ -9,13 +9,12 @@ from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.cache import cache_manager
 from app.core.circuit_breaker import circuit_breaker_registry
 from app.core.config import settings
 from app.core.database import get_db
 from app.core.events import event_bus
 from app.core.logging import logger
-from app.core.redis import cache as redis_cache
+from app.core.unified_cache import cache
 
 router = APIRouter(prefix="/health", tags=["health"])
 
@@ -100,48 +99,45 @@ async def check_database_health(db: AsyncSession) -> ComponentHealth:
         )
 
 
-async def check_redis_health() -> ComponentHealth:
-    """Check Redis connectivity and performance."""
+async def check_cache_health() -> ComponentHealth:
+    """Check in-memory cache connectivity and performance."""
     import time
 
     start = time.time()
     try:
-        # Test Redis connection
+        # Test cache connection
         test_key = "_health_check"
         test_value = str(datetime.now(timezone.utc))
 
-        await redis_cache.set(test_key, test_value, ttl=10)
-        retrieved = await redis_cache.get(test_key)
+        await cache.set(test_key, test_value, ttl=10)
+        retrieved = await cache.get(test_key)
 
         latency_ms = (time.time() - start) * 1000
 
         if retrieved != test_value:
             status = HealthStatus.DEGRADED
-            message = "Redis read/write mismatch"
-        elif latency_ms > 50:
+            message = "Cache read/write mismatch"
+        elif latency_ms > 10:  # Lower threshold for in-memory cache
             status = HealthStatus.DEGRADED
-            message = "High Redis latency"
+            message = "High cache latency"
         else:
             status = HealthStatus.HEALTHY
-            message = "Redis is healthy"
+            message = "Cache is healthy"
 
-        # Get Redis info
-        try:
-            info = await redis_cache.redis.info()
-            metadata = {
-                "connected_clients": info.get("connected_clients"),
-                "used_memory_human": info.get("used_memory_human"),
-                "uptime_in_seconds": info.get("uptime_in_seconds"),
-            }
-        except Exception:
-            metadata = {}
+        # Get cache stats
+        cache_stats = cache.get_stats()
+        metadata = {
+            "type": "unified_cache",
+            "implementation": "TTLCache",
+            "stats": cache_stats,
+        }
 
-        return ComponentHealth(name="redis", status=status, latency_ms=latency_ms, message=message, metadata=metadata)
+        return ComponentHealth(name="cache", status=status, latency_ms=latency_ms, message=message, metadata=metadata)
 
     except Exception as e:
-        logger.error(f"Redis health check failed: {e}")
+        logger.error(f"Cache health check failed: {e}")
         return ComponentHealth(
-            name="redis", status=HealthStatus.UNHEALTHY, message=str(e), latency_ms=(time.time() - start) * 1000
+            name="cache", status=HealthStatus.UNHEALTHY, message=str(e), latency_ms=(time.time() - start) * 1000
         )
 
 
@@ -217,35 +213,12 @@ def check_event_bus_health() -> ComponentHealth:
         return ComponentHealth(name="event_bus", status=HealthStatus.UNHEALTHY, message=str(e))
 
 
-async def check_cache_health() -> ComponentHealth:
-    """Check cache system health."""
-    try:
-        cache_stats = await cache_manager.get_cache_stats()
-
-        # Check memory cache usage
-        usage_ratio = cache_stats["memory_cache_size"] / cache_stats["memory_cache_maxsize"]
-
-        if usage_ratio > 0.9:
-            status = HealthStatus.DEGRADED
-            message = "High memory cache usage"
-        else:
-            status = HealthStatus.HEALTHY
-            message = "Cache is healthy"
-
-        return ComponentHealth(name="cache", status=status, message=message, metadata=cache_stats)
-
-    except Exception as e:
-        logger.error(f"Cache health check failed: {e}")
-        return ComponentHealth(name="cache", status=HealthStatus.UNHEALTHY, message=str(e))
-
-
 @router.get("/", response_model=HealthResponse)
 async def health_check(db: AsyncSession = Depends(get_db)) -> HealthResponse:
     """Comprehensive health check endpoint."""
     # Check all components
     components = {
         "database": await check_database_health(db),
-        "redis": await check_redis_health(),
         "circuit_breakers": check_circuit_breakers_health(),
         "event_bus": check_event_bus_health(),
         "cache": await check_cache_health(),
@@ -296,8 +269,8 @@ async def readiness_check(db: AsyncSession = Depends(get_db)) -> Dict[str, Any]:
         # Check database
         await db.execute(text("SELECT 1"))
 
-        # Check Redis
-        await redis_cache.set("_readiness", "1", ttl=5)
+        # Check Cache
+        await cache.set("_readiness", "1", ttl=5)
 
         return {
             "status": "ready",

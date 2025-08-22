@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-이 파일은 이 저장소의 코드 작업 시 Claude Code (claude.ai/code)에게 가이드를 제공합니다.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 프로젝트 개요
 
@@ -174,11 +174,24 @@ content_security_policy: {
 - **모듈**: 동적 전환이 있는 `@wxt-dev/i18n`
 - **파일**: `src/locales/*.json`
 
-# 중요한 지시사항 알림
-요청된 것만 수행하고, 그 이상도 그 이하도 하지 마세요.
-목표 달성에 절대적으로 필요한 경우가 아니면 파일을 생성하지 마세요.
-항상 새 파일을 생성하는 것보다 기존 파일을 편집하는 것을 선호하세요.
-사용자가 명시적으로 요청하지 않는 한 문서 파일(*.md)이나 README 파일을 사전에 생성하지 마세요.
+## 개발 가이드라인
 
+### 코드 수정 시 주의사항
+- 새 파일 생성보다 기존 파일 편집을 우선
+- TypeScript 타입 안전성 유지
+- 기존 코드 스타일과 패턴 따르기
+- API 키나 민감한 정보는 환경 변수 사용
 
-      중요: 이 컨텍스트는 작업과 관련이 있을 수도 있고 없을 수도 있습니다. 작업과 매우 관련이 있는 경우에만 이 컨텍스트에 응답해야 합니다.
+### 테스트 작성
+- 새 기능 추가 시 테스트 포함
+- Backend: pytest 사용
+- Frontend: Vitest 사용
+
+### 커밋 메시지 컨벤션
+- `feat:` 새 기능
+- `fix:` 버그 수정
+- `docs:` 문서 변경
+- `style:` 코드 포맷팅
+- `refactor:` 코드 리팩토링
+- `test:` 테스트 추가/수정
+- `chore:` 빌드 또는 도구 변경

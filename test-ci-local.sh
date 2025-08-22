@@ -153,7 +153,7 @@ if command -v uv &> /dev/null; then
 
     echo -e "${GREEN}✅ Backend 테스트 준비 완료${NC}"
     echo "  💡 실제 테스트는 DB 연결이 필요합니다:"
-    echo "     - PostgreSQL과 Redis 실행 필요"
+    echo "     - PostgreSQL 실행 필요"
     echo "     - 또는 docker-compose 사용"
     cd ..
 elif command -v python3 &> /dev/null; then

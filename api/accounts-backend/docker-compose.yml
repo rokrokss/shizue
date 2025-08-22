@@ -20,22 +20,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # Redis Cache
-  redis:
-    image: redis:7-alpine
-    container_name: shizue-redis
-    restart: unless-stopped
-    command: redis-server --requirepass ${REDIS_PASSWORD:-redis_password}
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   # FastAPI Application
   api:
     build:
@@ -48,9 +32,6 @@ services:
     environment:
       # Database
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-shizue}:${POSTGRES_PASSWORD:-shizue_password}@postgres:5432/${POSTGRES_DB:-shizue_accounts}
-
-      # Redis
-      REDIS_URL: redis://default:${REDIS_PASSWORD:-redis_password}@redis:6379/0
 
       # Application settings
       APP_NAME: "Shizue Accounts API"
@@ -77,8 +58,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_healthy
     volumes:
       - ./app:/app/app:ro  # Mount app directory for development
 
@@ -100,7 +79,6 @@ services:
 
 volumes:
   postgres_data:
-  redis_data:
 
 networks:
   default:

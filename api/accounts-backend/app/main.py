@@ -17,8 +17,8 @@ from app.core.database import engine
 from app.core.events import event_bus, initialize_default_handlers
 from app.core.logging import logger, setup_logging
 from app.core.openapi import custom_openapi
-from app.core.redis import redis_client
-from app.middleware.correlation import CorrelationMiddleware, ErrorHandlingMiddleware, RequestLoggingMiddleware
+from app.core.unified_cache import rate_limiter
+from app.middleware.correlation import CorrelationMiddleware, ErrorHandlingMiddleware
 
 # Configure structured logging
 setup_logging(level="DEBUG" if settings.DEBUG else "INFO")
@@ -37,9 +37,9 @@ async def lifespan(app: FastAPI):
             await conn.run_sync(Base.metadata.create_all)
     logger.info("Database connection established")
 
-    # Test Redis connection
-    await redis_client.ping()
-    logger.info("Redis connection established")
+    # Initialize rate limiter (TTL-based, no cleanup needed)
+    await rate_limiter.start_cleanup_task()
+    logger.info("Unified cache system initialized")
 
     # Initialize event bus with default handlers
     initialize_default_handlers()
@@ -62,8 +62,10 @@ async def lifespan(app: FastAPI):
     # Clear event bus
     event_bus.clear_event_store()
 
-    # Close connections
-    await redis_client.close()
+    # Stop cleanup tasks
+    await rate_limiter.stop_cleanup_task()
+
+    # Close database connection
     await engine.dispose()
 
     logger.info("Application shutdown complete")
@@ -101,9 +103,8 @@ app.add_middleware(
 # 4. Correlation and request tracking
 app.add_middleware(CorrelationMiddleware)
 
-# 5. Request logging (if debug mode)
-if settings.DEBUG:
-    app.add_middleware(RequestLoggingMiddleware)
+# Request logging handled by CorrelationMiddleware
+# Removed redundant RequestLoggingMiddleware for better performance
 
 
 # HTTP exception handler
@@ -148,11 +149,6 @@ app.include_router(create_version_info_router())
 v1_router = version_router("v1", tags=["v1"])
 v1_router.include_router(api_router)
 app.include_router(v1_router)
-
-# API v2 endpoints (future)
-# v2_router = version_router("v2", tags=["v2"], deprecated=False)
-# v2_router.include_router(api_router_v2)
-# app.include_router(v2_router)
 
 
 # Cache root response

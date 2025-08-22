@@ -81,6 +81,9 @@ def upgrade() -> None:
     )
     op.create_index(op.f("ix_users_email"), "users", ["email"], unique=True)
     op.create_index(op.f("ix_users_google_id"), "users", ["google_id"], unique=True)
+    # Performance indexes
+    op.create_index("idx_users_is_active", "users", ["is_active"], postgresql_where=sa.text("is_active = true"))
+    op.create_index("idx_users_created_at", "users", ["created_at"])
 
     # Create auth_tokens table
     op.create_table(
@@ -111,6 +114,9 @@ def upgrade() -> None:
     op.create_index(
         op.f("ix_auth_tokens_user_id"), "auth_tokens", ["user_id"], unique=False
     )
+    # Performance indexes
+    op.create_index("idx_auth_tokens_expires_at", "auth_tokens", ["expires_at"])
+    op.create_index("idx_auth_tokens_user_id_is_active", "auth_tokens", ["user_id", "is_active"])
 
     # Create api_usage table
     op.create_table(
@@ -141,6 +147,8 @@ def upgrade() -> None:
     op.create_index(
         op.f("ix_api_usage_user_id"), "api_usage", ["user_id"], unique=False
     )
+    # Composite index for common queries
+    op.create_index("idx_api_usage_user_id_created_at", "api_usage", ["user_id", "created_at"])
 
     # Create user_subscriptions table
     op.create_table(
@@ -194,6 +202,11 @@ def upgrade() -> None:
         "idx_user_subscriptions_expires_at", "user_subscriptions", ["expires_at"],
         postgresql_where=sa.text("expires_at IS NOT NULL")
     )
+    # Performance index for active subscriptions
+    op.create_index(
+        "idx_user_subscriptions_status_active", "user_subscriptions", ["status"],
+        postgresql_where=sa.text("status = 'active'")
+    )
 
     # Insert default subscription plans
     op.execute("""
@@ -204,6 +217,19 @@ def upgrade() -> None:
         (gen_random_uuid(), 'max', 'Max', true),
         (gen_random_uuid(), 'enterprise', 'Enterprise', true)
     """)
+
+    # Create oauth_states table
+    op.create_table(
+        "oauth_states",
+        sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False),
+        sa.Column("state", sa.String(length=255), nullable=False),
+        sa.Column("code_verifier", sa.String(length=255), nullable=True),
+        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column("expires_at", sa.DateTime(timezone=True), nullable=False),
+        sa.PrimaryKeyConstraint("id")
+    )
+    op.create_index("idx_oauth_states_state", "oauth_states", ["state"], unique=True)
+    op.create_index("idx_oauth_states_created_at", "oauth_states", ["created_at"])
 
 
 def downgrade() -> None:

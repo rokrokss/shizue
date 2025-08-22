@@ -6,9 +6,9 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.cache import CacheKey, CacheLevel, CacheTTL
 from app.core.encryption import decrypt_data, encrypt_data
 from app.core.logging import logger
+from app.core.unified_cache import CacheKey, CacheTTL
 from app.models.user import User
 from app.repositories.base import ReadOnlyRepository
 from app.schemas.settings import SettingsUpdate
@@ -24,7 +24,7 @@ class SettingsQueryRepository(ReadOnlyRepository[User]):
         """Get user settings (decrypted)."""
         # Try cache first
         cache_key = CacheKey.user_settings(str(user_id))
-        cached_settings = await self.cache.get(cache_key, CacheLevel.MEMORY)
+        cached_settings = await self.cache.get(cache_key)
         if cached_settings:
             return cached_settings
 
@@ -38,7 +38,7 @@ class SettingsQueryRepository(ReadOnlyRepository[User]):
             decrypted_settings = decrypt_data(user.settings)
 
             # Cache decrypted settings in memory only (short TTL)
-            await self.cache.set(cache_key, decrypted_settings, ttl=CacheTTL.SHORT, level=CacheLevel.MEMORY)
+            await self.cache.set(cache_key, decrypted_settings, ttl=CacheTTL.SHORT)
 
             return decrypted_settings
         except Exception as e:

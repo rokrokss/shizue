@@ -10,7 +10,6 @@ echo "Working directory: $(pwd)"
 
 # Set environment variables (matching GitHub Actions)
 export DATABASE_URL="postgresql+asyncpg://test:test@localhost:5432/test_db"
-export REDIS_URL="redis://localhost:6379/1"
 export JWT_SECRET_KEY="test_secret_key_for_ci"
 export GOOGLE_CLIENT_ID="test_client_id"
 export GOOGLE_CLIENT_SECRET="test_client_secret"
@@ -25,12 +24,6 @@ cd accounts-backend
 if command -v pg_isready &> /dev/null; then
     echo "Checking PostgreSQL connection..."
     pg_isready -h localhost -p 5432 -U test || echo "Warning: PostgreSQL may not be ready"
-fi
-
-# Check if Redis is ready (for local testing)
-if command -v redis-cli &> /dev/null; then
-    echo "Checking Redis connection..."
-    redis-cli -h localhost -p 6379 ping || echo "Warning: Redis may not be ready"
 fi
 
 # Initialize database

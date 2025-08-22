@@ -33,15 +33,20 @@ class CorrelationMiddleware(BaseHTTPMiddleware):
         request.state.correlation_id = correlation_id
         request.state.request_id = request_id
 
-        # Log request start
+        # Optimized request logging
         start_time = time.time()
-        logger.info(
-            f"Request started: {request.method} {request.url.path}",
-            method=request.method,
-            path=request.url.path,
-            query_params=dict(request.query_params),
-            client_host=request.client.host if request.client else None,
-        )
+
+        # Skip verbose logging for health checks
+        skip_verbose = ["/health", "/healthz", "/metrics"]
+        is_health_check = any(request.url.path.startswith(path) for path in skip_verbose)
+
+        if not is_health_check:
+            logger.info(
+                f"Request: {request.method} {request.url.path}",
+                method=request.method,
+                path=request.url.path,
+                client_host=request.client.host if request.client else None,
+            )
 
         try:
             # Process request
@@ -54,13 +59,14 @@ class CorrelationMiddleware(BaseHTTPMiddleware):
             # Calculate duration
             duration_ms = (time.time() - start_time) * 1000
 
-            # Log request completion
-            LogMetrics.api_call(
-                endpoint=request.url.path,
-                method=request.method,
-                status_code=response.status_code,
-                duration_ms=duration_ms,
-            )
+            # Log completion for non-health checks
+            if not is_health_check:
+                LogMetrics.api_call(
+                    endpoint=request.url.path,
+                    method=request.method,
+                    status_code=response.status_code,
+                    duration_ms=duration_ms,
+                )
 
             return response
 
@@ -68,7 +74,7 @@ class CorrelationMiddleware(BaseHTTPMiddleware):
             # Calculate duration
             duration_ms = (time.time() - start_time) * 1000
 
-            # Log error
+            # Log error (always log errors)
             logger.error(
                 f"Request failed: {request.method} {request.url.path}",
                 method=request.method,
@@ -94,26 +100,32 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         """Log detailed request and response information."""
-        # Skip logging for health checks
-        if request.url.path in ["/health", "/healthz", "/metrics"]:
+        # Skip logging for health checks and static assets
+        skip_paths = ["/health", "/healthz", "/metrics", "/static", "/favicon.ico"]
+        if any(request.url.path.startswith(path) for path in skip_paths):
             return await call_next(request)
 
-        # Log request details
-        logger.debug(
-            "Request details",
-            headers=dict(request.headers),
-            cookies=request.cookies,
-        )
+        # Only log in debug mode - optimized logging
+        from app.core.config import settings
+
+        if settings.DEBUG:
+            logger.debug(
+                "Request details",
+                method=request.method,
+                path=request.url.path,
+                headers={k: v for k, v in request.headers.items() if k.lower() not in ["authorization", "cookie"]},
+            )
 
         # Process request
         response = await call_next(request)
 
-        # Log response details
-        logger.debug(
-            "Response details",
-            status_code=response.status_code,
-            headers=dict(response.headers),
-        )
+        # Response logging only in debug mode
+        if settings.DEBUG:
+            logger.debug(
+                "Response details",
+                status_code=response.status_code,
+                content_type=response.headers.get("content-type"),
+            )
 
         return response
 

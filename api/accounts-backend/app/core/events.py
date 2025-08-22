@@ -202,7 +202,7 @@ class CacheInvalidationHandler(EventHandler):
     """Handler that invalidates cache on certain events."""
 
     def __init__(self):
-        from app.core.cache import cache_manager
+        from app.core.unified_cache import cache_manager
 
         self.cache_manager = cache_manager
 

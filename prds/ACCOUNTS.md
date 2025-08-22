@@ -27,7 +27,6 @@
 
 - [x] Backend API Server
 - [x] Database (PostgreSQL/MySQL)
-- [x] Redis Cache
 - [ ] Payment System (Stripe) - 향후 구현
 
 ## 배경 및 목표
@@ -535,8 +534,7 @@ class UnifiedStorageService {
 - **ASGI Server**: Uvicorn + Gunicorn
 - **Database**: PostgreSQL (Supabase 또는 Neon)
 - **ORM**: SQLAlchemy 2.0+ or Tortoise ORM
-- **Cache**: Redis (Upstash)
-- **Task Queue**: Celery + Redis (향후 AI 작업용)
+- **Task Queue**: Celery
 - **Payment**: Stripe
 - **Authentication**: python-jose[cryptography] (JWT)
 - **OAuth**: Authlib
@@ -635,39 +633,6 @@ class StructuredLogger:
             "tokens_used": tokens,
             "timestamp": datetime.now(datetime.UTC).isoformat()
         })
-```
-
-### Redis 캐싱 전략
-
-```python
-# src/services/cache.py
-import redis.asyncio as redis
-from typing import Optional, Any
-import json
-
-class CacheService:
-    def __init__(self, redis_url: str):
-        self.redis = redis.from_url(redis_url)
-
-    async def get_user_profile(self, user_id: str) -> Optional[dict]:
-        key = f"user:profile:{user_id}"
-        cached = await self.redis.get(key)
-        if cached:
-            return json.loads(cached)
-        return None
-
-    async def set_user_profile(self, user_id: str, profile: dict, ttl: int = 3600):
-        key = f"user:profile:{user_id}"
-        await self.redis.setex(
-            key,
-            ttl,
-            json.dumps(profile)
-        )
-
-    async def invalidate_user_cache(self, user_id: str):
-        pattern = f"user:*:{user_id}"
-        async for key in self.redis.scan_iter(match=pattern):
-            await self.redis.delete(key)
 ```
 
 ### 데이터베이스 스키마 (SQLAlchemy 모델)
@@ -1560,7 +1525,7 @@ function handleFloatingButtonClick() {
 
 - **Google OAuth 2.0**: 웹 기반 OAuth 플로우 구현
 - **JWT 토큰 관리**: Access/Refresh 토큰 자동 갱신
-- **세션 관리**: Redis 캐싱으로 성능 최적화
+- **세션 관리**: 인메모리 캐싱으로 성능 최적화
 - **Chrome Extension 통합**: postMessage로 토큰 전달
 
 #### 2. 사용자 설정 관리
@@ -1581,7 +1546,6 @@ function handleFloatingButtonClick() {
 
 - **FastAPI**: 비동기 Python 웹 프레임워크
 - **PostgreSQL**: 사용자 데이터 저장
-- **Redis**: 세션 캐싱 및 속도 제한
 - **Docker**: 컨테이너화 및 배포 준비
 
 #### 5. 프론트엔드 통합
@@ -1602,7 +1566,6 @@ api/accounts-backend/
 │   │   └── users.py         # 사용자 프로필 관리
 │   ├── core/
 │   │   ├── encryption.py   # API Key 암호화
-│   │   ├── redis.py         # Redis 캐싱
 │   │   └── security.py      # JWT 토큰 생성/검증
 │   ├── models/
 │   │   ├── user.py          # User 모델
@@ -1645,7 +1608,7 @@ src/
 
 ### 성능 지표
 
-- **인증 응답 시간**: ~200ms (Redis 캐싱)
+- **인증 응답 시간**: ~200ms (인메모리 캐싱)
 - **설정 동기화**: ~150ms (배치 처리)
 - **토큰 갱신**: 자동 (만료 5분 전)
 - **암호화 오버헤드**: <10ms (Fernet)
@@ -1656,7 +1619,6 @@ src/
 - ✅ JWT 토큰 (HS256)
 - ✅ API Key 암호화 (AES-256)
 - ✅ CORS 설정
-- ✅ Rate Limiting (Redis)
 - ✅ SQL Injection 방지 (SQLAlchemy ORM)
 
 ### 다음 단계

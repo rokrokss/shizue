@@ -9,15 +9,12 @@ class Settings(BaseSettings):
     # Application
     APP_NAME: str = "Shizue Accounts API"
     APP_VERSION: str = "1.0.0"
-    VERSION: str = "1.0.0"  # Alias for backward compatibility
+    VERSION: str = "1.0.0"
     DEBUG: bool = False
     ENVIRONMENT: str = "production"
 
     # Database
     DATABASE_URL: str
-
-    # Redis
-    REDIS_URL: str
 
     # JWT
     JWT_SECRET_KEY: str
@@ -59,9 +56,18 @@ class Settings(BaseSettings):
     HOST: str = "0.0.0.0"
     PORT: int = 8000
 
-    # Rate Limiting
+    # Rate Limiting (optimized defaults)
     RATE_LIMIT_AUTH: str = "5/minute"
     RATE_LIMIT_API: str = "100/minute"
+
+    # Cache Configuration
+    CACHE_MAX_SIZE: int = 2000
+    CACHE_DEFAULT_TTL: int = 300  # 5 minutes
+
+    # Performance Settings
+    MAX_REQUEST_SIZE: int = 16_777_216  # 16MB
+    GZIP_MINIMUM_SIZE: int = 500
+    CORS_MAX_AGE: int = 3600  # 1 hour
 
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)
 

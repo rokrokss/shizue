@@ -14,8 +14,7 @@ class APIVersion(str, Enum):
     """Supported API versions."""
 
     V1 = "v1"
-    V2 = "v2"
-    LATEST = "v2"  # Always points to the latest stable version
+    LATEST = "v1"  # Always points to the latest stable version
 
 
 class VersionInfo(BaseModel):
@@ -34,19 +33,6 @@ VERSION_INFO: Dict[str, VersionInfo] = {
     "v1": VersionInfo(
         version="v1",
         status="stable",
-        release_date=datetime(2024, 1, 1),
-        deprecation_date=None,
-        sunset_date=None,
-        changes=[
-            "Initial release",
-            "Basic authentication and user management",
-            "Settings management",
-            "API key validation",
-        ],
-    ),
-    "v2": VersionInfo(
-        version="v2",
-        status="beta",
         release_date=datetime(2024, 11, 1),
         deprecation_date=None,
         sunset_date=None,
@@ -57,6 +43,9 @@ VERSION_INFO: Dict[str, VersionInfo] = {
             "Event-driven architecture",
             "Circuit breaker for external APIs",
             "Multi-level caching",
+            "Basic authentication and user management",
+            "Settings management",
+            "API key validation",
         ],
     ),
 }

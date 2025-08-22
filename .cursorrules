@@ -1,0 +1,57 @@
+# Cursor Rules for this repository
+
+## 최상위 원칙
+- 절대 자동 커밋/푸시를 수행하지 않습니다. 사용자가 같은 메시지에서 명시적으로 지시하지 않는 한 `git commit`, `git push`를 실행하지 마세요.
+- 응답은 한국어, 커밋 메시지는 영어로 작성합니다.
+
+## 변경 원칙
+- 새 파일 생성보다 기존 파일 편집을 우선합니다.
+- 불필요한 대규모 리팩터링/포맷 변경은 금지합니다. 관련된 줄만 최소 수정합니다.
+- 기존 들여쓰기 문자(탭/스페이스)와 폭을 그대로 유지합니다.
+- 코드 내부 설명 주석 남발 금지. 필요 시 블록/함수 상단에 간결한 주석만.
+- 키/토큰 등 민감정보는 코드에 하드코딩하지 말고 환경 변수/저장소를 사용합니다.
+
+## 타입·품질
+- TypeScript 타입 안전성 유지, `any` 남발 금지.
+- 가드 절과 명확한 변수명, 얕은 중첩을 선호합니다.
+- 오류는 의미 있게 처리하고 빈 `try/catch` 금지.
+- 기존 코드 스타일을 따르고 관련 없는 파일 포맷팅 금지.
+
+## 테스트
+- 기능 변경/추가 시 테스트를 함께 수정/추가합니다.
+- Frontend: Vitest (예: `pnpm test`)
+- Backend: pytest (예: `cd api/accounts-backend && uv run pytest -q`)
+- 전체 러너가 필요하면 루트 스크립트를 사용합니다 (예: `sh scripts/test-all.sh`).
+
+## 프로젝트 컨텍스트(요약)
+- 모노레포: Chrome 확장 + Python API + PDF 번역 워커
+- 주요 경로
+  - 확장: `src/`
+    - 백그라운드: `src/entrypoints/background/`
+    - 사이드패널: `src/entrypoints/sidepanel/`
+    - 콘텐츠 스크립트: `src/entrypoints/toggle.content/`, `src/entrypoints/youtube-caption-toggle.content/`
+  - 백엔드: `api/accounts-backend/`
+  - PDF 번역: `api/pdf-translation/`
+- 기본 명령(확장): `pnpm dev`, `pnpm build`, `pnpm compile`
+
+## 메시지·스토리지 참고
+- 메시지 상수: `src/config/constants.ts`
+- Chrome 저장소 키 패턴: `STORAGE_*`
+- IndexedDB: Dexie 사용
+
+## 보안·성능
+- CSP 설정은 `wxt.config.ts`를 따릅니다. WASM 관련 설정 임의 변경 금지.
+- 번들 변경 시 불필요 의존성 추가 금지, 트리셰이킹 저해하지 않도록 주의.
+
+## 문서
+- 사용자 요청 없이 일반 문서(`*.md`)의 대규모 생성/이동/삭제를 하지 않습니다.
+- `CLAUDE.md`와 충돌 시 이 `.cursorrules`를 우선합니다.
+
+## 커밋 정책
+- Conventional Commits 사용: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `test:`, `chore:`
+- 한 커밋에는 서로 관련된 변경만 포함합니다.
+- 자동 커밋/푸시는 절대 금지이며, 커밋이 필요하면 사용자가 명확히 지시해야 합니다.
+
+## 완료 기준
+- 변경 후 관련 테스트 통과, 린터/타입체크 에러 0.
+- 기능/성능/보안 영향이 있는 변경은 변경 요약을 간단히 남깁니다.

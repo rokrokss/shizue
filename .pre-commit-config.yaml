@@ -129,7 +129,7 @@ repos:
         files: ^api/.*\.py$
         pass_filenames: false
         stages: [manual]
-        # Note: Requires PostgreSQL and Redis to be running
+        # Note: Requires PostgreSQL to be running
 
   # =============================================================================
   # General Repository Hooks
@@ -143,12 +143,12 @@ repos:
       - id: end-of-file-fixer
         exclude: \.(svg|snap)$
       - id: mixed-line-ending
-        args: ['--fix=lf']
+        args: ["--fix=lf"]
         exclude: \.(svg|snap)$
 
       # File checks
       - id: check-added-large-files
-        args: ['--maxkb=1000']
+        args: ["--maxkb=1000"]
         exclude: \.(png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|pdf)$
       - id: check-case-conflict
       - id: check-symlinks
@@ -158,7 +158,7 @@ repos:
       - id: check-merge-conflict
       - id: check-yaml
         exclude: ^(deploy/k8s/.*\.yaml|\.github/workflows/.*\.yml)$
-        args: ['--unsafe']  # Allow custom tags
+        args: ["--unsafe"] # Allow custom tags
       - id: check-json
         exclude: ^(tsconfig.*\.json|webapp/tsconfig\.json)$
       - id: check-toml
@@ -175,7 +175,7 @@ repos:
       # Security
       - id: detect-private-key
       - id: detect-aws-credentials
-        args: ['--allow-missing-credentials']
+        args: ["--allow-missing-credentials"]
 
   # =============================================================================
   # Additional Security and Quality Checks
@@ -202,9 +202,8 @@ repos:
     rev: v0.43.0
     hooks:
       - id: markdownlint
-        args: ['--fix', '--disable', 'MD013', 'MD033', 'MD041']
+        args: ["--fix", "--disable", "MD013", "MD033", "MD041"]
         exclude: ^(CHANGELOG\.md|webapp/.*\.md)$
-
 # =============================================================================
 # Configuration Notes
 # =============================================================================

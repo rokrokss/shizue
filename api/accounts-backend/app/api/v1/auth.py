@@ -11,18 +11,12 @@ from sqlalchemy.orm import selectinload
 
 from app.core.config import settings
 from app.core.database import get_db
-from app.core.redis import cache
-from app.core.security import (
-    create_access_token,
-    create_refresh_token,
-    generate_device_id,
-    generate_state_token,
-    hash_token,
-    verify_token,
-)
+from app.core.security import create_access_token, create_refresh_token, generate_device_id, hash_token, verify_token
+from app.core.unified_cache import cache
 from app.models.auth_token import AuthToken
 from app.models.user import User
 from app.models.user_subscription import UserSubscription
+from app.repositories.oauth_state import OAuthStateRepository
 from app.schemas.auth import LoginURLResponse, RefreshTokenRequest, TokenResponse
 from app.services.google_oauth import google_oauth
 
@@ -59,14 +53,14 @@ router = APIRouter()
         500: {"description": "서버 오류"},
     },
 )
-async def login_google():
+async def login_google(db: AsyncSession = Depends(get_db)):
     """Get Google OAuth login URL"""
     try:
-        # Generate state token for CSRF protection
-        state = generate_state_token()
+        # Create OAuth state repository
+        oauth_repo = OAuthStateRepository(db)
 
-        # Store state in cache (expires in 10 minutes)
-        await cache.set_oauth_state(state, {"provider": "google"}, ttl=600)
+        # Generate and store state token for CSRF protection
+        state = await oauth_repo.create_state(redirect_uri=None)
 
         # Get authorization URL
         authorization_url = await google_oauth.get_authorization_url(state)
@@ -88,16 +82,19 @@ async def callback_google(
 ):
     """Handle Google OAuth callback"""
     try:
+        # Create OAuth state repository
+        oauth_repo = OAuthStateRepository(db)
+
         # Verify state token
-        state_data = await cache.get_oauth_state(state)
+        state_data = await oauth_repo.get_state(state)
         if not state_data:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid or expired state token",
             )
 
-        # Delete state from cache
-        await cache.delete_oauth_state(state)
+        # Delete state from database
+        await oauth_repo.delete_state(state)
 
         # Exchange code for user info
         user_data = await google_oauth.verify_and_get_user_info(code)

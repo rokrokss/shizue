@@ -113,14 +113,11 @@ if [ "$SKIP_BACKEND" != "true" ] && [ -d "api" ]; then
             -e POSTGRES_DB=test_db \
             postgres:15 || echo "PostgreSQL container may already exist"
 
-        docker run -d --name test-redis -p 6379:6379 redis:7 || echo "Redis container may already exist"
-
         # Wait for databases
         sleep 5
 
         # Run tests
         export DATABASE_URL="postgresql+asyncpg://test:test@localhost:5432/test_db"
-        export REDIS_URL="redis://localhost:6379/1"
         export JWT_SECRET_KEY="test_secret_key_for_ci"
         export GOOGLE_CLIENT_ID="test_client_id"
         export GOOGLE_CLIENT_SECRET="test_client_secret"
@@ -133,8 +130,8 @@ if [ "$SKIP_BACKEND" != "true" ] && [ -d "api" ]; then
 
         # Cleanup
         echo "Stopping test databases..."
-        docker stop test-postgres test-redis || true
-        docker rm test-postgres test-redis || true
+        docker stop test-postgres || true
+        docker rm test-postgres || true
     else
         echo "Docker not found, skipping backend tests that require database"
     fi

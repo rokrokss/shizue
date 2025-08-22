@@ -7,8 +7,8 @@ from uuid import UUID
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.cache import CacheKey, CacheTTL
 from app.core.logging import logger
+from app.core.unified_cache import CacheKey, CacheTTL
 from app.models.auth_token import AuthToken
 from app.repositories.base import BaseRepository
 from app.schemas.auth import TokenCreate, TokenUpdate

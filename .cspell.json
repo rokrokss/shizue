@@ -47,7 +47,6 @@
     "starlette",
     "uvloop",
     "httptools",
-    "aioredis",
     "vitest",
     "webextension",
     "fernet"

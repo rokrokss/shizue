@@ -29,7 +29,7 @@
 ┌─────────────────────────────────────────────────────────────┐
 │                      Data Layer                               │
 ├─────────────────────┬───────────────────┬───────────────────┤
-│    PostgreSQL       │      Redis        │  Chrome Storage   │
+│    PostgreSQL       │  Memory Cache     │  Chrome Storage   │
 │ • User Data         │ • Session Cache   │ • API Keys        │
 │ • Usage Stats       │ • Rate Limits     │ • UI Settings     │
 │ • Auth Tokens       │ • User Profiles   │ • Token Cache     │
@@ -519,7 +519,7 @@ export async function handleMessage(
 
 ### 6.1 캐싱 전략
 
-#### Redis 캐싱
+#### 메모리 캐싱
 ```python
 # 캐시 키 패턴
 user:profile:{user_id}        # TTL: 1시간
@@ -602,7 +602,7 @@ class AuthStateCache {
    ```bash
    poetry new shizue-backend
    cd shizue-backend
-   poetry add fastapi uvicorn[standard] sqlalchemy asyncpg redis authlib python-jose[cryptography] pydantic-settings
+   poetry add fastapi uvicorn[standard] sqlalchemy asyncpg authlib python-jose[cryptography] pydantic-settings
    ```
 
 2. **Docker Compose 설정**
@@ -618,10 +618,6 @@ class AuthStateCache {
        ports:
          - "5432:5432"
 
-     redis:
-       image: redis:7-alpine
-       ports:
-         - "6379:6379"
    ```
 
 3. **기본 구조 생성**
@@ -687,7 +683,7 @@ class AuthStateCache {
 - [ ] JWT 인증 시스템 구현
 - [ ] 데이터베이스 스키마 생성
 - [ ] API 엔드포인트 구현
-- [ ] Redis 캐싱 설정
+- [ ] 메모리 캐싱 설정
 - [ ] Rate Limiting 구현
 - [ ] 로깅 및 모니터링
 - [ ] 단위/통합 테스트

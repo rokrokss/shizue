@@ -33,14 +33,13 @@ nano .env.production
 - JWT 토큰 기반 인증
 - 사용자 프로필 관리
 - API 사용량 추적
-- Redis 캐싱
+- 인메모리 캐싱 (TTLCache)
 - PostgreSQL 데이터베이스
 
 ## 필요 사항
 
 - Python 3.12
 - PostgreSQL 15+
-- Redis 7+
 - Docker & Docker Compose (권장)
 
 ## 빠른 시작
@@ -87,9 +86,9 @@ cp .env.example .env
 # .env 파일 편집
 ```
 
-4. 데이터베이스 및 Redis 시작:
+4. 데이터베이스 시작:
 ```bash
-docker-compose up -d postgres redis
+docker-compose up -d postgres
 ```
 
 5. 애플리케이션 실행:
