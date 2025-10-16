@@ -50,6 +50,24 @@ function getTranslationModelPreset(): ModelPreset {
   return { openaiKey, geminiKey, anthropicKey, modelName };
 }
 
+/**
+ * Removes markdown code fences (```json, ```, etc.) from JSON response
+ * Some LLM models wrap JSON in markdown code blocks despite instructions
+ */
+function stripMarkdownCodeFence(content: string): string {
+  const trimmed = content.trim();
+
+  // Check if wrapped in markdown code fence (```json ... ``` or ``` ... ```)
+  const codeBlockRegex = /^```(?:json)?\s*\n?([\s\S]*?)\n?```$/;
+  const match = trimmed.match(codeBlockRegex);
+
+  if (match) {
+    return match[1].trim();
+  }
+
+  return trimmed;
+}
+
 export class TranslationHandler {
   constructor() {}
 
@@ -85,7 +103,8 @@ export class TranslationHandler {
 
       let parsedResponse: YoutubeCaptionTranslationJsonResponseFormat;
       try {
-        parsedResponse = JSON.parse(rawResponseContent);
+        const cleanedContent = stripMarkdownCodeFence(rawResponseContent);
+        parsedResponse = JSON.parse(cleanedContent);
       } catch (parseError) {
         errorLog(
           'TranslationHandler [translateYoutubeCaption] JSON parsing error:',
@@ -215,7 +234,8 @@ export class TranslationHandler {
 
       let parsedResponse: BatchTranslationJsonResponseFormat;
       try {
-        parsedResponse = JSON.parse(rawResponseContent);
+        const cleanedContent = stripMarkdownCodeFence(rawResponseContent);
+        parsedResponse = JSON.parse(cleanedContent);
       } catch (parseError) {
         errorLog(
           'TranslationHandler [translateHtmlTextBatch] JSON parsing error:',
