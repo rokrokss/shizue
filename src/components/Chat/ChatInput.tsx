@@ -1,4 +1,5 @@
 import Footer from '@/components/Footer';
+import { MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE } from '@/config/constants';
 import { ChatStatus, isChatWaiting } from '@/hooks/chat';
 import { useThemeValue } from '@/hooks/layout';
 import { debugLog } from '@/logs';
@@ -11,6 +12,7 @@ import {
   PictureOutlined,
   SmileOutlined,
   TranslationOutlined,
+  UnorderedListOutlined,
 } from '@ant-design/icons';
 import { Button, Input, Tooltip, Upload } from 'antd';
 import { useState } from 'react';
@@ -71,6 +73,26 @@ const ChatInput = ({
   const handleMemoClick = () => {
     debugLog('ChatInput: [handleMemoClick] navigate to /shizue-memo');
     navigate('/shizue-memo');
+  };
+
+  const handleSummaryClick = async () => {
+    debugLog('ChatInput: [handleSummaryClick] trigger summarize page');
+
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+      if (!tab?.id) {
+        debugLog('ChatInput: [handleSummaryClick] no active tab found');
+        return;
+      }
+
+      // Toggle의 MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE 리스너가 처리
+      chrome.tabs.sendMessage(tab.id, {
+        action: MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE,
+      });
+    } catch (error) {
+      debugLog('ChatInput: [handleSummaryClick] error', error);
+    }
   };
 
   const handleTranslateModeClick = () => {
@@ -323,6 +345,35 @@ const ChatInput = ({
                 type="text"
                 icon={
                   <EditOutlined
+                    style={{
+                      fontSize: '20px',
+                      color: 'rgba(0,0,0,0.88)',
+                      filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                    }}
+                  />
+                }
+                size="middle"
+              ></Button>
+            </Tooltip>
+            <Tooltip
+              placement="top"
+              title={
+                <div
+                  className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
+                    theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
+                  }`}
+                >
+                  {t('overlayMenu.summarizePage')}
+                </div>
+              }
+              color={theme == 'dark' ? '#505362' : 'white'}
+              className="sz:font-ycom"
+            >
+              <Button
+                onClick={() => handleSummaryClick()}
+                type="text"
+                icon={
+                  <UnorderedListOutlined
                     style={{
                       fontSize: '20px',
                       color: 'rgba(0,0,0,0.88)',
