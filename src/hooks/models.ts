@@ -11,12 +11,12 @@ import { chromeStorageBackend } from '@/lib/storageBackend';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
-export const defaultOpenAIChatModel: ChatModel = 'gpt-4.1';
-export const defaultOpenAITranslateModel: TranslateModel = 'gpt-4.1-mini';
-export const defaultGeminiChatModel: ChatModel = 'gemini-2.5-flash';
-export const defaultGeminiTranslateModel: TranslateModel = 'gemini-2.5-flash-lite-preview-06-17';
-export const defaultAnthropicChatModel: ChatModel = 'claude-sonnet-4-20250514';
-export const defaultAnthropicTranslateModel: TranslateModel = 'claude-3-5-haiku-20241022';
+export const defaultOpenAIChatModel: ChatModel = 'gpt';
+export const defaultOpenAITranslateModel: TranslateModel = 'gpt-mini';
+export const defaultGeminiChatModel: ChatModel = 'gemini-flash';
+export const defaultGeminiTranslateModel: TranslateModel = 'gemini-flash-lite';
+export const defaultAnthropicChatModel: ChatModel = 'claude-sonnet';
+export const defaultAnthropicTranslateModel: TranslateModel = 'claude-haiku';
 
 export const defaultOpenAIValidated = undefined;
 export const defaultGeminiValidated = undefined;

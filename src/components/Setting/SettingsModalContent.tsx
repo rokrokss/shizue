@@ -365,46 +365,40 @@ const SettingsModalContent = () => {
                     className="sz:font-ycom sz:w-50"
                     options={[
                       {
-                        value: 'gpt-4.1',
-                        label: 'GPT 4.1',
+                        value: 'gpt',
+                        label: 'GPT 5',
                         className: 'sz:font-ycom',
                         disabled: openAIValidated ? false : true,
                       },
                       {
-                        value: 'gpt-4.1-mini',
-                        label: 'GPT 4.1 Mini',
+                        value: 'gpt-mini',
+                        label: 'GPT 5 Mini',
                         className: 'sz:font-ycom',
                         disabled: openAIValidated ? false : true,
                       },
                       {
-                        value: 'gemini-2.5-flash',
+                        value: 'gemini-flash',
                         label: 'Gemini 2.5 Flash',
                         className: 'sz:font-ycom',
                         disabled: geminiValidated ? false : true,
                       },
                       {
-                        value: 'gemini-2.5-flash-lite-preview-06-17',
+                        value: 'gemini-flash-lite',
                         label: 'Gemini 2.5 Flash Lite',
                         className: 'sz:font-ycom',
                         disabled: geminiValidated ? false : true,
                       },
                       {
-                        value: 'claude-sonnet-4-20250514',
-                        label: 'Claude Sonnet 4',
+                        value: 'claude-sonnet',
+                        label: 'Claude Sonnet 4.5',
                         className: 'sz:font-ycom',
                         disabled: anthropicValidated ? false : true,
                       },
                       {
-                        value: 'claude-3-5-haiku-20241022',
-                        label: 'Claude Haiku 3.5',
+                        value: 'claude-haiku',
+                        label: 'Claude Haiku 4.5',
                         className: 'sz:font-ycom',
                         disabled: anthropicValidated ? false : true,
-                      },
-                      {
-                        value: 'wip',
-                        label: t('onboarding.selectProvider.chatGPTWebApp.title'),
-                        className: 'sz:font-ycom',
-                        disabled: true,
                       },
                     ]}
                   />
@@ -421,46 +415,40 @@ const SettingsModalContent = () => {
                     className="sz:font-ycom sz:w-50"
                     options={[
                       {
-                        value: 'gpt-4.1',
-                        label: 'GPT 4.1',
+                        value: 'gpt',
+                        label: 'GPT 5',
                         className: 'sz:font-ycom',
                         disabled: openAIValidated ? false : true,
                       },
                       {
-                        value: 'gpt-4.1-mini',
-                        label: 'GPT 4.1 Mini',
+                        value: 'gpt-mini',
+                        label: 'GPT 5 Mini',
                         className: 'sz:font-ycom',
                         disabled: openAIValidated ? false : true,
                       },
                       {
-                        value: 'gemini-2.5-flash',
+                        value: 'gemini-flash',
                         label: 'Gemini 2.5 Flash',
                         className: 'sz:font-ycom',
                         disabled: geminiValidated ? false : true,
                       },
                       {
-                        value: 'gemini-2.5-flash-lite-preview-06-17',
+                        value: 'gemini-flash-lite',
                         label: 'Gemini 2.5 Flash Lite',
                         className: 'sz:font-ycom',
                         disabled: geminiValidated ? false : true,
                       },
                       {
-                        value: 'claude-sonnet-4-20250514',
-                        label: 'Claude Sonnet 4',
+                        value: 'claude-sonnet',
+                        label: 'Claude Sonnet 4.5',
                         className: 'sz:font-ycom',
                         disabled: anthropicValidated ? false : true,
                       },
                       {
-                        value: 'claude-3-5-haiku-20241022',
-                        label: 'Claude Haiku 3.5',
+                        value: 'claude-haiku',
+                        label: 'Claude Haiku 4.5',
                         className: 'sz:font-ycom',
                         disabled: anthropicValidated ? false : true,
-                      },
-                      {
-                        value: 'wip',
-                        label: t('onboarding.selectProvider.chatGPTWebApp.title'),
-                        className: 'sz:font-ycom',
-                        disabled: true,
                       },
                     ]}
                   />

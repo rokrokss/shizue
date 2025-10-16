@@ -1,8 +1,8 @@
 import { getTranslationTargetLanguage } from '@/entrypoints/background/states/language';
 import {
+  getCurrentAnthropicKey,
   getCurrentGeminiKey,
   getCurrentOpenaiKey,
-  getCurrentAnthropicKey,
   getCurrentTranslateModel,
 } from '@/entrypoints/background/states/models';
 import { ModelPreset, getModelInstance } from '@/lib/models';
@@ -60,21 +60,22 @@ export class TranslationHandler {
   ): Promise<YoutubeCaptionTranslationResult> {
     try {
       const prompt = getYoutubeCaptionTranslationPrompt(captions, targetLanguage, metadata);
+      const modelPreset = getTranslationModelPreset();
 
       const llm = getModelInstance({
         temperature: 0.1,
         streaming: false,
-        modelPreset: getTranslationModelPreset(),
+        modelPreset: modelPreset,
         responseFormat: { type: 'json_object' },
       });
 
-      debugLog('TranslationHandler [translateYoutubeCaption] modelPreset:', getTranslationModelPreset());
+      debugLog('TranslationHandler [translateYoutubeCaption] modelPreset:', modelPreset);
       debugLog('TranslationHandler [translateYoutubeCaption] llm:', llm);
-      
+
       debugLog('TranslationHandler [translateYoutubeCaption] prompt:', prompt);
       const response = await llm.invoke([new HumanMessage(prompt)]);
-      await trackTokenUsage(llm.model, response);
-      
+      await trackTokenUsage(modelPreset.modelName, response);
+
       const rawResponseContent = (response.content as string)?.trim();
 
       debugLog(
@@ -154,19 +155,20 @@ export class TranslationHandler {
     try {
       const targetLanguage = getTranslationTargetLanguage();
       const prompt = getHtmlTranslationPrompt(text, targetLanguage);
+      const modelPreset = getTranslationModelPreset();
 
       const llm = getModelInstance({
         temperature: 0.1,
         maxTokens: 8000,
         streaming: false,
-        modelPreset: getTranslationModelPreset(),
+        modelPreset: modelPreset,
       });
 
       debugLog('TranslationHandler [translateHtmlText] llm:', llm);
-      
+
       const response = await llm.invoke([new HumanMessage(prompt)]);
 
-      await trackTokenUsage(llm.model, response);
+      await trackTokenUsage(modelPreset.modelName, response);
 
       debugLog('TranslationHandler [translateText] response:', response);
 
@@ -188,21 +190,22 @@ export class TranslationHandler {
       const serializedTextBatch = JSON.stringify(textBatch, null, 2);
 
       const batchPrompt = getHtmlTranslationBatchPrompt(serializedTextBatch, targetLanguage);
+      const modelPreset = getTranslationModelPreset();
 
       const llm = getModelInstance({
         temperature: 0.1,
         maxTokens: 5000,
         streaming: false,
-        modelPreset: getTranslationModelPreset(),
+        modelPreset: modelPreset,
         responseFormat: { type: 'json_object' },
       });
 
       debugLog('TranslationHandler [translateHtmlTextBatch] llm:', llm);
 
       const response = await llm.invoke([new HumanMessage(batchPrompt)]);
-      
-      await trackTokenUsage(llm.model, response);
-      
+
+      await trackTokenUsage(modelPreset.modelName, response);
+
       const rawResponseContent = (response.content as string)?.trim();
 
       debugLog(

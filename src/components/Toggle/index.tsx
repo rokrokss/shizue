@@ -469,8 +469,8 @@ const Toggle = () => {
                             size="small"
                             options={[
                               {
-                                value: 'gpt-4.1',
-                                label: 'GPT 4.1',
+                                value: 'gpt',
+                                label: 'GPT 5',
                                 className: 'sz:font-ycom',
                                 styles: {
                                   color: openAIValidated
@@ -484,8 +484,8 @@ const Toggle = () => {
                                 disabled: !openAIValidated,
                               },
                               {
-                                value: 'gpt-4.1-mini',
-                                label: 'GPT 4.1 Mini',
+                                value: 'gpt-mini',
+                                label: 'GPT 5 Mini',
                                 className: 'sz:font-ycom',
                                 styles: {
                                   color: openAIValidated
@@ -499,7 +499,7 @@ const Toggle = () => {
                                 disabled: !openAIValidated,
                               },
                               {
-                                value: 'gemini-2.5-flash',
+                                value: 'gemini-flash',
                                 label: 'Gemini 2.5 Flash',
                                 className: 'sz:font-ycom',
                                 styles: {
@@ -514,7 +514,7 @@ const Toggle = () => {
                                 disabled: !geminiValidated,
                               },
                               {
-                                value: 'gemini-2.5-flash-lite-preview-06-17',
+                                value: 'gemini-flash-lite',
                                 label: 'Gemini 2.5 Flash Lite',
                                 className: 'sz:font-ycom',
                                 styles: {
@@ -529,8 +529,8 @@ const Toggle = () => {
                                 disabled: !geminiValidated,
                               },
                               {
-                                value: 'claude-sonnet-4-20250514',
-                                label: 'Claude Sonnet 4',
+                                value: 'claude-sonnet',
+                                label: 'Claude Sonnet 4.5',
                                 className: 'sz:font-ycom',
                                 styles: {
                                   color: anthropicValidated
@@ -544,8 +544,8 @@ const Toggle = () => {
                                 disabled: !anthropicValidated,
                               },
                               {
-                                value: 'claude-3-5-haiku-20241022',
-                                label: 'Claude Haiku 3.5',
+                                value: 'claude-haiku',
+                                label: 'Claude Haiku 4.5',
                                 className: 'sz:font-ycom',
                                 styles: {
                                   color: anthropicValidated
@@ -557,12 +557,6 @@ const Toggle = () => {
                                     : 'rgba(55, 65, 81, 0.25)',
                                 },
                                 disabled: !anthropicValidated,
-                              },
-                              {
-                                value: 'wip',
-                                label: t('onboarding.selectProvider.chatGPTWebApp.title'),
-                                className: 'sz:font-ycom',
-                                disabled: true,
                               },
                             ]}
                           />
