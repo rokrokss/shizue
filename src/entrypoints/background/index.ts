@@ -1,4 +1,5 @@
 import { createContextMenu } from '@/entrypoints/background/contextMenu';
+import { onInstalled } from '@/entrypoints/background/onInstalled';
 import {
   sidebarToggleListeners,
   sidePanelMessageListeners,
@@ -9,6 +10,7 @@ import { backgroundLog } from '@/logs';
 import { messageHandlers } from '@/services/background/messageHandlers';
 
 export default defineBackground(() => {
+  onInstalled();
   backgroundLog();
   sidebarToggleListeners();
   languageListeners();

@@ -28,6 +28,14 @@ const MODEL_COLORS = {
   'gpt-4.1-mini': '#ABDCFF',
   'gemini-2.5-flash': '#FFF6B7',
   'gemini-2.5-flash-lite-preview-06-17': '#CE9FFC',
+  'claude-sonnet-4-20250514': '#DCC6B7',
+  'claude-3-5-haiku-20241022': '#1FFFFC',
+  gpt: '#32CCBC',
+  'gpt-mini': '#ABDCFF',
+  'gemini-flash': '#FFF6B7',
+  'gemini-flash-lite': '#CE9FFC',
+  'claude-sonnet': '#DCC6B7',
+  'claude-haiku': '#1FFFFC',
   default: '#32CCBC',
 };
 

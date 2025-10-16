@@ -101,7 +101,7 @@ export class ChatModelHandler {
 
       // Track token usage (after streaming is complete)
       if (lastChunk) {
-        await trackStreamingTokenUsage(llm.model, lastChunk);
+        await trackStreamingTokenUsage(modelPreset.modelName, lastChunk);
       }
 
       port.postMessage({ done: true });

@@ -168,3 +168,451 @@ content_security_policy: {
 - **Languages**: 23 supported (ar, bn, de, en, es, fr, ja, ko, zh_CN, etc.)
 - **Module**: `@wxt-dev/i18n` with dynamic switching
 - **Files**: `src/locales/*.json`
+
+## Critical Architecture Patterns
+
+### Message Handler Registry Pattern
+**When adding new message types**, follow this pattern:
+1. Define constant in `src/config/constants.ts`: `export const MESSAGE_NEW_ACTION = 'new-action'`
+2. Create handler function: `async function handleNewAction(msg, sendResponse) { ... }`
+3. Register in `services/background/messageHandlers.ts`: `[MESSAGE_NEW_ACTION]: handleNewAction`
+4. Background script automatically routes based on message action
+
+**Important**: Always `return true` from `chrome.runtime.onMessage.addListener` for async handlers to prevent "port closed" errors.
+
+### Port-Based Streaming Architecture
+**Real-time streaming** (chat, translation) uses Chrome Port connections:
+- Side Panel creates port: `chrome.runtime.connect({ name: PORT_STREAM_MESSAGE })`
+- Background listens: `port.onMessage.addListener((msg) => { ... })`
+- Stream data: `port.postMessage({ delta, done, error })`
+- Buffering optimization: Messages batched by `STREAM_FLUSH_THRESHOLD` to reduce UI updates
+- Cancellation: AbortController passed through port messages
+
+### State Management Hierarchy
+Three-layer state system with different purposes:
+1. **Jotai Atoms** (`hooks/global.ts`) - UI reactivity, temporary state
+2. **Chrome Storage** - Cross-component sync, user preferences
+3. **IndexedDB** (`lib/indexDB.ts`) - Persistent data (threads, messages, memos)
+
+**Key Pattern**: `atomWithStorage(key, initialValue, chromeStorageBackend('local'))` bridges Jotai + Chrome Storage
+
+### Background Service Worker State Caching
+**Pattern**: `entrypoints/background/states/models/index.ts` maintains in-memory cache of API keys and model selections, synchronized via `chrome.storage.onChanged` listeners.
+
+**When adding new LLM providers**:
+1. Add cache variable: `let newProviderKey: string | undefined`
+2. Add to `modelListeners()`: Watch for storage changes
+3. Add to `loadModelSettings()`: Initial load on startup
+
+### IndexedDB Schema Migration (Dexie)
+**Pattern**: `lib/indexDB.ts` uses incremental versioning:
+```typescript
+this.version(1).stores({ messages: 'id, threadId, createdAt' });
+this.version(2).stores({ messages: '...', tokenUsage: 'id, date, model' });
+```
+
+**When adding new tables/fields**:
+- Call new `version(N)` and list ALL tables (cumulative)
+- Only index fields used for filtering/sorting
+- Primary key (`id`) automatically indexed
+
+### LLM Provider Factory Pattern
+**Location**: `lib/models.ts`
+
+**When adding new LLM provider**:
+1. Add model names to `ChatModel` or `TranslateModel` types
+2. Update `providerFromName()`: Add detection logic
+3. Create `createNewProvider()` function (LangChain wrapper)
+4. Add case to `getModelInstance()` switch
+
+### ActionType-Based Feature Routing
+**Pattern**: `hooks/global.ts` defines `ActionType` enum that determines:
+- Temperature settings (e.g., `askForSummary`: 0.3, `chat`: 0.7)
+- System prompts (`lib/prompts.ts`)
+- Side Panel routes
+- Streaming behavior
+
+**When adding new feature**:
+1. Add to `ActionType` union type
+2. Create route in `sidepanel/routes.tsx`
+3. Define prompt in `lib/prompts.ts`
+4. Handle in `services/chatService.ts`
+
+### Live Query Pattern for Real-Time UI
+**Pattern**: `hooks/chat.ts` uses Dexie's `liveQuery` + Jotai's `atomWithObservable`:
+```typescript
+export const threadsAtom = atomWithObservable(() =>
+  liveQuery(() => db.threads.orderBy('updatedAt').reverse().toArray())
+);
+```
+
+**Purpose**: Automatically re-render components when IndexedDB data changes (no manual refresh needed)
+
+### Context Menu Integration
+**Pattern**: `entrypoints/background/contextMenu.ts` creates menus → sends messages to content scripts on click:
+```typescript
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  chrome.tabs.sendMessage(tab.id, { action: MESSAGE_CONTEXT_MENU_* });
+});
+```
+
+Content scripts then communicate with Side Panel to perform actions.
+
+## Storage Architecture
+
+This project uses **three distinct storage layers** with different purposes:
+
+### 1. Chrome Storage (chrome.storage.local)
+**Purpose**: Cross-component synchronization of settings, API keys, and user preferences
+**Location**: [src/lib/storageBackend.ts](src/lib/storageBackend.ts)
+
+#### chromeStorageBackend Implementation
+```typescript
+// Unified interface for Jotai atoms
+export const chromeStorageBackend = <T>(area: 'local' | 'sync' | 'session' = 'local') => ({
+  async getItem(key: string, initialValue: T): Promise<T>
+  async setItem(key: string, value: T): Promise<void>
+  async removeItem(key: string): Promise<void>
+  subscribe(key: string, callback: (val: T) => void, initialValue: T)
+})
+```
+
+**Key Pattern**: All storage keys defined in [config/constants.ts](src/config/constants.ts) with `STORAGE_*` prefix:
+
+| Category | Keys | Purpose |
+|----------|------|---------|
+| **API Keys** | `STORAGE_OPENAI_KEY`, `STORAGE_GEMINI_KEY`, `STORAGE_ANTHROPIC_KEY` | LLM provider credentials |
+| **API Validation** | `STORAGE_OPENAI_VALIDATED`, `STORAGE_GEMINI_VALIDATED`, `STORAGE_ANTHROPIC_VALIDATED` | API key validation status |
+| **Model Selection** | `STORAGE_CHAT_MODEL`, `STORAGE_TRANSLATE_MODEL` | Selected LLM models |
+| **Languages** | `STORAGE_LANGUAGE`, `STORAGE_TRANSLATE_TARGET_LANGUAGE` | UI language and translation target |
+| **Global State** | `STORAGE_GLOBAL_STATE` | Side panel current state (actionType, threadId, etc.) |
+| **UI Settings** | `STORAGE_THEME`, `STORAGE_SHOW_TOGGLE`, `STORAGE_TOGGLE_Y_POSITION`, `STORAGE_TOGGLE_HIDDEN_SITE_LIST` | Theme, toggle button visibility/position, hidden sites |
+| **YouTube** | `STORAGE_SHOW_YOUTUBE_CAPTION_TOGGLE`, `STORAGE_SHOW_YOUTUBE_BILINGUAL_CAPTION`, `STORAGE_USE_YOUTUBE_KEYBOARD_NAVIGATE`, `STORAGE_YOUTUBE_CAPTION_SIZE_RATIO` | YouTube-specific settings |
+| **PDF** | `STORAGE_PDF_TRANSLATE_TASK_INFO`, `STORAGE_PDF_TRANSLATE_NO_DUAL` | PDF translation task state |
+| **User Context** | `STORAGE_USER_MEMORY` | User information for LLM context |
+
+#### Direct Chrome Storage Access Pattern
+```typescript
+// Utility functions (lib/storageBackend.ts:33-58)
+export async function readStorage<T>(key: string, area: 'local' | 'sync' | 'session' = 'local'): Promise<T | undefined>
+export async function setStorage<T>(key: string, value: T, area: 'local' | 'sync' | 'session' = 'local'): Promise<boolean>
+
+// Usage example
+const apiKey = await readStorage<string>(STORAGE_OPENAI_KEY);
+await setStorage(STORAGE_OPENAI_KEY, 'sk-...');
+```
+
+#### Background State Caching Pattern
+**Location**: [entrypoints/background/states/models/index.ts](src/entrypoints/background/states/models/index.ts)
+
+Background service worker maintains in-memory cache of frequently accessed values:
+```typescript
+// Cache variables (lines 10-14)
+let currentChatModel: ChatModel = 'gpt-4.1';
+let currentTranslateModel: TranslateModel = 'gpt-4.1';
+let openaiKey: string | undefined;
+let geminiKey: string | undefined;
+let anthropicKey: string | undefined;
+
+// Synchronized via storage listeners (lines 46-96)
+chrome.storage.local.get(STORAGE_CHAT_MODEL, (res) => { ... });
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'local' && changes.CHAT_MODEL) {
+    changeChatModel(changes.CHAT_MODEL.newValue);
+  }
+});
+```
+
+**When to add new cached values**:
+1. Add cache variable
+2. Add getter function: `export const getCurrentXXX = () => xxx;`
+3. Add setter function: `export const changeXXX = (val) => { xxx = val; };`
+4. Add initial load in `modelListeners()`: `chrome.storage.local.get(...)`
+5. Add listener in `modelListeners()`: handle `changes.XXX`
+
+---
+
+### 2. Jotai Atoms with Chrome Storage Backend
+**Purpose**: Reactive UI state management with persistence
+**Pattern**: `atomWithStorage(key, initialValue, chromeStorageBackend('local'), options)`
+
+#### All atomWithStorage Definitions (22 atoms total)
+
+| Atom | Type | Storage Key | Default | getOnInit | Purpose | Location |
+|------|------|-------------|---------|-----------|---------|----------|
+| **Global State** |
+| `globalStateAtom` | `GlobalState` | `STORAGE_GLOBAL_STATE` | `{actionType: 'chat'}` | false | Side panel state (actionType, threadId, summaryText, imageBase64, etc.) | [hooks/global.ts:32](src/hooks/global.ts#L32) |
+| **API Keys** |
+| `openAIKeyAtom` | `string` | `STORAGE_OPENAI_KEY` | `''` | true | OpenAI API key | [hooks/settings.ts:10](src/hooks/settings.ts#L10) |
+| `geminiKeyAtom` | `string` | `STORAGE_GEMINI_KEY` | `''` | true | Google Gemini API key | [hooks/settings.ts:17](src/hooks/settings.ts#L17) |
+| `anthropicKeyAtom` | `string` | `STORAGE_ANTHROPIC_KEY` | `''` | true | Anthropic Claude API key | [hooks/settings.ts:24](src/hooks/settings.ts#L24) |
+| **Models** |
+| `chatModelAtom` | `ChatModel` | `STORAGE_CHAT_MODEL` | `'gpt-4.1'` | true | Chat LLM model selection | [hooks/models.ts:25](src/hooks/models.ts#L25) |
+| `translateModelAtom` | `TranslateModel` | `STORAGE_TRANSLATE_MODEL` | `'gpt-4.1-mini'` | true | Translation LLM model | [hooks/models.ts:32](src/hooks/models.ts#L32) |
+| `openAIValidatedAtom` | `boolean \| undefined` | `STORAGE_OPENAI_VALIDATED` | `undefined` | true | OpenAI key validation status | [hooks/models.ts:39](src/hooks/models.ts#L39) |
+| `geminiValidatedAtom` | `boolean \| undefined` | `STORAGE_GEMINI_VALIDATED` | `undefined` | true | Gemini key validation status | [hooks/models.ts:46](src/hooks/models.ts#L46) |
+| `anthropicValidatedAtom` | `boolean \| undefined` | `STORAGE_ANTHROPIC_VALIDATED` | `undefined` | true | Anthropic key validation status | [hooks/models.ts:53](src/hooks/models.ts#L53) |
+| **Languages** |
+| `languageAtom` | `Language` | `STORAGE_LANGUAGE` | `fallbackLanguage` | true | App UI language (23 languages) | [hooks/language.ts:38](src/hooks/language.ts#L38) |
+| `targetLanguageAtom` | `Language` | `STORAGE_TRANSLATE_TARGET_LANGUAGE` | `fallbackLanguage` | true | Translation target language | [hooks/language.ts:45](src/hooks/language.ts#L45) |
+| **Layout/UI** |
+| `themeAtom` | `'light' \| 'dark'` | `STORAGE_THEME` | `'light'` | false | Theme mode | [hooks/layout.ts:26](src/hooks/layout.ts#L26) |
+| `showToggleAtom` | `boolean` | `STORAGE_SHOW_TOGGLE` | `true` | true | Show floating toggle button | [hooks/layout.ts:33](src/hooks/layout.ts#L33) |
+| `toggleYPositionAtom` | `number` | `STORAGE_TOGGLE_Y_POSITION` | `-18` | true | Toggle button Y position | [hooks/layout.ts:40](src/hooks/layout.ts#L40) |
+| `toggleHiddenSiteListAtom` | `string[]` | `STORAGE_TOGGLE_HIDDEN_SITE_LIST` | `[]` | true | Sites where toggle is hidden | [hooks/layout.ts:47](src/hooks/layout.ts#L47) |
+| `youtubeShowCaptionToggleAtom` | `boolean` | `STORAGE_SHOW_YOUTUBE_CAPTION_TOGGLE` | `true` | true | Show YouTube caption toggle | [hooks/layout.ts:54](src/hooks/layout.ts#L54) |
+| `youtubeShowBilingualCaptionAtom` | `boolean` | `STORAGE_SHOW_YOUTUBE_BILINGUAL_CAPTION` | `false` | true | Show bilingual captions | [hooks/layout.ts:61](src/hooks/layout.ts#L61) |
+| `useYoutubeKeyboardNavigateAtom` | `boolean` | `STORAGE_USE_YOUTUBE_KEYBOARD_NAVIGATE` | `true` | true | Enable YouTube keyboard shortcuts | [hooks/layout.ts:68](src/hooks/layout.ts#L68) |
+| `youtubeCaptionSizeRatioAtom` | `number` | `STORAGE_YOUTUBE_CAPTION_SIZE_RATIO` | `1.0` | true | Caption size multiplier | [hooks/layout.ts:75](src/hooks/layout.ts#L75) |
+| **PDF** |
+| `pdfTranslateTaskInfoAtom` | `TaskInfo` | `STORAGE_PDF_TRANSLATE_TASK_INFO` | `{task_id: '', created_at: ''}` | true | PDF translation task tracking | [hooks/pdf.ts:19](src/hooks/pdf.ts#L19) |
+| `pdfTranslationNoDualAtom` | `boolean` | `STORAGE_PDF_TRANSLATE_NO_DUAL` | `false` | true | Single language mode for PDF | [hooks/pdf.ts:26](src/hooks/pdf.ts#L26) |
+| **User Context** |
+| `userMemoryAtom` | `UserMemory` | `STORAGE_USER_MEMORY` | `{text: ''}` | true | User information for LLM prompts | [hooks/userMemory.ts:17](src/hooks/userMemory.ts#L17) |
+
+#### getOnInit Option Pattern
+- **`getOnInit: true` (20 atoms)**: Load from storage immediately on initialization
+  - Use for: Settings, API keys, user preferences that must be correct from startup
+- **`getOnInit: false` (2 atoms)**: Manual hydration via `useHydrateAtoms` hook
+  - Use for: Large objects or state that can tolerate brief incorrect values during initial render
+  - Examples: `globalStateAtom` (manual hydration in SidePanelProvider), `themeAtom` (minimize flash)
+
+#### Safe Atom Pattern (for undefined handling)
+```typescript
+// Storage atom (can be undefined) - hooks/models.ts:39
+export const openAIValidatedAtom = atomWithStorage<boolean | undefined>(
+  STORAGE_OPENAI_VALIDATED,
+  undefined,
+  chromeStorageBackend('local'),
+  { getOnInit: true }
+);
+
+// Safe derived atom (fallback to API key existence check) - hooks/models.ts:58
+export const openAIValidatedSafeAtom = atom(
+  (get) => {
+    const validated = get(openAIValidatedAtom);
+    return validated !== undefined ? validated : Boolean(get(openAIKeyAtom));
+  },
+  (_, set, value: boolean) => set(openAIValidatedAtom, value)
+);
+```
+
+#### Custom Hook Patterns
+```typescript
+// Full access (read + write)
+export const useOpenAIKey = () => useAtom(openAIKeyAtom);
+
+// Read-only access
+export const useOpenAIKeyValue = () => useAtomValue(openAIKeyAtom);
+
+// Write-only access
+export const useSetOpenAIKey = () => useSetAtom(openAIKeyAtom);
+```
+
+**When adding new atomWithStorage**:
+1. Define storage key in [config/constants.ts](src/config/constants.ts): `export const STORAGE_NEW_KEY = 'NEW_KEY'`
+2. Create atom in appropriate hooks file: `hooks/{feature}.ts`
+3. Choose `getOnInit` based on hydration strategy (usually `true`)
+4. Create custom hooks for clean API
+5. Add to background cache if needed frequently
+
+---
+
+### 3. IndexedDB (Dexie)
+**Purpose**: Large-scale persistent data (threads, messages, memos, token usage)
+**Location**: [src/lib/indexDB.ts](src/lib/indexDB.ts)
+
+#### Database Schema (Version 5 - Current)
+```typescript
+// lib/indexDB.ts:48-86
+class DB extends Dexie {
+  messages!: Table<Message, string>;
+  threads!: Table<ThreadMeta, string>;
+  tokenUsage!: Table<TokenUsage, string>;
+  memos!: Table<Memo, string>;
+
+  constructor() {
+    super('ShizueDB');
+    this.version(5).stores({
+      messages: 'id, threadId, createdAt',
+      threads: 'id, updatedAt',
+      tokenUsage: 'id, date, model, provider, createdAt',
+      memos: 'id, folder, isPinned, createdAt, updatedAt',
+    });
+  }
+}
+```
+
+#### Table Structures
+
+**Messages** ([Message](src/lib/indexDB.ts#L4) interface):
+- `id`: UUID primary key
+- `threadId`: Foreign key to threads
+- `role`: 'human' | 'system' | 'ai'
+- `actionType`: ActionType (chat, askForSummary, translatePdf, etc.)
+- `content`: Message text
+- `images`: Optional base64 image array
+- `createdAt`: Timestamp
+- `done`, `onInterrupt`, `stopped`: Streaming state flags
+
+**Threads** ([ThreadMeta](src/lib/indexDB.ts#L20) interface):
+- `id`: UUID primary key
+- `title`: Thread display name
+- `updatedAt`: Last activity timestamp (sorted index)
+
+**TokenUsage** ([TokenUsage](src/lib/indexDB.ts#L26) interface):
+- `id`: UUID primary key
+- `date`: 'YYYY-MM-DD' format (indexed for date range queries)
+- `model`: Model name string
+- `provider`: 'openai' | 'gemini' | 'anthropic'
+- `inputTokens`, `outputTokens`, `totalTokens`: Usage metrics
+- `requestCount`: Number of API calls
+- `createdAt`: Timestamp
+
+**Memos** ([Memo](src/lib/indexDB.ts#L38) interface):
+- `id`: UUID primary key
+- `title`: Memo title
+- `content`: Memo body (markdown supported)
+- `folder`: Optional folder name
+- `isPinned`: Pin to top flag
+- `createdAt`, `updatedAt`: Timestamps
+
+#### CRUD Function Library
+
+**Threads**:
+```typescript
+export const createThread = async (title = 'NEW_CHAT') => string      // lib/indexDB.ts:106 - Returns new thread ID
+export const listThreads = () => Promise<ThreadMeta[]>                 // lib/indexDB.ts:102 - Sorted by updatedAt desc
+export const touchThread = async (id: string) => void                  // lib/indexDB.ts:103 - Update timestamp
+export const deleteThread = async (id: string) => void                 // lib/indexDB.ts:111 - Cascade delete messages
+export const getInitialMessagesForAllThreads = async () => Promise<ThreadWithInitialMessages[]>  // lib/indexDB.ts:119
+```
+
+**Messages**:
+```typescript
+export const addMessage = (m: Message) => Promise<string>              // lib/indexDB.ts:99
+export const loadThread = (id: string) => Promise<Message[]>           // lib/indexDB.ts:100 - Sorted by createdAt
+export const getLatestMessageForThread = async (threadId: string) => Promise<Message | undefined>  // lib/indexDB.ts:115
+```
+
+**Token Usage**:
+```typescript
+export const recordTokenUsage = async (usage: Omit<TokenUsage, 'id'>) => void  // lib/indexDB.ts:144
+export const getTokenUsageByDate = async (date: string) => Promise<TokenUsage[]>  // lib/indexDB.ts:156
+export const getTokenUsageByDateRange = async (startDate: string, endDate: string) => Promise<TokenUsage[]>  // lib/indexDB.ts:149
+export const getTotalTokenUsage = async () => Promise<{totalInputTokens, totalOutputTokens, totalTokens, totalRequests}>  // lib/indexDB.ts:160
+```
+
+**Memos**:
+```typescript
+export const createMemo = async (title: string, content?: string, folder?: string) => string  // lib/indexDB.ts:222
+export const addMemo = (memo: Memo) => Promise<string>                 // lib/indexDB.ts:179
+export const updateMemo = async (id: string, updates: Partial<Memo>) => void  // lib/indexDB.ts:181 - Auto-updates updatedAt
+export const deleteMemo = async (id: string) => void                   // lib/indexDB.ts:185
+export const getMemo = (id: string) => Promise<Memo | undefined>       // lib/indexDB.ts:189
+export const listMemos = async (folder?: string) => Promise<Memo[]>    // lib/indexDB.ts:191 - Sorted by updatedAt desc
+export const searchMemos = async (searchTerm: string) => Promise<Memo[]>  // lib/indexDB.ts:202 - Case-insensitive title + content search
+export const toggleMemoPinned = async (id: string) => void             // lib/indexDB.ts:215
+```
+
+#### Live Query Pattern (Real-time UI Updates)
+**Pattern**: `hooks/chat.ts` uses Dexie's `liveQuery` + Jotai's `atomWithObservable`:
+```typescript
+import { liveQuery } from 'dexie';
+import { atomWithObservable } from 'jotai/utils';
+
+// Automatically re-renders components when IndexedDB data changes
+export const threadsAtom = atomWithObservable(() =>
+  liveQuery(() => db.threads.orderBy('updatedAt').reverse().toArray())
+);
+
+export const messagesAtom = atomWithObservable((get) => {
+  const threadId = get(threadIdAtom);
+  return liveQuery(async () => {
+    if (!threadId) return [];
+    return await db.messages.where('threadId').equals(threadId).sortBy('createdAt');
+  });
+});
+```
+
+**Purpose**: No manual refresh needed - UI reacts to direct database operations like `addMessage()`, `createThread()`, etc.
+
+#### Schema Migration Pattern
+**Cumulative Version System** - each version must list ALL tables:
+```typescript
+// Version 1: Initial schema (lib/indexDB.ts:56-60)
+this.version(1).stores({
+  messages: 'id, threadId, createdAt',
+  threads: 'id, updatedAt',
+});
+
+// Version 2: Add tokenUsage table (must still list old tables!) (lib/indexDB.ts:61-66)
+this.version(2).stores({
+  messages: 'id, threadId, createdAt',
+  threads: 'id, updatedAt',
+  tokenUsage: 'id, date, model, provider, createdAt',
+});
+
+// Version 5: Add memos table (lib/indexDB.ts:79-85)
+this.version(5).stores({
+  messages: 'id, threadId, createdAt',
+  threads: 'id, updatedAt',
+  tokenUsage: 'id, date, model, provider, createdAt',
+  memos: 'id, folder, isPinned, createdAt, updatedAt',
+});
+```
+
+**When adding new table/indexes**:
+1. Increment version number
+2. List ALL existing tables (copy previous version)
+3. Add new table or modify indexes
+4. Only index fields used for filtering/sorting (primary key auto-indexed)
+5. Test migration by opening extension in browser with old database
+
+---
+
+### Storage Layer Selection Guide
+
+| Use Case | Storage Layer | Reason |
+|----------|--------------|---------|
+| Settings, API keys, preferences | Chrome Storage + Jotai | Cross-component sync, reactive UI |
+| Frequently accessed values in background | In-memory cache (background/states/models) | Performance (avoid repeated async reads) |
+| Chat threads, messages | IndexedDB | Large data, complex queries, liveQuery support |
+| Temporary UI state (doesn't need persistence) | Plain Jotai atoms | No storage overhead |
+| Long-running task status (PDF translation) | Chrome Storage + atomWithStorage | Cross-session persistence, easy access |
+| Search/filter operations | IndexedDB | Compound indexes, efficient queries |
+| Large media (images > 1MB) | IndexedDB or external storage | Chrome Storage quota limits |
+
+**Key Trade-offs**:
+- **Chrome Storage**: 10MB quota, simple key-value, automatic sync across extension components
+- **IndexedDB**: Unlimited quota (user approval for > 50MB), complex queries, manual sync management
+- **In-memory cache**: Fastest access, lost on service worker restart, needs explicit sync
+
+---
+
+## Common Development Workflows
+
+### Adding a New Content Script
+1. Create `src/entrypoints/name.content.ts`
+2. Export `defineContentScript({ matches: ['<all_urls>'], ... })`
+3. WXT auto-registers in manifest
+4. Test: Reload extension → check chrome://extensions → Inspect content script
+
+### Adding a New Side Panel Route
+1. Define route in `sidepanel/routes.tsx`: `{ path: '/new-feature', element: <NewFeature /> }`
+2. Add navigation: `navigate('/new-feature')` or `<Link to="/new-feature" />`
+3. Update `ActionType` if feature needs LLM integration
+4. Test: Open side panel → navigate to route
+
+### Adding Chrome Storage Values
+1. Define key in `config/constants.ts`: `export const STORAGE_NEW_KEY = 'new-key'`
+2. Add type to storage interfaces if using TypeScript
+3. Add listener in background script if background needs to react
+4. Use `chrome.storage.local.get([STORAGE_NEW_KEY])` or Jotai's `atomWithStorage`
+
+### Debugging Tips
+- **Background errors**: chrome://extensions → Service Worker → Inspect
+- **Port closed errors**: Check `return true` in message listeners
+- **State not syncing**: Verify Chrome Storage listeners are registered
+- **IndexedDB issues**: Open DevTools → Application → IndexedDB → ShizueDB
+- **Streaming stops**: Check AbortController not prematurely triggered
