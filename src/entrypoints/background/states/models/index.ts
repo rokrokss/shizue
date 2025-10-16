@@ -1,14 +1,14 @@
 import {
+  STORAGE_ANTHROPIC_KEY,
   STORAGE_CHAT_MODEL,
   STORAGE_GEMINI_KEY,
   STORAGE_OPENAI_KEY,
-  STORAGE_ANTHROPIC_KEY,
   STORAGE_TRANSLATE_MODEL,
 } from '@/config/constants';
 import { ChatModel, TranslateModel } from '@/lib/models';
 
-let currentChatModel: ChatModel = 'gpt-4.1';
-let currentTranslateModel: TranslateModel = 'gpt-4.1';
+let currentChatModel: ChatModel = 'gpt';
+let currentTranslateModel: TranslateModel = 'gpt-mini';
 let openaiKey: string | undefined = undefined;
 let geminiKey: string | undefined = undefined;
 let anthropicKey: string | undefined = undefined;
