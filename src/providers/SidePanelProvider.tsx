@@ -321,16 +321,21 @@ const SidePanelProvider = ({
         // windowId 포함한 Port 생성
         const currentWindow = await chrome.windows.getCurrent();
 
-        await chrome.runtime.sendMessage({
+        debugLog('SidePanelProvider: Sending panel opened ping, windowId:', currentWindow.id);
+
+        // Background에 side panel이 열렸음을 알림 (상태 복원용)
+        const response = await chrome.runtime.sendMessage({
           action: MESSAGE_PANEL_OPENED_PING_FROM_PANEL,
           windowId: currentWindow.id
         });
+
+        debugLog('SidePanelProvider: Panel opened ping response:', response);
 
         const portName = `${PORT_LISTEN_PANEL_CLOSED_KEY}:${currentWindow.id}`;
         debugLog('SidePanelProvider: Connecting port with name:', portName);
         chrome.runtime.connect({ name: portName });
       } catch (error) {
-        errorLog('connect backend port', error);
+        errorLog('SidePanelProvider: Failed to connect backend port:', error);
       }
     };
 
