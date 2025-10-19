@@ -10,6 +10,7 @@ import {
 } from '@/config/constants';
 import { changePanelShowStatus, closePanel, openPanel } from '@/entrypoints/background/sidepanel';
 import {
+  changePanelOpened,
   getPanelOpenedWindow,
   setPanelOpenedWindow,
 } from '@/entrypoints/background/states/sidepanel';
@@ -37,8 +38,9 @@ async function handlePanelOpenedPingFromPanel(
     debugLog('[handlePanelOpenedPingFromPanel] Panel opened in window:', windowId);
     debugLog('[handlePanelOpenedPingFromPanel] Current state:', getPanelOpenedWindow());
 
-    // 실제로 패널이 열린 후에만 상태 업데이트 (Chrome Storage에도 저장)
-    await setPanelOpenedWindow(windowId);
+    // 실제로 패널이 열린 후에만 상태 업데이트
+    setPanelOpenedWindow(windowId);
+    changePanelOpened(true); // 기존 호환성 유지
 
     debugLog('[handlePanelOpenedPingFromPanel] State updated to:', getPanelOpenedWindow());
   }
