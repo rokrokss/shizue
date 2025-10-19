@@ -13,7 +13,6 @@ export const MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE = 'context_menu_translate_page'
 export const MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE = 'context_menu_summarize_page';
 export const MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE = 'context_menu_describe_image';
 export const MESSAGE_CONTEXT_MENU_EXTRACT_IMAGE_TEXT = 'context_menu_extract_image_text';
-export const MESSAGE_GET_PANEL_OPENED_WINDOW = 'get_panel_opened_window';
 
 /* port */
 export const PORT_LISTEN_PANEL_CLOSED_KEY = 'listen_panel_closed_key';

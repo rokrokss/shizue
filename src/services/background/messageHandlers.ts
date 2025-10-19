@@ -1,6 +1,5 @@
 import {
   MESSAGE_CANCEL_NOT_STARTED_MESSAGE,
-  MESSAGE_GET_PANEL_OPENED_WINDOW,
   MESSAGE_LOAD_THREAD,
   MESSAGE_OPEN_PANEL,
   MESSAGE_PANEL_OPENED_PING_FROM_PANEL,
@@ -8,50 +7,22 @@ import {
   MESSAGE_TRANSLATE_HTML_TEXT_BATCH,
   MESSAGE_TRANSLATE_YOUTUBE_CAPTION,
 } from '@/config/constants';
-import { changePanelShowStatus, closePanel, openPanel } from '@/entrypoints/background/sidepanel';
-import {
-  changePanelOpened,
-  getPanelOpenedWindow,
-  setPanelOpenedWindow,
-} from '@/entrypoints/background/states/sidepanel';
+import { changePanelShowStatus, openPanel } from '@/entrypoints/background/sidepanel';
+import { changePanelOpened, getPanelOpened } from '@/entrypoints/background/states/sidepanel';
 import { db, getLatestMessageForThread, loadThread } from '@/lib/indexDB';
-import { debugLog } from '@/logs';
 import { getTranslationHandler } from '@/services/background/translationHandler';
 
-async function handleSetPanelOpenOrNot(
-  msg: any,
-  sender: chrome.runtime.MessageSender,
-  sendResponse: (response?: any) => void
-) {
-  const windowId = sender.tab?.windowId;
-  changePanelShowStatus(windowId);
+async function handleSetPanelOpenOrNot(msg: any, sendResponse: (response?: any) => void) {
+  changePanelShowStatus();
   sendResponse({ status: 'success' });
 }
 
-async function handlePanelOpenedPingFromPanel(
-  msg: any,
-  sender: chrome.runtime.MessageSender,
-  sendResponse: (response?: any) => void
-) {
-  const windowId = msg.windowId;
-  if (windowId !== undefined) {
-    debugLog('[handlePanelOpenedPingFromPanel] Panel opened in window:', windowId);
-    debugLog('[handlePanelOpenedPingFromPanel] Current state:', getPanelOpenedWindow());
-
-    // 실제로 패널이 열린 후에만 상태 업데이트
-    setPanelOpenedWindow(windowId);
-    changePanelOpened(true); // 기존 호환성 유지
-
-    debugLog('[handlePanelOpenedPingFromPanel] State updated to:', getPanelOpenedWindow());
-  }
+async function handlePanelOpenedPingFromPanel(msg: any, sendResponse: (response?: any) => void) {
+  changePanelOpened(true);
   sendResponse({ status: 'success' });
 }
 
-async function handleLoadThread(
-  msg: any,
-  sender: chrome.runtime.MessageSender,
-  sendResponse: (response?: any) => void
-) {
+async function handleLoadThread(msg: any, sendResponse: (response?: any) => void) {
   const data = await loadThread(msg.threadId);
   sendResponse(
     data
@@ -71,11 +42,7 @@ async function handleLoadThread(
   );
 }
 
-async function handleLatestMessageForThread(
-  msg: any,
-  sender: chrome.runtime.MessageSender,
-  sendResponse: (response?: any) => void
-) {
+async function handleLatestMessageForThread(msg: any, sendResponse: (response?: any) => void) {
   const latestMessage = await getLatestMessageForThread(msg.threadId);
   if (
     latestMessage &&
@@ -89,39 +56,20 @@ async function handleLatestMessageForThread(
   sendResponse({ status: 'success' });
 }
 
-async function handleOpenPanel(
-  msg: any,
-  sender: chrome.runtime.MessageSender,
-  sendResponse: (response?: any) => void
-) {
-  const windowId = sender.tab?.windowId;
-  const currentOpenedWindowId = getPanelOpenedWindow();
-
-  // 다른 윈도우에서 이미 열려있으면 먼저 닫기
-  if (currentOpenedWindowId !== undefined && currentOpenedWindowId !== windowId) {
-    debugLog('[handleOpenPanel] Closing panel in window:', currentOpenedWindowId);
-    closePanel(currentOpenedWindowId);
+async function handleOpenPanel(msg: any, sendResponse: (response?: any) => void) {
+  if (!getPanelOpened()) {
+    openPanel(undefined);
   }
-
-  openPanel(windowId);
   sendResponse({ status: 'success' });
 }
 
-async function handleTranslateHtmlTextBatch(
-  msg: any,
-  sender: chrome.runtime.MessageSender,
-  sendResponse: (response?: any) => void
-) {
+async function handleTranslateHtmlTextBatch(msg: any, sendResponse: (response?: any) => void) {
   const { texts } = msg;
   const translatedTexts = await getTranslationHandler().translateHtmlTextBatch(texts);
   sendResponse(translatedTexts);
 }
 
-async function handleTranslateYoutubeCaption(
-  msg: any,
-  sender: chrome.runtime.MessageSender,
-  sendResponse: (response?: any) => void
-) {
+async function handleTranslateYoutubeCaption(msg: any, sendResponse: (response?: any) => void) {
   const { captions, targetLanguage, metadata } = msg;
   const translatedCaptions = await getTranslationHandler().translateYoutubeCaption(
     captions,
@@ -129,15 +77,6 @@ async function handleTranslateYoutubeCaption(
     metadata
   );
   sendResponse(translatedCaptions);
-}
-
-async function handleGetPanelOpenedWindow(
-  _msg: any,
-  _sender: chrome.runtime.MessageSender,
-  sendResponse: (response?: any) => void
-) {
-  const windowId = getPanelOpenedWindow();
-  sendResponse({ windowId });
 }
 
 export const messageHandlers = {
@@ -148,5 +87,4 @@ export const messageHandlers = {
   [MESSAGE_OPEN_PANEL]: handleOpenPanel,
   [MESSAGE_TRANSLATE_HTML_TEXT_BATCH]: handleTranslateHtmlTextBatch,
   [MESSAGE_TRANSLATE_YOUTUBE_CAPTION]: handleTranslateYoutubeCaption,
-  [MESSAGE_GET_PANEL_OPENED_WINDOW]: handleGetPanelOpenedWindow,
 };
