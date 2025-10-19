@@ -18,12 +18,12 @@ export default defineBackground(() => {
   modelListeners();
   createContextMenu();
 
-  chrome.runtime.onMessage.addListener((msg, _s, sendResponse) => {
+  chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     (async () => {
       const action = msg.action as keyof typeof messageHandlers;
 
       if (messageHandlers[action]) {
-        await messageHandlers[action](msg, sendResponse);
+        await messageHandlers[action](msg, sender, sendResponse);
       }
     })();
     return true;

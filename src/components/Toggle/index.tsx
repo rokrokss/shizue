@@ -17,7 +17,6 @@ import {
   MESSAGE_CONTEXT_MENU_EXTRACT_IMAGE_TEXT,
   MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE,
   MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
-  MESSAGE_UPDATE_PANEL_INIT_DATA,
 } from '@/config/constants';
 import { Language, useTranslateTargetLanguage } from '@/hooks/language';
 import {
@@ -157,7 +156,10 @@ const Toggle = () => {
 
   const handleClick = () => {
     debugLog('Toggle clicked');
-    if (isDragging) return;
+    if (isDragging) {
+      debugLog('Toggle clicked but is dragging');
+      return;
+    }
     setPanelOpenOrNot();
   };
 
@@ -209,9 +211,6 @@ const Toggle = () => {
     if (isDragging) return;
     const pageText = document.body.innerText;
     await initSummarizePageContent(document.title, pageText, window.location.href);
-    void chrome.runtime.sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA }).catch((err) => {
-      debugLog('handleSummarizePage: Panel not opened yet', err);
-    });
     setPanelOpen();
   }, [isDragging]);
 
@@ -230,11 +229,6 @@ const Toggle = () => {
           const base64 = reader.result as string;
           // GlobalState에 이미지 데이터 저장
           await initDescribeImageContent(base64, srcUrl);
-          void chrome.runtime
-            .sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA })
-            .catch((err) => {
-              debugLog('handleDescribeImage: Panel not opened yet', err);
-            });
           setPanelOpen();
         };
 
@@ -261,11 +255,6 @@ const Toggle = () => {
           const base64 = reader.result as string;
           // GlobalState에 이미지 데이터 저장
           await initExtractImageTextContent(base64, srcUrl);
-          void chrome.runtime
-            .sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA })
-            .catch((err) => {
-              debugLog('handleExtractImageText: Panel not opened yet', err);
-            });
           setPanelOpen();
         };
 
@@ -303,9 +292,6 @@ const Toggle = () => {
     debugLog('handlePdfClick');
     if (isDragging) return;
     await initPdfPageContent();
-    void chrome.runtime.sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA }).catch((err) => {
-      debugLog('handlePdfClick: Panel not opened yet', err);
-    });
     setPanelOpen();
   };
 
@@ -313,9 +299,6 @@ const Toggle = () => {
     debugLog('handleMemoClick');
     if (isDragging) return;
     await initMemoPageContent();
-    void chrome.runtime.sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA }).catch((err) => {
-      debugLog('handleMemoClick: Panel not opened yet', err);
-    });
     setPanelOpen();
   };
 

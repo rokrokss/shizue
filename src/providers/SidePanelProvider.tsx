@@ -1,4 +1,5 @@
 import {
+  MESSAGE_GET_PANEL_OPENED_WINDOW,
   MESSAGE_PANEL_OPENED_PING_FROM_PANEL,
   MESSAGE_UPDATE_PANEL_INIT_DATA,
   PORT_LISTEN_PANEL_CLOSED_KEY,
@@ -258,6 +259,51 @@ const SidePanelProvider = ({
     getInitData();
   }, [sidePanelHydrated]);
 
+  // Chrome Storage 변경 감지 - 같은 윈도우에서 Summary 등을 클릭했을 때 처리
+  useEffect(() => {
+    const handleStorageChange = async (changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => {
+      if (areaName === 'local' && changes[STORAGE_GLOBAL_STATE]) {
+        const newValue = changes[STORAGE_GLOBAL_STATE].newValue as GlobalState | undefined;
+        debugLog('SidePanelProvider: [Storage changed] GLOBAL_STATE:', newValue);
+
+        // actionType이 변경되었을 때만 getInitData() 재실행
+        if (newValue?.actionType && newValue.actionType !== 'chat') {
+          try {
+            // 현재 윈도우 ID 확인
+            const currentWindow = await chrome.windows.getCurrent();
+
+            // Background에서 실제로 열린 패널의 windowId 가져오기
+            const response = await chrome.runtime.sendMessage({
+              action: MESSAGE_GET_PANEL_OPENED_WINDOW
+            });
+
+            debugLog('SidePanelProvider: [Storage changed] currentWindow:', currentWindow.id, 'openedWindow:', response?.windowId);
+
+            // 현재 윈도우가 열린 패널일 때만 처리
+            if (currentWindow.id === response?.windowId) {
+              debugLog('SidePanelProvider: [Storage changed] This is the opened panel, triggering getInitData with 200ms delay');
+
+              // 200ms 대기 후 실행 (이전 윈도우 완전히 정리될 때까지)
+              setTimeout(() => {
+                getInitData();
+              }, 200);
+            } else {
+              debugLog('SidePanelProvider: [Storage changed] Not the opened panel, ignoring (closing window)');
+            }
+          } catch (error) {
+            errorLog('SidePanelProvider: [Storage changed] Error checking window:', error);
+          }
+        }
+      }
+    };
+
+    chrome.storage.onChanged.addListener(handleStorageChange);
+
+    return () => {
+      chrome.storage.onChanged.removeListener(handleStorageChange);
+    };
+  }, [getInitData]);
+
   useEffect(() => {
     // This effect runs after the first render.
     // We assume atomWithStorage has loaded the initial value from localStorage by this time.
@@ -270,12 +316,25 @@ const SidePanelProvider = ({
 
     chrome.runtime.onMessage.addListener(handleMessage);
 
-    try {
-      chrome.runtime.sendMessage({ action: MESSAGE_PANEL_OPENED_PING_FROM_PANEL });
-      chrome.runtime.connect({ name: PORT_LISTEN_PANEL_CLOSED_KEY });
-    } catch (error) {
-      errorLog('connect backend port', error);
-    }
+    const connectPort = async () => {
+      try {
+        // windowId 포함한 Port 생성
+        const currentWindow = await chrome.windows.getCurrent();
+
+        await chrome.runtime.sendMessage({
+          action: MESSAGE_PANEL_OPENED_PING_FROM_PANEL,
+          windowId: currentWindow.id
+        });
+
+        const portName = `${PORT_LISTEN_PANEL_CLOSED_KEY}:${currentWindow.id}`;
+        debugLog('SidePanelProvider: Connecting port with name:', portName);
+        chrome.runtime.connect({ name: portName });
+      } catch (error) {
+        errorLog('connect backend port', error);
+      }
+    };
+
+    connectPort();
 
     return () => {
       chrome.runtime.onMessage.removeListener(handleMessage);
