@@ -339,7 +339,7 @@ const YoutubeCaptionToggle = () => {
             sz:px-2
             sz:mx-2
             sz:my-0
-            sz:py-[2px]
+            sz:py-0
             sz:rounded-lg
             sz:font-youtube
           "
@@ -635,6 +635,7 @@ const YoutubeCaptionToggle = () => {
                   sz:flex-col
                   sz:justify-center
                   sz:items-center
+                  sz:h-full
                   sz:px-3
                   sz:gap-2
                   sz:cursor-pointer

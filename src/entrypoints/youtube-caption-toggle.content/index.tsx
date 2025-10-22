@@ -31,7 +31,7 @@ export default defineContentScript({
       const customDiv = document.createElement('div');
       customDiv.id = YOUTUBE_TOGGLE_SHADOW_HOST_ID;
       customDiv.className =
-        'sz:inline-block sz:w-fit sz:h-full sz:px-0 sz:py-0 sz:overflow-hidden sz:leading-0';
+        'sz:inline-block sz:w-fit sz:h-full sz:px-0 sz:py-0 sz:overflow-hidden sz:leading-0 sz:align-top';
       anchor?.prepend(customDiv);
 
       const ui = await createShadowRootUi(ctx, {
@@ -43,9 +43,25 @@ export default defineContentScript({
         onMount: (container, shadow) => {
           root = createRoot(container);
           container.classList.add('sz:h-full');
-          shadow.host.classList.add('sz:h-full');
-          shadow.host.classList.add('sz:inline-flex');
-          shadow.host.classList.add('sz:leading-0');
+          container.classList.add('sz:flex');
+          container.classList.add('sz:flex-col');
+          container.classList.add('sz:m-0');
+
+          // Add :host styles to shadow DOM
+          const hostStyle = document.createElement('style');
+          hostStyle.textContent = `
+            :host {
+              display: inline-block !important;
+              height: 100% !important;
+              line-height: 0 !important;
+              vertical-align: middle !important;
+            }
+            :host > * {
+              height: 100% !important;
+            }
+          `;
+          shadow.appendChild(hostStyle);
+
           root.render(
             <StrictMode>
               <JotaiProvider>
