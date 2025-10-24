@@ -470,7 +470,7 @@ const Toggle = () => {
                             options={[
                               {
                                 value: 'gpt',
-                                label: 'GPT 5',
+                                label: 'GPT 4.1',
                                 className: 'sz:font-ycom',
                                 styles: {
                                   color: openAIValidated
@@ -485,7 +485,7 @@ const Toggle = () => {
                               },
                               {
                                 value: 'gpt-mini',
-                                label: 'GPT 5 Mini',
+                                label: 'GPT 4.1 Mini',
                                 className: 'sz:font-ycom',
                                 styles: {
                                   color: openAIValidated

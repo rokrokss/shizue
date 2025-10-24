@@ -47,11 +47,11 @@ export interface ModelOptions {
 
 export const formatModelName = (modelName: string) => {
   if (modelName === 'gpt') {
-    return 'GPT 5';
+    return 'GPT 4.1';
   } else if (modelName === 'gpt-4.1') {
     return 'GPT 4.1';
   } else if (modelName === 'gpt-mini') {
-    return 'GPT 5 Mini';
+    return 'GPT 4.1 Mini';
   } else if (modelName === 'gpt-4.1-mini') {
     return 'GPT 4.1 Mini';
   } else if (modelName === 'gemini-2.5-flash' || modelName === 'gemini-flash') {

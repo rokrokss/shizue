@@ -366,13 +366,13 @@ const SettingsModalContent = () => {
                     options={[
                       {
                         value: 'gpt',
-                        label: 'GPT 5',
+                        label: 'GPT 4.1',
                         className: 'sz:font-ycom',
                         disabled: openAIValidated ? false : true,
                       },
                       {
                         value: 'gpt-mini',
-                        label: 'GPT 5 Mini',
+                        label: 'GPT 4.1 Mini',
                         className: 'sz:font-ycom',
                         disabled: openAIValidated ? false : true,
                       },
@@ -416,13 +416,13 @@ const SettingsModalContent = () => {
                     options={[
                       {
                         value: 'gpt',
-                        label: 'GPT 5',
+                        label: 'GPT 4.1',
                         className: 'sz:font-ycom',
                         disabled: openAIValidated ? false : true,
                       },
                       {
                         value: 'gpt-mini',
-                        label: 'GPT 5 Mini',
+                        label: 'GPT 4.1 Mini',
                         className: 'sz:font-ycom',
                         disabled: openAIValidated ? false : true,
                       },

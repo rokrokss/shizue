@@ -645,14 +645,14 @@ const YoutubeCaptionToggle = () => {
                   <LoadingOutlined
                     style={{
                       fontSize: '21px',
-                      color: '#E8E9EA',
+                      color: 'rgb(255, 255, 255)',
                     }}
                   />
                 ) : (
                   <ReadFilled
                     style={{
                       fontSize: '24px',
-                      color: '#E8E9EA',
+                      color: 'rgb(255, 255, 255)',
                     }}
                   />
                 )}
