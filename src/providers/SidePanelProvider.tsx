@@ -62,8 +62,8 @@ const SidePanelProvider = ({
     if (isChatWaiting(chatStatus)) {
       debugLog('SidePanelProvider: [getInitData] skip initData for chatStatus', chatStatus);
       return;
-    } else if (initData?.actionType === 'chat' && (window.location.hash === '#/shizue-pdf' || window.location.hash === '#/shizue-memo')) {
-      debugLog('SidePanelProvider: [getInitData] skip initData for actionType chat and pdf or memo url');
+    } else if (initData?.actionType === 'chat' && window.location.hash === '#/shizue-memo') {
+      debugLog('SidePanelProvider: [getInitData] skip initData for actionType chat and memo url');
       return;
     } else if (initData?.actionType === 'askForSummary') {
       // Clear the action immediately to prevent duplicate processing
@@ -76,11 +76,10 @@ const SidePanelProvider = ({
 
       let isNewThread = false;
 
-      const isInPdfPage = window.location.hash === '#/shizue-pdf';
       const isInMemoPage = window.location.hash === '#/shizue-memo';
 
       let tid = threadId;
-      if (!tid || isInPdfPage || isInMemoPage) {
+      if (!tid || isInMemoPage) {
         tid = await createThread(summaryTitle!.slice(0, 20));
         isNewThread = true;
       }
@@ -108,23 +107,9 @@ const SidePanelProvider = ({
         setThreadId(tid);
       }
 
-      if (isInPdfPage || isInMemoPage) {
+      if (isInMemoPage) {
         debugLog('SidePanelProvider: [getInitData] navigate to /');
         navigate('/');
-      }
-    } else if (initData?.actionType === 'translatePdf') {
-      debugLog('SidePanelProvider: [getInitData] translatePdf');
-      await rollbackActionType();
-
-      const isInPdfPage = window.location.hash === '#/shizue-pdf';
-
-      debugLog('SidePanelProvider: [getInitData] isInPdfPage', isInPdfPage);
-
-      if (!isInPdfPage) {
-        debugLog('SidePanelProvider: [getInitData] navigate to /shizue-pdf');
-        setTimeout(() => {
-          navigate('/shizue-pdf');
-        }, 100);
       }
     } else if (initData?.actionType === 'memo') {
       debugLog('SidePanelProvider: [getInitData] memo');
@@ -155,11 +140,10 @@ const SidePanelProvider = ({
       }
 
       let isNewThread = false;
-      const isInPdfPage = window.location.hash === '#/shizue-pdf';
       const isInMemoPage = window.location.hash === '#/shizue-memo';
 
       let tid = threadId;
-      if (!tid || isInPdfPage || isInMemoPage) {
+      if (!tid || isInMemoPage) {
         tid = await createThread(t('chat.describeImageRequest'));
         isNewThread = true;
       }
@@ -184,7 +168,7 @@ const SidePanelProvider = ({
         setThreadId(tid);
       }
 
-      if (isInPdfPage || isInMemoPage) {
+      if (isInMemoPage) {
         debugLog('SidePanelProvider: [getInitData] navigate to /');
         navigate('/');
       }
@@ -203,11 +187,10 @@ const SidePanelProvider = ({
       }
 
       let isNewThread = false;
-      const isInPdfPage = window.location.hash === '#/shizue-pdf';
       const isInMemoPage = window.location.hash === '#/shizue-memo';
 
       let tid = threadId;
-      if (!tid || isInPdfPage || isInMemoPage) {
+      if (!tid || isInMemoPage) {
         tid = await createThread(t('chat.extractImageTextRequest'));
         isNewThread = true;
       }
@@ -231,7 +214,7 @@ const SidePanelProvider = ({
         setThreadId(tid);
       }
 
-      if (isInPdfPage || isInMemoPage) {
+      if (isInMemoPage) {
         debugLog('SidePanelProvider: [getInitData] navigate to /');
         navigate('/');
       }

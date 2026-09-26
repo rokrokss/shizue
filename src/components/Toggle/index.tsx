@@ -1,7 +1,6 @@
 import BookIcon from '@/assets/icons/book.svg?react';
 import CloseIcon from '@/assets/icons/close.svg?react';
 import MemoIcon from '@/assets/icons/note.svg?react';
-import PhotoIcon from '@/assets/icons/photo.svg?react';
 import SettingIcon from '@/assets/icons/setting.svg?react';
 import TranslateIcon from '@/assets/icons/translate.svg?react';
 import TranslateCheckIcon from '@/assets/icons/translate_check.svg?react';
@@ -37,7 +36,6 @@ import {
   initDescribeImageContent,
   initExtractImageTextContent,
   initMemoPageContent,
-  initPdfPageContent,
   initSummarizePageContent,
 } from '@/lib/initPanelData';
 import { languageOptions } from '@/lib/language';
@@ -115,7 +113,6 @@ const Toggle = () => {
     t('overlayMenu.translatePage'),
     t('overlayMenu.summarizePage'),
     t('overlayMenu.removeTranslation'),
-    t('pdf.translatePdf'),
     t('memo.memo'),
   ];
 
@@ -299,16 +296,6 @@ const Toggle = () => {
     setMotionDivId(motionDivId + 1);
   }, [toggleYPosition]);
 
-  const handlePdfClick = async () => {
-    debugLog('handlePdfClick');
-    if (isDragging) return;
-    await initPdfPageContent();
-    void chrome.runtime.sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA }).catch((err) => {
-      debugLog('handlePdfClick: Panel not opened yet', err);
-    });
-    setPanelOpen();
-  };
-
   const handleMemoClick = async () => {
     debugLog('handleMemoClick');
     if (isDragging) return;
@@ -419,7 +406,7 @@ const Toggle = () => {
               <OverlayMenuItem
                 theme={theme}
                 icon={<MemoIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
-                tooltipMessage={tooltipMessages[5]}
+                tooltipMessage={tooltipMessages[4]}
                 onClick={handleMemoClick}
                 hideTooltip={translateSettingsModalOpen || closeIconModalOpen}
               />
@@ -604,14 +591,6 @@ const Toggle = () => {
                   />
                 }
                 isPopoverOpen={translateSettingsModalOpen}
-                hideTooltip={translateSettingsModalOpen || closeIconModalOpen}
-              />
-
-              <OverlayMenuItem
-                theme={theme}
-                icon={<PhotoIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
-                tooltipMessage={tooltipMessages[4]}
-                onClick={handlePdfClick}
                 hideTooltip={translateSettingsModalOpen || closeIconModalOpen}
               />
 

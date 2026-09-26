@@ -5,7 +5,6 @@ import { useThemeValue } from '@/hooks/layout';
 import { debugLog } from '@/logs';
 import {
   EditOutlined,
-  FilePdfOutlined,
   FolderOutlined,
   LineChartOutlined,
   PauseOutlined,
@@ -63,11 +62,6 @@ const ChatInput = ({
       const currentValue = e.currentTarget.value.trim();
       handleSubmit(currentValue);
     }
-  };
-
-  const handlePdfClick = () => {
-    debugLog('ChatInput: [handlePdfClick] navigate to /shizue-pdf');
-    navigate('/shizue-pdf');
   };
 
   const handleMemoClick = () => {
@@ -223,35 +217,6 @@ const ChatInput = ({
                 type="text"
                 icon={
                   <LineChartOutlined
-                    style={{
-                      fontSize: '20px',
-                      color: 'rgba(0,0,0,0.88)',
-                      filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
-                    }}
-                  />
-                }
-                size="middle"
-              ></Button>
-            </Tooltip>
-            <Tooltip
-              placement="top"
-              title={
-                <div
-                  className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
-                    theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
-                  }`}
-                >
-                  {t('pdf.translatePdf')}
-                </div>
-              }
-              color={theme == 'dark' ? '#505362' : 'white'}
-              className="sz:font-ycom"
-            >
-              <Button
-                onClick={() => handlePdfClick()}
-                type="text"
-                icon={
-                  <FilePdfOutlined
                     style={{
                       fontSize: '20px',
                       color: 'rgba(0,0,0,0.88)',

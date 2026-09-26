@@ -10,7 +10,6 @@ export const messageAddedInPanelAtom = atom<number | null>(null);
 export type ActionType =
   | 'chat'
   | 'askForSummary'
-  | 'translatePdf'
   | 'describeImage'
   | 'extractImageText'
   | 'memo';

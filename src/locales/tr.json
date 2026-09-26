@@ -139,15 +139,6 @@
     "retry": "Yeniden Dene",
     "noData": "Henüz kullanım verisi yok."
   },
-  "pdf": {
-    "translatePdf": "PDF Çevir",
-    "selectPdfFile": "PDF Dosyası Seç",
-    "startTranslation": "Çeviriyi Başlat",
-    "fileSizeExceeds": "Dosya boyutu {SIZE_REPLACEMENT}MB'ı aşıyor.",
-    "pageCountExceeds": "PDF sayfa sayısı {PAGE_REPLACEMENT} sayfayı aşıyor.",
-    "translatorStarting": "Çevirici başlatılıyor...",
-    "translationPersists": "Panel kapatılsa bile çeviri süreci ve sonuçları korunur."
-  },
   "home": {
     "title": "Ana Sayfaya Git"
   },

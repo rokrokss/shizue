@@ -14,11 +14,6 @@ Shizue ni kiendelezi cha Chrome kinachounganisha kwa urahisi Mifumo Mikubwa ya L
 - Manukuu yanatokea kwa asili unapotazama
 - Msaada kwa lugha nyingi za lengo
 
-📄 Tafsiri ya PDF na Kuhifadhi Mpangilio
-- Tafsiri nyaraka kamili za PDF huku ukihifadhi uumbizaji wa awali
-- Kamili kwa makala za kitaaluma, mwongozo na nyaraka rasmi
-- Hamisha PDF zilizotafsiriwa kwa matumizi ya nje ya mtandao
-
 📝 Kumbukumbu za Wavuti
 - Chukua maelezo wakati wa kuvinjari
 - Panga mawazo na mawazo yako

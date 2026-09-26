@@ -139,15 +139,6 @@
     "retry": "تلاش مجدد",
     "noData": "هنوز داده‌ای از استفاده موجود نیست."
   },
-  "pdf": {
-    "translatePdf": "ترجمه PDF",
-    "selectPdfFile": "انتخاب فایل PDF",
-    "startTranslation": "شروع ترجمه",
-    "fileSizeExceeds": "حجم فایل از {SIZE_REPLACEMENT}MB فراتر رفته است.",
-    "pageCountExceeds": "تعداد صفحات PDF از {PAGE_REPLACEMENT} صفحه فراتر رفته است.",
-    "translatorStarting": "مترجم در حال شروع است...",
-    "translationPersists": "فرآیند و نتایج ترجمه حتی با بسته شدن پنل حفظ می‌شود."
-  },
   "home": {
     "title": "رفتن به خانه"
   },

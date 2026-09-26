@@ -14,11 +14,6 @@ Shizue to rozszerzenie Chrome, które płynnie integruje Duże Modele Językowe 
 - Napisy pojawiają się naturalnie podczas oglądania
 - Wsparcie dla wielu języków docelowych
 
-📄 Tłumaczenie PDF z Zachowaniem Układu
-- Tłumacz całe dokumenty PDF zachowując oryginalne formatowanie
-- Idealne dla prac naukowych, podręczników i dokumentów urzędowych
-- Eksportuj przetłumaczone PDF do użytku offline
-
 📝 Notatki Internetowe
 - Rób notatki podczas przeglądania
 - Organizuj swoje myśli i pomysły

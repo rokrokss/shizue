@@ -14,11 +14,6 @@ Shizue, Büyük Dil Modellerini (LLM'ler) günlük web tarama deneyiminize sorun
 - İzlerken altyazılar doğal olarak görünür
 - Birden fazla hedef dil desteği
 
-📄 Mizanpaj Korumalı PDF Çevirisi
-- Orijinal biçimlendirmeyi koruyarak tüm PDF belgelerini çevirin
-- Akademik makaleler, kılavuzlar ve resmi belgeler için mükemmel
-- Çevrilmiş PDF'leri çevrimdışı kullanım için dışa aktarın
-
 📝 Web Not Defteri
 - Gezinirken notlar alın
 - Düşüncelerinizi ve fikirlerinizi organize edin

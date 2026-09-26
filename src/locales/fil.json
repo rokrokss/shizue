@@ -139,15 +139,6 @@
     "retry": "Subukan Muli",
     "noData": "Walang data ng paggamit pa."
   },
-  "pdf": {
-    "translatePdf": "Isalin ang PDF",
-    "selectPdfFile": "Piliin ang PDF File",
-    "startTranslation": "Simulan ang Pagsasalin",
-    "fileSizeExceeds": "Ang laki ng file ay lumampas sa {SIZE_REPLACEMENT}MB.",
-    "pageCountExceeds": "Ang bilang ng pahina ng PDF ay lumampas sa {PAGE_REPLACEMENT} pahina.",
-    "translatorStarting": "Nagsisimula ang translator...",
-    "translationPersists": "Napreserba ang proseso at mga resulta ng pagsasalin kahit nakasurado ang panel."
-  },
   "home": {
     "title": "Pumunta sa Tahanan"
   },

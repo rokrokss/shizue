@@ -139,15 +139,6 @@
     "retry": "Reintentar",
     "noData": "Aún no hay datos de uso."
   },
-  "pdf": {
-    "translatePdf": "Traducir PDF",
-    "selectPdfFile": "Seleccionar archivo PDF",
-    "startTranslation": "Iniciar traducción",
-    "fileSizeExceeds": "El tamaño del archivo excede {SIZE_REPLACEMENT}MB.",
-    "pageCountExceeds": "El número de páginas del PDF excede {PAGE_REPLACEMENT} páginas.",
-    "translatorStarting": "Iniciando traductor...",
-    "translationPersists": "El proceso y resultados de traducción se mantienen aún con el panel cerrado."
-  },
   "home": {
     "title": "Ir al Inicio"
   },

@@ -139,15 +139,6 @@
     "retry": "Повторить",
     "noData": "Пока нет данных об использовании."
   },
-  "pdf": {
-    "translatePdf": "Перевести PDF",
-    "selectPdfFile": "Выбрать PDF файл",
-    "startTranslation": "Начать перевод",
-    "fileSizeExceeds": "Размер файла превышает {SIZE_REPLACEMENT}MB.",
-    "pageCountExceeds": "Количество страниц PDF превышает {PAGE_REPLACEMENT} страниц.",
-    "translatorStarting": "Запуск переводчика...",
-    "translationPersists": "Процесс и результаты перевода сохраняются даже при закрытой панели."
-  },
   "home": {
     "title": "Перейти на главную"
   },

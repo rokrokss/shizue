@@ -12,14 +12,6 @@ export async function initSummarizePageContent(title: string, text: string, page
   });
 }
 
-export async function initPdfPageContent() {
-  const prevGlobalState = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
-  await setStorage(STORAGE_GLOBAL_STATE, {
-    ...(prevGlobalState ?? {}),
-    actionType: 'translatePdf',
-  });
-}
-
 export async function initMemoPageContent() {
   const prevGlobalState = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
   await setStorage(STORAGE_GLOBAL_STATE, {

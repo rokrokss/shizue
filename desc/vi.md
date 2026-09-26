@@ -14,11 +14,6 @@ Shizue là một tiện ích mở rộng Chrome tích hợp liền mạch các M
 - Phụ đề xuất hiện tự nhiên khi bạn xem
 - Hỗ trợ nhiều ngôn ngữ đích
 
-📄 Dịch PDF với bảo toàn bố cục
-- Dịch toàn bộ tài liệu PDF trong khi duy trì định dạng gốc
-- Hoàn hảo cho các bài báo học thuật, sổ tay và tài liệu chính thức
-- Xuất PDF đã dịch để sử dụng ngoại tuyến
-
 📝 Ghi chú Web
 - Ghi chú trong khi duyệt web
 - Tổ chức suy nghĩ và ý tưởng của bạn

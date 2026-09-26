@@ -14,11 +14,6 @@ Ang Shizue ay isang Chrome extension na walang putol na pinagsasama ang mga Larg
 - Natural na lumalabas ang mga caption habang nanonood ka
 - Suporta para sa maraming target na wika
 
-📄 Pagsasalin ng PDF na May Pagpapanatili ng Layout
-- Isalin ang buong PDF na dokumento habang pinapanatili ang orihinal na pagkakaformat
-- Perpekto para sa mga akademikong papel, manwal, at opisyal na dokumento
-- I-export ang mga isinalin na PDF para sa offline na paggamit
-
 📝 Web Memo
 - Gumawa ng mga tala habang nag-browse
 - Ayusin ang iyong mga kaisipan at ideya

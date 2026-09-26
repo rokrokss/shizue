@@ -14,11 +14,6 @@ Shizue is a Chrome extension that seamlessly integrates Large Language Models (L
 - Captions appear naturally as you watch
 - Support for multiple target languages
 
-📄 PDF Translation with Layout Preservation
-- Translate entire PDF documents while maintaining original formatting
-- Perfect for academic papers, manuals, and official documents
-- Export translated PDFs for offline use
-
 📝 Web Memo
 - Take notes while browsing
 - Organize your thoughts and ideas

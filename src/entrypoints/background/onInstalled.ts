@@ -21,6 +21,9 @@ export const onInstalled = () => {
       if (migrations[TRANSLATE_MODEL]) {
         await chrome.storage.local.set({ TRANSLATE_MODEL: migrations[TRANSLATE_MODEL] });
       }
+
+      // The PDF translation feature was removed; drop its leftover settings.
+      await chrome.storage.local.remove(['PDF_TRANSLATE_TASK_INFO', 'PDF_TRANSLATE_NO_DUAL']);
     }
   });
 };

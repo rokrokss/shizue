@@ -14,11 +14,6 @@ Shizue ist eine Chrome-Erweiterung, die große Sprachmodelle (LLMs) nahtlos in I
 - Untertitel erscheinen natürlich während Sie schauen
 - Unterstützung für mehrere Zielsprachen
 
-📄 PDF-Übersetzung mit Layout-Erhaltung
-- Übersetzen Sie komplette PDF-Dokumente unter Beibehaltung der ursprünglichen Formatierung
-- Perfekt für akademische Arbeiten, Handbücher und offizielle Dokumente
-- Exportieren Sie übersetzte PDFs für die Offline-Nutzung
-
 📝 Web-Memo
 - Machen Sie sich Notizen während des Surfens
 - Organisieren Sie Ihre Gedanken und Ideen

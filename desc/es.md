@@ -14,11 +14,6 @@ Shizue es una extensión de Chrome que integra sin problemas los Modelos de Leng
 - Los subtítulos aparecen naturalmente mientras miras
 - Soporte para múltiples idiomas de destino
 
-📄 Traducción de PDF con Preservación del Diseño
-- Traduce documentos PDF completos manteniendo el formato original
-- Perfecto para documentos académicos, manuales y documentos oficiales
-- Exporta PDFs traducidos para uso sin conexión
-
 📝 Memo Web
 - Toma notas mientras navegas
 - Organiza tus pensamientos e ideas

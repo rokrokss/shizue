@@ -139,15 +139,6 @@
     "captionSizeRatio": "Caption Size",
     "useKeyboardNavigate": "Navigate Subtitles with A/D"
   },
-  "pdf": {
-    "translatePdf": "Translate PDF",
-    "selectPdfFile": "Select PDF File",
-    "startTranslation": "Start Translation",
-    "fileSizeExceeds": "File size exceeds {SIZE_REPLACEMENT}MB.",
-    "pageCountExceeds": "PDF page count exceeds {PAGE_REPLACEMENT} pages.",
-    "translatorStarting": "Translator is starting...",
-    "translationPersists": "Translation continues even when panel is closed."
-  },
   "home": {
     "title": "Go to Home"
   },

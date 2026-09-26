@@ -139,15 +139,6 @@
     "retry": "ลองอีกครั้ง",
     "noData": "ยังไม่มีข้อมูลการใช้งาน"
   },
-  "pdf": {
-    "translatePdf": "แปล PDF",
-    "selectPdfFile": "เลือกไฟล์ PDF",
-    "startTranslation": "เริ่มแปล",
-    "fileSizeExceeds": "ขนาดไฟล์เกิน {SIZE_REPLACEMENT}MB.",
-    "pageCountExceeds": "จำนวนหน้า PDF เกิน {PAGE_REPLACEMENT} หน้า",
-    "translatorStarting": "กำลังเริ่มตัวแปล...",
-    "translationPersists": "กระบวนการและผลลัพธ์การแปลจะถูกเก็บไว้แม้ปิดแผงแล้ว"
-  },
   "home": {
     "title": "ไปยังหน้าแรก"
   },
