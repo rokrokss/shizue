@@ -38,3 +38,6 @@ uploads
 # python
 __pycache__
 .venv
+
+# Claude Code
+.claude/
