@@ -2,7 +2,13 @@ import { debugLog, errorLog } from '@/logs';
 import { ChatAnthropic } from '@langchain/anthropic';
 import { ChatGoogle } from '@langchain/google';
 import { ChatOpenAI } from '@langchain/openai';
-import { MODELS, type ChatModel, type ModelProvider, type ModelSpec } from '@/lib/modelRegistry';
+import {
+  MODELS,
+  type ApiKeyProvider,
+  type ChatModel,
+  type ConnectionMode,
+  type ModelSpec,
+} from '@/lib/modelRegistry';
 
 export * from '@/lib/modelRegistry';
 
@@ -10,6 +16,8 @@ export interface ModelPreset {
   openaiKey?: string;
   geminiKey?: string;
   anthropicKey?: string;
+  openrouterKey?: string;
+  connectionMode: ConnectionMode;
   modelName: ChatModel;
 }
 
@@ -19,20 +27,22 @@ export interface ModelOptions {
   streaming?: boolean;
   // Minimize reasoning for latency-sensitive calls such as translation.
   fast?: boolean;
-  // JSON object output. Gemini enforces the schema; OpenAI uses JSON mode; Anthropic relies on the prompt.
+  // JSON object output. Gemini enforces the schema; OpenAI and OpenRouter use JSON mode;
+  // Anthropic relies on the prompt.
   jsonSchema?: Record<string, unknown>;
   modelPreset: ModelPreset;
 }
 
-const throwIfMissing = (key: string | undefined, provider: ModelProvider) => {
+const providerNames: Record<ApiKeyProvider, string> = {
+  'openai-api-key': 'OpenAI',
+  'gemini-api-key': 'Gemini',
+  'anthropic-api-key': 'Anthropic',
+  'openrouter-api-key': 'OpenRouter',
+};
+
+const throwIfMissing = (key: string | undefined, provider: ApiKeyProvider) => {
   if (!key) {
-    const providerName =
-      provider === 'openai-api-key'
-        ? 'OpenAI'
-        : provider === 'gemini-api-key'
-        ? 'Gemini'
-        : 'Anthropic';
-    const msg = `${providerName} API key is not set.`;
+    const msg = `${providerNames[provider]} API key is not set.`;
     errorLog(msg);
     throw new Error(msg);
   }
@@ -98,8 +108,37 @@ function createAnthropic(spec: ModelSpec, opts: ModelOptions) {
   return instance;
 }
 
+// OpenRouter speaks the OpenAI Chat Completions API and takes the image_url format for every model.
+function createOpenRouter(spec: ModelSpec, opts: ModelOptions) {
+  const { maxTokens, temperature, streaming, fast, jsonSchema, modelPreset } = opts;
+  throwIfMissing(modelPreset.openrouterKey, 'openrouter-api-key');
+
+  const fastEffort = fast ? spec.openrouter.fastEffort : undefined;
+  const instance = new ChatOpenAI({
+    model: spec.openrouter.id,
+    apiKey: modelPreset.openrouterKey!,
+    configuration: { baseURL: 'https://openrouter.ai/api/v1' },
+    streaming: Boolean(streaming),
+    ...temperatureFor(spec, temperature),
+    ...(maxTokens ? { maxTokens } : {}),
+    modelKwargs: {
+      ...(fastEffort ? { reasoning: { effort: fastEffort } } : {}),
+      ...(jsonSchema ? { response_format: { type: 'json_object' } } : {}),
+    },
+  });
+
+  debugLog('OpenRouter instance created:', {
+    model: spec.openrouter.id,
+    maxTokens,
+    streaming,
+    fast,
+  });
+  return instance;
+}
+
 export function getModelInstance(opts: ModelOptions) {
   const spec = MODELS[opts.modelPreset.modelName];
+  if (opts.modelPreset.connectionMode === 'openrouter') return createOpenRouter(spec, opts);
   if (spec.provider === 'openai-api-key') return createOpenAI(spec, opts);
   if (spec.provider === 'gemini-api-key') return createGemini(spec, opts);
   return createAnthropic(spec, opts);

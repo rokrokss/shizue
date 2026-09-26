@@ -1,4 +1,4 @@
-import { providerFromName } from './modelRegistry';
+import { ConnectionMode, providerFromName } from './modelRegistry';
 
 interface ImageContent {
   type: string;
@@ -18,11 +18,13 @@ export const parseDataUrl = (dataUrl: string): { mediaType: string; base64Data: 
 
 export const formatImageForProvider = (
   imageDataUrl: string,
-  modelName: string
+  modelName: string,
+  connectionMode: ConnectionMode
 ): ImageContent => {
   const provider = providerFromName(modelName);
   
-  if (provider === 'anthropic-api-key') {
+  // OpenRouter takes the image_url format for Claude too.
+  if (provider === 'anthropic-api-key' && connectionMode === 'direct') {
     // Anthropic expects a different format
     const { mediaType, base64Data } = parseDataUrl(imageDataUrl);
     return {
@@ -44,7 +46,8 @@ export const formatImageForProvider = (
 
 export const formatImagesForMessage = (
   images: string[],
-  modelName: string
+  modelName: string,
+  connectionMode: ConnectionMode
 ): ImageContent[] => {
-  return images.map((img) => formatImageForProvider(img, modelName));
+  return images.map((img) => formatImageForProvider(img, modelName, connectionMode));
 };

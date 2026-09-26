@@ -29,6 +29,10 @@
       },
       "geminiApiKey": "Gemini API کلید استعمال کریں",
       "anthropicApiKey": "Anthropic API کلید استعمال کریں",
+      "openRouterApiKey": {
+        "title": "OpenRouter API کلید استعمال کریں",
+        "description": "GPT، Gemini اور Claude کے لیے ایک ہی کلید۔"
+      },
       "chatGPTWebApp": {
         "title": "کام جاری ہے...",
         "description": "OpenAI کی پالیسیوں میں تبدیلیوں کی وجہ سے غیر مستحکم ہو سکتا ہے۔"
@@ -66,6 +70,8 @@
     "title": "ترتیبات",
     "language": "زبان",
     "shortcut": "پینل شارٹ کٹ",
+    "connectionMode": "کنکشن",
+    "connectionDirect": "فراہم کنندگان سے براہ راست",
     "aiProvider": "AI فراہم کنندہ",
     "chatModel": "چیٹ ماڈل",
     "translateModel": "ترجمہ ماڈل",

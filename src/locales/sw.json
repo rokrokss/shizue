@@ -29,6 +29,10 @@
       },
       "geminiApiKey": "Tumia Gemini API Key",
       "anthropicApiKey": "Tumia Anthropic API Key",
+      "openRouterApiKey": {
+        "title": "Tumia OpenRouter API Key",
+        "description": "Ufunguo mmoja kwa GPT, Gemini na Claude."
+      },
       "chatGPTWebApp": {
         "title": "kazi inaendelea...",
         "description": "Inaweza kuwa isiyo thabiti kutokana na mabadiliko katika sera za OpenAI."
@@ -66,6 +70,8 @@
     "title": "Mipangilio",
     "language": "Lugha",
     "shortcut": "Shortcut ya Panel",
+    "connectionMode": "Muunganisho",
+    "connectionDirect": "Moja kwa moja kwa watoaji",
     "aiProvider": "Mtoaji wa AI",
     "chatModel": "Mfano wa Ongea",
     "translateModel": "Mfano wa Kutafsiri",

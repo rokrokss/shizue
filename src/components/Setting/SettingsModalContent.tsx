@@ -8,15 +8,37 @@ import {
   useToggleHiddenSiteList,
 } from '@/hooks/layout';
 import {
+  defaultAnthropicChatModel,
+  defaultAnthropicTranslateModel,
+  defaultGeminiChatModel,
+  defaultGeminiTranslateModel,
+  defaultOpenAIChatModel,
+  defaultOpenAITranslateModel,
   useAnthropicValidated,
   useChatModel,
+  useConnectionMode,
   useGeminiValidated,
+  useModelAvailability,
   useOpenAIValidated,
+  useOpenRouterValidated,
   useTranslateModel,
 } from '@/hooks/models';
-import { useSetAnthropicKey, useSetGeminiKey, useSetOpenAIKey } from '@/hooks/settings';
+import {
+  useSetAnthropicKey,
+  useSetGeminiKey,
+  useSetOpenAIKey,
+  useSetOpenRouterKey,
+} from '@/hooks/settings';
 import { languageOptions } from '@/lib/language';
-import { ChatModel, MODEL_OPTIONS, MODELS, ModelProvider, TranslateModel } from '@/lib/modelRegistry';
+import {
+  ApiKeyProvider,
+  ChatModel,
+  ConnectionMode,
+  MODEL_OPTIONS,
+  MODELS,
+  ModelProvider,
+  TranslateModel,
+} from '@/lib/modelRegistry';
 import { getOS } from '@/lib/userOS';
 import { validateApiKey } from '@/lib/validateApiKey';
 import { debugLog } from '@/logs';
@@ -38,9 +60,13 @@ const SettingsModalContent = () => {
   const setOpenAIKey = useSetOpenAIKey();
   const setGeminiKey = useSetGeminiKey();
   const setAnthropicKey = useSetAnthropicKey();
+  const setOpenRouterKey = useSetOpenRouterKey();
   const [openAIValidated, setOpenAIValidated] = useOpenAIValidated();
   const [geminiValidated, setGeminiValidated] = useGeminiValidated();
   const [anthropicValidated, setAnthropicValidated] = useAnthropicValidated();
+  const [openRouterValidated, setOpenRouterValidated] = useOpenRouterValidated();
+  const [connectionMode, setConnectionMode] = useConnectionMode();
+  const modelAvailability = useModelAvailability();
   const [chatModel, setChatModel] = useChatModel();
   const [translateModel, setTranslateModel] = useTranslateModel();
   const [theme, setTheme] = useTheme();
@@ -59,8 +85,10 @@ const SettingsModalContent = () => {
     value,
     label: MODELS[value].label,
     className: 'sz:font-ycom',
-    disabled: !providerValidated[MODELS[value].provider],
+    disabled: !modelAvailability[value],
   }));
+  const keyProvider: ApiKeyProvider =
+    connectionMode === 'openrouter' ? 'openrouter-api-key' : selectedProvider;
 
   const handleSelectLanguage = (value: string) => {
     setLang(value as Language);
@@ -73,6 +101,26 @@ const SettingsModalContent = () => {
   const handleSelectProvider = (value: string) => {
     setSelectedProvider(value as ModelProvider);
     setApiKey('');
+  };
+
+  const handleSelectConnectionMode = (value: ConnectionMode) => {
+    setConnectionMode(value);
+    setApiKey('');
+    setIsInvalidApiKey(false);
+    setCanProceed(true);
+    if (value !== 'direct') return;
+    // Models picked through OpenRouter may lack a direct key; fall back to the defaults of a
+    // registered provider.
+    const fallback = openAIValidated
+      ? [defaultOpenAIChatModel, defaultOpenAITranslateModel]
+      : geminiValidated
+      ? [defaultGeminiChatModel, defaultGeminiTranslateModel]
+      : anthropicValidated
+      ? [defaultAnthropicChatModel, defaultAnthropicTranslateModel]
+      : undefined;
+    if (!fallback) return;
+    if (!providerValidated[MODELS[chatModel].provider]) setChatModel(fallback[0]);
+    if (!providerValidated[MODELS[translateModel].provider]) setTranslateModel(fallback[1]);
   };
 
   const handleSelectChatModel = (value: string) => {
@@ -102,15 +150,18 @@ const SettingsModalContent = () => {
   const onClickValidate = async () => {
     setIsLoading(true);
     const trimmedKey = apiKey.trim();
-    const isValid = await validateApiKey(trimmedKey, selectedProvider);
+    const isValid = await validateApiKey(trimmedKey, keyProvider);
     if (isValid) {
-      if (selectedProvider === 'openai-api-key') {
+      if (keyProvider === 'openrouter-api-key') {
+        setOpenRouterKey(trimmedKey);
+        setOpenRouterValidated(true);
+      } else if (keyProvider === 'openai-api-key') {
         setOpenAIKey(trimmedKey);
         setOpenAIValidated(true);
-      } else if (selectedProvider === 'gemini-api-key') {
+      } else if (keyProvider === 'gemini-api-key') {
         setGeminiKey(trimmedKey);
         setGeminiValidated(true);
-      } else if (selectedProvider === 'anthropic-api-key') {
+      } else if (keyProvider === 'anthropic-api-key') {
         setAnthropicKey(trimmedKey);
         setAnthropicValidated(true);
       }
@@ -275,43 +326,73 @@ const SettingsModalContent = () => {
                       theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'
                     }`}
                   >
-                    {t('settings.aiProvider')}
+                    {t('settings.connectionMode')}
                   </div>
                   <Select
-                    value={selectedProvider}
-                    onChange={handleSelectProvider}
+                    value={connectionMode}
+                    onChange={handleSelectConnectionMode}
                     className="sz:font-ycom sz:w-50"
                     options={[
                       {
-                        value: 'openai-api-key',
-                        label: t('onboarding.selectProvider.openaiApiKey.title'),
+                        value: 'direct',
+                        label: t('settings.connectionDirect'),
                         className: 'sz:font-ycom',
                       },
                       {
-                        value: 'gemini-api-key',
-                        label: t('onboarding.selectProvider.geminiApiKey'),
+                        value: 'openrouter',
+                        label: 'OpenRouter',
                         className: 'sz:font-ycom',
-                      },
-                      {
-                        value: 'anthropic-api-key',
-                        label: t('onboarding.selectProvider.anthropicApiKey'),
-                        className: 'sz:font-ycom',
-                      },
-                      {
-                        value: 'chatgpt-webapp',
-                        label: t('onboarding.selectProvider.chatGPTWebApp.title'),
-                        className: 'sz:font-ycom',
-                        disabled: true,
                       },
                     ]}
                   />
+                  {connectionMode === 'direct' && (
+                    <>
+                      <div
+                        className={`sz:text-base ${
+                          theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'
+                        }`}
+                      >
+                        {t('settings.aiProvider')}
+                      </div>
+                      <Select
+                        value={selectedProvider}
+                        onChange={handleSelectProvider}
+                        className="sz:font-ycom sz:w-50"
+                        options={[
+                          {
+                            value: 'openai-api-key',
+                            label: t('onboarding.selectProvider.openaiApiKey.title'),
+                            className: 'sz:font-ycom',
+                          },
+                          {
+                            value: 'gemini-api-key',
+                            label: t('onboarding.selectProvider.geminiApiKey'),
+                            className: 'sz:font-ycom',
+                          },
+                          {
+                            value: 'anthropic-api-key',
+                            label: t('onboarding.selectProvider.anthropicApiKey'),
+                            className: 'sz:font-ycom',
+                          },
+                          {
+                            value: 'chatgpt-webapp',
+                            label: t('onboarding.selectProvider.chatGPTWebApp.title'),
+                            className: 'sz:font-ycom',
+                            disabled: true,
+                          },
+                        ]}
+                      />
+                    </>
+                  )}
                   <div className="sz:flex sz:flex-row sz:items-center sz:w-50 sz:mb-1">
                     <Input
                       className="sz:font-ycom sz:text-sm sz:mr-[5px] sz:h-8"
                       placeholder={
-                        selectedProvider === 'openai-api-key'
+                        keyProvider === 'openrouter-api-key'
+                          ? 'sk-or-v1-XXX......'
+                          : keyProvider === 'openai-api-key'
                           ? 'sk-proj-XXX......'
-                          : selectedProvider === 'gemini-api-key'
+                          : keyProvider === 'gemini-api-key'
                           ? 'AQ.XXX......'
                           : 'sk-ant-api03-XXX......'
                       }
@@ -363,6 +444,12 @@ const SettingsModalContent = () => {
                       color={anthropicValidated ? 'success' : 'default'}
                     >
                       Anthropic
+                    </Tag>
+                    <Tag
+                      style={{ fontSize: '11px' }}
+                      color={openRouterValidated ? 'success' : 'default'}
+                    >
+                      OpenRouter
                     </Tag>
                   </div>
                   <div

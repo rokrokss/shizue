@@ -6,14 +6,23 @@ import {
   defaultGeminiTranslateModel,
   defaultOpenAIChatModel,
   defaultOpenAITranslateModel,
+  defaultOpenRouterChatModel,
+  defaultOpenRouterTranslateModel,
   useSetAnthropicValidated,
   useSetChatModel,
+  useSetConnectionMode,
   useSetGeminiValidated,
   useSetOpenAIValidated,
+  useSetOpenRouterValidated,
   useSetTranslateModel,
 } from '@/hooks/models';
-import { useSetAnthropicKey, useSetGeminiKey, useSetOpenAIKey } from '@/hooks/settings';
-import { ModelProvider } from '@/lib/modelRegistry';
+import {
+  useSetAnthropicKey,
+  useSetGeminiKey,
+  useSetOpenAIKey,
+  useSetOpenRouterKey,
+} from '@/hooks/settings';
+import { ApiKeyProvider } from '@/lib/modelRegistry';
 import { validateApiKey } from '@/lib/validateApiKey';
 import { debugLog } from '@/logs';
 import { SmileOutlined } from '@ant-design/icons';
@@ -31,25 +40,30 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
   );
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [selectedProvider, setSelectedProvider] = useState<ModelProvider>('openai-api-key');
+  const [selectedProvider, setSelectedProvider] = useState<ApiKeyProvider>('openai-api-key');
   const setOpenAIKey = useSetOpenAIKey();
   const setGeminiKey = useSetGeminiKey();
   const setAnthropicKey = useSetAnthropicKey();
+  const setOpenRouterKey = useSetOpenRouterKey();
   const setChatModel = useSetChatModel();
   const setTranslateModel = useSetTranslateModel();
   const theme = useThemeValue();
   const setOpenAIValidated = useSetOpenAIValidated();
   const setGeminiValidated = useSetGeminiValidated();
   const setAnthropicValidated = useSetAnthropicValidated();
+  const setOpenRouterValidated = useSetOpenRouterValidated();
+  const setConnectionMode = useSetConnectionMode();
   const lines = [
     t('onboarding.selectProvider.title'),
     t('onboarding.selectProvider.openaiApiKey.description_0'),
-    t('onboarding.selectProvider.openaiApiKey.description_1'),
+    selectedProvider === 'openrouter-api-key'
+      ? t('onboarding.selectProvider.openRouterApiKey.description')
+      : t('onboarding.selectProvider.openaiApiKey.description_1'),
     t('onboarding.selectProvider.chatGPTWebApp.description'),
   ];
 
   const handleSelect = (value: string) => {
-    setSelectedProvider(value as ModelProvider);
+    setSelectedProvider(value as ApiKeyProvider);
     setApiKey('');
   };
 
@@ -58,7 +72,13 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
     const trimmedKey = apiKey.trim();
     const isValid = await validateApiKey(trimmedKey, selectedProvider);
     if (isValid) {
-      if (selectedProvider === 'openai-api-key') {
+      setConnectionMode(selectedProvider === 'openrouter-api-key' ? 'openrouter' : 'direct');
+      if (selectedProvider === 'openrouter-api-key') {
+        setOpenRouterKey(trimmedKey);
+        setChatModel(defaultOpenRouterChatModel);
+        setTranslateModel(defaultOpenRouterTranslateModel);
+        setOpenRouterValidated(true);
+      } else if (selectedProvider === 'openai-api-key') {
         setOpenAIKey(trimmedKey);
         setChatModel(defaultOpenAIChatModel);
         setTranslateModel(defaultOpenAITranslateModel);
@@ -114,6 +134,11 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
             className: 'sz:font-ycom',
           },
           {
+            value: 'openrouter-api-key',
+            label: t('onboarding.selectProvider.openRouterApiKey.title'),
+            className: 'sz:font-ycom',
+          },
+          {
             value: 'chatgpt-webapp',
             label: t('onboarding.selectProvider.chatGPTWebApp.title'),
             className: 'sz:font-ycom',
@@ -146,6 +171,8 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
               ? 'AQ.XXX......'
               : selectedProvider === 'anthropic-api-key'
               ? 'sk-ant-api03-XXX......'
+              : selectedProvider === 'openrouter-api-key'
+              ? 'sk-or-v1-XXX......'
               : ''
           }
           className="sz:font-ycom sz:mr-[5px]"

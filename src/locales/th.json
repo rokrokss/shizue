@@ -29,6 +29,10 @@
       },
       "geminiApiKey": "ใช้ Gemini API Key",
       "anthropicApiKey": "ใช้ Anthropic API Key",
+      "openRouterApiKey": {
+        "title": "ใช้ OpenRouter API Key",
+        "description": "คีย์เดียวใช้ได้ทั้ง GPT, Gemini และ Claude"
+      },
       "chatGPTWebApp": {
         "title": "กำลังดำเนินการ...",
         "description": "อาจไม่เสถียรเนื่องจากการเปลี่ยนแปลงนโยบายของ OpenAI"
@@ -66,6 +70,8 @@
     "title": "การตั้งค่า",
     "language": "ภาษา",
     "shortcut": "ปุ่มลัดแผงควบคุม",
+    "connectionMode": "การเชื่อมต่อ",
+    "connectionDirect": "เชื่อมต่อผู้ให้บริการโดยตรง",
     "aiProvider": "ผู้ให้บริการ AI",
     "chatModel": "โมเดลแชท",
     "translateModel": "โมเดลการแปล",

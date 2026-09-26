@@ -29,6 +29,10 @@
       },
       "geminiApiKey": "استخدام مفتاح Gemini API",
       "anthropicApiKey": "استخدام مفتاح Anthropic API",
+      "openRouterApiKey": {
+        "title": "استخدام مفتاح OpenRouter API",
+        "description": "مفتاح واحد لـ GPT وGemini وClaude."
+      },
       "chatGPTWebApp": {
         "title": "قيد التطوير...",
         "description": "قد يكون غير مستقر بسبب التغييرات في سياسات OpenAI."
@@ -66,6 +70,8 @@
     "title": "الإعدادات",
     "language": "اللغة",
     "shortcut": "اختصار اللوحة",
+    "connectionMode": "طريقة الاتصال",
+    "connectionDirect": "الاتصال المباشر بالمزودين",
     "aiProvider": "مزود الذكاء الاصطناعي",
     "chatModel": "نموذج الدردشة",
     "translateModel": "نموذج الترجمة",

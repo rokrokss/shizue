@@ -1,9 +1,9 @@
-import { ModelProvider } from '@/lib/modelRegistry';
+import { ApiKeyProvider } from '@/lib/modelRegistry';
 import { debugLog } from '@/logs';
 
 // Keys are treated as opaque strings and verified against the provider API: key formats
 // change over time (e.g. Gemini moved from `AIza…` standard keys to `AQ.…` auth keys in 2026).
-export const validateApiKey = async (apiKey: string, provider: ModelProvider) => {
+export const validateApiKey = async (apiKey: string, provider: ApiKeyProvider) => {
   if (!apiKey) {
     debugLog('Invalid API key');
     return false;
@@ -52,6 +52,19 @@ export const validateApiKey = async (apiKey: string, provider: ModelProvider) =>
       } else {
         const errorJson = await response.json();
         debugLog('Anthropic error', errorJson);
+      }
+    } else if (provider === 'openrouter-api-key') {
+      // `/models` is public on OpenRouter, so it would accept any key; `/key` requires auth.
+      const response = await fetch('https://openrouter.ai/api/v1/key', {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+        },
+      });
+      if (response.ok) {
+        return true;
+      } else {
+        const errorJson = await response.json();
+        debugLog('OpenRouter error', errorJson);
       }
     }
   } catch (e) {

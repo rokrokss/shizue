@@ -29,6 +29,10 @@
       },
       "geminiApiKey": "Gemini APIキーを使用",
       "anthropicApiKey": "Anthropic APIキーを使用",
+      "openRouterApiKey": {
+        "title": "OpenRouter APIキーを使用",
+        "description": "1つのキーでGPT・Gemini・Claudeをすべて利用できます。"
+      },
       "chatGPTWebApp": {
         "title": "開発中...",
         "description": "OpenAIのポリシー変更により不安定になる可能性があります。"
@@ -66,6 +70,8 @@
     "title": "設定",
     "language": "言語",
     "shortcut": "パネルショートカット",
+    "connectionMode": "接続方法",
+    "connectionDirect": "各プロバイダーに直接接続",
     "aiProvider": "AIプロバイダー",
     "chatModel": "チャットモデル",
     "translateModel": "翻訳モデル",

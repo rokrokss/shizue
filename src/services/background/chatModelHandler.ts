@@ -3,8 +3,10 @@ import { getCurrentLanguage } from '@/entrypoints/background/states/language';
 import {
   getCurrentAnthropicKey,
   getCurrentChatModel,
+  getCurrentConnectionMode,
   getCurrentGeminiKey,
   getCurrentOpenaiKey,
+  getCurrentOpenrouterKey,
 } from '@/entrypoints/background/states/models';
 import { ActionType } from '@/hooks/global';
 import { formatImagesForMessage } from '@/lib/imageFormatHelper';
@@ -25,8 +27,10 @@ function getChatModelPreset(): ModelPreset {
   const openaiKey = getCurrentOpenaiKey();
   const geminiKey = getCurrentGeminiKey();
   const anthropicKey = getCurrentAnthropicKey();
+  const openrouterKey = getCurrentOpenrouterKey();
+  const connectionMode = getCurrentConnectionMode();
   const modelName = getCurrentChatModel();
-  return { openaiKey, geminiKey, anthropicKey, modelName };
+  return { openaiKey, geminiKey, anthropicKey, openrouterKey, connectionMode, modelName };
 }
 
 export class ChatModelHandler {
@@ -102,7 +106,7 @@ export class ChatModelHandler {
 
       // Track token usage (after streaming is complete)
       if (aggregatedChunk) {
-        await trackStreamingTokenUsage(modelPreset.modelName, aggregatedChunk);
+        await trackStreamingTokenUsage(modelPreset, aggregatedChunk);
       }
 
       port.postMessage({ done: true });
@@ -166,6 +170,7 @@ export class ChatModelHandler {
       const initialSystemMessage = getInitialSystemMessage(currentLang);
       const initialAIMessage = getInitialAIMessage(currentLang);
       const modelName = getCurrentChatModel();
+      const connectionMode = getCurrentConnectionMode();
 
       const messages = [
         new SystemMessage(initialSystemMessage),
@@ -176,7 +181,7 @@ export class ChatModelHandler {
               return new HumanMessage({
                 content: [
                   ...(m.content ? [{ type: 'text', text: m.content }] : []),
-                  ...formatImagesForMessage(m.images, modelName),
+                  ...formatImagesForMessage(m.images, modelName, connectionMode),
                 ],
               });
             } else {
@@ -244,6 +249,7 @@ export class ChatModelHandler {
       const initialSystemMessage = getInitialSystemMessage(currentLang);
       const initialAIMessage = getInitialAIMessage(currentLang);
       const modelName = getCurrentChatModel();
+      const connectionMode = getCurrentConnectionMode();
 
       const historyForModelInput = fullThreadHistory.slice(0, messageIdxToRetry);
 
@@ -256,7 +262,7 @@ export class ChatModelHandler {
               return new HumanMessage({
                 content: [
                   ...(m.content ? [{ type: 'text', text: m.content }] : []),
-                  ...formatImagesForMessage(m.images, modelName),
+                  ...formatImagesForMessage(m.images, modelName, connectionMode),
                 ],
               });
             } else {

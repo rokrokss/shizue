@@ -26,12 +26,7 @@ import {
   useToggleHiddenSiteList,
   useToggleYPosition,
 } from '@/hooks/layout';
-import {
-  useAnthropicValidatedValue,
-  useGeminiValidatedValue,
-  useOpenAIValidatedValue,
-  useTranslateModel,
-} from '@/hooks/models';
+import { useAnyModelAvailable, useModelAvailability, useTranslateModel } from '@/hooks/models';
 import { hashStringToIndex } from '@/lib/hash';
 import {
   initDescribeImageContent,
@@ -72,9 +67,8 @@ const Toggle = () => {
   const theme = useThemeValue();
   const [translateModel, setTranslateModel] = useTranslateModel();
   const [motionDivId, setMotionDivId] = useState(0);
-  const openAIValidated = useOpenAIValidatedValue();
-  const geminiValidated = useGeminiValidatedValue();
-  const anthropicValidated = useAnthropicValidatedValue();
+  const modelAvailability = useModelAvailability();
+  const anyModelAvailable = useAnyModelAvailable();
   const [showToggle, setShowToggle] = useShowToggle();
   const [toggleHiddenSiteList, setToggleHiddenSiteList] = useToggleHiddenSiteList();
   const [isHoveringHideFromCurrentSite, setIsHoveringHideFromCurrentSite] = useState(false);
@@ -160,7 +154,7 @@ const Toggle = () => {
   };
 
   const handleTranslateSettingsOpenChange = (newOpen: boolean) => {
-    if (!openAIValidated && !geminiValidated && !anthropicValidated) {
+    if (!anyModelAvailable) {
       debugLog('Translate page clicked but not able to open translate settings');
       setPanelOpen();
       return;
@@ -312,15 +306,8 @@ const Toggle = () => {
 
     if (isDragging) return;
 
-    if (!openAIValidated && !geminiValidated && !anthropicValidated) {
-      debugLog(
-        'Translate page clicked but not able to translate, openAIValidated',
-        openAIValidated,
-        'geminiValidated',
-        geminiValidated,
-        'anthropicValidated',
-        anthropicValidated
-      );
+    if (!anyModelAvailable) {
+      debugLog('Translate page clicked but not able to translate, no model available');
       setPanelOpen();
       return;
     }
@@ -332,14 +319,7 @@ const Toggle = () => {
     }
 
     setIsTranslationActive(!isTranslationActive);
-  }, [
-    isDragging,
-    isTranslationActive,
-    targetLanguage,
-    openAIValidated,
-    geminiValidated,
-    anthropicValidated,
-  ]);
+  }, [isDragging, isTranslationActive, targetLanguage, anyModelAvailable]);
 
   useEffect(() => {
     const messageListener = (message: any) => {
@@ -456,11 +436,7 @@ const Toggle = () => {
                             }}
                             size="small"
                             options={MODEL_OPTIONS.map((value) => {
-                              const validated = {
-                                'openai-api-key': openAIValidated,
-                                'gemini-api-key': geminiValidated,
-                                'anthropic-api-key': anthropicValidated,
-                              }[MODELS[value].provider];
+                              const validated = modelAvailability[value];
                               return {
                                 value,
                                 label: MODELS[value].label,

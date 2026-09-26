@@ -1,8 +1,10 @@
 import { getTranslationTargetLanguage } from '@/entrypoints/background/states/language';
 import {
   getCurrentAnthropicKey,
+  getCurrentConnectionMode,
   getCurrentGeminiKey,
   getCurrentOpenaiKey,
+  getCurrentOpenrouterKey,
   getCurrentTranslateModel,
 } from '@/entrypoints/background/states/models';
 import { ModelPreset, getModelInstance } from '@/lib/models';
@@ -54,8 +56,10 @@ function getTranslationModelPreset(): ModelPreset {
   const openaiKey = getCurrentOpenaiKey();
   const geminiKey = getCurrentGeminiKey();
   const anthropicKey = getCurrentAnthropicKey();
+  const openrouterKey = getCurrentOpenrouterKey();
+  const connectionMode = getCurrentConnectionMode();
   const modelName = getCurrentTranslateModel();
-  return { openaiKey, geminiKey, anthropicKey, modelName };
+  return { openaiKey, geminiKey, anthropicKey, openrouterKey, connectionMode, modelName };
 }
 
 /**
@@ -101,7 +105,7 @@ export class TranslationHandler {
 
       debugLog('TranslationHandler [translateYoutubeCaption] prompt:', prompt);
       const response = await llm.invoke([new HumanMessage(prompt)]);
-      await trackTokenUsage(modelPreset.modelName, response);
+      await trackTokenUsage(modelPreset, response);
 
       const rawResponseContent = response.text.trim();
 
@@ -196,7 +200,7 @@ export class TranslationHandler {
 
       const response = await llm.invoke([new HumanMessage(prompt)]);
 
-      await trackTokenUsage(modelPreset.modelName, response);
+      await trackTokenUsage(modelPreset, response);
 
       debugLog('TranslationHandler [translateText] response:', response);
 
@@ -233,7 +237,7 @@ export class TranslationHandler {
 
       const response = await llm.invoke([new HumanMessage(batchPrompt)]);
 
-      await trackTokenUsage(modelPreset.modelName, response);
+      await trackTokenUsage(modelPreset, response);
 
       const rawResponseContent = response.text.trim();
 

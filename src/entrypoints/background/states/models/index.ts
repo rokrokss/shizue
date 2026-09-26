@@ -1,17 +1,27 @@
 import {
   STORAGE_ANTHROPIC_KEY,
   STORAGE_CHAT_MODEL,
+  STORAGE_CONNECTION_MODE,
   STORAGE_GEMINI_KEY,
   STORAGE_OPENAI_KEY,
+  STORAGE_OPENROUTER_KEY,
   STORAGE_TRANSLATE_MODEL,
 } from '@/config/constants';
-import { ChatModel, isChatModel, TranslateModel } from '@/lib/modelRegistry';
+import {
+  ChatModel,
+  ConnectionMode,
+  isChatModel,
+  isConnectionMode,
+  TranslateModel,
+} from '@/lib/modelRegistry';
 
 let currentChatModel: ChatModel = 'gpt';
 let currentTranslateModel: TranslateModel = 'gpt-mini';
 let openaiKey: string | undefined = undefined;
 let geminiKey: string | undefined = undefined;
 let anthropicKey: string | undefined = undefined;
+let openrouterKey: string | undefined = undefined;
+let connectionMode: ConnectionMode = 'direct';
 
 export const getCurrentChatModel = () => currentChatModel;
 
@@ -22,6 +32,10 @@ export const getCurrentOpenaiKey = () => openaiKey;
 export const getCurrentGeminiKey = () => geminiKey;
 
 export const getCurrentAnthropicKey = () => anthropicKey;
+
+export const getCurrentOpenrouterKey = () => openrouterKey;
+
+export const getCurrentConnectionMode = () => connectionMode;
 
 export const changeChatModel = (model: ChatModel) => {
   currentChatModel = model;
@@ -43,6 +57,14 @@ export const changeAnthropicKey = (key: string | undefined) => {
   anthropicKey = key;
 };
 
+export const changeOpenrouterKey = (key: string | undefined) => {
+  openrouterKey = key;
+};
+
+export const changeConnectionMode = (mode: ConnectionMode) => {
+  connectionMode = mode;
+};
+
 let modelStateReady: Promise<void> = Promise.resolve();
 
 // Resolves once the cached settings are loaded; the service worker may have just restarted.
@@ -56,6 +78,8 @@ export const modelListeners = () => {
       STORAGE_OPENAI_KEY,
       STORAGE_GEMINI_KEY,
       STORAGE_ANTHROPIC_KEY,
+      STORAGE_OPENROUTER_KEY,
+      STORAGE_CONNECTION_MODE,
     ])
     .then((res) => {
       if (isChatModel(res.CHAT_MODEL)) changeChatModel(res.CHAT_MODEL);
@@ -63,6 +87,8 @@ export const modelListeners = () => {
       changeOpenaiKey((res.OPENAI_KEY as string) || undefined);
       changeGeminiKey((res.GEMINI_KEY as string) || undefined);
       changeAnthropicKey((res.ANTHROPIC_KEY as string) || undefined);
+      changeOpenrouterKey((res.OPENROUTER_KEY as string) || undefined);
+      if (isConnectionMode(res.CONNECTION_MODE)) changeConnectionMode(res.CONNECTION_MODE);
     });
 
   chrome.storage.onChanged.addListener((changes, area) => {
@@ -84,6 +110,13 @@ export const modelListeners = () => {
       }
       if (changes.ANTHROPIC_KEY) {
         changeAnthropicKey((changes.ANTHROPIC_KEY.newValue as string) || undefined);
+      }
+      if (changes.OPENROUTER_KEY) {
+        changeOpenrouterKey((changes.OPENROUTER_KEY.newValue as string) || undefined);
+      }
+      if (changes.CONNECTION_MODE) {
+        const newMode = changes.CONNECTION_MODE.newValue;
+        changeConnectionMode(isConnectionMode(newMode) ? newMode : 'direct');
       }
     }
   });

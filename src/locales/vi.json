@@ -29,6 +29,10 @@
       },
       "geminiApiKey": "Sử dụng Gemini API Key",
       "anthropicApiKey": "Sử dụng Anthropic API Key",
+      "openRouterApiKey": {
+        "title": "Sử dụng OpenRouter API Key",
+        "description": "Một khóa cho GPT, Gemini và Claude."
+      },
       "chatGPTWebApp": {
         "title": "đang làm việc...",
         "description": "Có thể không ổn định do thay đổi trong chính sách của OpenAI."
@@ -66,6 +70,8 @@
     "title": "Cài đặt",
     "language": "Ngôn ngữ",
     "shortcut": "Phím tắt Bảng điều khiển",
+    "connectionMode": "Kết nối",
+    "connectionDirect": "Trực tiếp đến nhà cung cấp",
     "aiProvider": "Nhà cung cấp AI",
     "chatModel": "Mô hình Trò chuyện",
     "translateModel": "Mô hình Dịch thuật",

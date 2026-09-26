@@ -29,6 +29,10 @@
       },
       "geminiApiKey": "Gemini API Anahtarını Kullan",
       "anthropicApiKey": "Anthropic API Anahtarını Kullan",
+      "openRouterApiKey": {
+        "title": "OpenRouter API Anahtarını Kullan",
+        "description": "GPT, Gemini ve Claude için tek anahtar."
+      },
       "chatGPTWebApp": {
         "title": "Çalışmalar devam ediyor...",
         "description": "OpenAI politikalarındaki değişiklikler nedeniyle kararsız olabilir."
@@ -66,6 +70,8 @@
     "title": "Ayarlar",
     "language": "Dil",
     "shortcut": "Panel Kısayolu",
+    "connectionMode": "Bağlantı",
+    "connectionDirect": "Sağlayıcılara doğrudan",
     "aiProvider": "Yapay Zeka Sağlayıcısı",
     "chatModel": "Sohbet Modeli",
     "translateModel": "Çeviri Modeli",

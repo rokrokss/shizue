@@ -29,6 +29,10 @@
       },
       "geminiApiKey": "Utiliser la clé API Gemini",
       "anthropicApiKey": "Utiliser la clé API Anthropic",
+      "openRouterApiKey": {
+        "title": "Utiliser la clé API OpenRouter",
+        "description": "Une seule clé pour GPT, Gemini et Claude."
+      },
       "chatGPTWebApp": {
         "title": "Travail en cours...",
         "description": "Peut être instable en raison de changements dans les politiques d'OpenAI."
@@ -66,6 +70,8 @@
     "title": "Paramètres",
     "language": "Langue",
     "shortcut": "Raccourci du panneau",
+    "connectionMode": "Connexion",
+    "connectionDirect": "Directement aux fournisseurs",
     "aiProvider": "Fournisseur d'IA",
     "chatModel": "Modèle de chat",
     "translateModel": "Modèle de traduction",

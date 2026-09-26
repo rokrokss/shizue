@@ -29,6 +29,10 @@
       },
       "geminiApiKey": "Gamitin ang Gemini API Key",
       "anthropicApiKey": "Gamitin ang Anthropic API Key",
+      "openRouterApiKey": {
+        "title": "Gamitin ang OpenRouter API Key",
+        "description": "Iisang key para sa GPT, Gemini, at Claude."
+      },
       "chatGPTWebApp": {
         "title": "work in progress...",
         "description": "Maaaring hindi stable dahil sa mga pagbabago sa mga patakaran ng OpenAI."
@@ -66,6 +70,8 @@
     "title": "Mga Setting",
     "language": "Wika",
     "shortcut": "Panel Shortcut",
+    "connectionMode": "Koneksyon",
+    "connectionDirect": "Direkta sa mga provider",
     "aiProvider": "AI Provider",
     "chatModel": "Chat Model",
     "translateModel": "Translation Model",

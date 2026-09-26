@@ -29,6 +29,10 @@
       },
       "geminiApiKey": "使用 Gemini API 密钥",
       "anthropicApiKey": "使用 Anthropic API 密钥",
+      "openRouterApiKey": {
+        "title": "使用 OpenRouter API 密钥",
+        "description": "一个密钥即可使用 GPT、Gemini 和 Claude。"
+      },
       "chatGPTWebApp": {
         "title": "正在开发中...",
         "description": "由于 OpenAI 政策的更改，可能不稳定。"
@@ -66,6 +70,8 @@
     "title": "设置",
     "language": "语言",
     "shortcut": "面板快捷键",
+    "connectionMode": "连接方式",
+    "connectionDirect": "直连各提供商",
     "aiProvider": "AI 提供商",
     "chatModel": "聊天模型",
     "translateModel": "翻译模型",

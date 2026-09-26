@@ -1,12 +1,26 @@
 import {
   STORAGE_ANTHROPIC_VALIDATED,
   STORAGE_CHAT_MODEL,
+  STORAGE_CONNECTION_MODE,
   STORAGE_GEMINI_VALIDATED,
   STORAGE_OPENAI_VALIDATED,
+  STORAGE_OPENROUTER_VALIDATED,
   STORAGE_TRANSLATE_MODEL,
 } from '@/config/constants';
-import { anthropicKeyAtom, geminiKeyAtom, openAIKeyAtom } from '@/hooks/settings';
-import { ChatModel, TranslateModel } from '@/lib/modelRegistry';
+import {
+  anthropicKeyAtom,
+  geminiKeyAtom,
+  openAIKeyAtom,
+  openRouterKeyAtom,
+} from '@/hooks/settings';
+import {
+  ChatModel,
+  ConnectionMode,
+  MODEL_OPTIONS,
+  MODELS,
+  ModelProvider,
+  TranslateModel,
+} from '@/lib/modelRegistry';
 import { chromeStorageBackend } from '@/lib/storageBackend';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
@@ -17,10 +31,14 @@ export const defaultGeminiChatModel: ChatModel = 'gemini-flash';
 export const defaultGeminiTranslateModel: TranslateModel = 'gemini-flash-lite';
 export const defaultAnthropicChatModel: ChatModel = 'claude-sonnet';
 export const defaultAnthropicTranslateModel: TranslateModel = 'claude-haiku';
+export const defaultOpenRouterChatModel: ChatModel = 'gpt';
+export const defaultOpenRouterTranslateModel: TranslateModel = 'gpt-mini';
 
 export const defaultOpenAIValidated = undefined;
 export const defaultGeminiValidated = undefined;
 export const defaultAnthropicValidated = undefined;
+export const defaultOpenRouterValidated = undefined;
+export const defaultConnectionMode: ConnectionMode = 'direct';
 
 export const chatModelAtom = atomWithStorage<ChatModel>(
   STORAGE_CHAT_MODEL,
@@ -51,6 +69,20 @@ export const geminiValidatedAtom = atomWithStorage<boolean | undefined>(
 export const anthropicValidatedAtom = atomWithStorage<boolean | undefined>(
   STORAGE_ANTHROPIC_VALIDATED,
   defaultAnthropicValidated,
+  chromeStorageBackend('local'),
+  { getOnInit: true }
+);
+
+export const openRouterValidatedAtom = atomWithStorage<boolean | undefined>(
+  STORAGE_OPENROUTER_VALIDATED,
+  defaultOpenRouterValidated,
+  chromeStorageBackend('local'),
+  { getOnInit: true }
+);
+
+export const connectionModeAtom = atomWithStorage<ConnectionMode>(
+  STORAGE_CONNECTION_MODE,
+  defaultConnectionMode,
   chromeStorageBackend('local'),
   { getOnInit: true }
 );
@@ -88,6 +120,17 @@ export const anthropicValidatedSafeAtom = atom(
   (_, set, value: boolean) => set(anthropicValidatedAtom, value)
 );
 
+export const openRouterValidatedSafeAtom = atom(
+  (get) => {
+    const validated = get(openRouterValidatedAtom);
+    if (validated !== undefined) {
+      return validated;
+    }
+    return Boolean(get(openRouterKeyAtom));
+  },
+  (_, set, value: boolean) => set(openRouterValidatedAtom, value)
+);
+
 export const useChatModel = () => useAtom(chatModelAtom);
 export const useTranslateModel = () => useAtom(translateModelAtom);
 export const useSetChatModel = () => useSetAtom(chatModelAtom);
@@ -101,3 +144,30 @@ export const useAnthropicValidatedValue = () => useAtomValue(anthropicValidatedS
 export const useSetOpenAIValidated = () => useSetAtom(openAIValidatedSafeAtom);
 export const useSetGeminiValidated = () => useSetAtom(geminiValidatedSafeAtom);
 export const useSetAnthropicValidated = () => useSetAtom(anthropicValidatedSafeAtom);
+export const useOpenRouterValidated = () => useAtom(openRouterValidatedSafeAtom);
+export const useSetOpenRouterValidated = () => useSetAtom(openRouterValidatedSafeAtom);
+export const useConnectionMode = () => useAtom(connectionModeAtom);
+export const useSetConnectionMode = () => useSetAtom(connectionModeAtom);
+
+// Whether each model can be called under the current connection mode. A hook rather than a
+// derived atom: the storage atoms start as promises, which useAtomValue unwraps.
+export const useModelAvailability = (): Record<ChatModel, boolean> => {
+  const connectionMode = useAtomValue(connectionModeAtom);
+  const openRouterValidated = useAtomValue(openRouterValidatedSafeAtom);
+  const directValidated: Record<ModelProvider, boolean | undefined> = {
+    'openai-api-key': useAtomValue(openAIValidatedSafeAtom),
+    'gemini-api-key': useAtomValue(geminiValidatedSafeAtom),
+    'anthropic-api-key': useAtomValue(anthropicValidatedSafeAtom),
+  };
+  return Object.fromEntries(
+    MODEL_OPTIONS.map((model) => [
+      model,
+      Boolean(
+        connectionMode === 'openrouter'
+          ? openRouterValidated
+          : directValidated[MODELS[model].provider]
+      ),
+    ])
+  ) as Record<ChatModel, boolean>;
+};
+export const useAnyModelAvailable = () => Object.values(useModelAvailability()).some(Boolean);

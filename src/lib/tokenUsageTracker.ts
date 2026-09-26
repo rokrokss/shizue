@@ -1,5 +1,6 @@
 import { recordTokenUsage } from '@/lib/indexDB';
-import { ChatModel, MODELS } from '@/lib/modelRegistry';
+import { MODELS } from '@/lib/modelRegistry';
+import type { ModelPreset } from '@/lib/models';
 import { debugLog } from '@/logs';
 import { AIMessage, AIMessageChunk } from '@langchain/core/messages';
 
@@ -23,7 +24,7 @@ export const extractTokenUsage = (
 };
 
 export const trackTokenUsage = async (
-  modelName: ChatModel,
+  modelPreset: ModelPreset,
   response: AIMessageChunk | AIMessage,
   requestCount: number = 1
 ): Promise<void> => {
@@ -36,9 +37,11 @@ export const trackTokenUsage = async (
     }
 
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-    const { id: model, provider: providerKey } = MODELS[modelName];
+    const { id: model, provider: providerKey } = MODELS[modelPreset.modelName];
     const provider =
-      providerKey === 'anthropic-api-key'
+      modelPreset.connectionMode === 'openrouter'
+        ? 'openrouter'
+        : providerKey === 'anthropic-api-key'
         ? 'anthropic'
         : providerKey === 'gemini-api-key'
         ? 'gemini'
@@ -68,8 +71,8 @@ export const trackTokenUsage = async (
 
 // Pass the concatenation of all streamed chunks: providers split usage across chunks.
 export const trackStreamingTokenUsage = async (
-  modelName: ChatModel,
+  modelPreset: ModelPreset,
   aggregatedResponse: AIMessageChunk
 ): Promise<void> => {
-  await trackTokenUsage(modelName, aggregatedResponse, 1);
+  await trackTokenUsage(modelPreset, aggregatedResponse, 1);
 };

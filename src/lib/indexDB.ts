@@ -28,7 +28,7 @@ export interface TokenUsage {
   id: string;
   date: string; // YYYY-MM-DD
   model: string;
-  provider: 'openai' | 'gemini' | 'anthropic';
+  provider: 'openai' | 'gemini' | 'anthropic' | 'openrouter';
   inputTokens: number;
   outputTokens: number;
   totalTokens: number;
