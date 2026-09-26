@@ -23,7 +23,7 @@ Shizue, Büyük Dil Modellerini (LLM'ler) günlük web tarama deneyiminize sorun
 💬 Etkileşimli AI Sohbet Asistanı
 - Herhangi bir web sayfası içeriği hakkında sorular sorun
 - Anında özetler, açıklamalar ve içgörüler alın
-- Birden fazla AI modelini destekler (OpenAI GPT-4, Claude, Gemini)
+- Birden fazla AI modelini destekler (OpenAI GPT, Claude, Gemini)
 - Mevcut sayfaya dayalı bağlam farkında yanıtlar
 
 📋 Tek Tıkla Sayfa Özeti
@@ -40,7 +40,6 @@ Shizue, Büyük Dil Modellerini (LLM'ler) günlük web tarama deneyiminize sorun
 - Rahat görüntüleme için Koyu/Açık tema desteği
 - 24'ten fazla dil desteği
 - Özelleştirilebilir klavye kısayolları
-- Gizlilik odaklı: Verileriniz yerel kalır
 - API yönetimi için token kullanım takibi
 
 🚀 Başlarken

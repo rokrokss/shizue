@@ -23,7 +23,7 @@ Shizue è un'estensione Chrome che integra perfettamente i Modelli di Linguaggio
 💬 Assistente Chat IA Interattivo
 - Fai domande su qualsiasi contenuto della pagina web
 - Ottieni riassunti, spiegazioni e approfondimenti istantanei
-- Supporta modelli IA multipli (OpenAI GPT-4, Claude, Gemini)
+- Supporta modelli IA multipli (OpenAI GPT, Claude, Gemini)
 - Risposte consapevoli del contesto basate sulla pagina corrente
 
 📋 Riepilogo Pagina con Un Click
@@ -40,7 +40,6 @@ Shizue è un'estensione Chrome che integra perfettamente i Modelli di Linguaggio
 - Supporto tema scuro/chiaro per visualizzazione confortevole
 - Supporto per oltre 24 lingue
 - Scorciatoie da tastiera personalizzabili
-- Focalizzato sulla privacy: I tuoi dati rimangono locali
 - Tracciamento dell'uso dei token per gestione API
 
 🚀 Per Iniziare

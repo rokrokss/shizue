@@ -23,7 +23,7 @@ Ang Shizue ay isang Chrome extension na walang putol na pinagsasama ang mga Larg
 💬 Interactive na AI Chat Assistant
 - Magtanong tungkol sa anumang nilalaman ng webpage
 - Makakuha ng agarang mga buod, paliwanag, at insight
-- Sumusuporta sa maraming AI model (OpenAI GPT-4, Claude, Gemini)
+- Sumusuporta sa maraming AI model (OpenAI GPT, Claude, Gemini)
 - Mga tugon na alam ang konteksto batay sa kasalukuyang pahina
 
 📋 Isang-Click na Pagbubuod ng Pahina
@@ -40,7 +40,6 @@ Ang Shizue ay isang Chrome extension na walang putol na pinagsasama ang mga Larg
 - Suporta sa Dark/Light theme para sa komportableng pagtingin
 - Suporta para sa 24+ na wika
 - Mga keyboard shortcut na maaaring i-customize
-- Nakatuon sa privacy: Ang iyong data ay nananatiling lokal
 - Pagsubaybay sa paggamit ng token para sa pamamahala ng API
 
 🚀 Pagsisimula

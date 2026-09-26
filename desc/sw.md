@@ -23,7 +23,7 @@ Shizue ni kiendelezi cha Chrome kinachounganisha kwa urahisi Mifumo Mikubwa ya L
 💬 Msaidizi wa Gumzo la AI Shirikishi
 - Uliza maswali kuhusu maudhui yoyote ya ukurasa wa wavuti
 - Pata muhtasari, maelezo na maarifa ya papo hapo
-- Inasaidia mifumo mingi ya AI (OpenAI GPT-4, Claude, Gemini)
+- Inasaidia mifumo mingi ya AI (OpenAI GPT, Claude, Gemini)
 - Majibu yanayozingatia muktadha kulingana na ukurasa wa sasa
 
 📋 Muhtasari wa Ukurasa kwa Kubofya Mara Moja
@@ -40,7 +40,6 @@ Shizue ni kiendelezi cha Chrome kinachounganisha kwa urahisi Mifumo Mikubwa ya L
 - Msaada wa mandhari ya giza/mwanga kwa kutazama kwa starehe
 - Msaada kwa lugha zaidi ya 24
 - Njia za mkato za kibodi zinazoweza kubinafsishwa
-- Inazingatia faragha: Data yako inabaki ndani ya eneo lako
 - Ufuatiliaji wa matumizi ya ishara kwa usimamizi wa API
 
 🚀 Kuanza

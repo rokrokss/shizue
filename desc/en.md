@@ -23,7 +23,7 @@ Shizue is a Chrome extension that seamlessly integrates Large Language Models (L
 💬 Interactive AI Chat Assistant
 - Ask questions about any webpage content
 - Get instant summaries, explanations, and insights
-- Supports multiple AI models (OpenAI GPT-4, Claude, Gemini)
+- Supports multiple AI models (OpenAI GPT, Claude, Gemini)
 - Context-aware responses based on current page
 
 📋 One-Click Page Summarization
@@ -40,7 +40,6 @@ Shizue is a Chrome extension that seamlessly integrates Large Language Models (L
 - Dark/Light theme support for comfortable viewing
 - Support for 24+ languages
 - Customizable keyboard shortcuts
-- Privacy-focused: Your data stays local
 - Token usage tracking for API management
 
 🚀 Getting Started

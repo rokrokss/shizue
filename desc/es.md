@@ -23,7 +23,7 @@ Shizue es una extensión de Chrome que integra sin problemas los Modelos de Leng
 💬 Asistente de Chat IA Interactivo
 - Haz preguntas sobre cualquier contenido de página web
 - Obtén resúmenes, explicaciones y perspectivas instantáneas
-- Soporta múltiples modelos de IA (OpenAI GPT-4, Claude, Gemini)
+- Soporta múltiples modelos de IA (OpenAI GPT, Claude, Gemini)
 - Respuestas conscientes del contexto basadas en la página actual
 
 📋 Resumen de Página con Un Clic
@@ -40,7 +40,6 @@ Shizue es una extensión de Chrome que integra sin problemas los Modelos de Leng
 - Soporte de tema oscuro/claro para visualización cómoda
 - Soporte para más de 24 idiomas
 - Atajos de teclado personalizables
-- Enfocado en la privacidad: Tus datos permanecen locales
 - Seguimiento del uso de tokens para gestión de API
 
 🚀 Comenzando

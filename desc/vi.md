@@ -23,7 +23,7 @@ Shizue là một tiện ích mở rộng Chrome tích hợp liền mạch các M
 💬 Trợ lý trò chuyện AI tương tác
 - Đặt câu hỏi về bất kỳ nội dung trang web nào
 - Nhận tóm tắt, giải thích và thông tin chi tiết ngay lập tức
-- Hỗ trợ nhiều mô hình AI (OpenAI GPT-4, Claude, Gemini)
+- Hỗ trợ nhiều mô hình AI (OpenAI GPT, Claude, Gemini)
 - Phản hồi nhận biết ngữ cảnh dựa trên trang hiện tại
 
 📋 Tóm tắt trang một cú nhấp chuột
@@ -40,7 +40,6 @@ Shizue là một tiện ích mở rộng Chrome tích hợp liền mạch các M
 - Hỗ trợ chủ đề tối/sáng để xem thoải mái
 - Hỗ trợ hơn 24 ngôn ngữ
 - Phím tắt có thể tùy chỉnh
-- Tập trung vào quyền riêng tư: Dữ liệu của bạn vẫn ở cục bộ
 - Theo dõi sử dụng token để quản lý API
 
 🚀 Bắt đầu

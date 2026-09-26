@@ -23,7 +23,7 @@ Shizue to rozszerzenie Chrome, które płynnie integruje Duże Modele Językowe 
 💬 Interaktywny Asystent Czatu AI
 - Zadawaj pytania o dowolną zawartość strony internetowej
 - Otrzymuj natychmiastowe podsumowania, wyjaśnienia i spostrzeżenia
-- Obsługuje wiele modeli AI (OpenAI GPT-4, Claude, Gemini)
+- Obsługuje wiele modeli AI (OpenAI GPT, Claude, Gemini)
 - Odpowiedzi świadome kontekstu oparte na bieżącej stronie
 
 📋 Podsumowanie Strony Jednym Kliknięciem
@@ -40,7 +40,6 @@ Shizue to rozszerzenie Chrome, które płynnie integruje Duże Modele Językowe 
 - Obsługa motywu ciemnego/jasnego dla wygodnego przeglądania
 - Wsparcie dla ponad 24 języków
 - Konfigurowalne skróty klawiszowe
-- Skoncentrowany na prywatności: Twoje dane pozostają lokalne
 - Śledzenie użycia tokenów do zarządzania API
 
 🚀 Rozpoczęcie Pracy

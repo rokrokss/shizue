@@ -23,7 +23,7 @@ Shizue ist eine Chrome-Erweiterung, die große Sprachmodelle (LLMs) nahtlos in I
 💬 Interaktiver KI-Chat-Assistent
 - Stellen Sie Fragen zu beliebigen Webseiteninhalten
 - Erhalten Sie sofortige Zusammenfassungen, Erklärungen und Einblicke
-- Unterstützt mehrere KI-Modelle (OpenAI GPT-4, Claude, Gemini)
+- Unterstützt mehrere KI-Modelle (OpenAI GPT, Claude, Gemini)
 - Kontextbezogene Antworten basierend auf der aktuellen Seite
 
 📋 Ein-Klick-Seitenzusammenfassung
@@ -40,7 +40,6 @@ Shizue ist eine Chrome-Erweiterung, die große Sprachmodelle (LLMs) nahtlos in I
 - Dunkles/Helles Theme für komfortables Betrachten
 - Unterstützung für über 24 Sprachen
 - Anpassbare Tastenkombinationen
-- Datenschutz-fokussiert: Ihre Daten bleiben lokal
 - Token-Nutzungsverfolgung für API-Verwaltung
 
 🚀 Erste Schritte
