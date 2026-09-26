@@ -48,9 +48,11 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   - **OpenAI**: GPT-6 Sol, GPT-6 Luna
   - **Google**: Gemini 3.8 Flash, Gemini 3.5 Flash-Lite
   - **Anthropic**: Claude Sonnet 5, Claude Haiku 4.5
+  - **OpenRouter**: all of the above with a single API key
 
 ### 🔑 Use Your Own API Keys:
   - Supports personal OpenAI/Gemini/Anthropic API keys for direct and the most cost-effective usage of models. Users are billed directly by those vendors.
+  - Or use one OpenRouter API key for every model, billed by OpenRouter.
 
 ### 🎨 Color Themes:
   - Offers Light and Dark mode options for interface customization.

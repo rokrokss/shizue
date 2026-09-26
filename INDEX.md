@@ -30,6 +30,7 @@ Shizue is a Chrome extension that integrates Large Language Models (LLMs) into w
 - **OpenAI**: GPT-6 Sol, GPT-6 Luna
 - **Google**: Gemini 3.8 Flash, Gemini 3.5 Flash-Lite
 - **Anthropic**: Claude Sonnet 5, Claude Haiku 4.5
+- **OpenRouter**: all of the above with a single API key
 
 ## 🏗️ Architecture
 

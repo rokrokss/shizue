@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Shizue is a Chrome extension that integrates Large Language Models (LLMs) into web browsing. Free, open-source alternative to commercial services like Sider, enabling users to use their own API keys for OpenAI, Anthropic Claude, and Google Gemini.
+Shizue is a Chrome extension that integrates Large Language Models (LLMs) into web browsing. Free, open-source alternative to commercial services like Sider, enabling users to use their own API keys for OpenAI, Anthropic Claude, and Google Gemini, or a single OpenRouter key for all of them.
 
 ## Development Commands
 
@@ -109,7 +109,7 @@ MESSAGE_CONTEXT_MENU_*           // Context menu actions:
 
 ### Storage Keys Pattern
 ```typescript
-STORAGE_*_KEY                    // API keys (OpenAI, Gemini, Anthropic)
+STORAGE_*_KEY                    // API keys (OpenAI, Gemini, Anthropic, OpenRouter)
 STORAGE_*_MODEL                  // Selected models
 STORAGE_*_VALIDATED              // API key validation status
 STORAGE_USER_MEMORY              // User context for AI (defined but not yet used in prompts)
@@ -221,6 +221,7 @@ this.version(2).stores({ messages: '...', tokenUsage: 'id, date, model' });
 - `@langchain/openai` does not recognize gpt-6 as a reasoning model, so OpenAI-specific fields go through `modelKwargs` (`max_completion_tokens`, `reasoning_effort`).
 - Read streamed text with `chunk.text` (skips thinking blocks) and aggregate chunks with `concat` before reading `usage_metadata` (providers split usage across chunks).
 - Never import `lib/models.ts` from UI or content scripts: it pulls LangChain into the bundle.
+- **OpenRouter** is a connection mode, not a provider (`STORAGE_CONNECTION_MODE`: `'direct'` | `'openrouter'`). In `'openrouter'` mode every slot goes through OpenRouter (`ChatOpenAI` with its `baseURL`) using `MODELS[slot].openrouter.id`; `fastEffort` there comes from each model's `supported_efforts` in OpenRouter's `/api/v1/models`. OpenRouter takes the OpenAI `image_url` format for Claude too, and its key is validated with `/api/v1/key` (`/models` is public). UI checks model availability with `useModelAvailability()` (`hooks/models.ts`), which accounts for the mode.
 - API keys are opaque: validate against the provider API, never by prefix (Gemini keys changed from `AIza…` to `AQ.…` in 2026 and must be sent in the `x-goog-api-key` header).
 
 **When adding new LLM provider**:
@@ -285,9 +286,10 @@ export const chromeStorageBackend = <T>(area: 'local' | 'sync' | 'session' = 'lo
 
 | Category | Keys | Purpose |
 |----------|------|---------|
-| **API Keys** | `STORAGE_OPENAI_KEY`, `STORAGE_GEMINI_KEY`, `STORAGE_ANTHROPIC_KEY` | LLM provider credentials |
-| **API Validation** | `STORAGE_OPENAI_VALIDATED`, `STORAGE_GEMINI_VALIDATED`, `STORAGE_ANTHROPIC_VALIDATED` | API key validation status |
+| **API Keys** | `STORAGE_OPENAI_KEY`, `STORAGE_GEMINI_KEY`, `STORAGE_ANTHROPIC_KEY`, `STORAGE_OPENROUTER_KEY` | LLM provider credentials |
+| **API Validation** | `STORAGE_OPENAI_VALIDATED`, `STORAGE_GEMINI_VALIDATED`, `STORAGE_ANTHROPIC_VALIDATED`, `STORAGE_OPENROUTER_VALIDATED` | API key validation status |
 | **Model Selection** | `STORAGE_CHAT_MODEL`, `STORAGE_TRANSLATE_MODEL` | Selected LLM models |
+| **Connection** | `STORAGE_CONNECTION_MODE` | `'direct'` (each provider's key) or `'openrouter'` (all models via OpenRouter) |
 | **Languages** | `STORAGE_LANGUAGE`, `STORAGE_TRANSLATE_TARGET_LANGUAGE` | UI language and translation target |
 | **Global State** | `STORAGE_GLOBAL_STATE` | Side panel current state (actionType, threadId, etc.) |
 | **UI Settings** | `STORAGE_THEME`, `STORAGE_SHOW_TOGGLE`, `STORAGE_TOGGLE_Y_POSITION`, `STORAGE_TOGGLE_HIDDEN_SITE_LIST` | Theme, toggle button visibility/position, hidden sites |
@@ -316,6 +318,8 @@ let currentTranslateModel: TranslateModel = 'gpt-mini';
 let openaiKey: string | undefined;
 let geminiKey: string | undefined;
 let anthropicKey: string | undefined;
+let openrouterKey: string | undefined;
+let connectionMode: ConnectionMode = 'direct';
 
 // Initial load is a promise; handlers await whenBackgroundStateReady() before reading
 modelStateReady = chrome.storage.local.get([STORAGE_CHAT_MODEL, ...]).then((res) => { ... });
@@ -340,22 +344,25 @@ chrome.storage.onChanged.addListener((changes, area) => {
 **Purpose**: Reactive UI state management with persistence
 **Pattern**: `atomWithStorage(key, initialValue, chromeStorageBackend('local'), options)`
 
-#### All atomWithStorage Definitions (20 atoms total)
+#### All atomWithStorage Definitions (23 atoms total)
 
 | Atom | Type | Storage Key | Default | getOnInit | Purpose | Location |
 |------|------|-------------|---------|-----------|---------|----------|
 | **Global State** |
 | `globalStateAtom` | `GlobalState` | `STORAGE_GLOBAL_STATE` | `{actionType: 'chat'}` | false | Side panel state (actionType, threadId, summaryText, imageBase64, etc.) | [hooks/global.ts:32](src/hooks/global.ts#L32) |
 | **API Keys** |
-| `openAIKeyAtom` | `string` | `STORAGE_OPENAI_KEY` | `''` | true | OpenAI API key | [hooks/settings.ts:10](src/hooks/settings.ts#L10) |
-| `geminiKeyAtom` | `string` | `STORAGE_GEMINI_KEY` | `''` | true | Google Gemini API key | [hooks/settings.ts:17](src/hooks/settings.ts#L17) |
-| `anthropicKeyAtom` | `string` | `STORAGE_ANTHROPIC_KEY` | `''` | true | Anthropic Claude API key | [hooks/settings.ts:24](src/hooks/settings.ts#L24) |
+| `openAIKeyAtom` | `string` | `STORAGE_OPENAI_KEY` | `''` | true | OpenAI API key | [hooks/settings.ts:16](src/hooks/settings.ts#L16) |
+| `geminiKeyAtom` | `string` | `STORAGE_GEMINI_KEY` | `''` | true | Google Gemini API key | [hooks/settings.ts:23](src/hooks/settings.ts#L23) |
+| `anthropicKeyAtom` | `string` | `STORAGE_ANTHROPIC_KEY` | `''` | true | Anthropic Claude API key | [hooks/settings.ts:30](src/hooks/settings.ts#L30) |
+| `openRouterKeyAtom` | `string` | `STORAGE_OPENROUTER_KEY` | `''` | true | OpenRouter API key | [hooks/settings.ts:37](src/hooks/settings.ts#L37) |
 | **Models** |
-| `chatModelAtom` | `ChatModel` | `STORAGE_CHAT_MODEL` | `'gpt'` | true | Chat LLM model selection | [hooks/models.ts:25](src/hooks/models.ts#L25) |
-| `translateModelAtom` | `TranslateModel` | `STORAGE_TRANSLATE_MODEL` | `'gpt-mini'` | true | Translation LLM model | [hooks/models.ts:32](src/hooks/models.ts#L32) |
-| `openAIValidatedAtom` | `boolean \| undefined` | `STORAGE_OPENAI_VALIDATED` | `undefined` | true | OpenAI key validation status | [hooks/models.ts:39](src/hooks/models.ts#L39) |
-| `geminiValidatedAtom` | `boolean \| undefined` | `STORAGE_GEMINI_VALIDATED` | `undefined` | true | Gemini key validation status | [hooks/models.ts:46](src/hooks/models.ts#L46) |
-| `anthropicValidatedAtom` | `boolean \| undefined` | `STORAGE_ANTHROPIC_VALIDATED` | `undefined` | true | Anthropic key validation status | [hooks/models.ts:53](src/hooks/models.ts#L53) |
+| `chatModelAtom` | `ChatModel` | `STORAGE_CHAT_MODEL` | `'gpt'` | true | Chat LLM model selection | [hooks/models.ts:43](src/hooks/models.ts#L43) |
+| `translateModelAtom` | `TranslateModel` | `STORAGE_TRANSLATE_MODEL` | `'gpt-mini'` | true | Translation LLM model | [hooks/models.ts:49](src/hooks/models.ts#L49) |
+| `openAIValidatedAtom` | `boolean \| undefined` | `STORAGE_OPENAI_VALIDATED` | `undefined` | true | OpenAI key validation status | [hooks/models.ts:56](src/hooks/models.ts#L56) |
+| `geminiValidatedAtom` | `boolean \| undefined` | `STORAGE_GEMINI_VALIDATED` | `undefined` | true | Gemini key validation status | [hooks/models.ts:62](src/hooks/models.ts#L62) |
+| `anthropicValidatedAtom` | `boolean \| undefined` | `STORAGE_ANTHROPIC_VALIDATED` | `undefined` | true | Anthropic key validation status | [hooks/models.ts:69](src/hooks/models.ts#L69) |
+| `openRouterValidatedAtom` | `boolean \| undefined` | `STORAGE_OPENROUTER_VALIDATED` | `undefined` | true | OpenRouter key validation status | [hooks/models.ts:76](src/hooks/models.ts#L76) |
+| `connectionModeAtom` | `ConnectionMode` | `STORAGE_CONNECTION_MODE` | `'direct'` | true | Direct provider keys or OpenRouter for all models | [hooks/models.ts:83](src/hooks/models.ts#L83) |
 | **Languages** |
 | `languageAtom` | `Language` | `STORAGE_LANGUAGE` | `fallbackLanguage` | true | App UI language (23 languages) | [hooks/language.ts:38](src/hooks/language.ts#L38) |
 | `targetLanguageAtom` | `Language` | `STORAGE_TRANSLATE_TARGET_LANGUAGE` | `fallbackLanguage` | true | Translation target language | [hooks/language.ts:45](src/hooks/language.ts#L45) |
@@ -372,7 +379,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
 | `userMemoryAtom` | `UserMemory` | `STORAGE_USER_MEMORY` | `{text: ''}` | true | User information for LLM prompts | [hooks/userMemory.ts:17](src/hooks/userMemory.ts#L17) |
 
 #### getOnInit Option Pattern
-- **`getOnInit: true` (18 atoms)**: Load from storage immediately on initialization
+- **`getOnInit: true` (21 atoms)**: Load from storage immediately on initialization
   - Use for: Settings, API keys, user preferences that must be correct from startup
 - **`getOnInit: false` (2 atoms)**: Manual hydration via `useHydrateAtoms` hook
   - Use for: Large objects or state that can tolerate brief incorrect values during initial render
@@ -380,7 +387,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
 
 #### Safe Atom Pattern (for undefined handling)
 ```typescript
-// Storage atom (can be undefined) - hooks/models.ts:39
+// Storage atom (can be undefined) - hooks/models.ts:56
 export const openAIValidatedAtom = atomWithStorage<boolean | undefined>(
   STORAGE_OPENAI_VALIDATED,
   undefined,
@@ -388,7 +395,7 @@ export const openAIValidatedAtom = atomWithStorage<boolean | undefined>(
   { getOnInit: true }
 );
 
-// Safe derived atom (fallback to API key existence check) - hooks/models.ts:58
+// Safe derived atom (fallback to API key existence check) - hooks/models.ts:90
 export const openAIValidatedSafeAtom = atom(
   (get) => {
     const validated = get(openAIValidatedAtom);
@@ -466,7 +473,7 @@ class DB extends Dexie {
 - `id`: UUID primary key
 - `date`: 'YYYY-MM-DD' format (indexed for date range queries)
 - `model`: Model name string
-- `provider`: 'openai' | 'gemini' | 'anthropic'
+- `provider`: 'openai' | 'gemini' | 'anthropic' | 'openrouter'
 - `inputTokens`, `outputTokens`, `totalTokens`: Usage metrics
 - `requestCount`: Number of API calls
 - `createdAt`: Timestamp
