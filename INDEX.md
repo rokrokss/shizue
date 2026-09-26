@@ -27,9 +27,9 @@ Shizue is a Chrome extension that integrates Large Language Models (LLMs) into w
 - **Build Tool**: Vite
 
 ### Supported AI Models
-- **OpenAI**: GPT 4.1, GPT 4.1 Mini
-- **Google**: Gemini 2.5 Flash, Gemini 2.5 Flash Lite
-- **Anthropic**: Claude Sonnet 4, Claude Haiku 3.5
+- **OpenAI**: GPT-6 Sol, GPT-6 Luna
+- **Google**: Gemini 3.8 Flash, Gemini 3.5 Flash-Lite
+- **Anthropic**: Claude Sonnet 5, Claude Haiku 4.5
 
 ## 🏗️ Architecture
 
@@ -43,9 +43,9 @@ Shizue is a Chrome extension that integrates Large Language Models (LLMs) into w
 │  (Service Worker)   │   (React App)     │  (Page Injection) │
 ├─────────────────────┼───────────────────┼───────────────────┤
 │ • Message Router    │ • Chat UI         │ • Toggle Button   │
-│ • API Management    │ • PDF Translator  │ • YouTube Captions│
-│ • Context Menus     │ • Memo/Notes      │ • Page Overlay    │
-│ • State Sync        │ • Settings        │ • Translation UI  │
+│ • API Management    │ • Memo/Notes      │ • YouTube Captions│
+│ • Context Menus     │ • Settings        │ • Page Overlay    │
+│ • State Sync        │                   │ • Translation UI  │
 └─────────────────────┴───────────────────┴───────────────────┘
 ```
 
@@ -66,24 +66,18 @@ Shizue is a Chrome extension that integrates Large Language Models (LLMs) into w
 - **Features**: Side-by-side translation, preserves formatting
 - **Activation**: Toggle button or context menu
 
-### 3. PDF Translation
-- **Component**: `src/components/Pdf/`
-- **Library**: pdf-lib for manipulation
-- **Route**: `/shizue-pdf`
-- **Features**: Preserves layout, batch processing
-
-### 4. YouTube Caption Translation
+### 3. YouTube Caption Translation
 - **Component**: `src/components/Youtube/`
 - **Features**: Real-time translation, keyboard navigation support
 - **Content Script**: `youtube-caption-toggle.content`
 
-### 5. Memo/Note System
+### 4. Memo/Note System
 - **Component**: `src/components/Memo/`
 - **Storage**: IndexedDB via Dexie
 - **Features**: Auto-save, pinning, search
 - **Route**: `/shizue-memo`
 
-### 6. Context Menu Actions
+### 5. Context Menu Actions
 - **File**: `src/entrypoints/background/contextMenu.ts`
 - **Actions**:
   - Translate page
@@ -101,7 +95,6 @@ src/
 │   ├── Memo/          # Note-taking components
 │   ├── Modal/         # Modal dialogs
 │   ├── Onboarding/    # First-time user flow
-│   ├── Pdf/           # PDF translation
 │   ├── Setting/       # Settings interface
 │   ├── Toggle/        # Floating toggle button
 │   ├── Translation/   # Translation overlay
@@ -134,8 +127,8 @@ src/
 **Entry**: `src/entrypoints/sidepanel/main.tsx`
 
 **Routes**:
-- `/` - Chat interface
-- `/shizue-pdf` - PDF translator
+- `/` - Redirects to `/chat`
+- `/chat` - Chat interface
 - `/shizue-memo` - Note-taking
 - `/onboarding` - First-time setup
 
@@ -154,11 +147,12 @@ src/
 
 ## 🔌 Services & APIs
 
-### Chat Service
-**File**: `src/services/chatService.ts`
-- Manages LLM interactions
-- Handles streaming responses
-- Thread management
+### Chat Streaming
+**File**: `src/services/background/chatModelHandler.ts`
+- Streams LLM responses to the side panel over a port
+- Records token usage per model
+
+**Models**: `src/lib/modelRegistry.ts` (slot → model ID/label/capabilities) and `src/lib/models.ts` (LangChain factory)
 
 ### Translation Service
 **File**: `src/services/translationService.ts`
@@ -274,7 +268,8 @@ Communication between components via:
 ## 🔒 Security Considerations
 
 - API keys stored in Chrome storage
-- Content Security Policy configured for WASM
+- Content Security Policy: `script-src 'self'; object-src 'self'`
+- LLM-generated HTML is sanitized with DOMPurify before insertion into pages
 - Isolated content script execution
 - No external analytics or tracking
 

@@ -31,9 +31,6 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 ### 📺 LLM Translations for Youtube Captions:
   - Generate LLM based translations for Youtube captions in realtime.
 
-### 📖 PDF Translation with Structure Preservation:
-  - Translate PDF documents while preserving the original layout, formatting, and structure using LLM-powered translation.
-
 ### 📝 Memo & Note-taking:
   - Create, edit, and manage personal notes directly within the extension. Features auto-save, pinning important memos, and organized note management.
 
@@ -48,9 +45,9 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   - Available in 23 languages including English, Spanish, French, German, Japanese, Chinese, Korean, Arabic, Hindi, and more.
 
 ### 🤖 Multiple AI Model Support:
-  - **OpenAI**: GPT 4.1, GPT 4.1 Mini
-  - **Google**: Gemini 2.5 Flash, Gemini 2.5 Flash Lite
-  - **Anthropic**: Claude Sonnet 4, Claude Haiku 3.5
+  - **OpenAI**: GPT-6 Sol, GPT-6 Luna
+  - **Google**: Gemini 3.8 Flash, Gemini 3.5 Flash-Lite
+  - **Anthropic**: Claude Sonnet 5, Claude Haiku 4.5
 
 ### 🔑 Use Your Own API Keys:
   - Supports personal OpenAI/Gemini/Anthropic API keys for direct and the most cost-effective usage of models. Users are billed directly by those vendors.
@@ -59,7 +56,7 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   - Offers Light and Dark mode options for interface customization.
 
 ### 🛡️ Secure & Private:
-  - API keys and user data are intended to be handled securely within the extension.
+  - API keys, chat history, and memos are stored only in your browser. Page content is sent only to the AI provider you choose, when you use a feature.
 
 <br/>
 

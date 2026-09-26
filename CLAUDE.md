@@ -37,9 +37,9 @@ pnpm compile          # TypeScript type checking
 │  (Service Worker)   │   (React App)     │  (Page Injection) │
 ├─────────────────────┼───────────────────┼───────────────────┤
 │ • Message Router    │ • Chat UI         │ • Toggle Button   │
-│ • API Management    │ • PDF Translator  │ • YouTube Captions│
-│ • Context Menus     │ • Memo/Notes      │ • Page Overlay    │
-│ • State Sync        │ • Settings        │ • Translation UI  │
+│ • API Management    │ • Memo/Notes      │ • YouTube Captions│
+│ • Context Menus     │ • Settings        │ • Page Overlay    │
+│ • State Sync        │                   │ • Translation UI  │
 └─────────────────────┴───────────────────┴───────────────────┘
 ```
 
@@ -65,9 +65,8 @@ pnpm compile          # TypeScript type checking
 - Side panel lifecycle control
 
 **Side Panel React App** (`src/entrypoints/sidepanel/`)
-- Routes: `/` (chat), `/shizue-pdf`, `/shizue-memo`, `/onboarding`
+- Routes: `/` (redirects to `/chat`), `/chat`, `/shizue-memo`, `/onboarding`
 - Streaming chat with thread management
-- PDF translation preserving layout
 - Memo system with auto-save and pinning
 
 **Content Scripts**
@@ -84,10 +83,11 @@ User Action → Content Script → Background Script → Side Panel
 ```
 
 **Service Architecture**
-- `services/chatService.ts` - LLM streaming, thread management
+- `services/chatService.ts` - Cancels a not-yet-started AI message (streaming lives in the background handlers)
 - `services/translationService.ts` - Batch translation, format preservation
 - `services/background/messageHandlers.ts` - Central message processing
-- `services/background/chatModelHandler.ts` - Model creation, streaming
+- `services/background/chatModelHandler.ts` - Chat streaming via port, token usage tracking
+- `services/background/translationHandler.ts` - Batch page/caption translation (JSON output)
 
 **State Management Layers**
 1. **Jotai Atoms** (`hooks/global.ts`) - UI state, current thread
@@ -112,14 +112,13 @@ MESSAGE_CONTEXT_MENU_*           // Context menu actions:
 STORAGE_*_KEY                    // API keys (OpenAI, Gemini, Anthropic)
 STORAGE_*_MODEL                  // Selected models
 STORAGE_*_VALIDATED              // API key validation status
-STORAGE_USER_MEMORY              // User context for AI
-STORAGE_PDF_TRANSLATE_TASK_INFO  // PDF translation state
+STORAGE_USER_MEMORY              // User context for AI (defined but not yet used in prompts)
 ```
 
 ## Core Features
 
 ### 1. AI Chat with Streaming
-- **Models**: GPT-4.1, Gemini 2.5 Flash, Claude Sonnet 4
+- **Models**: see `MODELS` in `lib/modelRegistry.ts` (GPT-6 Sol/Luna, Gemini 3.8 Flash/3.5 Flash-Lite, Claude Sonnet 5/Haiku 4.5)
 - **Streaming**: Via port connections with background script
 - **Thread Management**: IndexedDB storage with Dexie
 
@@ -128,22 +127,17 @@ STORAGE_PDF_TRANSLATE_TASK_INFO  // PDF translation state
 - **Batch Processing**: Efficient DOM manipulation
 - **Context Menu**: Right-click to translate any page
 
-### 3. PDF Translation
-- **Library**: pdf-lib for structure preservation
-- **WASM Support**: Enabled in CSP for performance
-- **Route**: `/shizue-pdf` in side panel
-
-### 4. YouTube Caption Translation
+### 3. YouTube Caption Translation
 - **Real-time**: Translates as captions appear
 - **Caching**: Reduces API calls for repeated content
 - **Keyboard Navigation**: Optional YouTube shortcuts
 
-### 5. Memo System
+### 4. Memo System
 - **Features**: Auto-save, pinning, search
-- **Storage**: IndexedDB with sync to Chrome storage
+- **Storage**: IndexedDB only
 - **Route**: `/shizue-memo` in side panel
 
-### 6. Context Menu Actions
+### 5. Context Menu Actions
 - Translate/Summarize pages
 - Describe images with AI
 - Extract text from images (OCR)
@@ -160,7 +154,7 @@ STORAGE_PDF_TRANSLATE_TASK_INFO  // PDF translation state
 ```javascript
 // wxt.config.ts
 content_security_policy: {
-  extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  extension_pages: "script-src 'self'; object-src 'self'"
 }
 ```
 
@@ -199,10 +193,12 @@ Three-layer state system with different purposes:
 ### Background Service Worker State Caching
 **Pattern**: `entrypoints/background/states/models/index.ts` maintains in-memory cache of API keys and model selections, synchronized via `chrome.storage.onChanged` listeners.
 
+The cache is filled asynchronously after every service worker start, so handlers must `await whenBackgroundStateReady()` (`states/ready.ts`) before reading it. The message router and the chat port listener already do this.
+
 **When adding new LLM providers**:
 1. Add cache variable: `let newProviderKey: string | undefined`
-2. Add to `modelListeners()`: Watch for storage changes
-3. Add to `loadModelSettings()`: Initial load on startup
+2. Add the key to the initial `chrome.storage.local.get([...])` in `modelListeners()`
+3. Handle it in the `chrome.storage.onChanged` listener (an emptied key must clear the cache)
 
 ### IndexedDB Schema Migration (Dexie)
 **Pattern**: `lib/indexDB.ts` uses incremental versioning:
@@ -217,13 +213,21 @@ this.version(2).stores({ messages: '...', tokenUsage: 'id, date, model' });
 - Primary key (`id`) automatically indexed
 
 ### LLM Provider Factory Pattern
-**Location**: `lib/models.ts`
+**Location**: `lib/modelRegistry.ts` (pure data, safe for UI/content scripts) + `lib/models.ts` (LangChain factory, background only)
+
+- Settings store stable slot names (`'gpt'`, `'gpt-mini'`, `'gemini-flash'`, ...). `MODELS` maps each slot to the real API model ID, display label, provider, and `supportsTemperature`.
+- To swap a model, change its `MODELS` entry. Settings and toggle UIs render from `MODEL_OPTIONS`.
+- Newer reasoning models reject or ignore non-default `temperature`; set `supportsTemperature: false` and the factory omits it. `fast: true` (translation) maps to OpenAI `reasoning_effort: 'none'`, Gemini `thinkingLevel: 'minimal'`, Anthropic `effort: 'low'`.
+- `@langchain/openai` does not recognize gpt-6 as a reasoning model, so OpenAI-specific fields go through `modelKwargs` (`max_completion_tokens`, `reasoning_effort`).
+- Read streamed text with `chunk.text` (skips thinking blocks) and aggregate chunks with `concat` before reading `usage_metadata` (providers split usage across chunks).
+- Never import `lib/models.ts` from UI or content scripts: it pulls LangChain into the bundle.
+- API keys are opaque: validate against the provider API, never by prefix (Gemini keys changed from `AIza…` to `AQ.…` in 2026 and must be sent in the `x-goog-api-key` header).
 
 **When adding new LLM provider**:
-1. Add model names to `ChatModel` or `TranslateModel` types
-2. Update `providerFromName()`: Add detection logic
-3. Create `createNewProvider()` function (LangChain wrapper)
-4. Add case to `getModelInstance()` switch
+1. Extend `ModelProvider` and add entries to `MODELS` in `lib/modelRegistry.ts`
+2. Create `createNewProvider()` in `lib/models.ts` (LangChain wrapper)
+3. Add a branch to `getModelInstance()`
+4. Add key validation in `lib/validateApiKey.ts`
 
 ### ActionType-Based Feature Routing
 **Pattern**: `hooks/global.ts` defines `ActionType` enum that determines:
@@ -236,13 +240,13 @@ this.version(2).stores({ messages: '...', tokenUsage: 'id, date, model' });
 1. Add to `ActionType` union type
 2. Create route in `sidepanel/routes.tsx`
 3. Define prompt in `lib/prompts.ts`
-4. Handle in `services/chatService.ts`
+4. Handle in `services/background/chatModelHandler.ts`
 
 ### Live Query Pattern for Real-Time UI
-**Pattern**: `hooks/chat.ts` uses Dexie's `liveQuery` + Jotai's `atomWithObservable`:
+**Pattern**: `hooks/chat.ts` uses Dexie's `liveQuery` + Jotai's `atomWithObservable` (e.g. `initialMessagesForAllThreadsAtom`, `createThreadMessageCountAtom`):
 ```typescript
-export const threadsAtom = atomWithObservable(() =>
-  liveQuery(() => db.threads.orderBy('updatedAt').reverse().toArray())
+export const initialMessagesForAllThreadsAtom = atomWithObservable(() =>
+  liveQuery(() => getInitialMessagesForAllThreads())
 );
 ```
 
@@ -288,7 +292,6 @@ export const chromeStorageBackend = <T>(area: 'local' | 'sync' | 'session' = 'lo
 | **Global State** | `STORAGE_GLOBAL_STATE` | Side panel current state (actionType, threadId, etc.) |
 | **UI Settings** | `STORAGE_THEME`, `STORAGE_SHOW_TOGGLE`, `STORAGE_TOGGLE_Y_POSITION`, `STORAGE_TOGGLE_HIDDEN_SITE_LIST` | Theme, toggle button visibility/position, hidden sites |
 | **YouTube** | `STORAGE_SHOW_YOUTUBE_CAPTION_TOGGLE`, `STORAGE_SHOW_YOUTUBE_BILINGUAL_CAPTION`, `STORAGE_USE_YOUTUBE_KEYBOARD_NAVIGATE`, `STORAGE_YOUTUBE_CAPTION_SIZE_RATIO` | YouTube-specific settings |
-| **PDF** | `STORAGE_PDF_TRANSLATE_TASK_INFO`, `STORAGE_PDF_TRANSLATE_NO_DUAL` | PDF translation task state |
 | **User Context** | `STORAGE_USER_MEMORY` | User information for LLM context |
 
 #### Direct Chrome Storage Access Pattern
@@ -307,18 +310,19 @@ await setStorage(STORAGE_OPENAI_KEY, 'sk-...');
 
 Background service worker maintains in-memory cache of frequently accessed values:
 ```typescript
-// Cache variables (lines 10-14)
-let currentChatModel: ChatModel = 'gpt-4.1';
-let currentTranslateModel: TranslateModel = 'gpt-4.1';
+// Cache variables (model values are registry slot names, not API model IDs)
+let currentChatModel: ChatModel = 'gpt';
+let currentTranslateModel: TranslateModel = 'gpt-mini';
 let openaiKey: string | undefined;
 let geminiKey: string | undefined;
 let anthropicKey: string | undefined;
 
-// Synchronized via storage listeners (lines 46-96)
-chrome.storage.local.get(STORAGE_CHAT_MODEL, (res) => { ... });
+// Initial load is a promise; handlers await whenBackgroundStateReady() before reading
+modelStateReady = chrome.storage.local.get([STORAGE_CHAT_MODEL, ...]).then((res) => { ... });
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'local' && changes.CHAT_MODEL) {
-    changeChatModel(changes.CHAT_MODEL.newValue);
+    const newChatModel = changes.CHAT_MODEL.newValue;
+    if (isChatModel(newChatModel)) changeChatModel(newChatModel);
   }
 });
 ```
@@ -336,7 +340,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
 **Purpose**: Reactive UI state management with persistence
 **Pattern**: `atomWithStorage(key, initialValue, chromeStorageBackend('local'), options)`
 
-#### All atomWithStorage Definitions (22 atoms total)
+#### All atomWithStorage Definitions (20 atoms total)
 
 | Atom | Type | Storage Key | Default | getOnInit | Purpose | Location |
 |------|------|-------------|---------|-----------|---------|----------|
@@ -347,8 +351,8 @@ chrome.storage.onChanged.addListener((changes, area) => {
 | `geminiKeyAtom` | `string` | `STORAGE_GEMINI_KEY` | `''` | true | Google Gemini API key | [hooks/settings.ts:17](src/hooks/settings.ts#L17) |
 | `anthropicKeyAtom` | `string` | `STORAGE_ANTHROPIC_KEY` | `''` | true | Anthropic Claude API key | [hooks/settings.ts:24](src/hooks/settings.ts#L24) |
 | **Models** |
-| `chatModelAtom` | `ChatModel` | `STORAGE_CHAT_MODEL` | `'gpt-4.1'` | true | Chat LLM model selection | [hooks/models.ts:25](src/hooks/models.ts#L25) |
-| `translateModelAtom` | `TranslateModel` | `STORAGE_TRANSLATE_MODEL` | `'gpt-4.1-mini'` | true | Translation LLM model | [hooks/models.ts:32](src/hooks/models.ts#L32) |
+| `chatModelAtom` | `ChatModel` | `STORAGE_CHAT_MODEL` | `'gpt'` | true | Chat LLM model selection | [hooks/models.ts:25](src/hooks/models.ts#L25) |
+| `translateModelAtom` | `TranslateModel` | `STORAGE_TRANSLATE_MODEL` | `'gpt-mini'` | true | Translation LLM model | [hooks/models.ts:32](src/hooks/models.ts#L32) |
 | `openAIValidatedAtom` | `boolean \| undefined` | `STORAGE_OPENAI_VALIDATED` | `undefined` | true | OpenAI key validation status | [hooks/models.ts:39](src/hooks/models.ts#L39) |
 | `geminiValidatedAtom` | `boolean \| undefined` | `STORAGE_GEMINI_VALIDATED` | `undefined` | true | Gemini key validation status | [hooks/models.ts:46](src/hooks/models.ts#L46) |
 | `anthropicValidatedAtom` | `boolean \| undefined` | `STORAGE_ANTHROPIC_VALIDATED` | `undefined` | true | Anthropic key validation status | [hooks/models.ts:53](src/hooks/models.ts#L53) |
@@ -364,14 +368,11 @@ chrome.storage.onChanged.addListener((changes, area) => {
 | `youtubeShowBilingualCaptionAtom` | `boolean` | `STORAGE_SHOW_YOUTUBE_BILINGUAL_CAPTION` | `false` | true | Show bilingual captions | [hooks/layout.ts:61](src/hooks/layout.ts#L61) |
 | `useYoutubeKeyboardNavigateAtom` | `boolean` | `STORAGE_USE_YOUTUBE_KEYBOARD_NAVIGATE` | `true` | true | Enable YouTube keyboard shortcuts | [hooks/layout.ts:68](src/hooks/layout.ts#L68) |
 | `youtubeCaptionSizeRatioAtom` | `number` | `STORAGE_YOUTUBE_CAPTION_SIZE_RATIO` | `1.0` | true | Caption size multiplier | [hooks/layout.ts:75](src/hooks/layout.ts#L75) |
-| **PDF** |
-| `pdfTranslateTaskInfoAtom` | `TaskInfo` | `STORAGE_PDF_TRANSLATE_TASK_INFO` | `{task_id: '', created_at: ''}` | true | PDF translation task tracking | [hooks/pdf.ts:19](src/hooks/pdf.ts#L19) |
-| `pdfTranslationNoDualAtom` | `boolean` | `STORAGE_PDF_TRANSLATE_NO_DUAL` | `false` | true | Single language mode for PDF | [hooks/pdf.ts:26](src/hooks/pdf.ts#L26) |
 | **User Context** |
 | `userMemoryAtom` | `UserMemory` | `STORAGE_USER_MEMORY` | `{text: ''}` | true | User information for LLM prompts | [hooks/userMemory.ts:17](src/hooks/userMemory.ts#L17) |
 
 #### getOnInit Option Pattern
-- **`getOnInit: true` (20 atoms)**: Load from storage immediately on initialization
+- **`getOnInit: true` (18 atoms)**: Load from storage immediately on initialization
   - Use for: Settings, API keys, user preferences that must be correct from startup
 - **`getOnInit: false` (2 atoms)**: Manual hydration via `useHydrateAtoms` hook
   - Use for: Large objects or state that can tolerate brief incorrect values during initial render
@@ -449,11 +450,12 @@ class DB extends Dexie {
 - `id`: UUID primary key
 - `threadId`: Foreign key to threads
 - `role`: 'human' | 'system' | 'ai'
-- `actionType`: ActionType (chat, askForSummary, translatePdf, etc.)
+- `actionType`: ActionType (chat, askForSummary, describeImage, etc.)
 - `content`: Message text
 - `images`: Optional base64 image array
 - `createdAt`: Timestamp
 - `done`, `onInterrupt`, `stopped`: Streaming state flags
+- `errorMessage`: Provider error text shown when a stream fails (optional)
 
 **Threads** ([ThreadMeta](src/lib/indexDB.ts#L20) interface):
 - `id`: UUID primary key
@@ -522,18 +524,17 @@ import { liveQuery } from 'dexie';
 import { atomWithObservable } from 'jotai/utils';
 
 // Automatically re-renders components when IndexedDB data changes
-export const threadsAtom = atomWithObservable(() =>
-  liveQuery(() => db.threads.orderBy('updatedAt').reverse().toArray())
+export const initialMessagesForAllThreadsAtom = atomWithObservable(
+  () => liveQuery(() => getInitialMessagesForAllThreads()),
+  { initialValue: [] }
 );
 
-export const messagesAtom = atomWithObservable((get) => {
-  const threadId = get(threadIdAtom);
-  return liveQuery(async () => {
-    if (!threadId) return [];
-    return await db.messages.where('threadId').equals(threadId).sortBy('createdAt');
-  });
-});
+// Per-thread message count (used to detect new messages)
+export const createThreadMessageCountAtom = (threadId) =>
+  atomWithObservable(() => liveQuery(() => db.messages.where('threadId').equals(threadId).count()));
 ```
+
+The open thread's messages themselves are loaded through the background (`MESSAGE_LOAD_THREAD`), not a live query.
 
 **Purpose**: No manual refresh needed - UI reacts to direct database operations like `addMessage()`, `createThread()`, etc.
 
@@ -579,7 +580,6 @@ this.version(5).stores({
 | Frequently accessed values in background | In-memory cache (background/states/models) | Performance (avoid repeated async reads) |
 | Chat threads, messages | IndexedDB | Large data, complex queries, liveQuery support |
 | Temporary UI state (doesn't need persistence) | Plain Jotai atoms | No storage overhead |
-| Long-running task status (PDF translation) | Chrome Storage + atomWithStorage | Cross-session persistence, easy access |
 | Search/filter operations | IndexedDB | Compound indexes, efficient queries |
 | Large media (images > 1MB) | IndexedDB or external storage | Chrome Storage quota limits |
 

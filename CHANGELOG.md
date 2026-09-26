@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+- Remove PDF translation (the translation server is shut down)
+- Update models: GPT-6 Sol/Luna, Gemini 3.8 Flash/3.5 Flash-Lite, Claude Sonnet 5/Haiku 4.5
+- Stop sending `temperature` to models that reject it; low-reasoning mode for translation
+- Accept new Gemini API key format (`AQ.…`) and fix Anthropic key validation (CORS)
+- Sanitize translated HTML before inserting it into pages
+- Show provider error details in chat; recover when the stream connection drops
+- Fix settings not loaded right after the service worker restarts
+- Fix token usage provider/model attribution and streaming usage totals
+- Fix page translation assigning translations to the wrong elements
+- Limit page text sent for summaries
+- Upgrade LangChain 1.x, WXT 0.21, Vite 7, and security patches
+
 ## v0.1.15
 
 - Memo App Feature
