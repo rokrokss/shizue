@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.1
+
+- Support OpenRouter: one OpenRouter API key for every model (Settings → Models → Connection)
+- Add OpenRouter to the onboarding provider options
+
 ## v0.2.0
 
 - Remove PDF translation (the translation server is shut down)
