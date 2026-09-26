@@ -10,7 +10,8 @@ export const createContextMenu = async () => {
   const i18n = createI18n();
 
   if (chrome.contextMenus) {
-    chrome.contextMenus.removeAll();
+    // Menus persist across service worker restarts; clear them before re-creating the same IDs.
+    await chrome.contextMenus.removeAll();
   }
 
   // Create parent menu with custom title "Shizue"

@@ -5,7 +5,7 @@ import {
   STORAGE_OPENAI_KEY,
   STORAGE_TRANSLATE_MODEL,
 } from '@/config/constants';
-import { ChatModel, TranslateModel } from '@/lib/models';
+import { ChatModel, isChatModel, TranslateModel } from '@/lib/modelRegistry';
 
 let currentChatModel: ChatModel = 'gpt';
 let currentTranslateModel: TranslateModel = 'gpt-mini';
@@ -31,65 +31,59 @@ export const changeTranslateModel = (model: TranslateModel) => {
   currentTranslateModel = model;
 };
 
-export const changeOpenaiKey = (key: string) => {
+export const changeOpenaiKey = (key: string | undefined) => {
   openaiKey = key;
 };
 
-export const changeGeminiKey = (key: string) => {
+export const changeGeminiKey = (key: string | undefined) => {
   geminiKey = key;
 };
 
-export const changeAnthropicKey = (key: string) => {
+export const changeAnthropicKey = (key: string | undefined) => {
   anthropicKey = key;
 };
 
+let modelStateReady: Promise<void> = Promise.resolve();
+
+// Resolves once the cached settings are loaded; the service worker may have just restarted.
+export const whenModelStateReady = () => modelStateReady;
+
 export const modelListeners = () => {
-  chrome.storage.local.get(STORAGE_CHAT_MODEL, (res) => {
-    const newChatModel = res.CHAT_MODEL as ChatModel;
-    if (newChatModel) changeChatModel(newChatModel);
-  });
-
-  chrome.storage.local.get(STORAGE_TRANSLATE_MODEL, (res) => {
-    const newTranslateModel = res.TRANSLATE_MODEL as TranslateModel;
-    if (newTranslateModel) changeTranslateModel(newTranslateModel);
-  });
-
-  chrome.storage.local.get(STORAGE_OPENAI_KEY, (res) => {
-    const newOpenaiKey = res.OPENAI_KEY as string;
-    if (newOpenaiKey) changeOpenaiKey(newOpenaiKey);
-  });
-
-  chrome.storage.local.get(STORAGE_GEMINI_KEY, (res) => {
-    const newGeminiKey = res.GEMINI_KEY as string;
-    if (newGeminiKey) changeGeminiKey(newGeminiKey);
-  });
-
-  chrome.storage.local.get(STORAGE_ANTHROPIC_KEY, (res) => {
-    const newAnthropicKey = res.ANTHROPIC_KEY as string;
-    if (newAnthropicKey) changeAnthropicKey(newAnthropicKey);
-  });
+  modelStateReady = chrome.storage.local
+    .get([
+      STORAGE_CHAT_MODEL,
+      STORAGE_TRANSLATE_MODEL,
+      STORAGE_OPENAI_KEY,
+      STORAGE_GEMINI_KEY,
+      STORAGE_ANTHROPIC_KEY,
+    ])
+    .then((res) => {
+      if (isChatModel(res.CHAT_MODEL)) changeChatModel(res.CHAT_MODEL);
+      if (isChatModel(res.TRANSLATE_MODEL)) changeTranslateModel(res.TRANSLATE_MODEL);
+      changeOpenaiKey((res.OPENAI_KEY as string) || undefined);
+      changeGeminiKey((res.GEMINI_KEY as string) || undefined);
+      changeAnthropicKey((res.ANTHROPIC_KEY as string) || undefined);
+    });
 
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area === 'local') {
       if (changes.CHAT_MODEL) {
-        const newChatModel = changes.CHAT_MODEL.newValue as ChatModel;
-        if (newChatModel) changeChatModel(newChatModel);
+        const newChatModel = changes.CHAT_MODEL.newValue;
+        if (isChatModel(newChatModel)) changeChatModel(newChatModel);
       }
       if (changes.TRANSLATE_MODEL) {
-        const newTranslateModel = changes.TRANSLATE_MODEL.newValue as TranslateModel;
-        if (newTranslateModel) changeTranslateModel(newTranslateModel);
+        const newTranslateModel = changes.TRANSLATE_MODEL.newValue;
+        if (isChatModel(newTranslateModel)) changeTranslateModel(newTranslateModel);
       }
+      // An emptied or removed key must clear the cache too.
       if (changes.OPENAI_KEY) {
-        const newOpenaiKey = changes.OPENAI_KEY.newValue as string;
-        if (newOpenaiKey) changeOpenaiKey(newOpenaiKey);
+        changeOpenaiKey((changes.OPENAI_KEY.newValue as string) || undefined);
       }
       if (changes.GEMINI_KEY) {
-        const newGeminiKey = changes.GEMINI_KEY.newValue as string;
-        if (newGeminiKey) changeGeminiKey(newGeminiKey);
+        changeGeminiKey((changes.GEMINI_KEY.newValue as string) || undefined);
       }
       if (changes.ANTHROPIC_KEY) {
-        const newAnthropicKey = changes.ANTHROPIC_KEY.newValue as string;
-        if (newAnthropicKey) changeAnthropicKey(newAnthropicKey);
+        changeAnthropicKey((changes.ANTHROPIC_KEY.newValue as string) || undefined);
       }
     }
   });

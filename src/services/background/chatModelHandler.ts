@@ -109,10 +109,11 @@ export class ChatModelHandler {
     } catch (err) {
       if (!abortController.signal.aborted) {
         errorLog('ChatModelHandler [_executeStreamAndUpdate] Error during execution:', err);
+        const errorMessage = (err as Error).message ?? String(err);
         try {
           port.postMessage({
             error: 'stream_error',
-            message: (err as Error).message ?? String(err),
+            message: errorMessage,
           });
         } catch (postError) {
           errorLog(
@@ -120,7 +121,11 @@ export class ChatModelHandler {
             postError
           );
         } finally {
-          await db.messages.update(messageId, { content: fullResponseContent, onInterrupt: true });
+          await db.messages.update(messageId, {
+            content: fullResponseContent,
+            onInterrupt: true,
+            errorMessage,
+          });
         }
       }
     } finally {
@@ -230,6 +235,7 @@ export class ChatModelHandler {
         done: false,
         onInterrupt: false,
         stopped: false,
+        errorMessage: undefined,
       });
 
       // const memory = (await loadUserMemory()).text; // TODO

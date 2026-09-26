@@ -5,6 +5,7 @@ import {
   PORT_STREAM_MESSAGE,
 } from '@/config/constants';
 import { changePanelOpened, getPanelOpened } from '@/entrypoints/background/states/sidepanel';
+import { whenBackgroundStateReady } from '@/entrypoints/background/states/ready';
 import { debugLog, errorLog } from '@/logs';
 import { getChatModelHandler } from '@/services/background/chatModelHandler';
 
@@ -93,6 +94,7 @@ export const sidePanelMessageListeners = () => {
     });
 
     port.onMessage.addListener(async (msg) => {
+      await whenBackgroundStateReady();
       if (msg.action === MESSAGE_RUN_GRAPH_STREAM) {
         const { threadId, actionType } = msg;
 

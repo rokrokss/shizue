@@ -31,6 +31,7 @@ export interface Message {
   done: boolean;
   onInterrupt: boolean;
   stopped: boolean;
+  errorMessage?: string;
 }
 
 const Chat = () => {
@@ -164,6 +165,7 @@ const Chat = () => {
               updateAIMessage(cur, {
                 done: false,
                 onInterrupt: true,
+                errorMessage: err,
               })
             );
             touchThread(tId);
@@ -187,6 +189,7 @@ const Chat = () => {
       chrome.runtime
         .sendMessage({ action: MESSAGE_LOAD_THREAD, threadId: tId })
         .then((res: Message[]) => {
+          if (!Array.isArray(res)) return;
           setMessages(res);
           debugLog('loadThreadBackground set messages', res);
           if (res.length > 0) {
@@ -375,38 +378,20 @@ const Chat = () => {
             return updatedMessages;
           }),
         onDone: () => {
-          setMessages((cur) => {
-            const idx = aiIndexRef.current;
-            const copy = [...cur];
-            copy[idx] = {
-              role: 'ai',
-              actionType: copy[idx].actionType,
-              content: copy[idx].content,
-              done: true,
-              onInterrupt: false,
-              stopped: copy[idx].stopped,
-            };
-            return copy;
-          });
+          setMessages((cur) =>
+            // The AI slot may not exist yet if the stream ends before the first delta.
+            updateAIMessage(cur, { done: true, onInterrupt: false })
+          );
           touchThread(tId);
           setChatStatus('idle');
           scrollToBottomThrottled();
         },
         onError: (err) => {
           errorLog('Chat Stream error:', err);
-          setMessages((cur) => {
-            const idx = aiIndexRef.current;
-            const copy = [...cur];
-            copy[idx] = {
-              role: 'ai',
-              actionType: copy[idx].actionType,
-              content: copy[idx].content,
-              done: false,
-              onInterrupt: true,
-              stopped: copy[idx].stopped,
-            };
-            return copy;
-          });
+          setMessages((cur) =>
+            // The AI slot may not exist yet if the request fails before the first delta.
+            updateAIMessage(cur, { done: false, onInterrupt: true, errorMessage: err })
+          );
           touchThread(tId);
           setChatStatus('idle');
           scrollToBottomThrottled();
@@ -429,6 +414,7 @@ const Chat = () => {
       done: false,
       onInterrupt: false,
       stopped: false,
+      errorMessage: undefined,
     })),
       startRetryStream(
         {
@@ -459,6 +445,7 @@ const Chat = () => {
             setMessages((cur) => updateAIMessage(cur, {
               done: false,
               onInterrupt: true,
+              errorMessage: err,
             }));
             touchThread(threadId);
             setChatStatus('idle');
@@ -513,38 +500,20 @@ const Chat = () => {
             return updatedMessages;
           }),
         onDone: () => {
-          setMessages((cur) => {
-            const idx = aiIndexRef.current;
-            const copy = [...cur];
-            copy[idx] = {
-              role: 'ai',
-              actionType: copy[idx].actionType,
-              content: copy[idx].content,
-              done: true,
-              onInterrupt: false,
-              stopped: copy[idx].stopped,
-            };
-            return copy;
-          });
+          setMessages((cur) =>
+            // The AI slot may not exist yet if the stream ends before the first delta.
+            updateAIMessage(cur, { done: true, onInterrupt: false })
+          );
           touchThread(tId);
           setChatStatus('idle');
           scrollToBottomThrottled();
         },
         onError: (err) => {
           errorLog('Chat Stream error:', err);
-          setMessages((cur) => {
-            const idx = aiIndexRef.current;
-            const copy = [...cur];
-            copy[idx] = {
-              role: 'ai',
-              actionType: copy[idx].actionType,
-              content: copy[idx].content,
-              done: false,
-              onInterrupt: true,
-              stopped: copy[idx].stopped,
-            };
-            return copy;
-          });
+          setMessages((cur) =>
+            // The AI slot may not exist yet if the request fails before the first delta.
+            updateAIMessage(cur, { done: false, onInterrupt: true, errorMessage: err })
+          );
           touchThread(tId);
           setChatStatus('idle');
           scrollToBottomThrottled();

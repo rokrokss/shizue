@@ -38,6 +38,7 @@ async function handleLoadThread(msg: any, sendResponse: (response?: any) => void
         images: m.images,
         onInterrupt: m.onInterrupt,
         stopped: m.stopped,
+        errorMessage: m.errorMessage,
       }))
   );
 }

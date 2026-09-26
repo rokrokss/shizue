@@ -17,6 +17,7 @@ import {
   MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE,
   MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
   MESSAGE_UPDATE_PANEL_INIT_DATA,
+  SUMMARY_PAGE_TEXT_MAX_CHARS,
 } from '@/config/constants';
 import { Language, useTranslateTargetLanguage } from '@/hooks/language';
 import {
@@ -204,7 +205,7 @@ const Toggle = () => {
   const handleSummarizePage = useCallback(async () => {
     debugLog('Summarize page clicked');
     if (isDragging) return;
-    const pageText = document.body.innerText;
+    const pageText = document.body.innerText.slice(0, SUMMARY_PAGE_TEXT_MAX_CHARS);
     await initSummarizePageContent(document.title, pageText, window.location.href);
     void chrome.runtime.sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA }).catch((err) => {
       debugLog('handleSummarizePage: Panel not opened yet', err);

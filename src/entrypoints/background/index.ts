@@ -6,7 +6,8 @@ import {
 } from '@/entrypoints/background/sidepanel';
 import { languageListeners } from '@/entrypoints/background/states/language';
 import { modelListeners } from '@/entrypoints/background/states/models';
-import { backgroundLog } from '@/logs';
+import { whenBackgroundStateReady } from '@/entrypoints/background/states/ready';
+import { backgroundLog, errorLog } from '@/logs';
 import { messageHandlers } from '@/services/background/messageHandlers';
 
 export default defineBackground(() => {
@@ -19,11 +20,16 @@ export default defineBackground(() => {
   createContextMenu();
 
   chrome.runtime.onMessage.addListener((msg, _s, sendResponse) => {
-    (async () => {
-      const action = msg.action as keyof typeof messageHandlers;
+    const handler = messageHandlers[msg?.action as keyof typeof messageHandlers];
+    if (!handler) return false;
 
-      if (messageHandlers[action]) {
-        await messageHandlers[action](msg, sendResponse);
+    (async () => {
+      try {
+        await whenBackgroundStateReady();
+        await handler(msg, sendResponse);
+      } catch (err) {
+        errorLog('Message handler failed:', msg.action, err);
+        sendResponse({ success: false, error: (err as Error).message ?? String(err) });
       }
     })();
     return true;

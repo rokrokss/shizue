@@ -44,3 +44,5 @@ export const STORAGE_TOGGLE_HIDDEN_SITE_LIST = 'TOGGLE_HIDDEN_SITE_LIST';
 /* parameters */
 export const STREAM_FLUSH_THRESHOLD_0 = 5;
 export const STREAM_FLUSH_THRESHOLD_1 = 10;
+// Page text is re-sent with every follow-up turn, so bound its size (~25-35K tokens).
+export const SUMMARY_PAGE_TEXT_MAX_CHARS = 100_000;

@@ -222,7 +222,11 @@ export class PageTranslator {
 
     const { elements, texts } = batchToProcess;
 
-    const overlaysInBatch: { element: Element; overlay: ShizueTranslationOverlay }[] = [];
+    const overlaysInBatch: {
+      element: Element;
+      overlay: ShizueTranslationOverlay;
+      text: string;
+    }[] = [];
     for (let i = 0; i < elements.length; i++) {
       const element = elements[i];
       const text = texts[i];
@@ -253,7 +257,7 @@ export class PageTranslator {
         const overlay = this.attachTranslationOverlay(element);
         this.visitedElements.add(element);
         overlay.setLoading(true);
-        overlaysInBatch.push({ element, overlay });
+        overlaysInBatch.push({ element, overlay, text });
       } else {
         // overlay exists unexpectedly
         if (this.queuedElements.has(element)) {
@@ -262,12 +266,10 @@ export class PageTranslator {
       }
     }
 
-    const validElementsForApi = overlaysInBatch.map((o) => o.element);
-    const validTextsForApi = texts.filter(
-      (_, index) => elements.indexOf(validElementsForApi[index]) !== -1
-    );
+    // Cached elements are skipped above, so take texts from the batch itself to keep indices aligned.
+    const validTextsForApi = overlaysInBatch.map((o) => o.text);
 
-    if (validElementsForApi.length === 0) {
+    if (validTextsForApi.length === 0) {
       this.isProcessingBatch = false;
       if (this.isActive) this.processTranslationQueue();
       return;
@@ -314,7 +316,7 @@ export class PageTranslator {
           .get(this.targetLanguage as string)
           ?.set(validTextsForApi[i], translatedTextResult.translatedTexts[i]);
         if (
-          texts[i] === translatedTextResult.translatedTexts[i] ||
+          validTextsForApi[i] === translatedTextResult.translatedTexts[i] ||
           translatedTextResult.translatedTexts[i].trim() === ''
         ) {
           overlaysInBatch[i].overlay.setLoading(false);

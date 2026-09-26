@@ -78,7 +78,14 @@ const ChatContainer = ({
                     }}
                   >
                     {m.onInterrupt && !m.stopped ? (
-                      t('chat.connectionError')
+                      <>
+                        {t('chat.connectionError')}
+                        {m.errorMessage ? (
+                          <div className="sz:text-xs sz:text-gray-500 sz:pt-1 sz:break-words">
+                            {m.errorMessage}
+                          </div>
+                        ) : null}
+                      </>
                     ) : idx === messages.length - 1 && !m.done ? (
                       m.content.trim() ? (
                         getMarkdownText(animatedText)

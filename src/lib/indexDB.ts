@@ -15,6 +15,7 @@ export interface Message {
   done: boolean;
   onInterrupt: boolean;
   stopped: boolean;
+  errorMessage?: string;
 }
 
 export interface ThreadMeta {

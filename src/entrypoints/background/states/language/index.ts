@@ -17,14 +17,18 @@ export const getCurrentLanguage = () => currentLang;
 
 export const getTranslationTargetLanguage = () => currentTranslationTargetLang;
 
+let languageStateReady: Promise<void> = Promise.resolve();
+
+export const whenLanguageStateReady = () => languageStateReady;
+
 export const languageListeners = () => {
-  chrome.storage.local.get(STORAGE_LANGUAGE, (res) => {
-    if (res.LANGUAGE) changeLanguage(res.LANGUAGE as Language);
-  });
-  chrome.storage.local.get(STORAGE_TRANSLATE_TARGET_LANGUAGE, (res) => {
-    if (res.TRANSLATE_TARGET_LANGUAGE)
-      changeTranslationTargetLanguage(res.TRANSLATE_TARGET_LANGUAGE as Language);
-  });
+  languageStateReady = chrome.storage.local
+    .get([STORAGE_LANGUAGE, STORAGE_TRANSLATE_TARGET_LANGUAGE])
+    .then((res) => {
+      if (res.LANGUAGE) changeLanguage(res.LANGUAGE as Language);
+      if (res.TRANSLATE_TARGET_LANGUAGE)
+        changeTranslationTargetLanguage(res.TRANSLATE_TARGET_LANGUAGE as Language);
+    });
 
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area === 'local') {

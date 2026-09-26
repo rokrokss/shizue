@@ -9,7 +9,7 @@ import { useCallback, useEffect, useRef } from 'react';
 interface StreamOptions {
   onDelta: (delta: string) => void;
   onDone: () => void;
-  onError?: (e: unknown) => void;
+  onError?: (message: string) => void;
 }
 
 export const useChromePortStream = () => {
@@ -25,6 +25,7 @@ export const useChromePortStream = () => {
 
       const port = chrome.runtime.connect({ name: PORT_STREAM_MESSAGE });
       portRef.current = port;
+      let finished = false;
 
       const handleMessage = (msg: any) => {
         const activeOpts = streamOptionsRef.current;
@@ -33,15 +34,22 @@ export const useChromePortStream = () => {
         if ('delta' in msg) {
           opts.onDelta(msg.delta);
         } else if ('error' in msg) {
-          opts.onError?.(msg.error);
+          finished = true;
+          opts.onError?.(msg.message ?? msg.error);
           port.disconnect();
         } else if (msg.done) {
+          finished = true;
           opts.onDone();
           port.disconnect();
         }
       };
 
+      // Fires only when the background side goes away (e.g. the service worker was terminated).
       const handleDisconnect = (p: chrome.runtime.Port) => {
+        if (!finished && streamOptionsRef.current === opts) {
+          finished = true;
+          opts.onError?.(chrome.runtime.lastError?.message ?? 'Connection to background lost');
+        }
         if (portRef.current === p) {
           p.onMessage.removeListener(handleMessage);
           p.onDisconnect.removeListener(handleDisconnect);
