@@ -1,6 +1,22 @@
 import { TEXT_ELEMENTS } from '@/lib/html';
 import { debugLog, errorLog } from '@/logs';
 import '@webcomponents/custom-elements';
+import DOMPurify from 'dompurify';
+
+// Translations are LLM output derived from page content, so a prompt injection on the page could
+// return active HTML. Keep only inline formatting before inserting it into the page.
+const TRANSLATION_ALLOWED_TAGS = [
+  'a', 'abbr', 'b', 'bdi', 'bdo', 'br', 'cite', 'code', 'del', 'dfn', 'em', 'i', 'ins', 'kbd',
+  'mark', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup', 'time',
+  'u', 'var', 'wbr',
+];
+const TRANSLATION_ALLOWED_ATTR = ['href', 'title', 'lang', 'dir'];
+
+const sanitizeTranslation = (html: string) =>
+  DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: TRANSLATION_ALLOWED_TAGS,
+    ALLOWED_ATTR: TRANSLATION_ALLOWED_ATTR,
+  });
 
 // Shizue Translation Overlay Web Component
 class ShizueTranslationOverlay extends HTMLElement {
@@ -83,7 +99,7 @@ class ShizueTranslationOverlay extends HTMLElement {
       }, 0);
     } else {
       this.style.maxHeight = '20px';
-      this.innerHTML = this.translatedText;
+      this.innerHTML = sanitizeTranslation(this.translatedText);
       this.style.lineHeight = '';
       this.style.opacity = '0.5';
 
