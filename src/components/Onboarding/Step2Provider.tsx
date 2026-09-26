@@ -13,7 +13,7 @@ import {
   useSetTranslateModel,
 } from '@/hooks/models';
 import { useSetAnthropicKey, useSetGeminiKey, useSetOpenAIKey } from '@/hooks/settings';
-import { ModelProvider } from '@/lib/models';
+import { ModelProvider } from '@/lib/modelRegistry';
 import { validateApiKey } from '@/lib/validateApiKey';
 import { debugLog } from '@/logs';
 import { SmileOutlined } from '@ant-design/icons';
@@ -55,20 +55,21 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
 
   const onClickValidate = async () => {
     setIsLoading(true);
-    const isValid = await validateApiKey(apiKey, selectedProvider);
+    const trimmedKey = apiKey.trim();
+    const isValid = await validateApiKey(trimmedKey, selectedProvider);
     if (isValid) {
       if (selectedProvider === 'openai-api-key') {
-        setOpenAIKey(apiKey);
+        setOpenAIKey(trimmedKey);
         setChatModel(defaultOpenAIChatModel);
         setTranslateModel(defaultOpenAITranslateModel);
         setOpenAIValidated(true);
       } else if (selectedProvider === 'gemini-api-key') {
-        setGeminiKey(apiKey);
+        setGeminiKey(trimmedKey);
         setChatModel(defaultGeminiChatModel);
         setTranslateModel(defaultGeminiTranslateModel);
         setGeminiValidated(true);
       } else if (selectedProvider === 'anthropic-api-key') {
-        setAnthropicKey(apiKey);
+        setAnthropicKey(trimmedKey);
         setChatModel(defaultAnthropicChatModel);
         setTranslateModel(defaultAnthropicTranslateModel);
         setAnthropicValidated(true);
@@ -140,11 +141,11 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
         <Input
           placeholder={
             selectedProvider === 'openai-api-key'
-              ? 'sk-XXX......'
+              ? 'sk-proj-XXX......'
               : selectedProvider === 'gemini-api-key'
-              ? 'AIza......'
+              ? 'AQ.XXX......'
               : selectedProvider === 'anthropic-api-key'
-              ? 'sk-ant-XXX......'
+              ? 'sk-ant-api03-XXX......'
               : ''
           }
           className="sz:font-ycom sz:mr-[5px]"

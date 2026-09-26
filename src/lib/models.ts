@@ -1,84 +1,28 @@
 import { debugLog, errorLog } from '@/logs';
 import { ChatAnthropic } from '@langchain/anthropic';
-import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
+import { ChatGoogle } from '@langchain/google';
 import { ChatOpenAI } from '@langchain/openai';
+import { MODELS, type ChatModel, type ModelProvider, type ModelSpec } from '@/lib/modelRegistry';
 
-export type ModelProvider = 'openai-api-key' | 'gemini-api-key' | 'anthropic-api-key';
-
-export type ChatModel =
-  | 'gpt'
-  | 'gpt-mini'
-  | 'gemini-flash'
-  | 'gemini-flash-lite'
-  | 'claude-sonnet'
-  | 'claude-haiku';
-
-export type TranslateModel =
-  | 'gpt'
-  | 'gpt-mini'
-  | 'gemini-flash'
-  | 'gemini-flash-lite'
-  | 'claude-sonnet'
-  | 'claude-haiku';
-
-const displayToRealModelMap: Record<string, string> = {
-  gpt: 'gpt-4.1',
-  'gpt-mini': 'gpt-4.1-mini',
-  'gemini-flash': 'gemini-2.5-flash',
-  'gemini-flash-lite': 'gemini-2.5-flash-lite',
-  'claude-sonnet': 'claude-sonnet-4-5',
-  'claude-haiku': 'claude-haiku-4-5',
-};
+export * from '@/lib/modelRegistry';
 
 export interface ModelPreset {
   openaiKey?: string;
   geminiKey?: string;
   anthropicKey?: string;
-  modelName: string;
+  modelName: ChatModel;
 }
 
 export interface ModelOptions {
   maxTokens?: number;
   temperature?: number;
   streaming?: boolean;
+  // Minimize reasoning for latency-sensitive calls such as translation.
+  fast?: boolean;
+  // JSON object output. Gemini enforces the schema; OpenAI uses JSON mode; Anthropic relies on the prompt.
+  jsonSchema?: Record<string, unknown>;
   modelPreset: ModelPreset;
-  responseFormat?: { type: 'json_object' };
 }
-
-export const formatModelName = (modelName: string) => {
-  if (modelName === 'gpt') {
-    return 'GPT 4.1';
-  } else if (modelName === 'gpt-4.1') {
-    return 'GPT 4.1';
-  } else if (modelName === 'gpt-mini') {
-    return 'GPT 4.1 Mini';
-  } else if (modelName === 'gpt-4.1-mini') {
-    return 'GPT 4.1 Mini';
-  } else if (modelName === 'gemini-2.5-flash' || modelName === 'gemini-flash') {
-    return 'Gemini 2.5 Flash';
-  } else if (
-    modelName === 'gemini-2.5-flash-lite-preview-06-17' ||
-    modelName === 'gemini-flash-lite'
-  ) {
-    return 'Gemini 2.5 Flash Lite';
-  } else if (modelName === 'claude-sonnet-4-20250514') {
-    return 'Claude Sonnet 4';
-  } else if (modelName === 'claude-sonnet') {
-    return 'Claude Sonnet 4.5';
-  } else if (modelName === 'claude-3-5-haiku-20241022') {
-    return 'Claude Haiku 3.5';
-  } else if (modelName === 'claude-haiku') {
-    return 'Claude Haiku 4.5';
-  }
-
-  return modelName;
-};
-
-export const providerFromName = (modelName: string): ModelProvider => {
-  if (modelName.includes('gemini')) return 'gemini-api-key';
-  if (modelName.includes('claude')) return 'anthropic-api-key';
-  return 'openai-api-key';
-};
 
 const throwIfMissing = (key: string | undefined, provider: ModelProvider) => {
   if (!key) {
@@ -94,77 +38,69 @@ const throwIfMissing = (key: string | undefined, provider: ModelProvider) => {
   }
 };
 
-function createOpenAI({
-  maxTokens,
-  temperature,
-  streaming,
-  modelPreset,
-  responseFormat,
-}: ModelOptions) {
-  const { openaiKey, modelName } = modelPreset;
-  throwIfMissing(openaiKey, 'openai-api-key');
+const temperatureFor = (spec: ModelSpec, temperature?: number) =>
+  spec.supportsTemperature && temperature !== undefined ? { temperature } : {};
 
-  const realModelName = displayToRealModelMap[modelName];
+function createOpenAI(spec: ModelSpec, opts: ModelOptions) {
+  const { maxTokens, temperature, streaming, fast, jsonSchema, modelPreset } = opts;
+  throwIfMissing(modelPreset.openaiKey, 'openai-api-key');
 
+  // @langchain/openai only recognizes o-series/gpt-5 as reasoning models, so it would drop
+  // `reasoning` and send the legacy `max_tokens` for gpt-6. Pass the raw API fields instead.
   const instance = new ChatOpenAI({
-    modelName: realModelName,
-    apiKey: openaiKey!,
-    temperature: temperature ?? 0.7,
+    model: spec.id,
+    apiKey: modelPreset.openaiKey!,
     streaming: Boolean(streaming),
-    maxTokens: maxTokens ?? -1,
-    ...(responseFormat && { modelKwargs: { response_format: responseFormat } }),
+    ...temperatureFor(spec, temperature),
+    modelKwargs: {
+      ...(maxTokens ? { max_completion_tokens: maxTokens } : {}),
+      ...(fast ? { reasoning_effort: 'none' } : {}),
+      ...(jsonSchema ? { response_format: { type: 'json_object' } } : {}),
+    },
   });
 
-  debugLog('OpenAI instance created:', { realModelName, temperature, maxTokens, streaming });
+  debugLog('OpenAI instance created:', { model: spec.id, maxTokens, streaming, fast });
   return instance;
 }
 
-function createGemini({
-  maxTokens,
-  temperature,
-  streaming,
-  modelPreset,
-  responseFormat,
-}: ModelOptions) {
-  const { geminiKey, modelName } = modelPreset;
-  throwIfMissing(geminiKey, 'gemini-api-key');
+function createGemini(spec: ModelSpec, opts: ModelOptions) {
+  const { maxTokens, temperature, fast, jsonSchema, modelPreset } = opts;
+  throwIfMissing(modelPreset.geminiKey, 'gemini-api-key');
 
-  const realModelName = displayToRealModelMap[modelName];
-
-  const instance = new ChatGoogleGenerativeAI({
-    model: realModelName,
-    apiKey: geminiKey!,
-    temperature: temperature ?? 0.7,
-    streaming: Boolean(streaming),
-    ...(maxTokens && maxTokens > -1 ? { maxOutputTokens: maxTokens } : {}),
-    json: Boolean(responseFormat),
+  const instance = new ChatGoogle({
+    model: spec.id,
+    apiKey: modelPreset.geminiKey!,
+    ...temperatureFor(spec, temperature),
+    ...(maxTokens ? { maxOutputTokens: maxTokens } : {}),
+    ...(fast ? { thinkingLevel: 'minimal' as const } : {}),
+    ...(jsonSchema ? { responseSchema: jsonSchema } : {}),
   });
 
-  debugLog('Gemini instance created:', { realModelName, temperature, maxTokens, streaming });
+  debugLog('Gemini instance created:', { model: spec.id, maxTokens, fast });
   return instance;
 }
 
-function createAnthropic({ maxTokens, temperature, streaming, modelPreset }: ModelOptions) {
-  const { anthropicKey, modelName } = modelPreset;
-  throwIfMissing(anthropicKey, 'anthropic-api-key');
-
-  const realModelName = displayToRealModelMap[modelName];
+function createAnthropic(spec: ModelSpec, opts: ModelOptions) {
+  const { maxTokens, temperature, streaming, fast, modelPreset } = opts;
+  throwIfMissing(modelPreset.anthropicKey, 'anthropic-api-key');
 
   const instance = new ChatAnthropic({
-    model: realModelName,
-    apiKey: anthropicKey!,
-    temperature: temperature ?? 0.7,
+    model: spec.id,
+    apiKey: modelPreset.anthropicKey!,
     streaming: Boolean(streaming),
-    ...(maxTokens && maxTokens > -1 ? { maxTokens } : {}),
+    ...temperatureFor(spec, temperature),
+    ...(maxTokens ? { maxTokens } : {}),
+    // Effort only applies to adaptive-thinking models (those without temperature support).
+    ...(fast && !spec.supportsTemperature ? { outputConfig: { effort: 'low' as const } } : {}),
   });
 
-  debugLog('Anthropic instance created:', { realModelName, temperature, maxTokens, streaming });
+  debugLog('Anthropic instance created:', { model: spec.id, maxTokens, streaming, fast });
   return instance;
 }
 
 export function getModelInstance(opts: ModelOptions) {
-  const provider = providerFromName(opts.modelPreset.modelName);
-  if (provider === 'openai-api-key') return createOpenAI(opts);
-  if (provider === 'gemini-api-key') return createGemini(opts);
-  return createAnthropic(opts);
+  const spec = MODELS[opts.modelPreset.modelName];
+  if (spec.provider === 'openai-api-key') return createOpenAI(spec, opts);
+  if (spec.provider === 'gemini-api-key') return createGemini(spec, opts);
+  return createAnthropic(spec, opts);
 }

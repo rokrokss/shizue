@@ -1,4 +1,4 @@
-import { providerFromName } from './models';
+import { providerFromName } from './modelRegistry';
 
 interface ImageContent {
   type: string;

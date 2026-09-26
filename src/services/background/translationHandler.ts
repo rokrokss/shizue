@@ -42,6 +42,14 @@ interface BatchTranslationJsonResponseFormat {
   translations: string[];
 }
 
+const TRANSLATIONS_JSON_SCHEMA = {
+  type: 'object',
+  properties: {
+    translations: { type: 'array', items: { type: 'string' } },
+  },
+  required: ['translations'],
+};
+
 function getTranslationModelPreset(): ModelPreset {
   const openaiKey = getCurrentOpenaiKey();
   const geminiKey = getCurrentGeminiKey();
@@ -83,8 +91,9 @@ export class TranslationHandler {
       const llm = getModelInstance({
         temperature: 0.1,
         streaming: false,
+        fast: true,
         modelPreset: modelPreset,
-        responseFormat: { type: 'json_object' },
+        jsonSchema: TRANSLATIONS_JSON_SCHEMA,
       });
 
       debugLog('TranslationHandler [translateYoutubeCaption] modelPreset:', modelPreset);
@@ -94,7 +103,7 @@ export class TranslationHandler {
       const response = await llm.invoke([new HumanMessage(prompt)]);
       await trackTokenUsage(modelPreset.modelName, response);
 
-      const rawResponseContent = (response.content as string)?.trim();
+      const rawResponseContent = response.text.trim();
 
       debugLog(
         'TranslationHandler [translateYoutubeCaption] raw response from AI:',
@@ -215,8 +224,9 @@ export class TranslationHandler {
         temperature: 0.1,
         maxTokens: 5000,
         streaming: false,
+        fast: true,
         modelPreset: modelPreset,
-        responseFormat: { type: 'json_object' },
+        jsonSchema: TRANSLATIONS_JSON_SCHEMA,
       });
 
       debugLog('TranslationHandler [translateHtmlTextBatch] llm:', llm);
@@ -225,7 +235,7 @@ export class TranslationHandler {
 
       await trackTokenUsage(modelPreset.modelName, response);
 
-      const rawResponseContent = (response.content as string)?.trim();
+      const rawResponseContent = response.text.trim();
 
       debugLog(
         'TranslationHandler [translateHtmlTextBatch] raw response from AI:',

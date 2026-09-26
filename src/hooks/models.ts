@@ -6,7 +6,7 @@ import {
   STORAGE_TRANSLATE_MODEL,
 } from '@/config/constants';
 import { anthropicKeyAtom, geminiKeyAtom, openAIKeyAtom } from '@/hooks/settings';
-import { ChatModel, TranslateModel } from '@/lib/models';
+import { ChatModel, TranslateModel } from '@/lib/modelRegistry';
 import { chromeStorageBackend } from '@/lib/storageBackend';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';

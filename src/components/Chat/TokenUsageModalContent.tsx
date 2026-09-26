@@ -1,5 +1,5 @@
 import { useThemeValue } from '@/hooks/layout';
-import { formatModelName } from '@/lib/models';
+import { formatModelName } from '@/lib/modelRegistry';
 import { debugLog } from '@/logs';
 import { DailyUsage, fetchUsageData } from '@/services/usageService';
 import { ReloadOutlined } from '@ant-design/icons';
@@ -36,6 +36,12 @@ const MODEL_COLORS = {
   'gemini-flash-lite': '#CE9FFC',
   'claude-sonnet': '#DCC6B7',
   'claude-haiku': '#1FFFFC',
+  'gpt-6-sol': '#32CCBC',
+  'gpt-6-luna': '#ABDCFF',
+  'gemini-3.8-flash': '#FFF6B7',
+  'gemini-3.5-flash-lite': '#CE9FFC',
+  'claude-sonnet-5': '#DCC6B7',
+  'claude-haiku-4-5': '#1FFFFC',
   default: '#32CCBC',
 };
 

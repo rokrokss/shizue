@@ -66,7 +66,7 @@ export class ChatModelHandler {
       );
 
       let buffer = '';
-      let lastChunk: AIMessageChunk | undefined;
+      let aggregatedChunk: AIMessageChunk | undefined;
 
       const sendBufferToPort = () => {
         const threshold = fullResponseContent ? STREAM_FLUSH_THRESHOLD_1 : STREAM_FLUSH_THRESHOLD_0;
@@ -83,8 +83,9 @@ export class ChatModelHandler {
       };
 
       for await (const chunk of stream) {
-        lastChunk = chunk;
-        const delta = typeof chunk === 'string' ? chunk : (chunk.content as string) ?? '';
+        aggregatedChunk = aggregatedChunk ? aggregatedChunk.concat(chunk) : chunk;
+        // `text` skips non-text blocks such as reasoning/thinking content.
+        const delta = chunk.text;
         
         // 빈 델타는 무시
         if (!delta) continue;
@@ -100,8 +101,8 @@ export class ChatModelHandler {
       }
 
       // Track token usage (after streaming is complete)
-      if (lastChunk) {
-        await trackStreamingTokenUsage(modelPreset.modelName, lastChunk);
+      if (aggregatedChunk) {
+        await trackStreamingTokenUsage(modelPreset.modelName, aggregatedChunk);
       }
 
       port.postMessage({ done: true });

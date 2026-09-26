@@ -1,13 +1,10 @@
-import { ModelProvider } from '@/lib/models';
+import { ModelProvider } from '@/lib/modelRegistry';
 import { debugLog } from '@/logs';
 
+// Keys are treated as opaque strings and verified against the provider API: key formats
+// change over time (e.g. Gemini moved from `AIza…` standard keys to `AQ.…` auth keys in 2026).
 export const validateApiKey = async (apiKey: string, provider: ModelProvider) => {
-  if (
-    !apiKey ||
-    (!apiKey.startsWith('sk-') && provider === 'openai-api-key') ||
-    (!apiKey.startsWith('AIza') && provider === 'gemini-api-key') ||
-    (!apiKey.startsWith('sk-ant-') && provider === 'anthropic-api-key')
-  ) {
+  if (!apiKey) {
     debugLog('Invalid API key');
     return false;
   }
@@ -27,9 +24,12 @@ export const validateApiKey = async (apiKey: string, provider: ModelProvider) =>
         debugLog('OpenAI error', errorJson);
       }
     } else if (provider === 'gemini-api-key') {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`
-      );
+      // Auth keys must be sent as a header; the `?key=` query parameter is not supported for them.
+      const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models', {
+        headers: {
+          'x-goog-api-key': apiKey,
+        },
+      });
       debugLog('Gemini response', response);
       if (response.ok) {
         return true;
@@ -43,6 +43,8 @@ export const validateApiKey = async (apiKey: string, provider: ModelProvider) =>
           'x-api-key': apiKey,
           'anthropic-version': '2023-06-01',
           'content-type': 'application/json',
+          // Required for CORS from browser/extension origins.
+          'anthropic-dangerous-direct-browser-access': 'true',
         },
       });
       if (response.ok) {

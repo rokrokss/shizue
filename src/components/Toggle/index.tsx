@@ -39,7 +39,7 @@ import {
   initSummarizePageContent,
 } from '@/lib/initPanelData';
 import { languageOptions } from '@/lib/language';
-import { TranslateModel } from '@/lib/models';
+import { MODEL_OPTIONS, MODELS, TranslateModel } from '@/lib/modelRegistry';
 import { getPageTranslator } from '@/lib/pageTranslator';
 import { debugLog } from '@/logs';
 import { panelService } from '@/services/panelService';
@@ -454,13 +454,18 @@ const Toggle = () => {
                               return modal as HTMLElement;
                             }}
                             size="small"
-                            options={[
-                              {
-                                value: 'gpt',
-                                label: 'GPT 4.1',
+                            options={MODEL_OPTIONS.map((value) => {
+                              const validated = {
+                                'openai-api-key': openAIValidated,
+                                'gemini-api-key': geminiValidated,
+                                'anthropic-api-key': anthropicValidated,
+                              }[MODELS[value].provider];
+                              return {
+                                value,
+                                label: MODELS[value].label,
                                 className: 'sz:font-ycom',
                                 styles: {
-                                  color: openAIValidated
+                                  color: validated
                                     ? theme == 'dark'
                                       ? 'white'
                                       : 'rgb(55, 65, 81)'
@@ -468,84 +473,9 @@ const Toggle = () => {
                                     ? 'rgba(255, 255, 255, 0.25)'
                                     : 'rgba(55, 65, 81, 0.25)',
                                 },
-                                disabled: !openAIValidated,
-                              },
-                              {
-                                value: 'gpt-mini',
-                                label: 'GPT 4.1 Mini',
-                                className: 'sz:font-ycom',
-                                styles: {
-                                  color: openAIValidated
-                                    ? theme == 'dark'
-                                      ? 'white'
-                                      : 'rgb(55, 65, 81)'
-                                    : theme == 'dark'
-                                    ? 'rgba(255, 255, 255, 0.25)'
-                                    : 'rgba(55, 65, 81, 0.25)',
-                                },
-                                disabled: !openAIValidated,
-                              },
-                              {
-                                value: 'gemini-flash',
-                                label: 'Gemini 2.5 Flash',
-                                className: 'sz:font-ycom',
-                                styles: {
-                                  color: geminiValidated
-                                    ? theme == 'dark'
-                                      ? 'white'
-                                      : 'rgb(55, 65, 81)'
-                                    : theme == 'dark'
-                                    ? 'rgba(255, 255, 255, 0.25)'
-                                    : 'rgba(55, 65, 81, 0.25)',
-                                },
-                                disabled: !geminiValidated,
-                              },
-                              {
-                                value: 'gemini-flash-lite',
-                                label: 'Gemini 2.5 Flash Lite',
-                                className: 'sz:font-ycom',
-                                styles: {
-                                  color: geminiValidated
-                                    ? theme == 'dark'
-                                      ? 'white'
-                                      : 'rgb(55, 65, 81)'
-                                    : theme == 'dark'
-                                    ? 'rgba(255, 255, 255, 0.25)'
-                                    : 'rgba(55, 65, 81, 0.25)',
-                                },
-                                disabled: !geminiValidated,
-                              },
-                              {
-                                value: 'claude-sonnet',
-                                label: 'Claude Sonnet 4.5',
-                                className: 'sz:font-ycom',
-                                styles: {
-                                  color: anthropicValidated
-                                    ? theme == 'dark'
-                                      ? 'white'
-                                      : 'rgb(55, 65, 81)'
-                                    : theme == 'dark'
-                                    ? 'rgba(255, 255, 255, 0.25)'
-                                    : 'rgba(55, 65, 81, 0.25)',
-                                },
-                                disabled: !anthropicValidated,
-                              },
-                              {
-                                value: 'claude-haiku',
-                                label: 'Claude Haiku 4.5',
-                                className: 'sz:font-ycom',
-                                styles: {
-                                  color: anthropicValidated
-                                    ? theme == 'dark'
-                                      ? 'white'
-                                      : 'rgb(55, 65, 81)'
-                                    : theme == 'dark'
-                                    ? 'rgba(255, 255, 255, 0.25)'
-                                    : 'rgba(55, 65, 81, 0.25)',
-                                },
-                                disabled: !anthropicValidated,
-                              },
-                            ]}
+                                disabled: !validated,
+                              };
+                            })}
                           />
                         </div>
                         <div className="sz:flex sz:flex-row sz:items-center sz:gap-[10px] sz:w-full sz:justify-between">
