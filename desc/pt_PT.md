@@ -6,7 +6,6 @@ Shizue é uma extensão do Chrome que integra perfeitamente Modelos de Linguagem
 
 🌐 Tradução Bilingue Inteligente
 - Leia conteúdo em dois idiomas simultaneamente com tradução alimentada por IA
-- Perfeito para estudantes de idiomas e consumidores de conteúdo internacional
 - Preserva contexto e nuances com compreensão avançada de LLM
 
 🎬 Tradução de Legendas do YouTube em Tempo Real
@@ -29,7 +28,6 @@ Shizue é uma extensão do Chrome que integra perfeitamente Modelos de Linguagem
 📋 Resumo de Página com Um Clique
 - Compreenda instantaneamente as ideias principais de qualquer artigo ou página web
 - Poupe tempo com resumos concisos gerados por IA
-- Perfeito para pesquisa e recolha rápida de informações
 
 🎯 Ações Inteligentes do Menu de Contexto
 - Clique com o botão direito para traduzir, explicar ou resumir o texto selecionado
@@ -47,13 +45,6 @@ Shizue é uma extensão do Chrome que integra perfeitamente Modelos de Linguagem
 2. Clique no ícone da extensão para abrir o painel lateral
 3. Adicione a sua chave de API de IA preferida (OpenAI, Anthropic ou Google)
 4. Comece a navegar com superpoderes de IA!
-
-💡 Perfeito Para
-- Estudantes e investigadores
-- Estudantes de idiomas
-- Criadores de conteúdo e escritores
-- Profissionais internacionais
-- Qualquer pessoa que queira navegar de forma mais inteligente
 
 🔒 Privacidade e Segurança
 - Chaves de API armazenadas com segurança no seu navegador

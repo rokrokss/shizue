@@ -6,7 +6,6 @@ Shizue là một tiện ích mở rộng Chrome tích hợp liền mạch các M
 
 🌐 Dịch thuật song ngữ thông minh
 - Đọc nội dung bằng hai ngôn ngữ cùng lúc với bản dịch được hỗ trợ bởi AI
-- Hoàn hảo cho người học ngôn ngữ và người tiêu dùng nội dung quốc tế
 - Bảo toàn ngữ cảnh và sắc thái với khả năng hiểu LLM tiên tiến
 
 🎬 Dịch phụ đề YouTube theo thời gian thực
@@ -29,7 +28,6 @@ Shizue là một tiện ích mở rộng Chrome tích hợp liền mạch các M
 📋 Tóm tắt trang một cú nhấp chuột
 - Nắm bắt ngay lập tức các ý tưởng chính của bất kỳ bài viết hoặc trang web nào
 - Tiết kiệm thời gian với các bản tóm tắt ngắn gọn do AI tạo ra
-- Hoàn hảo cho nghiên cứu và thu thập thông tin nhanh chóng
 
 🎯 Hành động menu ngữ cảnh thông minh
 - Nhấp chuột phải để dịch, giải thích hoặc tóm tắt văn bản đã chọn
@@ -47,13 +45,6 @@ Shizue là một tiện ích mở rộng Chrome tích hợp liền mạch các M
 2. Nhấp vào biểu tượng tiện ích mở rộng để mở bảng điều khiển bên
 3. Thêm khóa API AI ưa thích của bạn (OpenAI, Anthropic hoặc Google)
 4. Bắt đầu duyệt web với siêu năng lực AI!
-
-💡 Hoàn hảo cho
-- Sinh viên và nhà nghiên cứu
-- Người học ngôn ngữ
-- Người sáng tạo nội dung và nhà văn
-- Chuyên gia quốc tế
-- Bất kỳ ai muốn duyệt web thông minh hơn
 
 🔒 Quyền riêng tư & Bảo mật
 - Khóa API được lưu trữ an toàn trong trình duyệt của bạn

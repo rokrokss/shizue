@@ -6,7 +6,6 @@ Shizue to rozszerzenie Chrome, które płynnie integruje Duże Modele Językowe 
 
 🌐 Inteligentne Tłumaczenie Dwujęzyczne
 - Czytaj treści w dwóch językach jednocześnie dzięki tłumaczeniu wspieranemu przez AI
-- Idealne dla osób uczących się języków i użytkowników międzynarodowych treści
 - Zachowuje kontekst i niuanse dzięki zaawansowanemu zrozumieniu LLM
 
 🎬 Tłumaczenie Napisów YouTube w Czasie Rzeczywistym
@@ -29,7 +28,6 @@ Shizue to rozszerzenie Chrome, które płynnie integruje Duże Modele Językowe 
 📋 Podsumowanie Strony Jednym Kliknięciem
 - Natychmiast zrozum główne idee dowolnego artykułu lub strony internetowej
 - Oszczędź czas dzięki zwięzłym podsumowaniom generowanym przez AI
-- Idealne do badań i szybkiego zbierania informacji
 
 🎯 Inteligentne Akcje Menu Kontekstowego
 - Kliknij prawym przyciskiem, aby przetłumaczyć, wyjaśnić lub podsumować zaznaczony tekst
@@ -47,13 +45,6 @@ Shizue to rozszerzenie Chrome, które płynnie integruje Duże Modele Językowe 
 2. Kliknij ikonę rozszerzenia, aby otworzyć panel boczny
 3. Dodaj preferowany klucz API AI (OpenAI, Anthropic lub Google)
 4. Rozpocznij przeglądanie z supermocami AI!
-
-💡 Idealny Dla
-- Studentów i badaczy
-- Osób uczących się języków
-- Twórców treści i pisarzy
-- Międzynarodowych profesjonalistów
-- Każdego, kto chce przeglądać mądrzej
 
 🔒 Prywatność i Bezpieczeństwo
 - Klucze API bezpiecznie przechowywane w Twojej przeglądarce

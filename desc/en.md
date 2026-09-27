@@ -6,7 +6,6 @@ Shizue is a Chrome extension that seamlessly integrates Large Language Models (L
 
 🌐 Smart Bilingual Translation
 - Read content in two languages simultaneously with AI-powered translation
-- Perfect for language learners and international content consumers
 - Preserves context and nuance with advanced LLM understanding
 
 🎬 Real-time YouTube Caption Translation
@@ -29,7 +28,6 @@ Shizue is a Chrome extension that seamlessly integrates Large Language Models (L
 📋 One-Click Page Summarization
 - Instantly grasp the main ideas of any article or webpage
 - Save time with concise, AI-generated summaries
-- Perfect for research and quick information gathering
 
 🎯 Smart Context Menu Actions
 - Right-click to translate, explain, or summarize selected text
@@ -47,13 +45,6 @@ Shizue is a Chrome extension that seamlessly integrates Large Language Models (L
 2. Click the extension icon to open the side panel
 3. Add your preferred AI API key (OpenAI, Anthropic, or Google)
 4. Start browsing with AI superpowers!
-
-💡 Perfect For
-- Students and researchers
-- Language learners
-- Content creators and writers
-- International professionals
-- Anyone who wants to browse smarter, not harder
 
 🔒 Privacy & Security
 - API keys stored securely in your browser

@@ -6,7 +6,6 @@ Shizue, Büyük Dil Modellerini (LLM'ler) günlük web tarama deneyiminize sorun
 
 🌐 Akıllı İki Dilli Çeviri
 - AI destekli çeviri ile içeriği aynı anda iki dilde okuyun
-- Dil öğrenenler ve uluslararası içerik tüketicileri için mükemmel
 - Gelişmiş LLM anlayışı ile bağlamı ve nüansları korur
 
 🎬 Gerçek Zamanlı YouTube Altyazı Çevirisi
@@ -29,7 +28,6 @@ Shizue, Büyük Dil Modellerini (LLM'ler) günlük web tarama deneyiminize sorun
 📋 Tek Tıkla Sayfa Özeti
 - Herhangi bir makale veya web sayfasının ana fikirlerini anında kavrayın
 - AI tarafından oluşturulan özlü özetlerle zaman kazanın
-- Araştırma ve hızlı bilgi toplama için mükemmel
 
 🎯 Akıllı Bağlam Menüsü Eylemleri
 - Seçili metni çevirmek, açıklamak veya özetlemek için sağ tıklayın
@@ -47,13 +45,6 @@ Shizue, Büyük Dil Modellerini (LLM'ler) günlük web tarama deneyiminize sorun
 2. Yan paneli açmak için uzantı simgesine tıklayın
 3. Tercih ettiğiniz AI API anahtarını ekleyin (OpenAI, Anthropic veya Google)
 4. AI süper güçleriyle gezinmeye başlayın!
-
-💡 Şunlar İçin Mükemmel
-- Öğrenciler ve araştırmacılar
-- Dil öğrenenler
-- İçerik oluşturucular ve yazarlar
-- Uluslararası profesyoneller
-- Daha akıllı gezinmek isteyen herkes
 
 🔒 Gizlilik ve Güvenlik
 - API anahtarları tarayıcınızda güvenli bir şekilde saklanır

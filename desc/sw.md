@@ -6,7 +6,6 @@ Shizue ni kiendelezi cha Chrome kinachounganisha kwa urahisi Mifumo Mikubwa ya L
 
 🌐 Tafsiri ya Kijanja ya Lugha Mbili
 - Soma maudhui katika lugha mbili kwa wakati mmoja na tafsiri inayoendeshwa na AI
-- Kamili kwa wanafunzi wa lugha na watumiaji wa maudhui ya kimataifa
 - Inahifadhi muktadha na hisia kwa uelewa wa hali ya juu wa LLM
 
 🎬 Tafsiri ya Manukuu ya YouTube ya Wakati Halisi
@@ -29,7 +28,6 @@ Shizue ni kiendelezi cha Chrome kinachounganisha kwa urahisi Mifumo Mikubwa ya L
 📋 Muhtasari wa Ukurasa kwa Kubofya Mara Moja
 - Elewa mara moja mawazo makuu ya makala au ukurasa wowote wa wavuti
 - Okoa muda na muhtasari mfupi uliozalishwa na AI
-- Kamili kwa utafiti na ukusanyaji wa haraka wa habari
 
 🎯 Vitendo vya Menyu ya Muktadha Vyenye Akili
 - Bofya kulia kutafsiri, kueleza au kufupisha maandishi yaliyochaguliwa
@@ -47,13 +45,6 @@ Shizue ni kiendelezi cha Chrome kinachounganisha kwa urahisi Mifumo Mikubwa ya L
 2. Bofya aikoni ya kiendelezi kufungua paneli ya kando
 3. Ongeza ufunguo wako wa API wa AI unaopendelea (OpenAI, Anthropic, au Google)
 4. Anza kuvinjari na nguvu kuu za AI!
-
-💡 Kamili Kwa
-- Wanafunzi na watafiti
-- Wanafunzi wa lugha
-- Waundaji wa maudhui na waandishi
-- Wataalamu wa kimataifa
-- Yeyote anayetaka kuvinjari kwa njia ya busara zaidi
 
 🔒 Faragha na Usalama
 - Funguo za API zimehifadhiwa salama katika kivinjari chako

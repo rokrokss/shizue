@@ -6,7 +6,6 @@ Ang Shizue ay isang Chrome extension na walang putol na pinagsasama ang mga Larg
 
 🌐 Matalinong Bilingual na Pagsasalin
 - Basahin ang nilalaman sa dalawang wika nang sabay gamit ang AI-powered na pagsasalin
-- Perpekto para sa mga nag-aaral ng wika at mga gumagamit ng internasyonal na nilalaman
 - Pinapanatili ang konteksto at pagkakaiba-iba gamit ang advanced na pag-unawa ng LLM
 
 🎬 Real-time na Pagsasalin ng YouTube Caption
@@ -29,7 +28,6 @@ Ang Shizue ay isang Chrome extension na walang putol na pinagsasama ang mga Larg
 📋 Isang-Click na Pagbubuod ng Pahina
 - Agad na maunawaan ang mga pangunahing ideya ng anumang artikulo o webpage
 - Makatipid ng oras gamit ang mga maikling, AI-generated na buod
-- Perpekto para sa pananaliksik at mabilis na pagtitipon ng impormasyon
 
 🎯 Matalinong Context Menu Actions
 - I-right-click para isalin, ipaliwanag, o ibuod ang napiling teksto
@@ -47,13 +45,6 @@ Ang Shizue ay isang Chrome extension na walang putol na pinagsasama ang mga Larg
 2. I-click ang extension icon para buksan ang side panel
 3. Idagdag ang iyong gustong AI API key (OpenAI, Anthropic, o Google)
 4. Magsimulang mag-browse gamit ang AI superpowers!
-
-💡 Perpekto Para Sa
-- Mga estudyante at mananaliksik
-- Mga nag-aaral ng wika
-- Mga content creator at manunulat
-- Mga internasyonal na propesyonal
-- Sinumang gustong mag-browse nang mas matalino
 
 🔒 Privacy at Seguridad
 - Ligtas na nakaimbak ang mga API key sa iyong browser

@@ -6,7 +6,6 @@ Shizue ist eine Chrome-Erweiterung, die große Sprachmodelle (LLMs) nahtlos in I
 
 🌐 Intelligente zweisprachige Übersetzung
 - Lesen Sie Inhalte gleichzeitig in zwei Sprachen mit KI-gestützter Übersetzung
-- Perfekt für Sprachlernende und internationale Inhaltsnutzer
 - Bewahrt Kontext und Nuancen mit fortgeschrittenem LLM-Verständnis
 
 🎬 Echtzeit-YouTube-Untertitelübersetzung
@@ -29,7 +28,6 @@ Shizue ist eine Chrome-Erweiterung, die große Sprachmodelle (LLMs) nahtlos in I
 📋 Ein-Klick-Seitenzusammenfassung
 - Erfassen Sie sofort die Hauptideen eines Artikels oder einer Webseite
 - Sparen Sie Zeit mit prägnanten, KI-generierten Zusammenfassungen
-- Perfekt für Recherche und schnelle Informationsbeschaffung
 
 🎯 Intelligente Kontextmenü-Aktionen
 - Rechtsklick zum Übersetzen, Erklären oder Zusammenfassen von ausgewähltem Text
@@ -47,13 +45,6 @@ Shizue ist eine Chrome-Erweiterung, die große Sprachmodelle (LLMs) nahtlos in I
 2. Klicken Sie auf das Erweiterungssymbol, um das Seitenpanel zu öffnen
 3. Fügen Sie Ihren bevorzugten KI-API-Schlüssel hinzu (OpenAI, Anthropic oder Google)
 4. Beginnen Sie mit KI-Superkräften zu surfen!
-
-💡 Perfekt für
-- Studenten und Forscher
-- Sprachlernende
-- Content-Ersteller und Autoren
-- Internationale Fachleute
-- Jeden, der intelligenter surfen möchte
 
 🔒 Datenschutz & Sicherheit
 - API-Schlüssel sicher in Ihrem Browser gespeichert
