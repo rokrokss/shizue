@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.4
+
+- Onboarding: fix the provider dropdown showing OpenAI while OpenRouter was selected
+
 ## v0.2.3
 
 - Onboarding: OpenRouter is now the first and default option in the provider list
