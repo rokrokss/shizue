@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.3
+
+- Onboarding: OpenRouter is now the first and default option in the provider list
+
 ## v0.2.2
 
 - Fix the side panel not opening from the floating button (and its summarize, memo and image actions)
