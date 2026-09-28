@@ -10,6 +10,12 @@ import { useTranslation } from 'react-i18next';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
+// Keep GFM but drop strikethrough, so "3~5일" style tildes render as plain text.
+function remarkNoStrikethrough(this: { data: () => object }) {
+  const data = this.data() as { micromarkExtensions?: unknown[] };
+  (data.micromarkExtensions ||= []).push({ disable: { null: ['strikethrough'] } });
+}
+
 const ChatContainer = ({
   messages,
   onRetry,
@@ -31,7 +37,7 @@ const ChatContainer = ({
     (message.onInterrupt && !message.stopped) || message.stopped;
 
   const getMarkdownText = (content: string) => {
-    return <Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>;
+    return <Markdown remarkPlugins={[remarkGfm, remarkNoStrikethrough]}>{content}</Markdown>;
   };
 
   return (
