@@ -8,12 +8,6 @@ import {
   useToggleHiddenSiteList,
 } from '@/hooks/layout';
 import {
-  defaultAnthropicChatModel,
-  defaultAnthropicTranslateModel,
-  defaultGeminiChatModel,
-  defaultGeminiTranslateModel,
-  defaultOpenAIChatModel,
-  defaultOpenAITranslateModel,
   useAnthropicValidated,
   useChatModel,
   useConnectionMode,
@@ -33,10 +27,8 @@ import { languageOptions } from '@/lib/language';
 import {
   ApiKeyProvider,
   ChatModel,
-  ConnectionMode,
   MODEL_OPTIONS,
   MODELS,
-  ModelProvider,
   TranslateModel,
 } from '@/lib/modelRegistry';
 import { getOS } from '@/lib/userOS';
@@ -73,22 +65,15 @@ const SettingsModalContent = () => {
   const [showToggle, setShowToggle] = useShowToggle();
   const setToggleYPosition = useSetAtom(toggleYPositionAtom);
   const [showYoutubeCaptionToggle, setShowYoutubeCaptionToggle] = useShowYoutubeCaptionToggle();
-  const [selectedProvider, setSelectedProvider] = useState<ModelProvider>('openai-api-key');
+  const [selectedProvider, setSelectedProvider] = useState<ApiKeyProvider>('openrouter-api-key');
   const [toggleHiddenSiteList, setToggleHiddenSiteList] = useToggleHiddenSiteList();
 
-  const providerValidated: Record<ModelProvider, boolean | undefined> = {
-    'openai-api-key': openAIValidated,
-    'gemini-api-key': geminiValidated,
-    'anthropic-api-key': anthropicValidated,
-  };
   const modelOptions = MODEL_OPTIONS.map((value) => ({
     value,
     label: MODELS[value].label,
     className: 'sz:font-ycom',
     disabled: !modelAvailability[value],
   }));
-  const keyProvider: ApiKeyProvider =
-    connectionMode === 'openrouter' ? 'openrouter-api-key' : selectedProvider;
 
   const handleSelectLanguage = (value: string) => {
     setLang(value as Language);
@@ -99,28 +84,12 @@ const SettingsModalContent = () => {
   };
 
   const handleSelectProvider = (value: string) => {
-    setSelectedProvider(value as ModelProvider);
+    setSelectedProvider(value as ApiKeyProvider);
     setApiKey('');
   };
 
-  const handleSelectConnectionMode = (value: ConnectionMode) => {
-    setConnectionMode(value);
-    setApiKey('');
-    setIsInvalidApiKey(false);
-    setCanProceed(true);
-    if (value !== 'direct') return;
-    // Models picked through OpenRouter may lack a direct key; fall back to the defaults of a
-    // registered provider.
-    const fallback = openAIValidated
-      ? [defaultOpenAIChatModel, defaultOpenAITranslateModel]
-      : geminiValidated
-      ? [defaultGeminiChatModel, defaultGeminiTranslateModel]
-      : anthropicValidated
-      ? [defaultAnthropicChatModel, defaultAnthropicTranslateModel]
-      : undefined;
-    if (!fallback) return;
-    if (!providerValidated[MODELS[chatModel].provider]) setChatModel(fallback[0]);
-    if (!providerValidated[MODELS[translateModel].provider]) setTranslateModel(fallback[1]);
+  const handleTogglePreferOpenRouter = () => {
+    setConnectionMode(connectionMode === 'openrouter' ? 'direct' : 'openrouter');
   };
 
   const handleSelectChatModel = (value: string) => {
@@ -150,18 +119,18 @@ const SettingsModalContent = () => {
   const onClickValidate = async () => {
     setIsLoading(true);
     const trimmedKey = apiKey.trim();
-    const isValid = await validateApiKey(trimmedKey, keyProvider);
+    const isValid = await validateApiKey(trimmedKey, selectedProvider);
     if (isValid) {
-      if (keyProvider === 'openrouter-api-key') {
+      if (selectedProvider === 'openrouter-api-key') {
         setOpenRouterKey(trimmedKey);
         setOpenRouterValidated(true);
-      } else if (keyProvider === 'openai-api-key') {
+      } else if (selectedProvider === 'openai-api-key') {
         setOpenAIKey(trimmedKey);
         setOpenAIValidated(true);
-      } else if (keyProvider === 'gemini-api-key') {
+      } else if (selectedProvider === 'gemini-api-key') {
         setGeminiKey(trimmedKey);
         setGeminiValidated(true);
-      } else if (keyProvider === 'anthropic-api-key') {
+      } else if (selectedProvider === 'anthropic-api-key') {
         setAnthropicKey(trimmedKey);
         setAnthropicValidated(true);
       }
@@ -326,73 +295,50 @@ const SettingsModalContent = () => {
                       theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'
                     }`}
                   >
-                    {t('settings.connectionMode')}
+                    {t('settings.aiProvider')}
                   </div>
                   <Select
-                    value={connectionMode}
-                    onChange={handleSelectConnectionMode}
+                    value={selectedProvider}
+                    onChange={handleSelectProvider}
                     className="sz:font-ycom sz:w-50"
                     options={[
                       {
-                        value: 'direct',
-                        label: t('settings.connectionDirect'),
+                        value: 'openrouter-api-key',
+                        label: t('onboarding.selectProvider.openRouterApiKey.title'),
                         className: 'sz:font-ycom',
                       },
                       {
-                        value: 'openrouter',
-                        label: 'OpenRouter',
+                        value: 'openai-api-key',
+                        label: t('onboarding.selectProvider.openaiApiKey.title'),
                         className: 'sz:font-ycom',
+                      },
+                      {
+                        value: 'gemini-api-key',
+                        label: t('onboarding.selectProvider.geminiApiKey'),
+                        className: 'sz:font-ycom',
+                      },
+                      {
+                        value: 'anthropic-api-key',
+                        label: t('onboarding.selectProvider.anthropicApiKey'),
+                        className: 'sz:font-ycom',
+                      },
+                      {
+                        value: 'chatgpt-webapp',
+                        label: t('onboarding.selectProvider.chatGPTWebApp.title'),
+                        className: 'sz:font-ycom',
+                        disabled: true,
                       },
                     ]}
                   />
-                  {connectionMode === 'direct' && (
-                    <>
-                      <div
-                        className={`sz:text-base ${
-                          theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'
-                        }`}
-                      >
-                        {t('settings.aiProvider')}
-                      </div>
-                      <Select
-                        value={selectedProvider}
-                        onChange={handleSelectProvider}
-                        className="sz:font-ycom sz:w-50"
-                        options={[
-                          {
-                            value: 'openai-api-key',
-                            label: t('onboarding.selectProvider.openaiApiKey.title'),
-                            className: 'sz:font-ycom',
-                          },
-                          {
-                            value: 'gemini-api-key',
-                            label: t('onboarding.selectProvider.geminiApiKey'),
-                            className: 'sz:font-ycom',
-                          },
-                          {
-                            value: 'anthropic-api-key',
-                            label: t('onboarding.selectProvider.anthropicApiKey'),
-                            className: 'sz:font-ycom',
-                          },
-                          {
-                            value: 'chatgpt-webapp',
-                            label: t('onboarding.selectProvider.chatGPTWebApp.title'),
-                            className: 'sz:font-ycom',
-                            disabled: true,
-                          },
-                        ]}
-                      />
-                    </>
-                  )}
                   <div className="sz:flex sz:flex-row sz:items-center sz:w-50 sz:mb-1">
                     <Input
                       className="sz:font-ycom sz:text-sm sz:mr-[5px] sz:h-8"
                       placeholder={
-                        keyProvider === 'openrouter-api-key'
+                        selectedProvider === 'openrouter-api-key'
                           ? 'sk-or-v1-XXX......'
-                          : keyProvider === 'openai-api-key'
+                          : selectedProvider === 'openai-api-key'
                           ? 'sk-proj-XXX......'
-                          : keyProvider === 'gemini-api-key'
+                          : selectedProvider === 'gemini-api-key'
                           ? 'AQ.XXX......'
                           : 'sk-ant-api03-XXX......'
                       }
@@ -452,6 +398,16 @@ const SettingsModalContent = () => {
                       OpenRouter
                     </Tag>
                   </div>
+                  {openRouterValidated &&
+                    (openAIValidated || geminiValidated || anthropicValidated) && (
+                      <Checkbox
+                        checked={connectionMode === 'openrouter'}
+                        onChange={handleTogglePreferOpenRouter}
+                        className="sz:font-ycom sz:w-50 sz:flex sz:flex-row sz:items-center sz:justify-center"
+                      >
+                        {t('settings.preferOpenRouter')}
+                      </Checkbox>
+                    )}
                   <div
                     className={`sz:text-base ${
                       theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'

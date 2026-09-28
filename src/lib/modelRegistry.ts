@@ -4,7 +4,9 @@ export type ModelProvider = 'openai-api-key' | 'gemini-api-key' | 'anthropic-api
 // OpenRouter serves every model, so it is a key type, never a model's provider.
 export type ApiKeyProvider = ModelProvider | 'openrouter-api-key';
 
-// 'direct' calls each model's own provider API; 'openrouter' sends every model through OpenRouter.
+// 'direct' calls the model's own provider API; 'openrouter' sends it through OpenRouter.
+// A model uses whichever of its provider key and the OpenRouter key is set. The stored setting
+// is the preference for when both are.
 export type ConnectionMode = 'direct' | 'openrouter';
 
 export const isConnectionMode = (value: unknown): value is ConnectionMode =>

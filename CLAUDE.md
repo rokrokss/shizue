@@ -221,7 +221,7 @@ this.version(2).stores({ messages: '...', tokenUsage: 'id, date, model' });
 - `@langchain/openai` does not recognize gpt-6 as a reasoning model, so OpenAI-specific fields go through `modelKwargs` (`max_completion_tokens`, `reasoning_effort`).
 - Read streamed text with `chunk.text` (skips thinking blocks) and aggregate chunks with `concat` before reading `usage_metadata` (providers split usage across chunks).
 - Never import `lib/models.ts` from UI or content scripts: it pulls LangChain into the bundle.
-- **OpenRouter** is a connection mode, not a provider (`STORAGE_CONNECTION_MODE`: `'direct'` | `'openrouter'`). In `'openrouter'` mode every slot goes through OpenRouter (`ChatOpenAI` with its `baseURL`) using `MODELS[slot].openrouter.id`; `fastEffort` there comes from each model's `supported_efforts` in OpenRouter's `/api/v1/models`. OpenRouter takes the OpenAI `image_url` format for Claude too, and its key is validated with `/api/v1/key` (`/models` is public). UI checks model availability with `useModelAvailability()` (`hooks/models.ts`), which accounts for the mode.
+- **OpenRouter** is a key type, not a model's provider: its key reaches every slot. Each model goes through its provider's key or OpenRouter, whichever is set; when both are, `STORAGE_CONNECTION_MODE` (`'direct'` | `'openrouter'`, the "Prefer OpenRouter" checkbox) decides. The background resolves this per model with `getConnectionModeFor()`, and `ModelPreset.connectionMode` holds the result. The OpenRouter path is `ChatOpenAI` with its `baseURL` using `MODELS[slot].openrouter.id`; `fastEffort` there comes from each model's `supported_efforts` in OpenRouter's `/api/v1/models`. OpenRouter takes the OpenAI `image_url` format for Claude too, and its key is validated with `/api/v1/key` (`/models` is public). UI checks model availability with `useModelAvailability()` (`hooks/models.ts`): a model is available through its provider key or an OpenRouter key.
 - API keys are opaque: validate against the provider API, never by prefix (Gemini keys changed from `AIza…` to `AQ.…` in 2026 and must be sent in the `x-goog-api-key` header).
 
 **When adding new LLM provider**:
@@ -289,7 +289,7 @@ export const chromeStorageBackend = <T>(area: 'local' | 'sync' | 'session' = 'lo
 | **API Keys** | `STORAGE_OPENAI_KEY`, `STORAGE_GEMINI_KEY`, `STORAGE_ANTHROPIC_KEY`, `STORAGE_OPENROUTER_KEY` | LLM provider credentials |
 | **API Validation** | `STORAGE_OPENAI_VALIDATED`, `STORAGE_GEMINI_VALIDATED`, `STORAGE_ANTHROPIC_VALIDATED`, `STORAGE_OPENROUTER_VALIDATED` | API key validation status |
 | **Model Selection** | `STORAGE_CHAT_MODEL`, `STORAGE_TRANSLATE_MODEL` | Selected LLM models |
-| **Connection** | `STORAGE_CONNECTION_MODE` | `'direct'` (each provider's key) or `'openrouter'` (all models via OpenRouter) |
+| **Connection** | `STORAGE_CONNECTION_MODE` | Preference when a model's provider key and the OpenRouter key are both set: `'direct'` or `'openrouter'` |
 | **Languages** | `STORAGE_LANGUAGE`, `STORAGE_TRANSLATE_TARGET_LANGUAGE` | UI language and translation target |
 | **Global State** | `STORAGE_GLOBAL_STATE` | Side panel current state (actionType, threadId, etc.) |
 | **UI Settings** | `STORAGE_THEME`, `STORAGE_SHOW_TOGGLE`, `STORAGE_TOGGLE_Y_POSITION`, `STORAGE_TOGGLE_HIDDEN_SITE_LIST` | Theme, toggle button visibility/position, hidden sites |
@@ -362,7 +362,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
 | `geminiValidatedAtom` | `boolean \| undefined` | `STORAGE_GEMINI_VALIDATED` | `undefined` | true | Gemini key validation status | [hooks/models.ts:62](src/hooks/models.ts#L62) |
 | `anthropicValidatedAtom` | `boolean \| undefined` | `STORAGE_ANTHROPIC_VALIDATED` | `undefined` | true | Anthropic key validation status | [hooks/models.ts:69](src/hooks/models.ts#L69) |
 | `openRouterValidatedAtom` | `boolean \| undefined` | `STORAGE_OPENROUTER_VALIDATED` | `undefined` | true | OpenRouter key validation status | [hooks/models.ts:76](src/hooks/models.ts#L76) |
-| `connectionModeAtom` | `ConnectionMode` | `STORAGE_CONNECTION_MODE` | `'direct'` | true | Direct provider keys or OpenRouter for all models | [hooks/models.ts:83](src/hooks/models.ts#L83) |
+| `connectionModeAtom` | `ConnectionMode` | `STORAGE_CONNECTION_MODE` | `'direct'` | true Prefer OpenRouter over provider keys when both are set | [hooks/models.ts:83](src/hooks/models.ts#L83) |
 | **Languages** |
 | `languageAtom` | `Language` | `STORAGE_LANGUAGE` | `fallbackLanguage` | true | App UI language (23 languages) | [hooks/language.ts:38](src/hooks/language.ts#L38) |
 | `targetLanguageAtom` | `Language` | `STORAGE_TRANSLATE_TARGET_LANGUAGE` | `fallbackLanguage` | true | Translation target language | [hooks/language.ts:45](src/hooks/language.ts#L45) |

@@ -12,6 +12,7 @@ import {
   ConnectionMode,
   isChatModel,
   isConnectionMode,
+  MODELS,
   TranslateModel,
 } from '@/lib/modelRegistry';
 
@@ -35,7 +36,16 @@ export const getCurrentAnthropicKey = () => anthropicKey;
 
 export const getCurrentOpenrouterKey = () => openrouterKey;
 
-export const getCurrentConnectionMode = () => connectionMode;
+// With no key set this returns 'direct', so the model factory reports the provider key missing.
+export const getConnectionModeFor = (model: ChatModel): ConnectionMode => {
+  const directKey = {
+    'openai-api-key': openaiKey,
+    'gemini-api-key': geminiKey,
+    'anthropic-api-key': anthropicKey,
+  }[MODELS[model].provider];
+  if (directKey && openrouterKey) return connectionMode;
+  return openrouterKey ? 'openrouter' : 'direct';
+};
 
 export const changeChatModel = (model: ChatModel) => {
   currentChatModel = model;

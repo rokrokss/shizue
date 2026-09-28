@@ -10,7 +10,6 @@ import {
   defaultOpenRouterTranslateModel,
   useSetAnthropicValidated,
   useSetChatModel,
-  useSetConnectionMode,
   useSetGeminiValidated,
   useSetOpenAIValidated,
   useSetOpenRouterValidated,
@@ -52,7 +51,6 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
   const setGeminiValidated = useSetGeminiValidated();
   const setAnthropicValidated = useSetAnthropicValidated();
   const setOpenRouterValidated = useSetOpenRouterValidated();
-  const setConnectionMode = useSetConnectionMode();
   const lines = [
     t('onboarding.selectProvider.title'),
     t('onboarding.selectProvider.openaiApiKey.description_0'),
@@ -72,7 +70,6 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
     const trimmedKey = apiKey.trim();
     const isValid = await validateApiKey(trimmedKey, selectedProvider);
     if (isValid) {
-      setConnectionMode(selectedProvider === 'openrouter-api-key' ? 'openrouter' : 'direct');
       if (selectedProvider === 'openrouter-api-key') {
         setOpenRouterKey(trimmedKey);
         setChatModel(defaultOpenRouterChatModel);

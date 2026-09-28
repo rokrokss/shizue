@@ -147,12 +147,10 @@ export const useSetAnthropicValidated = () => useSetAtom(anthropicValidatedSafeA
 export const useOpenRouterValidated = () => useAtom(openRouterValidatedSafeAtom);
 export const useSetOpenRouterValidated = () => useSetAtom(openRouterValidatedSafeAtom);
 export const useConnectionMode = () => useAtom(connectionModeAtom);
-export const useSetConnectionMode = () => useSetAtom(connectionModeAtom);
 
-// Whether each model can be called under the current connection mode. A hook rather than a
+// Whether each model can be called, through its provider key or OpenRouter. A hook rather than a
 // derived atom: the storage atoms start as promises, which useAtomValue unwraps.
 export const useModelAvailability = (): Record<ChatModel, boolean> => {
-  const connectionMode = useAtomValue(connectionModeAtom);
   const openRouterValidated = useAtomValue(openRouterValidatedSafeAtom);
   const directValidated: Record<ModelProvider, boolean | undefined> = {
     'openai-api-key': useAtomValue(openAIValidatedSafeAtom),
@@ -162,11 +160,7 @@ export const useModelAvailability = (): Record<ChatModel, boolean> => {
   return Object.fromEntries(
     MODEL_OPTIONS.map((model) => [
       model,
-      Boolean(
-        connectionMode === 'openrouter'
-          ? openRouterValidated
-          : directValidated[MODELS[model].provider]
-      ),
+      Boolean(directValidated[MODELS[model].provider] || openRouterValidated),
     ])
   ) as Record<ChatModel, boolean>;
 };

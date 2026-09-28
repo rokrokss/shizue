@@ -17,6 +17,7 @@ export interface ModelPreset {
   geminiKey?: string;
   anthropicKey?: string;
   openrouterKey?: string;
+  // Resolved for modelName, not the stored preference.
   connectionMode: ConnectionMode;
   modelName: ChatModel;
 }

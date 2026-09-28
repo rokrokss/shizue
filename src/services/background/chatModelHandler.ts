@@ -1,9 +1,9 @@
 import { STREAM_FLUSH_THRESHOLD_0, STREAM_FLUSH_THRESHOLD_1 } from '@/config/constants';
 import { getCurrentLanguage } from '@/entrypoints/background/states/language';
 import {
+  getConnectionModeFor,
   getCurrentAnthropicKey,
   getCurrentChatModel,
-  getCurrentConnectionMode,
   getCurrentGeminiKey,
   getCurrentOpenaiKey,
   getCurrentOpenrouterKey,
@@ -28,8 +28,8 @@ function getChatModelPreset(): ModelPreset {
   const geminiKey = getCurrentGeminiKey();
   const anthropicKey = getCurrentAnthropicKey();
   const openrouterKey = getCurrentOpenrouterKey();
-  const connectionMode = getCurrentConnectionMode();
   const modelName = getCurrentChatModel();
+  const connectionMode = getConnectionModeFor(modelName);
   return { openaiKey, geminiKey, anthropicKey, openrouterKey, connectionMode, modelName };
 }
 
@@ -170,7 +170,7 @@ export class ChatModelHandler {
       const initialSystemMessage = getInitialSystemMessage(currentLang);
       const initialAIMessage = getInitialAIMessage(currentLang);
       const modelName = getCurrentChatModel();
-      const connectionMode = getCurrentConnectionMode();
+      const connectionMode = getConnectionModeFor(modelName);
 
       const messages = [
         new SystemMessage(initialSystemMessage),
@@ -249,7 +249,7 @@ export class ChatModelHandler {
       const initialSystemMessage = getInitialSystemMessage(currentLang);
       const initialAIMessage = getInitialAIMessage(currentLang);
       const modelName = getCurrentChatModel();
-      const connectionMode = getCurrentConnectionMode();
+      const connectionMode = getConnectionModeFor(modelName);
 
       const historyForModelInput = fullThreadHistory.slice(0, messageIdxToRetry);
 

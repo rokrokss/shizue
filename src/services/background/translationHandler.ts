@@ -1,7 +1,7 @@
 import { getTranslationTargetLanguage } from '@/entrypoints/background/states/language';
 import {
+  getConnectionModeFor,
   getCurrentAnthropicKey,
-  getCurrentConnectionMode,
   getCurrentGeminiKey,
   getCurrentOpenaiKey,
   getCurrentOpenrouterKey,
@@ -57,8 +57,8 @@ function getTranslationModelPreset(): ModelPreset {
   const geminiKey = getCurrentGeminiKey();
   const anthropicKey = getCurrentAnthropicKey();
   const openrouterKey = getCurrentOpenrouterKey();
-  const connectionMode = getCurrentConnectionMode();
   const modelName = getCurrentTranslateModel();
+  const connectionMode = getConnectionModeFor(modelName);
   return { openaiKey, geminiKey, anthropicKey, openrouterKey, connectionMode, modelName };
 }
 
