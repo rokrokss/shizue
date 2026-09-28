@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.5
+
+- Chat: tildes (e.g. "3~5") no longer render as strikethrough
+
 ## v0.2.4
 
 - Onboarding: fix the provider dropdown showing OpenAI while OpenRouter was selected
