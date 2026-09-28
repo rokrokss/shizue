@@ -193,7 +193,7 @@ Three-layer state system with different purposes:
 ### Background Service Worker State Caching
 **Pattern**: `entrypoints/background/states/models/index.ts` maintains in-memory cache of API keys and model selections, synchronized via `chrome.storage.onChanged` listeners.
 
-The cache is filled asynchronously after every service worker start, so handlers must `await whenBackgroundStateReady()` (`states/ready.ts`) before reading it. The message router and the chat port listener already do this.
+The cache is filled asynchronously after every service worker start, so handlers must `await whenBackgroundStateReady()` (`states/ready.ts`) before reading it. The message router and the chat port listener already do this. The router skips the wait for panel-opening messages: `chrome.sidePanel.open()` must be called synchronously within the sender's user gesture, and any `await` before it loses the gesture.
 
 **When adding new LLM providers**:
 1. Add cache variable: `let newProviderKey: string | undefined`
