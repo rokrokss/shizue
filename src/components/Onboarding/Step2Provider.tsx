@@ -35,11 +35,11 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
   const [isInvalidApiKey, setIsInvalidApiKey] = useState(false);
   const [canProceed, setCanProceed] = useState(false);
   const [apiKey, setApiKey] = useState(
-    process.env.NODE_ENV === 'development' ? import.meta.env.WXT_OPENAI_API_KEY : ''
+    process.env.NODE_ENV === 'development' ? import.meta.env.WXT_OPENROUTER_API_KEY : ''
   );
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [selectedProvider, setSelectedProvider] = useState<ApiKeyProvider>('openai-api-key');
+  const [selectedProvider, setSelectedProvider] = useState<ApiKeyProvider>('openrouter-api-key');
   const setOpenAIKey = useSetOpenAIKey();
   const setGeminiKey = useSetGeminiKey();
   const setAnthropicKey = useSetAnthropicKey();
@@ -116,6 +116,11 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
         className="sz:font-ycom"
         options={[
           {
+            value: 'openrouter-api-key',
+            label: t('onboarding.selectProvider.openRouterApiKey.title'),
+            className: 'sz:font-ycom',
+          },
+          {
             value: 'openai-api-key',
             label: t('onboarding.selectProvider.openaiApiKey.title'),
             className: 'sz:font-ycom',
@@ -128,11 +133,6 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
           {
             value: 'anthropic-api-key',
             label: t('onboarding.selectProvider.anthropicApiKey'),
-            className: 'sz:font-ycom',
-          },
-          {
-            value: 'openrouter-api-key',
-            label: t('onboarding.selectProvider.openRouterApiKey.title'),
             className: 'sz:font-ycom',
           },
           {
