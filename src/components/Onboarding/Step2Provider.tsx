@@ -111,7 +111,7 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
         {lines[0]}
       </div>
       <Select
-        defaultValue="openai-api-key"
+        value={selectedProvider}
         onChange={handleSelect}
         className="sz:font-ycom"
         options={[
