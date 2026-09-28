@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.2
+
+- Fix the side panel not opening from the floating button (and its summarize, memo and image actions)
+- Settings: OpenRouter is now the first option under AI Provider; the Connection setting is gone
+- Each model uses whichever of its provider key and the OpenRouter key is registered; with both, the new "Prefer OpenRouter" checkbox decides
+
 ## v0.2.1
 
 - Support OpenRouter: one OpenRouter API key for every model (Settings → Models → Connection)
