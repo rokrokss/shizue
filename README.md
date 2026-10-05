@@ -25,17 +25,23 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 ### 💬 AI Chat Sidebar:
   - Quickly launch the sidebar using a keyboard shortcut (default: Ctrl/Cmd+Shift+E) to interact with LLMs via a side panel for queries, brainstorming, or information retrieval without navigating away from the current page.
 
-<img src="store/out/screenshot-1-hero.png" alt="Summarizing a page in the Shizue side panel" width="640" />
+<p align="center">
+  <img src="store/out/screenshot-1-hero.png" alt="Summarizing a page in the Shizue side panel" width="640" />
+</p>
 
 ### 🌐 Bilingual Reading:
   - View web content in two languages side-by-side, aiding in language learning or comprehension of foreign-language texts.
 
-<img src="store/out/screenshot-2-translate.png" alt="Bilingual page translation" width="640" />
+<p align="center">
+  <img src="store/out/screenshot-2-translate.png" alt="Bilingual page translation" width="640" />
+</p>
 
 ### 📺 LLM Translations for Youtube Captions:
   - Generate LLM based translations for Youtube captions in realtime.
 
-<img src="store/out/screenshot-3-youtube.png" alt="Bilingual YouTube captions" width="640" />
+<p align="center">
+  <img src="store/out/screenshot-3-youtube.png" alt="Bilingual YouTube captions" width="640" />
+</p>
 
 ### 📝 Memo & Note-taking:
   - Create, edit, and manage personal notes directly within the extension. Features auto-save, pinning important memos, and organized note management.
@@ -47,7 +53,9 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   - Right-click on any page to translate or summarize it instantly
   - Right-click on images to describe their content or extract text (OCR) using AI
 
-<img src="store/out/screenshot-4-context-menu.png" alt="Extracting text from an image via the context menu" width="640" />
+<p align="center">
+  <img src="store/out/screenshot-4-context-menu.png" alt="Extracting text from an image via the context menu" width="640" />
+</p>
 
 ### 🌍 Multi-language Support:
   - Available in 23 languages including English, Spanish, French, German, Japanese, Chinese, Korean, Arabic, Hindi, and more.
@@ -63,7 +71,9 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   - Supports personal OpenAI/Gemini/Anthropic API keys for direct and the most cost-effective usage of models. Users are billed directly by those vendors.
   - Or use one OpenRouter API key for every model, billed by OpenRouter.
 
-<img src="store/out/screenshot-5-models.png" alt="Model selection, token usage, and local storage" width="640" />
+<p align="center">
+  <img src="store/out/screenshot-5-models.png" alt="Model selection, token usage, and local storage" width="640" />
+</p>
 
 ### 🎨 Color Themes:
   - Offers Light and Dark mode options for interface customization.
