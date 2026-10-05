@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="article.css">
+<style>
+  .canvas { width: 1280px; height: 800px; }
+  .top { position: absolute; left: 64px; top: 52px; }
+  .headline { font-size: 66px; margin-top: 22px; }
+  .sub { font-size: 23px; margin-top: 14px; }
+  .browser { left: 64px; top: 290px; width: 1152px; height: 560px; }
+  .article { padding: 26px 64px 0; }
+  .article h2 { font-size: 36px; margin-bottom: 2px; }
+  .article h2.tr { font: 600 22px/1.3 var(--sys); color: rgba(29, 29, 27, 0.5); margin: 0 0 10px; letter-spacing: -0.01em; }
+  .article p { max-width: 660px; margin-bottom: 4px; }
+  .article p.tr { margin-bottom: 16px; }
+  .lang {
+    position: absolute; right: 64px; top: 196px;
+    display: flex; align-items: center; gap: 12px;
+    font: 700 22px var(--head); color: var(--ink); letter-spacing: -0.01em;
+  }
+  .lang .pill { background: #fff; border: 2px solid var(--ink); border-radius: 12px; padding: 8px 14px; box-shadow: 3px 3px 0 var(--ink); }
+  .lang .arrow { font: 400 22px var(--pixel); color: var(--mint-deep); }
+  .perch { position: absolute; top: 290px; transform: translateY(-100%); }
+
+  .popover {
+    position: absolute; right: 70px; top: 96px; width: 372px;
+    background: #fff; border-radius: 10px; padding: 16px 16px 18px;
+    box-shadow: 0 10px 30px -6px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.06);
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .popover .t { font: 400 16px var(--ycom); text-align: center; color: #000; }
+  .popover .row { white-space: nowrap; display: flex; align-items: center; justify-content: space-between; gap: 10px; font: 400 14px var(--ycom); color: #374151; }
+  .popover .sel {
+    width: 172px; height: 26px; border: 1px solid #d9d9d9; border-radius: 4px;
+    font: 400 13px var(--ycom); color: #374151; padding: 0 8px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .popover .sel.active { border-color: var(--mint); box-shadow: 0 0 0 2px rgba(50, 204, 188, 0.15); }
+  .popover .sel small { color: #9ca3af; font-size: 11px; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="glow" style="left:820px;top:-160px;width:560px;height:420px;background:rgba(144,247,236,.5)"></div>
+  <div class="glow" style="left:-200px;top:460px;width:520px;height:420px;background:rgba(232,181,172,.3)"></div>
+
+  <div class="top">
+    <span class="eyebrow"><span class="dot"></span>Bilingual reading</span>
+    <h1 class="headline">Read any page in <span class="mark">two languages</span></h1>
+    <p class="sub">Translations appear under each paragraph. The layout stays intact.</p>
+  </div>
+
+  <div class="lang"><span class="pill">English</span><span class="arrow">→</span><span class="pill">한국어</span></div>
+
+  <div class="perch sprite sp-chicken-eat" style="--s:4;left:150px"></div>
+  <div class="perch sprite sp-bluechicken" style="--s:4;left:220px;--f:3"></div>
+
+  <div class="browser">
+    <div class="bar">
+      <div class="lights"><i></i><i></i><i></i></div>
+      <div class="url">🔒 fieldnotes.example/biology/octopus-sleep</div>
+      <div class="ext"><img src="../../src/public/icon.svg"></div>
+    </div>
+    <div class="body">
+      <div class="page article">
+        <div class="masthead"><b>Field</b> Notes <span>Biology · Oceans · Behavior</span></div>
+        <div class="kicker">Science</div>
+        <h2>Do octopuses dream?</h2>
+        <h2 class="tr">문어도 꿈을 꿀까?</h2>
+        <p>When octopuses sleep, their skin flickers through colors and textures, replaying patterns they used while awake.</p>
+        <p class="tr">문어가 잠들면 피부가 여러 색과 질감으로 깜빡이며, 깨어 있을 때 썼던 무늬를 다시 재생합니다.</p>
+        <p>Researchers recorded short bursts of “active sleep” about once an hour — a rhythm strikingly similar to REM sleep in mammals.</p>
+        <p class="tr">연구진은 약 한 시간마다 짧은 ‘활동성 수면’을 기록했습니다. 포유류의 렘수면과 놀랄 만큼 닮은 리듬입니다.</p>
+        <p>The finding hints that dreaming may have evolved more than once, in brains built along entirely different lines.</p>
+        <p class="tr">이 발견은 꿈이 전혀 다른 구조의 뇌에서 한 번 이상 진화했을 가능성을 시사합니다.</p>
+      </div>
+
+      <div class="popover">
+        <div class="t">Translate settings</div>
+        <div class="row">Translation Model<span class="sel">Gemini 3.5 Flash-Lite <small>▾</small></span></div>
+        <div class="row">Target Language<span class="sel active">한국어 <small>Korean ▾</small></span></div>
+      </div>
+
+      <div class="toggle-menu" style="top:40px">
+        <div class="stack">
+          <span><img src="../../src/assets/icons/note.svg"></span>
+          <span><img src="../../src/assets/icons/setting.svg"></span>
+          <span class="on"><img src="../../src/assets/icons/translate_check.svg"></span>
+          <span><img src="../../src/assets/icons/book.svg"></span>
+        </div>
+        <div class="fab"><img src="../../src/public/icon.svg" style="width:26px;height:26px;image-rendering:pixelated"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

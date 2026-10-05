@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<style>
+  .canvas { width: 1280px; height: 800px; }
+  .top { position: absolute; left: 64px; top: 52px; }
+  .dark .eyebrow { background: #13211f; color: #e9f6f3; border-color: var(--mint-2); box-shadow: 3px 3px 0 var(--mint-2); }
+  .dark .eyebrow .dot { outline-color: var(--mint-2); }
+  .dark .headline { color: #f2fbf9; }
+  .dark .mark { color: var(--mint-2); }
+  .dark .mark::after { display: none; }
+  .dark .sub { color: #a8bfbb; }
+  .headline { font-size: 66px; margin-top: 22px; }
+  .sub { font-size: 23px; margin-top: 14px; }
+
+  .bento {
+    position: absolute; left: 64px; top: 262px; width: 1152px; height: 506px;
+    display: grid; grid-template-columns: 452px 334px 334px; grid-template-rows: 245px 245px; gap: 16px;
+  }
+  .tile {
+    position: relative; overflow: hidden;
+    background: #14211f; border: 1px solid rgba(144, 247, 236, 0.13); border-radius: 18px;
+    padding: 22px 24px; color: #e9f6f3;
+  }
+  .tile h3 { font: 700 22px/1.15 var(--head); letter-spacing: -0.02em; color: #f2fbf9; }
+  .tile p.d { font: 500 15px/1.4 var(--head); color: #9fb5b1; margin-top: 6px; letter-spacing: -0.005em; }
+  .tile .lbl { font: 400 12px var(--pixel); text-transform: uppercase; color: var(--mint-2); letter-spacing: 0.04em; margin-bottom: 8px; }
+
+  /* settings (Models tab) */
+  .A { grid-row: span 2; padding: 0; display: flex; flex-direction: column; }
+  .A .head { padding: 22px 24px 14px; }
+  .settings { flex: 1; margin: 0 24px; background: #1c1d26; border-radius: 12px 12px 0 0; border: 1px solid #2c2f3c; border-bottom: 0; padding: 14px 18px; font-family: var(--ycom); color: #e5e7eb; }
+  .tabs { display: flex; gap: 22px; font-size: 14px; color: #9ca3af; border-bottom: 1px solid #2c2f3c; margin: 0 -18px 14px; padding: 0 18px; }
+  .tabs span { padding-bottom: 8px; }
+  .tabs .on { color: var(--mint); border-bottom: 2px solid var(--mint); }
+  .srow { display: flex; align-items: center; justify-content: space-between; font-size: 14px; margin: 10px 0; }
+  .sel { width: 210px; height: 30px; border: 1px solid #424242; border-radius: 6px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: #f3f4f6; background: #141414; }
+  .sel.focus { border-color: var(--mint); box-shadow: 0 0 0 2px rgba(50, 204, 188, 0.2); }
+  .sel small { color: #6b7280; }
+  .tags { display: flex; gap: 4px; }
+  .tag { font: 400 11px var(--sys); padding: 1px 7px; border-radius: 4px; border: 1px solid #424242; color: #a3a3a3; background: #1f1f1f; }
+  .tag.ok { color: #49aa19; border-color: #274916; background: #162312; }
+  .dd { position: absolute; left: 212px; width: 210px; top: 248px; background: #1f1f1f; border-radius: 8px; padding: 4px; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5); font: 400 13px var(--ycom); }
+  .dd div { height: 29px; display: flex; align-items: center; padding: 0 10px; border-radius: 4px; color: #e5e7eb; }
+  .dd div.on { background: rgba(50, 204, 188, 0.22); color: #fff; }
+  .dd div i { margin-left: auto; font-style: normal; font: 400 10px var(--pixel); color: #7b8a87; }
+
+  /* token usage */
+  .bars { position: absolute; left: 24px; right: 24px; bottom: 22px; height: 84px; display: flex; align-items: flex-end; gap: 10px; }
+  .bars b { flex: 1; background: linear-gradient(180deg, var(--mint-2), var(--mint)); border-radius: 3px 3px 0 0; }
+  .bars b.lo { opacity: 0.45; }
+
+  /* privacy */
+  .lock { position: absolute; right: 22px; bottom: 20px; image-rendering: pixelated; }
+
+  /* memo */
+  .memo { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; font-family: var(--ycom); }
+  .memo .s { height: 28px; border: 1px solid #2c2f3c; border-radius: 6px; font-size: 13px; color: #6b7280; padding: 0 10px; display: flex; align-items: center; }
+  .memo .m { background: #1c1d26; border-radius: 6px; padding: 7px 10px; font-size: 13px; color: #e5e7eb; display: flex; justify-content: space-between; }
+  .memo .m span { color: #6b7280; font-size: 11px; }
+
+  .E { background: linear-gradient(135deg, #90f7ec 0%, #32ccbc 100%); border: 0; color: var(--ink); }
+  .E h3 { color: var(--ink); font-size: 26px; }
+  .E p.d { color: #14524b; }
+  .E .facts { position: absolute; left: 24px; bottom: 20px; display: flex; flex-direction: column; gap: 6px; font: 400 13px var(--pixel); text-transform: uppercase; color: var(--ink); }
+  .E .sprite { position: absolute; right: 22px; bottom: 18px; }
+</style>
+</head>
+<body>
+<div class="canvas dark">
+  <div class="glow" style="left:780px;top:-200px;width:620px;height:420px;background:rgba(50,204,188,.22)"></div>
+
+  <div class="top">
+    <span class="eyebrow"><span class="dot"></span>Bring your own key</span>
+    <h1 class="headline">Your key. <span class="mark">Your data.</span></h1>
+    <p class="sub">No subscription, no paywalled models. Pay your provider only for what you use.</p>
+  </div>
+
+  <div class="bento">
+    <div class="tile A">
+      <div class="head">
+        <div class="lbl">8 models · 4 providers</div>
+        <h3>Pick any model, switch anytime</h3>
+      </div>
+      <div class="settings">
+        <div class="tabs"><span>General</span><span class="on">Models</span><span>Layout</span></div>
+        <div class="srow">AI Provider<span class="sel">Use OpenRouter API Key <small>▾</small></span></div>
+        <div class="srow">Registered<span class="tags"><span class="tag ok">OpenAI</span><span class="tag">Gemini</span><span class="tag ok">Anthropic</span><span class="tag ok">OpenRouter</span></span></div>
+        <div class="srow">Chat Model<span class="sel focus">Claude Sonnet 5 <small>▴</small></span></div>
+        <div class="dd">
+          <div>GPT-6 Sol</div>
+          <div>GPT-6 Luna</div>
+          <div>Gemini 3.8 Flash</div>
+          <div>Gemini 3.5 Flash-Lite</div>
+          <div class="on">Claude Sonnet 5</div>
+          <div>Claude Haiku 4.5</div>
+          <div>DeepSeek V4 Pro</div>
+          <div>DeepSeek V4.1 Flash</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tile">
+      <div class="lbl">Token usage</div>
+      <h3>Track your token usage</h3>
+      <p class="d">Per model, per day.</p>
+      <div class="bars"><b class="lo" style="height:38%"></b><b class="lo" style="height:62%"></b><b class="lo" style="height:30%"></b><b class="lo" style="height:78%"></b><b class="lo" style="height:52%"></b><b class="lo" style="height:44%"></b><b style="height:92%"></b></div>
+    </div>
+
+    <div class="tile">
+      <div class="lbl">Private by design</div>
+      <h3>Stays in your browser</h3>
+      <p class="d">Keys, chats and memos are stored locally. Pages go only to the AI you choose.</p>
+      <svg class="lock" width="64" height="72" viewBox="0 0 16 18" shape-rendering="crispEdges">
+        <path fill="#90f7ec" d="M5 1h6v1h1v1h1v5h-2V3h-1V2H6v1H5v5H3V3h1V2h1z"/>
+        <path fill="#32ccbc" d="M1 8h14v9H1z"/>
+        <path fill="#0f1a19" d="M7 10h2v1h1v2H9v2H7v-2H6v-2h1z"/>
+      </svg>
+    </div>
+
+    <div class="tile">
+      <div class="lbl">Memo</div>
+      <h3>Notes beside every tab</h3>
+      <div class="memo">
+        <div class="s">🔍 Search memo</div>
+        <div class="m">📌 Kyoto café list <span>2h ago</span></div>
+        <div class="m">Octopus sleep — sources <span>1d ago</span></div>
+      </div>
+    </div>
+
+    <div class="tile E">
+      <h3>Free &amp; open source</h3>
+      <p class="d">MIT licensed. Every feature, no paywall.</p>
+      <div class="facts"><span>23 languages</span><span>Light + dark</span><span>No sign-up</span></div>
+      <div class="sprite sp-stand" style="--s:5;--f:3"></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

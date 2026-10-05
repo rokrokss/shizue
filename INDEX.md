@@ -110,6 +110,11 @@ src/
 ├── locales/           # i18n translations (23 languages)
 ├── providers/         # React context providers
 └── services/          # Business logic
+
+store/
+├── src/               # HTML/CSS sources for Chrome Web Store images
+├── out/               # Rendered PNGs (screenshots, promo tiles, store icon)
+└── render.sh          # Renders src → out with headless Chrome
 ```
 
 ## 🧩 Key Components
@@ -204,6 +209,12 @@ pnpm compile
 2. Open: `chrome://extensions`
 3. Enable: Developer mode
 4. Load: `dist/chrome-mv3/`
+
+### Chrome Web Store Images
+```bash
+store/render.sh                    # Render every image in store/src to store/out
+store/render.sh screenshot-1-hero  # Or only the named ones
+```
 
 ## ⚙️ Configuration
 

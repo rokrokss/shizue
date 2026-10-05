@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="article.css">
+<style>
+  .canvas { width: 1280px; height: 800px; }
+  .top { position: absolute; left: 64px; top: 52px; }
+  .headline { font-size: 66px; margin-top: 22px; }
+  .sub { font-size: 23px; margin-top: 14px; }
+  .browser { left: 64px; top: 290px; width: 1152px; height: 540px; }
+  .perch { position: absolute; top: 290px; transform: translateY(-100%); }
+  .actions { position: absolute; right: 64px; top: 166px; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+
+  .article h2 { font-size: 30px; }
+  .board {
+    width: 340px; height: 250px; border-radius: 8px; position: relative;
+    background: #2c3b36; border: 10px solid #a9784f;
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.35);
+    color: #f4f2e6; font-family: 'Hiragino Maru Gothic ProN', 'Hiragino Sans', sans-serif;
+    padding: 18px 26px;
+  }
+  .board .h { font-size: 24px; letter-spacing: 0.1em; text-align: center; border-bottom: 2px dashed rgba(244, 242, 230, 0.4); padding-bottom: 8px; margin-bottom: 12px; }
+  .board .r { display: flex; justify-content: space-between; font-size: 20px; margin: 7px 0; }
+  .board .r b { font-weight: 400; color: #ffe6a8; }
+  .board .leaf { position: absolute; right: 18px; bottom: 12px; width: 40px; height: 22px; border-radius: 0 100% 0 100%; background: #8fd19e; opacity: 0.8; }
+
+  .cm {
+    position: absolute; background: #fff; border-radius: 8px; padding: 6px 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.06);
+    font: 400 13.5px var(--sys); color: #1f1f1f; width: 236px;
+  }
+  .cm div { height: 28px; display: flex; align-items: center; padding: 0 14px 0 34px; position: relative; }
+  .cm hr { border: 0; border-top: 1px solid #e6e6e6; margin: 5px 0; }
+  .cm .hl { background: #e6f9f6; }
+  .cm .hl2 { background: var(--mint); color: #fff; }
+  .cm img { position: absolute; left: 10px; width: 16px; height: 16px; image-rendering: pixelated; }
+  .cm .arr { margin-left: auto; color: #666; }
+  .cursor { position: absolute; width: 22px; height: 22px; }
+
+  .panel .msgs { gap: 10px; }
+  .human .bubble img { display: block; width: 150px; border-radius: 4px; border: 1px solid #d1d5db; margin: 4px 0 8px auto; }
+  .ai .ocr { font-family: 'Hiragino Sans', sans-serif; font-size: 13.5px; background: #f7f7f5; border-radius: 6px; padding: 8px 10px; margin: 4px 0 6px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="glow" style="left:820px;top:-160px;width:560px;height:420px;background:rgba(144,247,236,.5)"></div>
+  <div class="glow" style="left:-200px;top:460px;width:520px;height:420px;background:rgba(232,181,172,.3)"></div>
+
+  <div class="top">
+    <span class="eyebrow"><span class="dot"></span>Context menu</span>
+    <h1 class="headline">Right-click. <span class="mark">Ask Shizue.</span></h1>
+    <p class="sub">Describe images, pull text out of them, or summarize the page.</p>
+  </div>
+
+  <div class="perch sprite sp-walk" style="--s:5;left:1010px;--f:2"></div>
+  <div class="perch sprite sp-babycow-walk" style="--s:4;left:1090px;--f:1"></div>
+
+  <div class="browser">
+    <div class="bar">
+      <div class="lights"><i></i><i></i><i></i></div>
+      <div class="url">🔒 slowtravel.example/kyoto/cafe-days</div>
+      <div class="ext"><img src="../../src/public/icon.svg"></div>
+    </div>
+    <div class="body">
+      <div class="page article">
+        <div class="masthead"><b>Slow</b> Travel <span>Japan · Food · Notes</span></div>
+        <h2>Three days of cafés in Kyoto</h2>
+        <div class="byline">Day 2 · Gion</div>
+        <div class="board">
+          <div class="h">本日のおすすめ</div>
+          <div class="r">抹茶ラテ <b>550円</b></div>
+          <div class="r">ほうじ茶ラテ <b>520円</b></div>
+          <div class="r">季節のケーキ <b>600円</b></div>
+          <div class="leaf"></div>
+        </div>
+        <p style="margin-top:16px;font-size:16px">The chalkboard outside was hand-written, so I just right-clicked it…</p>
+
+        <div class="cm" style="left:384px;top:272px;width:214px">
+          <div>Open image in new tab</div>
+          <div>Save image as…</div>
+          <div>Copy image</div>
+          <hr>
+          <div class="hl"><img src="../../src/public/icon.svg">Shizue<span class="arr">▸</span></div>
+        </div>
+        <div class="cm" style="left:594px;top:366px;width:196px">
+          <div>Describe this image</div>
+          <div class="hl2">Extract text from image</div>
+        </div>
+        <svg class="cursor" style="left:752px;top:410px" viewBox="0 0 24 24"><path d="M5 2l14 11-6.2 1.1 3.8 7.4-2.8 1.4-3.7-7.5L5 19.5z" fill="#111" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      </div>
+
+      <div class="panel">
+        <div class="ph"><img src="../../src/public/icon.svg">Shizue<span class="x">⌖ ✕</span></div>
+        <div class="msgs">
+          <div class="human">
+            <div class="sprite sp-chicken" style="--s:2.5;margin:2px 0 0 4px"></div>
+            <div class="bubble">
+              <div style="width:128px;height:80px;margin:4px 0 8px auto;border-radius:4px;background:#2c3b36;border:4px solid #a9784f;color:#f4f2e6;font:11px 'Hiragino Sans';padding:6px 8px;text-align:left;line-height:1.5">本日のおすすめ<br>抹茶ラテ　550円<br>ほうじ茶ラテ 520円</div>
+              Please extract text from this image.
+            </div>
+          </div>
+          <div class="ai">
+            <div class="ocr">本日のおすすめ<br>抹茶ラテ 550円<br>ほうじ茶ラテ 520円<br>季節のケーキ 600円</div>
+          </div>
+          <div class="human">
+            <div class="sprite sp-babycow" style="--s:2.15;margin:2px 0 0 4px"></div>
+            <div class="bubble">What does it say in English?</div>
+          </div>
+          <div class="ai">
+            <p><b>Today’s specials:</b> matcha latte ¥550, hojicha latte ¥520 and seasonal cake ¥600.</p>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

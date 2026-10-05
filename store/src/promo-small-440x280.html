@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<style>
+  .canvas {
+    width: 440px; height: 280px;
+    background-color: #32ccbc;
+    background-image:
+      radial-gradient(rgba(16, 48, 43, 0.13) 1.2px, transparent 1.3px),
+      linear-gradient(135deg, #90f7ec 0%, #32ccbc 70%);
+    background-size: 16px 16px, 100% 100%;
+    background-position: 8px 8px, 0 0;
+  }
+  .mascot { position: absolute; left: 40px; top: 66px; width: 132px; height: 132px; image-rendering: pixelated; filter: drop-shadow(5px 5px 0 rgba(16, 48, 43, 0.9)); }
+  .name { position: absolute; left: 198px; top: 74px; font: 800 64px/1 var(--head); font-variation-settings: 'opsz' 96; letter-spacing: -0.04em; color: var(--ink); }
+  .tag { position: absolute; left: 201px; top: 150px; font: 700 23px/1.12 var(--head); letter-spacing: -0.02em; color: #0f4a43; }
+  .grass { position: absolute; left: 0; right: 0; bottom: 0; height: 30px; background: #1f8f83; }
+  .grass::before { content: ''; position: absolute; left: 0; right: 0; top: -8px; height: 8px; background: repeating-linear-gradient(90deg, #1f8f83 0 8px, transparent 8px 16px); }
+  .sprite { position: absolute; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <img class="mascot" src="../../src/public/icon.svg">
+  <div class="name">Shizue</div>
+  <div class="tag">AI chat &amp; translation<br>on every page</div>
+  <div class="grass"></div>
+  <div class="sprite sp-cow" style="--s:2;left:300px;bottom:30px;--f:1"></div>
+  <div class="sprite sp-chicken" style="--s:2;left:370px;bottom:30px"></div>
+</div>
+</body>
+</html>

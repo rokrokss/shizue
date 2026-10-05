@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="article.css">
+<style>
+  .canvas { width: 1280px; height: 800px; }
+  .top { position: absolute; left: 64px; top: 52px; right: 64px; }
+  .headline { font-size: 66px; margin-top: 22px; }
+  .sub { font-size: 23px; margin-top: 14px; max-width: 760px; }
+  .chips { position: absolute; right: 64px; top: 50px; align-items: center; }
+  .chips .lbl { font: 400 14px var(--pixel); color: var(--ink-2); text-transform: uppercase; margin-right: 4px; }
+  .browser { left: 64px; top: 300px; width: 1152px; height: 540px; }
+  .perch { position: absolute; top: 300px; transform: translateY(-100%); }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="glow" style="left:760px;top:-120px;width:620px;height:420px;background:rgba(144,247,236,.55)"></div>
+  <div class="glow" style="left:-160px;top:420px;width:520px;height:420px;background:rgba(232,181,172,.35)"></div>
+
+  <div class="top">
+    <span class="eyebrow"><span class="dot"></span>Free · Open source · Bring your own key</span>
+    <h1 class="headline">Your AI sidekick on <span class="mark">every page</span></h1>
+    <p class="sub">Summarize, chat and translate without leaving the tab.</p>
+  </div>
+
+  <div class="chips">
+    <span class="lbl">Works with</span>
+    <span class="chip"><i style="background:#10a37f"></i>GPT-6</span>
+    <span class="chip"><i style="background:#d97757"></i>Claude</span>
+    <span class="chip"><i style="background:#4b8cf5"></i>Gemini</span>
+    <span class="chip"><i style="background:#4d6bfe"></i>DeepSeek</span>
+  </div>
+
+  <!-- pixel friends perched on the window -->
+  <div class="perch sprite sp-cow" style="--s:4;left:700px;--f:1"></div>
+  <div class="perch sprite sp-babycow" style="--s:4;left:822px;"></div>
+  <div class="perch sprite sp-stand" style="--s:6;left:1000px;"></div>
+  <div class="perch sprite sp-chicken" style="--s:4;left:1110px;--f:2"></div>
+
+  <div class="browser">
+    <div class="bar">
+      <div class="lights"><i></i><i></i><i></i></div>
+      <div class="url">🔒 wayfarer-weekly.example/rail/night-trains</div>
+      <div class="ext"><img src="../../src/public/icon.svg"></div>
+    </div>
+    <div class="body">
+      <div class="page article">
+        <div class="masthead"><b>Wayfarer</b> Weekly <span>Travel · Rail · Slow living</span></div>
+        <div class="kicker">Long read</div>
+        <h2>The quiet comeback of the night train</h2>
+        <div class="byline">By Mara Lindqvist · 9 min read</div>
+        <div class="hero-art">
+          <div class="sun"></div>
+          <div class="hill h1"></div><div class="hill h2"></div>
+          <div class="train"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="rail"></div>
+        </div>
+        <p>For decades, sleeper trains seemed destined for the history books. Budget airlines were faster, cheaper and everywhere. Yet across Europe, overnight routes are quietly filling up again — and operators are scrambling to add carriages.</p>
+        <p>The appeal is simple: board after dinner in one capital, wake up in another, and skip the airport entirely.</p>
+      </div>
+
+      <div class="toggle-menu" style="right:360px;top:250px">
+        <div class="fab"><img src="../../src/public/icon.svg" style="width:26px;height:26px;image-rendering:pixelated"></div>
+      </div>
+
+      <div class="panel">
+        <div class="ph"><img src="../../src/public/icon.svg">Shizue<span class="x">⌖ ✕</span></div>
+        <div class="msgs">
+          <div class="human">
+            <div class="sprite sp-babycow-walk" style="--s:2.1;margin:2px 0 0 4px"></div>
+            <div class="bubble">Summarize this page! Shizue!
+              <div class="link">🔗 The quiet comeback of the n...</div>
+            </div>
+          </div>
+          <div class="ai">
+            <p><b>Overnight trains are making a comeback in Europe</b> as travelers swap short flights for sleeper routes.</p>
+            <h4>Key points</h4>
+            <ul>
+              <li><b>New routes</b> link Paris, Berlin, Vienna and Rome.</li>
+              <li><b>Demand</b> is driven by climate-conscious travelers and city-center arrivals.</li>
+              <li><b>Price</b> is still the biggest hurdle versus budget airlines.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="composer">
+          <div class="tools">
+            <span><svg viewBox="64 64 896 896" fill="currentColor"><path d="M880 298.4H521L403.7 186.2a8.15 8.15 0 00-5.5-2.2H144c-17.7 0-32 14.3-32 32v592c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V330.4c0-17.7-14.3-32-32-32zM840 768H184V256h188.5l119.6 114.4H840V768z"/></svg></span>
+            <span><svg viewBox="64 64 896 896" fill="currentColor"><path d="M288 421a48 48 0 1096 0 48 48 0 10-96 0zm352 0a48 48 0 1096 0 48 48 0 10-96 0zM512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm263 711c-34.2 34.2-74 61-118.3 79.8C611 874.2 562.3 884 512 884c-50.3 0-99-9.8-144.8-29.2A370.4 370.4 0 01248.9 775c-34.2-34.2-61-74-79.8-118.3C149.8 611 140 562.3 140 512s9.8-99 29.2-144.8A370.4 370.4 0 01249 248.9c34.2-34.2 74-61 118.3-79.8C413 149.8 461.7 140 512 140c50.3 0 99 9.8 144.8 29.2A370.4 370.4 0 01775.1 249c34.2 34.2 61 74 79.8 118.3C874.2 413 884 461.7 884 512s-9.8 99-29.2 144.8A368.89 368.89 0 01775 775zM664 533h-48.1c-4.2 0-7.8 3.2-8.1 7.4C604 589.9 562.5 629 512 629s-92.1-39.1-95.8-88.6c-.3-4.2-3.9-7.4-8.1-7.4H360a8 8 0 00-8 8.4c4.4 84.3 74.5 151.6 160 151.6s155.6-67.3 160-151.6a8 8 0 00-8-8.4z"/></svg></span>
+            <span><svg viewBox="64 64 896 896" fill="currentColor"><path d="M888 792H200V168c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v688c0 4.4 3.6 8 8 8h752c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM305.8 637.7c3.1 3.1 8.1 3.1 11.3 0l138.3-137.6L583 628.5c3.1 3.1 8.2 3.1 11.3 0l275.4-275.3c3.1-3.1 3.1-8.2 0-11.3l-39.6-39.6a8.03 8.03 0 00-11.3 0l-230 229.9L461.4 404a8.03 8.03 0 00-11.3 0L266.3 586.7a8.03 8.03 0 000 11.3l39.5 39.7z"/></svg></span>
+            <span><svg viewBox="64 64 896 896" fill="currentColor"><path d="M140 188h584v164h76V144c0-17.7-14.3-32-32-32H96c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h544v-76H140V188z"/><path d="M414.3 256h-60.6c-3.4 0-6.4 2.2-7.6 5.4L219 629.4c-.3.8-.4 1.7-.4 2.6 0 4.4 3.6 8 8 8h55.1c3.4 0 6.4-2.2 7.6-5.4L322 540h196.2L422 261.4a8.42 8.42 0 00-7.7-5.4zm12.4 228h-85.5L384 360.2 426.7 484zM936 528H800v-93c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v93H592c-13.3 0-24 10.7-24 24v176c0 13.3 10.7 24 24 24h136v152c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V752h136c13.3 0 24-10.7 24-24V552c0-13.3-10.7-24-24-24zM728 680h-88v-80h88v80zm160 0h-88v-80h88v80z"/></svg></span>
+            <span><svg viewBox="64 64 896 896" fill="currentColor"><path d="M928 160H96c-17.7 0-32 14.3-32 32v640c0 17.7 14.3 32 32 32h832c17.7 0 32-14.3 32-32V192c0-17.7-14.3-32-32-32zm-40 632H136v-39.9l138.5-164.3 150.1 178L658.1 489 888 761.6V792zm0-129.8L664.2 396.8c-3.2-3.8-9-3.8-12.2 0L424.6 666.4l-144-170.7c-3.2-3.8-9-3.8-12.2 0L136 652.7V232h752v430.2zM304 456a88 88 0 100-176 88 88 0 000 176zm0-116c15.5 0 28 12.5 28 28s-12.5 28-28 28-28-12.5-28-28 12.5-28 28-28z"/></svg></span>
+            <span><svg viewBox="64 64 896 896" fill="currentColor"><path d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 000-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 009.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"/></svg></span>
+            <span><svg viewBox="64 64 896 896" fill="currentColor"><path d="M912 192H328c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h584c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 284H328c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h584c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 284H328c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h584c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM104 228a56 56 0 10112 0 56 56 0 10-112 0zm0 284a56 56 0 10112 0 56 56 0 10-112 0zm0 284a56 56 0 10112 0 56 56 0 10-112 0z"/></svg></span>
+          </div>
+          <div class="input">Ask anything</div>
+          <div class="foot">Join me on Discord! 💬</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

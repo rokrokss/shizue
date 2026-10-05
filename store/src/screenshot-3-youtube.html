@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<style>
+  .canvas { width: 1280px; height: 800px; }
+  .top { position: absolute; left: 64px; top: 52px; }
+  .headline { font-size: 66px; margin-top: 22px; }
+  .sub { font-size: 23px; margin-top: 14px; }
+
+  .player {
+    position: absolute; left: 64px; top: 268px; width: 1152px; height: 500px;
+    border-radius: 16px; overflow: hidden; background: #000;
+    box-shadow: 0 30px 60px -20px rgba(16, 48, 43, 0.4), 0 12px 24px -12px rgba(16, 48, 43, 0.25);
+    font-family: Roboto, Arial, Helvetica, sans-serif;
+  }
+  /* video frame: a pixel-art alpine pasture */
+  .scene { position: absolute; inset: 0; background: linear-gradient(180deg, #8fd6e8 0%, #c6ecef 45%, #f4f2d3 75%); }
+  .scene .sun { position: absolute; left: 160px; top: 54px; width: 72px; height: 72px; background: #fff6cf; box-shadow: 0 0 0 10px rgba(255, 246, 207, 0.35); }
+  .scene .cloud { position: absolute; height: 22px; background: #fff; box-shadow: 22px -16px 0 0 #fff, 44px 0 0 0 #fff; width: 66px; }
+  .scene .mtn { position: absolute; bottom: 150px; }
+  .scene .m1 { left: 380px; width: 520px; height: 260px; background: #6aa9a3; clip-path: polygon(0 100%, 22% 52%, 30% 58%, 50% 8%, 62% 30%, 70% 22%, 100% 100%); }
+  .scene .m1s { left: 380px; width: 520px; height: 260px; background: #fff; clip-path: polygon(44% 21%, 50% 8%, 56% 19%, 53% 24%, 50% 20%, 47% 25%); }
+  .scene .m2 { left: -60px; width: 560px; height: 200px; background: #82bdb5; clip-path: polygon(0 100%, 35% 18%, 48% 36%, 60% 26%, 100% 100%); }
+  .scene .m3 { left: 760px; width: 520px; height: 210px; background: #7cb7af; clip-path: polygon(0 100%, 40% 20%, 55% 34%, 70% 10%, 100% 100%); }
+  .scene .meadow { position: absolute; left: 0; right: 0; bottom: 0; height: 170px; background: #9deadd; }
+  .scene .meadow::before { content: ''; position: absolute; left: 0; right: 0; top: -14px; height: 28px; background: repeating-linear-gradient(90deg, #9deadd 0 28px, transparent 28px 56px); }
+  .scene .fence { position: absolute; bottom: 120px; left: 0; right: 0; height: 40px;
+    background:
+      linear-gradient(#c79a6b, #c79a6b) 0 8px / 100% 6px no-repeat,
+      linear-gradient(#c79a6b, #c79a6b) 0 24px / 100% 6px no-repeat,
+      repeating-linear-gradient(90deg, #a87b52 0 10px, transparent 10px 120px); }
+  .scene .sprite { position: absolute; }
+
+  /* captions (mirrors Youtube/CaptionDisplay) */
+  .caps { position: absolute; left: 40px; right: 390px; bottom: 76px; text-align: center; font-size: 27px; line-height: 1.22; white-space: nowrap; }
+  .caps span { display: inline-block; padding: 4px 8px; background: rgba(8, 8, 8, 0.75); color: #fff; }
+  .caps .orig span { color: #e6e6e6; }
+
+  .controls { position: absolute; left: 0; right: 0; bottom: 0; height: 56px; padding: 0 16px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.55)); display: flex; align-items: center; gap: 18px; color: #fff; font-size: 14px; }
+  .progress { position: absolute; left: 16px; right: 16px; bottom: 50px; height: 4px; background: rgba(255, 255, 255, 0.3); }
+  .progress b { position: absolute; left: 0; top: 0; bottom: 0; width: 34%; background: #f00; }
+  .progress i { position: absolute; left: 34%; top: -5px; width: 13px; height: 13px; border-radius: 50%; background: #f00; transform: translateX(-50%); }
+  .controls .sp { flex: 1; }
+  .controls svg { width: 22px; height: 22px; fill: #fff; display: block; }
+  .controls .sz { position: relative; padding: 0 6px; }
+  .controls .sz::after { content: ''; position: absolute; left: 6px; right: 6px; bottom: -8px; height: 3px; border-radius: 2px; background: var(--mint); }
+
+  /* Shizue AI Caption dropdown (mirrors YoutubeCaptionToggle) */
+  .menu { position: absolute; right: 70px; bottom: 76px; width: 300px; background: rgba(0, 0, 0, 0.78); border-radius: 8px; color: #fff; font-size: 13px; overflow: hidden; backdrop-filter: blur(6px); }
+  .menu .row { height: 38px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; }
+  .menu .row span.v { color: #9ca3af; }
+  .menu .sw { width: 28px; height: 16px; border-radius: 8px; background: var(--mint); position: relative; }
+  .menu .sw::after { content: ''; position: absolute; right: 2px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; }
+  .menu .sw.off { background: rgba(255, 255, 255, 0.3); }
+  .menu .sw.off::after { right: auto; left: 2px; }
+  .menu .num { width: 46px; height: 22px; border: 1px solid #424242; border-radius: 4px; text-align: right; padding: 2px 6px; font-size: 12px; }
+  .menu .btns { border-top: 1px solid #303030; display: flex; gap: 10px; padding: 8px; }
+  .menu .btns span { flex: 1; height: 26px; border-radius: 4px; display: grid; place-items: center; }
+  .menu .btns .p { background: var(--mint); color: #fff; }
+  .menu .btns .d { border: 1px dashed #424242; color: #ddd; }
+
+  .badge { position: absolute; right: 64px; top: 170px; display: flex; gap: 10px; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="glow" style="left:860px;top:-160px;width:560px;height:420px;background:rgba(144,247,236,.5)"></div>
+
+  <div class="top">
+    <span class="eyebrow"><span class="dot"></span>YouTube captions</span>
+    <h1 class="headline">Understand <span class="mark">any video</span></h1>
+    <p class="sub">Real-time AI subtitles, shown in both languages.</p>
+  </div>
+
+  <div class="badge">
+    <span class="chip">Spanish → English</span>
+    <span class="chip">23 languages</span>
+  </div>
+
+  <div class="player">
+    <div class="scene">
+      <div class="sun"></div>
+      <div class="cloud" style="left:620px;top:70px"></div>
+      <div class="cloud" style="left:980px;top:110px;transform:scale(.8)"></div>
+      <div class="mtn m2"></div>
+      <div class="mtn m3"></div>
+      <div class="mtn m1"></div>
+      <div class="mtn m1s"></div>
+      <div class="meadow"></div>
+      <div class="fence"></div>
+      <div class="sprite sp-cow" style="--s:6;left:120px;bottom:156px"></div>
+      <div class="sprite sp-babycow" style="--s:5;left:330px;bottom:156px;--f:2"></div>
+            <div class="sprite sp-chicken" style="--s:4;left:560px;bottom:156px;--f:1"></div>
+    </div>
+
+    <div class="caps">
+      <div class="orig"><span>Las vacas pasan el verano en la montaña.</span></div>
+      <div><span>The cows spend the summer in the mountains.</span></div>
+    </div>
+
+    <div class="menu">
+      <div class="row">Shizue AI Caption</div>
+      <div class="row">Target Language <span class="v">English ›</span></div>
+      <div class="row">Bilingual <span class="sw"></span></div>
+      <div class="row">Navigate Subtitles with A/D <span class="sw"></span></div>
+      <div class="row">Number of Lines <span class="num">2</span></div>
+      <div class="btns"><span class="p">Activate</span><span class="d">Deactivate</span></div>
+    </div>
+
+    <div class="progress"><b></b><i></i></div>
+    <div class="controls">
+      <svg viewBox="0 0 24 24"><path d="M7 5v14l11-7z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z" transform="scale(-1,1) translate(-24,0)"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.47 4.47 0 0 0 2.5-4z"/></svg>
+      <span>6:24 / 18:40</span>
+      <span class="sp"></span>
+      <span class="sz"><svg viewBox="64 64 896 896"><path d="M928 161H699.2c-49.1 0-97.1 14.1-138.4 40.7L512 233l-48.8-31.3A255.2 255.2 0 00324.8 161H96c-17.7 0-32 14.3-32 32v568c0 17.7 14.3 32 32 32h228.8c49.1 0 97.1 14.1 138.4 40.7l44.4 28.6c1.3.8 2.8 1.3 4.3 1.3s3-.4 4.3-1.3l44.4-28.6C602 807.1 650.1 793 699.2 793H928c17.7 0 32-14.3 32-32V193c0-17.7-14.3-32-32-32zM404 553.5c0 4.1-3.2 7.5-7.1 7.5H211.1c-3.9 0-7.1-3.4-7.1-7.5v-45c0-4.1 3.2-7.5 7.1-7.5h185.7c3.9 0 7.1 3.4 7.1 7.5v45zm0-140c0 4.1-3.2 7.5-7.1 7.5H211.1c-3.9 0-7.1-3.4-7.1-7.5v-45c0-4.1 3.2-7.5 7.1-7.5h185.7c3.9 0 7.1 3.4 7.1 7.5v45zm416 140c0 4.1-3.2 7.5-7.1 7.5H627.1c-3.9 0-7.1-3.4-7.1-7.5v-45c0-4.1 3.2-7.5 7.1-7.5h185.7c3.9 0 7.1 3.4 7.1 7.5v45zm0-140c0 4.1-3.2 7.5-7.1 7.5H627.1c-3.9 0-7.1-3.4-7.1-7.5v-45c0-4.1 3.2-7.5 7.1-7.5h185.7c3.9 0 7.1 3.4 7.1 7.5v45z"/></svg></span>
+      <svg viewBox="0 0 24 24"><path d="M19 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm-8 7H9.5v-.5h-2v3h2V13H11v1a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1zm7 0h-1.5v-.5h-2v3h2V13H18v1a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M19.4 13a7.5 7.5 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.3 7.3 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.3 7.3 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.5 7.5 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.3 7.3 0 0 0 1.7 1L11 21h4l.4-2.7a7.3 7.3 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+    </div>
+  </div>
+</div>
+</body>
+</html>

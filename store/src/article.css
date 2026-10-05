@@ -1,0 +1,48 @@
+/* Fictional article page used inside the browser mockups. */
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600;6..72,700&display=block');
+
+.browser .body { position: relative; }
+
+.article {
+  padding: 26px 44px 0;
+  font-family: 'Newsreader', Georgia, serif;
+  color: #1d1d1b;
+  background: #fffdf8;
+}
+.article .masthead {
+  font: 400 20px 'Newsreader', serif;
+  letter-spacing: -0.01em;
+  border-bottom: 1px solid #e8e3d6;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.article .masthead span { margin-left: auto; font: 400 12px var(--sys); color: #8a877d; letter-spacing: 0.02em; }
+.article .kicker { font: 600 12px var(--sys); text-transform: uppercase; letter-spacing: 0.12em; color: #b2604f; }
+.article h2 { font: 700 34px/1.08 'Newsreader', serif; letter-spacing: -0.02em; margin: 6px 0 8px; max-width: 620px; }
+.article .byline { font: 400 13px var(--sys); color: #8a877d; margin-bottom: 16px; }
+.article p { font: 400 17px/1.55 'Newsreader', serif; margin: 0 0 12px; max-width: 680px; }
+.article p.tr { color: rgba(29, 29, 27, 0.5); font-family: var(--sys); font-size: 15.5px; line-height: 1.6; }
+
+/* little CSS-drawn illustration: sunset, hills, train */
+.hero-art {
+  position: relative;
+  height: 150px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  background: linear-gradient(180deg, #f9d9b8 0%, #f3c1b0 55%, #e8b5ac 100%);
+}
+.hero-art .sun { position: absolute; width: 70px; height: 70px; border-radius: 50%; background: #fff3d6; left: 62%; top: 34px; }
+.hero-art .hill { position: absolute; bottom: 0; border-radius: 50% 50% 0 0; }
+.hero-art .h1 { left: -10%; width: 70%; height: 90px; background: #9deadd; }
+.hero-art .h2 { left: 40%; width: 80%; height: 70px; background: #6fd9cb; }
+.hero-art .rail { position: absolute; left: 0; right: 0; bottom: 18px; height: 4px; background: #1f4b46; }
+.hero-art .train {
+  position: absolute; left: 14%; bottom: 22px; height: 30px; width: 300px;
+  background: #1f4b46; border-radius: 6px 16px 4px 4px;
+  display: flex; gap: 10px; align-items: center; padding: 0 18px;
+}
+.hero-art .train i { width: 22px; height: 10px; background: #ffe9a8; border-radius: 2px; display: block; }
