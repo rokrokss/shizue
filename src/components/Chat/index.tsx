@@ -6,7 +6,7 @@ import TokenUsageModalContent from '@/components/Chat/TokenUsageModalContent';
 import TopMenu from '@/components/Chat/TopRightMenu';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import SettingsModalContent from '@/components/Setting/SettingsModalContent';
-import { MESSAGE_LOAD_THREAD } from '@/config/constants';
+import { isSelectionActionType, MESSAGE_LOAD_THREAD } from '@/config/constants';
 import { chatStatusAtom, createThreadMessageCountAtom, isChatIdle } from '@/hooks/chat';
 import { ActionType, threadIdAtom } from '@/hooks/global';
 import { useThemeValue } from '@/hooks/layout';
@@ -25,6 +25,7 @@ export interface Message {
   actionType: ActionType;
   summaryTitle?: string;
   summaryPageLink?: string;
+  selectionText?: string;
   translateMode?: boolean;
   content: string;
   images?: string[];
@@ -199,7 +200,8 @@ const Chat = () => {
               lastMessage.role === 'human' &&
               (lastMessage.actionType === 'askForSummary' ||
                 lastMessage.actionType === 'describeImage' ||
-                lastMessage.actionType === 'extractImageText')
+                lastMessage.actionType === 'extractImageText' ||
+                isSelectionActionType(lastMessage.actionType))
             ) {
               // Only trigger AI response if the last message is the human message
               // (no AI message exists yet)

@@ -1,4 +1,8 @@
-import { STREAM_FLUSH_THRESHOLD_0, STREAM_FLUSH_THRESHOLD_1 } from '@/config/constants';
+import {
+  isSelectionActionType,
+  STREAM_FLUSH_THRESHOLD_0,
+  STREAM_FLUSH_THRESHOLD_1,
+} from '@/config/constants';
 import { getCurrentLanguage } from '@/entrypoints/background/states/language';
 import {
   getConnectionModeFor,
@@ -53,7 +57,8 @@ export class ChatModelHandler {
         temperature:
           actionType === 'askForSummary' ||
           actionType === 'describeImage' ||
-          actionType === 'extractImageText'
+          actionType === 'extractImageText' ||
+          isSelectionActionType(actionType)
             ? 0.3
             : 0.7,
         modelPreset,

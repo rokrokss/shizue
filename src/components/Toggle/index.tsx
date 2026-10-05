@@ -14,9 +14,11 @@ import OverlayMenuItem from '@/components/Toggle/OverlayMenuItem';
 import {
   MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE,
   MESSAGE_CONTEXT_MENU_EXTRACT_IMAGE_TEXT,
+  MESSAGE_CONTEXT_MENU_SELECTION_ACTION,
   MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE,
   MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
   MESSAGE_UPDATE_PANEL_INIT_DATA,
+  SelectionActionType,
   SUMMARY_PAGE_TEXT_MAX_CHARS,
 } from '@/config/constants';
 import { Language, useTranslateTargetLanguage } from '@/hooks/language';
@@ -32,6 +34,7 @@ import {
   initDescribeImageContent,
   initExtractImageTextContent,
   initMemoPageContent,
+  initSelectionActionContent,
   initSummarizePageContent,
 } from '@/lib/initPanelData';
 import { languageOptions } from '@/lib/language';
@@ -269,6 +272,26 @@ const Toggle = () => {
     [isDragging]
   );
 
+  const handleSelectionAction = useCallback(
+    async (actionType: SelectionActionType, menuSelectionText: string, frameId: number) => {
+      debugLog('Selection action clicked', actionType);
+      // The menu's selectionText loses line breaks, so prefer the page's own selection. This
+      // script runs only in the top frame, where that selection is stale if the click was in a frame.
+      const pageSelectionText = frameId === 0 ? window.getSelection()?.toString().trim() : '';
+      const text = (pageSelectionText || menuSelectionText.trim()).slice(
+        0,
+        SUMMARY_PAGE_TEXT_MAX_CHARS
+      );
+      if (!text) return;
+      await initSelectionActionContent(actionType, text, document.title, window.location.href);
+      void chrome.runtime.sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA }).catch((err) => {
+        debugLog('handleSelectionAction: Panel not opened yet', err);
+      });
+      setPanelOpen();
+    },
+    []
+  );
+
   const constrain = (yPosition: number) => {
     const viewportHeight = window.innerHeight;
     const toggleHeight = 90;
@@ -331,6 +354,8 @@ const Toggle = () => {
         handleDescribeImage(message.srcUrl);
       } else if (message.action === MESSAGE_CONTEXT_MENU_EXTRACT_IMAGE_TEXT) {
         handleExtractImageText(message.srcUrl);
+      } else if (message.action === MESSAGE_CONTEXT_MENU_SELECTION_ACTION) {
+        handleSelectionAction(message.actionType, message.selectionText ?? '', message.frameId);
       }
     };
     chrome.runtime.onMessage.addListener(messageListener);
@@ -338,7 +363,7 @@ const Toggle = () => {
     return () => {
       chrome.runtime.onMessage.removeListener(messageListener);
     };
-  }, [handleTranslatePage, handleSummarizePage, handleDescribeImage]);
+  }, [handleTranslatePage, handleSummarizePage, handleDescribeImage, handleSelectionAction]);
 
   return (
     !isCurrentSiteHidden && (

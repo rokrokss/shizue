@@ -9,6 +9,10 @@
     "summarizePage": "Podsumuj tę stronę",
     "describeImage": "Opisz ten obraz",
     "extractImageText": "Wyodrębnij tekst z obrazu",
+    "translateSelection": "Przetłumacz zaznaczony tekst",
+    "explainSelection": "Wyjaśnij zaznaczony tekst",
+    "summarizeSelection": "Podsumuj zaznaczony tekst",
+    "fixGrammarSelection": "Popraw gramatykę zaznaczonego tekstu",
     "removeTranslation": "Usuń tłumaczenie"
   },
   "onboarding": {
@@ -58,6 +62,10 @@
     "translateMode": "Tryb tłumaczenia",
     "describeImageRequest": "Proszę opisać ten obraz.",
     "extractImageTextRequest": "Proszę wyodrębnić tekst z tego obrazu.",
+    "translateSelectionRequest": "Proszę przetłumaczyć ten tekst.",
+    "explainSelectionRequest": "Proszę wyjaśnić ten tekst.",
+    "summarizeSelectionRequest": "Proszę podsumować ten tekst.",
+    "fixGrammarSelectionRequest": "Proszę poprawić gramatykę tego tekstu.",
     "translateModeDescription": "Od teraz, dla każdej wiadomości, którą wyślę, proszę o tłumaczenie i wyjaśnienie w następującym formacie:\n\n1. ✅ Tłumaczenie: Przedstaw naturalne i odpowiednie kontekstowo tłumaczenie.\n2. 📚 Kluczowe słowa/wyrażenia\n    – Słowo: Część mowy / Znaczenie\n    – Przykład z oryginalnego tekstu\n3. 🧠 Wyjaśnienie gramatyczne lub wyrażeniowe: W razie potrzeby, przedstaw krótkie wyjaśnienie kluczowych wyrażeń lub fraz.\n\n- Przedstaw wynik w zorganizowanym formacie podobnym do słownika.\n- Zastosuj pogrubienie dla ważnych treści.\n- Pomiń niepotrzebne wyjaśnienia i pisz czysto i zwięźle dla skupionej nauki.\n- Utrzymaj ten format, chyba że dam dodatkowe instrukcje.",
     "activateTranslateMode": "Aktywuj tryb tłumaczenia..📡 🤖 📡",
     "imageUpload": "Prześlij obraz",

@@ -1,6 +1,8 @@
 import {
+  isSelectionActionType,
   MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE,
   MESSAGE_CONTEXT_MENU_EXTRACT_IMAGE_TEXT,
+  MESSAGE_CONTEXT_MENU_SELECTION_ACTION,
   MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE,
   MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
 } from '@/config/constants';
@@ -51,6 +53,31 @@ export const createContextMenu = async () => {
       title: i18n.t('overlayMenu.summarizePage'),
       contexts: ['page'],
     },
+    // Chrome hides the 'page' items while text is selected, so these take their place.
+    {
+      id: 'translateSelection',
+      parentId: 'shizue-parent',
+      title: i18n.t('overlayMenu.translateSelection'),
+      contexts: ['selection'],
+    },
+    {
+      id: 'explainSelection',
+      parentId: 'shizue-parent',
+      title: i18n.t('overlayMenu.explainSelection'),
+      contexts: ['selection'],
+    },
+    {
+      id: 'summarizeSelection',
+      parentId: 'shizue-parent',
+      title: i18n.t('overlayMenu.summarizeSelection'),
+      contexts: ['selection'],
+    },
+    {
+      id: 'fixGrammarSelection',
+      parentId: 'shizue-parent',
+      title: i18n.t('overlayMenu.fixGrammarSelection'),
+      contexts: ['selection'],
+    },
     {
       id: 'describeImage',
       parentId: 'shizue-parent',
@@ -88,6 +115,13 @@ export const createContextMenu = async () => {
         chrome.tabs.sendMessage(tab.id, {
           action: MESSAGE_CONTEXT_MENU_EXTRACT_IMAGE_TEXT,
           srcUrl: info.srcUrl,
+        });
+      } else if (isSelectionActionType(info.menuItemId)) {
+        chrome.tabs.sendMessage(tab.id, {
+          action: MESSAGE_CONTEXT_MENU_SELECTION_ACTION,
+          actionType: info.menuItemId,
+          selectionText: info.selectionText,
+          frameId: info.frameId,
         });
       }
     }

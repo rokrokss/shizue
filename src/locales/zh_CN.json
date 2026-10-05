@@ -9,6 +9,10 @@
     "summarizePage": "总结此页面",
     "describeImage": "描述这张图片",
     "extractImageText": "从图片中提取文字",
+    "translateSelection": "翻译所选文字",
+    "explainSelection": "解释所选文字",
+    "summarizeSelection": "总结所选文字",
+    "fixGrammarSelection": "修正所选文字的语法",
     "removeTranslation": "移除翻译"
   },
   "onboarding": {
@@ -58,6 +62,10 @@
     "translateMode": "翻译模式",
     "describeImageRequest": "请描述这张图片。",
     "extractImageTextRequest": "请从这张图片中提取文字。",
+    "translateSelectionRequest": "请翻译这段文字。",
+    "explainSelectionRequest": "请解释这段文字。",
+    "summarizeSelectionRequest": "请总结这段文字。",
+    "fixGrammarSelectionRequest": "请修正这段文字的语法。",
     "translateModeDescription": "从现在开始，对于我发送的每一条消息，请按以下格式提供翻译和解释：\n\n1. ✅ 翻译文：提供自然且符合语境的翻译。\n2. 📚 核心词汇/表达整理\n    – 单词：词性 / 含义\n    – 原文中的例句\n3. 🧠 语法或表达解释：必要时，对核心表达或句型提供简单说明。\n\n- 输出要像词典一样条理清晰。\n- 重要内容要加粗处理。\n- 省略不必要的解释，简洁明了地编写，以便专注学习。\n- 除非我另行指示，否则请保持此格式。",
     "activateTranslateMode": "激活翻译模式..📡 🤖 📡",
     "imageUpload": "图片上传",

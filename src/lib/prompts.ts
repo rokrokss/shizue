@@ -1,3 +1,4 @@
+import { SelectionActionType } from '@/config/constants';
 import { Language } from '@/hooks/language';
 import { Caption, VideoMetadata } from '@/lib/youtube';
 import { debugLog } from '@/logs';
@@ -85,6 +86,47 @@ ${title}
 ===innerText got from the page===
 ${text}`;
   return getSummaryPrompt(content);
+};
+
+export const getSelectionActionPrompt = (
+  actionType: SelectionActionType,
+  text: string,
+  pageTitle: string,
+  targetLanguage: Language
+) => {
+  switch (actionType) {
+    case 'translateSelection':
+      return `Translate the following text into ${targetLanguage}. Keep its line breaks and formatting. Output only the translation, without any explanation.
+
+===text to translate===
+${text}`;
+    case 'explainSelection':
+      return `Explain the following text, which I selected on a web page, so that it is easy to understand.
+- Clarify what it means, and define difficult terms, abbreviations, and concepts.
+- If it is code, explain what it does.
+- Keep it concise.
+
+===title of the page===
+${pageTitle}
+
+===text to explain===
+${text}`;
+    case 'summarizeSelection':
+      return `Summarize the following text concisely, without adding your own interpretations.
+- Start with a single sentence that captures its core message.
+- Then list the key points as short bullet points, if there are several.
+
+===text to summarize===
+${text}`;
+    case 'fixGrammarSelection':
+      return `Fix the grammar, spelling, and punctuation errors in the following text.
+- Keep its original language, meaning, tone, and line breaks. Do not translate it.
+- First output the corrected text, then briefly list the changes you made.
+- If there is nothing to fix, say so.
+
+===text to fix===
+${text}`;
+  }
 };
 
 export const getHtmlTranslationPrompt = (text: string, targetLanguage: Language) => {

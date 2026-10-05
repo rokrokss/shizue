@@ -9,6 +9,10 @@
     "summarizePage": "Resumir esta página",
     "describeImage": "Descrever esta imagem",
     "extractImageText": "Extrair texto da imagem",
+    "translateSelection": "Traduzir o texto selecionado",
+    "explainSelection": "Explicar o texto selecionado",
+    "summarizeSelection": "Resumir o texto selecionado",
+    "fixGrammarSelection": "Corrigir a gramática do texto selecionado",
     "removeTranslation": "Remover tradução"
   },
   "onboarding": {
@@ -58,6 +62,10 @@
     "translateMode": "Modo de tradução",
     "describeImageRequest": "Por favor, descreva esta imagem.",
     "extractImageTextRequest": "Por favor, extraia o texto desta imagem.",
+    "translateSelectionRequest": "Por favor, traduza este texto.",
+    "explainSelectionRequest": "Por favor, explique este texto.",
+    "summarizeSelectionRequest": "Por favor, resuma este texto.",
+    "fixGrammarSelectionRequest": "Por favor, corrija a gramática deste texto.",
     "translateModeDescription": "De agora em diante, para cada mensagem que eu enviar, forneça tradução e explicação no seguinte formato:\n\n1. ✅ Tradução: Forneça uma tradução natural e contextualmente apropriada.\n2. 📚 Palavras/Expressões-chave\n    – Palavra: Classe gramatical / Significado\n    – Exemplo do texto original\n3. 🧠 Explicação gramatical ou expressiva: Quando necessário, forneça uma breve explicação de expressões ou frases-chave.\n\n- Apresente a saída em um formato organizado como um dicionário.\n- Aplique formatação em negrito ao conteúdo importante.\n- Omita explicações desnecessárias e escreva de forma limpa e concisa para aprendizado focado.\n- Mantenha este formato a menos que eu forneça instruções adicionais.",
     "activateTranslateMode": "Ativar modo tradução..📡 🤖 📡",
     "imageUpload": "Carregar imagem",

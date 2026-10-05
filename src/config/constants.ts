@@ -13,6 +13,7 @@ export const MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE = 'context_menu_translate_page'
 export const MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE = 'context_menu_summarize_page';
 export const MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE = 'context_menu_describe_image';
 export const MESSAGE_CONTEXT_MENU_EXTRACT_IMAGE_TEXT = 'context_menu_extract_image_text';
+export const MESSAGE_CONTEXT_MENU_SELECTION_ACTION = 'context_menu_selection_action';
 
 /* port */
 export const PORT_LISTEN_PANEL_CLOSED_KEY = 'listen_panel_closed_key';
@@ -49,3 +50,16 @@ export const STREAM_FLUSH_THRESHOLD_0 = 5;
 export const STREAM_FLUSH_THRESHOLD_1 = 10;
 // Page text is re-sent with every follow-up turn, so bound its size (~25-35K tokens).
 export const SUMMARY_PAGE_TEXT_MAX_CHARS = 100_000;
+
+/* selection actions: context menu item IDs, also used as ActionTypes */
+export const SELECTION_ACTION_TYPES = [
+  'translateSelection',
+  'explainSelection',
+  'summarizeSelection',
+  'fixGrammarSelection',
+] as const;
+
+export type SelectionActionType = (typeof SELECTION_ACTION_TYPES)[number];
+
+export const isSelectionActionType = (value: unknown): value is SelectionActionType =>
+  SELECTION_ACTION_TYPES.includes(value as SelectionActionType);

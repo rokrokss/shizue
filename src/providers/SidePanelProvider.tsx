@@ -1,4 +1,5 @@
 import {
+  isSelectionActionType,
   MESSAGE_PANEL_OPENED_PING_FROM_PANEL,
   MESSAGE_UPDATE_PANEL_INIT_DATA,
   PORT_LISTEN_PANEL_CLOSED_KEY,
@@ -10,8 +11,9 @@ import {
   sidePanelHydratedAtom,
   threadIdAtom,
 } from '@/hooks/global';
+import { useTranslateTargetLanguageValue } from '@/hooks/language';
 import { addMessage, createThread } from '@/lib/indexDB';
-import { getSummarizePageTextPrompt } from '@/lib/prompts';
+import { getSelectionActionPrompt, getSummarizePageTextPrompt } from '@/lib/prompts';
 import { readStorage, setStorage } from '@/lib/storageBackend';
 import { debugLog, errorLog } from '@/logs';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
@@ -31,6 +33,7 @@ const SidePanelProvider = ({
   const [threadId, setThreadId] = useAtom(threadIdAtom);
   const setActionType = useSetAtom(actionTypeAtom);
   const chatStatus = useAtomValue(chatStatusAtom);
+  const targetLanguage = useTranslateTargetLanguageValue();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const isProcessingActionRef = useRef(false);
@@ -45,6 +48,7 @@ const SidePanelProvider = ({
       summaryTitle: undefined,
       summaryPageLink: undefined,
       summaryText: undefined,
+      selectionText: undefined,
       imageBase64: undefined,
       imageUrl: undefined,
     });
@@ -95,6 +99,55 @@ const SidePanelProvider = ({
         summaryPageLink: summaryPageLink,
         translateMode: false,
         content: summarizePageTextPrompt,
+        createdAt: Date.now(),
+        done: true,
+        onInterrupt: false,
+        stopped: false,
+      });
+
+      debugLog('SidePanelProvider: [getInitData] setThreadId', tid);
+
+      if (isNewThread) {
+        setThreadId(tid);
+      }
+
+      if (isInMemoPage) {
+        debugLog('SidePanelProvider: [getInitData] navigate to /');
+        navigate('/');
+      }
+    } else if (initData && isSelectionActionType(initData.actionType)) {
+      // Clear the action immediately to prevent duplicate processing
+      isProcessingActionRef.current = true;
+      await rollbackActionType();
+      const actionType = initData.actionType;
+      const { selectionText, summaryTitle, summaryPageLink } = initData;
+
+      debugLog('SidePanelProvider: [getInitData] selection action', actionType);
+      debugLog('SidePanelProvider: [getInitData] threadId', threadId);
+
+      let isNewThread = false;
+      const isInMemoPage = window.location.hash === '#/shizue-memo';
+
+      let tid = threadId;
+      if (!tid || isInMemoPage) {
+        tid = await createThread(selectionText!.slice(0, 20));
+        isNewThread = true;
+      }
+
+      await addMessage({
+        id: crypto.randomUUID(),
+        threadId: tid,
+        role: 'human',
+        actionType,
+        summaryTitle,
+        summaryPageLink,
+        selectionText,
+        content: getSelectionActionPrompt(
+          actionType,
+          selectionText!,
+          summaryTitle ?? '',
+          targetLanguage
+        ),
         createdAt: Date.now(),
         done: true,
         onInterrupt: false,
@@ -220,7 +273,7 @@ const SidePanelProvider = ({
       }
     }
     isProcessingActionRef.current = false;
-  }, [threadId, setThreadId, rollbackActionType, chatStatus, navigate, t]);
+  }, [threadId, setThreadId, rollbackActionType, chatStatus, navigate, t, targetLanguage]);
 
   const handleMessage = useCallback(
     async (request: any) => {

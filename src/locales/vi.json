@@ -9,6 +9,10 @@
     "summarizePage": "Tóm tắt trang này",
     "describeImage": "Mô tả hình ảnh này",
     "extractImageText": "Trích xuất văn bản từ hình ảnh",
+    "translateSelection": "Dịch văn bản đã chọn",
+    "explainSelection": "Giải thích văn bản đã chọn",
+    "summarizeSelection": "Tóm tắt văn bản đã chọn",
+    "fixGrammarSelection": "Sửa ngữ pháp văn bản đã chọn",
     "removeTranslation": "Xóa bản dịch"
   },
   "onboarding": {
@@ -58,6 +62,10 @@
     "translateMode": "Chế độ dịch",
     "describeImageRequest": "Vui lòng mô tả hình ảnh này.",
     "extractImageTextRequest": "Vui lòng trích xuất văn bản từ hình ảnh này.",
+    "translateSelectionRequest": "Vui lòng dịch văn bản này.",
+    "explainSelectionRequest": "Vui lòng giải thích văn bản này.",
+    "summarizeSelectionRequest": "Vui lòng tóm tắt văn bản này.",
+    "fixGrammarSelectionRequest": "Vui lòng sửa ngữ pháp của văn bản này.",
     "translateModeDescription": "Từ bây giờ, với mỗi tin nhắn tôi gửi, vui lòng cung cấp bản dịch và giải thích theo định dạng sau:\n\n1. ✅ Bản dịch: Cung cấp bản dịch tự nhiên và phù hợp với ngữ cảnh.\n2. 📚 Từ/Cụm từ chính\n    – Từ: Loại từ / Nghĩa\n    – Ví dụ từ văn bản gốc\n3. 🧠 Giải thích ngữ pháp hoặc cách diễn đạt: Khi cần thiết, cung cấp giải thích ngắn gọn về các cách diễn đạt hoặc cụm từ chính.\n\n- Trình bày kết quả theo định dạng có tổ chức giống từ điển.\n- Áp dụng định dạng in đậm cho nội dung quan trọng.\n- Bỏ qua các giải thích không cần thiết và viết rõ ràng, súc tích để tập trung học tập.\n- Duy trì định dạng này trừ khi tôi đưa ra hướng dẫn bổ sung.",
     "activateTranslateMode": "Kích hoạt chế độ dịch..📡 🤖 📡",
     "imageUpload": "Tải ảnh lên",

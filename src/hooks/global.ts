@@ -1,4 +1,4 @@
-import { STORAGE_GLOBAL_STATE } from '@/config/constants';
+import { SelectionActionType, STORAGE_GLOBAL_STATE } from '@/config/constants';
 import { chromeStorageBackend } from '@/lib/storageBackend';
 import { Atom, atom, useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
@@ -12,7 +12,8 @@ export type ActionType =
   | 'askForSummary'
   | 'describeImage'
   | 'extractImageText'
-  | 'memo';
+  | 'memo'
+  | SelectionActionType;
 
 export type GlobalState = {
   actionType: ActionType;
@@ -20,6 +21,7 @@ export type GlobalState = {
   summaryTitle?: string;
   summaryText?: string;
   summaryPageLink?: string;
+  selectionText?: string;
   imageBase64?: string;
   imageUrl?: string;
 };

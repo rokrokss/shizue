@@ -1,3 +1,4 @@
+import { isSelectionActionType } from '@/config/constants';
 import { initialMessagesForAllThreadsAtom } from '@/hooks/chat';
 import { threadIdAtom } from '@/hooks/global';
 import { getI8NLanguage, useLanguage } from '@/hooks/language';
@@ -72,6 +73,10 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
   const getThreadTitle = (thread: ThreadWithInitialMessages) => {
     if (thread.firstMessage?.actionType === 'askForSummary') {
       return t('overlayMenu.summarizePage') + ': ' + thread.firstMessage?.summaryTitle;
+    } else if (thread.firstMessage && isSelectionActionType(thread.firstMessage.actionType)) {
+      return (
+        t(`overlayMenu.${thread.firstMessage.actionType}`) + ': ' + thread.firstMessage.selectionText
+      );
     } else if (thread.firstMessage?.translateMode) {
       return t('chat.activateTranslateMode');
     }

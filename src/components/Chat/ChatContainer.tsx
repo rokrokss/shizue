@@ -1,6 +1,7 @@
 import CharacterPickChat, { characterCount } from '@/components/Character/CharacterPickChat';
 import { Message } from '@/components/Chat';
 import { DotCycle } from '@/components/Loader/DotCycle';
+import { isSelectionActionType } from '@/config/constants';
 import { useThemeValue } from '@/hooks/layout';
 import useStreamText from '@/hooks/useStreamText';
 import { hashStringToIndex } from '@/lib/hash';
@@ -189,6 +190,23 @@ const ChatContainer = ({
                         <div className="sz:text-sm sz:text-gray-500 sz:pb-[2px]">
                           {m.summaryTitle && m.summaryTitle.length > 25
                             ? m.summaryTitle?.slice(0, 25) + '...'
+                            : m.summaryTitle}
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                ) : isSelectionActionType(m.actionType) ? (
+                  <div className="sz:flex sz:flex-col sz:text-left">
+                    {getMarkdownText(t(`chat.${m.actionType}Request`))}
+                    <div className="sz:mb-[6px] sz:pl-[8px] sz:border-l-[3px] sz:border-[#32CCBC] sz:text-gray-500 sz:whitespace-pre-wrap sz:break-keep sz:line-clamp-6">
+                      {m.selectionText}
+                    </div>
+                    <a href={m.summaryPageLink} target="_blank" rel="noopener noreferrer">
+                      <div className="sz:flex sz:flex-row sz:items-center sz:gap-1">
+                        <LinkOutlined />
+                        <div className="sz:text-sm sz:text-gray-500 sz:pb-[2px]">
+                          {m.summaryTitle && m.summaryTitle.length > 25
+                            ? m.summaryTitle.slice(0, 25) + '...'
                             : m.summaryTitle}
                         </div>
                       </div>

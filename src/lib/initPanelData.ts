@@ -1,4 +1,4 @@
-import { STORAGE_GLOBAL_STATE } from '@/config/constants';
+import { SelectionActionType, STORAGE_GLOBAL_STATE } from '@/config/constants';
 import { readStorage, setStorage } from '@/lib/storageBackend';
 
 export async function initSummarizePageContent(title: string, text: string, pageLink: string) {
@@ -9,6 +9,23 @@ export async function initSummarizePageContent(title: string, text: string, page
     summaryTitle: title,
     summaryPageLink: pageLink,
     summaryText: text,
+  });
+}
+
+export async function initSelectionActionContent(
+  actionType: SelectionActionType,
+  text: string,
+  title: string,
+  pageLink: string
+) {
+  const prevGlobalState = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
+  await setStorage(STORAGE_GLOBAL_STATE, {
+    ...(prevGlobalState ?? {}),
+    actionType,
+    selectionText: text,
+    // The summary fields hold the source page, as for page summaries.
+    summaryTitle: title,
+    summaryPageLink: pageLink,
   });
 }
 

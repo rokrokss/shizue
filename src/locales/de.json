@@ -9,6 +9,10 @@
     "summarizePage": "Diese Seite zusammenfassen",
     "describeImage": "Dieses Bild beschreiben",
     "extractImageText": "Text aus Bild extrahieren",
+    "translateSelection": "Ausgewählten Text übersetzen",
+    "explainSelection": "Ausgewählten Text erklären",
+    "summarizeSelection": "Ausgewählten Text zusammenfassen",
+    "fixGrammarSelection": "Grammatik im ausgewählten Text korrigieren",
     "removeTranslation": "Übersetzung entfernen"
   },
   "onboarding": {
@@ -58,6 +62,10 @@
     "translateMode": "Übersetzungsmodus",
     "describeImageRequest": "Bitte beschreiben Sie dieses Bild.",
     "extractImageTextRequest": "Bitte extrahieren Sie Text aus diesem Bild.",
+    "translateSelectionRequest": "Bitte übersetzen Sie diesen Text.",
+    "explainSelectionRequest": "Bitte erklären Sie diesen Text.",
+    "summarizeSelectionRequest": "Bitte fassen Sie diesen Text zusammen.",
+    "fixGrammarSelectionRequest": "Bitte korrigieren Sie die Grammatik in diesem Text.",
     "translateModeDescription": "Von nun an sollen Sie für jede Nachricht, die ich sende, Übersetzung und Erklärung im folgenden Format bereitstellen:\n\n1. ✅ Übersetzung: Bieten Sie eine natürliche und kontextuell angemessene Übersetzung.\n2. 📚 Schlüsselwörter/-ausdrücke\n    – Wort: Wortart / Bedeutung\n    – Beispiel aus dem Originaltext\n3. 🧠 Grammatik- oder Ausdruckserklärung: Falls erforderlich, geben Sie eine kurze Erklärung zu Schlüsselausdrücken oder Phrasen.\n\n- Präsentieren Sie die Ausgabe in einem wörterbuchähnlichen organisierten Format.\n- Verwenden Sie Fettformatierung für wichtige Inhalte.\n- Lassen Sie unnötige Erklärungen weg und schreiben Sie sauber und prägnant für fokussiertes Lernen.\n- Behalten Sie dieses Format bei, es sei denn, ich gebe zusätzliche Anweisungen.",
     "activateTranslateMode": "Übersetzungsmodus aktivieren..📡 🤖 📡",
     "imageUpload": "Bild hochladen",

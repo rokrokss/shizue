@@ -9,6 +9,10 @@
     "summarizePage": "페이지 요약",
     "describeImage": "이미지 설명",
     "extractImageText": "이미지 텍스트 추출",
+    "translateSelection": "선택한 텍스트 번역",
+    "explainSelection": "선택한 텍스트 설명",
+    "summarizeSelection": "선택한 텍스트 요약",
+    "fixGrammarSelection": "선택한 텍스트 문법 교정",
     "removeTranslation": "번역 없애기"
   },
   "onboarding": {
@@ -58,6 +62,10 @@
     "translateMode": "번역 모드",
     "describeImageRequest": "이 이미지에 대해 설명해줘.",
     "extractImageTextRequest": "이 이미지에서 텍스트를 추출해줘.",
+    "translateSelectionRequest": "이 텍스트를 번역해줘.",
+    "explainSelectionRequest": "이 텍스트를 설명해줘.",
+    "summarizeSelectionRequest": "이 텍스트를 요약해줘.",
+    "fixGrammarSelectionRequest": "이 텍스트의 문법을 고쳐줘.",
     "translateModeDescription": "이제부터 내가 보내는 모든 메시지에 대해 다음과 같은 형식으로 번역과 설명을 제공해줘:\n\n1. ✅ 번역문: 자연스럽고 문맥에 맞는 번역을 제시해줘.\n2. 📚 핵심 단어/표현 정리\n    – 단어: 품사 / 의미\n    – 원문에서의 예문\n3. 🧠 문법 또는 표현 설명: 필요한 경우, 핵심 표현이나 구문에 대한 간단한 설명을 제공해줘.\n\n- 출력은 마치 사전처럼 정돈된 형태로 제공해줘.\n- 중요 내용에 볼드처리를 해줘.\n- 불필요한 해설은 생략하고, 학습에 집중할 수 있도록 깔끔하고 간결하게 작성해줘.\n- 내가 추가로 지시하지 않는 한, 이 포맷을 유지해.",
     "activateTranslateMode": "번역 모드 활성화..📡 🤖 📡",
     "imageUpload": "이미지 첨부",
