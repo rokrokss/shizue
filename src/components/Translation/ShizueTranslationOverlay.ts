@@ -75,23 +75,23 @@ class ShizueTranslationOverlay extends HTMLElement {
             height: 18px;
             padding: 1px 0;
           }
-          .spinner {
+          .shizue-spinner {
             display: inline-block;
             width: 14px;
             height: 14px;
             border: 2px solid #f3f3f3;
             border-top: 2px solid #32CCBC;
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+            animation: shizue-spin 0.8s linear infinite;
           }
           
-          @keyframes spin {
+          @keyframes shizue-spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
           }
           
         </style>
-        <div class="shizue-spinner-wrapper"><div class="spinner"></div></div>
+        <div class="shizue-spinner-wrapper"><div class="shizue-spinner"></div></div>
       `;
       this.style.lineHeight = 'normal';
       setTimeout(() => {
