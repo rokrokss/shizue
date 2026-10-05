@@ -159,6 +159,10 @@ export class TranslationHandler {
           'ChatModelHandler [translateYoutubeCaption] Item count mismatch error:',
           countMismatchErrorMsg
         );
+        if (captions.length > 1) {
+          debugLog('TranslationHandler [translateYoutubeCaption] retrying in halves:', captions.length);
+          return this.translateYoutubeCaptionInHalves(captions, targetLanguage, metadata);
+        }
         return {
           success: false,
           error: `Item count mismatch in AI response. Details: ${countMismatchErrorMsg}`,
@@ -181,6 +185,26 @@ export class TranslationHandler {
         }`,
       };
     }
+  }
+
+  // The model sometimes merges two fragmentary caption lines into one, so a chunk whose line
+  // count comes back wrong is retried in halves. Parts that still fail keep their original text.
+  private async translateYoutubeCaptionInHalves(
+    captions: Caption[],
+    targetLanguage: Language,
+    metadata: VideoMetadata
+  ): Promise<YoutubeCaptionTranslationResult> {
+    const middle = Math.ceil(captions.length / 2);
+    const parts = [captions.slice(0, middle), captions.slice(middle)];
+    const results = await Promise.all(
+      parts.map((part) => this.translateYoutubeCaption(part, targetLanguage, metadata))
+    );
+    return {
+      success: true,
+      captions: results.flatMap((result, i) =>
+        result.success && result.captions ? result.captions : parts[i]
+      ),
+    };
   }
 
   public async translateHtmlText(text: string): Promise<TranslationResult> {
