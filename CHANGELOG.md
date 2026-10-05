@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.7
+
+- YouTube captions: fix AI captions not showing up after Activate on some videos
+- YouTube captions: the subtitles (CC) button is no longer toggled on every video page load, only on Activate when needed
+- YouTube captions: when the AI returns the wrong number of lines for a chunk, it's retried in smaller parts instead of leaving the whole chunk untranslated
+
 ## v0.2.6
 
 - Add DeepSeek V4 Pro and DeepSeek V4.1 Flash (OpenRouter only)
