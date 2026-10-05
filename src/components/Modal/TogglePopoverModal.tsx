@@ -3,6 +3,7 @@ import { ReactNode, RefObject, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 const TogglePopoverModal = ({
+  container,
   onClose,
   toggleRef,
   triggerRef,
@@ -10,6 +11,7 @@ const TogglePopoverModal = ({
   settingsTriggerYPosition,
   theme,
 }: {
+  container: HTMLElement;
   onClose: () => void;
   toggleRef: RefObject<HTMLDivElement | null>;
   triggerRef: RefObject<HTMLDivElement | null>;
@@ -25,7 +27,8 @@ const TogglePopoverModal = ({
     const handleMouseDownCapture = (e: MouseEvent) => {
       if (!e.isTrusted) return;
 
-      const target = e.target as Node;
+      // At the document, clicks inside our shadow root are retargeted to its host.
+      const target = e.composedPath()[0] as Node;
 
       if (modalRef.current?.contains(target)) {
         debugLog('handleMouseDownCapture: Modal contains target');
@@ -43,9 +46,13 @@ const TogglePopoverModal = ({
         return;
       }
 
+      const root = modalRef.current?.getRootNode();
       onClose();
       setTimeout(() => {
-        const el = document.elementFromPoint(e.clientX, e.clientY);
+        let el = document.elementFromPoint(e.clientX, e.clientY);
+        if (root instanceof ShadowRoot && el === root.host) {
+          el = root.elementFromPoint(e.clientX, e.clientY);
+        }
         if (!el) return;
 
         const forwarded = new MouseEvent('click', {
@@ -90,7 +97,7 @@ const TogglePopoverModal = ({
       </button>
       {content}
     </div>,
-    document.body
+    container
   );
 };
 

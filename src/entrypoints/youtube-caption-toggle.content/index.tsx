@@ -5,14 +5,16 @@ import { watchPlayerCaptionRequests } from '@/lib/youtube';
 import { contentScriptLog } from '@/logs';
 import AntdProvider from '@/providers/AntdProvider';
 import LanguageProvider from '@/providers/LanguageProvider';
-import { StyleProvider as AntdStyleProvider } from '@ant-design/cssinjs';
+import { StyleProvider as AntdStyleProvider, createCache } from '@ant-design/cssinjs';
 import '@ant-design/v5-patch-for-react-19';
+import { ConfigProvider } from 'antd';
 import 'antd/dist/reset.css?inline';
 import { Provider as JotaiProvider } from 'jotai';
 import { StrictMode } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 
 export const YOUTUBE_TOGGLE_SHADOW_HOST_ID = 'shizue-youtube-caption-toggle-shadow-host';
+const YOUTUBE_POPUP_HOST_TAG = 'shizue-youtube-caption-popups';
 
 export default defineContentScript({
   matches: ['https://youtube.com/*', 'https://www.youtube.com/*'],
@@ -33,8 +35,16 @@ export default defineContentScript({
 
       const customDiv = document.createElement('div');
       customDiv.id = YOUTUBE_TOGGLE_SHADOW_HOST_ID;
-      customDiv.className =
-        'sz:inline-block sz:w-fit sz:h-full sz:px-0 sz:py-0 sz:overflow-hidden sz:leading-0 sz:align-top';
+      // Inline styles: this div is in YouTube's DOM, which our shadow-root stylesheet doesn't reach.
+      Object.assign(customDiv.style, {
+        display: 'inline-block',
+        width: 'fit-content',
+        height: '100%',
+        padding: '0',
+        overflow: 'hidden',
+        lineHeight: '0',
+        verticalAlign: 'top',
+      });
       anchor?.prepend(customDiv);
 
       const ui = await createShadowRootUi(ctx, {
@@ -65,13 +75,25 @@ export default defineContentScript({
           `;
           shadow.appendChild(hostStyle);
 
+          // Tooltips and dropdowns still open on <body>, but inside their own shadow root that
+          // reuses the stylesheet WXT put in this one.
+          document.querySelector(YOUTUBE_POPUP_HOST_TAG)?.remove();
+          const popupHost = document.createElement(YOUTUBE_POPUP_HOST_TAG);
+          const popupShadow = popupHost.attachShadow({ mode: 'open' });
+          const popupContainer = document.createElement('div');
+          popupShadow.append(shadow.querySelector('style')!.cloneNode(true), popupContainer);
+          document.body.append(popupHost);
+          ctx.onInvalidated(() => popupHost.remove());
+
           root.render(
             <StrictMode>
               <JotaiProvider>
                 <LanguageProvider loadingComponent={null}>
-                  <AntdStyleProvider container={shadow.host}>
+                  <AntdStyleProvider container={popupShadow} cache={createCache()}>
                     <AntdProvider>
-                      <YoutubeSubtitleToggle />
+                      <ConfigProvider getPopupContainer={() => popupContainer}>
+                        <YoutubeSubtitleToggle />
+                      </ConfigProvider>
                     </AntdProvider>
                   </AntdStyleProvider>
                 </LanguageProvider>

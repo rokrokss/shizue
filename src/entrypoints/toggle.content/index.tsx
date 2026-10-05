@@ -4,7 +4,9 @@ import Toggle from '@/components/Toggle';
 import { contentScriptLog } from '@/logs';
 import AntdProvider from '@/providers/AntdProvider';
 import LanguageProvider from '@/providers/LanguageProvider';
+import { StyleProvider as AntdStyleProvider, createCache } from '@ant-design/cssinjs';
 import '@ant-design/v5-patch-for-react-19';
+import { ConfigProvider } from 'antd';
 import { Provider as JotaiProvider } from 'jotai';
 import { StrictMode } from 'react';
 import { createRoot, Root } from 'react-dom/client';
@@ -12,8 +14,11 @@ import { createRoot, Root } from 'react-dom/client';
 export default defineContentScript({
   matches: ['http://*/*', 'https://*/*', '<all_urls>'],
   runAt: 'document_idle',
+  // Keep every style inside the shadow root. CSS injected into the page leaks both ways: our
+  // @layer names reordered the page's own layers, and page CSS restyled the toggle.
+  cssInjectionMode: 'ui',
   main(ctx) {
-    const mountUi = () => {
+    const mountUi = async () => {
       contentScriptLog('Toggle');
 
       let root: Root | null = null;
@@ -26,6 +31,7 @@ export default defineContentScript({
 
         const isInFullscreen = !!document.fullscreenElement;
 
+        // Hide the inner container: `:host { all: initial !important }` pins the host's display.
         if (isInFullscreen) {
           uiContainer.style.setProperty('display', 'none', 'important');
         } else {
@@ -33,30 +39,32 @@ export default defineContentScript({
         }
       };
 
-      const ui = createIntegratedUi(ctx, {
+      const ui = await createShadowRootUi(ctx, {
+        name: 'shizue-toggle',
         position: 'inline',
         anchor: 'body',
-        onMount: (container) => {
+        onMount: (container, shadow, shadowHost) => {
           uiContainer = container;
-          container.id = '_shizue_toggle_overlay_';
-          Object.assign(container.style, {
-            position: 'fixed',
-            inset: '0 auto auto 0',
-            zIndex: '2147483647',
-            pointerEvents: 'auto',
-            all: 'initial',
-          });
+          shadowHost.id = '_shizue_toggle_overlay_';
           container.classList.add('shizue-preflight');
-          document.body.append(container);
+
+          // Popovers, tooltips and antd styles also stay inside the shadow root. Popovers go
+          // before the toggle so the toggle still paints over them, as when they were on <body>.
+          const portalContainer = document.createElement('div');
+          shadow.insertBefore(portalContainer, container);
 
           root = createRoot(container);
           root.render(
             <StrictMode>
               <JotaiProvider>
                 <LanguageProvider loadingComponent={null}>
-                  <AntdProvider>
-                    <Toggle />
-                  </AntdProvider>
+                  <AntdStyleProvider container={shadow} cache={createCache()}>
+                    <AntdProvider>
+                      <ConfigProvider getPopupContainer={() => portalContainer}>
+                        <Toggle portalContainer={portalContainer} />
+                      </ConfigProvider>
+                    </AntdProvider>
+                  </AntdStyleProvider>
                 </LanguageProvider>
               </JotaiProvider>
             </StrictMode>
@@ -70,9 +78,9 @@ export default defineContentScript({
 
             debounceId = window.setTimeout(() => {
               debounceId = null;
-              if (!container.isConnected) return;
-              if (document.body.lastElementChild !== container) {
-                document.body.append(container);
+              if (!shadowHost.isConnected) return;
+              if (document.body.lastElementChild !== shadowHost) {
+                document.body.append(shadowHost);
               }
             }, 100);
           });

@@ -47,7 +47,7 @@ import { motion, PanInfo } from 'framer-motion';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const Toggle = () => {
+const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
   const { t } = useTranslation();
 
   const toggleRef = useRef<HTMLDivElement>(null);
@@ -426,6 +426,7 @@ const Toggle = () => {
                 ref={translateSettingsPopoverTriggerRef}
                 popoverContent={
                   <TogglePopoverModal
+                    container={portalContainer}
                     toggleRef={toggleRef}
                     triggerRef={translateSettingsPopoverTriggerRef}
                     settingsTriggerYPosition={settingsTriggerYPosition}
@@ -453,12 +454,9 @@ const Toggle = () => {
                             value={translateModel}
                             onChange={handleSelectTranslateModel}
                             className="sz:font-ycom sz:w-[180px]"
-                            getPopupContainer={() => {
-                              const modal = document.getElementsByClassName(
-                                'sz-toggle-translate-settings-modal'
-                              )[0];
-                              return modal as HTMLElement;
-                            }}
+                            getPopupContainer={(trigger) =>
+                              trigger.closest('.sz-toggle-translate-settings-modal') as HTMLElement
+                            }
                             size="small"
                             options={MODEL_OPTIONS.map((value) => {
                               const validated = modelAvailability[value];
@@ -492,12 +490,9 @@ const Toggle = () => {
                             value={targetLanguage}
                             onChange={handleSelectTargetLanguage}
                             className="sz:font-ycom sz:w-[180px] sz:text-gray-700"
-                            getPopupContainer={() => {
-                              const modal = document.getElementsByClassName(
-                                'sz-toggle-translate-settings-modal'
-                              )[0];
-                              return modal as HTMLElement;
-                            }}
+                            getPopupContainer={(trigger) =>
+                              trigger.closest('.sz-toggle-translate-settings-modal') as HTMLElement
+                            }
                             size="small"
                             options={languageOptions(t)}
                             optionRender={(option) => {
@@ -595,6 +590,7 @@ const Toggle = () => {
           </div>
           {closeIconModalOpen && (
             <ToggleClosePopoverModal
+              container={portalContainer}
               toggleRef={toggleRef}
               settingsTriggerYPosition={closeIconTriggerYPosition}
               onClose={() => handleCloseIconClick(false)}
