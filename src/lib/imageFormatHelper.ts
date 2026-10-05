@@ -1,4 +1,4 @@
-import { ConnectionMode, providerFromName } from './modelRegistry';
+import { ChatModel, ConnectionMode, MODELS, providerFromName } from './modelRegistry';
 
 interface ImageContent {
   type: string;
@@ -46,8 +46,17 @@ export const formatImageForProvider = (
 
 export const formatImagesForMessage = (
   images: string[],
-  modelName: string,
+  modelName: ChatModel,
   connectionMode: ConnectionMode
 ): ImageContent[] => {
+  // Text-only models reject any request with an image, so earlier images in the thread become a note.
+  if (!MODELS[modelName].supportsImages) {
+    return [
+      {
+        type: 'text',
+        text: `[${images.length} image(s) omitted: the current model does not accept images]`,
+      },
+    ];
+  }
   return images.map((img) => formatImageForProvider(img, modelName, connectionMode));
 };

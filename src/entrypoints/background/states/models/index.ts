@@ -37,12 +37,15 @@ export const getCurrentAnthropicKey = () => anthropicKey;
 export const getCurrentOpenrouterKey = () => openrouterKey;
 
 // With no key set this returns 'direct', so the model factory reports the provider key missing.
+// OpenRouter-only models always return 'openrouter', so a missing key is reported as OpenRouter's.
 export const getConnectionModeFor = (model: ChatModel): ConnectionMode => {
+  const { provider } = MODELS[model];
+  if (!provider) return 'openrouter';
   const directKey = {
     'openai-api-key': openaiKey,
     'gemini-api-key': geminiKey,
     'anthropic-api-key': anthropicKey,
-  }[MODELS[model].provider];
+  }[provider];
   if (directKey && openrouterKey) return connectionMode;
   return openrouterKey ? 'openrouter' : 'direct';
 };

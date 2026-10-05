@@ -4,7 +4,24 @@ import {
   MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE,
   MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
 } from '@/config/constants';
+import { getCurrentChatModel } from '@/entrypoints/background/states/models';
+import { whenBackgroundStateReady } from '@/entrypoints/background/states/ready';
+import { ChatModel, isChatModel, MODELS } from '@/lib/modelRegistry';
+import { errorLog } from '@/logs';
 import { createI18n } from '@wxt-dev/i18n';
+
+// Image actions run on the chat model, so they are greyed out for text-only models.
+const updateImageMenuItems = (model: ChatModel) => {
+  const enabled = MODELS[model].supportsImages;
+  for (const id of ['describeImage', 'extractImageText']) {
+    // Callback form: the promise form needs Chrome 123+.
+    chrome.contextMenus.update(id, { enabled }, () => {
+      if (chrome.runtime.lastError) {
+        errorLog('Failed to update context menu item:', id, chrome.runtime.lastError.message);
+      }
+    });
+  }
+};
 
 export const createContextMenu = async () => {
   const i18n = createI18n();
@@ -75,4 +92,13 @@ export const createContextMenu = async () => {
       }
     }
   });
+
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'local' && changes.CHAT_MODEL) {
+      const newChatModel = changes.CHAT_MODEL.newValue;
+      if (isChatModel(newChatModel)) updateImageMenuItems(newChatModel);
+    }
+  });
+  await whenBackgroundStateReady();
+  updateImageMenuItems(getCurrentChatModel());
 };

@@ -19,22 +19,31 @@ export type ChatModel =
   | 'gemini-flash'
   | 'gemini-flash-lite'
   | 'claude-sonnet'
-  | 'claude-haiku';
+  | 'claude-haiku'
+  | 'deepseek-pro'
+  | 'deepseek-flash';
 
 export type TranslateModel = ChatModel;
 
 export interface ModelSpec {
   id: string;
   label: string;
-  provider: ModelProvider;
+  // Unset for models served only through OpenRouter.
+  provider?: ModelProvider;
   // Newer reasoning models reject (or ignore) non-default sampling temperature.
   supportsTemperature: boolean;
+  // Whether the model takes image input (`input_modalities` on OpenRouter).
+  supportsImages: boolean;
   openrouter: {
     // OpenRouter IDs don't follow the provider's (claude-haiku-4-5 is anthropic/claude-haiku-4.5).
     id: string;
     // `reasoning.effort` for fast calls, from the model's `supported_efforts` on OpenRouter.
+    // 'off' sends `reasoning.enabled: false`, for models with a non-thinking mode but no 'none' effort.
     // Unset when reasoning is off by default, since sending an effort would turn it on.
-    fastEffort?: 'none' | 'minimal' | 'low';
+    fastEffort?: 'none' | 'minimal' | 'low' | 'off';
+    // OpenRouter's `default_effort`, sent on regular calls when the model lists no `default_enabled`:
+    // its providers then disagree on whether to think by default.
+    defaultEffort?: 'high';
   };
 }
 
@@ -44,6 +53,7 @@ export const MODELS: Record<ChatModel, ModelSpec> = {
     label: 'GPT-6 Sol',
     provider: 'openai-api-key',
     supportsTemperature: false,
+    supportsImages: true,
     openrouter: { id: 'openai/gpt-6-sol', fastEffort: 'none' },
   },
   'gpt-mini': {
@@ -51,6 +61,7 @@ export const MODELS: Record<ChatModel, ModelSpec> = {
     label: 'GPT-6 Luna',
     provider: 'openai-api-key',
     supportsTemperature: false,
+    supportsImages: true,
     openrouter: { id: 'openai/gpt-6-luna', fastEffort: 'none' },
   },
   'gemini-flash': {
@@ -58,6 +69,7 @@ export const MODELS: Record<ChatModel, ModelSpec> = {
     label: 'Gemini 3.8 Flash',
     provider: 'gemini-api-key',
     supportsTemperature: false,
+    supportsImages: true,
     openrouter: { id: 'google/gemini-3.8-flash', fastEffort: 'low' },
   },
   'gemini-flash-lite': {
@@ -65,6 +77,7 @@ export const MODELS: Record<ChatModel, ModelSpec> = {
     label: 'Gemini 3.5 Flash-Lite',
     provider: 'gemini-api-key',
     supportsTemperature: false,
+    supportsImages: true,
     openrouter: { id: 'google/gemini-3.5-flash-lite', fastEffort: 'minimal' },
   },
   'claude-sonnet': {
@@ -72,6 +85,7 @@ export const MODELS: Record<ChatModel, ModelSpec> = {
     label: 'Claude Sonnet 5',
     provider: 'anthropic-api-key',
     supportsTemperature: false,
+    supportsImages: true,
     openrouter: { id: 'anthropic/claude-sonnet-5', fastEffort: 'low' },
   },
   'claude-haiku': {
@@ -79,7 +93,26 @@ export const MODELS: Record<ChatModel, ModelSpec> = {
     label: 'Claude Haiku 4.5',
     provider: 'anthropic-api-key',
     supportsTemperature: true,
+    supportsImages: true,
     openrouter: { id: 'anthropic/claude-haiku-4.5' },
+  },
+  'deepseek-pro': {
+    id: 'deepseek-v4-pro-0813',
+    label: 'DeepSeek V4 Pro',
+    supportsTemperature: false,
+    supportsImages: false,
+    openrouter: {
+      id: 'deepseek/deepseek-v4-pro-0813',
+      fastEffort: 'off',
+      defaultEffort: 'high',
+    },
+  },
+  'deepseek-flash': {
+    id: 'deepseek-v4.1-flash',
+    label: 'DeepSeek V4.1 Flash',
+    supportsTemperature: false,
+    supportsImages: true,
+    openrouter: { id: 'deepseek/deepseek-v4.1-flash', fastEffort: 'off' },
   },
 };
 

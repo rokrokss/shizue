@@ -114,7 +114,8 @@ function createOpenRouter(spec: ModelSpec, opts: ModelOptions) {
   const { maxTokens, temperature, streaming, fast, jsonSchema, modelPreset } = opts;
   throwIfMissing(modelPreset.openrouterKey, 'openrouter-api-key');
 
-  const fastEffort = fast ? spec.openrouter.fastEffort : undefined;
+  const effort = fast ? spec.openrouter.fastEffort : spec.openrouter.defaultEffort;
+  const reasoning = effort === 'off' ? { enabled: false } : effort ? { effort } : undefined;
   const instance = new ChatOpenAI({
     model: spec.openrouter.id,
     apiKey: modelPreset.openrouterKey!,
@@ -123,7 +124,7 @@ function createOpenRouter(spec: ModelSpec, opts: ModelOptions) {
     ...temperatureFor(spec, temperature),
     ...(maxTokens ? { maxTokens } : {}),
     modelKwargs: {
-      ...(fastEffort ? { reasoning: { effort: fastEffort } } : {}),
+      ...(reasoning ? { reasoning } : {}),
       ...(jsonSchema ? { response_format: { type: 'json_object' } } : {}),
     },
   });

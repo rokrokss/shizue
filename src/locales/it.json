@@ -60,7 +60,8 @@
     "extractImageTextRequest": "Per favore, estrai il testo da questa immagine.",
     "translateModeDescription": "D'ora in poi, per ogni messaggio che invio, fornisci traduzione e spiegazione nel seguente formato:\n\n1. ✅ Traduzione: Fornisci una traduzione naturale e contestualmente appropriata.\n2. 📚 Parole/Espressioni chiave\n    – Parola: Parte del discorso / Significato\n    – Esempio dal testo originale\n3. 🧠 Spiegazione grammaticale o espressiva: Quando necessario, fornisci una breve spiegazione di espressioni o frasi chiave.\n\n- Presenta l'output in un formato organizzato simile a un dizionario.\n- Applica la formattazione in grassetto al contenuto importante.\n- Ometti spiegazioni inutili e scrivi in modo pulito e conciso per un apprendimento focalizzato.\n- Mantieni questo formato a meno che non fornisca istruzioni aggiuntive.",
     "activateTranslateMode": "Attiva modalità traduzione..📡 🤖 📡",
-    "imageUpload": "Carica immagine"
+    "imageUpload": "Carica immagine",
+    "imageUploadNotSupported": "Il modello attuale non supporta le immagini"
   },
   "footer": {
     "joinDiscord": "Unisciti a me su Discord!",

@@ -2,6 +2,8 @@ import Footer from '@/components/Footer';
 import { MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE } from '@/config/constants';
 import { ChatStatus, isChatWaiting } from '@/hooks/chat';
 import { useThemeValue } from '@/hooks/layout';
+import { useChatModel } from '@/hooks/models';
+import { MODELS } from '@/lib/modelRegistry';
 import { debugLog } from '@/logs';
 import {
   EditOutlined,
@@ -14,7 +16,7 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons';
 import { Button, Input, Tooltip, Upload } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -42,6 +44,13 @@ const ChatInput = ({
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const theme = useThemeValue();
   const navigate = useNavigate();
+  const [chatModel] = useChatModel();
+  const imagesSupported = MODELS[chatModel].supportsImages;
+
+  // Drop attached images when the chat model is switched to a text-only one.
+  useEffect(() => {
+    if (!imagesSupported) setUploadedImages([]);
+  }, [imagesSupported]);
 
   const handleSubmit = async (text: string) => {
     if (text !== '' || uploadedImages.length > 0) {
@@ -105,7 +114,7 @@ const ChatInput = ({
 
   const handlePaste = async (e: React.ClipboardEvent) => {
     const items = e.clipboardData?.items;
-    if (!items) return;
+    if (!items || !imagesSupported) return;
 
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
@@ -130,7 +139,7 @@ const ChatInput = ({
     const files = Array.from(e.dataTransfer.files);
     const imageFiles = files.filter((file) => file.type.startsWith('image/'));
 
-    if (imageFiles.length > 0) {
+    if (imageFiles.length > 0 && imagesSupported) {
       setUploadedImages((prev) => [...prev, ...imageFiles]);
     }
   };
@@ -264,7 +273,7 @@ const ChatInput = ({
                     theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
                   }`}
                 >
-                  {t('chat.imageUpload')}
+                  {imagesSupported ? t('chat.imageUpload') : t('chat.imageUploadNotSupported')}
                 </div>
               }
               color={theme == 'dark' ? '#505362' : 'white'}
@@ -275,14 +284,16 @@ const ChatInput = ({
                 accept="image/*"
                 showUploadList={false}
                 multiple
+                disabled={!imagesSupported}
               >
                 <Button
                   type="text"
+                  disabled={!imagesSupported}
                   icon={
                     <PictureOutlined
                       style={{
                         fontSize: '20px',
-                        color: 'rgba(0,0,0,0.88)',
+                        color: imagesSupported ? 'rgba(0,0,0,0.88)' : 'rgba(0,0,0,0.25)',
                         filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
                       }}
                     />

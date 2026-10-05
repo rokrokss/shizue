@@ -60,7 +60,8 @@
     "extractImageTextRequest": "請從這張圖片中提取文字。",
     "translateModeDescription": "從現在開始，對於我發送的每一條訊息，請按以下格式提供翻譯和解釋：\n\n1. ✅ 翻譯文：提供自然且符合語境的翻譯。\n2. 📚 核心詞彙/表達整理\n    – 單詞：詞性 / 含義\n    – 原文中的例句\n3. 🧠 語法或表達解釋：必要時，對核心表達或句型提供簡單說明。\n\n- 輸出要像詞典一樣條理清晰。\n- 重要內容要加粗處理。\n- 省略不必要的解釋，簡潔明瞭地編寫，以便專注學習。\n- 除非我另行指示，否則請保持此格式。",
     "activateTranslateMode": "啟動翻譯模式..📡 🤖 📡",
-    "imageUpload": "圖片上傳"
+    "imageUpload": "圖片上傳",
+    "imageUploadNotSupported": "目前的模型不支援圖片"
   },
   "footer": {
     "joinDiscord": "加入我的 Discord！",

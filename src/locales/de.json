@@ -60,7 +60,8 @@
     "extractImageTextRequest": "Bitte extrahieren Sie Text aus diesem Bild.",
     "translateModeDescription": "Von nun an sollen Sie für jede Nachricht, die ich sende, Übersetzung und Erklärung im folgenden Format bereitstellen:\n\n1. ✅ Übersetzung: Bieten Sie eine natürliche und kontextuell angemessene Übersetzung.\n2. 📚 Schlüsselwörter/-ausdrücke\n    – Wort: Wortart / Bedeutung\n    – Beispiel aus dem Originaltext\n3. 🧠 Grammatik- oder Ausdruckserklärung: Falls erforderlich, geben Sie eine kurze Erklärung zu Schlüsselausdrücken oder Phrasen.\n\n- Präsentieren Sie die Ausgabe in einem wörterbuchähnlichen organisierten Format.\n- Verwenden Sie Fettformatierung für wichtige Inhalte.\n- Lassen Sie unnötige Erklärungen weg und schreiben Sie sauber und prägnant für fokussiertes Lernen.\n- Behalten Sie dieses Format bei, es sei denn, ich gebe zusätzliche Anweisungen.",
     "activateTranslateMode": "Übersetzungsmodus aktivieren..📡 🤖 📡",
-    "imageUpload": "Bild hochladen"
+    "imageUpload": "Bild hochladen",
+    "imageUploadNotSupported": "Das aktuelle Modell unterstützt keine Bilder"
   },
   "footer": {
     "joinDiscord": "Tritt mir auf Discord bei!",

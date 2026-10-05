@@ -118,7 +118,7 @@ STORAGE_USER_MEMORY              // User context for AI (defined but not yet use
 ## Core Features
 
 ### 1. AI Chat with Streaming
-- **Models**: see `MODELS` in `lib/modelRegistry.ts` (GPT-6 Sol/Luna, Gemini 3.8 Flash/3.5 Flash-Lite, Claude Sonnet 5/Haiku 4.5)
+- **Models**: see `MODELS` in `lib/modelRegistry.ts` (GPT-6 Sol/Luna, Gemini 3.8 Flash/3.5 Flash-Lite, Claude Sonnet 5/Haiku 4.5, DeepSeek V4 Pro/V4.1 Flash via OpenRouter only)
 - **Streaming**: Via port connections with background script
 - **Thread Management**: IndexedDB storage with Dexie
 
@@ -215,13 +215,13 @@ this.version(2).stores({ messages: '...', tokenUsage: 'id, date, model' });
 ### LLM Provider Factory Pattern
 **Location**: `lib/modelRegistry.ts` (pure data, safe for UI/content scripts) + `lib/models.ts` (LangChain factory, background only)
 
-- Settings store stable slot names (`'gpt'`, `'gpt-mini'`, `'gemini-flash'`, ...). `MODELS` maps each slot to the real API model ID, display label, provider, and `supportsTemperature`.
+- Settings store stable slot names (`'gpt'`, `'gpt-mini'`, `'gemini-flash'`, ...). `MODELS` maps each slot to the real API model ID, display label, provider, `supportsTemperature`, and `supportsImages`.
 - To swap a model, change its `MODELS` entry. Settings and toggle UIs render from `MODEL_OPTIONS`.
-- Newer reasoning models reject or ignore non-default `temperature`; set `supportsTemperature: false` and the factory omits it. `fast: true` (translation) maps to OpenAI `reasoning_effort: 'none'`, Gemini `thinkingLevel: 'minimal'`, Anthropic `effort: 'low'`.
+- Newer reasoning models reject or ignore non-default `temperature`; set `supportsTemperature: false` and the factory omits it. `supportsImages: false` (text-only models) disables chat image upload and the image context menu items, and `formatImagesForMessage` replaces images in thread history with a text note. `fast: true` (translation) maps to OpenAI `reasoning_effort: 'none'`, Gemini `thinkingLevel: 'minimal'`, Anthropic `effort: 'low'`.
 - `@langchain/openai` does not recognize gpt-6 as a reasoning model, so OpenAI-specific fields go through `modelKwargs` (`max_completion_tokens`, `reasoning_effort`).
 - Read streamed text with `chunk.text` (skips thinking blocks) and aggregate chunks with `concat` before reading `usage_metadata` (providers split usage across chunks).
 - Never import `lib/models.ts` from UI or content scripts: it pulls LangChain into the bundle.
-- **OpenRouter** is a key type, not a model's provider: its key reaches every slot. Each model goes through its provider's key or OpenRouter, whichever is set; when both are, `STORAGE_CONNECTION_MODE` (`'direct'` | `'openrouter'`, the "Prefer OpenRouter" checkbox) decides. The background resolves this per model with `getConnectionModeFor()`, and `ModelPreset.connectionMode` holds the result. The OpenRouter path is `ChatOpenAI` with its `baseURL` using `MODELS[slot].openrouter.id`; `fastEffort` there comes from each model's `supported_efforts` in OpenRouter's `/api/v1/models`. OpenRouter takes the OpenAI `image_url` format for Claude too, and its key is validated with `/api/v1/key` (`/models` is public). UI checks model availability with `useModelAvailability()` (`hooks/models.ts`): a model is available through its provider key or an OpenRouter key.
+- **OpenRouter** is a key type, not a model's provider: its key reaches every slot. Each model goes through its provider's key or OpenRouter, whichever is set (models without a `provider`, such as DeepSeek, are OpenRouter-only); when both are, `STORAGE_CONNECTION_MODE` (`'direct'` | `'openrouter'`, the "Prefer OpenRouter" checkbox) decides. The background resolves this per model with `getConnectionModeFor()`, and `ModelPreset.connectionMode` holds the result. The OpenRouter path is `ChatOpenAI` with its `baseURL` using `MODELS[slot].openrouter.id`; `fastEffort` there comes from each model's `supported_efforts` in OpenRouter's `/api/v1/models`; `'off'` sends `reasoning.enabled: false` for models with a non-thinking mode but no `'none'` effort (DeepSeek: `effort: 'low'` still thinks). `defaultEffort` sends OpenRouter's `default_effort` on regular calls for models that list no `default_enabled`, since their providers disagree on whether to think (DeepSeek V4 Pro). OpenRouter takes the OpenAI `image_url` format for Claude too, and its key is validated with `/api/v1/key` (`/models` is public). UI checks model availability with `useModelAvailability()` (`hooks/models.ts`): a model is available through its provider key or an OpenRouter key.
 - API keys are opaque: validate against the provider API, never by prefix (Gemini keys changed from `AIza…` to `AQ.…` in 2026 and must be sent in the `x-goog-api-key` header).
 
 **When adding new LLM provider**:

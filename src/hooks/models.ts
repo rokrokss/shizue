@@ -158,10 +158,10 @@ export const useModelAvailability = (): Record<ChatModel, boolean> => {
     'anthropic-api-key': useAtomValue(anthropicValidatedSafeAtom),
   };
   return Object.fromEntries(
-    MODEL_OPTIONS.map((model) => [
-      model,
-      Boolean(directValidated[MODELS[model].provider] || openRouterValidated),
-    ])
+    MODEL_OPTIONS.map((model) => {
+      const { provider } = MODELS[model];
+      return [model, Boolean((provider && directValidated[provider]) || openRouterValidated)];
+    })
   ) as Record<ChatModel, boolean>;
 };
 export const useAnyModelAvailable = () => Object.values(useModelAvailability()).some(Boolean);
