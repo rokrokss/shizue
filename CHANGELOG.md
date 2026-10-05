@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.6
+
+- Add DeepSeek V4 Pro and DeepSeek V4.1 Flash (OpenRouter only)
+- Image upload and the image context menu actions are disabled for models that don't accept images (DeepSeek V4 Pro); earlier images in a thread are left out for them
+
 ## v0.2.5
 
 - Chat: tildes (e.g. "3~5") no longer render as strikethrough
