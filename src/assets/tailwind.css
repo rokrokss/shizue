@@ -3,10 +3,6 @@
 @import "tailwindcss/utilities.css" layer(utilities) prefix(sz);
 
 @layer base {
-  /* TODO: use shadowDOM for overlay */
-  /* div:not([data-set-margin]) {
-    margin: 0 !important;
-  } */
   .shizue-preflight {
     @import "tailwindcss/preflight" important;
   }

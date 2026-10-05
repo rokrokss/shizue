@@ -435,7 +435,6 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
                     content={
                       <div className="sz:flex sz:flex-col sz:items-center sz:gap-[10px]">
                         <div
-                          data-set-margin="true"
                           className={`sz:font-ycom sz:text-[16px] sz:mb-[2px] sz:mt-0 sz:mr-0 sz:ml-0 sz:text-center sz:leading-[16px] ${
                             theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
                           }`}
@@ -568,7 +567,6 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
             <CharacterPickToggle index={characterIndex} />
           </div>
           <div
-            data-set-margin="true"
             className="sz:relative sz:mr-0 sz:ml-0 sz:mb-0"
             style={{
               opacity: delayedVisible && !closeIconModalOpen ? 1 : 0,
@@ -598,7 +596,6 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
               content={
                 <div className="sz:flex sz:flex-col sz:items-center sz:gap-[10px]">
                   <div
-                    data-set-margin="true"
                     className={`sz:font-ycom sz:text-[16px] sz:mb-[2px] sz:mt-0 sz:mr-0 sz:ml-0sz:text-center sz:leading-[16px] ${
                       theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
                     }`}
