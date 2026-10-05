@@ -268,6 +268,14 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 Content scripts then communicate with Side Panel to perform actions.
 
+### Content Script UI Isolation (Shadow DOM)
+In-page UI (toggle, YouTube caption toggle, caption overlay) renders inside shadow roots so CSS doesn't leak in either direction. CSS injected into a page once took over the page's cascade layer order (a page's `@layer reset` ended up above its own utilities), and page CSS restyled the toggle.
+- UI entrypoints use `cssInjectionMode: 'ui'` + `createShadowRootUi`. The only CSS injected into pages is `public/fonts/fonts.css` (declared in `wxt.config.ts`), because shadow roots ignore `@font-face`. They ignore `@property` too, so WXT moves Tailwind's `@property` rules into a small `<style>` in the page head.
+- antd: `StyleProvider container={shadowRoot} cache={createCache()}`, plus `ConfigProvider getPopupContainer` and `createPortal` targets inside the shadow root. `@ant-design/cssinjs` must resolve to the version antd itself uses, or `StyleProvider` silently does nothing.
+- Listeners on `document` see the shadow host as the event target: read `e.composedPath()[0]`, and hit-test with `shadowRoot.elementFromPoint`.
+- Elements placed in the page's own DOM (e.g. the YouTube player-bar holder) can't use `sz:` classes; style them inline.
+- `rem` still follows the page's root font size (YouTube's is 10px, and the YouTube UI is tuned to it), so prefer px values in new content-script UI.
+
 ## Storage Architecture
 
 This project uses **three distinct storage layers** with different purposes:
@@ -400,12 +408,11 @@ export const openAIValidatedAtom = atomWithStorage<boolean | undefined>(
   { getOnInit: true }
 );
 
-// Safe derived atom (fallback to API key existence check) - hooks/models.ts:90
+// Safe derived atom (fallback to API key existence check) - hooks/models.ts:101
+// The storage atoms hold a promise until chrome.storage first resolves; validatedOrHasKey unwraps
+// it before falling back, so the result is a promise only while storage is still loading.
 export const openAIValidatedSafeAtom = atom(
-  (get) => {
-    const validated = get(openAIValidatedAtom);
-    return validated !== undefined ? validated : Boolean(get(openAIKeyAtom));
-  },
+  (get) => validatedOrHasKey(get(openAIValidatedAtom), get(openAIKeyAtom)),
   (_, set, value: boolean) => set(openAIValidatedAtom, value)
 );
 ```
@@ -608,7 +615,8 @@ this.version(5).stores({
 1. Create `src/entrypoints/name.content.ts`
 2. Export `defineContentScript({ matches: ['<all_urls>'], ... })`
 3. WXT auto-registers in manifest
-4. Test: Reload extension → check chrome://extensions → Inspect content script
+4. UI: mount it with `createShadowRootUi` and `cssInjectionMode: 'ui'` (see Content Script UI Isolation)
+5. Test: Reload extension → check chrome://extensions → Inspect content script
 
 ### Adding a New Side Panel Route
 1. Define route in `sidepanel/routes.tsx`: `{ path: '/new-feature', element: <NewFeature /> }`
