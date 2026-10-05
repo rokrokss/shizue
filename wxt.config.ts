@@ -36,6 +36,10 @@ export default defineConfig({
       content_security_policy: {
         extension_pages: "script-src 'self'; object-src 'self'",
       },
+      // Content scripts keep their CSS in shadow roots (cssInjectionMode: 'ui'). The only CSS
+      // injected into pages is this @font-face file, since shadow roots ignore @font-face.
+      content_scripts: [{ matches: ['<all_urls>'], css: ['fonts/fonts.css'] }],
+      web_accessible_resources: [{ resources: ['fonts/*.woff2'], matches: ['<all_urls>'] }],
     };
     return manifest;
   },

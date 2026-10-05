@@ -1,0 +1,9 @@
+/* Injected into every page by the manifest (see wxt.config.ts). Content-script UI lives in shadow
+   roots, which ignore @font-face, so its fonts are registered on the page here. Keep this file to
+   @font-face rules only: anything else would style the page itself. */
+@font-face {
+  font-family: 'Ycomputer-Regular';
+  src: url('chrome-extension://__MSG_@@extension_id__/fonts/Ycomputer-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
