@@ -165,7 +165,7 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
 
     if (newOpen && translateSettingsPopoverTriggerRef.current) {
       const rect = translateSettingsPopoverTriggerRef.current.getBoundingClientRect();
-      setSettingsTriggerYPosition(rect.top + 34);
+      setSettingsTriggerYPosition(rect.top);
       debugLog('handleTranslateSettingsOpenChange: Settings trigger Y position:', rect.top);
     }
     setTranslateSettingsModalOpen(newOpen);
