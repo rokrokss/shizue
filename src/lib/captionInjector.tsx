@@ -1,7 +1,7 @@
 import tailwindRaw from '@/assets/tailwind.css?inline';
 import { CaptionDisplay } from '@/components/Youtube/CaptionDisplay';
 import { Language } from '@/hooks/language';
-import { Caption, TranscriptMetadata, VideoMetadata } from '@/lib/youtube';
+import { Caption, getCaptionUrl, TranscriptMetadata, VideoMetadata } from '@/lib/youtube';
 import { debugLog, errorLog } from '@/logs';
 import AntdProvider from '@/providers/AntdProvider';
 import LanguageProvider from '@/providers/LanguageProvider';
@@ -232,7 +232,7 @@ export class CaptionInjector {
     if (!metadata) return null;
 
     try {
-      const response = await fetch(metadata.baseUrl);
+      const response = await fetch(await getCaptionUrl(metadata.baseUrl));
       const data = await response.json();
       const captions: Caption[] = data.events
         .filter((event: any) => event.segs)

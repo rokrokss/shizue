@@ -1,6 +1,7 @@
 import '@/assets/global.css';
 import '@/assets/tailwind.css';
 import YoutubeSubtitleToggle from '@/components/Youtube/YoutubeCaptionToggle';
+import { watchPlayerCaptionRequests } from '@/lib/youtube';
 import { contentScriptLog } from '@/logs';
 import AntdProvider from '@/providers/AntdProvider';
 import LanguageProvider from '@/providers/LanguageProvider';
@@ -18,6 +19,8 @@ export default defineContentScript({
   runAt: 'document_idle',
   cssInjectionMode: 'ui',
   async main(ctx) {
+    watchPlayerCaptionRequests();
+
     const mountUi = async () => {
       if (document.getElementById(YOUTUBE_TOGGLE_SHADOW_HOST_ID)) return;
 
