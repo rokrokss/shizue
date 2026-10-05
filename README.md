@@ -98,13 +98,6 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
     * Enable "Developer mode".
     * Click "Load unpacked" and select the build output directory (`dist/chrome-mv3/`).
 
-### Chrome Web Store Images:
-  - The store screenshots, promo tiles, and store icon are HTML pages in `store/src`, rendered to `store/out` with headless Chrome (fonts load from Google Fonts, so rendering needs network access):
-    ```bash
-    store/render.sh                    # Render every image
-    store/render.sh screenshot-1-hero  # Or only the named ones
-    ```
-
 <br/>
 
 # 💬 Community & Feedback
