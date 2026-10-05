@@ -87,47 +87,34 @@ export const connectionModeAtom = atomWithStorage<ConnectionMode>(
   { getOnInit: true }
 );
 
+// A storage atom holds the promise chrome.storage resolves to until its first change, so unwrap it
+// before treating the flag as missing and falling back to whether a key is set.
+const validatedOrHasKey = (
+  validated: boolean | undefined | Promise<boolean | undefined>,
+  key: string | Promise<string>
+): boolean | Promise<boolean> => {
+  if (validated instanceof Promise) return validated.then((v) => validatedOrHasKey(v, key));
+  if (validated !== undefined) return validated;
+  return key instanceof Promise ? key.then(Boolean) : Boolean(key);
+};
+
 export const openAIValidatedSafeAtom = atom(
-  (get) => {
-    const validated = get(openAIValidatedAtom);
-    if (validated !== undefined) {
-      return validated;
-    }
-    return Boolean(get(openAIKeyAtom));
-  },
+  (get) => validatedOrHasKey(get(openAIValidatedAtom), get(openAIKeyAtom)),
   (_, set, value: boolean) => set(openAIValidatedAtom, value)
 );
 
 export const geminiValidatedSafeAtom = atom(
-  (get) => {
-    const validated = get(geminiValidatedAtom);
-    if (validated !== undefined) {
-      return validated;
-    }
-    return Boolean(get(geminiKeyAtom));
-  },
+  (get) => validatedOrHasKey(get(geminiValidatedAtom), get(geminiKeyAtom)),
   (_, set, value: boolean) => set(geminiValidatedAtom, value)
 );
 
 export const anthropicValidatedSafeAtom = atom(
-  (get) => {
-    const validated = get(anthropicValidatedAtom);
-    if (validated !== undefined) {
-      return validated;
-    }
-    return Boolean(get(anthropicKeyAtom));
-  },
+  (get) => validatedOrHasKey(get(anthropicValidatedAtom), get(anthropicKeyAtom)),
   (_, set, value: boolean) => set(anthropicValidatedAtom, value)
 );
 
 export const openRouterValidatedSafeAtom = atom(
-  (get) => {
-    const validated = get(openRouterValidatedAtom);
-    if (validated !== undefined) {
-      return validated;
-    }
-    return Boolean(get(openRouterKeyAtom));
-  },
+  (get) => validatedOrHasKey(get(openRouterValidatedAtom), get(openRouterKeyAtom)),
   (_, set, value: boolean) => set(openRouterValidatedAtom, value)
 );
 
