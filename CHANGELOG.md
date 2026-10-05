@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.8
+
+- Context menu: right-click selected text to translate, explain, summarize, or fix its grammar. The answer opens in the side panel chat, quoting the selection and linking its page
+- Translating a selection uses the Translate Target Language setting
+
 ## v0.2.7
 
 - YouTube captions: fix AI captions not showing up after Activate on some videos
