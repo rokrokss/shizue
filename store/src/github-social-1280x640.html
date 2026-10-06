@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="article.css">
+<style>
+  /* GitHub social preview: link unfurls show it at ~45% scale, so the left column carries the message. */
+  .canvas {
+    width: 1280px; height: 640px;
+    background-color: #32ccbc;
+    background-image:
+      radial-gradient(rgba(16, 48, 43, 0.12) 1.4px, transparent 1.5px),
+      linear-gradient(120deg, #a6f9f0 0%, #5bdccd 45%, #32ccbc 100%);
+    background-size: 24px 24px, 100% 100%;
+    background-position: 8px 8px, 0 0;
+  }
+  .left { position: absolute; left: 72px; top: 84px; width: 540px; }
+  .brand { display: flex; align-items: center; gap: 18px; }
+  .brand img { width: 68px; height: 68px; image-rendering: pixelated; filter: drop-shadow(4px 4px 0 rgba(16, 48, 43, 0.9)); }
+  .brand span { font: 800 52px/1 var(--head); font-variation-settings: 'opsz' 96; letter-spacing: -0.04em; color: var(--ink); }
+  .headline { font-size: 70px; margin-top: 30px; }
+  .headline .w { background: #fff; padding: 0 8px; margin-left: -4px; box-shadow: 4px 4px 0 var(--ink); border: 2px solid var(--ink); border-radius: 8px; display: inline-block; line-height: 1.02; }
+  .sub { font-size: 24px; color: #0f4a43; margin-top: 24px; }
+  .chips { margin-top: 26px; }
+  .chip { background: rgba(255, 255, 255, 0.85); border-color: rgba(16, 48, 43, 0.25); }
+
+  .card {
+    position: absolute; background: #fff; border-radius: 16px; overflow: hidden;
+    box-shadow: 0 30px 60px -18px rgba(16, 48, 43, 0.45), 0 10px 20px -10px rgba(16, 48, 43, 0.3);
+    border: 1px solid rgba(16, 48, 43, 0.12);
+  }
+  .art { left: 610px; top: 72px; width: 440px; height: 400px; transform: rotate(-2.5deg); }
+  .art .article { padding: 22px 28px; height: 100%; }
+  .art .article h2 { font-size: 27px; margin-bottom: 2px; }
+  .art .article h2.tr { font: 600 18px var(--sys); color: rgba(29, 29, 27, 0.5); margin: 0 0 12px; }
+  .art .article p { font-size: 15.5px; line-height: 1.5; margin-bottom: 3px; }
+  .art .article p.tr { font-size: 14px; margin-bottom: 12px; }
+
+  .side { left: 880px; top: 126px; width: 320px; height: 330px; transform: rotate(2deg); display: flex; flex-direction: column; }
+  .side.panel { border-left: 1px solid rgba(16, 48, 43, 0.12); }
+  .side .msgs { padding: 14px 14px; font-size: 13.5px; }
+
+  .grass { position: absolute; left: 0; right: 0; bottom: 0; height: 34px; background: #1f8f83; }
+  .grass::before { content: ''; position: absolute; left: 0; right: 0; top: -10px; height: 10px; background: repeating-linear-gradient(90deg, #1f8f83 0 10px, transparent 10px 20px); }
+  .canvas > .sprite { position: absolute; bottom: 34px; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="left">
+    <div class="brand"><img src="../../src/public/icon.svg"><span>Shizue</span></div>
+    <h1 class="headline">Your AI sidekick<br>on <span class="w">every page</span></h1>
+    <p class="sub">Free and open source. Chat, summarize and translate with your own API key.</p>
+    <div class="chips">
+      <span class="chip"><i style="background:#10a37f"></i>GPT-6</span>
+      <span class="chip"><i style="background:#d97757"></i>Claude</span>
+      <span class="chip"><i style="background:#4b8cf5"></i>Gemini</span>
+      <span class="chip"><i style="background:#4d6bfe"></i>DeepSeek</span>
+    </div>
+  </div>
+
+  <div class="card art">
+    <div class="article">
+      <div class="kicker">Science</div>
+      <h2>Do octopuses dream?</h2>
+      <h2 class="tr">문어도 꿈을 꿀까?</h2>
+      <p>When octopuses sleep, their skin flickers through colors and textures, replaying patterns they used while awake.</p>
+      <p class="tr">문어가 잠들면 피부가 여러 색과 질감으로 깜빡이며, 깨어 있을 때 썼던 무늬를 다시 재생합니다.</p>
+      <p>Researchers recorded short bursts of “active sleep” about once an hour.</p>
+      <p class="tr">연구진은 약 한 시간마다 짧은 ‘활동성 수면’을 기록했습니다.</p>
+    </div>
+  </div>
+
+  <div class="card side panel">
+    <div class="ph"><img src="../../src/public/icon.svg">Shizue</div>
+    <div class="msgs">
+      <div class="human">
+        <div class="sprite sp-babycow-walk" style="--s:2.1;margin:2px 0 0 2px"></div>
+        <div class="bubble">Summarize this page! Shizue!</div>
+      </div>
+      <div class="ai">
+        <p><b>Octopuses may dream.</b> Their sleep has REM-like phases.</p>
+        <ul>
+          <li><b>Skin patterns</b> replay while asleep.</li>
+          <li><b>Active sleep</b> comes about once an hour.</li>
+          <li>Dreaming may have <b>evolved more than once</b>.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="grass"></div>
+  <div class="sprite sp-cow" style="--s:3;left:96px;--f:1"></div>
+  <div class="sprite sp-babycow" style="--s:3;left:206px"></div>
+  <div class="sprite sp-chicken" style="--s:3;left:306px;--f:2"></div>
+  <div class="sprite sp-walk" style="--s:3;left:700px;--f:4"></div>
+  <div class="sprite sp-bluechicken" style="--s:3;left:780px;--f:1"></div>
+  <div class="sprite sp-chicken-eat" style="--s:3;left:1090px"></div>
+</div>
+</body>
+</html>

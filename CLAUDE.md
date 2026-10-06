@@ -19,6 +19,7 @@ store/render.sh       # Render Chrome Web Store images (store/src → store/out)
 ### Chrome Web Store Images
 - `store/src/*.html` recreate the extension UI in HTML (styles and strings copied from the real components and `src/locales/en.json`); `store/render.sh` screenshots them with headless Chrome at exact store sizes. When UI text, model names, or features they show change, update the HTML and re-render.
 - `store-icon-128.png` is the store listing icon (96px artwork + 16px transparent padding). It is uploaded separately and is not the manifest icon in `src/public/icon/`.
+- `github-social-1280x640.png` is the GitHub social preview, not a store image. It is uploaded in the repo's Settings → General → Social preview.
 
 ### Testing Extension
 1. Build: `pnpm build`

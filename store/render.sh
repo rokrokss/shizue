@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Renders the Chrome Web Store images in store/src to exact-size PNGs in store/out.
+# Renders the Chrome Web Store images (and the GitHub social preview) in store/src to exact-size PNGs in store/out.
 # Usage: store/render.sh [name ...]   (no args = render everything)
 # Needs network: base.css/article.css load Bricolage Grotesque, Silkscreen and Newsreader from Google Fonts.
 set -euo pipefail
@@ -18,6 +18,7 @@ TARGETS=(
   "promo-small-440x280:440:280"
   "promo-marquee-1400x560:1400:560"
   "store-icon-128:128:128"
+  "github-social-1280x640:1280:640"
 )
 
 for t in "${TARGETS[@]}"; do
