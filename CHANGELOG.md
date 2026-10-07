@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.2
+
+- Local models: the settings show what's connected, the server and its models, instead of an address form. When no server is running or it has no models yet, Shizue says what to do and connects on its own once you start the server or download a model. Enter an address only when you need a different one
+- The Connect and Validate buttons no longer flash a spinner for checks that finish within a moment
+
 ## v0.3.1
 
 - Chat history and the memo list no longer flash their empty message while loading, and the Connect and Validate buttons keep their size while they work
