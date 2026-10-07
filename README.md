@@ -9,6 +9,12 @@
       Download Shizue from Chrome Web Store
     </a>
   </p>
+
+  <p>
+    <a href="https://chromewebstore.google.com/detail/mpcbgfkoholfgapcgcmfjobnfcbnfanm"><img alt="Chrome Web Store users" src="https://img.shields.io/chrome-web-store/users/mpcbgfkoholfgapcgcmfjobnfcbnfanm?label=users" /></a>
+    <a href="https://chromewebstore.google.com/detail/mpcbgfkoholfgapcgcmfjobnfcbnfanm/reviews"><img alt="Chrome Web Store rating" src="https://img.shields.io/chrome-web-store/rating/mpcbgfkoholfgapcgcmfjobnfcbnfanm" /></a>
+    <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue" /></a>
+  </p>
 </div>
 
 # 👋 Intro
@@ -83,6 +89,42 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 
 <br/>
 
+# 🔍 Transparency & FAQ
+
+**Is it really free?**
+Yes, and it will stay free. There is no paid plan, no account, and no ads. You pay only your AI provider (or OpenRouter) for the API calls you make. The Token Usage chart (the chart button below the chat box) shows how many tokens each model used.
+
+**Is the whole thing open source?**
+Yes. The full source of the extension is in this repository under the [MIT License](LICENSE). The repository was private for a period after mid-2025 and is public again. It was AGPL-3.0 from June 2025 to October 2026 and is MIT as of v0.2.9. The PDF translation feature, which was built on AGPL-licensed BabelDOC, has been removed.
+
+**Does Shizue have a server? What leaves my browser?**
+There is no Shizue server. API keys, chat history, memos, and settings stay in your browser's storage. When you use a feature, only the content that feature needs (e.g. the page text for a summary) is sent directly from your browser to the provider you chose, or to OpenRouter. There is no analytics or tracking. Details are in the [privacy policy](privacy_policy.md).
+
+**What does OpenRouter see about Shizue?**
+Requests to OpenRouter carry `HTTP-Referer: https://shizue.net` and `X-OpenRouter-Title: Shizue`, so OpenRouter counts the usage under the Shizue app. These headers identify the app, not you, and nothing is sent to shizue.net.
+
+**Why these permissions?**
+- `storage`: keep your keys, settings, and history locally
+- `sidePanel`: the chat side panel
+- `activeTab`: work with the tab you're on when you open Shizue or use a right-click action
+- `contextMenus`: the right-click actions
+- Content scripts on all sites: the floating toggle button and page translation; on YouTube, the caption translation
+
+**Local models (Ollama) or Firefox?**
+Not yet.
+
+<br/>
+
+# 🔀 Using Shizue with OpenRouter
+
+One [OpenRouter](https://openrouter.ai) key gives you every model in Shizue, including DeepSeek, which is available only through OpenRouter.
+
+1. Create a key at [openrouter.ai/keys](https://openrouter.ai/keys).
+2. In Shizue's onboarding, choose **Use OpenRouter API Key** and paste it. Later you can change it in Settings → Models → AI Provider.
+3. If you also register a provider's own key (OpenAI, Gemini, or Anthropic), its models use that key directly. Check **Prefer OpenRouter** to send them through OpenRouter instead.
+
+<br/>
+
 # 🐳 Installation
 
 - You can install Shizue from [Chrome Web Store](https://chromewebstore.google.com/detail/mpcbgfkoholfgapcgcmfjobnfcbnfanm?utm_source=item-share-cb),
@@ -113,3 +155,9 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 # 💬 Community & Feedback
 
 For suggestions, feedback, or discussions, join me on [Discord](https://discord.gg/ukfPmxsyEy).
+
+<br/>
+
+# 📄 License
+
+[MIT](LICENSE)
