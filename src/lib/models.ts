@@ -1,12 +1,14 @@
 import { debugLog, errorLog } from '@/logs';
 import { ChatAnthropic } from '@langchain/anthropic';
 import { ChatGoogle } from '@langchain/google';
+import { ChatOllama } from '@langchain/ollama';
 import { ChatOpenAI } from '@langchain/openai';
 import {
   MODELS,
   type ApiKeyProvider,
   type ChatModel,
   type ConnectionMode,
+  type LocalModelConfig,
   type ModelSpec,
 } from '@/lib/modelRegistry';
 
@@ -17,6 +19,7 @@ export interface ModelPreset {
   geminiKey?: string;
   anthropicKey?: string;
   openrouterKey?: string;
+  localModel?: LocalModelConfig;
   // Resolved for modelName, not the stored preference.
   connectionMode: ConnectionMode;
   modelName: ChatModel;
@@ -145,8 +148,63 @@ function createOpenRouter(spec: ModelSpec, opts: ModelOptions) {
   return instance;
 }
 
+// Ollama's own default is 4K tokens on most machines, which silently cuts long pages. Every request
+// sends the same value, since a different num_ctx makes Ollama reload the model.
+const LOCAL_CONTEXT_LENGTH = 32_768;
+
+function createLocal(opts: ModelOptions) {
+  const { maxTokens, temperature, streaming, jsonSchema, modelPreset } = opts;
+  const local = modelPreset.localModel;
+  if (!local) {
+    const msg = 'Local model is not set.';
+    errorLog(msg);
+    throw new Error(msg);
+  }
+
+  if (local.kind === 'ollama') {
+    const instance = new ChatOllama({
+      baseUrl: local.baseUrl,
+      model: local.model,
+      streaming: Boolean(streaming),
+      ...(temperature !== undefined ? { temperature } : {}),
+      ...(maxTokens ? { numPredict: maxTokens } : {}),
+      numCtx: Math.min(local.contextLength ?? LOCAL_CONTEXT_LENGTH, LOCAL_CONTEXT_LENGTH),
+      ...(local.supportsThinking ? { think: false } : {}),
+      ...(jsonSchema ? { format: jsonSchema } : {}),
+    });
+    debugLog('Ollama instance created:', { model: local.model, maxTokens, streaming });
+    return instance;
+  }
+
+  const instance = new ChatOpenAI({
+    model: local.model,
+    // The OpenAI SDK rejects an empty key; servers without auth ignore it.
+    apiKey: local.apiKey || 'local',
+    configuration: { baseURL: `${local.baseUrl}/v1` },
+    streaming: Boolean(streaming),
+    ...(temperature !== undefined ? { temperature } : {}),
+    ...(maxTokens ? { maxTokens } : {}),
+    modelKwargs: jsonSchema
+      ? {
+          response_format: {
+            type: 'json_schema',
+            json_schema: { name: 'response', strict: true, schema: jsonSchema },
+          },
+        }
+      : {},
+  });
+  debugLog('Local OpenAI-compatible instance created:', {
+    model: local.model,
+    maxTokens,
+    streaming,
+  });
+  return instance;
+}
+
 export function getModelInstance(opts: ModelOptions) {
-  const spec = MODELS[opts.modelPreset.modelName];
+  const { modelName } = opts.modelPreset;
+  if (modelName === 'local') return createLocal(opts);
+  const spec = MODELS[modelName];
   if (opts.modelPreset.connectionMode === 'openrouter') return createOpenRouter(spec, opts);
   if (spec.provider === 'openai-api-key') return createOpenAI(spec, opts);
   if (spec.provider === 'gemini-api-key') return createGemini(spec, opts);

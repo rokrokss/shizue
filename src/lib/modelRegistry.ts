@@ -13,7 +13,7 @@ export const isConnectionMode = (value: unknown): value is ConnectionMode =>
   value === 'direct' || value === 'openrouter';
 
 // Stored in chrome.storage as stable slot names; the real model behind each slot is in MODELS.
-export type ChatModel =
+export type CloudModel =
   | 'gpt'
   | 'gpt-mini'
   | 'gemini-flash'
@@ -24,7 +24,27 @@ export type ChatModel =
   | 'deepseek-pro'
   | 'deepseek-flash';
 
+// 'local' is a model on the user's own server, described by the stored LocalModelConfig.
+export type ChatModel = CloudModel | 'local';
+
 export type TranslateModel = ChatModel;
+
+// Ollama gets its own API, which can set the context length per request; other servers use /v1.
+export type LocalServerKind = 'ollama' | 'openai-compatible';
+
+export interface LocalModelConfig {
+  kind: LocalServerKind;
+  // Server root without /v1, e.g. http://localhost:11434.
+  baseUrl: string;
+  model: string;
+  // Some OpenAI-compatible servers (Jan, vLLM --api-key) require one.
+  apiKey?: string;
+  supportsImages: boolean;
+  // Thinking runs before any text and is slow locally, so it is turned off when the model has it.
+  supportsThinking: boolean;
+  // The model's own maximum, when the server reports it (Ollama).
+  contextLength?: number;
+}
 
 export interface ModelSpec {
   id: string;
@@ -48,7 +68,7 @@ export interface ModelSpec {
   };
 }
 
-export const MODELS: Record<ChatModel, ModelSpec> = {
+export const MODELS: Record<CloudModel, ModelSpec> = {
   gpt: {
     id: 'gpt-6-sol',
     label: 'GPT-6 Sol',
@@ -125,10 +145,13 @@ export const MODELS: Record<ChatModel, ModelSpec> = {
   },
 };
 
-export const MODEL_OPTIONS = Object.keys(MODELS) as ChatModel[];
+export const MODEL_OPTIONS: ChatModel[] = [...(Object.keys(MODELS) as CloudModel[]), 'local'];
 
 export const isChatModel = (value: unknown): value is ChatModel =>
-  typeof value === 'string' && value in MODELS;
+  value === 'local' || (typeof value === 'string' && value in MODELS);
+
+export const modelSupportsImages = (model: ChatModel, localModel?: LocalModelConfig | null) =>
+  model === 'local' ? Boolean(localModel?.supportsImages) : MODELS[model].supportsImages;
 
 // Usage records written before model IDs were stored hold slot names or retired model IDs.
 const legacyModelLabels: Record<string, string> = {

@@ -3,6 +3,7 @@ import {
   STORAGE_CHAT_MODEL,
   STORAGE_CONNECTION_MODE,
   STORAGE_GEMINI_VALIDATED,
+  STORAGE_LOCAL_MODEL,
   STORAGE_OPENAI_VALIDATED,
   STORAGE_OPENROUTER_VALIDATED,
   STORAGE_TRANSLATE_MODEL,
@@ -16,6 +17,7 @@ import {
 import {
   ChatModel,
   ConnectionMode,
+  LocalModelConfig,
   MODEL_OPTIONS,
   MODELS,
   ModelProvider,
@@ -24,6 +26,7 @@ import {
 import { chromeStorageBackend } from '@/lib/storageBackend';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
+import { useTranslation } from 'react-i18next';
 
 export const defaultOpenAIChatModel: ChatModel = 'gpt';
 export const defaultOpenAITranslateModel: TranslateModel = 'gpt-mini';
@@ -87,6 +90,14 @@ export const connectionModeAtom = atomWithStorage<ConnectionMode>(
   { getOnInit: true }
 );
 
+// The model on the user's own server that the 'local' slot calls; null until one is picked.
+export const localModelAtom = atomWithStorage<LocalModelConfig | null>(
+  STORAGE_LOCAL_MODEL,
+  null,
+  chromeStorageBackend('local'),
+  { getOnInit: true }
+);
+
 // A storage atom holds the promise chrome.storage resolves to until its first change, so unwrap it
 // before treating the flag as missing and falling back to whether a key is set.
 const validatedOrHasKey = (
@@ -134,11 +145,15 @@ export const useSetAnthropicValidated = () => useSetAtom(anthropicValidatedSafeA
 export const useOpenRouterValidated = () => useAtom(openRouterValidatedSafeAtom);
 export const useSetOpenRouterValidated = () => useSetAtom(openRouterValidatedSafeAtom);
 export const useConnectionMode = () => useAtom(connectionModeAtom);
+export const useLocalModel = () => useAtom(localModelAtom);
+export const useLocalModelValue = () => useAtomValue(localModelAtom);
 
-// Whether each model can be called, through its provider key or OpenRouter. A hook rather than a
-// derived atom: the storage atoms start as promises, which useAtomValue unwraps.
+// Whether each model can be called, through its provider key or OpenRouter, or for the local slot,
+// whether a local model is picked. A hook rather than a derived atom: the storage atoms start as
+// promises, which useAtomValue unwraps.
 export const useModelAvailability = (): Record<ChatModel, boolean> => {
   const openRouterValidated = useAtomValue(openRouterValidatedSafeAtom);
+  const localModel = useAtomValue(localModelAtom);
   const directValidated: Record<ModelProvider, boolean | undefined> = {
     'openai-api-key': useAtomValue(openAIValidatedSafeAtom),
     'gemini-api-key': useAtomValue(geminiValidatedSafeAtom),
@@ -146,9 +161,22 @@ export const useModelAvailability = (): Record<ChatModel, boolean> => {
   };
   return Object.fromEntries(
     MODEL_OPTIONS.map((model) => {
+      if (model === 'local') return [model, Boolean(localModel)];
       const { provider } = MODELS[model];
       return [model, Boolean((provider && directValidated[provider]) || openRouterValidated)];
     })
   ) as Record<ChatModel, boolean>;
+};
+
+// Model picker labels; the local slot shows the model picked on the user's server.
+export const useModelLabel = () => {
+  const { t } = useTranslation();
+  const localModel = useAtomValue(localModelAtom);
+  return (model: ChatModel) =>
+    model !== 'local'
+      ? MODELS[model].label
+      : localModel
+        ? `${localModel.model} (${t('local.tag')})`
+        : t('local.unset');
 };
 export const useAnyModelAvailable = () => Object.values(useModelAvailability()).some(Boolean);

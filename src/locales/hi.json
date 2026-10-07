@@ -36,10 +36,6 @@
       "openRouterApiKey": {
         "title": "OpenRouter API कुंजी का उपयोग करें",
         "description": "GPT, Gemini और Claude के लिए एक ही कुंजी।"
-      },
-      "chatGPTWebApp": {
-        "title": "कार्य प्रगति पर है...",
-        "description": "OpenAI की नीतियों में बदलाव के कारण अस्थिर हो सकता है।"
       }
     },
     "selectLanguage": {
@@ -176,5 +172,22 @@
     "noSearchResults": "कोई खोज परिणाम नहीं",
     "noMemos": "कोई मेमो नहीं",
     "searchMemo": "मेमो खोजें"
+  },
+  "local": {
+    "providerTitle": "लोकल मॉडल इस्तेमाल करें",
+    "description": "आपके कंप्यूटर पर चलता है। API कुंजी की ज़रूरत नहीं।",
+    "connect": "कनेक्ट करें",
+    "find": "लोकल सर्वर खोजें",
+    "apiKeyOptional": "API कुंजी (अगर ज़रूरी हो)",
+    "selectModel": "मॉडल चुनें",
+    "connected": "कनेक्ट हो गया",
+    "notFound": "कोई लोकल सर्वर नहीं मिला। Ollama या LM Studio शुरू करें, या उसका पता डालें।",
+    "noModels": "इस सर्वर पर कोई चैट मॉडल नहीं है। पहले एक डाउनलोड करें, जैसे:",
+    "unreachable": "सर्वर तक नहीं पहुँच पा रहे। जाँचें कि वह चल रहा है।",
+    "unauthorized": "इस सर्वर को API कुंजी चाहिए।",
+    "forbidden": "Ollama ने अनुरोध अस्वीकार कर दिया। यह एनवायरनमेंट वेरिएबल सेट करें और Ollama फिर से शुरू करें:",
+    "invalidUrl": "सर्वर का पता डालें, जैसे http://localhost:11434",
+    "tag": "लोकल",
+    "unset": "लोकल मॉडल (कनेक्ट नहीं)"
   }
 }

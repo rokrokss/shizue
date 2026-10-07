@@ -3,6 +3,7 @@ import {
   getConnectionModeFor,
   getCurrentAnthropicKey,
   getCurrentGeminiKey,
+  getCurrentLocalModel,
   getCurrentOpenaiKey,
   getCurrentOpenrouterKey,
   getCurrentTranslateModel,
@@ -16,7 +17,7 @@ import {
 import { trackTokenUsage } from '@/lib/tokenUsageTracker';
 import { Caption, VideoMetadata } from '@/lib/youtube';
 import { debugLog, errorLog } from '@/logs';
-import { HumanMessage } from '@langchain/core/messages';
+import { AIMessage, AIMessageChunk, HumanMessage } from '@langchain/core/messages';
 
 export interface TranslationResult {
   success: boolean;
@@ -57,9 +58,18 @@ function getTranslationModelPreset(): ModelPreset {
   const geminiKey = getCurrentGeminiKey();
   const anthropicKey = getCurrentAnthropicKey();
   const openrouterKey = getCurrentOpenrouterKey();
+  const localModel = getCurrentLocalModel();
   const modelName = getCurrentTranslateModel();
   const connectionMode = getConnectionModeFor(modelName);
-  return { openaiKey, geminiKey, anthropicKey, openrouterKey, connectionMode, modelName };
+  return {
+    openaiKey,
+    geminiKey,
+    anthropicKey,
+    openrouterKey,
+    localModel,
+    connectionMode,
+    modelName,
+  };
 }
 
 /**
@@ -80,6 +90,43 @@ function stripMarkdownCodeFence(content: string): string {
   return trimmed;
 }
 
+// Local models get at most this many snippets per request. With qwen3.5:9b and gemma4:12b the item
+// count held at 4, 8 and 16 alike, but at 8 qwen3.5:9b put translations in the wrong slots on a
+// real page, and at 4 it kept them in place. That costs about 30% more time than 8.
+const LOCAL_TRANSLATION_BATCH_SIZE = 4;
+
+// Ollama ignores minItems/maxItems (llama.cpp enforces them), so counts are still checked after parsing.
+const translationsSchemaFor = (modelPreset: ModelPreset, count: number) =>
+  modelPreset.modelName === 'local'
+    ? {
+        ...TRANSLATIONS_JSON_SCHEMA,
+        properties: {
+          translations: {
+            type: 'array',
+            items: { type: 'string' },
+            minItems: count,
+            maxItems: count,
+          },
+        },
+      }
+    : TRANSLATIONS_JSON_SCHEMA;
+
+// MV3 stops the service worker when a fetch() response takes over 30 seconds to arrive, which one
+// batch on a slow local model can. A streamed response arrives with the first token.
+async function invokeTranslation(
+  llm: ReturnType<typeof getModelInstance>,
+  prompt: string,
+  modelPreset: ModelPreset
+): Promise<AIMessage | AIMessageChunk> {
+  const messages = [new HumanMessage(prompt)];
+  if (modelPreset.modelName !== 'local') return llm.invoke(messages);
+  let aggregated: AIMessageChunk | undefined;
+  for await (const chunk of await llm.stream(messages)) {
+    aggregated = aggregated ? aggregated.concat(chunk) : chunk;
+  }
+  return aggregated ?? new AIMessageChunk('');
+}
+
 export class TranslationHandler {
   constructor() {}
 
@@ -97,14 +144,14 @@ export class TranslationHandler {
         streaming: false,
         fast: true,
         modelPreset: modelPreset,
-        jsonSchema: TRANSLATIONS_JSON_SCHEMA,
+        jsonSchema: translationsSchemaFor(modelPreset, captions.length),
       });
 
       debugLog('TranslationHandler [translateYoutubeCaption] modelPreset:', modelPreset);
       debugLog('TranslationHandler [translateYoutubeCaption] llm:', llm);
 
       debugLog('TranslationHandler [translateYoutubeCaption] prompt:', prompt);
-      const response = await llm.invoke([new HumanMessage(prompt)]);
+      const response = await invokeTranslation(llm, prompt, modelPreset);
       await trackTokenUsage(modelPreset, response);
 
       const rawResponseContent = response.text.trim();
@@ -242,89 +289,11 @@ export class TranslationHandler {
     }
 
     try {
-      const targetLanguage = getTranslationTargetLanguage();
-      const serializedTextBatch = JSON.stringify(textBatch, null, 2);
-
-      const batchPrompt = getHtmlTranslationBatchPrompt(serializedTextBatch, targetLanguage);
       const modelPreset = getTranslationModelPreset();
-
-      const llm = getModelInstance({
-        temperature: 0.1,
-        maxTokens: 5000,
-        streaming: false,
-        fast: true,
-        modelPreset: modelPreset,
-        jsonSchema: TRANSLATIONS_JSON_SCHEMA,
-      });
-
-      debugLog('TranslationHandler [translateHtmlTextBatch] llm:', llm);
-
-      const response = await llm.invoke([new HumanMessage(batchPrompt)]);
-
-      await trackTokenUsage(modelPreset, response);
-
-      const rawResponseContent = response.text.trim();
-
-      debugLog(
-        'TranslationHandler [translateHtmlTextBatch] raw response from AI:',
-        rawResponseContent
-      );
-
-      let parsedResponse: BatchTranslationJsonResponseFormat;
-      try {
-        const cleanedContent = stripMarkdownCodeFence(rawResponseContent);
-        parsedResponse = JSON.parse(cleanedContent);
-      } catch (parseError) {
-        errorLog(
-          'TranslationHandler [translateHtmlTextBatch] JSON parsing error:',
-          (parseError as Error).message,
-          'Raw response:',
-          rawResponseContent
-        );
-        return {
-          success: false,
-          error: `Failed to parse model response. Error: ${(parseError as Error).message}`,
-        };
+      if (modelPreset.modelName === 'local') {
+        return await this.translateHtmlTextBatchLocally(textBatch, modelPreset);
       }
-
-      if (
-        !parsedResponse ||
-        !parsedResponse.translations ||
-        !Array.isArray(parsedResponse.translations) ||
-        !parsedResponse.translations.every((item) => typeof item === 'string')
-      ) {
-        const validationErrorMsg =
-          "AI response is not a valid JSON object with a 'translations' array of strings.";
-        errorLog(
-          'TranslationHandler [translateHtmlTextBatch] JSON validation error:',
-          validationErrorMsg,
-          'Parsed response:',
-          parsedResponse
-        );
-        return {
-          success: false,
-          error: `Invalid JSON structure in AI response. Details: ${validationErrorMsg}`,
-        };
-      }
-
-      const translatedTextsArray = parsedResponse.translations;
-
-      if (translatedTextsArray.length !== textBatch.length) {
-        const countMismatchErrorMsg = `Number of translated texts (${translatedTextsArray.length}) does not match input batch size (${textBatch.length}).`;
-        errorLog(
-          'ChatModelHandler [translateHtmlTextBatch] Item count mismatch error:',
-          countMismatchErrorMsg
-        );
-        return {
-          success: false,
-          error: `Item count mismatch in AI response. Details: ${countMismatchErrorMsg}`,
-        };
-      }
-
-      return {
-        success: true,
-        translatedTexts: translatedTextsArray,
-      };
+      return await this.requestHtmlTranslations(textBatch, modelPreset);
     } catch (err) {
       errorLog('TranslationHandler [translateHtmlTextBatch] general error:', err);
       return {
@@ -334,6 +303,116 @@ export class TranslationHandler {
         }`,
       };
     }
+  }
+
+  // A request whose JSON is broken or whose count is wrong is retried one snippet at a time; a
+  // snippet that still fails stays untranslated ('').
+  private async translateHtmlTextBatchLocally(
+    textBatch: string[],
+    modelPreset: ModelPreset
+  ): Promise<BatchTranslationResult> {
+    const translatedTexts: string[] = [];
+    for (let i = 0; i < textBatch.length; i += LOCAL_TRANSLATION_BATCH_SIZE) {
+      const chunk = textBatch.slice(i, i + LOCAL_TRANSLATION_BATCH_SIZE);
+      const result = await this.requestHtmlTranslations(chunk, modelPreset);
+      if (result.success && result.translatedTexts) {
+        translatedTexts.push(...result.translatedTexts);
+        continue;
+      }
+      for (const text of chunk) {
+        const single = await this.requestHtmlTranslations([text], modelPreset);
+        translatedTexts.push(single.translatedTexts?.[0] ?? '');
+      }
+    }
+    return { success: true, translatedTexts };
+  }
+
+  private async requestHtmlTranslations(
+    textBatch: string[],
+    modelPreset: ModelPreset
+  ): Promise<BatchTranslationResult> {
+    const targetLanguage = getTranslationTargetLanguage();
+    const serializedTextBatch = JSON.stringify(textBatch, null, 2);
+
+    const batchPrompt = getHtmlTranslationBatchPrompt(serializedTextBatch, targetLanguage);
+
+    const llm = getModelInstance({
+      temperature: 0.1,
+      maxTokens: 5000,
+      streaming: false,
+      fast: true,
+      modelPreset: modelPreset,
+      jsonSchema: translationsSchemaFor(modelPreset, textBatch.length),
+    });
+
+    debugLog('TranslationHandler [translateHtmlTextBatch] llm:', llm);
+
+    const response = await invokeTranslation(llm, batchPrompt, modelPreset);
+
+    await trackTokenUsage(modelPreset, response);
+
+    const rawResponseContent = response.text.trim();
+
+    debugLog(
+      'TranslationHandler [translateHtmlTextBatch] raw response from AI:',
+      rawResponseContent
+    );
+
+    let parsedResponse: BatchTranslationJsonResponseFormat;
+    try {
+      const cleanedContent = stripMarkdownCodeFence(rawResponseContent);
+      parsedResponse = JSON.parse(cleanedContent);
+    } catch (parseError) {
+      errorLog(
+        'TranslationHandler [translateHtmlTextBatch] JSON parsing error:',
+        (parseError as Error).message,
+        'Raw response:',
+        rawResponseContent
+      );
+      return {
+        success: false,
+        error: `Failed to parse model response. Error: ${(parseError as Error).message}`,
+      };
+    }
+
+    if (
+      !parsedResponse ||
+      !parsedResponse.translations ||
+      !Array.isArray(parsedResponse.translations) ||
+      !parsedResponse.translations.every((item) => typeof item === 'string')
+    ) {
+      const validationErrorMsg =
+        "AI response is not a valid JSON object with a 'translations' array of strings.";
+      errorLog(
+        'TranslationHandler [translateHtmlTextBatch] JSON validation error:',
+        validationErrorMsg,
+        'Parsed response:',
+        parsedResponse
+      );
+      return {
+        success: false,
+        error: `Invalid JSON structure in AI response. Details: ${validationErrorMsg}`,
+      };
+    }
+
+    const translatedTextsArray = parsedResponse.translations;
+
+    if (translatedTextsArray.length !== textBatch.length) {
+      const countMismatchErrorMsg = `Number of translated texts (${translatedTextsArray.length}) does not match input batch size (${textBatch.length}).`;
+      errorLog(
+        'ChatModelHandler [translateHtmlTextBatch] Item count mismatch error:',
+        countMismatchErrorMsg
+      );
+      return {
+        success: false,
+        error: `Item count mismatch in AI response. Details: ${countMismatchErrorMsg}`,
+      };
+    }
+
+    return {
+      success: true,
+      translatedTexts: translatedTextsArray,
+    };
   }
 }
 

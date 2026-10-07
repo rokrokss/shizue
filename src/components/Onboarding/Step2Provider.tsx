@@ -1,3 +1,4 @@
+import LocalModelSettings from '@/components/Setting/LocalModelSettings';
 import { useThemeValue } from '@/hooks/layout';
 import {
   defaultAnthropicChatModel,
@@ -39,7 +40,9 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
   );
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [selectedProvider, setSelectedProvider] = useState<ApiKeyProvider>('openrouter-api-key');
+  const [selectedProvider, setSelectedProvider] = useState<ApiKeyProvider | 'local'>(
+    'openrouter-api-key'
+  );
   const setOpenAIKey = useSetOpenAIKey();
   const setGeminiKey = useSetGeminiKey();
   const setAnthropicKey = useSetAnthropicKey();
@@ -53,19 +56,29 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
   const setOpenRouterValidated = useSetOpenRouterValidated();
   const lines = [
     t('onboarding.selectProvider.title'),
-    t('onboarding.selectProvider.openaiApiKey.description_0'),
-    selectedProvider === 'openrouter-api-key'
+    selectedProvider === 'local'
+      ? t('local.description')
+      : t('onboarding.selectProvider.openaiApiKey.description_0'),
+    selectedProvider === 'local'
+      ? ''
+      : selectedProvider === 'openrouter-api-key'
       ? t('onboarding.selectProvider.openRouterApiKey.description')
       : t('onboarding.selectProvider.openaiApiKey.description_1'),
-    t('onboarding.selectProvider.chatGPTWebApp.description'),
   ];
 
   const handleSelect = (value: string) => {
-    setSelectedProvider(value as ApiKeyProvider);
+    setSelectedProvider(value as ApiKeyProvider | 'local');
     setApiKey('');
   };
 
+  const onLocalModelSaved = () => {
+    setChatModel('local');
+    setTranslateModel('local');
+    setCanProceed(true);
+  };
+
   const onClickValidate = async () => {
+    if (selectedProvider === 'local') return;
     setIsLoading(true);
     const trimmedKey = apiKey.trim();
     const isValid = await validateApiKey(trimmedKey, selectedProvider);
@@ -136,10 +149,9 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
             className: 'sz:font-ycom',
           },
           {
-            value: 'chatgpt-webapp',
-            label: t('onboarding.selectProvider.chatGPTWebApp.title'),
+            value: 'local',
+            label: t('local.providerTitle'),
             className: 'sz:font-ycom',
-            disabled: true,
           },
         ]}
       />
@@ -159,37 +171,41 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
         <div>{lines[1]}</div>
         <div>{lines[2]}</div>
       </div>
-      <div className="sz:flex sz:flex-row sz:items-center sz:w-80">
-        <Input
-          placeholder={
-            selectedProvider === 'openai-api-key'
-              ? 'sk-proj-XXX......'
-              : selectedProvider === 'gemini-api-key'
-              ? 'AQ.XXX......'
-              : selectedProvider === 'anthropic-api-key'
-              ? 'sk-ant-api03-XXX......'
-              : selectedProvider === 'openrouter-api-key'
-              ? 'sk-or-v1-XXX......'
-              : ''
-          }
-          className="sz:font-ycom sz:mr-[5px]"
-          value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
-          status={isInvalidApiKey ? 'error' : undefined}
-        />
-        <Button
-          className="sz:font-semibold sz:text-base sz:font-ycom"
-          type="primary"
-          onClick={onClickValidate}
-          loading={isLoading}
-        >
-          {isLoading ? null : canProceed ? (
-            <SmileOutlined style={{ fontSize: '20px' }} />
-          ) : (
-            t('onboarding.selectProvider.openaiApiKey.validate')
-          )}
-        </Button>
-      </div>
+      {selectedProvider === 'local' ? (
+        <LocalModelSettings className="sz:w-80" onSaved={onLocalModelSaved} />
+      ) : (
+        <div className="sz:flex sz:flex-row sz:items-center sz:w-80">
+          <Input
+            placeholder={
+              selectedProvider === 'openai-api-key'
+                ? 'sk-proj-XXX......'
+                : selectedProvider === 'gemini-api-key'
+                ? 'AQ.XXX......'
+                : selectedProvider === 'anthropic-api-key'
+                ? 'sk-ant-api03-XXX......'
+                : selectedProvider === 'openrouter-api-key'
+                ? 'sk-or-v1-XXX......'
+                : ''
+            }
+            className="sz:font-ycom sz:mr-[5px]"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            status={isInvalidApiKey ? 'error' : undefined}
+          />
+          <Button
+            className="sz:font-semibold sz:text-base sz:font-ycom"
+            type="primary"
+            onClick={onClickValidate}
+            loading={isLoading}
+          >
+            {isLoading ? null : canProceed ? (
+              <SmileOutlined style={{ fontSize: '20px' }} />
+            ) : (
+              t('onboarding.selectProvider.openaiApiKey.validate')
+            )}
+          </Button>
+        </div>
+      )}
       <Button
         className={`sz:mt-2 sz:font-semibold sz:text-base sz:font-ycom ${
           theme == 'dark' ? 'sz:text-black' : ''

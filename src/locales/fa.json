@@ -36,10 +36,6 @@
       "openRouterApiKey": {
         "title": "از کلید API OpenRouter استفاده کنید",
         "description": "یک کلید برای GPT، Gemini و Claude."
-      },
-      "chatGPTWebApp": {
-        "title": "در حال کار...",
-        "description": "ممکن است به دلیل تغییرات در سیاست‌های OpenAI ناپایدار باشد."
       }
     },
     "selectLanguage": {
@@ -176,5 +172,22 @@
     "noSearchResults": "نتیجه جستجو یافت نشد",
     "noMemos": "یادداشتی وجود ندارد",
     "searchMemo": "جستجوی یادداشت"
+  },
+  "local": {
+    "providerTitle": "استفاده از مدل محلی",
+    "description": "روی رایانه شما اجرا می‌شود و به کلید API نیازی ندارد.",
+    "connect": "اتصال",
+    "find": "جست‌وجوی سرورهای محلی",
+    "apiKeyOptional": "کلید API (در صورت نیاز)",
+    "selectModel": "یک مدل انتخاب کنید",
+    "connected": "متصل",
+    "notFound": "سرور محلی پیدا نشد. Ollama یا LM Studio را اجرا کنید یا نشانی آن را وارد کنید.",
+    "noModels": "این سرور مدل گفت‌وگو ندارد. ابتدا یکی دانلود کنید، برای مثال:",
+    "unreachable": "دسترسی به سرور ممکن نیست. مطمئن شوید در حال اجراست.",
+    "unauthorized": "این سرور به کلید API نیاز دارد.",
+    "forbidden": "Ollama درخواست را رد کرد. این متغیر محیطی را تنظیم و Ollama را دوباره اجرا کنید:",
+    "invalidUrl": "نشانی سرور را وارد کنید، مثلاً http://localhost:11434",
+    "tag": "محلی",
+    "unset": "مدل محلی (متصل نیست)"
   }
 }

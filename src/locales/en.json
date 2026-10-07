@@ -36,10 +36,6 @@
       "openRouterApiKey": {
         "title": "Use OpenRouter API Key",
         "description": "One key for GPT, Gemini, and Claude."
-      },
-      "chatGPTWebApp": {
-        "title": "work in progress...",
-        "description": "May be unstable due to changes in OpenAI's policies."
       }
     },
     "selectLanguage": {
@@ -176,5 +172,22 @@
     "noSearchResults": "No search results",
     "noMemos": "No memos",
     "searchMemo": "Search memo"
+  },
+  "local": {
+    "providerTitle": "Use a Local Model",
+    "description": "Runs on your computer. No API key needed.",
+    "connect": "Connect",
+    "find": "Find local servers",
+    "apiKeyOptional": "API key (if required)",
+    "selectModel": "Choose a model",
+    "connected": "Connected",
+    "notFound": "No local server found. Start Ollama or LM Studio, or enter its address.",
+    "noModels": "This server has no chat models. Download one first, for example:",
+    "unreachable": "Can't reach the server. Make sure it's running.",
+    "unauthorized": "This server needs an API key.",
+    "forbidden": "Ollama refused the request. Set this environment variable and restart Ollama:",
+    "invalidUrl": "Enter a server address, e.g. http://localhost:11434",
+    "tag": "Local",
+    "unset": "Local model (not connected)"
   }
 }

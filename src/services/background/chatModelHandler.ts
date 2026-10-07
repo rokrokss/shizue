@@ -9,13 +9,14 @@ import {
   getCurrentAnthropicKey,
   getCurrentChatModel,
   getCurrentGeminiKey,
+  getCurrentLocalModel,
   getCurrentOpenaiKey,
   getCurrentOpenrouterKey,
 } from '@/entrypoints/background/states/models';
 import { ActionType } from '@/hooks/global';
 import { formatImagesForMessage } from '@/lib/imageFormatHelper';
 import { db, loadThread } from '@/lib/indexDB';
-import { getModelInstance, ModelPreset, providerFromName } from '@/lib/models';
+import { ChatModel, getModelInstance, ModelPreset, providerFromName } from '@/lib/models';
 import { getInitialAIMessage, getInitialSystemMessage } from '@/lib/prompts';
 import { trackStreamingTokenUsage } from '@/lib/tokenUsageTracker';
 import { debugLog, errorLog } from '@/logs';
@@ -32,10 +33,55 @@ function getChatModelPreset(): ModelPreset {
   const geminiKey = getCurrentGeminiKey();
   const anthropicKey = getCurrentAnthropicKey();
   const openrouterKey = getCurrentOpenrouterKey();
+  const localModel = getCurrentLocalModel();
   const modelName = getCurrentChatModel();
   const connectionMode = getConnectionModeFor(modelName);
-  return { openaiKey, geminiKey, anthropicKey, openrouterKey, connectionMode, modelName };
+  return {
+    openaiKey,
+    geminiKey,
+    anthropicKey,
+    openrouterKey,
+    localModel,
+    connectionMode,
+    modelName,
+  };
 }
+
+// Some local models (qwen3.5 on Ollama with thinking off) still open their reply with an empty
+// <think></think> block, which arrives as plain text. Returns a filter for the streamed deltas that
+// drops a think block at the start of the reply, and the whitespace after it.
+const leadingThinkBlockFilter = () => {
+  const open = '<think>';
+  const close = '</think>';
+  let head = '';
+  let state: 'head' | 'afterBlock' | 'passing' = 'head';
+  return (delta: string): string => {
+    if (state === 'passing') return delta;
+    if (state === 'afterBlock') {
+      const text = delta.trimStart();
+      if (text) state = 'passing';
+      return text;
+    }
+    head += delta;
+    const trimmed = head.trimStart();
+    if (!open.startsWith(trimmed.slice(0, open.length))) {
+      state = 'passing';
+      return head;
+    }
+    const end = trimmed.indexOf(close);
+    if (end === -1) return '';
+    const rest = trimmed.slice(end + close.length).trimStart();
+    state = rest ? 'passing' : 'afterBlock';
+    return rest;
+  };
+};
+
+// The greeting shown at the top of a chat goes to the model as its first turn. Some local chat
+// templates (Gemma's in LM Studio) reject an assistant turn before the first user turn.
+const initialMessagesFor = (modelName: ChatModel, systemMessage: string, aiMessage: string) =>
+  modelName === 'local'
+    ? [new SystemMessage(systemMessage)]
+    : [new SystemMessage(systemMessage), new AIMessage(aiMessage)];
 
 export class ChatModelHandler {
   constructor() {}
@@ -76,6 +122,8 @@ export class ChatModelHandler {
 
       let buffer = '';
       let aggregatedChunk: AIMessageChunk | undefined;
+      const visibleText =
+        modelPreset.modelName === 'local' ? leadingThinkBlockFilter() : (text: string) => text;
 
       const sendBufferToPort = () => {
         const threshold = fullResponseContent ? STREAM_FLUSH_THRESHOLD_1 : STREAM_FLUSH_THRESHOLD_0;
@@ -94,7 +142,7 @@ export class ChatModelHandler {
       for await (const chunk of stream) {
         aggregatedChunk = aggregatedChunk ? aggregatedChunk.concat(chunk) : chunk;
         // `text` skips non-text blocks such as reasoning/thinking content.
-        const delta = chunk.text;
+        const delta = visibleText(chunk.text);
         
         // 빈 델타는 무시
         if (!delta) continue;
@@ -176,17 +224,17 @@ export class ChatModelHandler {
       const initialAIMessage = getInitialAIMessage(currentLang);
       const modelName = getCurrentChatModel();
       const connectionMode = getConnectionModeFor(modelName);
+      const localModel = getCurrentLocalModel();
 
       const messages = [
-        new SystemMessage(initialSystemMessage),
-        new AIMessage(initialAIMessage),
+        ...initialMessagesFor(modelName, initialSystemMessage, initialAIMessage),
         ...threadHistory.map((m) => {
           if (m.role === 'human') {
             if (m.images && m.images.length > 0) {
               return new HumanMessage({
                 content: [
                   ...(m.content ? [{ type: 'text', text: m.content }] : []),
-                  ...formatImagesForMessage(m.images, modelName, connectionMode),
+                  ...formatImagesForMessage(m.images, modelName, connectionMode, localModel),
                 ],
               });
             } else {
@@ -255,19 +303,19 @@ export class ChatModelHandler {
       const initialAIMessage = getInitialAIMessage(currentLang);
       const modelName = getCurrentChatModel();
       const connectionMode = getConnectionModeFor(modelName);
+      const localModel = getCurrentLocalModel();
 
       const historyForModelInput = fullThreadHistory.slice(0, messageIdxToRetry);
 
       const messagesForModel: BaseMessage[] = [
-        new SystemMessage(initialSystemMessage),
-        new AIMessage(initialAIMessage),
+        ...initialMessagesFor(modelName, initialSystemMessage, initialAIMessage),
         ...historyForModelInput.map((m) => {
           if (m.role === 'human') {
             if (m.images && m.images.length > 0) {
               return new HumanMessage({
                 content: [
                   ...(m.content ? [{ type: 'text', text: m.content }] : []),
-                  ...formatImagesForMessage(m.images, modelName, connectionMode),
+                  ...formatImagesForMessage(m.images, modelName, connectionMode, localModel),
                 ],
               });
             } else {

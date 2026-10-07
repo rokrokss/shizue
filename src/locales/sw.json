@@ -36,10 +36,6 @@
       "openRouterApiKey": {
         "title": "Tumia OpenRouter API Key",
         "description": "Ufunguo mmoja kwa GPT, Gemini na Claude."
-      },
-      "chatGPTWebApp": {
-        "title": "kazi inaendelea...",
-        "description": "Inaweza kuwa isiyo thabiti kutokana na mabadiliko katika sera za OpenAI."
       }
     },
     "selectLanguage": {
@@ -176,5 +172,22 @@
     "noSearchResults": "Hakuna matokeo ya utafutaji",
     "noMemos": "Hakuna memo",
     "searchMemo": "Tafuta memo"
+  },
+  "local": {
+    "providerTitle": "Tumia modeli ya ndani",
+    "description": "Inaendeshwa kwenye kompyuta yako. Hakuna haja ya ufunguo wa API.",
+    "connect": "Unganisha",
+    "find": "Tafuta seva za ndani",
+    "apiKeyOptional": "Ufunguo wa API (ikihitajika)",
+    "selectModel": "Chagua modeli",
+    "connected": "Imeunganishwa",
+    "notFound": "Hakuna seva ya ndani iliyopatikana. Washa Ollama au LM Studio, au weka anwani yake.",
+    "noModels": "Seva hii haina modeli za mazungumzo. Pakua moja kwanza, kwa mfano:",
+    "unreachable": "Haiwezekani kufikia seva. Hakikisha inaendeshwa.",
+    "unauthorized": "Seva hii inahitaji ufunguo wa API.",
+    "forbidden": "Ollama imekataa ombi. Weka kigezo hiki cha mazingira kisha uwashe upya Ollama:",
+    "invalidUrl": "Weka anwani ya seva, mfano http://localhost:11434",
+    "tag": "Ndani",
+    "unset": "Modeli ya ndani (haijaunganishwa)"
   }
 }

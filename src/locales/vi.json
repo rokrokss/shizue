@@ -36,10 +36,6 @@
       "openRouterApiKey": {
         "title": "Sử dụng OpenRouter API Key",
         "description": "Một khóa cho GPT, Gemini và Claude."
-      },
-      "chatGPTWebApp": {
-        "title": "đang làm việc...",
-        "description": "Có thể không ổn định do thay đổi trong chính sách của OpenAI."
       }
     },
     "selectLanguage": {
@@ -176,5 +172,22 @@
     "noSearchResults": "Không có kết quả tìm kiếm",
     "noMemos": "Không có ghi chú",
     "searchMemo": "Tìm kiếm ghi chú"
+  },
+  "local": {
+    "providerTitle": "Dùng mô hình cục bộ",
+    "description": "Chạy trên máy tính của bạn. Không cần khóa API.",
+    "connect": "Kết nối",
+    "find": "Tìm máy chủ cục bộ",
+    "apiKeyOptional": "Khóa API (nếu cần)",
+    "selectModel": "Chọn mô hình",
+    "connected": "Đã kết nối",
+    "notFound": "Không tìm thấy máy chủ cục bộ. Hãy chạy Ollama hoặc LM Studio, hoặc nhập địa chỉ của nó.",
+    "noModels": "Máy chủ này không có mô hình trò chuyện. Hãy tải một mô hình trước, ví dụ:",
+    "unreachable": "Không thể kết nối tới máy chủ. Hãy kiểm tra xem nó có đang chạy không.",
+    "unauthorized": "Máy chủ này cần khóa API.",
+    "forbidden": "Ollama đã từ chối yêu cầu. Hãy đặt biến môi trường này rồi khởi động lại Ollama:",
+    "invalidUrl": "Nhập địa chỉ máy chủ, ví dụ http://localhost:11434",
+    "tag": "Cục bộ",
+    "unset": "Mô hình cục bộ (chưa kết nối)"
   }
 }

@@ -37,9 +37,14 @@ export const trackTokenUsage = async (
     }
 
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-    const { id: model, provider: providerKey } = MODELS[modelPreset.modelName];
+    const { modelName } = modelPreset;
+    const model =
+      modelName === 'local' ? (modelPreset.localModel?.model ?? 'local') : MODELS[modelName].id;
+    const providerKey = modelName === 'local' ? undefined : MODELS[modelName].provider;
     const provider =
-      modelPreset.connectionMode === 'openrouter'
+      modelName === 'local'
+        ? 'local'
+        : modelPreset.connectionMode === 'openrouter'
         ? 'openrouter'
         : providerKey === 'anthropic-api-key'
         ? 'anthropic'

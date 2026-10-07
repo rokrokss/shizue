@@ -128,7 +128,7 @@ STORAGE_USER_MEMORY              // User context for AI (defined but not yet use
 ## Core Features
 
 ### 1. AI Chat with Streaming
-- **Models**: see `MODELS` in `lib/modelRegistry.ts` (GPT-6 Sol/Luna, Gemini 3.8 Flash/3.5 Flash-Lite, Gemma 4 31B, Claude Sonnet 5/Haiku 4.5, DeepSeek V4 Pro/V4.1 Flash via OpenRouter only)
+- **Models**: see `MODELS` in `lib/modelRegistry.ts` (GPT-6 Sol/Luna, Gemini 3.8 Flash/3.5 Flash-Lite, Gemma 4 31B, Claude Sonnet 5/Haiku 4.5, DeepSeek V4 Pro/V4.1 Flash via OpenRouter only), plus the `'local'` slot for a model on the user's own server (Ollama, LM Studio, llama.cpp)
 - **Streaming**: Via port connections with background script
 - **Thread Management**: IndexedDB storage with Dexie
 
@@ -233,6 +233,10 @@ this.version(2).stores({ messages: '...', tokenUsage: 'id, date, model' });
 - Never import `lib/models.ts` from UI or content scripts: it pulls LangChain into the bundle.
 - **OpenRouter** is a key type, not a model's provider: its key reaches every slot. Each model goes through its provider's key or OpenRouter, whichever is set (models without a `provider`, such as DeepSeek, are OpenRouter-only); when both are, `STORAGE_CONNECTION_MODE` (`'direct'` | `'openrouter'`, the "Prefer OpenRouter" checkbox) decides. The background resolves this per model with `getConnectionModeFor()`, and `ModelPreset.connectionMode` holds the result. The OpenRouter path is `ChatOpenAI` with its `baseURL` using `MODELS[slot].openrouter.id`; `fastEffort` there comes from each model's `supported_efforts` in OpenRouter's `/api/v1/models`; `'off'` sends `reasoning.enabled: false` for models with a non-thinking mode but no `'none'` effort (DeepSeek: `effort: 'low'` still thinks). `defaultEffort` sends OpenRouter's `default_effort` on regular calls for models that list no `default_enabled`, since their providers disagree on whether to think (DeepSeek V4 Pro). OpenRouter takes the OpenAI `image_url` format for Claude too, and its key is validated with `/api/v1/key` (`/models` is public). UI checks model availability with `useModelAvailability()` (`hooks/models.ts`): a model is available through its provider key or an OpenRouter key.
 - API keys are opaque: validate against the provider API, never by prefix (Gemini keys changed from `AIza…` to `AQ.…` in 2026 and must be sent in the `x-goog-api-key` header).
+- **Local models**: `ChatModel = CloudModel | 'local'`; `MODELS` covers cloud slots only, and the `'local'` slot is described by the `LocalModelConfig` stored in `STORAGE_LOCAL_MODEL` (server kind, base URL, model, optional key, image/thinking support, context length). Use `modelSupportsImages()` and `useModelLabel()` instead of `MODELS[slot]` wherever a slot may be `'local'`.
+  - Ollama goes through `@langchain/ollama` (`ChatOllama`): `numCtx` is the model's maximum capped at 32K and the same on every request (a different `num_ctx` reloads the model), and `think: false` is sent when the model can think. Other servers go through `ChatOpenAI` with `baseURL` + `/v1` and a placeholder key; thinking can't be turned off there.
+  - `lib/localServer.ts` (UI side) finds servers at the default ports, tells Ollama apart by `/api/version`, and lists chat models (Ollama `/api/show` capabilities; `/v1/models` otherwise). Ollama answers POSTs carrying an extension Origin with 403, so it installs a DNR dynamic rule that sets `Origin` to the server's own origin, only for this extension's requests to that exact origin. The rule needs `declarativeNetRequestWithHostAccess` plus host permissions for `localhost`/`127.0.0.1`; the `<all_urls>` content scripts give fetch access but don't count for DNR. Ollama doesn't enforce `minItems`/`maxItems`.
+  - Translation with a local model sends 4 snippets per request (at 8, qwen3.5:9b put translations in the wrong slots), retries a broken or miscounted request one snippet at a time, and streams so the first token arrives before MV3's 30-second fetch limit. Chat drops the greeting AI turn (Gemma templates in LM Studio reject an assistant turn first) and a leading `<think></think>` block that qwen3.5 emits as text even with thinking off.
 
 **When adding new LLM provider**:
 1. Extend `ModelProvider` and add entries to `MODELS` in `lib/modelRegistry.ts`
@@ -308,6 +312,7 @@ export const chromeStorageBackend = <T>(area: 'local' | 'sync' | 'session' = 'lo
 | **API Validation** | `STORAGE_OPENAI_VALIDATED`, `STORAGE_GEMINI_VALIDATED`, `STORAGE_ANTHROPIC_VALIDATED`, `STORAGE_OPENROUTER_VALIDATED` | API key validation status |
 | **Model Selection** | `STORAGE_CHAT_MODEL`, `STORAGE_TRANSLATE_MODEL` | Selected LLM models |
 | **Connection** | `STORAGE_CONNECTION_MODE` | Preference when a model's provider key and the OpenRouter key are both set: `'direct'` or `'openrouter'` |
+| **Local model** | `STORAGE_LOCAL_MODEL` | `LocalModelConfig` for the `'local'` slot, or null |
 | **Languages** | `STORAGE_LANGUAGE`, `STORAGE_TRANSLATE_TARGET_LANGUAGE` | UI language and translation target |
 | **Global State** | `STORAGE_GLOBAL_STATE` | Side panel current state (actionType, threadId, etc.) |
 | **UI Settings** | `STORAGE_THEME`, `STORAGE_SHOW_TOGGLE`, `STORAGE_TOGGLE_Y_POSITION`, `STORAGE_TOGGLE_HIDDEN_SITE_LIST` | Theme, toggle button visibility/position, hidden sites |
@@ -381,6 +386,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
 | `anthropicValidatedAtom` | `boolean \| undefined` | `STORAGE_ANTHROPIC_VALIDATED` | `undefined` | true | Anthropic key validation status | [hooks/models.ts:69](src/hooks/models.ts#L69) |
 | `openRouterValidatedAtom` | `boolean \| undefined` | `STORAGE_OPENROUTER_VALIDATED` | `undefined` | true | OpenRouter key validation status | [hooks/models.ts:76](src/hooks/models.ts#L76) |
 | `connectionModeAtom` | `ConnectionMode` | `STORAGE_CONNECTION_MODE` | `'direct'` | true Prefer OpenRouter over provider keys when both are set | [hooks/models.ts:83](src/hooks/models.ts#L83) |
+| `localModelAtom` | `LocalModelConfig \| null` | `STORAGE_LOCAL_MODEL` | `null` | true | The local model the `'local'` slot calls | [hooks/models.ts](src/hooks/models.ts) |
 | **Languages** |
 | `languageAtom` | `Language` | `STORAGE_LANGUAGE` | `fallbackLanguage` | true | App UI language (23 languages) | [hooks/language.ts:38](src/hooks/language.ts#L38) |
 | `targetLanguageAtom` | `Language` | `STORAGE_TRANSLATE_TARGET_LANGUAGE` | `fallbackLanguage` | true | Translation target language | [hooks/language.ts:45](src/hooks/language.ts#L45) |

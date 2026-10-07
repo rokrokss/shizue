@@ -6,15 +6,15 @@ import {
   MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE,
   MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
 } from '@/config/constants';
-import { getCurrentChatModel } from '@/entrypoints/background/states/models';
+import { getCurrentChatModel, getCurrentLocalModel } from '@/entrypoints/background/states/models';
 import { whenBackgroundStateReady } from '@/entrypoints/background/states/ready';
-import { ChatModel, isChatModel, MODELS } from '@/lib/modelRegistry';
+import { ChatModel, isChatModel, LocalModelConfig, modelSupportsImages } from '@/lib/modelRegistry';
 import { errorLog } from '@/logs';
 import { createI18n } from '@wxt-dev/i18n';
 
 // Image actions run on the chat model, so they are greyed out for text-only models.
-const updateImageMenuItems = (model: ChatModel) => {
-  const enabled = MODELS[model].supportsImages;
+const updateImageMenuItems = (model: ChatModel, localModel?: LocalModelConfig | null) => {
+  const enabled = modelSupportsImages(model, localModel);
   for (const id of ['describeImage', 'extractImageText']) {
     // Callback form: the promise form needs Chrome 123+.
     chrome.contextMenus.update(id, { enabled }, () => {
@@ -127,12 +127,16 @@ export const createContextMenu = async () => {
     }
   });
 
+  // Read the changed values directly: the model state's own listener may not have run yet.
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === 'local' && changes.CHAT_MODEL) {
-      const newChatModel = changes.CHAT_MODEL.newValue;
-      if (isChatModel(newChatModel)) updateImageMenuItems(newChatModel);
+    if (area === 'local' && (changes.CHAT_MODEL || changes.LOCAL_MODEL)) {
+      const newChatModel = changes.CHAT_MODEL ? changes.CHAT_MODEL.newValue : getCurrentChatModel();
+      const localModel = changes.LOCAL_MODEL
+        ? (changes.LOCAL_MODEL.newValue as LocalModelConfig | null)
+        : getCurrentLocalModel();
+      if (isChatModel(newChatModel)) updateImageMenuItems(newChatModel, localModel);
     }
   });
   await whenBackgroundStateReady();
-  updateImageMenuItems(getCurrentChatModel());
+  updateImageMenuItems(getCurrentChatModel(), getCurrentLocalModel());
 };

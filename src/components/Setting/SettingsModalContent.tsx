@@ -1,3 +1,4 @@
+import LocalModelSettings from '@/components/Setting/LocalModelSettings';
 import { Language, useLanguage, useTranslateTargetLanguage } from '@/hooks/language';
 import {
   Theme,
@@ -12,7 +13,9 @@ import {
   useChatModel,
   useConnectionMode,
   useGeminiValidated,
+  useLocalModelValue,
   useModelAvailability,
+  useModelLabel,
   useOpenAIValidated,
   useOpenRouterValidated,
   useTranslateModel,
@@ -24,13 +27,7 @@ import {
   useSetOpenRouterKey,
 } from '@/hooks/settings';
 import { languageOptions } from '@/lib/language';
-import {
-  ApiKeyProvider,
-  ChatModel,
-  MODEL_OPTIONS,
-  MODELS,
-  TranslateModel,
-} from '@/lib/modelRegistry';
+import { ApiKeyProvider, ChatModel, MODEL_OPTIONS, TranslateModel } from '@/lib/modelRegistry';
 import { getOS } from '@/lib/userOS';
 import { validateApiKey } from '@/lib/validateApiKey';
 import { debugLog } from '@/logs';
@@ -65,12 +62,16 @@ const SettingsModalContent = () => {
   const [showToggle, setShowToggle] = useShowToggle();
   const setToggleYPosition = useSetAtom(toggleYPositionAtom);
   const [showYoutubeCaptionToggle, setShowYoutubeCaptionToggle] = useShowYoutubeCaptionToggle();
-  const [selectedProvider, setSelectedProvider] = useState<ApiKeyProvider>('openrouter-api-key');
+  const [selectedProvider, setSelectedProvider] = useState<ApiKeyProvider | 'local'>(
+    'openrouter-api-key'
+  );
+  const localModel = useLocalModelValue();
   const [toggleHiddenSiteList, setToggleHiddenSiteList] = useToggleHiddenSiteList();
 
+  const modelLabel = useModelLabel();
   const modelOptions = MODEL_OPTIONS.map((value) => ({
     value,
-    label: MODELS[value].label,
+    label: modelLabel(value),
     className: 'sz:font-ycom',
     disabled: !modelAvailability[value],
   }));
@@ -84,7 +85,7 @@ const SettingsModalContent = () => {
   };
 
   const handleSelectProvider = (value: string) => {
-    setSelectedProvider(value as ApiKeyProvider);
+    setSelectedProvider(value as ApiKeyProvider | 'local');
     setApiKey('');
   };
 
@@ -117,6 +118,7 @@ const SettingsModalContent = () => {
   const userOS = getOS();
 
   const onClickValidate = async () => {
+    if (selectedProvider === 'local') return;
     setIsLoading(true);
     const trimmedKey = apiKey.trim();
     const isValid = await validateApiKey(trimmedKey, selectedProvider);
@@ -323,48 +325,51 @@ const SettingsModalContent = () => {
                         className: 'sz:font-ycom',
                       },
                       {
-                        value: 'chatgpt-webapp',
-                        label: t('onboarding.selectProvider.chatGPTWebApp.title'),
+                        value: 'local',
+                        label: t('local.providerTitle'),
                         className: 'sz:font-ycom',
-                        disabled: true,
                       },
                     ]}
                   />
-                  <div className="sz:flex sz:flex-row sz:items-center sz:w-50 sz:mb-1">
-                    <Input
-                      className="sz:font-ycom sz:text-sm sz:mr-[5px] sz:h-8"
-                      placeholder={
-                        selectedProvider === 'openrouter-api-key'
-                          ? 'sk-or-v1-XXX......'
-                          : selectedProvider === 'openai-api-key'
-                          ? 'sk-proj-XXX......'
-                          : selectedProvider === 'gemini-api-key'
-                          ? 'AQ.XXX......'
-                          : 'sk-ant-api03-XXX......'
-                      }
-                      value={apiKey}
-                      onChange={(e) => setApiKey(e.target.value)}
-                      status={isInvalidApiKey ? 'error' : undefined}
-                    />
-                    <Button
-                      className="sz:font-semibold sz:text-base sz:font-ycom sz:h-8"
-                      type="primary"
-                      onClick={onClickValidate}
-                      loading={isLoading}
-                      onMouseEnter={() => setIsValidateHovered(true)}
-                      onMouseLeave={() => setIsValidateHovered(false)}
-                      style={{
-                        color: theme == 'dark' ? '#000' : 'white',
-                      }}
-                    >
-                      {!isLoading &&
-                        (isValidateHovered || !canProceed ? (
-                          t('onboarding.selectProvider.openaiApiKey.validate')
-                        ) : (
-                          <SmileOutlined style={{ fontSize: '20px' }} />
-                        ))}
-                    </Button>
-                  </div>
+                  {selectedProvider === 'local' ? (
+                    <LocalModelSettings className="sz:w-50 sz:mb-1" />
+                  ) : (
+                    <div className="sz:flex sz:flex-row sz:items-center sz:w-50 sz:mb-1">
+                      <Input
+                        className="sz:font-ycom sz:text-sm sz:mr-[5px] sz:h-8"
+                        placeholder={
+                          selectedProvider === 'openrouter-api-key'
+                            ? 'sk-or-v1-XXX......'
+                            : selectedProvider === 'openai-api-key'
+                            ? 'sk-proj-XXX......'
+                            : selectedProvider === 'gemini-api-key'
+                            ? 'AQ.XXX......'
+                            : 'sk-ant-api03-XXX......'
+                        }
+                        value={apiKey}
+                        onChange={(e) => setApiKey(e.target.value)}
+                        status={isInvalidApiKey ? 'error' : undefined}
+                      />
+                      <Button
+                        className="sz:font-semibold sz:text-base sz:font-ycom sz:h-8"
+                        type="primary"
+                        onClick={onClickValidate}
+                        loading={isLoading}
+                        onMouseEnter={() => setIsValidateHovered(true)}
+                        onMouseLeave={() => setIsValidateHovered(false)}
+                        style={{
+                          color: theme == 'dark' ? '#000' : 'white',
+                        }}
+                      >
+                        {!isLoading &&
+                          (isValidateHovered || !canProceed ? (
+                            t('onboarding.selectProvider.openaiApiKey.validate')
+                          ) : (
+                            <SmileOutlined style={{ fontSize: '20px' }} />
+                          ))}
+                      </Button>
+                    </div>
+                  )}
                   <div
                     className={`sz:text-base ${
                       theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'
@@ -396,6 +401,9 @@ const SettingsModalContent = () => {
                       color={openRouterValidated ? 'success' : 'default'}
                     >
                       OpenRouter
+                    </Tag>
+                    <Tag style={{ fontSize: '11px' }} color={localModel ? 'success' : 'default'}>
+                      {t('local.tag')}
                     </Tag>
                   </div>
                   {openRouterValidated &&

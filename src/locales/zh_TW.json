@@ -36,10 +36,6 @@
       "openRouterApiKey": {
         "title": "使用 OpenRouter API 金鑰",
         "description": "一組金鑰即可使用 GPT、Gemini 和 Claude。"
-      },
-      "chatGPTWebApp": {
-        "title": "開發中...",
-        "description": "由於 OpenAI 政策的變更，可能不穩定。"
       }
     },
     "selectLanguage": {
@@ -176,5 +172,22 @@
     "noSearchResults": "無搜索結果",
     "noMemos": "無備忘錄",
     "searchMemo": "搜索備忘錄"
+  },
+  "local": {
+    "providerTitle": "使用本機模型",
+    "description": "在你的電腦上執行，不需要 API 金鑰。",
+    "connect": "連線",
+    "find": "尋找本機伺服器",
+    "apiKeyOptional": "API 金鑰（如需要）",
+    "selectModel": "選擇模型",
+    "connected": "已連線",
+    "notFound": "找不到本機伺服器。請啟動 Ollama 或 LM Studio，或輸入其位址。",
+    "noModels": "此伺服器沒有聊天模型。請先下載一個，例如：",
+    "unreachable": "無法連線到伺服器。請確認它正在執行。",
+    "unauthorized": "此伺服器需要 API 金鑰。",
+    "forbidden": "Ollama 拒絕了請求。請設定以下環境變數並重新啟動 Ollama：",
+    "invalidUrl": "請輸入伺服器位址，例如 http://localhost:11434",
+    "tag": "本機",
+    "unset": "本機模型（未連線）"
   }
 }

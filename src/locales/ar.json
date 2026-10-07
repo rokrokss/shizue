@@ -36,10 +36,6 @@
       "openRouterApiKey": {
         "title": "استخدام مفتاح OpenRouter API",
         "description": "مفتاح واحد لـ GPT وGemini وClaude."
-      },
-      "chatGPTWebApp": {
-        "title": "قيد التطوير...",
-        "description": "قد يكون غير مستقر بسبب التغييرات في سياسات OpenAI."
       }
     },
     "selectLanguage": {
@@ -176,5 +172,22 @@
     "noSearchResults": "لا توجد نتائج بحث",
     "noMemos": "لا توجد مذكرات",
     "searchMemo": "البحث في المذكرات"
+  },
+  "local": {
+    "providerTitle": "استخدام نموذج محلي",
+    "description": "يعمل على حاسوبك ولا يحتاج إلى مفتاح API.",
+    "connect": "اتصال",
+    "find": "البحث عن خوادم محلية",
+    "apiKeyOptional": "مفتاح API (عند الحاجة)",
+    "selectModel": "اختر نموذجًا",
+    "connected": "متصل",
+    "notFound": "لم يُعثر على خادم محلي. شغّل Ollama أو LM Studio، أو أدخل عنوانه.",
+    "noModels": "لا يحتوي هذا الخادم على نماذج محادثة. نزّل نموذجًا أولًا، مثلًا:",
+    "unreachable": "تعذّر الوصول إلى الخادم. تأكد من أنه يعمل.",
+    "unauthorized": "يتطلب هذا الخادم مفتاح API.",
+    "forbidden": "رفض Ollama الطلب. اضبط متغير البيئة هذا ثم أعد تشغيل Ollama:",
+    "invalidUrl": "أدخل عنوان الخادم، مثل http://localhost:11434",
+    "tag": "محلي",
+    "unset": "نموذج محلي (غير متصل)"
   }
 }

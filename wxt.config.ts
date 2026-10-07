@@ -19,7 +19,18 @@ export default defineConfig({
         default_title: 'Shizue',
       },
       author: { email: 'q0115643@gmail.com' },
-      permissions: ['storage', 'sidePanel', 'activeTab', 'contextMenus'],
+      // declarativeNetRequestWithHostAccess (no install warning) lets src/lib/localServer.ts rewrite
+      // the Origin header that Ollama rejects; such rules need host access to localhost. The
+      // <all_urls> content scripts already put every site under the install warning, so these add
+      // none.
+      permissions: [
+        'storage',
+        'sidePanel',
+        'activeTab',
+        'contextMenus',
+        'declarativeNetRequestWithHostAccess',
+      ],
+      host_permissions: ['http://localhost/*', 'http://127.0.0.1/*'],
       default_locale: 'en',
       side_panel: {
         default_path: 'sidepanel.html',

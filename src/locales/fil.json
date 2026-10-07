@@ -36,10 +36,6 @@
       "openRouterApiKey": {
         "title": "Gamitin ang OpenRouter API Key",
         "description": "Iisang key para sa GPT, Gemini, at Claude."
-      },
-      "chatGPTWebApp": {
-        "title": "work in progress...",
-        "description": "Maaaring hindi stable dahil sa mga pagbabago sa mga patakaran ng OpenAI."
       }
     },
     "selectLanguage": {
@@ -176,5 +172,22 @@
     "noSearchResults": "Walang mga resulta ng paghahanap",
     "noMemos": "Walang mga memo",
     "searchMemo": "Maghanap ng memo"
+  },
+  "local": {
+    "providerTitle": "Gumamit ng Local Model",
+    "description": "Tumatakbo sa iyong computer. Hindi kailangan ng API key.",
+    "connect": "Kumonekta",
+    "find": "Hanapin ang mga local server",
+    "apiKeyOptional": "API key (kung kailangan)",
+    "selectModel": "Pumili ng model",
+    "connected": "Nakakonekta",
+    "notFound": "Walang nahanap na local server. Patakbuhin ang Ollama o LM Studio, o ilagay ang address nito.",
+    "noModels": "Walang chat model ang server na ito. Mag-download muna ng isa, halimbawa:",
+    "unreachable": "Hindi maabot ang server. Tiyaking tumatakbo ito.",
+    "unauthorized": "Kailangan ng API key ng server na ito.",
+    "forbidden": "Tinanggihan ng Ollama ang request. Itakda ang environment variable na ito at i-restart ang Ollama:",
+    "invalidUrl": "Ilagay ang address ng server, hal. http://localhost:11434",
+    "tag": "Local",
+    "unset": "Local model (hindi nakakonekta)"
   }
 }

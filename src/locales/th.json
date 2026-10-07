@@ -36,10 +36,6 @@
       "openRouterApiKey": {
         "title": "ใช้ OpenRouter API Key",
         "description": "คีย์เดียวใช้ได้ทั้ง GPT, Gemini และ Claude"
-      },
-      "chatGPTWebApp": {
-        "title": "กำลังดำเนินการ...",
-        "description": "อาจไม่เสถียรเนื่องจากการเปลี่ยนแปลงนโยบายของ OpenAI"
       }
     },
     "selectLanguage": {
@@ -176,5 +172,22 @@
     "noSearchResults": "ไม่มีผลการค้นหา",
     "noMemos": "ไม่มีบันทึก",
     "searchMemo": "ค้นหาบันทึก"
+  },
+  "local": {
+    "providerTitle": "ใช้โมเดลในเครื่อง",
+    "description": "ทำงานบนคอมพิวเตอร์ของคุณ ไม่ต้องใช้คีย์ API",
+    "connect": "เชื่อมต่อ",
+    "find": "ค้นหาเซิร์ฟเวอร์ในเครื่อง",
+    "apiKeyOptional": "คีย์ API (ถ้าจำเป็น)",
+    "selectModel": "เลือกโมเดล",
+    "connected": "เชื่อมต่อแล้ว",
+    "notFound": "ไม่พบเซิร์ฟเวอร์ในเครื่อง เปิด Ollama หรือ LM Studio หรือป้อนที่อยู่ของเซิร์ฟเวอร์",
+    "noModels": "เซิร์ฟเวอร์นี้ไม่มีโมเดลแชต ดาวน์โหลดก่อน เช่น",
+    "unreachable": "เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ตรวจสอบว่าเซิร์ฟเวอร์ทำงานอยู่",
+    "unauthorized": "เซิร์ฟเวอร์นี้ต้องใช้คีย์ API",
+    "forbidden": "Ollama ปฏิเสธคำขอ ตั้งค่าตัวแปรสภาพแวดล้อมนี้แล้วเริ่ม Ollama ใหม่:",
+    "invalidUrl": "ป้อนที่อยู่เซิร์ฟเวอร์ เช่น http://localhost:11434",
+    "tag": "ในเครื่อง",
+    "unset": "โมเดลในเครื่อง (ยังไม่เชื่อมต่อ)"
   }
 }

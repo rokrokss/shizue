@@ -72,6 +72,7 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   - **Anthropic**: Claude Sonnet 5, Claude Haiku 4.5
   - **DeepSeek** (OpenRouter only): DeepSeek V4 Pro, DeepSeek V4.1 Flash
   - **OpenRouter**: all of the above with a single API key
+  - **Local models**: any model you run with Ollama, LM Studio, or llama.cpp, with no API key
 
 ### 🔑 Use Your Own API Keys:
   - Supports personal OpenAI/Gemini/Anthropic API keys for direct and the most cost-effective usage of models. Users are billed directly by those vendors.
@@ -98,7 +99,7 @@ Yes, and it will stay free. There is no paid plan, no account, and no ads. You p
 Yes. The full source of the extension is in this repository under the [MIT License](LICENSE). The repository was private for a period after mid-2025 and is public again. It was AGPL-3.0 from June 2025 to October 2026 and is MIT as of v0.2.9. The PDF translation feature, which was built on AGPL-licensed BabelDOC, has been removed.
 
 **Does Shizue have a server? What leaves my browser?**
-There is no Shizue server. API keys, chat history, memos, and settings stay in your browser's storage. When you use a feature, only the content that feature needs (e.g. the page text for a summary) is sent directly from your browser to the provider you chose, or to OpenRouter. There is no analytics or tracking. Details are in the [privacy policy](privacy_policy.md).
+There is no Shizue server. API keys, chat history, memos, and settings stay in your browser's storage. When you use a feature, only the content that feature needs (e.g. the page text for a summary) is sent directly from your browser to the provider you chose, to OpenRouter, or to the local model server you set. There is no analytics or tracking. Details are in the [privacy policy](privacy_policy.md).
 
 **What does OpenRouter see about Shizue?**
 Requests to OpenRouter carry `HTTP-Referer: https://shizue.net` and `X-OpenRouter-Title: Shizue`, so OpenRouter counts the usage under the Shizue app. These headers identify the app, not you, and nothing is sent to shizue.net.
@@ -109,8 +110,12 @@ Requests to OpenRouter carry `HTTP-Referer: https://shizue.net` and `X-OpenRoute
 - `activeTab`: work with the tab you're on when you open Shizue or use a right-click action
 - `contextMenus`: the right-click actions
 - Content scripts on all sites: the floating toggle button and page translation; on YouTube, the caption translation
+- `declarativeNetRequestWithHostAccess` and access to `localhost`: reach a model server on your computer. Ollama rejects requests from browser extensions, so Shizue sets the `Origin` header of its own requests to Ollama to Ollama's address. No other requests are changed.
 
-**Local models (Ollama) or Firefox?**
+**Local models?**
+Yes. In Settings → Models, choose "Use a Local Model". Shizue finds Ollama, LM Studio, or llama.cpp on their default ports, or you can enter an address. Pages and chats then stay on your computer. Translation quality depends on the model: in our tests, `gemma4:12b` translated a test page accurately, while `qwen3.5:9b` left some lines untranslated.
+
+**Firefox?**
 Not yet.
 
 <br/>

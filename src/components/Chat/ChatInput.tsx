@@ -2,8 +2,8 @@ import Footer from '@/components/Footer';
 import { MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE } from '@/config/constants';
 import { ChatStatus, isChatWaiting } from '@/hooks/chat';
 import { useThemeValue } from '@/hooks/layout';
-import { useChatModel } from '@/hooks/models';
-import { MODELS } from '@/lib/modelRegistry';
+import { useChatModel, useLocalModelValue } from '@/hooks/models';
+import { modelSupportsImages } from '@/lib/modelRegistry';
 import { debugLog } from '@/logs';
 import {
   EditOutlined,
@@ -45,7 +45,8 @@ const ChatInput = ({
   const theme = useThemeValue();
   const navigate = useNavigate();
   const [chatModel] = useChatModel();
-  const imagesSupported = MODELS[chatModel].supportsImages;
+  const localModel = useLocalModelValue();
+  const imagesSupported = modelSupportsImages(chatModel, localModel);
 
   // Drop attached images when the chat model is switched to a text-only one.
   useEffect(() => {

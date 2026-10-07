@@ -36,10 +36,6 @@
       "openRouterApiKey": {
         "title": "OpenRouter API কী ব্যবহার করুন",
         "description": "একটি কী দিয়ে GPT, Gemini ও Claude সবই ব্যবহার করুন।"
-      },
-      "chatGPTWebApp": {
-        "title": "কাজ চলছে...",
-        "description": "OpenAI-এর নীতিতে পরিবর্তনের কারণে অস্থিতিশীল হতে পারে।"
       }
     },
     "selectLanguage": {
@@ -176,5 +172,22 @@
     "noSearchResults": "কোনো অনুসন্ধান ফলাফল নেই",
     "noMemos": "কোনো মেমো নেই",
     "searchMemo": "মেমো অনুসন্ধান"
+  },
+  "local": {
+    "providerTitle": "লোকাল মডেল ব্যবহার করুন",
+    "description": "আপনার কম্পিউটারে চলে। API কী লাগে না।",
+    "connect": "সংযোগ করুন",
+    "find": "লোকাল সার্ভার খুঁজুন",
+    "apiKeyOptional": "API কী (প্রয়োজন হলে)",
+    "selectModel": "একটি মডেল বেছে নিন",
+    "connected": "সংযুক্ত",
+    "notFound": "কোনো লোকাল সার্ভার পাওয়া যায়নি। Ollama বা LM Studio চালু করুন, অথবা ঠিকানা লিখুন।",
+    "noModels": "এই সার্ভারে কোনো চ্যাট মডেল নেই। আগে একটি ডাউনলোড করুন, যেমন:",
+    "unreachable": "সার্ভারে পৌঁছানো যাচ্ছে না। সেটি চলছে কিনা দেখুন।",
+    "unauthorized": "এই সার্ভারের জন্য API কী লাগবে।",
+    "forbidden": "Ollama অনুরোধটি প্রত্যাখ্যান করেছে। এই এনভায়রনমেন্ট ভেরিয়েবল সেট করে Ollama আবার চালু করুন:",
+    "invalidUrl": "সার্ভারের ঠিকানা লিখুন, যেমন http://localhost:11434",
+    "tag": "লোকাল",
+    "unset": "লোকাল মডেল (সংযুক্ত নয়)"
   }
 }

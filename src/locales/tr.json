@@ -36,10 +36,6 @@
       "openRouterApiKey": {
         "title": "OpenRouter API Anahtarını Kullan",
         "description": "GPT, Gemini ve Claude için tek anahtar."
-      },
-      "chatGPTWebApp": {
-        "title": "Çalışmalar devam ediyor...",
-        "description": "OpenAI politikalarındaki değişiklikler nedeniyle kararsız olabilir."
       }
     },
     "selectLanguage": {
@@ -176,5 +172,22 @@
     "noSearchResults": "Arama sonucu yok",
     "noMemos": "Not yok",
     "searchMemo": "Not ara"
+  },
+  "local": {
+    "providerTitle": "Yerel model kullan",
+    "description": "Bilgisayarınızda çalışır. API anahtarı gerekmez.",
+    "connect": "Bağlan",
+    "find": "Yerel sunucuları bul",
+    "apiKeyOptional": "API anahtarı (gerekirse)",
+    "selectModel": "Bir model seçin",
+    "connected": "Bağlandı",
+    "notFound": "Yerel sunucu bulunamadı. Ollama veya LM Studio’yu başlatın ya da adresini girin.",
+    "noModels": "Bu sunucuda sohbet modeli yok. Önce bir tane indirin, örneğin:",
+    "unreachable": "Sunucuya ulaşılamıyor. Çalıştığından emin olun.",
+    "unauthorized": "Bu sunucu bir API anahtarı istiyor.",
+    "forbidden": "Ollama isteği reddetti. Bu ortam değişkenini ayarlayıp Ollama’yı yeniden başlatın:",
+    "invalidUrl": "Sunucu adresini girin, ör. http://localhost:11434",
+    "tag": "Yerel",
+    "unset": "Yerel model (bağlı değil)"
   }
 }

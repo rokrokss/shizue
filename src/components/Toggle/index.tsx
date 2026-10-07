@@ -28,7 +28,12 @@ import {
   useToggleHiddenSiteList,
   useToggleYPosition,
 } from '@/hooks/layout';
-import { useAnyModelAvailable, useModelAvailability, useTranslateModel } from '@/hooks/models';
+import {
+  useAnyModelAvailable,
+  useModelAvailability,
+  useModelLabel,
+  useTranslateModel,
+} from '@/hooks/models';
 import { hashStringToIndex } from '@/lib/hash';
 import {
   initDescribeImageContent,
@@ -38,7 +43,7 @@ import {
   initSummarizePageContent,
 } from '@/lib/initPanelData';
 import { languageOptions } from '@/lib/language';
-import { MODEL_OPTIONS, MODELS, TranslateModel } from '@/lib/modelRegistry';
+import { MODEL_OPTIONS, TranslateModel } from '@/lib/modelRegistry';
 import { getPageTranslator } from '@/lib/pageTranslator';
 import { debugLog } from '@/logs';
 import { panelService } from '@/services/panelService';
@@ -71,6 +76,7 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
   const [translateModel, setTranslateModel] = useTranslateModel();
   const [motionDivId, setMotionDivId] = useState(0);
   const modelAvailability = useModelAvailability();
+  const modelLabel = useModelLabel();
   const anyModelAvailable = useAnyModelAvailable();
   const [showToggle, setShowToggle] = useShowToggle();
   const [toggleHiddenSiteList, setToggleHiddenSiteList] = useToggleHiddenSiteList();
@@ -461,7 +467,7 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
                               const validated = modelAvailability[value];
                               return {
                                 value,
-                                label: MODELS[value].label,
+                                label: modelLabel(value),
                                 className: 'sz:font-ycom',
                                 styles: {
                                   color: validated
