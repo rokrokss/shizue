@@ -1,5 +1,5 @@
-// Finds local LLM servers and their models for the 'local' slot. Runs in extension pages (settings,
-// onboarding); no LangChain, so it is safe outside the background.
+// Finds local LLM servers and their chat models. Runs in extension pages (settings, onboarding); no
+// LangChain, so it is safe outside the background.
 import { LocalServerConfig, LocalServerModel } from '@/lib/modelRegistry';
 
 // forbidden: Ollama refused the extension's origin. unauthorized: the server wants an API key.
@@ -18,7 +18,12 @@ const DEFAULT_SERVERS = [
   'http://localhost:8080',
 ];
 
+export const isDefaultServer = (baseUrl: string) => DEFAULT_SERVERS.includes(baseUrl);
+
 const OLLAMA_ORIGIN_RULE_ID = 1;
+// The settings re-check a server every few seconds while it has no models; the rule only needs
+// writing once per page.
+let allowedOllamaOrigin: string | undefined;
 
 // Ollama answers POST requests from extension origins with 403 unless OLLAMA_ORIGINS lists them,
 // so the extension's own requests to that server carry the server's origin instead. The rule
@@ -26,8 +31,9 @@ const OLLAMA_ORIGIN_RULE_ID = 1;
 // apps are untouched. It takes effect only where the manifest grants host access (localhost,
 // 127.0.0.1); a remote Ollama still needs OLLAMA_ORIGINS. Dynamic rules persist, so the
 // background's later requests are covered too.
-const allowOllamaOrigin = (origin: string) =>
-  chrome.declarativeNetRequest.updateDynamicRules({
+const allowOllamaOrigin = async (origin: string) => {
+  if (allowedOllamaOrigin === origin) return;
+  await chrome.declarativeNetRequest.updateDynamicRules({
     removeRuleIds: [OLLAMA_ORIGIN_RULE_ID],
     addRules: [
       {
@@ -47,6 +53,8 @@ const allowOllamaOrigin = (origin: string) =>
       },
     ],
   });
+  allowedOllamaOrigin = origin;
+};
 
 // Accepts "localhost:11434", "http://localhost:1234/v1/" and the like; returns the server root.
 export const normalizeBaseUrl = (input: string): string | undefined => {
@@ -122,15 +130,17 @@ const listLmStudioModels = async (
 const listOpenAICompatibleModels = async (
   baseUrl: string,
   apiKey?: string
-): Promise<LocalServerModel[]> => {
+): Promise<{ models: LocalServerModel[]; serverName?: string }> => {
   const headers = apiKey ? { Authorization: `Bearer ${apiKey}` } : undefined;
   const { data = [] } = await fetchJson(`${baseUrl}/v1/models`, { headers });
   const lmStudioModels = await listLmStudioModels(baseUrl, headers);
-  if (lmStudioModels) return lmStudioModels;
-  return data
-    .map(({ id }: { id: string }) => id)
-    .filter((id: string) => !/embed/i.test(id))
-    .map((id: string) => ({ id, supportsImages: false, supportsThinking: false }));
+  if (lmStudioModels) return { models: lmStudioModels, serverName: 'LM Studio' };
+  return {
+    models: data
+      .map(({ id }: { id: string }) => id)
+      .filter((id: string) => !/embed/i.test(id))
+      .map((id: string) => ({ id, supportsImages: false, supportsThinking: false })),
+  };
 };
 
 // Ollama is told apart by /api/version, which the OpenAI-compatible servers don't have.
@@ -141,12 +151,19 @@ export const probeLocalServer = async (
   const isOllama = await fetch(`${baseUrl}/api/version`)
     .then(async (res) => res.ok && typeof (await res.json()).version === 'string')
     .catch(() => false);
-  if (isOllama) return { kind: 'ollama', baseUrl, models: await listOllamaModels(baseUrl) };
+  if (isOllama) {
+    return {
+      kind: 'ollama',
+      baseUrl,
+      serverName: 'Ollama',
+      models: await listOllamaModels(baseUrl),
+    };
+  }
   return {
     kind: 'openai-compatible',
     baseUrl,
     ...(apiKey ? { apiKey } : {}),
-    models: await listOpenAICompatibleModels(baseUrl, apiKey),
+    ...(await listOpenAICompatibleModels(baseUrl, apiKey)),
   };
 };
 

@@ -51,6 +51,8 @@ export interface LocalServerConfig {
   baseUrl: string;
   // Some OpenAI-compatible servers (Jan, vLLM --api-key) require one.
   apiKey?: string;
+  // The server app, when the probe can tell (Ollama, LM Studio); shown next to the address.
+  serverName?: string;
   models: LocalServerModel[];
 }
 
