@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.3
+
+- Fix Cmd/Ctrl+Shift+E and the in-page toggle not closing the side panel after the browser had been idle for a while
+
 ## v0.3.2
 
 - Local models: the settings show what's connected, the server and its models, instead of an address form. When no server is running or it has no models yet, Shizue says what to do and connects on its own once you start the server or download a model. Enter an address only when you need a different one
