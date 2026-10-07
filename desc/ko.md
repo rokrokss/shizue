@@ -2,6 +2,8 @@
 
 Shizue는 대규모 언어 모델(LLM)을 일상적인 웹 브라우징에 원활하게 통합하는 Chrome 확장 프로그램입니다. 직관적인 사이드 패널 인터페이스로 브라우저에서 직접 AI의 힘을 경험하세요.
 
+Shizue는 무료 오픈소스(MIT)입니다. 내 OpenAI, Claude, Gemini API 키를 쓰거나, OpenRouter 키 하나로 DeepSeek를 포함한 모든 모델을 쓸 수 있습니다. 계정도 구독도 Shizue 서버도 없고, 쓴 만큼만 AI 제공업체에 비용을 냅니다.
+
 ✨ 주요 기능
 
 🌐 스마트 이중언어 번역
@@ -22,7 +24,7 @@ Shizue는 대규모 언어 모델(LLM)을 일상적인 웹 브라우징에 원�
 💬 대화형 AI 채팅 어시스턴트
 - 웹페이지 콘텐츠에 대해 질문
 - 즉각적인 요약, 설명, 통찰력 얻기
-- 여러 AI 모델 지원 (OpenAI GPT, Claude, Gemini)
+- 여러 AI 모델 지원 (OpenAI GPT, Claude, Gemini, DeepSeek)
 - 현재 페이지 기반 문맥 인식 응답
 
 📋 원클릭 페이지 요약
@@ -43,11 +45,13 @@ Shizue는 대규모 언어 모델(LLM)을 일상적인 웹 브라우징에 원�
 🚀 시작하기
 1. Chrome 웹 스토어에서 Shizue 설치
 2. 확장 프로그램 아이콘을 클릭하여 사이드 패널 열기
-3. 선호하는 AI API 키 추가 (OpenAI, Anthropic 또는 Google)
+3. 선호하는 AI API 키 추가 (OpenRouter, OpenAI, Anthropic 또는 Google)
 4. AI 슈퍼파워로 브라우징 시작!
 
 🔒 개인정보 보호 및 보안
 - API 키는 브라우저에 안전하게 저장
 - 타사 서버로 데이터 전송 안 함 (선택한 AI 제공업체 제외)
+- 분석·추적 없음
+- 오픈소스: https://github.com/rokrokss/shizue
 
 Shizue로 AI와 일상적인 웹 사용이 만나는 브라우징 경험을 변화시키세요. 지금 설치하고 더 스마트한 인터넷 탐색 방법을 발견하세요!
