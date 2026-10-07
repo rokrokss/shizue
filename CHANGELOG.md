@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.3.0
+
+- Local models: in Settings → Models, choose "Use a Local Model" to use Ollama, LM Studio, or llama.cpp running on your computer, with no API key. Shizue finds the server at its default port, or you can enter its address. Chat and translation can use different local models
+- Local models (Ollama): when a text is longer than the model can read at once, only its beginning is used, and a note under the reply says so
+- Add Gemma 4 31B (Gemini key or OpenRouter)
+- Page translation: fix translation failing while the side panel was open
+- Page translation: the loader now shows on pages whose paragraphs keep their line breaks, and on paragraphs still waiting their turn
+
 ## v0.2.9
 
 - License: Shizue is now MIT-licensed
