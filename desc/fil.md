@@ -1,53 +1,49 @@
-🌸 Shizue - Ang Iyong AI-Powered na Katulong sa Pag-browse
+Ang Shizue ay AI assistant sa side panel ng Chrome. Makipag-chat sa AI nang hindi umaalis sa pahina, ibuod ang binabasa sa isang click, at magbasa ng web page o manood ng YouTube video nang sabay na nakikita ang orihinal at ang salin.
 
-Ang Shizue ay isang Chrome extension na walang putol na pinagsasama ang mga Large Language Models (LLMs) sa iyong pang-araw-araw na pag-browse sa web, binabago kung paano ka nakikipag-ugnayan sa online na nilalaman. Maranasan ang kapangyarihan ng AI nang direkta sa iyong browser gamit ang aming madaling gamitin na side panel interface.
+Libre at open source (MIT) ang Shizue. Gumagana ito gamit ang sarili mong API key: OpenAI, Anthropic (Claude), Google (Gemini), o iisang OpenRouter key para sa lahat ng iyon at pati sa DeepSeek. Walang account, walang subscription, at walang server ng Shizue. Ang nagamit mo lang ang babayaran mo sa AI provider.
 
-✨ Mga Pangunahing Tampok
 
-🌐 Matalinong Bilingual na Pagsasalin
-- Basahin ang nilalaman sa dalawang wika nang sabay gamit ang AI-powered na pagsasalin
-- Pinapanatili ang konteksto at pagkakaiba-iba gamit ang advanced na pag-unawa ng LLM
+Mga Feature
 
-🎬 Real-time na Pagsasalin ng YouTube Caption
-- Manood ng mga video sa anumang wika gamit ang agarang AI na pagsasalin
-- Natural na lumalabas ang mga caption habang nanonood ka
-- Suporta para sa maraming target na wika
+Chat sa side panel
+- Buksan sa kahit anong pahina gamit ang Ctrl+Shift+E (Cmd+Shift+E sa Mac)
+- Mag-attach ng mga larawan at balikan ang mga naunang chat sa Kasaysayan
 
-📝 Web Memo
-- Gumawa ng mga tala habang nag-browse
-- Ayusin ang iyong mga kaisipan at ideya
-- Madaling maghanap sa iyong mga memo
-- I-access ang iyong mga tala sa mga browsing session
+Buod ng pahina
+- Ibuod ang binabasang pahina sa isang click, saka magtanong pa sa parehong chat
 
-💬 Interactive na AI Chat Assistant
-- Magtanong tungkol sa anumang nilalaman ng webpage
-- Makakuha ng agarang mga buod, paliwanag, at insight
-- Sumusuporta sa maraming AI model (OpenAI GPT, Claude, Gemini)
-- Mga tugon na alam ang konteksto batay sa kasalukuyang pahina
+Bilingual na web page
+- Lumalabas ang salin sa ilalim ng bawat talata, kaya nananatili sa puwesto ang orihinal
 
-📋 Isang-Click na Pagbubuod ng Pahina
-- Agad na maunawaan ang mga pangunahing ideya ng anumang artikulo o webpage
-- Makatipid ng oras gamit ang mga maikling, AI-generated na buod
+Bilingual na YouTube caption
+- Isinasalin ang mga caption habang nanonood at ipinapakita sa ilalim ng orihinal na linya
+- Piliin ang target language at ang bilang ng linya, at pindutin ang A o D para lumipat sa nakaraan o susunod na caption
 
-🎯 Matalinong Context Menu Actions
-- I-right-click para isalin, ipaliwanag, o ibuod ang napiling teksto
-- Pagsusuri ng gramatika at mga mungkahi sa pagpapabuti ng pagsulat
-- Mabilis na access sa mga AI feature nang hindi umaalis sa pahina
+Right-click menu
+- Napiling teksto: isalin, ipaliwanag, ibuod, o ayusin ang grammar
+- Mga larawan: ilarawan o kunin ang teksto
+- Buong pahina: isalin o ibuod
 
-🎨 Karagdagang mga Tampok
-- Suporta sa Dark/Light theme para sa komportableng pagtingin
-- Suporta para sa 24+ na wika
-- Mga keyboard shortcut na maaaring i-customize
-- Pagsubaybay sa paggamit ng token para sa pamamahala ng API
+Memo
+- Kusang nase-save habang nagta-type, at puwedeng i-pin at hanapin
 
-🚀 Pagsisimula
-1. I-install ang Shizue mula sa Chrome Web Store
-2. I-click ang extension icon para buksan ang side panel
-3. Idagdag ang iyong gustong AI API key (OpenAI, Anthropic, o Google)
-4. Magsimulang mag-browse gamit ang AI superpowers!
+Iba pa
+- Chart ng paggamit ng token na nagpapakita kung gaano karami ang nagamit ng bawat model
+- Maliwanag at madilim na tema
+- Interface sa 23 wika
 
-🔒 Privacy at Seguridad
-- Ligtas na nakaimbak ang mga API key sa iyong browser
-- Walang data na ipinapadala sa mga third-party server (maliban sa mga napiling AI provider)
 
-Baguhin ang iyong karanasan sa pag-browse gamit ang Shizue - kung saan nakakatagpo ang AI ng pang-araw-araw na paggamit ng web. I-install ngayon at tuklasin ang mas matalinong paraan para tuklasin ang internet!
+Privacy
+- Nasa browser mo lang ang mga API key, kasaysayan ng chat, at memo
+- Kapag gumamit ng isang feature, ang nilalaman lang na kailangan nito ang direktang ipinapadala mula sa browser mo papunta sa AI provider na pinili mo
+- Walang analytics o tracking
+- Source code: https://github.com/rokrokss/shizue
+
+
+Pagsisimula
+1. I-install ang Shizue at pindutin ang Ctrl+Shift+E (Cmd+Shift+E sa Mac) para buksan ang side panel
+2. I-paste ang API key. Pinakasimple ang OpenRouter: iisang key para sa lahat ng model
+3. Magbukas ng kahit anong pahina at magsimulang magtanong
+
+Website: https://shizue.net
+Mga tanong at feedback: https://discord.gg/ukfPmxsyEy

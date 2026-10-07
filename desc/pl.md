@@ -1,53 +1,49 @@
-🌸 Shizue - Twój Asystent Przeglądania Zasilany przez AI
+Shizue umieszcza asystenta AI w panelu bocznym Chrome. Możesz rozmawiać z AI bez opuszczania strony, jednym kliknięciem podsumować to, co czytasz, a na stronach internetowych i w filmach na YouTube widzieć oryginał razem z tłumaczeniem.
 
-Shizue to rozszerzenie Chrome, które płynnie integruje Duże Modele Językowe (LLMs) z Twoim codziennym przeglądaniem sieci, przekształcając sposób, w jaki wchodzisz w interakcję z treściami online. Doświadcz mocy AI bezpośrednio w swojej przeglądarce dzięki naszemu intuicyjnemu interfejsowi panelu bocznego.
+Shizue to darmowe rozszerzenie open source (MIT). Używasz własnego klucza API: OpenAI, Anthropic (Claude), Google (Gemini) albo jednego klucza OpenRouter, który działa ze wszystkimi tymi modelami, a do tego z DeepSeek. Nie trzeba zakładać konta ani płacić abonamentu, a Shizue nie ma własnego serwera. Płacisz tylko swojemu dostawcy AI i tylko za to, czego używasz.
 
-✨ Kluczowe Funkcje
 
-🌐 Inteligentne Tłumaczenie Dwujęzyczne
-- Czytaj treści w dwóch językach jednocześnie dzięki tłumaczeniu wspieranemu przez AI
-- Zachowuje kontekst i niuanse dzięki zaawansowanemu zrozumieniu LLM
+Funkcje
 
-🎬 Tłumaczenie Napisów YouTube w Czasie Rzeczywistym
-- Oglądaj filmy w dowolnym języku z natychmiastowymi tłumaczeniami AI
-- Napisy pojawiają się naturalnie podczas oglądania
-- Wsparcie dla wielu języków docelowych
+Czat w panelu bocznym
+- Otwiera się na każdej stronie skrótem Ctrl+Shift+E (Cmd+Shift+E na Macu)
+- Możesz dołączać obrazy i wracać do wcześniejszych czatów z historii
 
-📝 Notatki Internetowe
-- Rób notatki podczas przeglądania
-- Organizuj swoje myśli i pomysły
-- Łatwo przeszukuj swoje notatki
-- Uzyskaj dostęp do swoich notatek między sesjami przeglądania
+Podsumowania stron
+- Jednym kliknięciem podsumujesz czytaną stronę, a potem możesz dopytywać w tym samym czacie
 
-💬 Interaktywny Asystent Czatu AI
-- Zadawaj pytania o dowolną zawartość strony internetowej
-- Otrzymuj natychmiastowe podsumowania, wyjaśnienia i spostrzeżenia
-- Obsługuje wiele modeli AI (OpenAI GPT, Claude, Gemini)
-- Odpowiedzi świadome kontekstu oparte na bieżącej stronie
+Dwujęzyczne strony internetowe
+- Tłumaczenie pojawia się pod każdym akapitem, a oryginał zostaje na swoim miejscu
 
-📋 Podsumowanie Strony Jednym Kliknięciem
-- Natychmiast zrozum główne idee dowolnego artykułu lub strony internetowej
-- Oszczędź czas dzięki zwięzłym podsumowaniom generowanym przez AI
+Dwujęzyczne napisy na YouTube
+- Napisy są tłumaczone podczas oglądania i wyświetlane pod oryginalnym wierszem
+- Możesz wybrać język docelowy i liczbę wierszy, a klawiszami A i D przechodzić do poprzedniego lub następnego napisu
 
-🎯 Inteligentne Akcje Menu Kontekstowego
-- Kliknij prawym przyciskiem, aby przetłumaczyć, wyjaśnić lub podsumować zaznaczony tekst
-- Sprawdzanie gramatyki i sugestie poprawy pisania
-- Szybki dostęp do funkcji AI bez opuszczania strony
+Menu pod prawym przyciskiem myszy
+- Zaznaczony tekst: tłumaczenie, wyjaśnienie, podsumowanie lub poprawa gramatyki
+- Obrazy: opis lub wyodrębnienie tekstu
+- Cała strona: tłumaczenie lub podsumowanie
 
-🎨 Dodatkowe Funkcje
-- Obsługa motywu ciemnego/jasnego dla wygodnego przeglądania
-- Wsparcie dla ponad 24 języków
-- Konfigurowalne skróty klawiszowe
-- Śledzenie użycia tokenów do zarządzania API
+Notatki
+- Zapisują się w trakcie pisania i można je przypinać oraz przeszukiwać
 
-🚀 Rozpoczęcie Pracy
-1. Zainstaluj Shizue z Chrome Web Store
-2. Kliknij ikonę rozszerzenia, aby otworzyć panel boczny
-3. Dodaj preferowany klucz API AI (OpenAI, Anthropic lub Google)
-4. Rozpocznij przeglądanie z supermocami AI!
+Poza tym
+- Wykres wykorzystania tokenów z podziałem na modele
+- Motyw jasny i ciemny
+- Interfejs w 23 językach
 
-🔒 Prywatność i Bezpieczeństwo
-- Klucze API bezpiecznie przechowywane w Twojej przeglądarce
-- Żadne dane nie są wysyłane do serwerów trzecich (z wyjątkiem wybranych dostawców AI)
 
-Przekształć swoje doświadczenie przeglądania z Shizue - gdzie AI spotyka się z codziennym użytkowaniem sieci. Zainstaluj teraz i odkryj mądrzejszy sposób eksplorowania internetu!
+Prywatność
+- Klucze API, historia czatów i notatki zostają w Twojej przeglądarce
+- Gdy używasz jakiejś funkcji, tylko potrzebna jej treść trafia prosto z przeglądarki do wybranego przez Ciebie dostawcy AI
+- Bez analityki i śledzenia
+- Kod źródłowy: https://github.com/rokrokss/shizue
+
+
+Pierwsze kroki
+1. Zainstaluj Shizue i otwórz panel boczny skrótem Ctrl+Shift+E (Cmd+Shift+E na Macu)
+2. Wklej klucz API. Najprostsza opcja to OpenRouter: jeden klucz do wszystkich modeli
+3. Otwórz dowolną stronę i zadaj pytanie
+
+Strona internetowa: https://shizue.net
+Pytania i opinie: https://discord.gg/ukfPmxsyEy

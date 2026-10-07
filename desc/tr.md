@@ -1,53 +1,49 @@
-🌸 Shizue - AI Destekli Tarayıcı Asistanınız
+Shizue, Chrome'un yan paneline bir yapay zeka asistanı ekler. Sayfadan ayrılmadan sohbet edebilir, okuduğunuz sayfayı tek tıkla özetleyebilir, web sayfalarını ve YouTube videolarını orijinal metinle çeviriyi birlikte görerek takip edebilirsiniz.
 
-Shizue, Büyük Dil Modellerini (LLM'ler) günlük web tarama deneyiminize sorunsuz bir şekilde entegre eden, çevrimiçi içerikle etkileşim şeklinizi dönüştüren bir Chrome uzantısıdır. Sezgisel yan panel arayüzümüzle AI'nın gücünü doğrudan tarayıcınızda deneyimleyin.
+Shizue ücretsiz ve açık kaynaklıdır (MIT). Kendi API anahtarınızla çalışır: OpenAI, Anthropic (Claude), Google (Gemini) ya da bunların hepsine ve DeepSeek'e erişim sağlayan tek bir OpenRouter anahtarı. Hesap açmanız ya da abone olmanız gerekmez, Shizue'nin bir sunucusu da yoktur. Yapay zeka sağlayıcınıza yalnızca kullandığınız kadar ödersiniz.
 
-✨ Ana Özellikler
 
-🌐 Akıllı İki Dilli Çeviri
-- AI destekli çeviri ile içeriği aynı anda iki dilde okuyun
-- Gelişmiş LLM anlayışı ile bağlamı ve nüansları korur
+Özellikler
 
-🎬 Gerçek Zamanlı YouTube Altyazı Çevirisi
-- Anında AI çevirileriyle videoları herhangi bir dilde izleyin
-- İzlerken altyazılar doğal olarak görünür
-- Birden fazla hedef dil desteği
+Yan panelde sohbet
+- Herhangi bir sayfada Ctrl+Shift+E ile (Mac'te Cmd+Shift+E) açılır
+- Görsel ekleyebilir, önceki sohbetlere geçmişten dönebilirsiniz
 
-📝 Web Not Defteri
-- Gezinirken notlar alın
-- Düşüncelerinizi ve fikirlerinizi organize edin
-- Notlarınızda kolayca arama yapın
-- Tarama oturumları arasında notlarınıza erişin
+Sayfa özeti
+- Okuduğunuz sayfayı tek tıkla özetleyip aynı sohbette soru sormaya devam edebilirsiniz
 
-💬 Etkileşimli AI Sohbet Asistanı
-- Herhangi bir web sayfası içeriği hakkında sorular sorun
-- Anında özetler, açıklamalar ve içgörüler alın
-- Birden fazla AI modelini destekler (OpenAI GPT, Claude, Gemini)
-- Mevcut sayfaya dayalı bağlam farkında yanıtlar
+İki dilli web sayfaları
+- Çeviri her paragrafın altında görünür, orijinal metin yerinde kalır
 
-📋 Tek Tıkla Sayfa Özeti
-- Herhangi bir makale veya web sayfasının ana fikirlerini anında kavrayın
-- AI tarafından oluşturulan özlü özetlerle zaman kazanın
+İki dilli YouTube altyazıları
+- Altyazılar siz izlerken çevrilir ve orijinal satırın altında gösterilir
+- Hedef dili ve satır sayısını seçebilir, A ve D tuşlarıyla önceki ya da sonraki altyazıya geçebilirsiniz
 
-🎯 Akıllı Bağlam Menüsü Eylemleri
-- Seçili metni çevirmek, açıklamak veya özetlemek için sağ tıklayın
-- Dilbilgisi kontrolü ve yazma iyileştirme önerileri
-- Sayfadan ayrılmadan AI özelliklerine hızlı erişim
+Sağ tık menüsü
+- Seçili metin: çevir, açıkla, özetle ya da dilbilgisini düzelt
+- Görseller: açıkla ya da içindeki metni çıkar
+- Sayfanın tamamı: çevir ya da özetle
 
-🎨 Ek Özellikler
-- Rahat görüntüleme için Koyu/Açık tema desteği
-- 24'ten fazla dil desteği
-- Özelleştirilebilir klavye kısayolları
-- API yönetimi için token kullanım takibi
+Notlar
+- Yazdıkça otomatik kaydedilir, sabitlenebilir ve aranabilir
 
-🚀 Başlarken
-1. Chrome Web Mağazası'ndan Shizue'yu yükleyin
-2. Yan paneli açmak için uzantı simgesine tıklayın
-3. Tercih ettiğiniz AI API anahtarını ekleyin (OpenAI, Anthropic veya Google)
-4. AI süper güçleriyle gezinmeye başlayın!
+Ayrıca
+- Her modelin ne kadar kullanıldığını gösteren token kullanımı grafiği
+- Açık ve koyu tema
+- 23 dilde arayüz
 
-🔒 Gizlilik ve Güvenlik
-- API anahtarları tarayıcınızda güvenli bir şekilde saklanır
-- Üçüncü taraf sunuculara veri gönderilmez (seçilen AI sağlayıcıları hariç)
 
-Shizue ile tarama deneyiminizi dönüştürün - AI'nın günlük web kullanımıyla buluştuğu yer. Şimdi yükleyin ve interneti keşfetmenin daha akıllı bir yolunu keşfedin!
+Gizlilik
+- API anahtarları, sohbet geçmişi ve notlar yalnızca tarayıcınızda kalır
+- Bir özelliği kullandığınızda yalnızca o özelliğin ihtiyaç duyduğu içerik, tarayıcınızdan doğrudan seçtiğiniz yapay zeka sağlayıcısına gönderilir
+- Analiz ya da takip aracı kullanılmaz
+- Kaynak kodu: https://github.com/rokrokss/shizue
+
+
+Başlarken
+1. Shizue'yi yükleyin ve yan paneli açmak için Ctrl+Shift+E (Mac'te Cmd+Shift+E) tuşlarına basın
+2. Bir API anahtarı yapıştırın. En kolayı OpenRouter: tek anahtarla tüm modelleri kullanabilirsiniz
+3. Herhangi bir sayfayı açın ve sorunuzu sorun
+
+Web sitesi: https://shizue.net
+Sorular ve geri bildirim: https://discord.gg/ukfPmxsyEy

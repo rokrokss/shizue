@@ -1,53 +1,49 @@
-🌸 Shizue - Votre Assistant de Navigation Alimenté par l'IA
+Shizue ajoute un assistant IA au panneau latéral de Chrome. Vous pouvez discuter sans quitter la page, résumer en un clic ce que vous lisez, et voir l'original et la traduction ensemble sur les pages web et les vidéos YouTube.
 
-Shizue est une extension Chrome qui intègre harmonieusement les modèles de langage large (LLMs) dans votre navigation web quotidienne, transformant la façon dont vous interagissez avec le contenu en ligne. Découvrez la puissance de l'IA directement dans votre navigateur avec notre interface de panneau latéral intuitive.
+Shizue est une extension gratuite et open source (MIT). Elle fonctionne avec votre propre clé API : OpenAI, Anthropic (Claude), Google (Gemini) ou une seule clé OpenRouter qui couvre tous ces fournisseurs ainsi que DeepSeek. Pas de compte, pas d'abonnement, pas de serveur Shizue. Vous ne payez que votre fournisseur d'IA, et seulement pour ce que vous utilisez.
 
-✨ Fonctionnalités Principales
 
-🌐 Traduction Bilingue Intelligente
-- Lisez du contenu dans deux langues simultanément avec la traduction alimentée par l'IA
-- Préserve le contexte et les nuances avec une compréhension LLM avancée
+Fonctionnalités
 
-🎬 Traduction de Sous-titres YouTube en Temps Réel
-- Regardez des vidéos dans n'importe quelle langue avec des traductions IA instantanées
-- Les sous-titres apparaissent naturellement pendant que vous regardez
-- Support pour plusieurs langues cibles
+Chat dans le panneau latéral
+- S'ouvre sur n'importe quelle page avec Ctrl+Shift+E (Cmd+Shift+E sur Mac)
+- Joignez des images et retrouvez vos anciennes discussions dans l'historique
 
-📝 Mémo Web
-- Prenez des notes pendant votre navigation
-- Organisez vos pensées et idées
-- Recherchez facilement dans vos mémos
-- Accédez à vos notes à travers les sessions de navigation
+Résumé de page
+- Résumez en un clic la page que vous lisez, puis posez d'autres questions dans la même discussion
 
-💬 Assistant de Chat IA Interactif
-- Posez des questions sur n'importe quel contenu de page web
-- Obtenez des résumés, explications et aperçus instantanés
-- Prend en charge plusieurs modèles d'IA (OpenAI GPT, Claude, Gemini)
-- Réponses conscientes du contexte basées sur la page actuelle
+Pages web bilingues
+- La traduction s'affiche sous chaque paragraphe, et le texte original reste à sa place
 
-📋 Résumé de Page en Un Clic
-- Saisissez instantanément les idées principales de tout article ou page web
-- Gagnez du temps avec des résumés concis générés par l'IA
+Sous-titres YouTube bilingues
+- Les sous-titres sont traduits pendant que vous regardez la vidéo et s'affichent sous la ligne d'origine
+- Choisissez la langue cible et le nombre de lignes, et passez au sous-titre précédent ou suivant avec A ou D
 
-🎯 Actions Intelligentes du Menu Contextuel
-- Clic droit pour traduire, expliquer ou résumer le texte sélectionné
-- Vérification grammaticale et suggestions d'amélioration de l'écriture
-- Accès rapide aux fonctionnalités IA sans quitter la page
+Menu du clic droit
+- Texte sélectionné : traduire, expliquer, résumer ou corriger la grammaire
+- Images : décrire l'image ou en extraire le texte
+- Page entière : traduire ou résumer
 
-🎨 Fonctionnalités Supplémentaires
-- Support du thème sombre/clair pour un visionnage confortable
-- Support pour plus de 24 langues
-- Raccourcis clavier personnalisables
-- Suivi de l'utilisation des tokens pour la gestion API
+Mémos
+- Des notes enregistrées au fil de la saisie, que vous pouvez épingler et rechercher
 
-🚀 Pour Commencer
-1. Installez Shizue depuis le Chrome Web Store
-2. Cliquez sur l'icône de l'extension pour ouvrir le panneau latéral
-3. Ajoutez votre clé API IA préférée (OpenAI, Anthropic ou Google)
-4. Commencez à naviguer avec des super-pouvoirs IA !
+Et aussi
+- Un graphique de l'utilisation des tokens par modèle
+- Thèmes clair et sombre
+- Interface disponible en 23 langues
 
-🔒 Confidentialité et Sécurité
-- Clés API stockées en toute sécurité dans votre navigateur
-- Aucune donnée envoyée aux serveurs tiers (sauf aux fournisseurs IA choisis)
 
-Transformez votre expérience de navigation avec Shizue - où l'IA rencontre l'utilisation quotidienne du web. Installez maintenant et découvrez une façon plus intelligente d'explorer Internet !
+Confidentialité
+- Les clés API, l'historique des discussions et les mémos restent dans votre navigateur
+- Quand vous utilisez une fonctionnalité, seul le contenu dont elle a besoin est envoyé, directement depuis votre navigateur, au fournisseur d'IA que vous avez choisi
+- Aucun outil d'analyse ni de suivi
+- Code source : https://github.com/rokrokss/shizue
+
+
+Pour commencer
+1. Installez Shizue et ouvrez le panneau latéral avec Ctrl+Shift+E (Cmd+Shift+E sur Mac)
+2. Collez une clé API. Le plus simple est OpenRouter : une seule clé pour tous les modèles
+3. Ouvrez n'importe quelle page et posez votre question
+
+Site web : https://shizue.net
+Questions et retours : https://discord.gg/ukfPmxsyEy

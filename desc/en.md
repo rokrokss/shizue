@@ -1,57 +1,49 @@
-🌸 Shizue - Your AI-Powered Browsing Assistant
+Shizue puts an AI assistant in Chrome's side panel. Chat without leaving the page, summarize what you're reading in one click, and read web pages and YouTube videos with the original and the translation together.
 
-Shizue is a Chrome extension that seamlessly integrates Large Language Models (LLMs) into your everyday web browsing, transforming how you interact with online content. Experience the power of AI directly in your browser with our intuitive side panel interface.
+Shizue is free and open source (MIT). It runs on your own API key: OpenAI, Anthropic (Claude), Google (Gemini), or a single OpenRouter key that covers all of them plus DeepSeek. There's no account, no subscription, and no Shizue server. You pay your AI provider only for what you use.
 
-Shizue is free and open source (MIT). Bring your own OpenAI, Claude, or Gemini API key, or use one OpenRouter key for every model, including DeepSeek. No account, no subscription, and no Shizue server: you pay only your AI provider for what you use.
 
-✨ Key Features
+Features
 
-🌐 Smart Bilingual Translation
-- Read content in two languages simultaneously with AI-powered translation
-- Preserves context and nuance with advanced LLM understanding
+Side panel chat
+- Open it on any page with Ctrl+Shift+E (Cmd+Shift+E on Mac)
+- Attach images and go back to earlier chats from the history
 
-🎬 Real-time YouTube Caption Translation
-- Watch videos in any language with instant AI translations
-- Captions appear naturally as you watch
-- Support for multiple target languages
+Page summaries
+- Summarize the page you're reading in one click, then ask follow-up questions in the same chat
 
-📝 Web Memo
-- Take notes while browsing
-- Organize your thoughts and ideas
-- Search through your memos easily
-- Access your notes across browsing sessions
+Bilingual web pages
+- The translation appears under each paragraph, so the original stays in place
 
-💬 Interactive AI Chat Assistant
-- Ask questions about any webpage content
-- Get instant summaries, explanations, and insights
-- Supports multiple AI models (OpenAI GPT, Claude, Gemini, DeepSeek)
-- Context-aware responses based on current page
+Bilingual YouTube captions
+- Captions are translated as you watch and shown under the original line
+- Choose the target language and the number of lines, and press A or D to jump to the previous or next caption
 
-📋 One-Click Page Summarization
-- Instantly grasp the main ideas of any article or webpage
-- Save time with concise, AI-generated summaries
+Right-click menu
+- Selected text: translate, explain, summarize, or fix the grammar
+- Images: describe them or extract their text
+- Whole page: translate or summarize
 
-🎯 Smart Context Menu Actions
-- Right-click to translate, explain, or summarize selected text
-- Grammar checking and writing improvement suggestions
-- Quick access to AI features without leaving the page
+Memos
+- Notes that save as you type, with pinning and search
 
-🎨 Additional Features
-- Dark/Light theme support for comfortable viewing
-- Support for 24+ languages
-- Customizable keyboard shortcuts
-- Token usage tracking for API management
+Also
+- A token usage chart that shows how much each model has used
+- Light and dark themes
+- Interface in 23 languages
 
-🚀 Getting Started
-1. Install Shizue from the Chrome Web Store
-2. Click the extension icon to open the side panel
-3. Add your preferred AI API key (OpenRouter, OpenAI, Anthropic, or Google)
-4. Start browsing with AI superpowers!
 
-🔒 Privacy & Security
-- API keys stored securely in your browser
-- No data sent to third-party servers (except chosen AI providers)
+Privacy
+- API keys, chat history, and memos stay in your browser
+- When you use a feature, only the content it needs goes straight from your browser to the AI provider you chose
 - No analytics or tracking
-- Open source: https://github.com/rokrokss/shizue
+- Source code: https://github.com/rokrokss/shizue
 
-Transform your browsing experience with Shizue - where AI meets everyday web use. Install now and discover a smarter way to explore the internet!
+
+Getting started
+1. Install Shizue and press Ctrl+Shift+E (Cmd+Shift+E on Mac) to open the side panel
+2. Paste an API key. OpenRouter is the simplest: one key for every model
+3. Open any page and start asking
+
+Website: https://shizue.net
+Questions and feedback: https://discord.gg/ukfPmxsyEy

@@ -1,53 +1,49 @@
-🌸 Shizue - Trợ lý duyệt web được hỗ trợ bởi AI của bạn
+Shizue là trợ lý AI nằm trong bảng điều khiển bên của Chrome. Trò chuyện với AI mà không phải rời trang đang xem, tóm tắt trang đang đọc chỉ với một cú nhấp, đọc trang web và xem video YouTube với cả bản gốc lẫn bản dịch.
 
-Shizue là một tiện ích mở rộng Chrome tích hợp liền mạch các Mô hình Ngôn ngữ Lớn (LLMs) vào việc duyệt web hàng ngày của bạn, biến đổi cách bạn tương tác với nội dung trực tuyến. Trải nghiệm sức mạnh của AI trực tiếp trong trình duyệt của bạn với giao diện bảng điều khiển bên trực quan của chúng tôi.
+Shizue miễn phí và là phần mềm mã nguồn mở (MIT), chạy bằng khóa API của riêng bạn. Có thể dùng khóa của OpenAI, Anthropic (Claude), Google (Gemini), hoặc chỉ một khóa OpenRouter cho tất cả các mô hình đó và cả DeepSeek. Không cần tài khoản, không có gói thuê bao và cũng không có máy chủ Shizue. Chỉ trả phí cho nhà cung cấp AI theo mức đã dùng.
 
-✨ Tính năng chính
 
-🌐 Dịch thuật song ngữ thông minh
-- Đọc nội dung bằng hai ngôn ngữ cùng lúc với bản dịch được hỗ trợ bởi AI
-- Bảo toàn ngữ cảnh và sắc thái với khả năng hiểu LLM tiên tiến
+Tính năng
 
-🎬 Dịch phụ đề YouTube theo thời gian thực
-- Xem video bằng bất kỳ ngôn ngữ nào với bản dịch AI tức thì
-- Phụ đề xuất hiện tự nhiên khi bạn xem
-- Hỗ trợ nhiều ngôn ngữ đích
+Trò chuyện trong bảng điều khiển bên
+- Mở trên bất kỳ trang nào bằng Ctrl+Shift+E (Cmd+Shift+E trên Mac)
+- Đính kèm hình ảnh và mở lại các cuộc trò chuyện trước trong mục Lịch sử
 
-📝 Ghi chú Web
-- Ghi chú trong khi duyệt web
-- Tổ chức suy nghĩ và ý tưởng của bạn
-- Tìm kiếm dễ dàng trong ghi chú của bạn
-- Truy cập ghi chú của bạn qua các phiên duyệt web
+Tóm tắt trang
+- Tóm tắt trang đang đọc chỉ với một cú nhấp, rồi hỏi tiếp ngay trong cuộc trò chuyện đó
 
-💬 Trợ lý trò chuyện AI tương tác
-- Đặt câu hỏi về bất kỳ nội dung trang web nào
-- Nhận tóm tắt, giải thích và thông tin chi tiết ngay lập tức
-- Hỗ trợ nhiều mô hình AI (OpenAI GPT, Claude, Gemini)
-- Phản hồi nhận biết ngữ cảnh dựa trên trang hiện tại
+Trang web song ngữ
+- Bản dịch hiện ngay dưới từng đoạn văn, nên văn bản gốc vẫn giữ nguyên vị trí
 
-📋 Tóm tắt trang một cú nhấp chuột
-- Nắm bắt ngay lập tức các ý tưởng chính của bất kỳ bài viết hoặc trang web nào
-- Tiết kiệm thời gian với các bản tóm tắt ngắn gọn do AI tạo ra
+Phụ đề YouTube song ngữ
+- Phụ đề được dịch trong lúc xem và hiện bên dưới dòng phụ đề gốc
+- Chọn ngôn ngữ đích và số dòng, nhấn A hoặc D để chuyển đến phụ đề trước hoặc sau
 
-🎯 Hành động menu ngữ cảnh thông minh
-- Nhấp chuột phải để dịch, giải thích hoặc tóm tắt văn bản đã chọn
-- Kiểm tra ngữ pháp và đề xuất cải thiện viết
-- Truy cập nhanh các tính năng AI mà không cần rời khỏi trang
+Menu chuột phải
+- Văn bản đã chọn: dịch, giải thích, tóm tắt, sửa ngữ pháp
+- Hình ảnh: mô tả nội dung, trích xuất văn bản
+- Cả trang: dịch, tóm tắt
 
-🎨 Tính năng bổ sung
-- Hỗ trợ chủ đề tối/sáng để xem thoải mái
-- Hỗ trợ hơn 24 ngôn ngữ
-- Phím tắt có thể tùy chỉnh
-- Theo dõi sử dụng token để quản lý API
+Ghi chú
+- Tự động lưu trong lúc gõ, có ghim và tìm kiếm
 
-🚀 Bắt đầu
-1. Cài đặt Shizue từ Chrome Web Store
-2. Nhấp vào biểu tượng tiện ích mở rộng để mở bảng điều khiển bên
-3. Thêm khóa API AI ưa thích của bạn (OpenAI, Anthropic hoặc Google)
-4. Bắt đầu duyệt web với siêu năng lực AI!
+Ngoài ra
+- Biểu đồ mức sử dụng token của từng mô hình
+- Chủ đề sáng và tối
+- Giao diện hỗ trợ 23 ngôn ngữ
 
-🔒 Quyền riêng tư & Bảo mật
-- Khóa API được lưu trữ an toàn trong trình duyệt của bạn
-- Không có dữ liệu nào được gửi đến máy chủ bên thứ ba (ngoại trừ nhà cung cấp AI đã chọn)
 
-Biến đổi trải nghiệm duyệt web của bạn với Shizue - nơi AI gặp gỡ việc sử dụng web hàng ngày. Cài đặt ngay bây giờ và khám phá cách thông minh hơn để khám phá internet!
+Quyền riêng tư
+- Khóa API, lịch sử trò chuyện và ghi chú chỉ được lưu trong trình duyệt
+- Khi dùng một tính năng, chỉ nội dung mà tính năng đó cần mới được gửi thẳng từ trình duyệt đến nhà cung cấp AI đã chọn
+- Không dùng công cụ phân tích hay theo dõi
+- Mã nguồn: https://github.com/rokrokss/shizue
+
+
+Bắt đầu
+1. Cài Shizue và nhấn Ctrl+Shift+E (Cmd+Shift+E trên Mac) để mở bảng điều khiển bên
+2. Dán khóa API. Đơn giản nhất là OpenRouter: một khóa dùng được cho mọi mô hình
+3. Mở trang bất kỳ và bắt đầu đặt câu hỏi
+
+Trang web: https://shizue.net
+Câu hỏi và góp ý: https://discord.gg/ukfPmxsyEy

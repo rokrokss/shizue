@@ -1,53 +1,49 @@
-🌸 Shizue - O Seu Assistente de Navegação Alimentado por IA
+A Shizue põe um assistente de IA no painel lateral do Chrome. Podes conversar sem sair da página, resumir com um clique o que estás a ler e ver o original e a tradução juntos em páginas web e vídeos do YouTube.
 
-Shizue é uma extensão do Chrome que integra perfeitamente Modelos de Linguagem de Grande Escala (LLMs) na sua navegação web diária, transformando a forma como interage com conteúdo online. Experimente o poder da IA diretamente no seu navegador com a nossa interface intuitiva de painel lateral.
+A Shizue é gratuita e de código aberto (MIT). Funciona com a tua própria chave de API: OpenAI, Anthropic (Claude), Google (Gemini) ou uma única chave do OpenRouter que serve para todos eles e também para o DeepSeek. Não precisas de conta nem de subscrição, e não existe nenhum servidor da Shizue. Pagas apenas ao teu fornecedor de IA, e só pelo que usares.
 
-✨ Funcionalidades Principais
 
-🌐 Tradução Bilingue Inteligente
-- Leia conteúdo em dois idiomas simultaneamente com tradução alimentada por IA
-- Preserva contexto e nuances com compreensão avançada de LLM
+Funcionalidades
 
-🎬 Tradução de Legendas do YouTube em Tempo Real
-- Veja vídeos em qualquer idioma com traduções instantâneas de IA
-- As legendas aparecem naturalmente enquanto assiste
-- Suporte para múltiplos idiomas de destino
+Conversa no painel lateral
+- Abre-se em qualquer página com Ctrl+Shift+E (Cmd+Shift+E no Mac)
+- Anexa imagens e volta a conversas anteriores a partir do histórico
 
-📝 Memo Web
-- Tome notas enquanto navega
-- Organize os seus pensamentos e ideias
-- Pesquise facilmente nos seus memos
-- Aceda às suas notas em todas as sessões de navegação
+Resumo de páginas
+- Resume com um clique a página que estás a ler e continua a fazer perguntas na mesma conversa
 
-💬 Assistente de Chat IA Interativo
-- Faça perguntas sobre qualquer conteúdo de página web
-- Obtenha resumos, explicações e insights instantâneos
-- Suporta múltiplos modelos de IA (OpenAI GPT, Claude, Gemini)
-- Respostas conscientes do contexto baseadas na página atual
+Páginas web bilingues
+- A tradução aparece por baixo de cada parágrafo e o texto original fica no mesmo sítio
 
-📋 Resumo de Página com Um Clique
-- Compreenda instantaneamente as ideias principais de qualquer artigo ou página web
-- Poupe tempo com resumos concisos gerados por IA
+Legendas bilingues no YouTube
+- As legendas são traduzidas enquanto vês o vídeo e aparecem por baixo da linha original
+- Escolhe o idioma de destino e o número de linhas, e usa A ou D para saltar para a legenda anterior ou seguinte
 
-🎯 Ações Inteligentes do Menu de Contexto
-- Clique com o botão direito para traduzir, explicar ou resumir o texto selecionado
-- Verificação gramatical e sugestões de melhoria de escrita
-- Acesso rápido às funcionalidades de IA sem sair da página
+Menu do botão direito
+- Texto selecionado: traduzir, explicar, resumir ou corrigir a gramática
+- Imagens: descrever a imagem ou extrair o texto
+- Página inteira: traduzir ou resumir
 
-🎨 Funcionalidades Adicionais
-- Suporte a tema escuro/claro para visualização confortável
-- Suporte para mais de 24 idiomas
-- Atalhos de teclado personalizáveis
-- Rastreamento de uso de tokens para gestão de API
+Memos
+- Notas guardadas à medida que escreves, que podes fixar e pesquisar
 
-🚀 Como Começar
-1. Instale o Shizue da Chrome Web Store
-2. Clique no ícone da extensão para abrir o painel lateral
-3. Adicione a sua chave de API de IA preferida (OpenAI, Anthropic ou Google)
-4. Comece a navegar com superpoderes de IA!
+Além disso
+- Um gráfico da utilização de tokens por modelo
+- Tema claro e escuro
+- Interface em 23 idiomas
 
-🔒 Privacidade e Segurança
-- Chaves de API armazenadas com segurança no seu navegador
-- Nenhum dado enviado para servidores de terceiros (exceto fornecedores de IA escolhidos)
 
-Transforme a sua experiência de navegação com Shizue - onde a IA encontra o uso diário da web. Instale agora e descubra uma maneira mais inteligente de explorar a internet!
+Privacidade
+- As chaves de API, o histórico de conversas e os memos ficam no teu navegador
+- Quando usas uma funcionalidade, só o conteúdo de que ela precisa segue diretamente do teu navegador para o fornecedor de IA que escolheste
+- Sem ferramentas de análise ou de rastreio
+- Código-fonte: https://github.com/rokrokss/shizue
+
+
+Primeiros passos
+1. Instala a Shizue e abre o painel lateral com Ctrl+Shift+E (Cmd+Shift+E no Mac)
+2. Cola uma chave de API. O mais simples é o OpenRouter: uma só chave para todos os modelos
+3. Abre qualquer página e começa a perguntar
+
+Site: https://shizue.net
+Dúvidas e sugestões: https://discord.gg/ukfPmxsyEy

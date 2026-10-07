@@ -1,53 +1,49 @@
-🌸 Shizue - Ihr KI-gesteuerter Browser-Assistent
+Shizue bringt einen KI-Assistenten in die Seitenleiste von Chrome. Du kannst chatten, ohne die Seite zu verlassen, mit einem Klick zusammenfassen lassen, was du gerade liest, und bei Webseiten und YouTube-Videos Original und Übersetzung gleichzeitig sehen.
 
-Shizue ist eine Chrome-Erweiterung, die große Sprachmodelle (LLMs) nahtlos in Ihr tägliches Web-Browsing integriert und die Art und Weise verändert, wie Sie mit Online-Inhalten interagieren. Erleben Sie die Kraft der KI direkt in Ihrem Browser mit unserer intuitiven Seitenpanel-Oberfläche.
+Shizue ist kostenlos und Open Source (MIT). Es läuft mit deinem eigenen API-Schlüssel: OpenAI, Anthropic (Claude), Google (Gemini) oder einem einzelnen OpenRouter-Schlüssel, der alle drei und zusätzlich DeepSeek abdeckt. Es gibt kein Konto, kein Abo und keinen Shizue-Server. Du bezahlst nur deinen KI-Anbieter und nur für das, was du verbrauchst.
 
-✨ Hauptfunktionen
 
-🌐 Intelligente zweisprachige Übersetzung
-- Lesen Sie Inhalte gleichzeitig in zwei Sprachen mit KI-gestützter Übersetzung
-- Bewahrt Kontext und Nuancen mit fortgeschrittenem LLM-Verständnis
+Funktionen
 
-🎬 Echtzeit-YouTube-Untertitelübersetzung
-- Schauen Sie Videos in jeder Sprache mit sofortigen KI-Übersetzungen
-- Untertitel erscheinen natürlich während Sie schauen
-- Unterstützung für mehrere Zielsprachen
+Chat in der Seitenleiste
+- Auf jeder Seite mit Ctrl+Shift+E öffnen (Cmd+Shift+E am Mac)
+- Bilder anhängen und frühere Chats im Verlauf wieder aufrufen
 
-📝 Web-Memo
-- Machen Sie sich Notizen während des Surfens
-- Organisieren Sie Ihre Gedanken und Ideen
-- Durchsuchen Sie Ihre Memos einfach
-- Greifen Sie über Browsing-Sitzungen hinweg auf Ihre Notizen zu
+Seiten zusammenfassen
+- Die Seite, die du gerade liest, mit einem Klick zusammenfassen und im selben Chat weiterfragen
 
-💬 Interaktiver KI-Chat-Assistent
-- Stellen Sie Fragen zu beliebigen Webseiteninhalten
-- Erhalten Sie sofortige Zusammenfassungen, Erklärungen und Einblicke
-- Unterstützt mehrere KI-Modelle (OpenAI GPT, Claude, Gemini)
-- Kontextbezogene Antworten basierend auf der aktuellen Seite
+Zweisprachige Webseiten
+- Die Übersetzung erscheint unter jedem Absatz, das Original bleibt, wo es ist
 
-📋 Ein-Klick-Seitenzusammenfassung
-- Erfassen Sie sofort die Hauptideen eines Artikels oder einer Webseite
-- Sparen Sie Zeit mit prägnanten, KI-generierten Zusammenfassungen
+Zweisprachige YouTube-Untertitel
+- Untertitel werden beim Ansehen übersetzt und unter der Originalzeile angezeigt
+- Zielsprache und Anzahl der Zeilen wählen und mit A oder D zum vorherigen oder nächsten Untertitel springen
 
-🎯 Intelligente Kontextmenü-Aktionen
-- Rechtsklick zum Übersetzen, Erklären oder Zusammenfassen von ausgewähltem Text
-- Grammatikprüfung und Verbesserungsvorschläge für das Schreiben
-- Schneller Zugriff auf KI-Funktionen ohne die Seite zu verlassen
+Rechtsklickmenü
+- Ausgewählter Text: übersetzen, erklären, zusammenfassen oder Grammatik korrigieren
+- Bilder: beschreiben oder den Text darin extrahieren
+- Ganze Seite: übersetzen oder zusammenfassen
 
-🎨 Zusätzliche Funktionen
-- Dunkles/Helles Theme für komfortables Betrachten
-- Unterstützung für über 24 Sprachen
-- Anpassbare Tastenkombinationen
-- Token-Nutzungsverfolgung für API-Verwaltung
+Memos
+- Notizen werden beim Tippen gespeichert und lassen sich anheften und durchsuchen
 
-🚀 Erste Schritte
-1. Installieren Sie Shizue aus dem Chrome Web Store
-2. Klicken Sie auf das Erweiterungssymbol, um das Seitenpanel zu öffnen
-3. Fügen Sie Ihren bevorzugten KI-API-Schlüssel hinzu (OpenAI, Anthropic oder Google)
-4. Beginnen Sie mit KI-Superkräften zu surfen!
+Außerdem
+- Diagramm zum Token-Verbrauch, aufgeschlüsselt nach Modell
+- Hell- und Dunkelmodus
+- Oberfläche in 23 Sprachen
 
-🔒 Datenschutz & Sicherheit
-- API-Schlüssel sicher in Ihrem Browser gespeichert
-- Keine Daten an Drittanbieter-Server gesendet (außer gewählte KI-Anbieter)
 
-Verwandeln Sie Ihr Browsing-Erlebnis mit Shizue - wo KI auf alltägliche Webnutzung trifft. Jetzt installieren und eine intelligentere Art entdecken, das Internet zu erkunden!
+Datenschutz
+- API-Schlüssel, Chatverlauf und Memos bleiben in deinem Browser
+- Wenn du eine Funktion nutzt, geht nur der Inhalt, den sie braucht, direkt von deinem Browser an den KI-Anbieter, den du gewählt hast
+- Keine Nutzungsanalyse, kein Tracking
+- Quellcode: https://github.com/rokrokss/shizue
+
+
+Erste Schritte
+1. Shizue installieren und mit Ctrl+Shift+E (Cmd+Shift+E am Mac) die Seitenleiste öffnen
+2. Einen API-Schlüssel einfügen. Am einfachsten ist OpenRouter: ein Schlüssel für alle Modelle
+3. Eine beliebige Seite öffnen und die erste Frage stellen
+
+Website: https://shizue.net
+Fragen und Feedback: https://discord.gg/ukfPmxsyEy

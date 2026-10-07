@@ -1,53 +1,49 @@
-🌸 Shizue - Msaidizi Wako wa Kuvinjari Unaoendeshwa na AI
+Shizue ni msaidizi wa AI aliye kwenye paneli ya upande ya Chrome. Unaweza kupiga gumzo na AI bila kuondoka kwenye ukurasa, kufupisha ukurasa unaousoma kwa kubofya mara moja, na kusoma kurasa za wavuti na kutazama video za YouTube huku ukiona maandishi ya asili na tafsiri kwa pamoja.
 
-Shizue ni kiendelezi cha Chrome kinachounganisha kwa urahisi Mifumo Mikubwa ya Lugha (LLMs) katika uvinjari wako wa kila siku wa wavuti, kubadilisha jinsi unavyoingiliana na maudhui ya mtandaoni. Pata nguvu ya AI moja kwa moja katika kivinjari chako na kiolesura chetu cha paneli ya kando kilichofaa.
+Shizue ni bure na ni programu huria (MIT). Inafanya kazi kwa ufunguo wako mwenyewe wa API: OpenAI, Anthropic (Claude), Google (Gemini), au ufunguo mmoja wa OpenRouter unaotumika kwa zote hizo pamoja na DeepSeek. Hakuna akaunti, hakuna usajili wa kulipia, na hakuna seva ya Shizue. Unamlipa mtoa huduma wa AI kwa kiasi unachotumia tu.
 
-✨ Vipengele Vikuu
 
-🌐 Tafsiri ya Kijanja ya Lugha Mbili
-- Soma maudhui katika lugha mbili kwa wakati mmoja na tafsiri inayoendeshwa na AI
-- Inahifadhi muktadha na hisia kwa uelewa wa hali ya juu wa LLM
+Vipengele
 
-🎬 Tafsiri ya Manukuu ya YouTube ya Wakati Halisi
-- Tazama video katika lugha yoyote na tafsiri za papo hapo za AI
-- Manukuu yanatokea kwa asili unapotazama
-- Msaada kwa lugha nyingi za lengo
+Gumzo kwenye paneli ya upande
+- Fungua kwenye ukurasa wowote kwa Ctrl+Shift+E (Cmd+Shift+E kwenye Mac)
+- Ambatisha picha, na urudi kwenye mazungumzo ya awali kupitia Historia
 
-📝 Kumbukumbu za Wavuti
-- Chukua maelezo wakati wa kuvinjari
-- Panga mawazo na mawazo yako
-- Tafuta kwa urahisi katika kumbukumbu zako
-- Fikia maelezo yako katika vipindi vya kuvinjari
+Muhtasari wa ukurasa
+- Fupisha ukurasa unaousoma kwa kubofya mara moja, kisha uulize maswali zaidi kwenye gumzo hilo hilo
 
-💬 Msaidizi wa Gumzo la AI Shirikishi
-- Uliza maswali kuhusu maudhui yoyote ya ukurasa wa wavuti
-- Pata muhtasari, maelezo na maarifa ya papo hapo
-- Inasaidia mifumo mingi ya AI (OpenAI GPT, Claude, Gemini)
-- Majibu yanayozingatia muktadha kulingana na ukurasa wa sasa
+Kurasa za wavuti kwa lugha mbili
+- Tafsiri huonekana chini ya kila aya, kwa hiyo maandishi ya asili hubaki pale pale
 
-📋 Muhtasari wa Ukurasa kwa Kubofya Mara Moja
-- Elewa mara moja mawazo makuu ya makala au ukurasa wowote wa wavuti
-- Okoa muda na muhtasari mfupi uliozalishwa na AI
+Manukuu ya YouTube kwa lugha mbili
+- Manukuu hutafsiriwa unapotazama na kuonyeshwa chini ya mstari wa asili
+- Chagua lugha lengwa na idadi ya mistari, na ubonyeze A au D kwenda kwenye manukuu yaliyotangulia au yanayofuata
 
-🎯 Vitendo vya Menyu ya Muktadha Vyenye Akili
-- Bofya kulia kutafsiri, kueleza au kufupisha maandishi yaliyochaguliwa
-- Ukaguzi wa sarufi na mapendekezo ya kuboresha uandishi
-- Ufikiaji wa haraka wa vipengele vya AI bila kuondoka ukurasa
+Menyu ya kubofya kulia
+- Maandishi yaliyochaguliwa: tafsiri, eleza, fupisha, au rekebisha sarufi
+- Picha: eleza picha au toa maandishi yaliyomo
+- Ukurasa mzima: tafsiri au fupisha
 
-🎨 Vipengele vya Ziada
-- Msaada wa mandhari ya giza/mwanga kwa kutazama kwa starehe
-- Msaada kwa lugha zaidi ya 24
-- Njia za mkato za kibodi zinazoweza kubinafsishwa
-- Ufuatiliaji wa matumizi ya ishara kwa usimamizi wa API
+Memo
+- Memo huhifadhiwa kiotomatiki unapoandika, na unaweza kuzibandika na kuzitafuta
 
-🚀 Kuanza
-1. Sakinisha Shizue kutoka Chrome Web Store
-2. Bofya aikoni ya kiendelezi kufungua paneli ya kando
-3. Ongeza ufunguo wako wa API wa AI unaopendelea (OpenAI, Anthropic, au Google)
-4. Anza kuvinjari na nguvu kuu za AI!
+Pia
+- Chati ya matumizi ya token inayoonyesha kiasi ambacho kila modeli imetumia
+- Mandhari ya mwanga na giza
+- Kiolesura katika lugha 23
 
-🔒 Faragha na Usalama
-- Funguo za API zimehifadhiwa salama katika kivinjari chako
-- Hakuna data inayotumwa kwa seva za wahusika wengine (isipokuwa watoa huduma wa AI waliochaguliwa)
 
-Badilisha uzoefu wako wa kuvinjari na Shizue - ambapo AI inakutana na matumizi ya kila siku ya wavuti. Sakinisha sasa na gundua njia ya busara zaidi ya kuchunguza mtandao!
+Faragha
+- Funguo za API, historia ya gumzo, na memo hubaki kwenye kivinjari chako
+- Unapotumia kipengele, maudhui yanayohitajika na kipengele hicho pekee ndiyo hutumwa moja kwa moja kutoka kwenye kivinjari chako hadi kwa mtoa huduma wa AI uliyemchagua
+- Hakuna zana za takwimu wala ufuatiliaji
+- Msimbo chanzo: https://github.com/rokrokss/shizue
+
+
+Kuanza
+1. Sakinisha Shizue na ubonyeze Ctrl+Shift+E (Cmd+Shift+E kwenye Mac) kufungua paneli ya upande
+2. Bandika ufunguo wa API. OpenRouter ndiyo rahisi zaidi: ufunguo mmoja kwa kila modeli
+3. Fungua ukurasa wowote na uanze kuuliza
+
+Tovuti: https://shizue.net
+Maswali na maoni: https://discord.gg/ukfPmxsyEy
