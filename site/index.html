@@ -1,16 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{lang}}" dir="{{dir}}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shizue: free, open-source AI side panel for Chrome</title>
-<meta name="description" content="Chat, summarize, and translate pages and YouTube captions in a Chrome side panel. Free and open source (MIT). Bring your own OpenAI, Claude, Gemini, or OpenRouter key.">
-<link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="canonical" href="https://shizue.net/">
+<title>{{title}}</title>
+<meta name="description" content="{{description}}">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="canonical" href="{{url}}">
+{{alternates}}
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://shizue.net/">
-<meta property="og:title" content="Shizue: your AI sidekick on every page">
-<meta property="og:description" content="Free, open-source Chrome side panel for AI chat, page summaries, and bilingual page and YouTube caption translation. Bring your own API key.">
+<meta property="og:url" content="{{url}}">
+<meta property="og:title" content="{{og_title}}">
+<meta property="og:description" content="{{og_description}}">
 <meta property="og:image" content="https://shizue.net/img/github-social-1280x640.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,9 +47,26 @@
   header { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; }
   .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 800 26px/1 var(--head); letter-spacing: -0.03em; }
   .brand img { width: 36px; height: 36px; image-rendering: pixelated; }
-  nav { display: flex; gap: 20px; font-weight: 600; font-size: 15px; }
+  nav { display: flex; align-items: center; gap: 20px; font-weight: 600; font-size: 15px; }
   nav a { text-decoration: none; color: var(--ink-2); }
   nav a:hover { color: var(--ink); }
+
+  .lang { position: relative; }
+  .lang summary { display: flex; align-items: center; gap: 5px; color: var(--ink-2); cursor: pointer; list-style: none; user-select: none; }
+  .lang summary::-webkit-details-marker { display: none; }
+  .lang summary:hover, .lang[open] summary { color: var(--ink); }
+  .lang[open] .chev { transform: rotate(180deg); }
+  /* Trimmed to cap height, header text centers on the globe and chevron in any font. */
+  header nav a, .lang summary span { text-box: trim-both cap alphabetic; }
+  header nav a { padding-block: 6px; }
+  .lang-menu {
+    position: absolute; top: calc(100% + 10px); inset-inline-end: 0; z-index: 10;
+    display: grid; grid-template-columns: repeat(2, max-content); padding: 4px; list-style: none;
+    background: #fff; border: 1px solid rgba(16, 48, 43, .14); border-radius: 10px;
+  }
+  .lang-menu a { display: block; padding: 6px 10px; border-radius: 6px; font-size: 14px; font-weight: 400; color: var(--ink-2); white-space: nowrap; }
+  .lang-menu a:hover { background: var(--cream); color: var(--ink); }
+  .lang-menu a[aria-current="page"] { color: var(--mint-deep); font-weight: 600; }
 
   .btn {
     display: inline-flex; align-items: center; gap: 8px;
@@ -83,9 +101,9 @@
   .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; padding-bottom: 88px; }
 
   .faq { max-width: 760px; padding-bottom: 88px; }
-  details { background: #fff; border: 1.5px solid rgba(16, 48, 43, .2); border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; }
-  summary { font: 700 18px/1.3 var(--head); cursor: pointer; }
-  details p { margin-top: 10px; color: var(--ink-2); }
+  .faq details { background: #fff; border: 1.5px solid rgba(16, 48, 43, .2); border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; }
+  .faq summary { font: 700 18px/1.3 var(--head); cursor: pointer; }
+  .faq details p { margin-top: 10px; color: var(--ink-2); }
   code { font: 14px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--cream-2); padding: 1px 5px; border-radius: 4px; }
 
   .end { text-align: center; padding: 64px 0 88px; }
@@ -96,6 +114,10 @@
   footer::before { content: ''; position: absolute; left: 0; right: 0; top: -10px; height: 10px; background: repeating-linear-gradient(90deg, #1f8f83 0 10px, transparent 10px 20px); }
   footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; padding-top: 28px; padding-bottom: 28px; font-size: 15px; }
   footer nav a { color: #e9fffb; }
+
+  /* Letter-spacing pulls apart the joined letters of Arabic script. */
+  [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] .tag { letter-spacing: 0; }
+  :lang(ko) { word-break: keep-all; }
 
   @media (max-width: 860px) {
     nav .hide-sm { display: none; }
@@ -112,22 +134,32 @@
 <body>
 <div class="wrap">
   <header>
-    <a class="brand" href="/"><img src="icon.svg" alt="">Shizue</a>
+    <a class="brand" href="{{home}}"><img src="/icon.svg" alt="">Shizue</a>
     <nav>
-      <a class="hide-sm" href="#features">Features</a>
-      <a class="hide-sm" href="#faq">FAQ</a>
+      <a class="hide-sm" href="#features">{{nav_features}}</a>
+      <a class="hide-sm" href="#faq">{{nav_faq}}</a>
       <a href="https://github.com/rokrokss/shizue">GitHub</a>
+      <details class="lang">
+        <summary aria-label="{{language_label}}: {{language}}">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="8" cy="8" r="6.5"/><path d="M1.5 8h13M8 1.5c1.8 1.9 2.7 4 2.7 6.5S9.8 12.6 8 14.5M8 1.5C6.2 3.4 5.3 5.5 5.3 8s.9 4.6 2.7 6.5"/></svg>
+          <span>{{code}}</span>
+          <svg class="chev" viewBox="0 0 10 10" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2.5 4l2.5 2.5L7.5 4"/></svg>
+        </summary>
+        <ul class="lang-menu">
+          {{lang_menu}}
+        </ul>
+      </details>
     </nav>
   </header>
 
   <section class="hero">
     <div>
-      <span class="tag">Free &amp; open source</span>
-      <h1>Your AI sidekick on <span class="w">every page</span></h1>
-      <p class="lede">Chat, summarize, and translate pages and YouTube captions in a Chrome side panel. Bring your own OpenAI, Claude, Gemini, or OpenRouter key.</p>
+      <span class="tag">{{tag}}</span>
+      <h1>{{h1}}</h1>
+      <p class="lede">{{lede}}</p>
       <div class="ctas">
-        <a class="btn primary" href="https://chromewebstore.google.com/detail/mpcbgfkoholfgapcgcmfjobnfcbnfanm?utm_source=shizue.net">Add to Chrome, it's free</a>
-        <a class="btn ghost" href="https://github.com/rokrokss/shizue">View source</a>
+        <a class="btn primary" href="{{store_url}}">{{cta_install}}</a>
+        <a class="btn ghost" href="https://github.com/rokrokss/shizue">{{cta_source}}</a>
       </div>
       <div class="proof">
         <img alt="Chrome Web Store users" src="https://img.shields.io/chrome-web-store/users/mpcbgfkoholfgapcgcmfjobnfcbnfanm?style=flat-square&amp;color=13a596&amp;label=users" height="20">
@@ -135,65 +167,73 @@
         <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-13a596?style=flat-square" height="20">
       </div>
     </div>
-    <img class="shot" src="img/screenshot-3-youtube.png" width="1280" height="800" alt="Bilingual YouTube captions: Spanish with the English translation underneath">
+    <img class="shot" src="/img/screenshot-3-youtube.png" width="1280" height="800" alt="{{alt_youtube}}">
   </section>
 
   <section class="pillars">
-    <div class="pillar"><h3>Free, for good</h3><p>No paid plan, no account, no ads. You pay only your AI provider for what you use.</p></div>
-    <div class="pillar"><h3>Open source</h3><p>Every line of the extension is on GitHub under the MIT License.</p></div>
-    <div class="pillar"><h3>Your key, your data</h3><p>No Shizue server and no tracking. Keys and history stay in your browser.</p></div>
-    <div class="pillar"><h3>Every major model</h3><p>GPT, Claude, Gemini, and DeepSeek. One OpenRouter key covers them all.</p></div>
+    <div class="pillar"><h3>{{free_title}}</h3><p>{{free_body}}</p></div>
+    <div class="pillar"><h3>{{open_title}}</h3><p>{{open_body}}</p></div>
+    <div class="pillar"><h3>{{private_title}}</h3><p>{{private_body}}</p></div>
+    <div class="pillar"><h3>{{models_title}}</h3><p>{{models_body}}</p></div>
   </section>
 
   <section id="features">
-    <h2>What it does</h2>
+    <h2>{{features_title}}</h2>
     <div class="gallery">
-      <img class="shot" src="img/screenshot-1-hero.png" width="1280" height="800" loading="lazy" alt="Summarizing a page in the Shizue side panel">
-      <img class="shot" src="img/screenshot-2-translate.png" width="1280" height="800" loading="lazy" alt="Bilingual page translation, original and translation side by side">
-      <img class="shot" src="img/screenshot-4-context-menu.png" width="1280" height="800" loading="lazy" alt="Extracting text from an image with the right-click menu">
-      <img class="shot" src="img/screenshot-5-models.png" width="1280" height="800" loading="lazy" alt="Model selection, token usage, and local storage">
+      <img class="shot" src="/img/screenshot-1-hero.png" width="1280" height="800" loading="lazy" alt="{{alt_summary}}">
+      <img class="shot" src="/img/screenshot-2-translate.png" width="1280" height="800" loading="lazy" alt="{{alt_translate}}">
+      <img class="shot" src="/img/screenshot-4-context-menu.png" width="1280" height="800" loading="lazy" alt="{{alt_image_text}}">
+      <img class="shot" src="/img/screenshot-5-models.png" width="1280" height="800" loading="lazy" alt="{{alt_models}}">
     </div>
   </section>
 
   <section id="faq" class="faq">
-    <h2>FAQ</h2>
+    <h2>{{faq_title}}</h2>
     <details>
-      <summary>Is it really free?</summary>
-      <p>Yes, and it will stay free. You pay your AI provider (or OpenRouter) directly for the API calls you make, and the Token Usage chart shows how many tokens each model used.</p>
+      <summary>{{faq_free_q}}</summary>
+      <p>{{faq_free_a}}</p>
     </details>
     <details>
-      <summary>What leaves my browser?</summary>
-      <p>Only the content a feature needs, such as the page text for a summary, sent straight from your browser to the provider you chose. There is no Shizue server and no analytics. See the <a href="https://github.com/rokrokss/shizue/blob/develop/privacy_policy.md">privacy policy</a>.</p>
+      <summary>{{faq_data_q}}</summary>
+      <p>{{faq_data_a}}</p>
     </details>
     <details>
-      <summary>Which key should I get?</summary>
-      <p>The simplest is one <a href="https://openrouter.ai/keys">OpenRouter key</a>: it unlocks every model in Shizue, including DeepSeek. If you already have an OpenAI, Anthropic, or Gemini key, that works too.</p>
+      <summary>{{faq_key_q}}</summary>
+      <p>{{faq_key_a}}</p>
     </details>
     <details>
-      <summary>Does it support local models or Firefox?</summary>
-      <p>Not yet. Follow the <a href="https://github.com/rokrokss/shizue">GitHub repository</a> for updates.</p>
+      <summary>{{faq_more_q}}</summary>
+      <p>{{faq_more_a}}</p>
     </details>
   </section>
 
   <section class="end">
-    <h2>Make every page bilingual</h2>
-    <p>Install in a few seconds. No sign-up.</p>
+    <h2>{{end_title}}</h2>
+    <p>{{end_body}}</p>
     <div class="ctas">
-      <a class="btn primary" href="https://chromewebstore.google.com/detail/mpcbgfkoholfgapcgcmfjobnfcbnfanm?utm_source=shizue.net">Add to Chrome</a>
-      <a class="btn ghost" href="https://discord.gg/ukfPmxsyEy">Join the Discord</a>
+      <a class="btn primary" href="{{store_url}}">{{end_install}}</a>
+      <a class="btn ghost" href="https://discord.gg/ukfPmxsyEy">{{end_discord}}</a>
     </div>
   </section>
 </div>
 
 <footer>
   <div class="wrap">
-    <span>© 2025-2026 Shizue contributors · MIT License</span>
+    <span>{{footer_copyright}}</span>
     <nav>
       <a href="https://github.com/rokrokss/shizue">GitHub</a>
-      <a href="https://github.com/rokrokss/shizue/blob/develop/privacy_policy.md">Privacy</a>
-      <a href="mailto:q0115643@gmail.com">Contact</a>
+      <a href="https://github.com/rokrokss/shizue/blob/develop/privacy_policy.md">{{footer_privacy}}</a>
+      <a href="mailto:q0115643@gmail.com">{{footer_contact}}</a>
     </nav>
   </div>
 </footer>
+<script>
+  // The language menu is a plain <details>; this only closes it on an outside click or Escape.
+  const lang = document.querySelector('details.lang');
+  document.addEventListener('click', (e) => { if (lang.open && !lang.contains(e.target)) lang.open = false; });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lang.open) { lang.open = false; lang.querySelector('summary').focus(); }
+  });
+</script>
 </body>
 </html>
