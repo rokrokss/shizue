@@ -119,7 +119,12 @@ function createOpenRouter(spec: ModelSpec, opts: ModelOptions) {
   const instance = new ChatOpenAI({
     model: spec.openrouter.id,
     apiKey: modelPreset.openrouterKey!,
-    configuration: { baseURL: 'https://openrouter.ai/api/v1' },
+    configuration: {
+      baseURL: 'https://openrouter.ai/api/v1',
+      // App attribution: OpenRouter lists usage under shizue.net. The URL is the app's permanent
+      // identity there; changing it splits the usage history.
+      defaultHeaders: { 'HTTP-Referer': 'https://shizue.net', 'X-OpenRouter-Title': 'Shizue' },
+    },
     streaming: Boolean(streaming),
     ...temperatureFor(spec, temperature),
     ...(maxTokens ? { maxTokens } : {}),
