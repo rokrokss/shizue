@@ -1,6 +1,6 @@
 🌸 Shizue porta un assistente AI nel pannello laterale di Chrome. Puoi chattare senza lasciare la pagina, riassumere con un clic quello che stai leggendo e vedere insieme originale e traduzione su pagine web e video di YouTube.
 
-Shizue è gratis e open source (MIT). Funziona con la tua chiave API: OpenAI, Anthropic (Claude), Google (Gemini), oppure una sola chiave OpenRouter che vale per tutti e tre e anche per DeepSeek. Niente account, niente abbonamento, nessun server di Shizue. Paghi solo il tuo provider AI, e solo per quello che usi.
+Shizue è gratis e open source (MIT). Funziona con la tua chiave API: OpenAI, Anthropic (Claude), Google (Gemini), oppure una sola chiave OpenRouter che vale per tutti e tre e anche per DeepSeek. Niente account, niente abbonamento, nessun server di Shizue. Paghi solo il tuo provider AI, e solo per quello che usi. Puoi anche usare un modello che gira sul tuo computer con Ollama o LM Studio, senza chiave e senza costi.
 
 
 ✨ Funzionalità
@@ -36,13 +36,14 @@ Shizue è gratis e open source (MIT). Funziona con la tua chiave API: OpenAI, An
 🔒 Privacy
 - Chiavi API, cronologia delle chat e memo restano nel tuo browser
 - Quando usi una funzione, solo il contenuto che le serve va direttamente dal tuo browser al provider AI che hai scelto
+- Con un modello locale, pagine e chat non lasciano mai il tuo computer
 - Nessuno strumento di analisi o tracciamento
 - Codice sorgente: https://github.com/rokrokss/shizue
 
 
 🚀 Per iniziare
 1. Installa Shizue e apri il pannello laterale con Ctrl+Shift+E (Cmd+Shift+E su Mac)
-2. Incolla una chiave API. La scelta più semplice è OpenRouter: una sola chiave per tutti i modelli
+2. Incolla una chiave API (la scelta più semplice è OpenRouter: una sola chiave per tutti i modelli) oppure collega un modello in esecuzione su Ollama o LM Studio
 3. Apri una pagina qualsiasi e inizia a fare domande
 
 Sito web: https://shizue.net

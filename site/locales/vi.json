@@ -34,7 +34,7 @@
   "faq_key_q": "Nên dùng khóa nào?",
   "faq_key_a": "Đơn giản nhất là một <a href=\"https://openrouter.ai/keys\">khóa OpenRouter</a>: dùng được mọi mô hình trong Shizue, kể cả DeepSeek. Nếu bạn đã có khóa OpenAI, Anthropic hoặc Gemini thì cũng dùng được.",
   "faq_more_q": "Có hỗ trợ mô hình chạy cục bộ hoặc Firefox không?",
-  "faq_more_a": "Hiện chưa. Hãy theo dõi <a href=\"https://github.com/rokrokss/shizue\">kho mã nguồn trên GitHub</a> để cập nhật tin mới.",
+  "faq_more_a": "Mô hình cục bộ thì có: trong Cài đặt → Mô hình, chọn “Dùng mô hình cục bộ” để kết nối Ollama, LM Studio hoặc llama.cpp đang chạy trên máy tính của bạn mà không cần khóa API. Firefox thì hiện chưa. Hãy theo dõi <a href=\"https://github.com/rokrokss/shizue\">kho mã nguồn trên GitHub</a> để cập nhật tin mới.",
   "end_title": "Biến mọi trang web thành song ngữ",
   "end_body": "Cài đặt trong vài giây. Không cần đăng ký.",
   "end_install": "Thêm vào Chrome",

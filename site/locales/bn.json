@@ -34,7 +34,7 @@
   "faq_key_q": "কোন কী নেব?",
   "faq_key_a": "সবচেয়ে সহজ হলো একটি <a href=\"https://openrouter.ai/keys\">OpenRouter কী</a>: এটি দিয়ে Shizue-র সব মডেল চলে, DeepSeek-ও। আপনার কাছে আগে থেকেই OpenAI, Anthropic বা Gemini-এর কী থাকলে সেটিও চলবে।",
   "faq_more_q": "Shizue কি লোকাল মডেল বা Firefox সাপোর্ট করে?",
-  "faq_more_a": "এখনও না। আপডেট পেতে <a href=\"https://github.com/rokrokss/shizue\">GitHub রিপোজিটরি</a> ফলো করুন।",
+  "faq_more_a": "লোকাল মডেল সাপোর্ট করে: সেটিংস → মডেল থেকে “লোকাল মডেল ব্যবহার করুন” বেছে নিয়ে আপনার কম্পিউটারে চলা Ollama, LM Studio বা llama.cpp কোনো API কী ছাড়াই সংযুক্ত করুন। Firefox এখনও না। আপডেট পেতে <a href=\"https://github.com/rokrokss/shizue\">GitHub রিপোজিটরি</a> ফলো করুন।",
   "end_title": "প্রতিটি পেজকে দ্বিভাষিক করে তুলুন",
   "end_body": "কয়েক সেকেন্ডেই ইনস্টল হয়ে যায়। সাইন-আপ লাগে না।",
   "end_install": "Chrome-এ যোগ করুন",

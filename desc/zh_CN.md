@@ -1,6 +1,6 @@
 🌸 Shizue 是在 Chrome 侧边栏中使用的 AI 助手。不用离开当前页面就能和 AI 聊天，一键总结正在阅读的页面，还能对照原文和译文浏览网页、观看 YouTube 视频。
 
-Shizue 是免费的开源软件（MIT），使用自备的 API 密钥运行。可以使用 OpenAI、Anthropic（Claude）、Google（Gemini）的密钥，也可以用一个 OpenRouter 密钥覆盖以上所有模型以及 DeepSeek。不需要注册账号，没有订阅，也没有 Shizue 服务器。费用按实际用量付给 AI 提供商。
+Shizue 是免费的开源软件（MIT），使用自备的 API 密钥运行。可以使用 OpenAI、Anthropic（Claude）、Google（Gemini）的密钥，也可以用一个 OpenRouter 密钥覆盖以上所有模型以及 DeepSeek。不需要注册账号，没有订阅，也没有 Shizue 服务器。费用按实际用量付给 AI 提供商。也可以通过 Ollama 或 LM Studio 使用在自己电脑上运行的模型，无需密钥，也不产生费用。
 
 
 ✨ 功能
@@ -36,13 +36,14 @@ Shizue 是免费的开源软件（MIT），使用自备的 API 密钥运行。�
 🔒 隐私
 - API 密钥、聊天记录和备忘录只保存在浏览器中
 - 使用某项功能时，只有该功能需要的内容会从浏览器直接发送到所选的 AI 提供商
+- 使用本地模型时，页面和聊天内容不会离开你的电脑
 - 不使用统计分析或追踪工具
 - 源代码：https://github.com/rokrokss/shizue
 
 
 🚀 开始使用
 1. 安装 Shizue，按 Ctrl+Shift+E（Mac 上为 Cmd+Shift+E）打开侧边栏
-2. 粘贴 API 密钥。最简单的是 OpenRouter，一个密钥就能使用所有模型
+2. 粘贴 API 密钥（最简单的是 OpenRouter，一个密钥就能使用所有模型），或连接在 Ollama、LM Studio 中运行的模型
 3. 打开任意页面，开始提问
 
 网站：https://shizue.net

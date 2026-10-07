@@ -34,7 +34,7 @@
   "faq_key_q": "چه کلیدی بگیرم؟",
   "faq_key_a": "ساده‌ترین راه یک <a href=\"https://openrouter.ai/keys\">کلید OpenRouter</a> است که با آن به همهٔ مدل‌های Shizue، از جمله DeepSeek، دسترسی دارید. اگر از قبل کلید OpenAI، Anthropic یا Gemini دارید، همان هم کار می‌کند.",
   "faq_more_q": "از مدل‌های محلی یا Firefox پشتیبانی می‌کند؟",
-  "faq_more_a": "هنوز نه. برای خبرهای تازه <a href=\"https://github.com/rokrokss/shizue\">مخزن GitHub</a> را دنبال کنید.",
+  "faq_more_a": "مدل‌های محلی پشتیبانی می‌شوند: در تنظیمات ← مدل‌ها، «استفاده از مدل محلی» را انتخاب کنید تا Ollama، LM Studio یا llama.cpp را که روی رایانهٔ شما اجرا می‌شود بدون کلید API وصل کنید. Firefox هنوز نه. برای خبرهای تازه <a href=\"https://github.com/rokrokss/shizue\">مخزن GitHub</a> را دنبال کنید.",
   "end_title": "هر صفحه را دوزبانه کنید",
   "end_body": "نصبش چند ثانیه طول می‌کشد و ثبت‌نام هم لازم نیست.",
   "end_install": "افزودن به Chrome",

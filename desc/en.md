@@ -1,6 +1,6 @@
 🌸 Shizue puts an AI assistant in Chrome's side panel. Chat without leaving the page, summarize what you're reading in one click, and read web pages and YouTube videos with the original and the translation together.
 
-Shizue is free and open source (MIT). It runs on your own API key: OpenAI, Anthropic (Claude), Google (Gemini), or a single OpenRouter key that covers all of them plus DeepSeek. There's no account, no subscription, and no Shizue server. You pay your AI provider only for what you use.
+Shizue is free and open source (MIT). It runs on your own API key: OpenAI, Anthropic (Claude), Google (Gemini), or a single OpenRouter key that covers all of them plus DeepSeek. There's no account, no subscription, and no Shizue server. You pay your AI provider only for what you use. You can also run a model on your own computer with Ollama or LM Studio, with no key and no cost.
 
 
 ✨ Features
@@ -36,13 +36,14 @@ Shizue is free and open source (MIT). It runs on your own API key: OpenAI, Anthr
 🔒 Privacy
 - API keys, chat history, and memos stay in your browser
 - When you use a feature, only the content it needs goes straight from your browser to the AI provider you chose
+- With a local model, pages and chats never leave your computer
 - No analytics or tracking
 - Source code: https://github.com/rokrokss/shizue
 
 
 🚀 Getting started
 1. Install Shizue and press Ctrl+Shift+E (Cmd+Shift+E on Mac) to open the side panel
-2. Paste an API key. OpenRouter is the simplest: one key for every model
+2. Paste an API key (OpenRouter is the simplest: one key for every model), or connect a model running in Ollama or LM Studio
 3. Open any page and start asking
 
 Website: https://shizue.net

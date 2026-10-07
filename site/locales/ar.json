@@ -34,7 +34,7 @@
   "faq_key_q": "أي مفتاح أحتاج إليه؟",
   "faq_key_a": "أبسط خيار هو <a href=\"https://openrouter.ai/keys\">مفتاح OpenRouter</a> واحد، فهو يتيح لك كل النماذج في Shizue، ومنها DeepSeek. وإن كان لديك مفتاح من OpenAI أو Anthropic أو Gemini، فيمكنك استخدامه أيضًا.",
   "faq_more_q": "هل تدعم النماذج المحلية أو Firefox؟",
-  "faq_more_a": "ليس بعد. تابع <a href=\"https://github.com/rokrokss/shizue\">مستودع GitHub</a> لمعرفة الجديد.",
+  "faq_more_a": "النماذج المحلية مدعومة: من الإعدادات ← النماذج، اختر «استخدام نموذج محلي» لتوصيل Ollama أو LM Studio أو llama.cpp العامل على حاسوبك دون مفتاح API. أما Firefox فليس بعد. تابع <a href=\"https://github.com/rokrokss/shizue\">مستودع GitHub</a> لمعرفة الجديد.",
   "end_title": "اجعل كل صفحة ثنائية اللغة",
   "end_body": "يستغرق التثبيت بضع ثوانٍ، ولا حاجة إلى إنشاء حساب.",
   "end_install": "إضافة إلى Chrome",

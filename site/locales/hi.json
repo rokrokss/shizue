@@ -34,7 +34,7 @@
   "faq_key_q": "मुझे कौन-सी कुंजी लेनी चाहिए?",
   "faq_key_a": "सबसे आसान है <a href=\"https://openrouter.ai/keys\">OpenRouter कुंजी</a>: इस एक कुंजी से Shizue के सारे मॉडल चलते हैं, DeepSeek भी। अगर आपके पास पहले से OpenAI, Anthropic या Gemini की कुंजी है, तो वह भी चलेगी।",
   "faq_more_q": "क्या यह लोकल मॉडल या Firefox को सपोर्ट करता है?",
-  "faq_more_a": "अभी नहीं। नए अपडेट के लिए <a href=\"https://github.com/rokrokss/shizue\">GitHub रिपॉज़िटरी</a> फ़ॉलो करें।",
+  "faq_more_a": "लोकल मॉडल हाँ: सेटिंग्स → मॉडल में “लोकल मॉडल इस्तेमाल करें” चुनें और अपने कंप्यूटर पर चल रहे Ollama, LM Studio या llama.cpp को बिना API कुंजी के जोड़ें। Firefox अभी नहीं। नए अपडेट के लिए <a href=\"https://github.com/rokrokss/shizue\">GitHub रिपॉज़िटरी</a> फ़ॉलो करें।",
   "end_title": "हर पेज को द्विभाषी बनाएँ",
   "end_body": "कुछ ही सेकंड में इंस्टॉल करें। साइन-अप की ज़रूरत नहीं।",
   "end_install": "Chrome में जोड़ें",

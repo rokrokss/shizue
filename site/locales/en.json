@@ -34,7 +34,7 @@
   "faq_key_q": "Which key should I get?",
   "faq_key_a": "The simplest is one <a href=\"https://openrouter.ai/keys\">OpenRouter key</a>: it unlocks every model in Shizue, including DeepSeek. If you already have an OpenAI, Anthropic, or Gemini key, that works too.",
   "faq_more_q": "Does it support local models or Firefox?",
-  "faq_more_a": "Not yet. Follow the <a href=\"https://github.com/rokrokss/shizue\">GitHub repository</a> for updates.",
+  "faq_more_a": "Local models, yes: in Settings → Models, choose “Use a Local Model” to connect Ollama, LM Studio, or llama.cpp running on your computer, with no API key. Firefox, not yet. Follow the <a href=\"https://github.com/rokrokss/shizue\">GitHub repository</a> for updates.",
   "end_title": "Make every page bilingual",
   "end_body": "Install in a few seconds. No sign-up.",
   "end_install": "Add to Chrome",

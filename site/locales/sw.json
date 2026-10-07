@@ -34,7 +34,7 @@
   "faq_key_q": "Nipate ufunguo upi?",
   "faq_key_a": "Rahisi zaidi ni <a href=\"https://openrouter.ai/keys\">ufunguo wa OpenRouter</a>: ufunguo mmoja unafungua kila modeli ndani ya Shizue, ikiwemo DeepSeek. Ikiwa tayari una ufunguo wa OpenAI, Anthropic au Gemini, huo pia unafanya kazi.",
   "faq_more_q": "Je, inafanya kazi na modeli za ndani au kwenye Firefox?",
-  "faq_more_a": "Bado. Fuatilia <a href=\"https://github.com/rokrokss/shizue\">hazina ya GitHub</a> ili upate taarifa mpya.",
+  "faq_more_a": "Miundo ya ndani, ndiyo: katika Mipangilio → Miundo, chagua “Tumia modeli ya ndani” ili kuunganisha Ollama, LM Studio au llama.cpp inayoendeshwa kwenye kompyuta yako, bila ufunguo wa API. Firefox, bado. Fuatilia <a href=\"https://github.com/rokrokss/shizue\">hazina ya GitHub</a> ili upate taarifa mpya.",
   "end_title": "Fanya kila ukurasa uwe wa lugha mbili",
   "end_body": "Sakinisha kwa sekunde chache. Hakuna kujisajili.",
   "end_install": "Ongeza kwenye Chrome",

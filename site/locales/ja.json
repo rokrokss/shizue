@@ -34,7 +34,7 @@
   "faq_key_q": "どのキーを用意すればいいですか？",
   "faq_key_a": "いちばん簡単なのは<a href=\"https://openrouter.ai/keys\">OpenRouterのキー</a>を1つ用意することです。DeepSeekを含め、Shizueのすべてのモデルが使えます。OpenAI、Anthropic、Geminiのキーをすでにお持ちなら、それも使えます。",
   "faq_more_q": "ローカルモデルやFirefoxには対応していますか？",
-  "faq_more_a": "まだ対応していません。今後の情報は<a href=\"https://github.com/rokrokss/shizue\">GitHubリポジトリ</a>でご確認ください。",
+  "faq_more_a": "ローカルモデルには対応しています。設定 → モデルで「ローカルモデルを使用」を選ぶと、パソコンで動いているOllama、LM Studio、llama.cppにAPIキーなしで接続できます。Firefoxにはまだ対応していません。今後の情報は<a href=\"https://github.com/rokrokss/shizue\">GitHubリポジトリ</a>でご確認ください。",
   "end_title": "どのページもバイリンガルに",
   "end_body": "インストールは数秒、アカウント登録は不要です。",
   "end_install": "Chromeに追加",

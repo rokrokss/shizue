@@ -1,6 +1,6 @@
 🌸 Ang Shizue ay AI assistant sa side panel ng Chrome. Makipag-chat sa AI nang hindi umaalis sa pahina, ibuod ang binabasa sa isang click, at magbasa ng web page o manood ng YouTube video nang sabay na nakikita ang orihinal at ang salin.
 
-Libre at open source (MIT) ang Shizue. Gumagana ito gamit ang sarili mong API key: OpenAI, Anthropic (Claude), Google (Gemini), o iisang OpenRouter key para sa lahat ng iyon at pati sa DeepSeek. Walang account, walang subscription, at walang server ng Shizue. Ang nagamit mo lang ang babayaran mo sa AI provider.
+Libre at open source (MIT) ang Shizue. Gumagana ito gamit ang sarili mong API key: OpenAI, Anthropic (Claude), Google (Gemini), o iisang OpenRouter key para sa lahat ng iyon at pati sa DeepSeek. Walang account, walang subscription, at walang server ng Shizue. Ang nagamit mo lang ang babayaran mo sa AI provider. Puwede ka ring gumamit ng model na tumatakbo sa sarili mong computer gamit ang Ollama o LM Studio, nang walang key at walang bayad.
 
 
 ✨ Mga Feature
@@ -36,13 +36,14 @@ Libre at open source (MIT) ang Shizue. Gumagana ito gamit ang sarili mong API ke
 🔒 Privacy
 - Nasa browser mo lang ang mga API key, kasaysayan ng chat, at memo
 - Kapag gumamit ng isang feature, ang nilalaman lang na kailangan nito ang direktang ipinapadala mula sa browser mo papunta sa AI provider na pinili mo
+- Kapag local model ang gamit, hindi lumalabas sa computer mo ang mga page at chat
 - Walang analytics o tracking
 - Source code: https://github.com/rokrokss/shizue
 
 
 🚀 Pagsisimula
 1. I-install ang Shizue at pindutin ang Ctrl+Shift+E (Cmd+Shift+E sa Mac) para buksan ang side panel
-2. I-paste ang API key. Pinakasimple ang OpenRouter: iisang key para sa lahat ng model
+2. I-paste ang API key (pinakasimple ang OpenRouter: iisang key para sa lahat ng model), o ikonekta ang model na tumatakbo sa Ollama o LM Studio
 3. Magbukas ng kahit anong pahina at magsimulang magtanong
 
 Website: https://shizue.net

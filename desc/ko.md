@@ -1,6 +1,6 @@
 🌸 Shizue는 크롬 사이드 패널에서 쓰는 AI 도우미입니다. 보던 페이지를 떠나지 않고 AI와 대화하고, 읽던 글을 한 번에 요약하고, 웹페이지와 유튜브 영상을 원문과 번역을 함께 보며 읽을 수 있습니다.
 
-Shizue는 무료 오픈소스(MIT)입니다. 직접 발급받은 API 키로 동작합니다. OpenAI, Anthropic(Claude), Google(Gemini) 키를 쓰거나, OpenRouter 키 하나로 이 모델들과 DeepSeek까지 모두 쓸 수 있습니다. 회원가입도 구독도 Shizue 서버도 없고, 비용은 쓴 만큼만 AI 제공업체에 냅니다.
+Shizue는 무료 오픈소스(MIT)입니다. 직접 발급받은 API 키로 동작합니다. OpenAI, Anthropic(Claude), Google(Gemini) 키를 쓰거나, OpenRouter 키 하나로 이 모델들과 DeepSeek까지 모두 쓸 수 있습니다. 회원가입도 구독도 Shizue 서버도 없고, 비용은 쓴 만큼만 AI 제공업체에 냅니다. Ollama나 LM Studio로 내 컴퓨터에서 실행하는 모델을 쓰면 키도 비용도 필요 없습니다.
 
 
 ✨ 기능
@@ -36,13 +36,14 @@ Shizue는 무료 오픈소스(MIT)입니다. 직접 발급받은 API 키로 동�
 🔒 개인정보
 - API 키, 대화 기록, 메모는 내 브라우저에만 저장됩니다
 - 기능을 쓸 때 그 기능에 필요한 내용만 브라우저에서 내가 고른 AI 제공업체로 바로 전송됩니다
+- 로컬 모델을 쓰면 페이지와 대화가 내 컴퓨터 밖으로 나가지 않습니다
 - 분석이나 추적 도구를 쓰지 않습니다
 - 소스 코드: https://github.com/rokrokss/shizue
 
 
 🚀 시작하기
 1. Shizue를 설치하고 Ctrl+Shift+E(Mac은 Cmd+Shift+E)로 사이드 패널을 엽니다
-2. API 키를 붙여 넣습니다. OpenRouter 키 하나면 모든 모델을 쓸 수 있어 가장 간단합니다
+2. API 키를 붙여 넣거나(OpenRouter 키 하나면 모든 모델을 쓸 수 있어 가장 간단합니다), Ollama나 LM Studio에서 실행 중인 모델을 연결합니다
 3. 아무 페이지에서나 질문을 시작합니다
 
 웹사이트: https://shizue.net

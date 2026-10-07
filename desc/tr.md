@@ -1,6 +1,6 @@
 🌸 Shizue, Chrome'un yan paneline bir yapay zeka asistanı ekler. Sayfadan ayrılmadan sohbet edebilir, okuduğunuz sayfayı tek tıkla özetleyebilir, web sayfalarını ve YouTube videolarını orijinal metinle çeviriyi birlikte görerek takip edebilirsiniz.
 
-Shizue ücretsiz ve açık kaynaklıdır (MIT). Kendi API anahtarınızla çalışır: OpenAI, Anthropic (Claude), Google (Gemini) ya da bunların hepsine ve DeepSeek'e erişim sağlayan tek bir OpenRouter anahtarı. Hesap açmanız ya da abone olmanız gerekmez, Shizue'nin bir sunucusu da yoktur. Yapay zeka sağlayıcınıza yalnızca kullandığınız kadar ödersiniz.
+Shizue ücretsiz ve açık kaynaklıdır (MIT). Kendi API anahtarınızla çalışır: OpenAI, Anthropic (Claude), Google (Gemini) ya da bunların hepsine ve DeepSeek'e erişim sağlayan tek bir OpenRouter anahtarı. Hesap açmanız ya da abone olmanız gerekmez, Shizue'nin bir sunucusu da yoktur. Yapay zeka sağlayıcınıza yalnızca kullandığınız kadar ödersiniz. Ollama veya LM Studio ile kendi bilgisayarınızda çalışan bir modeli de anahtarsız ve ücretsiz kullanabilirsiniz.
 
 
 ✨ Özellikler
@@ -36,13 +36,14 @@ Shizue ücretsiz ve açık kaynaklıdır (MIT). Kendi API anahtarınızla çalı
 🔒 Gizlilik
 - API anahtarları, sohbet geçmişi ve notlar yalnızca tarayıcınızda kalır
 - Bir özelliği kullandığınızda yalnızca o özelliğin ihtiyaç duyduğu içerik, tarayıcınızdan doğrudan seçtiğiniz yapay zeka sağlayıcısına gönderilir
+- Yerel bir modelle sayfalar ve sohbetler bilgisayarınızdan çıkmaz
 - Analiz ya da takip aracı kullanılmaz
 - Kaynak kodu: https://github.com/rokrokss/shizue
 
 
 🚀 Başlarken
 1. Shizue'yi yükleyin ve yan paneli açmak için Ctrl+Shift+E (Mac'te Cmd+Shift+E) tuşlarına basın
-2. Bir API anahtarı yapıştırın. En kolayı OpenRouter: tek anahtarla tüm modelleri kullanabilirsiniz
+2. Bir API anahtarı yapıştırın (en kolayı OpenRouter: tek anahtarla tüm modelleri kullanabilirsiniz) ya da Ollama veya LM Studio'da çalışan bir modeli bağlayın
 3. Herhangi bir sayfayı açın ve sorunuzu sorun
 
 Web sitesi: https://shizue.net

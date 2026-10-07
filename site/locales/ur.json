@@ -34,7 +34,7 @@
   "faq_key_q": "مجھے کون سی کلید لینی چاہیے؟",
   "faq_key_a": "سب سے آسان یہ ہے کہ <a href=\"https://openrouter.ai/keys\">OpenRouter کی کلید</a> لے لیں: ایک ہی کلید سے Shizue کے تمام ماڈل، بشمول DeepSeek، چلتے ہیں۔ اگر آپ کے پاس پہلے سے OpenAI، Anthropic یا Gemini کی کلید ہے تو وہ بھی چلے گی۔",
   "faq_more_q": "کیا یہ لوکل ماڈلز یا Firefox کو سپورٹ کرتا ہے؟",
-  "faq_more_a": "ابھی نہیں۔ نئی اپ ڈیٹس کے لیے <a href=\"https://github.com/rokrokss/shizue\">GitHub ریپوزٹری</a> فالو کریں۔",
+  "faq_more_a": "لوکل ماڈلز کی سپورٹ موجود ہے: ترتیبات ← ماڈلز میں «لوکل ماڈل استعمال کریں» منتخب کریں اور اپنے کمپیوٹر پر چلنے والا Ollama، LM Studio یا llama.cpp بغیر API کلید کے جوڑیں۔ Firefox ابھی نہیں۔ نئی اپ ڈیٹس کے لیے <a href=\"https://github.com/rokrokss/shizue\">GitHub ریپوزٹری</a> فالو کریں۔",
   "end_title": "ہر صفحے کو دو لسانی بنائیں",
   "end_body": "چند سیکنڈ میں انسٹال کریں۔ سائن اپ کی ضرورت نہیں۔",
   "end_install": "Chrome میں شامل کریں",

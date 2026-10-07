@@ -34,7 +34,7 @@
   "faq_key_q": "ควรใช้คีย์ไหนดี",
   "faq_key_a": "วิธีที่ง่ายที่สุดคือใช้<a href=\"https://openrouter.ai/keys\">คีย์ OpenRouter</a> คีย์เดียว ซึ่งใช้ได้กับทุกโมเดลใน Shizue รวมถึง DeepSeek ถ้ามีคีย์ OpenAI, Anthropic หรือ Gemini อยู่แล้ว ก็ใช้ได้เช่นกัน",
   "faq_more_q": "รองรับโมเดลแบบโลคัลหรือ Firefox ไหม",
-  "faq_more_a": "ยังไม่รองรับ ติดตามความคืบหน้าได้ที่<a href=\"https://github.com/rokrokss/shizue\">ที่เก็บโค้ดบน GitHub</a>",
+  "faq_more_a": "โมเดลในเครื่องรองรับแล้ว ไปที่ การตั้งค่า → โมเดล แล้วเลือก “ใช้โมเดลในเครื่อง” เพื่อเชื่อมต่อ Ollama, LM Studio หรือ llama.cpp ที่รันอยู่บนคอมพิวเตอร์ของคุณโดยไม่ต้องใช้คีย์ API ส่วน Firefox ยังไม่รองรับ ติดตามความคืบหน้าได้ที่<a href=\"https://github.com/rokrokss/shizue\">ที่เก็บโค้ดบน GitHub</a>",
   "end_title": "ทำให้ทุกหน้าเว็บเป็นสองภาษา",
   "end_body": "ติดตั้งได้ในไม่กี่วินาที ไม่ต้องสมัครสมาชิก",
   "end_install": "เพิ่มลงใน Chrome",

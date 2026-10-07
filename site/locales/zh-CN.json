@@ -34,7 +34,7 @@
   "faq_key_q": "应该用哪种密钥？",
   "faq_key_a": "最简单的是一个 <a href=\"https://openrouter.ai/keys\">OpenRouter 密钥</a>：它能使用 Shizue 中的所有模型，包括 DeepSeek。如果你已经有 OpenAI、Anthropic 或 Gemini 的密钥，也可以直接使用。",
   "faq_more_q": "支持本地模型或 Firefox 吗？",
-  "faq_more_a": "暂不支持。请关注 <a href=\"https://github.com/rokrokss/shizue\">GitHub 仓库</a>获取最新动态。",
+  "faq_more_a": "支持本地模型：在 设置 → 模型 中选择“使用本地模型”，即可无需 API 密钥连接在你电脑上运行的 Ollama、LM Studio 或 llama.cpp。Firefox 暂不支持。请关注 <a href=\"https://github.com/rokrokss/shizue\">GitHub 仓库</a>获取最新动态。",
   "end_title": "让每个页面都变成双语",
   "end_body": "几秒即可安装，无需注册。",
   "end_install": "添加到 Chrome",

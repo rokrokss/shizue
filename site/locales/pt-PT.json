@@ -34,7 +34,7 @@
   "faq_key_q": "Que chave devo usar?",
   "faq_key_a": "O mais simples é uma <a href=\"https://openrouter.ai/keys\">chave do OpenRouter</a>: dá acesso a todos os modelos da Shizue, incluindo o DeepSeek. Se já tens uma chave da OpenAI, da Anthropic ou do Gemini, também serve.",
   "faq_more_q": "Funciona com modelos locais ou no Firefox?",
-  "faq_more_a": "Ainda não. Acompanha as novidades no <a href=\"https://github.com/rokrokss/shizue\">repositório no GitHub</a>.",
+  "faq_more_a": "Modelos locais, sim: em Definições → Modelos, escolhe “Utilizar um modelo local” para ligar o Ollama, o LM Studio ou o llama.cpp a correr no teu computador, sem chave de API. Firefox, ainda não. Acompanha as novidades no <a href=\"https://github.com/rokrokss/shizue\">repositório no GitHub</a>.",
   "end_title": "Torna qualquer página bilingue",
   "end_body": "Instala em poucos segundos. Sem registo.",
   "end_install": "Adicionar ao Chrome",
