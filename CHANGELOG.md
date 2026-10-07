@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.1
+
+- Chat history and the memo list no longer flash their empty message while loading, and the Connect and Validate buttons keep their size while they work
+- Local models: clearer message when the connected server has no chat models
+
 ## v0.3.0
 
 - Local models: in Settings → Models, choose "Use a Local Model" to use Ollama, LM Studio, or llama.cpp running on your computer, with no API key. Shizue finds the server at its default port, or you can enter its address. Chat and translation can use different local models
@@ -7,7 +12,6 @@
 - Add Gemma 4 31B (Gemini key or OpenRouter)
 - Page translation: fix translation failing while the side panel was open
 - Page translation: the loader now shows on pages whose paragraphs keep their line breaks, and on paragraphs still waiting their turn
-- Chat history and the memo list no longer flash their empty message while loading, and the Connect and Validate buttons keep their size while they work
 
 ## v0.2.9
 
