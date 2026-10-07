@@ -1,46 +1,46 @@
-Shizue puts an AI assistant in Chrome's side panel. Chat without leaving the page, summarize what you're reading in one click, and read web pages and YouTube videos with the original and the translation together.
+🌸 Shizue puts an AI assistant in Chrome's side panel. Chat without leaving the page, summarize what you're reading in one click, and read web pages and YouTube videos with the original and the translation together.
 
 Shizue is free and open source (MIT). It runs on your own API key: OpenAI, Anthropic (Claude), Google (Gemini), or a single OpenRouter key that covers all of them plus DeepSeek. There's no account, no subscription, and no Shizue server. You pay your AI provider only for what you use.
 
 
-Features
+✨ Features
 
-Side panel chat
+💬 Side panel chat
 - Open it on any page with Ctrl+Shift+E (Cmd+Shift+E on Mac)
 - Attach images and go back to earlier chats from the history
 
-Page summaries
+📋 Page summaries
 - Summarize the page you're reading in one click, then ask follow-up questions in the same chat
 
-Bilingual web pages
+🌐 Bilingual web pages
 - The translation appears under each paragraph, so the original stays in place
 
-Bilingual YouTube captions
+🎬 Bilingual YouTube captions
 - Captions are translated as you watch and shown under the original line
 - Choose the target language and the number of lines, and press A or D to jump to the previous or next caption
 
-Right-click menu
+🎯 Right-click menu
 - Selected text: translate, explain, summarize, or fix the grammar
 - Images: describe them or extract their text
 - Whole page: translate or summarize
 
-Memos
+📝 Memos
 - Notes that save as you type, with pinning and search
 
-Also
+🎨 Also
 - A token usage chart that shows how much each model has used
 - Light and dark themes
 - Interface in 23 languages
 
 
-Privacy
+🔒 Privacy
 - API keys, chat history, and memos stay in your browser
 - When you use a feature, only the content it needs goes straight from your browser to the AI provider you chose
 - No analytics or tracking
 - Source code: https://github.com/rokrokss/shizue
 
 
-Getting started
+🚀 Getting started
 1. Install Shizue and press Ctrl+Shift+E (Cmd+Shift+E on Mac) to open the side panel
 2. Paste an API key. OpenRouter is the simplest: one key for every model
 3. Open any page and start asking
