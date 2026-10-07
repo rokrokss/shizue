@@ -10,6 +10,8 @@ interface StreamOptions {
   onDelta: (delta: string) => void;
   onDone: () => void;
   onError?: (message: string) => void;
+  // The background cut a long message to fit a local model's context.
+  onContextTruncated?: () => void;
 }
 
 export const useChromePortStream = () => {
@@ -37,6 +39,8 @@ export const useChromePortStream = () => {
           finished = true;
           opts.onError?.(msg.message ?? msg.error);
           port.disconnect();
+        } else if (msg.contextTruncated) {
+          opts.onContextTruncated?.();
         } else if (msg.done) {
           finished = true;
           opts.onDone();

@@ -1,5 +1,5 @@
 import { recordTokenUsage } from '@/lib/indexDB';
-import { MODELS } from '@/lib/modelRegistry';
+import { isLocalModel, localModelId, MODELS } from '@/lib/modelRegistry';
 import type { ModelPreset } from '@/lib/models';
 import { debugLog } from '@/logs';
 import { AIMessage, AIMessageChunk } from '@langchain/core/messages';
@@ -38,11 +38,10 @@ export const trackTokenUsage = async (
 
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     const { modelName } = modelPreset;
-    const model =
-      modelName === 'local' ? (modelPreset.localModel?.model ?? 'local') : MODELS[modelName].id;
-    const providerKey = modelName === 'local' ? undefined : MODELS[modelName].provider;
+    const model = isLocalModel(modelName) ? localModelId(modelName) : MODELS[modelName].id;
+    const providerKey = isLocalModel(modelName) ? undefined : MODELS[modelName].provider;
     const provider =
-      modelName === 'local'
+      isLocalModel(modelName)
         ? 'local'
         : modelPreset.connectionMode === 'openrouter'
         ? 'openrouter'

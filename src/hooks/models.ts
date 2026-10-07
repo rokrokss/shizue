@@ -3,7 +3,7 @@ import {
   STORAGE_CHAT_MODEL,
   STORAGE_CONNECTION_MODE,
   STORAGE_GEMINI_VALIDATED,
-  STORAGE_LOCAL_MODEL,
+  STORAGE_LOCAL_SERVER,
   STORAGE_OPENAI_VALIDATED,
   STORAGE_OPENROUTER_VALIDATED,
   STORAGE_TRANSLATE_MODEL,
@@ -17,7 +17,10 @@ import {
 import {
   ChatModel,
   ConnectionMode,
-  LocalModelConfig,
+  isLocalModel,
+  localModelId,
+  localModelRef,
+  LocalServerConfig,
   MODEL_OPTIONS,
   MODELS,
   ModelProvider,
@@ -90,9 +93,9 @@ export const connectionModeAtom = atomWithStorage<ConnectionMode>(
   { getOnInit: true }
 );
 
-// The model on the user's own server that the 'local' slot calls; null until one is picked.
-export const localModelAtom = atomWithStorage<LocalModelConfig | null>(
-  STORAGE_LOCAL_MODEL,
+// The connected local server and its chat models; null until the user connects one.
+export const localServerAtom = atomWithStorage<LocalServerConfig | null>(
+  STORAGE_LOCAL_SERVER,
   null,
   chromeStorageBackend('local'),
   { getOnInit: true }
@@ -145,38 +148,48 @@ export const useSetAnthropicValidated = () => useSetAtom(anthropicValidatedSafeA
 export const useOpenRouterValidated = () => useAtom(openRouterValidatedSafeAtom);
 export const useSetOpenRouterValidated = () => useSetAtom(openRouterValidatedSafeAtom);
 export const useConnectionMode = () => useAtom(connectionModeAtom);
-export const useLocalModel = () => useAtom(localModelAtom);
-export const useLocalModelValue = () => useAtomValue(localModelAtom);
+export const useLocalServer = () => useAtom(localServerAtom);
+export const useLocalServerValue = () => useAtomValue(localServerAtom);
 
-// Whether each model can be called, through its provider key or OpenRouter, or for the local slot,
-// whether a local model is picked. A hook rather than a derived atom: the storage atoms start as
-// promises, which useAtomValue unwraps.
-export const useModelAvailability = (): Record<ChatModel, boolean> => {
+export interface ModelOption {
+  value: ChatModel;
+  label: string;
+  available: boolean;
+}
+
+// What the model pickers list: the cloud models, available through their provider key or
+// OpenRouter, then each chat model on the connected local server. A local model picked earlier
+// that the server no longer has stays listed, unavailable, so the picker still names it. A hook
+// rather than a derived atom: the storage atoms start as promises, which useAtomValue unwraps.
+export const useModelOptions = (): ModelOption[] => {
+  const { t } = useTranslation();
   const openRouterValidated = useAtomValue(openRouterValidatedSafeAtom);
-  const localModel = useAtomValue(localModelAtom);
+  const localServer = useAtomValue(localServerAtom);
+  const chatModel = useAtomValue(chatModelAtom);
+  const translateModel = useAtomValue(translateModelAtom);
   const directValidated: Record<ModelProvider, boolean | undefined> = {
     'openai-api-key': useAtomValue(openAIValidatedSafeAtom),
     'gemini-api-key': useAtomValue(geminiValidatedSafeAtom),
     'anthropic-api-key': useAtomValue(anthropicValidatedSafeAtom),
   };
-  return Object.fromEntries(
-    MODEL_OPTIONS.map((model) => {
-      if (model === 'local') return [model, Boolean(localModel)];
-      const { provider } = MODELS[model];
-      return [model, Boolean((provider && directValidated[provider]) || openRouterValidated)];
-    })
-  ) as Record<ChatModel, boolean>;
+  const localLabel = (id: string) => `${id} (${t('local.tag')})`;
+  const localIds = localServer?.models.map((model) => model.id) ?? [];
+  const missingLocalIds = [chatModel, translateModel]
+    .filter(isLocalModel)
+    .map(localModelId)
+    .filter((id, i, ids) => !localIds.includes(id) && ids.indexOf(id) === i);
+  return [
+    ...MODEL_OPTIONS.map((model) => {
+      const { provider, label } = MODELS[model];
+      const available = Boolean((provider && directValidated[provider]) || openRouterValidated);
+      return { value: model, label, available };
+    }),
+    ...localIds.map((id) => ({ value: localModelRef(id), label: localLabel(id), available: true })),
+    ...missingLocalIds.map((id) => ({
+      value: localModelRef(id),
+      label: localLabel(id),
+      available: false,
+    })),
+  ];
 };
-
-// Model picker labels; the local slot shows the model picked on the user's server.
-export const useModelLabel = () => {
-  const { t } = useTranslation();
-  const localModel = useAtomValue(localModelAtom);
-  return (model: ChatModel) =>
-    model !== 'local'
-      ? MODELS[model].label
-      : localModel
-        ? `${localModel.model} (${t('local.tag')})`
-        : t('local.unset');
-};
-export const useAnyModelAvailable = () => Object.values(useModelAvailability()).some(Boolean);
+export const useAnyModelAvailable = () => useModelOptions().some((option) => option.available);

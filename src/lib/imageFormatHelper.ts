@@ -1,7 +1,7 @@
 import {
   ChatModel,
   ConnectionMode,
-  LocalModelConfig,
+  LocalServerConfig,
   modelSupportsImages,
   providerFromName,
 } from './modelRegistry';
@@ -54,10 +54,10 @@ export const formatImagesForMessage = (
   images: string[],
   modelName: ChatModel,
   connectionMode: ConnectionMode,
-  localModel?: LocalModelConfig
+  localServer?: LocalServerConfig
 ): ImageContent[] => {
   // Text-only models reject any request with an image, so earlier images in the thread become a note.
-  if (!modelSupportsImages(modelName, localModel)) {
+  if (!modelSupportsImages(modelName, localServer)) {
     return [
       {
         type: 'text',

@@ -17,6 +17,8 @@ export interface Message {
   onInterrupt: boolean;
   stopped: boolean;
   errorMessage?: string;
+  // A long message was cut to fit the local model's context before this reply.
+  contextTruncated?: boolean;
 }
 
 export interface ThreadMeta {

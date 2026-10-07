@@ -30,8 +30,7 @@ import {
 } from '@/hooks/layout';
 import {
   useAnyModelAvailable,
-  useModelAvailability,
-  useModelLabel,
+  useModelOptions,
   useTranslateModel,
 } from '@/hooks/models';
 import { hashStringToIndex } from '@/lib/hash';
@@ -43,7 +42,7 @@ import {
   initSummarizePageContent,
 } from '@/lib/initPanelData';
 import { languageOptions } from '@/lib/language';
-import { MODEL_OPTIONS, TranslateModel } from '@/lib/modelRegistry';
+import { TranslateModel } from '@/lib/modelRegistry';
 import { getPageTranslator } from '@/lib/pageTranslator';
 import { debugLog } from '@/logs';
 import { panelService } from '@/services/panelService';
@@ -75,8 +74,7 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
   const theme = useThemeValue();
   const [translateModel, setTranslateModel] = useTranslateModel();
   const [motionDivId, setMotionDivId] = useState(0);
-  const modelAvailability = useModelAvailability();
-  const modelLabel = useModelLabel();
+  const modelOptions = useModelOptions();
   const anyModelAvailable = useAnyModelAvailable();
   const [showToggle, setShowToggle] = useShowToggle();
   const [toggleHiddenSiteList, setToggleHiddenSiteList] = useToggleHiddenSiteList();
@@ -463,11 +461,11 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
                               trigger.closest('.sz-toggle-translate-settings-modal') as HTMLElement
                             }
                             size="small"
-                            options={MODEL_OPTIONS.map((value) => {
-                              const validated = modelAvailability[value];
+                            options={modelOptions.map(({ value, label, available }) => {
+                              const validated = available;
                               return {
                                 value,
-                                label: modelLabel(value),
+                                label,
                                 className: 'sz:font-ycom',
                                 styles: {
                                   color: validated

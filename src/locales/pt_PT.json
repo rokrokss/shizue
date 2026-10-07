@@ -65,7 +65,8 @@
     "translateModeDescription": "De agora em diante, para cada mensagem que eu enviar, fornece tradução e explicação no seguinte formato:\n\n1. ✅ Tradução: Fornece uma tradução natural e contextualmente apropriada.\n2. 📚 Palavras/Expressões-chave\n    – Palavra: Tipo de palavra / Significado\n    – Exemplo do texto original\n3. 🧠 Explicação gramatical ou expressiva: Quando necessário, fornece uma breve explicação de expressões ou frases-chave.\n\n- Apresenta a saída num formato organizado como um dicionário.\n- Aplica formatação em negrito ao conteúdo importante.\n- Omite explicações desnecessárias e escreve de forma limpa e concisa para aprendizagem focada.\n- Mantém este formato a menos que eu forneça instruções adicionais.",
     "activateTranslateMode": "Ativar modo de tradução..📡 🤖 📡",
     "imageUpload": "Carregar imagem",
-    "imageUploadNotSupported": "O modelo atual não suporta imagens"
+    "imageUploadNotSupported": "O modelo atual não suporta imagens",
+    "contextTruncated": "O texto é maior do que o modelo local consegue ler de uma vez, por isso só foi usado o início."
   },
   "footer": {
     "joinDiscord": "Junta-te a mim no Discord!",

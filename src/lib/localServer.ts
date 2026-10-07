@@ -1,19 +1,6 @@
 // Finds local LLM servers and their models for the 'local' slot. Runs in extension pages (settings,
 // onboarding); no LangChain, so it is safe outside the background.
-import { LocalServerKind } from '@/lib/modelRegistry';
-
-export interface LocalServerModel {
-  id: string;
-  supportsImages: boolean;
-  supportsThinking: boolean;
-  contextLength?: number;
-}
-
-export interface LocalServer {
-  kind: LocalServerKind;
-  baseUrl: string;
-  models: LocalServerModel[];
-}
+import { LocalServerConfig, LocalServerModel } from '@/lib/modelRegistry';
 
 // forbidden: Ollama refused the extension's origin. unauthorized: the server wants an API key.
 export type LocalServerErrorCode = 'forbidden' | 'unauthorized' | 'unreachable';
@@ -114,14 +101,32 @@ const listOllamaModels = async (baseUrl: string): Promise<LocalServerModel[]> =>
   return details.filter((model) => model !== undefined);
 };
 
-// /v1/models says nothing about capabilities, so images stay off; embedding models are skipped by name.
+// LM Studio's own API types each model: 'vlm' takes images, 'embeddings' isn't a chat model.
+// Undefined for servers without it.
+const listLmStudioModels = async (
+  baseUrl: string,
+  headers?: HeadersInit
+): Promise<LocalServerModel[] | undefined> => {
+  const data = await fetch(`${baseUrl}/api/v0/models`, { headers })
+    .then((res) => (res.ok ? res.json() : undefined))
+    .then((body) => body?.data)
+    .catch(() => undefined);
+  if (!Array.isArray(data) || !data.every((model) => typeof model.type === 'string')) return;
+  return data
+    .filter(({ type }) => type === 'llm' || type === 'vlm')
+    .map(({ id, type }) => ({ id, supportsImages: type === 'vlm', supportsThinking: false }));
+};
+
+// /v1/models says nothing about capabilities, so images stay off unless the server is LM Studio;
+// embedding models are skipped by name.
 const listOpenAICompatibleModels = async (
   baseUrl: string,
   apiKey?: string
 ): Promise<LocalServerModel[]> => {
-  const { data = [] } = await fetchJson(`${baseUrl}/v1/models`, {
-    headers: apiKey ? { Authorization: `Bearer ${apiKey}` } : undefined,
-  });
+  const headers = apiKey ? { Authorization: `Bearer ${apiKey}` } : undefined;
+  const { data = [] } = await fetchJson(`${baseUrl}/v1/models`, { headers });
+  const lmStudioModels = await listLmStudioModels(baseUrl, headers);
+  if (lmStudioModels) return lmStudioModels;
   return data
     .map(({ id }: { id: string }) => id)
     .filter((id: string) => !/embed/i.test(id))
@@ -129,7 +134,10 @@ const listOpenAICompatibleModels = async (
 };
 
 // Ollama is told apart by /api/version, which the OpenAI-compatible servers don't have.
-export const probeLocalServer = async (baseUrl: string, apiKey?: string): Promise<LocalServer> => {
+export const probeLocalServer = async (
+  baseUrl: string,
+  apiKey?: string
+): Promise<LocalServerConfig> => {
   const isOllama = await fetch(`${baseUrl}/api/version`)
     .then(async (res) => res.ok && typeof (await res.json()).version === 'string')
     .catch(() => false);
@@ -137,12 +145,13 @@ export const probeLocalServer = async (baseUrl: string, apiKey?: string): Promis
   return {
     kind: 'openai-compatible',
     baseUrl,
+    ...(apiKey ? { apiKey } : {}),
     models: await listOpenAICompatibleModels(baseUrl, apiKey),
   };
 };
 
 // The first default server that answers, preferring one with models.
-export const detectLocalServer = async (): Promise<LocalServer | undefined> => {
+export const detectLocalServer = async (): Promise<LocalServerConfig | undefined> => {
   const results = await Promise.allSettled(DEFAULT_SERVERS.map((url) => probeLocalServer(url)));
   const found = results.flatMap((result) => (result.status === 'fulfilled' ? [result.value] : []));
   return found.find((server) => server.models.length > 0) ?? found[0];

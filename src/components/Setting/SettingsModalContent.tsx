@@ -13,9 +13,8 @@ import {
   useChatModel,
   useConnectionMode,
   useGeminiValidated,
-  useLocalModelValue,
-  useModelAvailability,
-  useModelLabel,
+  useLocalServerValue,
+  useModelOptions,
   useOpenAIValidated,
   useOpenRouterValidated,
   useTranslateModel,
@@ -27,7 +26,7 @@ import {
   useSetOpenRouterKey,
 } from '@/hooks/settings';
 import { languageOptions } from '@/lib/language';
-import { ApiKeyProvider, ChatModel, MODEL_OPTIONS, TranslateModel } from '@/lib/modelRegistry';
+import { ApiKeyProvider, ChatModel, TranslateModel } from '@/lib/modelRegistry';
 import { getOS } from '@/lib/userOS';
 import { validateApiKey } from '@/lib/validateApiKey';
 import { debugLog } from '@/logs';
@@ -55,7 +54,6 @@ const SettingsModalContent = () => {
   const [anthropicValidated, setAnthropicValidated] = useAnthropicValidated();
   const [openRouterValidated, setOpenRouterValidated] = useOpenRouterValidated();
   const [connectionMode, setConnectionMode] = useConnectionMode();
-  const modelAvailability = useModelAvailability();
   const [chatModel, setChatModel] = useChatModel();
   const [translateModel, setTranslateModel] = useTranslateModel();
   const [theme, setTheme] = useTheme();
@@ -65,15 +63,14 @@ const SettingsModalContent = () => {
   const [selectedProvider, setSelectedProvider] = useState<ApiKeyProvider | 'local'>(
     'openrouter-api-key'
   );
-  const localModel = useLocalModelValue();
+  const localServer = useLocalServerValue();
   const [toggleHiddenSiteList, setToggleHiddenSiteList] = useToggleHiddenSiteList();
 
-  const modelLabel = useModelLabel();
-  const modelOptions = MODEL_OPTIONS.map((value) => ({
+  const modelOptions = useModelOptions().map(({ value, label, available }) => ({
     value,
-    label: modelLabel(value),
+    label,
     className: 'sz:font-ycom',
-    disabled: !modelAvailability[value],
+    disabled: !available,
   }));
 
   const handleSelectLanguage = (value: string) => {
@@ -402,7 +399,7 @@ const SettingsModalContent = () => {
                     >
                       OpenRouter
                     </Tag>
-                    <Tag style={{ fontSize: '11px' }} color={localModel ? 'success' : 'default'}>
+                    <Tag style={{ fontSize: '11px' }} color={localServer ? 'success' : 'default'}>
                       {t('local.tag')}
                     </Tag>
                   </div>

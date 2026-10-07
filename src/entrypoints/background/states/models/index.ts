@@ -3,7 +3,7 @@ import {
   STORAGE_CHAT_MODEL,
   STORAGE_CONNECTION_MODE,
   STORAGE_GEMINI_KEY,
-  STORAGE_LOCAL_MODEL,
+  STORAGE_LOCAL_SERVER,
   STORAGE_OPENAI_KEY,
   STORAGE_OPENROUTER_KEY,
   STORAGE_TRANSLATE_MODEL,
@@ -13,8 +13,11 @@ import {
   ConnectionMode,
   isChatModel,
   isConnectionMode,
+  isLocalModel,
   LocalModelConfig,
+  LocalServerConfig,
   MODELS,
+  resolveLocalModel,
   TranslateModel,
 } from '@/lib/modelRegistry';
 
@@ -25,7 +28,7 @@ let geminiKey: string | undefined = undefined;
 let anthropicKey: string | undefined = undefined;
 let openrouterKey: string | undefined = undefined;
 let connectionMode: ConnectionMode = 'direct';
-let localModel: LocalModelConfig | undefined = undefined;
+let localServer: LocalServerConfig | undefined = undefined;
 
 export const getCurrentChatModel = () => currentChatModel;
 
@@ -39,13 +42,17 @@ export const getCurrentAnthropicKey = () => anthropicKey;
 
 export const getCurrentOpenrouterKey = () => openrouterKey;
 
-export const getCurrentLocalModel = () => localModel;
+export const getCurrentLocalServer = () => localServer;
+
+// The config to call `model` with, when it is a local model on the connected server.
+export const getLocalModelFor = (model: ChatModel): LocalModelConfig | undefined =>
+  isLocalModel(model) ? resolveLocalModel(model, localServer) : undefined;
 
 // With no key set this returns 'direct', so the model factory reports the provider key missing.
 // OpenRouter-only models always return 'openrouter', so a missing key is reported as OpenRouter's.
-// The local model needs no key and calls the user's own server.
+// Local models need no key and call the user's own server.
 export const getConnectionModeFor = (model: ChatModel): ConnectionMode => {
-  if (model === 'local') return 'direct';
+  if (isLocalModel(model)) return 'direct';
   const { provider } = MODELS[model];
   if (!provider) return 'openrouter';
   const directKey = {
@@ -85,8 +92,8 @@ export const changeConnectionMode = (mode: ConnectionMode) => {
   connectionMode = mode;
 };
 
-export const changeLocalModel = (config: LocalModelConfig | undefined) => {
-  localModel = config;
+export const changeLocalServer = (config: LocalServerConfig | undefined) => {
+  localServer = config;
 };
 
 let modelStateReady: Promise<void> = Promise.resolve();
@@ -104,7 +111,7 @@ export const modelListeners = () => {
       STORAGE_ANTHROPIC_KEY,
       STORAGE_OPENROUTER_KEY,
       STORAGE_CONNECTION_MODE,
-      STORAGE_LOCAL_MODEL,
+      STORAGE_LOCAL_SERVER,
     ])
     .then((res) => {
       if (isChatModel(res.CHAT_MODEL)) changeChatModel(res.CHAT_MODEL);
@@ -114,7 +121,7 @@ export const modelListeners = () => {
       changeAnthropicKey((res.ANTHROPIC_KEY as string) || undefined);
       changeOpenrouterKey((res.OPENROUTER_KEY as string) || undefined);
       if (isConnectionMode(res.CONNECTION_MODE)) changeConnectionMode(res.CONNECTION_MODE);
-      changeLocalModel((res.LOCAL_MODEL as LocalModelConfig | null) ?? undefined);
+      changeLocalServer((res.LOCAL_SERVER as LocalServerConfig | null) ?? undefined);
     });
 
   chrome.storage.onChanged.addListener((changes, area) => {
@@ -144,8 +151,8 @@ export const modelListeners = () => {
         const newMode = changes.CONNECTION_MODE.newValue;
         changeConnectionMode(isConnectionMode(newMode) ? newMode : 'direct');
       }
-      if (changes.LOCAL_MODEL) {
-        changeLocalModel((changes.LOCAL_MODEL.newValue as LocalModelConfig | null) ?? undefined);
+      if (changes.LOCAL_SERVER) {
+        changeLocalServer((changes.LOCAL_SERVER.newValue as LocalServerConfig | null) ?? undefined);
       }
     }
   });

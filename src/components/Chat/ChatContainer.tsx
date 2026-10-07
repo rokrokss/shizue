@@ -5,7 +5,7 @@ import { isSelectionActionType } from '@/config/constants';
 import { useThemeValue } from '@/hooks/layout';
 import useStreamText from '@/hooks/useStreamText';
 import { hashStringToIndex } from '@/lib/hash';
-import { LinkOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, LinkOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 import Markdown from 'react-markdown';
@@ -112,6 +112,12 @@ const ChatContainer = ({
                     role: {m.role} <br />
                     actionType: {m.actionType}
                   </div> */}
+                  {m.contextTruncated ? (
+                    <div className="sz:flex sz:flex-row sz:items-start sz:gap-1 sz:text-xs sz:text-gray-500 sz:pt-1">
+                      <InfoCircleOutlined className="sz:pt-[2px]" />
+                      <span>{t('chat.contextTruncated')}</span>
+                    </div>
+                  ) : null}
                   {isRetryButtonVisible ? (
                     <div className="sz:text-xs sz:text-gray-500 sz:pl-0.5 sz:pt-1">
                       <Button

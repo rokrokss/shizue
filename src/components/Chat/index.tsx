@@ -33,6 +33,7 @@ export interface Message {
   onInterrupt: boolean;
   stopped: boolean;
   errorMessage?: string;
+  contextTruncated?: boolean;
 }
 
 const Chat = () => {
@@ -124,6 +125,9 @@ const Chat = () => {
     return copy;
   };
 
+  const markContextTruncated = () =>
+    setMessages((cur) => updateAIMessage(cur, { contextTruncated: true }));
+
   const handleRequestFromContextMenu = useCallback(
     async (tId: string, requestedActionType: ActionType) => {
       debugLog('handleRequestFromContextMenu called');
@@ -138,6 +142,7 @@ const Chat = () => {
       startStream(
         { threadId: tId, actionType: actionType.current },
         {
+          onContextTruncated: markContextTruncated,
           onDelta: (delta) => {
             setMessages((cur) => {
               const updatedMessages = updateAIMessage(cur, {
@@ -369,6 +374,7 @@ const Chat = () => {
     startStream(
       { threadId: tId, actionType: actionType.current },
       {
+        onContextTruncated: markContextTruncated,
         onDelta: (delta) =>
           setMessages((cur) => {
             const updatedMessages = updateAIMessage(cur, {
@@ -417,6 +423,7 @@ const Chat = () => {
       onInterrupt: false,
       stopped: false,
       errorMessage: undefined,
+      contextTruncated: undefined,
     })),
       startRetryStream(
         {
@@ -425,6 +432,7 @@ const Chat = () => {
           actionType: actionType.current,
         },
         {
+          onContextTruncated: markContextTruncated,
           onDelta: (delta) =>
             setMessages((cur) => {
               const updatedMessages = updateAIMessage(cur, {
@@ -491,6 +499,7 @@ const Chat = () => {
     startStream(
       { threadId: tId, actionType: actionType.current },
       {
+        onContextTruncated: markContextTruncated,
         onDelta: (delta) =>
           setMessages((cur) => {
             const updatedMessages = updateAIMessage(cur, {

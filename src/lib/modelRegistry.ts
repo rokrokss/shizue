@@ -24,25 +24,44 @@ export type CloudModel =
   | 'deepseek-pro'
   | 'deepseek-flash';
 
-// 'local' is a model on the user's own server, described by the stored LocalModelConfig.
-export type ChatModel = CloudModel | 'local';
+// A model on the user's own server, stored as 'local:<model id>'. The server, and what each of its
+// models supports, is the stored LocalServerConfig. Chat and translation can pick different ones.
+export type LocalModelRef = `local:${string}`;
+
+export type ChatModel = CloudModel | LocalModelRef;
 
 export type TranslateModel = ChatModel;
 
 // Ollama gets its own API, which can set the context length per request; other servers use /v1.
 export type LocalServerKind = 'ollama' | 'openai-compatible';
 
-export interface LocalModelConfig {
-  kind: LocalServerKind;
-  // Server root without /v1, e.g. http://localhost:11434.
-  baseUrl: string;
-  model: string;
-  // Some OpenAI-compatible servers (Jan, vLLM --api-key) require one.
-  apiKey?: string;
+export interface LocalServerModel {
+  id: string;
   supportsImages: boolean;
   // Thinking runs before any text and is slow locally, so it is turned off when the model has it.
   supportsThinking: boolean;
   // The model's own maximum, when the server reports it (Ollama).
+  contextLength?: number;
+}
+
+// The connected server and its chat models, saved when the user connects.
+export interface LocalServerConfig {
+  kind: LocalServerKind;
+  // Server root without /v1, e.g. http://localhost:11434.
+  baseUrl: string;
+  // Some OpenAI-compatible servers (Jan, vLLM --api-key) require one.
+  apiKey?: string;
+  models: LocalServerModel[];
+}
+
+// What the model factory needs to call one local model.
+export interface LocalModelConfig {
+  kind: LocalServerKind;
+  baseUrl: string;
+  model: string;
+  apiKey?: string;
+  supportsImages: boolean;
+  supportsThinking: boolean;
   contextLength?: number;
 }
 
@@ -145,13 +164,44 @@ export const MODELS: Record<CloudModel, ModelSpec> = {
   },
 };
 
-export const MODEL_OPTIONS: ChatModel[] = [...(Object.keys(MODELS) as CloudModel[]), 'local'];
+export const MODEL_OPTIONS = Object.keys(MODELS) as CloudModel[];
+
+const LOCAL_PREFIX = 'local:';
+
+export const isLocalModel = (model: ChatModel): model is LocalModelRef =>
+  model.startsWith(LOCAL_PREFIX);
+
+export const localModelRef = (id: string): LocalModelRef => `${LOCAL_PREFIX}${id}`;
+
+export const localModelId = (model: LocalModelRef) => model.slice(LOCAL_PREFIX.length);
 
 export const isChatModel = (value: unknown): value is ChatModel =>
-  value === 'local' || (typeof value === 'string' && value in MODELS);
+  typeof value === 'string' &&
+  (value in MODELS || (value.startsWith(LOCAL_PREFIX) && value.length > LOCAL_PREFIX.length));
 
-export const modelSupportsImages = (model: ChatModel, localModel?: LocalModelConfig | null) =>
-  model === 'local' ? Boolean(localModel?.supportsImages) : MODELS[model].supportsImages;
+// Undefined when the model isn't on the connected server (e.g. after connecting another one).
+export const resolveLocalModel = (
+  model: LocalModelRef,
+  server?: LocalServerConfig | null
+): LocalModelConfig | undefined => {
+  const id = localModelId(model);
+  const found = server?.models.find((m) => m.id === id);
+  if (!server || !found) return undefined;
+  return {
+    kind: server.kind,
+    baseUrl: server.baseUrl,
+    apiKey: server.apiKey,
+    model: id,
+    supportsImages: found.supportsImages,
+    supportsThinking: found.supportsThinking,
+    contextLength: found.contextLength,
+  };
+};
+
+export const modelSupportsImages = (model: ChatModel, localServer?: LocalServerConfig | null) =>
+  isLocalModel(model)
+    ? Boolean(resolveLocalModel(model, localServer)?.supportsImages)
+    : MODELS[model].supportsImages;
 
 // Usage records written before model IDs were stored hold slot names or retired model IDs.
 const legacyModelLabels: Record<string, string> = {

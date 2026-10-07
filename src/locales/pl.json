@@ -65,7 +65,8 @@
     "translateModeDescription": "Od teraz, dla każdej wiadomości, którą wyślę, proszę o tłumaczenie i wyjaśnienie w następującym formacie:\n\n1. ✅ Tłumaczenie: Przedstaw naturalne i odpowiednie kontekstowo tłumaczenie.\n2. 📚 Kluczowe słowa/wyrażenia\n    – Słowo: Część mowy / Znaczenie\n    – Przykład z oryginalnego tekstu\n3. 🧠 Wyjaśnienie gramatyczne lub wyrażeniowe: W razie potrzeby, przedstaw krótkie wyjaśnienie kluczowych wyrażeń lub fraz.\n\n- Przedstaw wynik w zorganizowanym formacie podobnym do słownika.\n- Zastosuj pogrubienie dla ważnych treści.\n- Pomiń niepotrzebne wyjaśnienia i pisz czysto i zwięźle dla skupionej nauki.\n- Utrzymaj ten format, chyba że dam dodatkowe instrukcje.",
     "activateTranslateMode": "Aktywuj tryb tłumaczenia..📡 🤖 📡",
     "imageUpload": "Prześlij obraz",
-    "imageUploadNotSupported": "Bieżący model nie obsługuje obrazów"
+    "imageUploadNotSupported": "Bieżący model nie obsługuje obrazów",
+    "contextTruncated": "Tekst jest dłuższy, niż model lokalny może przeczytać naraz, więc użyto tylko jego początku."
   },
   "footer": {
     "joinDiscord": "Dołącz do mnie na Discordzie!",

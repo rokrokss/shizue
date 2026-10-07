@@ -65,7 +65,8 @@
     "translateModeDescription": "Kuanzia sasa, kwa kila ujumbe nitakaoutuma, tafadhali toa tafsiri na maelezo katika umbizo lifuatalo:\n\n1. ✅ Tafsiri: Toa tafsiri ya asili na inayofaa kwa muktadha.\n2. 📚 Maneno/Misemo ya Msingi\n    – Neno: Aina ya neno / Maana\n    – Mfano kutoka kwa nakala halisi\n3. 🧠 Maelezo ya Sarufi au Msemo: Inapohitajika, toa maelezo mafupi ya misemo au vifungu vya muhimu.\n\n- Onyesha matokeo katika umbizo lililoanzana kama kamusi.\n- Tumia uandishi wa ujasiri kwa maudhui muhimu.\n- Epuka maelezo yasiyohitajika na andika kwa uwazi na ufupi kwa kujifunza kileng'enevu.\n- Dumisha umbizo hili isipokuwa nipe maelekezo ya ziada.",
     "activateTranslateMode": "Amilisha Hali ya Tafsiri..📡 🤖 📡",
     "imageUpload": "Pakia picha",
-    "imageUploadNotSupported": "Modeli ya sasa haitumii picha"
+    "imageUploadNotSupported": "Modeli ya sasa haitumii picha",
+    "contextTruncated": "Maandishi ni marefu kuliko modeli ya ndani inavyoweza kusoma kwa mara moja, kwa hiyo mwanzo wake pekee ndio ulitumika."
   },
   "footer": {
     "joinDiscord": "Jiunge nami kwenye Discord!",

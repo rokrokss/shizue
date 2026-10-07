@@ -40,6 +40,7 @@ async function handleLoadThread(msg: any, sendResponse: (response?: any) => void
         onInterrupt: m.onInterrupt,
         stopped: m.stopped,
         errorMessage: m.errorMessage,
+        contextTruncated: m.contextTruncated,
       }))
   );
 }

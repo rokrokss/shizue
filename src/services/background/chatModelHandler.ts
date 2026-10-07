@@ -9,14 +9,22 @@ import {
   getCurrentAnthropicKey,
   getCurrentChatModel,
   getCurrentGeminiKey,
-  getCurrentLocalModel,
+  getCurrentLocalServer,
+  getLocalModelFor,
   getCurrentOpenaiKey,
   getCurrentOpenrouterKey,
 } from '@/entrypoints/background/states/models';
 import { ActionType } from '@/hooks/global';
 import { formatImagesForMessage } from '@/lib/imageFormatHelper';
 import { db, loadThread } from '@/lib/indexDB';
-import { ChatModel, getModelInstance, ModelPreset, providerFromName } from '@/lib/models';
+import {
+  ChatModel,
+  getModelInstance,
+  isLocalModel,
+  localContextLength,
+  ModelPreset,
+  providerFromName,
+} from '@/lib/models';
 import { getInitialAIMessage, getInitialSystemMessage } from '@/lib/prompts';
 import { trackStreamingTokenUsage } from '@/lib/tokenUsageTracker';
 import { debugLog, errorLog } from '@/logs';
@@ -33,8 +41,8 @@ function getChatModelPreset(): ModelPreset {
   const geminiKey = getCurrentGeminiKey();
   const anthropicKey = getCurrentAnthropicKey();
   const openrouterKey = getCurrentOpenrouterKey();
-  const localModel = getCurrentLocalModel();
   const modelName = getCurrentChatModel();
+  const localModel = getLocalModelFor(modelName);
   const connectionMode = getConnectionModeFor(modelName);
   return {
     openaiKey,
@@ -76,10 +84,85 @@ const leadingThinkBlockFilter = () => {
   };
 };
 
+// Room kept for the reply when fitting a local model's context.
+const LOCAL_REPLY_TOKENS = 4096;
+
+// Rough token count: Hangul, CJK and kana come to about a token per character, other text to
+// about one per 4 characters. qwen3.5:9b read 100K characters of English as about 20K tokens
+// (5 characters each); 4 errs toward cutting a little early.
+const estimateTextTokens = (text: string) => {
+  const wide =
+    text.match(/[\p{Script=Hangul}\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/gu)
+      ?.length ?? 0;
+  return wide + Math.ceil((text.length - wide) / 4);
+};
+
+const textOf = (message: BaseMessage) =>
+  typeof message.content === 'string'
+    ? message.content
+    : message.content.map((part) => (part.type === 'text' ? part.text : '')).join('');
+
+// An image comes to about 1,000 tokens.
+const estimateMessageTokens = (message: BaseMessage) =>
+  estimateTextTokens(textOf(message)) +
+  (typeof message.content === 'string'
+    ? 0
+    : message.content.filter((part) => part.type !== 'text').length * 1000);
+
+// The longest prefix of `text` estimated at no more than `tokens`, cut between code points.
+const truncateToTokens = (text: string, tokens: number) => {
+  const chars = Array.from(text);
+  let low = 0;
+  let high = chars.length;
+  while (low < high) {
+    const mid = Math.ceil((low + high) / 2);
+    if (estimateTextTokens(chars.slice(0, mid).join('')) <= tokens) low = mid;
+    else high = mid - 1;
+  }
+  return chars.slice(0, low).join('');
+};
+
+// Ollama drops whatever doesn't fit its context without saying so. When the request won't fit,
+// cut the end of the longest human message (usually a page sent for a summary, whose instructions
+// come first) and report it, so the reply can say it read only part.
+const fitLocalContext = (messages: BaseMessage[], contextLength: number) => {
+  const budget = contextLength - LOCAL_REPLY_TOKENS;
+  const total = messages.reduce((sum, m) => sum + estimateMessageTokens(m), 0);
+  debugLog('ChatModelHandler [fitLocalContext] estimated tokens:', total, 'budget:', budget);
+  if (total <= budget) return { messages, truncated: false };
+
+  let longest = -1;
+  messages.forEach((m, i) => {
+    if (
+      m instanceof HumanMessage &&
+      (longest === -1 || textOf(m).length > textOf(messages[longest]).length)
+    ) {
+      longest = i;
+    }
+  });
+  if (longest === -1) return { messages, truncated: false };
+
+  const original = messages[longest];
+  const keep = Math.max(0, estimateTextTokens(textOf(original)) - (total - budget));
+  const text = truncateToTokens(textOf(original), keep);
+  const fitted = [...messages];
+  fitted[longest] = new HumanMessage(
+    typeof original.content === 'string'
+      ? text
+      : {
+          content: [
+            { type: 'text', text },
+            ...original.content.filter((part) => part.type !== 'text'),
+          ],
+        }
+  );
+  return { messages: fitted, truncated: true };
+};
+
 // The greeting shown at the top of a chat goes to the model as its first turn. Some local chat
 // templates (Gemma's in LM Studio) reject an assistant turn before the first user turn.
 const initialMessagesFor = (modelName: ChatModel, systemMessage: string, aiMessage: string) =>
-  modelName === 'local'
+  isLocalModel(modelName)
     ? [new SystemMessage(systemMessage)]
     : [new SystemMessage(systemMessage), new AIMessage(aiMessage)];
 
@@ -109,9 +192,18 @@ export class ChatModelHandler {
             : 0.7,
         modelPreset,
       });
-      debugLog('ChatModelHandler [_executeStreamAndUpdate] messagesForModel:', messagesForModel);
+      const local = modelPreset.localModel;
+      const { messages: messagesToSend, truncated } =
+        local?.kind === 'ollama'
+          ? fitLocalContext(messagesForModel, localContextLength(local))
+          : { messages: messagesForModel, truncated: false };
+      if (truncated) {
+        port.postMessage({ contextTruncated: true });
+        await db.messages.update(messageId, { contextTruncated: true });
+      }
+      debugLog('ChatModelHandler [_executeStreamAndUpdate] messagesForModel:', messagesToSend);
       const stream = await llm.stream(
-        messagesForModel.map((m) => {
+        messagesToSend.map((m) => {
           if (m.content == '' && provider === 'gemini-api-key') {
             m.content = ' ';
           }
@@ -123,7 +215,7 @@ export class ChatModelHandler {
       let buffer = '';
       let aggregatedChunk: AIMessageChunk | undefined;
       const visibleText =
-        modelPreset.modelName === 'local' ? leadingThinkBlockFilter() : (text: string) => text;
+        isLocalModel(modelPreset.modelName) ? leadingThinkBlockFilter() : (text: string) => text;
 
       const sendBufferToPort = () => {
         const threshold = fullResponseContent ? STREAM_FLUSH_THRESHOLD_1 : STREAM_FLUSH_THRESHOLD_0;
@@ -224,7 +316,7 @@ export class ChatModelHandler {
       const initialAIMessage = getInitialAIMessage(currentLang);
       const modelName = getCurrentChatModel();
       const connectionMode = getConnectionModeFor(modelName);
-      const localModel = getCurrentLocalModel();
+      const localServer = getCurrentLocalServer();
 
       const messages = [
         ...initialMessagesFor(modelName, initialSystemMessage, initialAIMessage),
@@ -234,7 +326,7 @@ export class ChatModelHandler {
               return new HumanMessage({
                 content: [
                   ...(m.content ? [{ type: 'text', text: m.content }] : []),
-                  ...formatImagesForMessage(m.images, modelName, connectionMode, localModel),
+                  ...formatImagesForMessage(m.images, modelName, connectionMode, localServer),
                 ],
               });
             } else {
@@ -294,6 +386,7 @@ export class ChatModelHandler {
         onInterrupt: false,
         stopped: false,
         errorMessage: undefined,
+        contextTruncated: undefined,
       });
 
       // const memory = (await loadUserMemory()).text; // TODO
@@ -303,7 +396,7 @@ export class ChatModelHandler {
       const initialAIMessage = getInitialAIMessage(currentLang);
       const modelName = getCurrentChatModel();
       const connectionMode = getConnectionModeFor(modelName);
-      const localModel = getCurrentLocalModel();
+      const localServer = getCurrentLocalServer();
 
       const historyForModelInput = fullThreadHistory.slice(0, messageIdxToRetry);
 
@@ -315,7 +408,7 @@ export class ChatModelHandler {
               return new HumanMessage({
                 content: [
                   ...(m.content ? [{ type: 'text', text: m.content }] : []),
-                  ...formatImagesForMessage(m.images, modelName, connectionMode, localModel),
+                  ...formatImagesForMessage(m.images, modelName, connectionMode, localServer),
                 ],
               });
             } else {

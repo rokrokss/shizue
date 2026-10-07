@@ -1,44 +1,50 @@
 import { useThemeValue } from '@/hooks/layout';
-import { useLocalModel } from '@/hooks/models';
+import { useLocalServer } from '@/hooks/models';
 import {
   detectLocalServer,
-  LocalServer,
   LocalServerError,
   LocalServerErrorCode,
   normalizeBaseUrl,
   probeLocalServer,
 } from '@/lib/localServer';
+import { LocalModelRef, localModelRef, LocalServerConfig } from '@/lib/modelRegistry';
 import { Button, Input, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type Problem = LocalServerErrorCode | 'notFound' | 'noModels' | 'invalidUrl';
 
-// Connects the 'local' slot to a server on this computer: finds Ollama, LM Studio or llama.cpp at
-// their default ports, or takes an address, then saves the picked model.
+// Connects a server on this computer: finds Ollama, LM Studio or llama.cpp at their default ports,
+// or takes an address, and saves the server with its chat models, which the chat and translation
+// model pickers then list. Onboarding has no pickers, so there it also asks for a model
+// (`pickModel`) and reports it for both uses.
 export default function LocalModelSettings({
   className,
-  onSaved,
+  pickModel,
+  onModelPicked,
 }: {
   className?: string;
-  onSaved?: () => void;
+  pickModel?: boolean;
+  onModelPicked?: (model: LocalModelRef) => void;
 }) {
   const { t } = useTranslation();
   const theme = useThemeValue();
-  const [localModel, setLocalModel] = useLocalModel();
-  const [address, setAddress] = useState(localModel?.baseUrl ?? '');
-  const [apiKey, setApiKey] = useState(localModel?.apiKey ?? '');
-  const [server, setServer] = useState<LocalServer>();
+  const [localServer, setLocalServer] = useLocalServer();
+  const [address, setAddress] = useState(localServer?.baseUrl ?? '');
+  const [apiKey, setApiKey] = useState(localServer?.apiKey ?? '');
+  const [server, setServer] = useState<LocalServerConfig>();
+  const [pickedModel, setPickedModel] = useState<string>();
   const [problem, setProblem] = useState<Problem>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const run = async (find: () => Promise<LocalServer | undefined>) => {
+  const run = async (find: () => Promise<LocalServerConfig | undefined>) => {
     setIsLoading(true);
     setProblem(undefined);
     try {
       const found = await find();
       setServer(found);
       if (found) setAddress(found.baseUrl);
+      if (found && found.models.length > 0) setLocalServer(found);
       setProblem(!found ? 'notFound' : found.models.length === 0 ? 'noModels' : undefined);
     } catch (err) {
       setServer(undefined);
@@ -58,31 +64,20 @@ export default function LocalModelSettings({
     run(() => probeLocalServer(baseUrl, apiKey.trim() || undefined));
   };
 
-  // Look for a server right away, so most users only have to pick a model.
+  // Look for a server right away (or refresh the saved one's model list), so most users only have
+  // to pick a model.
   useEffect(() => {
-    if (localModel) {
-      run(() => probeLocalServer(localModel.baseUrl, localModel.apiKey));
+    if (localServer) {
+      run(() => probeLocalServer(localServer.baseUrl, localServer.apiKey));
     } else {
       onFind();
     }
   }, []);
 
   const onSelectModel = (id: string) => {
-    const model = server?.models.find((m) => m.id === id);
-    if (!server || !model) return;
-    setLocalModel({
-      kind: server.kind,
-      baseUrl: server.baseUrl,
-      model: model.id,
-      apiKey: apiKey.trim() || undefined,
-      supportsImages: model.supportsImages,
-      supportsThinking: model.supportsThinking,
-      contextLength: model.contextLength,
-    });
-    onSaved?.();
+    setPickedModel(id);
+    onModelPicked?.(localModelRef(id));
   };
-
-  const selectedHere = localModel && server && localModel.baseUrl === server.baseUrl;
   const mutedText = theme == 'dark' ? 'sz:text-gray-400' : 'sz:text-gray-500';
   const codeClass = `sz:block sz:mt-1 sz:px-1 sz:py-[2px] sz:rounded sz:break-all sz:select-all ${
     theme == 'dark' ? 'sz:bg-gray-800 sz:text-gray-200' : 'sz:bg-gray-100 sz:text-gray-800'
@@ -127,11 +122,11 @@ export default function LocalModelSettings({
           onPressEnter={onConnect}
         />
       )}
-      {server && server.models.length > 0 && (
+      {pickModel && server && server.models.length > 0 && (
         <Select
           className="sz:font-ycom"
           placeholder={t('local.selectModel')}
-          value={selectedHere ? localModel.model : undefined}
+          value={pickedModel}
           onChange={onSelectModel}
           options={server.models.map((model) => ({
             value: model.id,
@@ -141,9 +136,10 @@ export default function LocalModelSettings({
         />
       )}
       {problemMessage ??
-        (localModel && (
+        (localServer && (
           <div className={`sz:text-xs ${mutedText} sz:break-all`}>
-            {t('local.connected')}: {localModel.model} · {localModel.baseUrl}
+            {t('local.connected')}: {localServer.baseUrl} ·{' '}
+            {localServer.models.map((model) => model.id).join(', ')}
           </div>
         ))}
       <Button

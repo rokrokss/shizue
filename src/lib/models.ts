@@ -4,11 +4,14 @@ import { ChatGoogle } from '@langchain/google';
 import { ChatOllama } from '@langchain/ollama';
 import { ChatOpenAI } from '@langchain/openai';
 import {
+  isLocalModel,
+  localModelId,
   MODELS,
   type ApiKeyProvider,
   type ChatModel,
   type ConnectionMode,
   type LocalModelConfig,
+  type LocalModelRef,
   type ModelSpec,
 } from '@/lib/modelRegistry';
 
@@ -152,11 +155,15 @@ function createOpenRouter(spec: ModelSpec, opts: ModelOptions) {
 // sends the same value, since a different num_ctx makes Ollama reload the model.
 const LOCAL_CONTEXT_LENGTH = 32_768;
 
-function createLocal(opts: ModelOptions) {
+// The context Ollama is asked for; chatModelHandler fits long messages into it.
+export const localContextLength = (local: LocalModelConfig) =>
+  Math.min(local.contextLength ?? LOCAL_CONTEXT_LENGTH, LOCAL_CONTEXT_LENGTH);
+
+function createLocal(model: LocalModelRef, opts: ModelOptions) {
   const { maxTokens, temperature, streaming, jsonSchema, modelPreset } = opts;
   const local = modelPreset.localModel;
   if (!local) {
-    const msg = 'Local model is not set.';
+    const msg = `Local model "${localModelId(model)}" is not on the connected server. Connect it again in Settings.`;
     errorLog(msg);
     throw new Error(msg);
   }
@@ -168,7 +175,7 @@ function createLocal(opts: ModelOptions) {
       streaming: Boolean(streaming),
       ...(temperature !== undefined ? { temperature } : {}),
       ...(maxTokens ? { numPredict: maxTokens } : {}),
-      numCtx: Math.min(local.contextLength ?? LOCAL_CONTEXT_LENGTH, LOCAL_CONTEXT_LENGTH),
+      numCtx: localContextLength(local),
       ...(local.supportsThinking ? { think: false } : {}),
       ...(jsonSchema ? { format: jsonSchema } : {}),
     });
@@ -203,7 +210,7 @@ function createLocal(opts: ModelOptions) {
 
 export function getModelInstance(opts: ModelOptions) {
   const { modelName } = opts.modelPreset;
-  if (modelName === 'local') return createLocal(opts);
+  if (isLocalModel(modelName)) return createLocal(modelName, opts);
   const spec = MODELS[modelName];
   if (opts.modelPreset.connectionMode === 'openrouter') return createOpenRouter(spec, opts);
   if (spec.provider === 'openai-api-key') return createOpenAI(spec, opts);

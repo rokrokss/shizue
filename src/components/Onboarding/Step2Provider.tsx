@@ -22,7 +22,7 @@ import {
   useSetOpenAIKey,
   useSetOpenRouterKey,
 } from '@/hooks/settings';
-import { ApiKeyProvider } from '@/lib/modelRegistry';
+import { ApiKeyProvider, LocalModelRef } from '@/lib/modelRegistry';
 import { validateApiKey } from '@/lib/validateApiKey';
 import { debugLog } from '@/logs';
 import { SmileOutlined } from '@ant-design/icons';
@@ -71,9 +71,9 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
     setApiKey('');
   };
 
-  const onLocalModelSaved = () => {
-    setChatModel('local');
-    setTranslateModel('local');
+  const onLocalModelPicked = (model: LocalModelRef) => {
+    setChatModel(model);
+    setTranslateModel(model);
     setCanProceed(true);
   };
 
@@ -172,7 +172,7 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
         <div>{lines[2]}</div>
       </div>
       {selectedProvider === 'local' ? (
-        <LocalModelSettings className="sz:w-80" onSaved={onLocalModelSaved} />
+        <LocalModelSettings className="sz:w-80" pickModel onModelPicked={onLocalModelPicked} />
       ) : (
         <div className="sz:flex sz:flex-row sz:items-center sz:w-80">
           <Input

@@ -1,4 +1,4 @@
-import { useLocalModelValue } from '@/hooks/models';
+import { useLocalServerValue } from '@/hooks/models';
 import {
   useAnthropicKeyValue,
   useGeminiKeyValue,
@@ -13,10 +13,10 @@ export const OnboardedRoute = ({ children }: { children: ReactNode }) => {
   const geminiKey = useGeminiKeyValue();
   const anthropicKey = useAnthropicKeyValue();
   const openRouterKey = useOpenRouterKeyValue();
-  const localModel = useLocalModelValue();
+  const localServer = useLocalServerValue();
 
   const isOnboarded =
-    !!openAIKey || !!geminiKey || !!anthropicKey || !!openRouterKey || !!localModel;
+    !!openAIKey || !!geminiKey || !!anthropicKey || !!openRouterKey || !!localServer;
 
   return isOnboarded ? children : <Navigate to="/onboarding" replace />;
 };

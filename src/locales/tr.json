@@ -65,7 +65,8 @@
     "translateModeDescription": "Bundan böyle gönderdiğim her mesaj için, lütfen aşağıdaki formatta çeviri ve açıklama sağlayın:\n\n1. ✅ Çeviri: Doğal ve bağlama uygun bir çeviri sağlayın.\n2. 📚 Anahtar Kelimeler/İfadeler\n    – Kelime: Kelime türü / Anlam\n    – Orijinal metinden örnek\n3. 🧠 Dilbilgisi veya İfade Açıklaması: Gerektiğinde, anahtar ifadeler veya cümleler için kısa bir açıklama sağlayın.\n\n- Çıktıyı sözlük benzeri düzenli bir formatta sunun.\n- Önemli içeriğe kalın biçimlendirme uygulayın.\n- Gereksiz açıklamaları atlayın ve odaklı öğrenme için temiz ve özlü yazın.\n- Ek talimatlar vermediğim sürece bu formatı koruyun.",
     "activateTranslateMode": "Çeviri Modunu Etkinleştir..📡 🤖 📡",
     "imageUpload": "Resim yükle",
-    "imageUploadNotSupported": "Mevcut model görselleri desteklemiyor"
+    "imageUploadNotSupported": "Mevcut model görselleri desteklemiyor",
+    "contextTruncated": "Metin, yerel modelin bir seferde okuyabileceğinden uzun olduğu için yalnızca başı kullanıldı."
   },
   "footer": {
     "joinDiscord": "Discord'da bana katılın!",

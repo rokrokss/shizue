@@ -3,12 +3,12 @@ import {
   getConnectionModeFor,
   getCurrentAnthropicKey,
   getCurrentGeminiKey,
-  getCurrentLocalModel,
+  getLocalModelFor,
   getCurrentOpenaiKey,
   getCurrentOpenrouterKey,
   getCurrentTranslateModel,
 } from '@/entrypoints/background/states/models';
-import { ModelPreset, getModelInstance } from '@/lib/models';
+import { ModelPreset, getModelInstance, isLocalModel } from '@/lib/models';
 import {
   getHtmlTranslationBatchPrompt,
   getHtmlTranslationPrompt,
@@ -58,8 +58,8 @@ function getTranslationModelPreset(): ModelPreset {
   const geminiKey = getCurrentGeminiKey();
   const anthropicKey = getCurrentAnthropicKey();
   const openrouterKey = getCurrentOpenrouterKey();
-  const localModel = getCurrentLocalModel();
   const modelName = getCurrentTranslateModel();
+  const localModel = getLocalModelFor(modelName);
   const connectionMode = getConnectionModeFor(modelName);
   return {
     openaiKey,
@@ -97,7 +97,7 @@ const LOCAL_TRANSLATION_BATCH_SIZE = 4;
 
 // Ollama ignores minItems/maxItems (llama.cpp enforces them), so counts are still checked after parsing.
 const translationsSchemaFor = (modelPreset: ModelPreset, count: number) =>
-  modelPreset.modelName === 'local'
+  isLocalModel(modelPreset.modelName)
     ? {
         ...TRANSLATIONS_JSON_SCHEMA,
         properties: {
@@ -119,7 +119,7 @@ async function invokeTranslation(
   modelPreset: ModelPreset
 ): Promise<AIMessage | AIMessageChunk> {
   const messages = [new HumanMessage(prompt)];
-  if (modelPreset.modelName !== 'local') return llm.invoke(messages);
+  if (!isLocalModel(modelPreset.modelName)) return llm.invoke(messages);
   let aggregated: AIMessageChunk | undefined;
   for await (const chunk of await llm.stream(messages)) {
     aggregated = aggregated ? aggregated.concat(chunk) : chunk;
@@ -290,7 +290,7 @@ export class TranslationHandler {
 
     try {
       const modelPreset = getTranslationModelPreset();
-      if (modelPreset.modelName === 'local') {
+      if (isLocalModel(modelPreset.modelName)) {
         return await this.translateHtmlTextBatchLocally(textBatch, modelPreset);
       }
       return await this.requestHtmlTranslations(textBatch, modelPreset);
