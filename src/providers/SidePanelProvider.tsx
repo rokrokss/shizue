@@ -275,11 +275,14 @@ const SidePanelProvider = ({
     isProcessingActionRef.current = false;
   }, [threadId, setThreadId, rollbackActionType, chatStatus, navigate, t, targetLanguage]);
 
+  // Not async: Chrome takes a listener's returned promise as its reply, so an async listener here
+  // answered every message (e.g. a content script's translation batch) with undefined before the
+  // background could.
   const handleMessage = useCallback(
-    async (request: any) => {
+    (request: any) => {
       if (request.action === MESSAGE_UPDATE_PANEL_INIT_DATA) {
         debugLog('handleMessage: MESSAGE_UPDATE_PANEL_INIT_DATA');
-        await getInitData();
+        void getInitData();
       }
     },
     [getInitData]
