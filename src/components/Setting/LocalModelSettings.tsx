@@ -1,3 +1,4 @@
+import { LoadingLabel } from '@/components/Loader/LoadingLabel';
 import { useThemeValue } from '@/hooks/layout';
 import { useLocalServer } from '@/hooks/models';
 import {
@@ -37,9 +38,11 @@ export default function LocalModelSettings({
   const [problem, setProblem] = useState<Problem>();
   const [isLoading, setIsLoading] = useState(false);
 
+  // The previous message stays until the result replaces it; clearing it first made the message
+  // and everything below it jump on every Connect.
   const run = async (find: () => Promise<LocalServerConfig | undefined>) => {
+    if (isLoading) return;
     setIsLoading(true);
-    setProblem(undefined);
     try {
       const found = await find();
       setServer(found);
@@ -107,10 +110,9 @@ export default function LocalModelSettings({
           className="sz:font-semibold sz:text-base sz:font-ycom sz:h-8"
           type="primary"
           onClick={onConnect}
-          loading={isLoading}
           style={{ color: theme == 'dark' ? '#000' : 'white' }}
         >
-          {!isLoading && t('local.connect')}
+          <LoadingLabel loading={isLoading}>{t('local.connect')}</LoadingLabel>
         </Button>
       </div>
       {(server?.kind === 'openai-compatible' || problem === 'unauthorized' || apiKey) && (
@@ -147,7 +149,6 @@ export default function LocalModelSettings({
         size="small"
         className="sz:font-ycom sz:self-start sz:p-0 sz:h-auto"
         onClick={onFind}
-        disabled={isLoading}
       >
         {t('local.find')}
       </Button>

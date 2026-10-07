@@ -183,7 +183,7 @@
     "selectModel": "选择模型",
     "connected": "已连接",
     "notFound": "未找到本地服务器。请启动 Ollama 或 LM Studio，或输入其地址。",
-    "noModels": "此服务器没有聊天模型。请先下载一个，例如：",
+    "noModels": "此服务器没有聊天模型。请用以下命令下载一个：",
     "unreachable": "无法连接到服务器。请确认它正在运行。",
     "unauthorized": "此服务器需要 API 密钥。",
     "forbidden": "Ollama 拒绝了请求。请设置以下环境变量并重启 Ollama：",

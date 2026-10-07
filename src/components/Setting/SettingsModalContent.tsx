@@ -1,3 +1,4 @@
+import { LoadingLabel } from '@/components/Loader/LoadingLabel';
 import LocalModelSettings from '@/components/Setting/LocalModelSettings';
 import { Language, useLanguage, useTranslateTargetLanguage } from '@/hooks/language';
 import {
@@ -115,7 +116,7 @@ const SettingsModalContent = () => {
   const userOS = getOS();
 
   const onClickValidate = async () => {
-    if (selectedProvider === 'local') return;
+    if (selectedProvider === 'local' || isLoading) return;
     setIsLoading(true);
     const trimmedKey = apiKey.trim();
     const isValid = await validateApiKey(trimmedKey, selectedProvider);
@@ -351,19 +352,19 @@ const SettingsModalContent = () => {
                         className="sz:font-semibold sz:text-base sz:font-ycom sz:h-8"
                         type="primary"
                         onClick={onClickValidate}
-                        loading={isLoading}
                         onMouseEnter={() => setIsValidateHovered(true)}
                         onMouseLeave={() => setIsValidateHovered(false)}
                         style={{
                           color: theme == 'dark' ? '#000' : 'white',
                         }}
                       >
-                        {!isLoading &&
-                          (isValidateHovered || !canProceed ? (
+                        <LoadingLabel loading={isLoading}>
+                          {isValidateHovered || !canProceed ? (
                             t('onboarding.selectProvider.openaiApiKey.validate')
                           ) : (
                             <SmileOutlined style={{ fontSize: '20px' }} />
-                          ))}
+                          )}
+                        </LoadingLabel>
                       </Button>
                     </div>
                   )}

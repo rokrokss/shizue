@@ -93,7 +93,7 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
         {t('chat.history')}
       </div>
       <div className="sz:flex sz:flex-col sz:gap-3 sz:overflow-y-auto sz:scrollbar-hidden sz:max-h-[70vh]">
-        {threadsWithMessages.length > 0 ? (
+        {threadsWithMessages && threadsWithMessages.length > 0 ? (
           threadsWithMessages.map((thread) => {
             const isSelected = thread.threadId === threadId;
             const isHovered = hoveredThreadId === thread.threadId;
@@ -181,9 +181,9 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
               </div>
             );
           })
-        ) : (
+        ) : threadsWithMessages ? (
           <div className="sz:text-center sz:text-gray-500 sz:text-base">{t('chat.empty')}</div>
-        )}
+        ) : null}
       </div>
     </>
   );

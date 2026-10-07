@@ -1,3 +1,4 @@
+import { LoadingLabel } from '@/components/Loader/LoadingLabel';
 import LocalModelSettings from '@/components/Setting/LocalModelSettings';
 import { useThemeValue } from '@/hooks/layout';
 import {
@@ -78,7 +79,7 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
   };
 
   const onClickValidate = async () => {
-    if (selectedProvider === 'local') return;
+    if (selectedProvider === 'local' || isLoading) return;
     setIsLoading(true);
     const trimmedKey = apiKey.trim();
     const isValid = await validateApiKey(trimmedKey, selectedProvider);
@@ -196,13 +197,14 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
             className="sz:font-semibold sz:text-base sz:font-ycom"
             type="primary"
             onClick={onClickValidate}
-            loading={isLoading}
           >
-            {isLoading ? null : canProceed ? (
-              <SmileOutlined style={{ fontSize: '20px' }} />
-            ) : (
-              t('onboarding.selectProvider.openaiApiKey.validate')
-            )}
+            <LoadingLabel loading={isLoading}>
+              {canProceed ? (
+                <SmileOutlined style={{ fontSize: '20px' }} />
+              ) : (
+                t('onboarding.selectProvider.openaiApiKey.validate')
+              )}
+            </LoadingLabel>
           </Button>
         </div>
       )}

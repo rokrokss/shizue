@@ -183,7 +183,7 @@
     "selectModel": "Bir model seçin",
     "connected": "Bağlandı",
     "notFound": "Yerel sunucu bulunamadı. Ollama veya LM Studio’yu başlatın ya da adresini girin.",
-    "noModels": "Bu sunucuda sohbet modeli yok. Önce bir tane indirin, örneğin:",
+    "noModels": "Bu sunucuda sohbet modeli yok. Bu komutla bir tane indirin:",
     "unreachable": "Sunucuya ulaşılamıyor. Çalıştığından emin olun.",
     "unauthorized": "Bu sunucu bir API anahtarı istiyor.",
     "forbidden": "Ollama isteği reddetti. Bu ortam değişkenini ayarlayıp Ollama’yı yeniden başlatın:",

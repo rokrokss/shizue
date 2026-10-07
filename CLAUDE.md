@@ -557,10 +557,11 @@ export const toggleMemoPinned = async (id: string) => void             // lib/in
 import { liveQuery } from 'dexie';
 import { atomWithObservable } from 'jotai/utils';
 
-// Automatically re-renders components when IndexedDB data changes
+// Automatically re-renders components when IndexedDB data changes. null (not []) until the first
+// query returns, so a list doesn't flash its empty message while loading.
 export const initialMessagesForAllThreadsAtom = atomWithObservable(
   () => liveQuery(() => getInitialMessagesForAllThreads()),
-  { initialValue: [] }
+  { initialValue: null }
 );
 
 // Per-thread message count (used to detect new messages)

@@ -183,7 +183,7 @@
     "selectModel": "Pumili ng model",
     "connected": "Nakakonekta",
     "notFound": "Walang nahanap na local server. Patakbuhin ang Ollama o LM Studio, o ilagay ang address nito.",
-    "noModels": "Walang chat model ang server na ito. Mag-download muna ng isa, halimbawa:",
+    "noModels": "Walang chat model ang server na ito. Mag-download ng isa gamit ang command na ito:",
     "unreachable": "Hindi maabot ang server. Tiyaking tumatakbo ito.",
     "unauthorized": "Kailangan ng API key ng server na ito.",
     "forbidden": "Tinanggihan ng Ollama ang request. Itakda ang environment variable na ito at i-restart ang Ollama:",

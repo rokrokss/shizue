@@ -183,7 +183,7 @@
     "selectModel": "Chọn mô hình",
     "connected": "Đã kết nối",
     "notFound": "Không tìm thấy máy chủ cục bộ. Hãy chạy Ollama hoặc LM Studio, hoặc nhập địa chỉ của nó.",
-    "noModels": "Máy chủ này không có mô hình trò chuyện. Hãy tải một mô hình trước, ví dụ:",
+    "noModels": "Máy chủ này không có mô hình trò chuyện. Hãy tải một mô hình bằng lệnh này:",
     "unreachable": "Không thể kết nối tới máy chủ. Hãy kiểm tra xem nó có đang chạy không.",
     "unauthorized": "Máy chủ này cần khóa API.",
     "forbidden": "Ollama đã từ chối yêu cầu. Hãy đặt biến môi trường này rồi khởi động lại Ollama:",

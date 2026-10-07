@@ -183,7 +183,7 @@
     "selectModel": "Wybierz model",
     "connected": "Połączono",
     "notFound": "Nie znaleziono serwera lokalnego. Uruchom Ollama lub LM Studio albo wpisz adres.",
-    "noModels": "Ten serwer nie ma modeli czatu. Najpierw pobierz jakiś, na przykład:",
+    "noModels": "Ten serwer nie ma modeli czatu. Pobierz jakiś tym poleceniem:",
     "unreachable": "Nie można połączyć się z serwerem. Sprawdź, czy działa.",
     "unauthorized": "Ten serwer wymaga klucza API.",
     "forbidden": "Ollama odrzuciła żądanie. Ustaw tę zmienną środowiskową i uruchom Ollama ponownie:",

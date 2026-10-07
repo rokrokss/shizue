@@ -183,7 +183,7 @@
     "selectModel": "Elige un modelo",
     "connected": "Conectado",
     "notFound": "No se encontró ningún servidor local. Inicia Ollama o LM Studio, o escribe su dirección.",
-    "noModels": "Este servidor no tiene modelos de chat. Descarga uno primero, por ejemplo:",
+    "noModels": "Este servidor no tiene modelos de chat. Descarga uno con este comando:",
     "unreachable": "No se puede conectar con el servidor. Comprueba que esté en marcha.",
     "unauthorized": "Este servidor necesita una clave API.",
     "forbidden": "Ollama rechazó la solicitud. Define esta variable de entorno y reinicia Ollama:",

@@ -183,7 +183,7 @@
     "selectModel": "모델 선택",
     "connected": "연결됨",
     "notFound": "로컬 서버를 찾지 못했습니다. Ollama나 LM Studio를 실행하거나 주소를 입력하세요.",
-    "noModels": "이 서버에 채팅 모델이 없습니다. 먼저 모델을 받으세요. 예:",
+    "noModels": "이 서버에 채팅 모델이 없습니다. 아래 명령으로 모델을 하나 받으세요:",
     "unreachable": "서버에 연결할 수 없습니다. 서버가 실행 중인지 확인하세요.",
     "unauthorized": "이 서버는 API 키가 필요합니다.",
     "forbidden": "Ollama가 요청을 거부했습니다. 아래 환경 변수를 설정하고 Ollama를 다시 시작하세요:",

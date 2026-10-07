@@ -10,14 +10,17 @@ export const chatStatusAtom = atom<ChatStatus>('idle');
 export const isChatIdle = (status: ChatStatus) => status === 'idle';
 export const isChatWaiting = (status: ChatStatus) => status === 'waiting';
 
-export const initialMessagesForAllThreadsAtom = atomWithObservable<ThreadWithInitialMessages[]>(
+// null until the first query returns, so the history doesn't flash its empty message.
+export const initialMessagesForAllThreadsAtom = atomWithObservable<
+  ThreadWithInitialMessages[] | null
+>(
   (getJotai) => {
     const observable: Observable<ThreadWithInitialMessages[]> = liveQuery(() =>
       getInitialMessagesForAllThreads()
     );
     return observable;
   },
-  { initialValue: [] }
+  { initialValue: null }
 );
 
 export const createThreadMessageCountAtom = (threadId: string | undefined) => 

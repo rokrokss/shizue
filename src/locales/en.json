@@ -183,7 +183,7 @@
     "selectModel": "Choose a model",
     "connected": "Connected",
     "notFound": "No local server found. Start Ollama or LM Studio, or enter its address.",
-    "noModels": "This server has no chat models. Download one first, for example:",
+    "noModels": "This server has no chat models. Download one with this command:",
     "unreachable": "Can't reach the server. Make sure it's running.",
     "unauthorized": "This server needs an API key.",
     "forbidden": "Ollama refused the request. Set this environment variable and restart Ollama:",

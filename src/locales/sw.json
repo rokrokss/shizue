@@ -183,7 +183,7 @@
     "selectModel": "Chagua modeli",
     "connected": "Imeunganishwa",
     "notFound": "Hakuna seva ya ndani iliyopatikana. Washa Ollama au LM Studio, au weka anwani yake.",
-    "noModels": "Seva hii haina modeli za mazungumzo. Pakua moja kwanza, kwa mfano:",
+    "noModels": "Seva hii haina modeli za mazungumzo. Pakua moja kwa amri hii:",
     "unreachable": "Haiwezekani kufikia seva. Hakikisha inaendeshwa.",
     "unauthorized": "Seva hii inahitaji ufunguo wa API.",
     "forbidden": "Ollama imekataa ombi. Weka kigezo hiki cha mazingira kisha uwashe upya Ollama:",

@@ -51,7 +51,8 @@ const MemoListModalContent = ({
   const [hoveredMemoId, setHoveredMemoId] = useState<string | null>(null);
   const [memos, setMemos] = useState<Memo[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  // Starts true so the empty message doesn't show before the first load.
+  const [isLoading, setIsLoading] = useState(true);
   const { t } = useTranslation();
   const { lang } = useLanguage();
 
@@ -168,7 +169,8 @@ const MemoListModalContent = ({
       </div>
 
       <div className="sz:flex sz:flex-col sz:gap-3 sz:overflow-y-auto sz:scrollbar-hidden sz:max-h-[50vh]">
-        {!isLoading && sortedMemos.length > 0 ? (
+        {/* A reload (e.g. after a delete) keeps the current list until the new one replaces it. */}
+        {sortedMemos.length > 0 ? (
           sortedMemos.map((memo) => {
             const isSelected = memo.id === selectedMemoId;
             const isHovered = hoveredMemoId === memo.id;
@@ -275,7 +277,7 @@ const MemoListModalContent = ({
               </div>
             );
           })
-        ) : (
+        ) : isLoading ? null : (
           <div className="sz:text-center sz:py-8">
             <p className={`sz:text-sm ${theme === 'dark' ? 'sz:text-gray-400' : 'sz:text-gray-500'}`}>
               {searchTerm ? t('memo.noSearchResults') : t('memo.noMemos')}
