@@ -94,6 +94,9 @@ class ShizueTranslationOverlay extends HTMLElement {
         <div class="shizue-spinner-wrapper"><div class="shizue-spinner"></div></div>
       `;
       this.style.lineHeight = 'normal';
+      // Under an inherited `white-space: pre-wrap` the template's line breaks render as a blank
+      // line that pushes the spinner out of the 20px box (e.g. cerebras.ai blog paragraphs).
+      this.style.whiteSpace = 'normal';
       setTimeout(() => {
         this.style.maxHeight = '20px';
       }, 0);
@@ -101,6 +104,7 @@ class ShizueTranslationOverlay extends HTMLElement {
       this.style.maxHeight = '20px';
       this.innerHTML = sanitizeTranslation(this.translatedText);
       this.style.lineHeight = '';
+      this.style.whiteSpace = '';
       this.style.opacity = '0.5';
 
       const targetHeight = this.scrollHeight + 'px';

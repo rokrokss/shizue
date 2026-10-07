@@ -237,7 +237,7 @@ export class PageTranslator {
         debugLog(
           `[processTranslationQueue] cached translation found for ${text}, translatedText: ${translatedText}`
         );
-        const overlay = this.attachTranslationOverlay(element);
+        const overlay = this.overlayFor(element);
         this.visitedElements.add(element);
         if (translatedText.trim() !== '') {
           overlay.setTexts(translatedText);
@@ -250,11 +250,8 @@ export class PageTranslator {
         if (this.queuedElements.has(element)) {
           this.queuedElements.delete(element);
         }
-      } else if (
-        this.queuedElements.has(element) &&
-        !element.querySelector('shizue-translation-overlay')
-      ) {
-        const overlay = this.attachTranslationOverlay(element);
+      } else if (this.queuedElements.has(element)) {
+        const overlay = this.overlayFor(element);
         this.visitedElements.add(element);
         overlay.setLoading(true);
         overlaysInBatch.push({ element, overlay, text });
@@ -392,7 +389,13 @@ export class PageTranslator {
         }
       }
 
-      queueAbleItems.forEach(({ element }) => this.queuedElements.add(element));
+      // Show the loader on every queued element now: batches go out one at a time, so elements in
+      // later batches would otherwise show nothing until their turn.
+      queueAbleItems.forEach(({ element }) => {
+        this.queuedElements.add(element);
+        this.visitedElements.add(element);
+        this.overlayFor(element).setLoading(true);
+      });
 
       const batches = this.createTranslationBatches(queueAbleItems);
 
@@ -532,6 +535,14 @@ export class PageTranslator {
     ) as ShizueTranslationOverlay;
     element.appendChild(overlay);
     return overlay;
+  }
+
+  // The overlay attached when the element was queued, or a new one.
+  private overlayFor(element: Element): ShizueTranslationOverlay {
+    const existing = Array.from(element.children).find(
+      (child) => child.tagName === 'SHIZUE-TRANSLATION-OVERLAY'
+    );
+    return (existing as ShizueTranslationOverlay) ?? this.attachTranslationOverlay(element);
   }
 
   // Return current active state
