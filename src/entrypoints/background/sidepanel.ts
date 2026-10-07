@@ -1,10 +1,8 @@
 import {
   MESSAGE_RETRY_GRAPH_STREAM,
   MESSAGE_RUN_GRAPH_STREAM,
-  PORT_LISTEN_PANEL_CLOSED_KEY,
   PORT_STREAM_MESSAGE,
 } from '@/config/constants';
-import { changePanelOpened, getPanelOpened } from '@/entrypoints/background/states/sidepanel';
 import { whenBackgroundStateReady } from '@/entrypoints/background/states/ready';
 import { debugLog, errorLog } from '@/logs';
 import { getChatModelHandler } from '@/services/background/chatModelHandler';
@@ -17,11 +15,13 @@ const updateCurrentWindowId = () => {
   });
 };
 
-export const openPanel = async (windowId: number | undefined) => {
-  if (windowId === undefined) {
-    windowId = currentWindowId;
-  }
-  chrome.sidePanel.open({ windowId: windowId! });
+// Callers pass the window of the tab that asked when they know it: right after the service worker
+// starts, currentWindowId is still being looked up.
+export const openPanel = (windowId: number | undefined) => {
+  windowId ??= currentWindowId;
+  if (windowId === undefined) return;
+  // A no-op when the panel is already open.
+  chrome.sidePanel.open({ windowId }).catch((error) => errorLog('sidePanel.open', error));
 };
 
 export const closePanel = () => {
@@ -30,14 +30,18 @@ export const closePanel = () => {
   });
 };
 
-export const changePanelShowStatus = () => {
-  changePanelOpened(!getPanelOpened());
-
-  if (getPanelOpened()) {
-    void openPanel(undefined);
-  } else {
-    closePanel();
-  }
+// Asks Chrome whether the panel is open instead of remembering it: the service worker is stopped
+// after ~30 s idle, and a remembered state came back as "closed" while the panel was open, so the
+// next press opened (a no-op) instead of closing. open() has to run within the click or shortcut,
+// which an await would leave, so the panel is opened right away and closed once the answer (taken
+// before the open) says it had been open. Side panel contexts carry no window ID (-1), so this asks
+// about any window, like closePanel, which closes them all.
+export const togglePanel = (windowId: number | undefined) => {
+  const wasOpen = chrome.runtime
+    .getContexts({ contextTypes: [chrome.runtime.ContextType.SIDE_PANEL] })
+    .then((contexts) => contexts.length > 0);
+  openPanel(windowId);
+  wasOpen.then((open) => open && closePanel()).catch((error) => errorLog('getContexts', error));
 };
 
 export const sidebarToggleListeners = () => {
@@ -63,22 +67,14 @@ export const sidebarToggleListeners = () => {
     updateCurrentWindowId();
   });
 
-  chrome.action.onClicked.addListener(() => {
-    changePanelShowStatus();
+  chrome.action.onClicked.addListener((tab) => {
+    togglePanel(tab.windowId);
   });
 
-  chrome.runtime.onConnect.addListener((port) => {
-    if (port.name === PORT_LISTEN_PANEL_CLOSED_KEY) {
-      port.onDisconnect.addListener(() => {
-        changePanelOpened(false);
-      });
-    }
-  });
-
-  chrome.commands.onCommand.addListener((command) => {
+  chrome.commands.onCommand.addListener((command, tab) => {
     if (command === 'toggle-sidepanel') {
       debugLog('toggle-sidepanel command received');
-      changePanelShowStatus();
+      togglePanel(tab?.windowId);
     }
   });
 };

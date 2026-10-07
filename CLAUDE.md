@@ -205,6 +205,12 @@ Three-layer state system with different purposes:
 
 The cache is filled asynchronously after every service worker start, so handlers must `await whenBackgroundStateReady()` (`states/ready.ts`) before reading it. The message router and the chat port listener already do this. The router skips the wait for panel-opening messages: `chrome.sidePanel.open()` must be called synchronously within the sender's user gesture, and any `await` before it loses the gesture.
 
+**Side panel toggle** (`background/sidepanel.ts` `togglePanel`, used by Cmd/Ctrl+Shift+E, the in-page toggle and the action) keeps no open/closed flag.
+- The service worker is stopped after ~30 s idle, and a remembered flag came back "closed" while the panel was open.
+- Instead it starts `chrome.runtime.getContexts({ contextTypes: [SIDE_PANEL] })`, calls `open()` right away (a no-op on an open panel), and closes all panels if the answer says one was open.
+- Side panel contexts report `windowId: -1`, so the check can't be per window.
+- The window comes from the command's or sender's tab: right after a restart, `currentWindowId` is still being looked up.
+
 **When adding new LLM providers**:
 1. Add cache variable: `let newProviderKey: string | undefined`
 2. Add the key to the initial `chrome.storage.local.get([...])` in `modelListeners()`

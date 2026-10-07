@@ -2,23 +2,20 @@ import {
   MESSAGE_CANCEL_NOT_STARTED_MESSAGE,
   MESSAGE_LOAD_THREAD,
   MESSAGE_OPEN_PANEL,
-  MESSAGE_PANEL_OPENED_PING_FROM_PANEL,
   MESSAGE_SET_PANEL_OPEN_OR_NOT,
   MESSAGE_TRANSLATE_HTML_TEXT_BATCH,
   MESSAGE_TRANSLATE_YOUTUBE_CAPTION,
 } from '@/config/constants';
-import { changePanelShowStatus, openPanel } from '@/entrypoints/background/sidepanel';
-import { changePanelOpened, getPanelOpened } from '@/entrypoints/background/states/sidepanel';
+import { openPanel, togglePanel } from '@/entrypoints/background/sidepanel';
 import { db, getLatestMessageForThread, loadThread } from '@/lib/indexDB';
 import { getTranslationHandler } from '@/services/background/translationHandler';
 
-async function handleSetPanelOpenOrNot(msg: any, sendResponse: (response?: any) => void) {
-  changePanelShowStatus();
-  sendResponse({ status: 'success' });
-}
-
-async function handlePanelOpenedPingFromPanel(msg: any, sendResponse: (response?: any) => void) {
-  changePanelOpened(true);
+async function handleSetPanelOpenOrNot(
+  msg: any,
+  sendResponse: (response?: any) => void,
+  sender: chrome.runtime.MessageSender
+) {
+  togglePanel(sender.tab?.windowId);
   sendResponse({ status: 'success' });
 }
 
@@ -59,10 +56,12 @@ async function handleLatestMessageForThread(msg: any, sendResponse: (response?: 
   sendResponse({ status: 'success' });
 }
 
-async function handleOpenPanel(msg: any, sendResponse: (response?: any) => void) {
-  if (!getPanelOpened()) {
-    openPanel(undefined);
-  }
+async function handleOpenPanel(
+  msg: any,
+  sendResponse: (response?: any) => void,
+  sender: chrome.runtime.MessageSender
+) {
+  openPanel(sender.tab?.windowId);
   sendResponse({ status: 'success' });
 }
 
@@ -86,7 +85,6 @@ export const messageHandlers = {
   [MESSAGE_LOAD_THREAD]: handleLoadThread,
   [MESSAGE_CANCEL_NOT_STARTED_MESSAGE]: handleLatestMessageForThread,
   [MESSAGE_SET_PANEL_OPEN_OR_NOT]: handleSetPanelOpenOrNot,
-  [MESSAGE_PANEL_OPENED_PING_FROM_PANEL]: handlePanelOpenedPingFromPanel,
   [MESSAGE_OPEN_PANEL]: handleOpenPanel,
   [MESSAGE_TRANSLATE_HTML_TEXT_BATCH]: handleTranslateHtmlTextBatch,
   [MESSAGE_TRANSLATE_YOUTUBE_CAPTION]: handleTranslateYoutubeCaption,

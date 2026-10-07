@@ -22,7 +22,7 @@ export default defineBackground(() => {
   modelListeners();
   createContextMenu();
 
-  chrome.runtime.onMessage.addListener((msg, _s, sendResponse) => {
+  chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     const handler = messageHandlers[msg?.action as keyof typeof messageHandlers];
     if (!handler) return false;
 
@@ -31,7 +31,7 @@ export default defineBackground(() => {
         // sidePanel.open() must run synchronously within the sender's user gesture,
         // which is lost after an await.
         if (!PANEL_OPEN_ACTIONS.has(msg.action)) await whenBackgroundStateReady();
-        await handler(msg, sendResponse);
+        await handler(msg, sendResponse, sender);
       } catch (err) {
         errorLog('Message handler failed:', msg.action, err);
         sendResponse({ success: false, error: (err as Error).message ?? String(err) });

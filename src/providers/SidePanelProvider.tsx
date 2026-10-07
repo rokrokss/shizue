@@ -1,8 +1,6 @@
 import {
   isSelectionActionType,
-  MESSAGE_PANEL_OPENED_PING_FROM_PANEL,
   MESSAGE_UPDATE_PANEL_INIT_DATA,
-  PORT_LISTEN_PANEL_CLOSED_KEY,
   STORAGE_GLOBAL_STATE,
 } from '@/config/constants';
 import { chatStatusAtom, isChatWaiting } from '@/hooks/chat';
@@ -15,7 +13,7 @@ import { useTranslateTargetLanguageValue } from '@/hooks/language';
 import { addMessage, createThread } from '@/lib/indexDB';
 import { getSelectionActionPrompt, getSummarizePageTextPrompt } from '@/lib/prompts';
 import { readStorage, setStorage } from '@/lib/storageBackend';
-import { debugLog, errorLog } from '@/logs';
+import { debugLog } from '@/logs';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -308,13 +306,6 @@ const SidePanelProvider = ({
     setPanelInitialized(true);
 
     chrome.runtime.onMessage.addListener(handleMessage);
-
-    try {
-      chrome.runtime.sendMessage({ action: MESSAGE_PANEL_OPENED_PING_FROM_PANEL });
-      chrome.runtime.connect({ name: PORT_LISTEN_PANEL_CLOSED_KEY });
-    } catch (error) {
-      errorLog('connect backend port', error);
-    }
 
     return () => {
       chrome.runtime.onMessage.removeListener(handleMessage);
