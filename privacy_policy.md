@@ -29,7 +29,7 @@ We may update our Privacy Policy from time to time. We will notify you of any ch
 
 **Contact Us**
 
-If you have any questions about this Privacy Policy, please contact us via our Discord server: [https://discord.gg/ukfPmxsyEy](https://discord.gg/ukfPmxsyEy)
+If you have any questions about this Privacy Policy, please contact us by email at [q0115643@gmail.com](mailto:q0115643@gmail.com) or via our Discord server: [https://discord.gg/ukfPmxsyEy](https://discord.gg/ukfPmxsyEy)
 
 ---
 
@@ -66,4 +66,4 @@ Shizue 개발자는 **여러분의 데이터를 받는 서버를 운영하지 �
 
 **문의**
 
-본 개인정보처리방침에 대해 궁금한 점이 있으시면 Discord 서버를 통해 문의해 주십시오: [https://discord.gg/ukfPmxsyEy](https://discord.gg/ukfPmxsyEy)
+본 개인정보처리방침에 대해 궁금한 점이 있으시면 이메일([q0115643@gmail.com](mailto:q0115643@gmail.com)) 또는 Discord 서버를 통해 문의해 주십시오: [https://discord.gg/ukfPmxsyEy](https://discord.gg/ukfPmxsyEy)
