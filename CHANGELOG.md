@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.9
+
+- License: Shizue is now MIT-licensed
+- OpenRouter: requests carry `HTTP-Referer: https://shizue.net` and `X-OpenRouter-Title: Shizue`, so usage is counted under the Shizue app on OpenRouter. They identify the app, not you
+
 ## v0.2.8
 
 - Context menu: right-click selected text to translate, explain, summarize, or fix its grammar. The answer opens in the side panel chat, quoting the selection and linking its page
