@@ -128,7 +128,7 @@ STORAGE_USER_MEMORY              // User context for AI (defined but not yet use
 ## Core Features
 
 ### 1. AI Chat with Streaming
-- **Models**: see `MODELS` in `lib/modelRegistry.ts` (GPT-6 Sol/Luna, Gemini 3.8 Flash/3.5 Flash-Lite, Claude Sonnet 5/Haiku 4.5, DeepSeek V4 Pro/V4.1 Flash via OpenRouter only)
+- **Models**: see `MODELS` in `lib/modelRegistry.ts` (GPT-6 Sol/Luna, Gemini 3.8 Flash/3.5 Flash-Lite, Gemma 4 31B, Claude Sonnet 5/Haiku 4.5, DeepSeek V4 Pro/V4.1 Flash via OpenRouter only)
 - **Streaming**: Via port connections with background script
 - **Thread Management**: IndexedDB storage with Dexie
 
@@ -227,7 +227,7 @@ this.version(2).stores({ messages: '...', tokenUsage: 'id, date, model' });
 
 - Settings store stable slot names (`'gpt'`, `'gpt-mini'`, `'gemini-flash'`, ...). `MODELS` maps each slot to the real API model ID, display label, provider, `supportsTemperature`, and `supportsImages`.
 - To swap a model, change its `MODELS` entry. Settings and toggle UIs render from `MODEL_OPTIONS`.
-- Newer reasoning models reject or ignore non-default `temperature`; set `supportsTemperature: false` and the factory omits it. `supportsImages: false` (text-only models) disables chat image upload and the image context menu items, and `formatImagesForMessage` replaces images in thread history with a text note. `fast: true` (translation) maps to OpenAI `reasoning_effort: 'none'`, Gemini `thinkingLevel: 'minimal'`, Anthropic `effort: 'low'`.
+- Newer reasoning models reject or ignore non-default `temperature`; set `supportsTemperature: false` and the factory omits it. `supportsImages: false` (text-only models) disables chat image upload and the image context menu items, and `formatImagesForMessage` replaces images in thread history with a text note. `fast: true` (translation) maps to OpenAI `reasoning_effort: 'none'`, Gemini `thinkingLevel: 'minimal'`, Anthropic `effort: 'low'`. Gemma gets `'minimal'` on every Gemini-key call: the Gemini API turns its thinking on, unlike the model's own default and OpenRouter.
 - `@langchain/openai` does not recognize gpt-6 as a reasoning model, so OpenAI-specific fields go through `modelKwargs` (`max_completion_tokens`, `reasoning_effort`).
 - Read streamed text with `chunk.text` (skips thinking blocks) and aggregate chunks with `concat` before reading `usage_metadata` (providers split usage across chunks).
 - Never import `lib/models.ts` from UI or content scripts: it pulls LangChain into the bundle.

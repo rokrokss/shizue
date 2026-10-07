@@ -68,7 +68,7 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 
 ### 🤖 Multiple AI Model Support:
   - **OpenAI**: GPT-6 Sol, GPT-6 Luna
-  - **Google**: Gemini 3.8 Flash, Gemini 3.5 Flash-Lite
+  - **Google**: Gemini 3.8 Flash, Gemini 3.5 Flash-Lite, Gemma 4 31B
   - **Anthropic**: Claude Sonnet 5, Claude Haiku 4.5
   - **DeepSeek** (OpenRouter only): DeepSeek V4 Pro, DeepSeek V4.1 Flash
   - **OpenRouter**: all of the above with a single API key

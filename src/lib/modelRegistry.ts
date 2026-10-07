@@ -18,6 +18,7 @@ export type ChatModel =
   | 'gpt-mini'
   | 'gemini-flash'
   | 'gemini-flash-lite'
+  | 'gemma'
   | 'claude-sonnet'
   | 'claude-haiku'
   | 'deepseek-pro'
@@ -79,6 +80,14 @@ export const MODELS: Record<ChatModel, ModelSpec> = {
     supportsTemperature: false,
     supportsImages: true,
     openrouter: { id: 'google/gemini-3.5-flash-lite', fastEffort: 'minimal' },
+  },
+  gemma: {
+    id: 'gemma-4-31b-it',
+    label: 'Gemma 4 31B',
+    provider: 'gemini-api-key',
+    supportsTemperature: true,
+    supportsImages: true,
+    openrouter: { id: 'google/gemma-4-31b-it' },
   },
   'claude-sonnet': {
     id: 'claude-sonnet-5',

@@ -83,7 +83,9 @@ function createGemini(spec: ModelSpec, opts: ModelOptions) {
     apiKey: modelPreset.geminiKey!,
     ...temperatureFor(spec, temperature),
     ...(maxTokens ? { maxOutputTokens: maxTokens } : {}),
-    ...(fast ? { thinkingLevel: 'minimal' as const } : {}),
+    // Gemma (the only Gemini-key model with temperature support) doesn't think by default, but the
+    // Gemini API turns thinking on for it, which once streamed a chat reply with no text. Keep it off.
+    ...(fast || spec.supportsTemperature ? { thinkingLevel: 'minimal' as const } : {}),
     ...(jsonSchema ? { responseSchema: jsonSchema } : {}),
   });
 
