@@ -21,6 +21,9 @@ store/render.sh       # Render Chrome Web Store images (store/src → store/out)
 - `store-icon-128.png` is the store listing icon (96px artwork + 16px transparent padding). It is uploaded separately and is not the manifest icon in `src/public/icon/`.
 - `github-social-1280x640.png` is the GitHub social preview, not a store image. It is uploaded in the repo's Settings → General → Social preview.
 
+### Landing Page (shizue.net)
+- `site/index.html` is the landing page. `site/build.sh` assembles it into `_site/` with images copied from `store/out`, and `.github/workflows/pages.yml` deploys it to GitHub Pages on push to `develop`. Re-rendered store images update the site too.
+
 ### Testing Extension
 1. Build: `pnpm build`
 2. Navigate to `chrome://extensions`

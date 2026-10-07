@@ -44,3 +44,6 @@ __pycache__
 
 research_notes/
 reports/
+
+# shizue.net landing page build output (site/build.sh)
+_site/
