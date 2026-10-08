@@ -3,6 +3,7 @@
 ## v0.3.4
 
 - Add ChatGPT sign-in and automatically restore disconnected page scripts
+- GPT-6 Sol is updated to GPT-6.1 Sol
 - Show page translation loaders only for batches currently being translated
 - Fix a previous chat briefly appearing when opening a page summary; reopening the side panel starts a new chat while keeping saved history
 - Speed up side panel startup and settings opening, and remove repeated loading when reopening settings
