@@ -1,5 +1,9 @@
 const EmptyPage = () => {
-  return <div className="w-full h-full bg-white" />;
+  return <div aria-busy="true" style={{
+    width: '100%',
+    minHeight: '100vh',
+    background: 'var(--sz-panel-background, #1c1d26)',
+  }} />;
 };
 
 export default EmptyPage;

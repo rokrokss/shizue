@@ -27,7 +27,7 @@ export const themeAtom = atomWithStorage<Theme>(
   STORAGE_THEME,
   defaultTheme,
   chromeStorageBackend('local'),
-  { getOnInit: false }
+  { getOnInit: true }
 );
 
 export const showToggleAtom = atomWithStorage<boolean>(

@@ -7,6 +7,18 @@
     <meta name="manifest.type" content="browser_action" />
     <meta name="manifest.open_at_install" content="true" />
     <meta name="manifest.include" content="['chrome']" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --sz-panel-background: #1c1d26;
+      }
+      html, body, #root {
+        margin: 0;
+        min-height: 100%;
+        background: var(--sz-panel-background);
+      }
+    </style>
+    <script src="/panel-theme.js"></script>
   </head>
   <body>
     <div id="root"></div>

@@ -7,22 +7,24 @@ import LanguageProvider from '@/providers/LanguageProvider';
 import SidePanelProvider from '@/providers/SidePanelProvider';
 import '@ant-design/v5-patch-for-react-19';
 import { Provider as JotaiProvider } from 'jotai';
-import { StrictMode } from 'react';
+import { StrictMode, Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <JotaiProvider>
-      <HashRouter>
-        <LanguageProvider loadingComponent={<EmptyPage />}>
-          <SidePanelProvider loadingComponent={<EmptyPage />}>
-            <AntdProvider>
-              <SidePanelRoutes />
-            </AntdProvider>
-          </SidePanelProvider>
-        </LanguageProvider>
-      </HashRouter>
+      <Suspense fallback={<EmptyPage />}>
+        <HashRouter>
+          <LanguageProvider loadingComponent={<EmptyPage />}>
+            <SidePanelProvider loadingComponent={<EmptyPage />}>
+              <AntdProvider>
+                <SidePanelRoutes />
+              </AntdProvider>
+            </SidePanelProvider>
+          </LanguageProvider>
+        </HashRouter>
+      </Suspense>
     </JotaiProvider>
   </StrictMode>
 );
