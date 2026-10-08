@@ -20,6 +20,8 @@ const TopMenu = ({ onSettingsClick }: { onSettingsClick: () => void }) => {
       arrow={false}
     >
       <button
+        type="button"
+        aria-label={t('settings.title')}
         className={`
         sz:fixed
         sz:top-3
@@ -38,7 +40,7 @@ const TopMenu = ({ onSettingsClick }: { onSettingsClick: () => void }) => {
         <SettingOutlined
           style={{
             fontSize: 22,
-            filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+            color: theme === 'dark' ? 'rgba(255,255,255,0.88)' : 'rgba(0,0,0,0.88)',
           }}
         />
       </button>

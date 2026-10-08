@@ -32,8 +32,8 @@ const SidePanelFullModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          className={`sz:absolute sz:top-2 sz:right-3 hover:sz:text-black sz:cursor-pointer ${
-            theme == 'dark' ? 'sz:text-white' : 'sz:text-gray-400'
+          className={`sz:absolute sz:top-2 sz:right-3 sz:cursor-pointer ${
+            theme == 'dark' ? 'sz:text-white sz:hover:text-gray-300' : 'sz:text-gray-600 sz:hover:text-black'
           }`}
           onClick={onClose}
         >

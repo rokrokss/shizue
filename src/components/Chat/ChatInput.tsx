@@ -44,6 +44,8 @@ const ChatInput = ({
   const [isCancelHovered, setIsCancelHovered] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const theme = useThemeValue();
+  const iconColor = theme === 'dark' ? 'rgba(255,255,255,0.88)' : 'rgba(0,0,0,0.88)';
+  const disabledIconColor = theme === 'dark' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)';
   const navigate = useNavigate();
   const [chatModel] = useChatModel();
   const localServer = useLocalServerValue();
@@ -155,7 +157,7 @@ const ChatInput = ({
               placement="top"
               title={
                 <div
-                  className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
+                  className={`sz:font-ycom sz:z-2147483647 ${
                     theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
                   }`}
                 >
@@ -172,8 +174,7 @@ const ChatInput = ({
                   <FolderOutlined
                     style={{
                       fontSize: '20px',
-                      color: 'rgba(0,0,0,0.88)',
-                      filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                      color: iconColor,
                     }}
                   />
                 }
@@ -184,7 +185,7 @@ const ChatInput = ({
               placement="top"
               title={
                 <div
-                  className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
+                  className={`sz:font-ycom sz:z-2147483647 ${
                     theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
                   }`}
                 >
@@ -201,8 +202,7 @@ const ChatInput = ({
                   <SmileOutlined
                     style={{
                       fontSize: '20px',
-                      color: 'rgba(0,0,0,0.88)',
-                      filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                      color: iconColor,
                     }}
                   />
                 }
@@ -213,7 +213,7 @@ const ChatInput = ({
               placement="top"
               title={
                 <div
-                  className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
+                  className={`sz:font-ycom sz:z-2147483647 ${
                     theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
                   }`}
                 >
@@ -230,8 +230,7 @@ const ChatInput = ({
                   <LineChartOutlined
                     style={{
                       fontSize: '20px',
-                      color: 'rgba(0,0,0,0.88)',
-                      filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                      color: iconColor,
                     }}
                   />
                 }
@@ -242,7 +241,7 @@ const ChatInput = ({
               placement="top"
               title={
                 <div
-                  className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
+                  className={`sz:font-ycom sz:z-2147483647 ${
                     theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
                   }`}
                 >
@@ -259,8 +258,7 @@ const ChatInput = ({
                   <TranslationOutlined
                     style={{
                       fontSize: '20px',
-                      color: 'rgba(0,0,0,0.88)',
-                      filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                      color: iconColor,
                     }}
                   />
                 }
@@ -271,7 +269,7 @@ const ChatInput = ({
               placement="top"
               title={
                 <div
-                  className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
+                  className={`sz:font-ycom sz:z-2147483647 ${
                     theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
                   }`}
                 >
@@ -295,8 +293,7 @@ const ChatInput = ({
                     <PictureOutlined
                       style={{
                         fontSize: '20px',
-                        color: imagesSupported ? 'rgba(0,0,0,0.88)' : 'rgba(0,0,0,0.25)',
-                        filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                        color: imagesSupported ? iconColor : disabledIconColor,
                       }}
                     />
                   }
@@ -308,7 +305,7 @@ const ChatInput = ({
               placement="top"
               title={
                 <div
-                  className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
+                  className={`sz:font-ycom sz:z-2147483647 ${
                     theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
                   }`}
                 >
@@ -325,8 +322,7 @@ const ChatInput = ({
                   <EditOutlined
                     style={{
                       fontSize: '20px',
-                      color: 'rgba(0,0,0,0.88)',
-                      filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                      color: iconColor,
                     }}
                   />
                 }
@@ -337,7 +333,7 @@ const ChatInput = ({
               placement="top"
               title={
                 <div
-                  className={`sz:text-black sz:font-ycom sz:z-2147483647 ${
+                  className={`sz:font-ycom sz:z-2147483647 ${
                     theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
                   }`}
                 >
@@ -354,8 +350,7 @@ const ChatInput = ({
                   <UnorderedListOutlined
                     style={{
                       fontSize: '20px',
-                      color: 'rgba(0,0,0,0.88)',
-                      filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                      color: iconColor,
                     }}
                   />
                 }

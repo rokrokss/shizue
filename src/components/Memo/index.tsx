@@ -36,6 +36,7 @@ dayjs.extend(localizedFormat);
 
 const Memo = () => {
   const theme = useThemeValue();
+  const iconColor = theme === 'dark' ? 'rgba(255,255,255,0.88)' : 'rgba(0,0,0,0.88)';
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMemoListOpen, setIsMemoListOpen] = useState(false);
   const [selectedMemo, setSelectedMemo] = useState<Memo | null>(null);
@@ -262,7 +263,7 @@ const Memo = () => {
             <HomeOutlined
               style={{
                 fontSize: 22,
-                filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                color: iconColor,
               }}
             />
           </button>
@@ -299,7 +300,7 @@ const Memo = () => {
               <MenuOutlined
                 style={{
                   fontSize: 22,
-                  filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                  color: iconColor,
                 }}
               />
             </button>
@@ -336,7 +337,7 @@ const Memo = () => {
               <PlusOutlined
                 style={{
                   fontSize: 22,
-                  filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
+                  color: iconColor,
                 }}
               />
             </button>

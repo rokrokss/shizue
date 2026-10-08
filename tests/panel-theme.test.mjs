@@ -80,11 +80,15 @@ import { createRoot } from 'react-dom/client';
 import { Provider, createStore } from 'jotai';
 import { themeAtom, useThemeValue } from './src/hooks/layout';
 import EmptyPage from './src/components/Loader/EmptyPage';
+import TopMenu from './src/components/Chat/TopRightMenu';
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
 
 const check = (condition, message) => { if (!condition) throw new Error(message); };
 const host = document.getElementById('root');
 const store = createStore();
 const frames = [];
+let settingsOpened = 0;
 const color = theme => theme === 'dark' ? 'rgb(28, 29, 38)' : 'rgb(255, 255, 255)';
 const background = element => getComputedStyle(element).backgroundColor;
 const assertDocumentTheme = theme => {
@@ -96,13 +100,35 @@ const assertDocumentTheme = theme => {
 function Probe() {
   const theme = useThemeValue();
   useLayoutEffect(() => { frames.push(theme); }, [theme]);
-  return React.createElement('div', { id: 'probe', style: { background: color(theme) } }, theme);
+  return React.createElement(React.Fragment, null,
+    React.createElement('div', { id: 'probe', style: { background: color(theme) } }, theme),
+    React.createElement(TopMenu, { onSettingsClick: () => { settingsOpened++; } }));
+}
+function assertSettingsContrast(theme) {
+  const icon = host.querySelector('[aria-label="setting"]');
+  check(icon, 'Settings icon is missing');
+  const style = getComputedStyle(icon);
+  const channels = style.color.match(/[\\d.]+/g).map(Number);
+  const alpha = channels[3] ?? 1;
+  const surface = theme === 'dark' ? [28, 29, 38] : [255, 255, 255];
+  // Account for the legacy invert filter: currentColor can already be white
+  // under color-scheme: dark, which turns an inherited icon back to black.
+  const inverted = /invert\\(1\\)/.test(style.filter);
+  const visible = channels.slice(0, 3).map((value, i) =>
+    (inverted ? 255 - value : value) * alpha + surface[i] * (1 - alpha));
+  const luminance = rgb => rgb.map(value => value / 255).map(value =>
+    value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4)
+    .reduce((sum, value, i) => sum + value * [0.2126, 0.7152, 0.0722][i], 0);
+  const a = luminance(visible), b = luminance(surface);
+  const ratio = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+  check(ratio >= 4.5, 'Settings icon is unreadable in ' + theme + ': contrast=' + ratio.toFixed(2));
 }
 async function run() {
   assertDocumentTheme(fixture.theme);
   const initialLoading = host.querySelector('[role="status"]');
   check(initialLoading?.textContent.includes('Shizue'), 'No loading UI before React starts');
   check(initialLoading.getBoundingClientRect().height >= innerHeight, 'Initial loading UI does not fill the panel');
+  await i18n.use(initReactI18next).init({ lng: 'en', resources: { en: { translation: { settings: { title: 'Settings' } } } } });
   const root = createRoot(host);
   await act(async () => root.render(React.createElement(Provider, { store },
     React.createElement(Suspense, { fallback: React.createElement(EmptyPage) }, React.createElement(Probe)))));
@@ -114,9 +140,13 @@ async function run() {
   await act(async () => { fixture.waiting = false; fixture.reads.splice(0).forEach(resolve => resolve()); });
   check(frames.length > 0 && frames.every(theme => theme === fixture.theme), 'Hydration committed the wrong theme');
   assertDocumentTheme(fixture.theme);
+  assertSettingsContrast(fixture.theme);
+  await act(async () => host.querySelector('[aria-label="setting"]').closest('button').click());
+  check(settingsOpened === 1, 'Settings button did not open settings');
   const next = fixture.theme === 'dark' ? 'light' : 'dark';
   await act(async () => { await store.set(themeAtom, next); });
   assertDocumentTheme(next);
+  assertSettingsContrast(next);
   check(document.getElementById('probe').textContent === next, 'Setting did not update the UI theme');
   check(localStorage.getItem('shizue.panel.theme') === next, 'Next-open cache did not follow the setting');
   await act(async () => root.unmount());
