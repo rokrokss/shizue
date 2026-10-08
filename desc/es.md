@@ -1,16 +1,16 @@
-🌸 Shizue pone un asistente de IA en el panel lateral de Chrome. Puedes chatear sin salir de la página, resumir con un clic lo que estás leyendo y ver el original y la traducción juntos en páginas web y videos de YouTube.
+🌸 Shizue pone un asistente de IA en el panel lateral de Chrome. Puedes chatear sin cambiar de pestaña, resumir con un clic lo que estás leyendo y ver el original y la traducción juntos en páginas web y videos de YouTube.
 
-Shizue es gratis y de código abierto (MIT). Funciona con tu propia clave de API: OpenAI, Anthropic (Claude), Google (Gemini) o una sola clave de OpenRouter que sirve para todos ellos y también para DeepSeek. No necesitas cuenta ni suscripción, y no hay ningún servidor de Shizue. Solo pagas a tu proveedor de IA, y solo por lo que usas. También puedes usar un modelo que se ejecute en tu propio ordenador con Ollama o LM Studio, sin clave y sin coste.
+Shizue es gratis y de código abierto (MIT). Funciona con tu propia clave de API del proveedor de IA que elijas. No necesitas cuenta ni suscripción, y no hay ningún servidor de Shizue. Solo pagas a tu proveedor de IA, y solo por lo que usas. También puedes usar un modelo que se ejecute en tu propio ordenador, sin clave y sin coste.
 
 
 ✨ Funciones
 
 💬 Chat en el panel lateral
-- Ábrelo en cualquier página con Ctrl+Shift+E (Cmd+Shift+E en Mac)
+- Ábrelo desde cualquier lugar con Ctrl+Shift+E (Cmd+Shift+E en Mac)
 - Adjunta imágenes y vuelve a chats anteriores desde el historial
 
 📋 Resumen de páginas
-- Resume con un clic la página que estás leyendo y sigue preguntando en el mismo chat
+- Obtén un resumen con un clic y sigue preguntando sobre él
 
 🌐 Páginas web bilingües
 - La traducción aparece debajo de cada párrafo y el texto original se queda donde está
@@ -36,15 +36,15 @@ Shizue es gratis y de código abierto (MIT). Funciona con tu propia clave de API
 🔒 Privacidad
 - Las claves de API, el historial de chats y los memos se quedan en tu navegador
 - Cuando usas una función, solo el contenido que necesita va directamente de tu navegador al proveedor de IA que elijas
-- Con un modelo local, las páginas y los chats no salen de tu ordenador
+- Con un modelo local, nada sale de tu ordenador
 - Sin herramientas de análisis ni de seguimiento
 - Código fuente: https://github.com/rokrokss/shizue
 
 
 🚀 Primeros pasos
 1. Instala Shizue y abre el panel lateral con Ctrl+Shift+E (Cmd+Shift+E en Mac)
-2. Pega una clave de API (lo más sencillo es OpenRouter: una sola clave para todos los modelos) o conecta un modelo que se ejecute en Ollama o LM Studio
-3. Abre cualquier página y empieza a preguntar
+2. Pega tu clave de API o conecta un modelo que se ejecute en tu ordenador
+3. Abre cualquier sitio web y empieza a preguntar
 
 Sitio web: https://shizue.net
 Preguntas y comentarios: https://discord.gg/ukfPmxsyEy

@@ -1,16 +1,16 @@
-🌸 Shizue ni msaidizi wa AI aliye kwenye paneli ya upande ya Chrome. Unaweza kupiga gumzo na AI bila kuondoka kwenye ukurasa, kufupisha ukurasa unaousoma kwa kubofya mara moja, na kusoma kurasa za wavuti na kutazama video za YouTube huku ukiona maandishi ya asili na tafsiri kwa pamoja.
+🌸 Shizue ni msaidizi wa AI aliye kwenye paneli ya upande ya Chrome. Unaweza kupiga gumzo na AI bila kubadilisha kichupo, kufupisha unachosoma kwa kubofya mara moja, na kusoma kurasa za wavuti na kutazama video za YouTube huku ukiona maandishi ya asili na tafsiri kwa pamoja.
 
-Shizue ni bure na ni programu huria (MIT). Inafanya kazi kwa ufunguo wako mwenyewe wa API: OpenAI, Anthropic (Claude), Google (Gemini), au ufunguo mmoja wa OpenRouter unaotumika kwa zote hizo pamoja na DeepSeek. Hakuna akaunti, hakuna usajili wa kulipia, na hakuna seva ya Shizue. Unamlipa mtoa huduma wa AI kwa kiasi unachotumia tu. Unaweza pia kutumia modeli inayoendeshwa kwenye kompyuta yako mwenyewe kupitia Ollama au LM Studio, bila ufunguo na bila gharama.
+Shizue ni bure na ni programu huria (MIT). Inafanya kazi kwa ufunguo wako mwenyewe wa API kutoka kwa mtoa huduma wa AI unayemchagua. Hakuna akaunti, hakuna usajili wa kulipia, na hakuna seva ya Shizue. Unamlipa mtoa huduma wa AI kwa kiasi unachotumia tu. Unaweza pia kutumia modeli inayoendeshwa kwenye kompyuta yako mwenyewe, bila ufunguo na bila gharama.
 
 
 ✨ Vipengele
 
 💬 Gumzo kwenye paneli ya upande
-- Fungua kwenye ukurasa wowote kwa Ctrl+Shift+E (Cmd+Shift+E kwenye Mac)
+- Fungua popote kwa Ctrl+Shift+E (Cmd+Shift+E kwenye Mac)
 - Ambatisha picha, na urudi kwenye mazungumzo ya awali kupitia Historia
 
 📋 Muhtasari wa ukurasa
-- Fupisha ukurasa unaousoma kwa kubofya mara moja, kisha uulize maswali zaidi kwenye gumzo hilo hilo
+- Pata muhtasari kwa kubofya mara moja, kisha uulize maswali zaidi kuuhusu
 
 🌐 Kurasa za wavuti kwa lugha mbili
 - Tafsiri huonekana chini ya kila aya, kwa hiyo maandishi ya asili hubaki pale pale
@@ -36,15 +36,15 @@ Shizue ni bure na ni programu huria (MIT). Inafanya kazi kwa ufunguo wako mwenye
 🔒 Faragha
 - Funguo za API, historia ya gumzo, na memo hubaki kwenye kivinjari chako
 - Unapotumia kipengele, maudhui yanayohitajika na kipengele hicho pekee ndiyo hutumwa moja kwa moja kutoka kwenye kivinjari chako hadi kwa mtoa huduma wa AI uliyemchagua
-- Ukitumia modeli ya ndani, kurasa na mazungumzo hayatoki nje ya kompyuta yako
+- Ukitumia modeli ya ndani, hakuna kinachotoka nje ya kompyuta yako
 - Hakuna zana za takwimu wala ufuatiliaji
 - Msimbo chanzo: https://github.com/rokrokss/shizue
 
 
 🚀 Kuanza
 1. Sakinisha Shizue na ubonyeze Ctrl+Shift+E (Cmd+Shift+E kwenye Mac) kufungua paneli ya upande
-2. Bandika ufunguo wa API (OpenRouter ndiyo rahisi zaidi: ufunguo mmoja kwa kila modeli), au unganisha modeli inayoendeshwa kwenye Ollama au LM Studio
-3. Fungua ukurasa wowote na uanze kuuliza
+2. Bandika ufunguo wako wa API, au unganisha modeli inayoendeshwa kwenye kompyuta yako
+3. Fungua tovuti yoyote na uanze kuuliza
 
 Tovuti: https://shizue.net
 Maswali na maoni: https://discord.gg/ukfPmxsyEy

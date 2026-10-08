@@ -1,16 +1,16 @@
-🌸 Shizue puts an AI assistant in Chrome's side panel. Chat without leaving the page, summarize what you're reading in one click, and read web pages and YouTube videos with the original and the translation together.
+🌸 Shizue puts an AI assistant in Chrome's side panel. Chat without switching tabs, summarize what you're reading in one click, and read web pages and YouTube videos with the original and the translation together.
 
-Shizue is free and open source (MIT). It runs on your own API key: OpenAI, Anthropic (Claude), Google (Gemini), or a single OpenRouter key that covers all of them plus DeepSeek. There's no account, no subscription, and no Shizue server. You pay your AI provider only for what you use. You can also run a model on your own computer with Ollama or LM Studio, with no key and no cost.
+Shizue is free and open source (MIT). It runs on your own API key from the AI provider you choose. There's no account, no subscription, and no Shizue server. You pay your AI provider only for what you use. You can also use a model that runs on your own computer, with no key and no cost.
 
 
 ✨ Features
 
 💬 Side panel chat
-- Open it on any page with Ctrl+Shift+E (Cmd+Shift+E on Mac)
+- Open it anywhere with Ctrl+Shift+E (Cmd+Shift+E on Mac)
 - Attach images and go back to earlier chats from the history
 
 📋 Page summaries
-- Summarize the page you're reading in one click, then ask follow-up questions in the same chat
+- Get a summary in one click, then ask follow-up questions about it
 
 🌐 Bilingual web pages
 - The translation appears under each paragraph, so the original stays in place
@@ -36,15 +36,15 @@ Shizue is free and open source (MIT). It runs on your own API key: OpenAI, Anthr
 🔒 Privacy
 - API keys, chat history, and memos stay in your browser
 - When you use a feature, only the content it needs goes straight from your browser to the AI provider you chose
-- With a local model, pages and chats never leave your computer
+- With a local model, nothing leaves your computer
 - No analytics or tracking
 - Source code: https://github.com/rokrokss/shizue
 
 
 🚀 Getting started
 1. Install Shizue and press Ctrl+Shift+E (Cmd+Shift+E on Mac) to open the side panel
-2. Paste an API key (OpenRouter is the simplest: one key for every model), or connect a model running in Ollama or LM Studio
-3. Open any page and start asking
+2. Paste your API key, or connect a model running on your computer
+3. Open a site and start asking
 
 Website: https://shizue.net
 Questions and feedback: https://discord.gg/ukfPmxsyEy
