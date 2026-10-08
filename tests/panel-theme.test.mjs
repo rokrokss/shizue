@@ -126,7 +126,7 @@ function assertSettingsContrast(theme) {
 async function run() {
   assertDocumentTheme(fixture.theme);
   const initialLoading = host.querySelector('[role="status"]');
-  check(initialLoading?.textContent.includes('Shizue'), 'No loading UI before React starts');
+  check(initialLoading?.querySelector('.sz-panel-loading-input'), 'No loading UI before React starts');
   check(initialLoading.getBoundingClientRect().height >= innerHeight, 'Initial loading UI does not fill the panel');
   await i18n.use(initReactI18next).init({ lng: 'en', resources: { en: { translation: { settings: { title: 'Settings' } } } } });
   const root = createRoot(host);
