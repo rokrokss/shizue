@@ -15,7 +15,7 @@ import {
   modelSupportsImages,
 } from '@/lib/modelRegistry';
 import { errorLog } from '@/logs';
-import { createI18n } from '@wxt-dev/i18n';
+import { i18n } from '#i18n';
 
 // Image actions run on the chat model, so they are greyed out for text-only models.
 const updateImageMenuItems = (model: ChatModel, localServer?: LocalServerConfig | null) => {
@@ -31,8 +31,6 @@ const updateImageMenuItems = (model: ChatModel, localServer?: LocalServerConfig 
 };
 
 export const createContextMenu = async () => {
-  const i18n = createI18n();
-
   if (chrome.contextMenus) {
     // Menus persist across service worker restarts; clear them before re-creating the same IDs.
     await chrome.contextMenus.removeAll();
