@@ -66,8 +66,9 @@ const SidePanelProvider = ({
     try {
       await chrome.runtime.sendMessage({ action: MESSAGE_WAIT_PANEL_SUMMARY });
       const initData = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
-      // Use the same storage snapshot as the action, not a pre-hydration render.
-      const threadId = initData?.threadId;
+      // Continue the current panel's conversation only. Legacy storage may still
+      // contain a threadId from a panel that has already been closed.
+      const threadId = store.get(threadIdAtom);
       debugLog('initData', initData);
     
       if (isChatWaiting(store.get(chatStatusAtom))) {

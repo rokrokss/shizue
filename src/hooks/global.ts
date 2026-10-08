@@ -15,7 +15,6 @@ export type ActionType =
 
 export type GlobalState = {
   actionType: ActionType;
-  threadId?: string;
   summaryTitle?: string;
   summaryText?: string;
   summaryPageLink?: string;
@@ -35,8 +34,7 @@ export const globalStateAtom = atomWithStorage<GlobalState>(
   { getOnInit: true }
 );
 
-// Chrome storage is asynchronous. Reading properties from its promise loses the
-// saved thread, even after that promise resolves. Keep readiness explicit.
+// Resolve asynchronous action data before initializing the panel.
 const resolvedGlobalStateAtom = unwrap(globalStateAtom);
 export const sidePanelHydratedAtom = atom((get) => get(resolvedGlobalStateAtom) !== undefined);
 
@@ -46,11 +44,9 @@ export const updateGlobalStateAtom = atom(null, (_get, set, changes: Partial<Glo
     : { ...prev, ...changes })
 );
 
-export const threadIdAtom = atom(
-  (get) => get(resolvedGlobalStateAtom)?.threadId,
-  (_get, set, newThreadId: string | undefined) =>
-    set(updateGlobalStateAtom, { threadId: newThreadId })
-);
+// Selection belongs to this panel's store. A reopened panel starts a new chat;
+// saved conversations remain available through the IndexedDB history.
+export const threadIdAtom = atom<string | undefined>(undefined);
 
 export const actionTypeAtom = atom(
   (get) => get(resolvedGlobalStateAtom)?.actionType ?? 'chat',

@@ -115,7 +115,7 @@ fixture.countAtom = id => {
   return counts.get(id);
 };
 fixture.stream = {
-  startStream: payload => fixture.streams.push(payload),
+  startStream: (payload, options) => { fixture.streams.push(payload); fixture.streamOptions = options; },
   startRetryStream: payload => fixture.streams.push(payload),
   cancelStream() {},
 };
@@ -140,15 +140,16 @@ async function run() {
   check(fixture.adds.length === 1, 'Summary was duplicated or was not processed');
   check(host.textContent === 'INITIALIZING', 'Chat appeared before summary message was saved');
   await flush(() => { fixture.holdAdds = false; fixture.adds.splice(0).forEach(resolve => resolve()); });
-  check(fixture.created === 0, 'Hydration created a different thread');
-  check(fixture.loads.length > 0 && fixture.loads.every(load => load.id === 'saved'), 'Wrong thread loaded');
-  await flush(() => resolveLoads('saved'));
-  check(fixture.frames.length > 0 && fixture.frames.every(frame => frame.includes('SUMMARY Page')), 'Previous chat flashed before the summary');
-  check(fixture.streams.length === 1 && fixture.streams[0].threadId === 'saved', 'Summary stream duplicated or used the wrong thread');
+  check(fixture.created === 1, 'A summary opening a fresh panel must create one new thread');
+  check(fixture.loads.length > 0 && fixture.loads.every(load => load.id === 'created'), 'Previous panel thread loaded');
+  await flush(() => resolveLoads('created'));
+  check(fixture.frames.length > 0 && fixture.frames.every(frame => frame.includes('SUMMARY Page') && !frame.includes('SAVED CHAT')), 'Previous chat flashed before the summary');
+  check(fixture.streams.length === 1 && fixture.streams[0].threadId === 'created', 'Summary stream duplicated or used the wrong thread');
+  check(fixture.rows.get('saved')[0].content === 'SAVED CHAT', 'Starting a new chat changed saved history');
   await flush(() => root.unmount());
 
-  // Mount the real Chat component with an existing conversation, then switch
-  // while two old reads are in flight. Resolve one before and one after B.
+  // Reopen into a new store with a legacy saved selection. It must start blank,
+  // while explicitly selecting a history entry in the open panel still works.
   fixture.state = { actionType: 'chat', threadId: 'A' };
   fixture.rows = new Map([['A', [ai('A CONTENT')]], ['B', [ai('B CONTENT')]]]);
   fixture.frames = []; fixture.loads = []; fixture.streams = []; counts.clear();
@@ -157,6 +158,10 @@ async function run() {
   await flush(() => root.render(React.createElement(StrictMode, null,
     React.createElement(Provider, { store: fixture.store },
       React.createElement(SidePanelProvider, { loadingComponent: 'INITIALIZING' }, React.createElement(Chat))))));
+  check(host.textContent.includes('GREETING'), 'Reopened panel did not start a new chat');
+  check(fixture.loads.length === 0 && fixture.frames.length === 0, 'Previous panel conversation flashed on reopening');
+  check(fixture.store.get(threadIdAtom) === undefined, 'Reopened panel restored the stored thread');
+  await flush(() => fixture.store.set(threadIdAtom, 'A'));
   await flush(() => resolveLoads('A'));
   check(host.textContent.includes('A CONTENT'), 'Initial chat did not load');
   fixture.rows.set('A', [humanSummary]);
@@ -174,7 +179,18 @@ async function run() {
   check(host.textContent.includes('B CONTENT') && !host.textContent.includes('STALE SUMMARY'), 'Late old response replaced the new chat');
   check(fixture.streams.length === 0, 'An obsolete summary started a stream');
 
-  await flush(() => fixture.store.set(fixture.countAtom('B'), 2));
+  // Summary in an already-open panel belongs to its current selection, even if
+  // the action payload carries a legacy thread from a different panel.
+  await flush(() => chrome.storage.local.set({ GLOBAL_STATE: {
+    actionType: 'askForSummary', threadId: 'A', summaryTitle: 'Warm panel', summaryText: 'Body',
+  } }));
+  await flush(() => resolveLoads('B'));
+  check(fixture.created === 1, 'Summary in the open panel created an unnecessary thread');
+  check(fixture.streams.length === 1 && fixture.streams[0].threadId === 'B', 'Summary ignored the active panel selection');
+  check(host.textContent.includes('B CONTENT') && host.textContent.includes('SUMMARY Warm panel'), 'Summary was not appended to the selected conversation');
+  await flush(() => fixture.streamOptions.onDone());
+
+  await flush(() => fixture.store.set(fixture.countAtom('B'), 3));
   await flush(() => fixture.input.onNewChat());
   await flush(() => resolveLoads('B'));
   check(host.textContent.includes('GREETING') && !host.textContent.includes('B CONTENT'), 'A cleared chat reappeared');
@@ -182,10 +198,10 @@ async function run() {
   await flush(() => fixture.store.set(threadIdAtom, 'A'));
   await flush(() => root.unmount());
   await flush(() => resolveLoads('A'));
-  check(fixture.streams.length === 0, 'An unmounted chat started a summary stream');
+  check(fixture.streams.length === 1, 'An unmounted chat started a summary stream');
   check(fixture.store.get(chatStatusAtom) === 'idle', 'Stale response changed chat status');
   document.body.dataset.result = 'passed';
-  document.getElementById('result').textContent = 'PASS: hydration, summary preparation, StrictMode, selection rendering, stale replies, clearing, unmount';
+  document.getElementById('result').textContent = 'PASS: fresh panel selection, hydration, summary preparation, current-panel summary, StrictMode, stale replies, clearing, unmount';
 }
 run().catch(error => {
   document.body.dataset.result = 'failed';

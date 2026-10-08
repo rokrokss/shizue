@@ -42,19 +42,19 @@ async function withGlobalState(run) {
   }
 }
 
-test('stored thread resolves without a storage change and hydration stays false until then', async () => {
+test('stored actions hydrate without restoring the previous panel selection', async () => {
   await withGlobalState(async ({ atoms, store, hydration }) => {
     assert.equal(store.get(atoms.sidePanelHydratedAtom), false);
     assert.equal(store.get(atoms.threadIdAtom), undefined);
     hydration.resolve({ GLOBAL_STATE: { actionType: 'askForSummary', threadId: 'saved-thread' } });
     await flush();
     assert.equal(store.get(atoms.sidePanelHydratedAtom), true);
-    assert.equal(store.get(atoms.threadIdAtom), 'saved-thread');
+    assert.equal(store.get(atoms.threadIdAtom), undefined);
     assert.equal(store.get(atoms.actionTypeAtom), 'askForSummary');
   });
 });
 
-test('thread and action writes preserve the resolved storage fields', async () => {
+test('action writes preserve stored fields while thread selection stays local', async () => {
   await withGlobalState(async ({ atoms, store, hydration, writes }) => {
     hydration.resolve({ GLOBAL_STATE: { actionType: 'askForSummary', threadId: 'saved-thread', summaryText: 'Page' } });
     await flush();
@@ -62,29 +62,46 @@ test('thread and action writes preserve the resolved storage fields', async () =
     assert.deepEqual(writes.at(-1), { actionType: 'chat', threadId: 'saved-thread', summaryText: 'Page' });
     await store.set(atoms.threadIdAtom, 'selected-thread');
     assert.equal(store.get(atoms.threadIdAtom), 'selected-thread');
-    assert.deepEqual(writes.at(-1), { actionType: 'chat', threadId: 'selected-thread', summaryText: 'Page' });
+    assert.deepEqual(writes, [{ actionType: 'chat', threadId: 'saved-thread', summaryText: 'Page' }]);
   });
 });
 
-test('a write during hydration waits for the stored data before merging', async () => {
+test('an action write during hydration waits for stored data without changing selection', async () => {
   await withGlobalState(async ({ atoms, store, hydration, writes }) => {
-    const write = store.set(atoms.threadIdAtom, 'new-thread');
+    store.set(atoms.threadIdAtom, 'new-thread');
+    const write = store.set(atoms.actionTypeAtom, 'chat');
     assert.equal(writes.length, 0);
     hydration.resolve({ GLOBAL_STATE: { actionType: 'askForSummary', summaryText: 'Keep this' } });
     await write;
     await flush();
     assert.equal(store.get(atoms.threadIdAtom), 'new-thread');
-    assert.deepEqual(writes, [{ actionType: 'askForSummary', summaryText: 'Keep this', threadId: 'new-thread' }]);
+    assert.deepEqual(writes, [{ actionType: 'chat', summaryText: 'Keep this' }]);
   });
 });
 
 test('a late hydration response cannot undo a newer storage event', async () => {
   await withGlobalState(async ({ atoms, store, hydration, change }) => {
-    change({ actionType: 'chat', threadId: 'current-thread' });
+    store.set(atoms.threadIdAtom, 'current-thread');
+    change({ actionType: 'memo', threadId: 'other-panel-thread' });
     hydration.resolve({ GLOBAL_STATE: { actionType: 'chat', threadId: 'old-thread' } });
     await flush();
     assert.equal(store.get(atoms.threadIdAtom), 'current-thread');
+    assert.equal(store.get(atoms.actionTypeAtom), 'memo');
     assert.equal(store.get(atoms.sidePanelHydratedAtom), true);
+  });
+});
+
+test('reopening a panel starts a new chat and selections in separate panels are independent', async () => {
+  await withGlobalState(async ({ atoms, store, hydration, writes }) => {
+    hydration.resolve({ GLOBAL_STATE: { actionType: 'chat', threadId: 'legacy-thread' } });
+    await flush();
+    store.set(atoms.threadIdAtom, 'selected-thread');
+    const reopened = createStore();
+    assert.equal(reopened.get(atoms.threadIdAtom), undefined);
+    reopened.set(atoms.threadIdAtom, 'another-thread');
+    assert.equal(store.get(atoms.threadIdAtom), 'selected-thread');
+    assert.equal(reopened.get(atoms.threadIdAtom), 'another-thread');
+    assert.deepEqual(writes, []);
   });
 });
 
