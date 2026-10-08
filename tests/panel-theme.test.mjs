@@ -100,6 +100,9 @@ function Probe() {
 }
 async function run() {
   assertDocumentTheme(fixture.theme);
+  const initialLoading = host.querySelector('[role="status"]');
+  check(initialLoading?.textContent.includes('Shizue'), 'No loading UI before React starts');
+  check(initialLoading.getBoundingClientRect().height >= innerHeight, 'Initial loading UI does not fill the panel');
   const root = createRoot(host);
   await act(async () => root.render(React.createElement(Provider, { store },
     React.createElement(Suspense, { fallback: React.createElement(EmptyPage) }, React.createElement(Probe)))));

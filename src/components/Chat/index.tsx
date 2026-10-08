@@ -1,12 +1,8 @@
-import ChatContainer from '@/components/Chat/ChatContainer';
 import ChatGreeting from '@/components/Chat/ChatGreeting';
 import ChatInput from '@/components/Chat/ChatInput';
-import ThreadListModalContent from '@/components/Chat/ThreadListModalContent';
-import TokenUsageModalContent from '@/components/Chat/TokenUsageModalContent';
 import { DotCycle } from '@/components/Loader/DotCycle';
 import TopMenu from '@/components/Chat/TopRightMenu';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
-import SettingsModalContent from '@/components/Setting/SettingsModalContent';
 import { isSelectionActionType, MESSAGE_LOAD_THREAD } from '@/config/constants';
 import { chatStatusAtom, createThreadMessageCountAtom, isChatIdle } from '@/hooks/chat';
 import { ActionType, threadIdAtom } from '@/hooks/global';
@@ -19,8 +15,13 @@ import { createThreadLoader } from '@/lib/threadLoader';
 import { debugLog, errorLog } from '@/logs';
 import { chatService } from '@/services/chatService';
 import { useAtom, useAtomValue, useStore } from 'jotai';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+const ChatContainer = lazy(() => import('@/components/Chat/ChatContainer'));
+const ThreadListModalContent = lazy(() => import('@/components/Chat/ThreadListModalContent'));
+const TokenUsageModalContent = lazy(() => import('@/components/Chat/TokenUsageModalContent'));
+const SettingsModalContent = lazy(() => import('@/components/Setting/SettingsModalContent'));
 
 export interface Message {
   role: 'human' | 'system' | 'ai';
@@ -562,12 +563,14 @@ const Chat = () => {
         {threadId && messagesThreadId !== threadId ? (
           <div className="sz:pt-15" aria-busy="true"><DotCycle /></div>
         ) : threadId && messages.length > 0 ? (
-          <ChatContainer
-            key={threadId}
-            messages={messages}
-            onRetry={handleRetry}
-            scrollToBottom={scrollToBottomThrottled}
-          />
+          <Suspense fallback={<div className="sz:pt-15" aria-busy="true"><DotCycle /></div>}>
+            <ChatContainer
+              key={threadId}
+              messages={messages}
+              onRetry={handleRetry}
+              scrollToBottom={scrollToBottomThrottled}
+            />
+          </Suspense>
         ) : (
           <ChatGreeting />
         )}

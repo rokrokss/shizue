@@ -1,4 +1,5 @@
-import { ReactNode } from 'react';
+import { DotCycle } from '@/components/Loader/DotCycle';
+import { ReactNode, Suspense } from 'react';
 
 const SidePanelFullModal = ({
   onClose,
@@ -38,7 +39,9 @@ const SidePanelFullModal = ({
         >
           ✕
         </button>
-        {content}
+        <Suspense fallback={<div aria-busy="true"><DotCycle /></div>}>
+          {content}
+        </Suspense>
       </div>
     </div>
   );

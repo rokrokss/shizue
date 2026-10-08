@@ -17,11 +17,44 @@
         min-height: 100%;
         background: var(--sz-panel-background);
       }
+      .sz-panel-loading {
+        box-sizing: border-box;
+        min-height: 100vh;
+        padding: 24px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background: var(--sz-panel-background);
+      }
+      .sz-panel-loading-brand {
+        color: #32ccbc;
+        font: 500 16px system-ui, sans-serif;
+      }
+      .sz-panel-loading-lines {
+        width: 70%;
+        align-self: center;
+      }
+      .sz-panel-loading-line, .sz-panel-loading-input {
+        background: #88888820;
+        border-radius: 8px;
+      }
+      .sz-panel-loading-line { height: 14px; margin: 12px 0; }
+      .sz-panel-loading-line:last-child { width: 70%; }
+      .sz-panel-loading-input { height: 128px; }
     </style>
     <script src="/panel-theme.js"></script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="sz-panel-loading" role="status" aria-label="Loading Shizue" aria-busy="true">
+        <div class="sz-panel-loading-brand" aria-hidden="true">Shizue</div>
+        <div class="sz-panel-loading-lines" aria-hidden="true">
+          <div class="sz-panel-loading-line"></div>
+          <div class="sz-panel-loading-line"></div>
+        </div>
+        <div class="sz-panel-loading-input" aria-hidden="true"></div>
+      </div>
+    </div>
     <script type="module" src="./main.tsx"></script>
   </body>
 </html>
