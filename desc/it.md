@@ -1,6 +1,6 @@
-🌸 Shizue porta un assistente AI nel pannello laterale di Chrome. Puoi chattare senza cambiare scheda, riassumere con un clic quello che stai leggendo e vedere insieme originale e traduzione su pagine web e video di YouTube.
+🌸 Shizue porta nel pannello laterale di Chrome un assistente AI che funziona con il tuo piano ChatGPT: basta accedere con ChatGPT, senza chiave API. Puoi chattare senza cambiare scheda, riassumere con un clic quello che stai leggendo e vedere insieme originale e traduzione su pagine web e video di YouTube.
 
-Shizue è gratis e open source (MIT). Funziona con la tua chiave API del provider AI che preferisci. Niente account, niente abbonamento, nessun server di Shizue. Paghi solo il tuo provider AI, e solo per quello che usi. Puoi anche usare un modello che gira sul tuo computer, senza chiave e senza costi.
+Shizue è gratis e open source (MIT). Puoi anche usare la tua chiave API del provider AI che preferisci e pagare solo quello che usi, oppure un modello che gira sul tuo computer, senza chiave e senza costi. Shizue in sé non ha account, abbonamenti né server.
 
 
 ✨ Funzionalità
@@ -34,7 +34,7 @@ Shizue è gratis e open source (MIT). Funziona con la tua chiave API del provide
 
 
 🔒 Privacy
-- Chiavi API, cronologia delle chat e memo restano nel tuo browser
+- Dati di accesso, chiavi API, cronologia delle chat e memo restano nel tuo browser
 - Quando usi una funzione, solo il contenuto che le serve va direttamente dal tuo browser al provider AI che hai scelto
 - Con un modello locale, nulla lascia il tuo computer
 - Nessuno strumento di analisi o tracciamento
@@ -43,7 +43,7 @@ Shizue è gratis e open source (MIT). Funziona con la tua chiave API del provide
 
 🚀 Per iniziare
 1. Installa Shizue e apri il pannello laterale con Ctrl+Shift+E (Cmd+Shift+E su Mac)
-2. Incolla la tua chiave API oppure collega un modello che gira sul tuo computer
+2. Accedi con ChatGPT, incolla la tua chiave API oppure collega un modello che gira sul tuo computer
 3. Apri un sito qualsiasi e inizia a fare domande
 
 Sito web: https://shizue.net

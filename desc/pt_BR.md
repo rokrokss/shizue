@@ -1,6 +1,6 @@
-🌸 Shizue coloca um assistente de IA no painel lateral do Chrome. Você pode conversar sem trocar de aba, resumir com um clique o que está lendo e ver o original e a tradução juntos em páginas da web e vídeos do YouTube.
+🌸 Shizue coloca no painel lateral do Chrome um assistente de IA que funciona com o seu plano do ChatGPT: é só entrar com o ChatGPT, sem chave de API. Você pode conversar sem trocar de aba, resumir com um clique o que está lendo e ver o original e a tradução juntos em páginas da web e vídeos do YouTube.
 
-Shizue é grátis e de código aberto (MIT). Funciona com a sua própria chave de API do provedor de IA que você escolher. Não é preciso criar conta nem fazer assinatura, e não existe servidor de Shizue. Você paga só ao seu provedor de IA, e só pelo que usar. Você também pode usar um modelo que roda no seu próprio computador, sem chave e sem custo.
+Shizue é grátis e de código aberto (MIT). Você também pode usar a sua própria chave de API do provedor de IA que escolher e pagar só pelo que usar, ou um modelo que roda no seu próprio computador, sem chave e sem custo. Shizue não tem conta, assinatura nem servidor próprios.
 
 
 ✨ Recursos
@@ -34,7 +34,7 @@ Shizue é grátis e de código aberto (MIT). Funciona com a sua própria chave d
 
 
 🔒 Privacidade
-- Chaves de API, histórico de conversas e memos ficam no seu navegador
+- Dados de login, chaves de API, histórico de conversas e memos ficam no seu navegador
 - Quando você usa um recurso, só o conteúdo necessário vai direto do seu navegador para o provedor de IA que você escolheu
 - Com um modelo local, nada sai do seu computador
 - Nenhuma ferramenta de análise ou rastreamento
@@ -43,7 +43,7 @@ Shizue é grátis e de código aberto (MIT). Funciona com a sua própria chave d
 
 🚀 Primeiros passos
 1. Instale Shizue e abra o painel lateral com Ctrl+Shift+E (Cmd+Shift+E no Mac)
-2. Cole a sua chave de API ou conecte um modelo rodando no seu computador
+2. Entre com o ChatGPT, cole a sua chave de API ou conecte um modelo rodando no seu computador
 3. Abra qualquer site e comece a perguntar
 
 Site: https://shizue.net

@@ -2,6 +2,7 @@
   <img src="store/out/promo-marquee-1400x560.png" alt="Shizue: your AI sidekick on every page" width="100%" />
   <h1>Shizue</h1>
   <p>Supercharge your Browse experience with the power of LLMs</p>
+  <p><b>Sign in with ChatGPT and use your ChatGPT plan, no API key needed.</b></p>
 
 
   <p>
@@ -21,12 +22,16 @@
 
 Shizue is a Chrome extension designed for integrating Large Language Models (LLMs) into the daily Browse workflow. The project aims to enhance browser interactions with LLM-driven features, conceptually similar to how tools like Cursor augment code editors.
 
-Shizue provides a free, open-source alternative to commercial services (e.g., [Sider](https://sider.ai/pricing)) that **restricts access to newer models or handy services** behind additional paywalls. Shizue enables users to utilize their own API keys for direct access to rich LLM functionalities, such as page summarization and bilingual webpage translation.
+Shizue provides a free, open-source alternative to commercial services (e.g., [Sider](https://sider.ai/pricing)) that **restricts access to newer models or handy services** behind additional paywalls. Sign in with ChatGPT to use your ChatGPT plan, or bring your own API keys, for direct access to rich LLM functionalities, such as page summarization and bilingual webpage translation.
 
 <br/>
 
 # 🌟 Features
 
+
+### 🔐 Sign in with ChatGPT:
+  - Use your ChatGPT plan instead of an API key: choose Sign in with ChatGPT during onboarding or in Settings → AI provider. Chat, summaries, image actions, and translation then use the models your plan offers, with nothing to install.
+  - Requests count toward your plan's usage, which you can review in [ChatGPT settings](https://chatgpt.com/settings/usage).
 
 ### 💬 AI Chat Sidebar:
   - Quickly launch the sidebar using a keyboard shortcut (default: Ctrl/Cmd+Shift+E) to interact with LLMs via a side panel for queries, brainstorming, or information retrieval without navigating away from the current page.
@@ -73,6 +78,7 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   - **DeepSeek** (OpenRouter only): DeepSeek V4 Pro, DeepSeek V4.1 Flash
   - **OpenRouter**: all of the above with a single API key
   - **Local models**: any model you run with Ollama, LM Studio, or llama.cpp, with no API key
+  - **ChatGPT plan**: the models your plan offers, through Sign in with ChatGPT
 
 ### 🔑 Use Your Own API Keys:
   - Supports personal OpenAI/Gemini/Anthropic API keys for direct and the most cost-effective usage of models. Users are billed directly by those vendors.
@@ -86,7 +92,7 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   - Offers Light and Dark mode options for interface customization.
 
 ### 🛡️ Secure & Private:
-  - API keys, chat history, and memos are stored only in your browser. Page content is sent only to the AI provider you choose, when you use a feature.
+  - API keys, ChatGPT sign-in, chat history, and memos are stored only in your browser. Page content is sent only to the AI provider you choose, when you use a feature.
 
 <br/>
 

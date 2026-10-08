@@ -1,6 +1,6 @@
-🌸 Shizue umieszcza asystenta AI w panelu bocznym Chrome. Możesz rozmawiać z AI bez przełączania kart, jednym kliknięciem podsumować to, co czytasz, a na stronach internetowych i w filmach na YouTube widzieć oryginał razem z tłumaczeniem.
+🌸 Shizue umieszcza w panelu bocznym Chrome asystenta AI, który działa z Twoim planem ChatGPT: wystarczy zalogować się przez ChatGPT, bez klucza API. Możesz rozmawiać z AI bez przełączania kart, jednym kliknięciem podsumować to, co czytasz, a na stronach internetowych i w filmach na YouTube widzieć oryginał razem z tłumaczeniem.
 
-Shizue to darmowe rozszerzenie open source (MIT). Używasz własnego klucza API od wybranego dostawcy AI. Nie trzeba zakładać konta ani płacić abonamentu, a Shizue nie ma własnego serwera. Płacisz tylko swojemu dostawcy AI i tylko za to, czego używasz. Możesz też korzystać z modelu działającego na własnym komputerze – bez klucza i bez kosztów.
+Shizue to darmowe rozszerzenie open source (MIT). Możesz też używać własnego klucza API od wybranego dostawcy AI i płacić tylko za to, czego używasz, albo modelu działającego na własnym komputerze – bez klucza i bez kosztów. Samo Shizue nie wymaga konta ani abonamentu i nie ma własnego serwera.
 
 
 ✨ Funkcje
@@ -34,7 +34,7 @@ Shizue to darmowe rozszerzenie open source (MIT). Używasz własnego klucza API 
 
 
 🔒 Prywatność
-- Klucze API, historia czatów i notatki zostają w Twojej przeglądarce
+- Dane logowania, klucze API, historia czatów i notatki zostają w Twojej przeglądarce
 - Gdy używasz jakiejś funkcji, tylko potrzebna jej treść trafia prosto z przeglądarki do wybranego przez Ciebie dostawcy AI
 - Z modelem lokalnym nic nie opuszcza Twojego komputera
 - Bez analityki i śledzenia
@@ -43,7 +43,7 @@ Shizue to darmowe rozszerzenie open source (MIT). Używasz własnego klucza API 
 
 🚀 Pierwsze kroki
 1. Zainstaluj Shizue i otwórz panel boczny skrótem Ctrl+Shift+E (Cmd+Shift+E na Macu)
-2. Wklej swój klucz API albo podłącz model działający na Twoim komputerze
+2. Zaloguj się przez ChatGPT, wklej swój klucz API albo podłącz model działający na Twoim komputerze
 3. Otwórz dowolną witrynę i zadaj pytanie
 
 Strona internetowa: https://shizue.net

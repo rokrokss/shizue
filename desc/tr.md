@@ -1,6 +1,6 @@
-🌸 Shizue, Chrome'un yan paneline bir yapay zeka asistanı ekler. Sekme değiştirmeden sohbet edebilir, okuduğunuz içeriği tek tıkla özetleyebilir, web sayfalarını ve YouTube videolarını orijinal metinle çeviriyi birlikte görerek takip edebilirsiniz.
+🌸 Shizue, Chrome'un yan paneline ChatGPT planınızla çalışan bir yapay zeka asistanı ekler: ChatGPT ile giriş yapmanız yeterli, API anahtarı gerekmez. Sekme değiştirmeden sohbet edebilir, okuduğunuz içeriği tek tıkla özetleyebilir, web sayfalarını ve YouTube videolarını orijinal metinle çeviriyi birlikte görerek takip edebilirsiniz.
 
-Shizue ücretsiz ve açık kaynaklıdır (MIT). Seçtiğiniz yapay zeka sağlayıcısından aldığınız kendi API anahtarınızla çalışır. Hesap açmanız ya da abone olmanız gerekmez, Shizue'nin bir sunucusu da yoktur. Yapay zeka sağlayıcınıza yalnızca kullandığınız kadar ödersiniz. Kendi bilgisayarınızda çalışan bir modeli de anahtarsız ve ücretsiz kullanabilirsiniz.
+Shizue ücretsiz ve açık kaynaklıdır (MIT). Seçtiğiniz yapay zeka sağlayıcısından aldığınız kendi API anahtarınızla yalnızca kullandığınız kadar ödeyerek ya da kendi bilgisayarınızda çalışan bir modelle anahtarsız ve ücretsiz de kullanabilirsiniz. Shizue'nin kendisinde hesap, abonelik ya da sunucu yoktur.
 
 
 ✨ Özellikler
@@ -34,7 +34,7 @@ Shizue ücretsiz ve açık kaynaklıdır (MIT). Seçtiğiniz yapay zeka sağlay�
 
 
 🔒 Gizlilik
-- API anahtarları, sohbet geçmişi ve notlar yalnızca tarayıcınızda kalır
+- Giriş bilgileri, API anahtarları, sohbet geçmişi ve notlar yalnızca tarayıcınızda kalır
 - Bir özelliği kullandığınızda yalnızca o özelliğin ihtiyaç duyduğu içerik, tarayıcınızdan doğrudan seçtiğiniz yapay zeka sağlayıcısına gönderilir
 - Yerel bir modelle hiçbir şey bilgisayarınızdan çıkmaz
 - Analiz ya da takip aracı kullanılmaz
@@ -43,7 +43,7 @@ Shizue ücretsiz ve açık kaynaklıdır (MIT). Seçtiğiniz yapay zeka sağlay�
 
 🚀 Başlarken
 1. Shizue'yi yükleyin ve yan paneli açmak için Ctrl+Shift+E (Mac'te Cmd+Shift+E) tuşlarına basın
-2. Kendi API anahtarınızı yapıştırın ya da bilgisayarınızda çalışan bir modeli bağlayın
+2. ChatGPT ile giriş yapın, kendi API anahtarınızı yapıştırın ya da bilgisayarınızda çalışan bir modeli bağlayın
 3. Herhangi bir web sitesini açın ve sorunuzu sorun
 
 Web sitesi: https://shizue.net

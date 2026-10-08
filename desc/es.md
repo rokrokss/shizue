@@ -1,6 +1,6 @@
-🌸 Shizue pone un asistente de IA en el panel lateral de Chrome. Puedes chatear sin cambiar de pestaña, resumir con un clic lo que estás leyendo y ver el original y la traducción juntos en páginas web y videos de YouTube.
+🌸 Shizue pone en el panel lateral de Chrome un asistente de IA que funciona con tu plan de ChatGPT: solo inicia sesión con ChatGPT, sin clave de API. Puedes chatear sin cambiar de pestaña, resumir con un clic lo que estás leyendo y ver el original y la traducción juntos en páginas web y videos de YouTube.
 
-Shizue es gratis y de código abierto (MIT). Funciona con tu propia clave de API del proveedor de IA que elijas. No necesitas cuenta ni suscripción, y no hay ningún servidor de Shizue. Solo pagas a tu proveedor de IA, y solo por lo que usas. También puedes usar un modelo que se ejecute en tu propio ordenador, sin clave y sin coste.
+Shizue es gratis y de código abierto (MIT). También puedes usar tu propia clave de API del proveedor de IA que elijas y pagar solo por lo que uses, o un modelo que se ejecute en tu propio ordenador, sin clave y sin coste. Shizue no tiene cuenta, suscripción ni servidor propios.
 
 
 ✨ Funciones
@@ -34,7 +34,7 @@ Shizue es gratis y de código abierto (MIT). Funciona con tu propia clave de API
 
 
 🔒 Privacidad
-- Las claves de API, el historial de chats y los memos se quedan en tu navegador
+- Los datos de inicio de sesión, las claves de API, el historial de chats y los memos se quedan en tu navegador
 - Cuando usas una función, solo el contenido que necesita va directamente de tu navegador al proveedor de IA que elijas
 - Con un modelo local, nada sale de tu ordenador
 - Sin herramientas de análisis ni de seguimiento
@@ -43,7 +43,7 @@ Shizue es gratis y de código abierto (MIT). Funciona con tu propia clave de API
 
 🚀 Primeros pasos
 1. Instala Shizue y abre el panel lateral con Ctrl+Shift+E (Cmd+Shift+E en Mac)
-2. Pega tu clave de API o conecta un modelo que se ejecute en tu ordenador
+2. Inicia sesión con ChatGPT, pega tu clave de API o conecta un modelo que se ejecute en tu ordenador
 3. Abre cualquier sitio web y empieza a preguntar
 
 Sitio web: https://shizue.net

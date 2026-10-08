@@ -1,6 +1,6 @@
-🌸 Shizue là trợ lý AI nằm trong bảng điều khiển bên của Chrome. Trò chuyện với AI mà không phải chuyển tab, tóm tắt nội dung đang đọc chỉ với một cú nhấp, đọc trang web và xem video YouTube với cả bản gốc lẫn bản dịch.
+🌸 Shizue là trợ lý AI nằm trong bảng điều khiển bên của Chrome, dùng được với gói ChatGPT của bạn: chỉ cần đăng nhập bằng ChatGPT, không cần khóa API. Trò chuyện với AI mà không phải chuyển tab, tóm tắt nội dung đang đọc chỉ với một cú nhấp, đọc trang web và xem video YouTube với cả bản gốc lẫn bản dịch.
 
-Shizue miễn phí và là phần mềm mã nguồn mở (MIT), chạy bằng khóa API của riêng bạn từ nhà cung cấp AI bạn chọn. Không cần tài khoản, không có gói thuê bao và cũng không có máy chủ Shizue. Chỉ trả phí cho nhà cung cấp AI theo mức đã dùng. Bạn cũng có thể dùng mô hình chạy trên chính máy tính của mình, không cần khóa và không mất phí.
+Shizue miễn phí và là phần mềm mã nguồn mở (MIT). Bạn cũng có thể dùng khóa API của riêng bạn từ nhà cung cấp AI bạn chọn và chỉ trả theo mức đã dùng, hoặc dùng mô hình chạy trên chính máy tính của mình, không cần khóa và không mất phí. Bản thân Shizue không có tài khoản, gói thuê bao hay máy chủ.
 
 
 ✨ Tính năng
@@ -34,7 +34,7 @@ Shizue miễn phí và là phần mềm mã nguồn mở (MIT), chạy bằng kh
 
 
 🔒 Quyền riêng tư
-- Khóa API, lịch sử trò chuyện và ghi chú chỉ được lưu trong trình duyệt
+- Thông tin đăng nhập, khóa API, lịch sử trò chuyện và ghi chú chỉ được lưu trong trình duyệt
 - Khi dùng một tính năng, chỉ nội dung mà tính năng đó cần mới được gửi thẳng từ trình duyệt đến nhà cung cấp AI đã chọn
 - Khi dùng mô hình cục bộ, không có gì rời khỏi máy tính của bạn
 - Không dùng công cụ phân tích hay theo dõi
@@ -43,7 +43,7 @@ Shizue miễn phí và là phần mềm mã nguồn mở (MIT), chạy bằng kh
 
 🚀 Bắt đầu
 1. Cài Shizue và nhấn Ctrl+Shift+E (Cmd+Shift+E trên Mac) để mở bảng điều khiển bên
-2. Dán khóa API của bạn, hoặc kết nối một mô hình đang chạy trên máy tính của bạn
+2. Đăng nhập bằng ChatGPT, dán khóa API của bạn, hoặc kết nối một mô hình đang chạy trên máy tính của bạn
 3. Mở một website bất kỳ và bắt đầu đặt câu hỏi
 
 Trang web: https://shizue.net

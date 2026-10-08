@@ -1,6 +1,6 @@
-🌸 Shizue ajoute un assistant IA au panneau latéral de Chrome. Vous pouvez discuter sans changer d'onglet, résumer en un clic ce que vous lisez, et voir l'original et la traduction ensemble sur les pages web et les vidéos YouTube.
+🌸 Shizue ajoute au panneau latéral de Chrome un assistant IA qui fonctionne avec votre forfait ChatGPT : connectez-vous simplement avec ChatGPT, sans clé API. Vous pouvez discuter sans changer d'onglet, résumer en un clic ce que vous lisez, et voir l'original et la traduction ensemble sur les pages web et les vidéos YouTube.
 
-Shizue est une extension gratuite et open source (MIT). Elle fonctionne avec votre propre clé API, auprès du fournisseur d'IA de votre choix. Pas de compte, pas d'abonnement, pas de serveur Shizue. Vous ne payez que votre fournisseur d'IA, et seulement pour ce que vous utilisez. Vous pouvez aussi utiliser un modèle qui tourne sur votre propre ordinateur, sans clé et sans frais.
+Shizue est une extension gratuite et open source (MIT). Vous pouvez aussi utiliser votre propre clé API du fournisseur d'IA de votre choix et ne payer que ce que vous utilisez, ou un modèle qui tourne sur votre propre ordinateur, sans clé et sans frais. Shizue elle-même n'a ni compte, ni abonnement, ni serveur.
 
 
 ✨ Fonctionnalités
@@ -34,7 +34,7 @@ Shizue est une extension gratuite et open source (MIT). Elle fonctionne avec vot
 
 
 🔒 Confidentialité
-- Les clés API, l'historique des discussions et les mémos restent dans votre navigateur
+- Les informations de connexion, les clés API, l'historique des discussions et les mémos restent dans votre navigateur
 - Quand vous utilisez une fonctionnalité, seul le contenu dont elle a besoin est envoyé, directement depuis votre navigateur, au fournisseur d'IA que vous avez choisi
 - Avec un modèle local, rien ne quitte votre ordinateur
 - Aucun outil d'analyse ni de suivi
@@ -43,7 +43,7 @@ Shizue est une extension gratuite et open source (MIT). Elle fonctionne avec vot
 
 🚀 Pour commencer
 1. Installez Shizue et ouvrez le panneau latéral avec Ctrl+Shift+E (Cmd+Shift+E sur Mac)
-2. Collez votre clé API ou connectez un modèle qui tourne sur votre ordinateur
+2. Connectez-vous avec ChatGPT, collez votre clé API ou reliez un modèle qui tourne sur votre ordinateur
 3. Ouvrez n'importe quel site et posez votre question
 
 Site web : https://shizue.net

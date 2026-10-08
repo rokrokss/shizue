@@ -1,6 +1,6 @@
-🌸 Shizue bringt einen KI-Assistenten in die Seitenleiste von Chrome. Du kannst chatten, ohne den Tab zu wechseln, mit einem Klick zusammenfassen lassen, was du gerade liest, und bei Webseiten und YouTube-Videos Original und Übersetzung gleichzeitig sehen.
+🌸 Shizue bringt einen KI-Assistenten in die Seitenleiste von Chrome, und er läuft mit deinem ChatGPT-Plan: einfach mit ChatGPT anmelden, ganz ohne API-Schlüssel. Du kannst chatten, ohne den Tab zu wechseln, mit einem Klick zusammenfassen lassen, was du gerade liest, und bei Webseiten und YouTube-Videos Original und Übersetzung gleichzeitig sehen.
 
-Shizue ist kostenlos und Open Source (MIT). Es läuft mit deinem eigenen API-Schlüssel von dem KI-Anbieter deiner Wahl. Es gibt kein Konto, kein Abo und keinen Shizue-Server. Du bezahlst nur deinen KI-Anbieter und nur für das, was du verbrauchst. Du kannst auch ein Modell nutzen, das auf deinem eigenen Computer läuft – ohne Schlüssel und ohne Kosten.
+Shizue ist kostenlos und Open Source (MIT). Du kannst auch deinen eigenen API-Schlüssel von dem KI-Anbieter deiner Wahl verwenden und nur bezahlen, was du verbrauchst, oder ein Modell nutzen, das auf deinem eigenen Computer läuft – ohne Schlüssel und ohne Kosten. Shizue selbst hat kein Konto, kein Abo und keinen Server.
 
 
 ✨ Funktionen
@@ -34,7 +34,7 @@ Shizue ist kostenlos und Open Source (MIT). Es läuft mit deinem eigenen API-Sch
 
 
 🔒 Datenschutz
-- API-Schlüssel, Chatverlauf und Memos bleiben in deinem Browser
+- Anmeldedaten, API-Schlüssel, Chatverlauf und Memos bleiben in deinem Browser
 - Wenn du eine Funktion nutzt, geht nur der Inhalt, den sie braucht, direkt von deinem Browser an den KI-Anbieter, den du gewählt hast
 - Mit einem lokalen Modell verlässt nichts deinen Computer
 - Keine Nutzungsanalyse, kein Tracking
@@ -43,7 +43,7 @@ Shizue ist kostenlos und Open Source (MIT). Es läuft mit deinem eigenen API-Sch
 
 🚀 Erste Schritte
 1. Shizue installieren und mit Ctrl+Shift+E (Cmd+Shift+E am Mac) die Seitenleiste öffnen
-2. Deinen API-Schlüssel einfügen oder ein Modell verbinden, das auf deinem Computer läuft
+2. Mit ChatGPT anmelden, deinen API-Schlüssel einfügen oder ein Modell verbinden, das auf deinem Computer läuft
 3. Eine beliebige Website öffnen und die erste Frage stellen
 
 Website: https://shizue.net

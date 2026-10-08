@@ -1,6 +1,6 @@
-🌸 Ang Shizue ay AI assistant sa side panel ng Chrome. Makipag-chat sa AI nang hindi lumilipat ng tab, ibuod ang binabasa sa isang click, at magbasa ng web page o manood ng YouTube video nang sabay na nakikita ang orihinal at ang salin.
+🌸 Ang Shizue ay AI assistant sa side panel ng Chrome na gumagana gamit ang iyong ChatGPT plan: mag-sign in lang gamit ang ChatGPT, walang kailangang API key. Makipag-chat sa AI nang hindi lumilipat ng tab, ibuod ang binabasa sa isang click, at magbasa ng web page o manood ng YouTube video nang sabay na nakikita ang orihinal at ang salin.
 
-Libre at open source (MIT) ang Shizue. Gumagana ito gamit ang sarili mong API key mula sa AI provider na pipiliin mo. Walang account, walang subscription, at walang server ng Shizue. Ang nagamit mo lang ang babayaran mo sa AI provider. Puwede ka ring gumamit ng model na tumatakbo sa sarili mong computer, nang walang key at walang bayad.
+Libre at open source (MIT) ang Shizue. Puwede mo ring gamitin ang sarili mong API key mula sa AI provider na pipiliin mo at bayaran lang ang nagamit mo, o gumamit ng model na tumatakbo sa sarili mong computer, nang walang key at walang bayad. Walang sariling account, subscription, o server ang Shizue.
 
 
 ✨ Mga Feature
@@ -34,7 +34,7 @@ Libre at open source (MIT) ang Shizue. Gumagana ito gamit ang sarili mong API ke
 
 
 🔒 Privacy
-- Nasa browser mo lang ang mga API key, kasaysayan ng chat, at memo
+- Nasa browser mo lang ang sign-in, mga API key, kasaysayan ng chat, at memo
 - Kapag gumamit ng isang feature, ang nilalaman lang na kailangan nito ang direktang ipinapadala mula sa browser mo papunta sa AI provider na pinili mo
 - Kapag local model ang gamit, walang lumalabas sa computer mo
 - Walang analytics o tracking
@@ -43,7 +43,7 @@ Libre at open source (MIT) ang Shizue. Gumagana ito gamit ang sarili mong API ke
 
 🚀 Pagsisimula
 1. I-install ang Shizue at pindutin ang Ctrl+Shift+E (Cmd+Shift+E sa Mac) para buksan ang side panel
-2. I-paste ang sarili mong API key, o ikonekta ang model na tumatakbo sa computer mo
+2. Mag-sign in gamit ang ChatGPT, i-paste ang sarili mong API key, o ikonekta ang model na tumatakbo sa computer mo
 3. Magbukas ng kahit anong website at magsimulang magtanong
 
 Website: https://shizue.net
