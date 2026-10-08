@@ -252,6 +252,10 @@ this.version(2).stores({ messages: '...', tokenUsage: 'id, date, model' });
     - Onboarding's model picker sets both chat and translation.
     - Text uses `break-keep` + `wrap-anywhere`, and the address and model names never break inside.
   - Translation with a local model sends 4 snippets per request (at 8, qwen3.5:9b put translations in the wrong slots), retries a broken or miscounted request one snippet at a time, and streams so the first token arrives before MV3's 30-second fetch limit. Chat drops the greeting AI turn (Gemma templates in LM Studio reject an assistant turn first) and a leading `<think></think>` block that qwen3.5 emits as text even with thinking off.
+- **Sign in with ChatGPT** (ChatGPT plan usage, OpenAI's open-source flow): `chatgpt:<model id>` refs, models from the account's `/v1/models`. Everything runs in the extension, with no native helper.
+  - `lib/chatgptAuth.ts` (OAuth, PKCE, ID token checks, one saved registration, refresh) and `lib/chatgptResponses.ts` (Responses stream) are pure; `services/background/chatgpt.ts` wires them to `chrome.storage.local` (`STORAGE_CHATGPT_CREDENTIALS`, read only by the background) and the settings bridge. The UI sees only `STORAGE_CHATGPT_CONNECTION` (labels, models, status).
+  - The flow requires a `http://127.0.0.1:<port>/auth/callback` redirect. Nothing listens there: a DNR session rule redirects that navigation to the web-accessible `chatgpt-callback.html`, which passes the query to the background and closes its tab. The background checks `state`.
+  - While waiting for the callback, the background calls an extension API every 20 s, because Chrome may stop a worker after 30 s without events. (In a headless test the worker survived 45 s even without it, so this is insurance.)
 
 **When adding new LLM provider**:
 1. Extend `ModelProvider` and add entries to `MODELS` in `lib/modelRegistry.ts`

@@ -1,8 +1,10 @@
+// Responses API helpers for ChatGPT plan usage. Pure: shared by the background and its tests.
 export class ProviderError extends Error {
-  constructor(code, message) { super(message); this.code = code; }
+  code: string;
+  constructor(code: string, message: string) { super(message); this.code = code; }
 }
 
-export async function requireOK(response) {
+export async function requireOK(response: Response) {
   if (response.ok) return response;
   const body = await response.json().catch(() => ({}));
   const code = body.error?.code || body.error || `http_${response.status}`;
@@ -10,39 +12,51 @@ export async function requireOK(response) {
   throw new ProviderError(typeof code === 'string' ? code : 'provider_error', `ChatGPT request failed (${response.status}).`);
 }
 
-export async function readJSON(response) {
+export async function readJSON(response: Response) {
   try { return await response.json(); }
   catch { throw new ProviderError('invalid_provider_response', 'ChatGPT returned an unreadable response.'); }
 }
 
-export function responseRequestBody({ model, input, instructions, reasoning }) {
+export interface ResponseRequest {
+  model: unknown;
+  input: unknown;
+  instructions?: unknown;
+  reasoning?: unknown;
+}
+
+export function responseRequestBody({ model, input, instructions, reasoning }: ResponseRequest) {
   if (typeof model !== 'string' || !Array.isArray(input) || (instructions !== undefined && typeof instructions !== 'string')) throw new Error('Invalid ChatGPT request.');
+  const effort = (reasoning as { effort?: unknown } | undefined)?.effort;
   if (reasoning !== undefined && (
     !reasoning || typeof reasoning !== 'object' || Array.isArray(reasoning) ||
-    !['low', 'none'].includes(reasoning.effort)
+    typeof effort !== 'string' || !['low', 'none'].includes(effort)
   )) throw new Error('Invalid ChatGPT reasoning effort.');
-  // Construct only supported fields; never forward arbitrary native-message options.
+  // Construct only supported fields; never forward arbitrary options.
   return {
     model, input,
     ...(instructions ? { instructions } : {}),
-    ...(reasoning ? { reasoning: { effort: reasoning.effort } } : {}),
+    ...(reasoning ? { reasoning: { effort: effort as 'low' | 'none' } } : {}),
     store: false, stream: true,
   };
 }
 
-export function visibleModels(body) {
+export function visibleModels(body: { models?: unknown }) {
   if (!Array.isArray(body.models)) throw new Error('ChatGPT returned an invalid model catalog.');
   return body.models.filter((model) => model.visibility === 'list' && typeof model.slug === 'string')
-    .map((model) => ({ id: model.slug, label: model.display_name || model.slug }));
+    .map((model) => ({ id: model.slug as string, label: (model.display_name || model.slug) as string }));
 }
 
-export async function* responseEvents(body) {
+export type ResponseEvent =
+  | { delta: string }
+  | { usage: { input_tokens: number; output_tokens: number; total_tokens: number } };
+
+export async function* responseEvents(body: ReadableStream<Uint8Array> | null): AsyncGenerator<ResponseEvent> {
   if (!body) throw new Error('ChatGPT returned no response stream.');
   const reader = body.getReader();
   const decoder = new TextDecoder();
   let pending = '';
   let completed = false;
-  const parseEvent = (block) => {
+  const parseEvent = (block: string) => {
     const data = block.split('\n').filter((line) => line.startsWith('data:')).map((line) => line.slice(5).trimStart()).join('\n');
     if (!data || data === '[DONE]') return null;
     try { return JSON.parse(data); }

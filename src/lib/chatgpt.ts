@@ -1,14 +1,12 @@
-export const CHATGPT_HOST = 'net.shizue.chatgpt';
 export const CHATGPT_SETTINGS_MESSAGE = 'chatgpt_settings';
+export const CHATGPT_CALLBACK_MESSAGE = 'chatgpt_callback';
 export const CHATGPT_REQUEST_TIMEOUTS = {
   status: 10_000,
   signIn: 240_000,
   signOut: 120_000,
-  responses: 660_000,
 };
 
 export interface ChatGPTConnection {
-  installed: boolean;
   connected: boolean;
   activeId: string | null;
   accounts: { id: string; label: string; connected: boolean }[];
@@ -18,7 +16,7 @@ export interface ChatGPTConnection {
 }
 
 export const disconnectedChatGPT: ChatGPTConnection = {
-  installed: false, connected: false, activeId: null, accounts: [], models: [],
+  connected: false, activeId: null, accounts: [], models: [],
 };
 
 export interface ChatGPTSettingsResult extends ChatGPTConnection {

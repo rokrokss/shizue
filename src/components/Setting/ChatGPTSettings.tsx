@@ -25,24 +25,19 @@ export default function ChatGPTSettings({ className, onConnected, onReadyChange,
   const foregroundOperation = useRef<ChatGPTSettingsOperation | null>(null);
   const [pendingOperation, setPendingOperation] = useState<ChatGPTSettingsOperation | null>(null);
   const busy = pendingOperation !== null;
-  const [hasChecked, setHasChecked] = useState(false);
   const [error, setError] = useState('');
   const [welcome, setWelcome] = useState<{ chat: ChatGPTModelRef; translation: ChatGPTModelRef } | null>(null);
   const [revocationPending, setRevocationPending] = useState(false);
   const needsSignIn = chatGPTNeedsSignIn(connection);
   const needsConnectionCheck = Boolean(connection.activeId && !connection.connected && !needsSignIn);
   const activeAccount = connection.accounts.find((account) => account.id === connection.activeId);
-  // Older helper versions may still return multiple registrations. Only the active
-  // connection is displayed; a returning login reuses the last saved registration.
+  // Only the active connection is displayed; a returning login reuses the last saved registration.
   const savedAccount = activeAccount ?? connection.accounts.at(-1);
   const accountName = (account: ChatGPTConnection['accounts'][number]) => {
     // Older cached status replies appended an internal client ID to the email.
     const suffix = ` · ${account.id.slice(-6)}`;
     return account.label.endsWith(suffix) ? account.label.slice(0, -suffix.length) : account.label;
   };
-  const codeClass = `sz:block sz:rounded sz:px-1 sz:py-[2px] sz:break-all sz:select-all ${
-    theme === 'dark' ? 'sz:bg-gray-800 sz:text-gray-200' : 'sz:bg-gray-100 sz:text-gray-800'
-  }`;
   const primaryLabel = needsSignIn ? 'chatgpt.reconnect' : needsConnectionCheck ? 'chatgpt.retry' : 'chatgpt.continue';
 
   const apply = (next: ChatGPTConnection, selectModels: boolean, showWelcome: boolean, isCurrent: () => boolean) => {
@@ -97,7 +92,6 @@ export default function ChatGPTSettings({ className, onConnected, onReadyChange,
       if (isCurrent()) {
         foregroundOperation.current = null;
         setPendingOperation(null);
-        setHasChecked(true);
       }
     }
   };
@@ -155,25 +149,6 @@ export default function ChatGPTSettings({ className, onConnected, onReadyChange,
         >
           {t(primaryLabel)}
         </Button>
-      )}
-      {!connection.installed && hasChecked && (
-        <Alert className="sz:font-ycom sz:text-right" type="info" message={t('chatgpt.helperTitle')} description={
-          <div className="sz:text-xs">
-            <p>{t('chatgpt.helperDescription')}</p>
-            <code className={codeClass}>pnpm chatgpt:install --extension-id {chrome.runtime.id}</code>
-            <div className="sz:flex sz:flex-wrap sz:items-center sz:justify-end sz:gap-2 sz:mt-1">
-              <Button
-                type="link"
-                size="small"
-                href="https://github.com/rokrokss/shizue#sign-in-with-chatgpt"
-                target="_blank"
-                rel="noreferrer"
-                className="sz:font-ycom sz:text-xs sz:p-0 sz:h-auto"
-              >{t('chatgpt.setupInstructions')}</Button>
-              <Button className="sz:font-ycom" size="small" loading={pendingOperation === 'status'} disabled={busy} onClick={() => void run('status')}>{t('chatgpt.retry')}</Button>
-            </div>
-          </div>
-        } />
       )}
       {feedback}
     </div>

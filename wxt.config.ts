@@ -20,13 +20,13 @@ export default defineConfig({
       },
       author: { email: 'q0115643@gmail.com' },
       // declarativeNetRequestWithHostAccess (no install warning) lets src/lib/localServer.ts rewrite
-      // the Origin header that Ollama rejects; such rules need host access to localhost. The
+      // the Origin header that Ollama rejects, and services/background/chatgpt.ts catch the ChatGPT
+      // sign-in callback on 127.0.0.1; such rules need host access to those addresses. The
       // <all_urls> content scripts already put every site under the install warning, so these add
       // none.
       permissions: [
         'storage',
         'scripting',
-        'nativeMessaging',
         'sidePanel',
         'activeTab',
         'contextMenus',
@@ -54,7 +54,12 @@ export default defineConfig({
       // Content scripts keep their CSS in shadow roots (cssInjectionMode: 'ui'). The only CSS
       // injected into pages is this @font-face file, since shadow roots ignore @font-face.
       content_scripts: [{ matches: ['<all_urls>'], css: ['fonts/fonts.css'] }],
-      web_accessible_resources: [{ resources: ['fonts/*.woff2'], matches: ['<all_urls>'] }],
+      web_accessible_resources: [
+        { resources: ['fonts/*.woff2'], matches: ['<all_urls>'] },
+        // A session rule redirects ChatGPT's loopback sign-in callback here, and redirects may only
+        // target web-accessible pages. The page does nothing without the sign-in's state value.
+        { resources: ['chatgpt-callback.html'], matches: ['<all_urls>'] },
+      ],
     };
     return manifest;
   },

@@ -10,8 +10,8 @@ import { modelListeners } from '@/entrypoints/background/states/models';
 import { whenBackgroundStateReady } from '@/entrypoints/background/states/ready';
 import { backgroundLog, errorLog } from '@/logs';
 import { messageHandlers } from '@/services/background/messageHandlers';
-import { CHATGPT_SETTINGS_MESSAGE } from '@/lib/chatgpt';
-import { handleChatGPTSettings } from '@/services/background/chatgptNative';
+import { CHATGPT_CALLBACK_MESSAGE, CHATGPT_SETTINGS_MESSAGE } from '@/lib/chatgpt';
+import { handleChatGPTCallback, handleChatGPTSettings } from '@/services/background/chatgpt';
 import { RECOVER_CONTENT_SCRIPTS } from '@/lib/contentScriptConnection';
 import { contentScriptRecoveryListeners, recoverTabContentScripts } from '@/services/background/contentScriptRecovery';
 
@@ -40,6 +40,11 @@ export default defineBackground(() => {
         .then((connection) => sendResponse({ success: true, connection }))
         .catch((error) => sendResponse({ success: false, error: error.message, errorCode: error.code }));
       return true;
+    }
+    if (msg?.action === CHATGPT_CALLBACK_MESSAGE) {
+      if (sender.id !== chrome.runtime.id || !sender.url?.startsWith(chrome.runtime.getURL('chatgpt-callback.html'))) return false;
+      sendResponse(handleChatGPTCallback(msg.search));
+      return false;
     }
     const handler = messageHandlers[msg?.action as keyof typeof messageHandlers];
     if (!handler) return false;

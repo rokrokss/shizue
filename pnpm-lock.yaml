@@ -62,6 +62,9 @@ importers:
       i18next:
         specifier: ^25.10.10
         version: 25.10.10(typescript@5.9.3)
+      jose:
+        specifier: ^6.2.12
+        version: 6.2.12
       jotai:
         specifier: ^2.20.3
         version: 2.20.3(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@19.3.0)(react@19.3.0)
@@ -102,9 +105,6 @@ importers:
       esbuild:
         specifier: ^0.28.2
         version: 0.28.2
-      jose:
-        specifier: ^6.2.12
-        version: 6.2.12
       postcss:
         specifier: ^8.5.28
         version: 8.5.28

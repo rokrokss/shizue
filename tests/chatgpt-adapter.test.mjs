@@ -5,39 +5,59 @@ import { rm } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { randomUUID } from 'node:crypto';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { responseRequestBody } from '../native/chatgpt/responses.mjs';
 
-test('the existing model interface streams/invokes with usage, cancellation and late quota failure', async () => {
+// A signed-in account in chrome.storage.local, and OpenAI's model catalog and Responses stream.
+async function withChatGPT(entry, { models, respond }, run) {
   const temporary = fileURLToPath(new URL(`../.wxt/chatgpt-adapter-${randomUUID()}.mjs`, import.meta.url));
   const originalChrome = globalThis.chrome;
-  const listeners = [];
+  const originalFetch = globalThis.fetch;
+  const items = { CHATGPT_CREDENTIALS: {
+    hostId: 'urn:uuid:test', activeId: 'oaiapp_test',
+    accounts: [{ clientId: 'oaiapp_test', subject: 'user', label: 'user@example.com', tokens: {
+      accessToken: 'access', refreshToken: 'refresh', scope: 'chatgpt.tokens.use.direct', expiresAt: Date.now() + 3_600_000,
+    } }],
+  } };
+  globalThis.chrome = { storage: { local: {
+    get: async (key) => ({ [key]: structuredClone(items[key]) }),
+    set: async (values) => { Object.assign(items, structuredClone(values)); },
+  } } };
+  globalThis.fetch = async (url, options) => {
+    assert.equal(options.headers.Authorization, 'Bearer access');
+    if (String(url) === 'https://api.openai.com/v1/models') {
+      return Response.json({ models: models.map((slug) => ({ slug, display_name: slug, visibility: 'list' })) });
+    }
+    assert.equal(String(url), 'https://api.openai.com/v1/responses');
+    const { events, close = true } = respond(JSON.parse(options.body), options.signal);
+    const text = events.map((event) => `data: ${JSON.stringify(event)}\n\n`).join('');
+    return new Response(new ReadableStream({ start(controller) {
+      controller.enqueue(new TextEncoder().encode(text));
+      if (close) controller.close();
+      options.signal.addEventListener('abort', () => controller.error(options.signal.reason));
+    } }));
+  };
+  try {
+    await build({ entryPoints: [fileURLToPath(new URL(entry, import.meta.url))], outfile: temporary, bundle: true, platform: 'node', format: 'esm', packages: 'external', logLevel: 'silent' });
+    await run(await import(pathToFileURL(temporary).href));
+  } finally {
+    globalThis.chrome = originalChrome;
+    globalThis.fetch = originalFetch;
+    await rm(temporary, { force: true });
+  }
+}
+
+test('the existing model interface streams/invokes with usage, cancellation and late quota failure', async () => {
   const calls = [];
   let mode = 'success';
-  const port = {
-    onMessage: { addListener: (listener) => listeners.push(listener) },
-    onDisconnect: { addListener: () => {} },
-    postMessage: (request) => {
-      calls.push(request);
-      if (request.operation === 'cancel') return;
-      queueMicrotask(() => {
-        for (const listener of listeners) {
-          listener({ id: request.id, event: { delta: 'Hello ' } });
-          if (mode === 'wait') continue;
-          if (mode === 'quota') {
-            listener({ id: request.id, error: { code: 'subscription_sharing_usage_limit_exceeded', message: 'quota' } });
-          } else {
-            listener({ id: request.id, event: { delta: 'world' } });
-            listener({ id: request.id, event: { usage: { input_tokens: 10, output_tokens: 2, total_tokens: 12 } } });
-            listener({ id: request.id, result: { completed: true } });
-          }
-        }
-      });
-    },
+  let lastSignal;
+  const respond = (body, signal) => {
+    calls.push(body);
+    lastSignal = signal;
+    const hello = { type: 'response.output_text.delta', delta: 'Hello ' };
+    if (mode === 'wait') return { events: [hello], close: false };
+    if (mode === 'quota') return { events: [hello, { type: 'response.failed', response: { error: { code: 'subscription_sharing_usage_limit_exceeded' } } }] };
+    return { events: [hello, { type: 'response.output_text.delta', delta: 'world' }, { type: 'response.completed', response: { usage: { input_tokens: 10, output_tokens: 2, total_tokens: 12 } } }] };
   };
-  globalThis.chrome = { runtime: { connectNative: () => port }, storage: { local: { set: async () => {} } } };
-  try {
-    await build({ entryPoints: [fileURLToPath(new URL('../src/lib/chatgptModel.ts', import.meta.url))], outfile: temporary, bundle: true, platform: 'node', format: 'esm', packages: 'external', logLevel: 'silent' });
-    const { ChatGPTPlanModel } = await import(pathToFileURL(temporary).href);
+  await withChatGPT('../src/lib/chatgptModel.ts', { models: ['account-model'], respond }, async ({ ChatGPTPlanModel }) => {
     const model = new ChatGPTPlanModel('account-model', false);
     const reply = await model.invoke([new SystemMessage('Be helpful'), new HumanMessage('Hi')]);
     assert.equal(reply.text, 'Hello world');
@@ -56,32 +76,22 @@ test('the existing model interface streams/invokes with usage, cancellation and 
     const stream = await model.stream([new HumanMessage('Hi')], { signal: controller.signal });
     const consume = (async () => { for await (const _chunk of stream) controller.abort(); })();
     await assert.rejects(consume, /cancel|abort/i);
-    assert.equal(calls.at(-1).operation, 'cancel');
-  } finally { globalThis.chrome = originalChrome; await rm(temporary, { force: true }); }
+    assert.equal(lastSignal.aborted, true);
+    // A model the account doesn't offer never reaches the Responses API.
+    const requests = calls.length;
+    await assert.rejects(new ChatGPTPlanModel('other-model', false).invoke([new HumanMessage('Hi')]), /unavailable/);
+    assert.equal(calls.length, requests);
+  });
 });
 
-test('ChatGPT translations carry model-specific effort through the factory and native request body', async () => {
-  const temporary = fileURLToPath(new URL(`../.wxt/chatgpt-effort-${randomUUID()}.mjs`, import.meta.url));
-  const originalChrome = globalThis.chrome;
-  const listeners = [];
+test('ChatGPT translations carry model-specific effort through the factory and request body', async () => {
   const requests = [];
-  globalThis.chrome = { runtime: { connectNative: () => ({
-    onMessage: { addListener: (listener) => listeners.push(listener) },
-    onDisconnect: { addListener() {} },
-    postMessage(request) {
-      if (request.operation === 'cancel') return;
-      requests.push(responseRequestBody(request));
-      queueMicrotask(() => {
-        for (const listener of listeners) {
-          listener({ id: request.id, event: { delta: '{"translation":"안녕하세요"}' } });
-          listener({ id: request.id, result: { completed: true } });
-        }
-      });
-    },
-  }) } };
-  try {
-    await build({ entryPoints: [fileURLToPath(new URL('../src/lib/models.ts', import.meta.url))], outfile: temporary, bundle: true, platform: 'node', format: 'esm', packages: 'external', logLevel: 'silent' });
-    const { getModelInstance } = await import(pathToFileURL(temporary).href);
+  const respond = (body) => {
+    requests.push(body);
+    return { events: [{ type: 'response.output_text.delta', delta: '{"translation":"안녕하세요"}' }, { type: 'response.completed', response: {} }] };
+  };
+  const models = ['gpt-6.1-sol', 'gpt-6-luna', 'gpt-6-astra', 'unknown-account-model'];
+  await withChatGPT('../src/lib/models.ts', { models, respond }, async ({ getModelInstance }) => {
     for (const [modelName, effort] of [
       ['chatgpt:gpt-6.1-sol', 'low'],
       ['chatgpt:gpt-6-luna', 'none'],
@@ -109,5 +119,5 @@ test('ChatGPT translations carry model-specific effort through the factory and n
         }
       }
     }
-  } finally { globalThis.chrome = originalChrome; await rm(temporary, { force: true }); }
+  });
 });

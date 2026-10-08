@@ -94,7 +94,7 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 
 ## Sign in with ChatGPT
 
-Choose **AI provider → Sign in with ChatGPT** to use your ChatGPT plan with the existing chat, summary, image, and translation features. This requires a one-time local helper installation on macOS or Linux. Follow the [setup instructions](native/chatgpt/README.md), then click **Continue with ChatGPT**. The helper starts automatically and stores login credentials outside the browser. Available models come from your signed-in account; usage and app limits are managed in [ChatGPT settings](https://chatgpt.com/settings/usage).
+Choose **AI provider → Sign in with ChatGPT** to use your ChatGPT plan with the existing chat, summary, image, and translation features. Click **Continue with ChatGPT** and finish OpenAI's sign-in in the tab that opens; there is nothing to install. Available models come from your signed-in account; usage and app limits are managed in [ChatGPT settings](https://chatgpt.com/settings/usage).
 
 **Is it really free?**
 Yes, and it will stay free. There is no Shizue account, paid plan, or ads. You can use your AI provider's API, a local model, or your ChatGPT plan. The Token Usage chart (the chart button below the chat box) shows how many tokens each model used; ChatGPT plan limits are managed in [ChatGPT settings](https://chatgpt.com/settings/usage).
@@ -105,7 +105,7 @@ Yes. The full source of the extension is in this repository under the [MIT Licen
 **Does Shizue have a server? What leaves my browser?**
 There is no Shizue server. API keys, chat history, memos, and settings stay in your browser's storage. When you use a feature, only the content that feature needs (e.g. the page text for a summary) is sent directly from your browser to the provider you chose, to OpenRouter, or to the local model server you set. There is no analytics or tracking. Details are in the [privacy policy](privacy_policy.md).
 
-Sign in with ChatGPT uses a local native messaging helper to send the same content to OpenAI. OAuth credentials stay in a protected file on your computer, outside browser storage. The helper opens a temporary `127.0.0.1` callback listener during sign-in; it does not run a persistent web server.
+With Sign in with ChatGPT, the same content goes directly from your browser to OpenAI. OpenAI's sign-in returns to a `127.0.0.1` address, as its sign-in flow requires; nothing listens there, and Shizue catches that address inside the browser to finish signing in. OAuth tokens are kept in the extension's local storage, like API keys.
 
 **What does OpenRouter see about Shizue?**
 Requests to OpenRouter carry `HTTP-Referer: https://shizue.net` and `X-OpenRouter-Title: Shizue`, so OpenRouter counts the usage under the Shizue app. These headers identify the app, not you, and nothing is sent to shizue.net.
@@ -113,12 +113,11 @@ Requests to OpenRouter carry `HTTP-Referer: https://shizue.net` and `X-OpenRoute
 **Why these permissions?**
 - `storage`: keep your keys, settings, and history locally
 - `scripting` and HTTP/HTTPS host access: reconnect Shizue in already-open web pages after an extension update or reload, without refreshing the pages
-- `nativeMessaging`: securely communicate with the local Sign in with ChatGPT helper
 - `sidePanel`: the chat side panel
 - `activeTab`: work with the tab you're on when you open Shizue or use a right-click action
 - `contextMenus`: the right-click actions
 - Content scripts on all sites: the floating toggle button and page translation; on YouTube, the caption translation
-- `declarativeNetRequestWithHostAccess` and access to `localhost`: reach a model server on your computer. Ollama rejects requests from browser extensions, so Shizue sets the `Origin` header of its own requests to Ollama to Ollama's address. No other requests are changed.
+- `declarativeNetRequestWithHostAccess` and access to `localhost`: reach a model server on your computer. Ollama rejects requests from browser extensions, so Shizue sets the `Origin` header of its own requests to Ollama to Ollama's address. During Sign in with ChatGPT, it also sends the browser's return to `127.0.0.1` to Shizue's own sign-in page. No other requests are changed.
 
 **Do existing pages need a refresh after an update?**
 Shizue automatically reconnects its page scripts after extension updates, reloads, and browser restarts. It checks for an existing connection before injecting, preserves page contents and form input, and retries when a sleeping tab becomes active. Chrome settings pages, the Chrome Web Store, and sites where extension access is withheld cannot be reconnected this way.

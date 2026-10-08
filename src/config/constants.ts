@@ -36,6 +36,8 @@ export const STORAGE_OPENROUTER_VALIDATED = 'OPENROUTER_VALIDATED';
 export const STORAGE_CONNECTION_MODE = 'CONNECTION_MODE';
 export const STORAGE_LOCAL_SERVER = 'LOCAL_SERVER';
 export const STORAGE_CHATGPT_CONNECTION = 'CHATGPT_CONNECTION';
+// OAuth tokens. Read only by the background (services/background/chatgpt.ts), never by the UI.
+export const STORAGE_CHATGPT_CREDENTIALS = 'CHATGPT_CREDENTIALS';
 export const STORAGE_USER_MEMORY = 'USER_MEMORY';
 export const STORAGE_GLOBAL_STATE = 'GLOBAL_STATE';
 export const STORAGE_THEME = 'THEME';

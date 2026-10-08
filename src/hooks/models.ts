@@ -97,7 +97,7 @@ export const localServerAtom = atomWithChromeStorage<LocalServerConfig | null>(
   null
 );
 
-// Public account labels and model choices only. OAuth credentials are held by the native helper.
+// Public account labels and model choices only. OAuth credentials are held by the background.
 export const chatGPTConnectionAtom = atomWithChromeStorage<ChatGPTConnection>(
   STORAGE_CHATGPT_CONNECTION, disconnectedChatGPT
 );

@@ -1,26 +1,44 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, stat, rm, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { build } from 'esbuild';
+import { rm } from 'node:fs/promises';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { randomUUID } from 'node:crypto';
 import { generateKeyPair, exportJWK, SignJWT, createLocalJWKSet, jwtVerify } from 'jose';
-import { Vault } from '../native/chatgpt/vault.mjs';
-import { ChatGPTAuth, callbackResult } from '../native/chatgpt/auth.mjs';
-import { responseEvents, visibleModels, readJSON, responseRequestBody } from '../native/chatgpt/responses.mjs';
-import { encodeMessage, messageDecoder } from '../native/chatgpt/protocol.mjs';
 import { chatGPTInput } from '../src/lib/chatgptInput.ts';
 import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages';
 
-test('native frames survive split/coalesced Unicode messages and reject oversized input', () => {
-  const received = [];
-  const decode = messageDecoder((value) => received.push(value));
-  const first = encodeMessage({ delta: '안녕하세요🙂' });
-  const second = encodeMessage({ done: true });
-  decode(first.subarray(0, 3));
-  decode(Buffer.concat([first.subarray(3), second]));
-  assert.deepEqual(received, [{ delta: '안녕하세요🙂' }, { done: true }]);
-  assert.throws(() => encodeMessage({ text: 'a'.repeat(1024 * 1024) }), /exceeds/);
-});
+async function load(entry) {
+  const temporary = fileURLToPath(new URL(`../.wxt/chatgpt-${randomUUID()}.mjs`, import.meta.url));
+  try {
+    await build({ entryPoints: [fileURLToPath(new URL(entry, import.meta.url))], outfile: temporary, bundle: true, platform: 'node', format: 'esm', packages: 'external', logLevel: 'silent' });
+    return await import(pathToFileURL(temporary).href);
+  } finally { await rm(temporary, { force: true }); }
+}
+const { ChatGPTAuth, StorageVault, callbackResult } = await load('../src/lib/chatgptAuth.ts');
+const { responseEvents, visibleModels, readJSON, responseRequestBody } = await load('../src/lib/chatgptResponses.ts');
+
+// chrome.storage.local stand-in.
+const memoryVault = () => {
+  const items = {};
+  return new StorageVault({
+    get: async (key) => ({ [key]: structuredClone(items[key]) }),
+    set: async (values) => { Object.assign(items, structuredClone(values)); },
+  }, 'CHATGPT_CREDENTIALS');
+};
+
+// Stands in for the background's redirect rule: the test delivers the callback URL that the
+// browser would navigate to.
+function testLoopback() {
+  let receive;
+  return {
+    open: async (fn) => {
+      receive = fn;
+      return { redirectUri: `http://127.0.0.1:${49152 + Math.floor(Math.random() * 16384)}/auth/callback`, close: async () => { receive = undefined; } };
+    },
+    deliver: (url) => receive?.(new URL(url)) ?? false,
+  };
+}
 
 test('OAuth callback binds state and the issued client ID, never the bootstrap ID', () => {
   const pending = { state: 'expected' };
@@ -53,35 +71,31 @@ test('OIDC validation verifies signature, audience, nonce, expiry, subject and d
   await assert.rejects(auth.validatedTokens({ ...response, id_token: expired }, 'oaiapp_client', 'nonce'), /exp/);
 });
 
-test('rotating refresh tokens are serialized and saved privately; public status excludes credentials', async () => {
-  const directory = await mkdtemp(join(tmpdir(), 'shizue-chatgpt-'));
-  try {
-    const vault = new Vault(directory);
-    await vault.locked((data) => {
-      data.activeId = 'oaiapp_client';
-      data.accounts.push({ clientId: data.activeId, subject: 'user', label: 'Account', tokens: { accessToken: 'old', refreshToken: 'old-refresh', scope: 'chatgpt.tokens.use.direct', expiresAt: 0 } });
-    });
-    let refreshes = 0;
-    const auth = new ChatGPTAuth(vault, { fetch: async (url, options) => {
-      if (String(url).endsWith('/oauth/token')) {
-        refreshes++;
-        assert.equal(options.body.get('client_id'), 'oaiapp_client');
-        assert.equal(options.body.get('refresh_token'), 'old-refresh');
-        assert.equal(options.body.has('scope'), false);
-        return Response.json({ access_token: 'new-secret', refresh_token: 'new-refresh', expires_in: 3600, scope: 'chatgpt.tokens.use.direct' });
-      }
-      return Response.json({ models: [{ visibility: 'list', slug: 'model', display_name: 'Model' }] });
-    } });
-    auth.oidc = { issuer: 'https://auth.openai.com' };
-    const sessions = await Promise.all([auth.access(), auth.access()]);
-    assert.equal(refreshes, 1);
-    assert.equal(sessions[0].accessToken, 'new-secret');
-    assert.equal((await vault.read()).accounts[0].tokens.refreshToken, 'new-refresh');
-    assert.equal((await stat(join(directory, 'credentials.json'))).mode & 0o777, 0o600);
-    const publicStatus = JSON.stringify(await auth.status());
-    assert.equal(publicStatus.includes('new-secret'), false);
-    assert.equal(publicStatus.includes('new-refresh'), false);
-  } finally { await rm(directory, { recursive: true, force: true }); }
+test('rotating refresh tokens are serialized and saved; public status excludes credentials', async () => {
+  const vault = memoryVault();
+  await vault.locked((data) => {
+    data.activeId = 'oaiapp_client';
+    data.accounts.push({ clientId: data.activeId, subject: 'user', label: 'Account', tokens: { accessToken: 'old', refreshToken: 'old-refresh', scope: 'chatgpt.tokens.use.direct', expiresAt: 0 } });
+  });
+  let refreshes = 0;
+  const auth = new ChatGPTAuth(vault, { fetch: async (url, options) => {
+    if (String(url).endsWith('/oauth/token')) {
+      refreshes++;
+      assert.equal(options.body.get('client_id'), 'oaiapp_client');
+      assert.equal(options.body.get('refresh_token'), 'old-refresh');
+      assert.equal(options.body.has('scope'), false);
+      return Response.json({ access_token: 'new-secret', refresh_token: 'new-refresh', expires_in: 3600, scope: 'chatgpt.tokens.use.direct' });
+    }
+    return Response.json({ models: [{ visibility: 'list', slug: 'model', display_name: 'Model' }] });
+  } });
+  auth.oidc = { issuer: 'https://auth.openai.com' };
+  const sessions = await Promise.all([auth.access(), auth.access()]);
+  assert.equal(refreshes, 1);
+  assert.equal(sessions[0].accessToken, 'new-secret');
+  assert.equal((await vault.read()).accounts[0].tokens.refreshToken, 'new-refresh');
+  const publicStatus = JSON.stringify(await auth.status());
+  assert.equal(publicStatus.includes('new-secret'), false);
+  assert.equal(publicStatus.includes('new-refresh'), false);
 });
 
 function streamOf(events, terminate = true) {
@@ -109,7 +123,7 @@ test('model catalog uses visibility and retains account-specific server order', 
   assert.deepEqual(visibleModels({ models: [{ slug: 'b', display_name: 'B', visibility: 'list' }, { slug: 'hidden', visibility: 'hide' }, { slug: 'a', display_name: 'A', visibility: 'list' }] }), [{ id: 'b', label: 'B' }, { id: 'a', label: 'A' }]);
 });
 
-test('native Responses requests validate effort and retain the supported-field allowlist', () => {
+test('Responses requests validate effort and retain the supported-field allowlist', () => {
   const input = [{ role: 'user', content: 'Translate Hello into Korean.' }];
   const base = { model: 'gpt-6.1-sol', input, instructions: 'Only return the translation.' };
   assert.deepEqual(responseRequestBody(base), { ...base, store: false, stream: true });
@@ -138,135 +152,127 @@ test('existing chat history and images become Responses input with system instru
 });
 
 test('loopback login uses PKCE, a stable host ID and the callback-issued client ID', async () => {
-  const directory = await mkdtemp(join(tmpdir(), 'shizue-login-'));
-  try {
-    const vault = new Vault(directory);
+  const vault = memoryVault();
+  const loopback = testLoopback();
+  let authorize;
+  let exchanges = 0;
+  const auth = new ChatGPTAuth(vault, {
+    loopback,
+    verify: async (_token, _keys, options) => {
+      assert.equal(options.audience, 'oaiapp_issued');
+      return { payload: { sub: 'user', email: 'same@example.com', nonce: authorize.searchParams.get('nonce') } };
+    },
+    fetch: async (url, options) => {
+      if (String(url).endsWith('/oauth/token')) {
+        exchanges++;
+        assert.equal(options.body.get('client_id'), 'oaiapp_issued');
+        assert.equal(options.body.get('redirect_uri'), authorize.searchParams.get('redirect_uri'));
+        const { createHash } = await import('node:crypto');
+        assert.equal(createHash('sha256').update(options.body.get('code_verifier')).digest('base64url'), authorize.searchParams.get('code_challenge'));
+        return Response.json({ access_token: 'login-secret', refresh_token: 'refresh-secret', id_token: 'test-token', expires_in: 3600, scope: 'openid chatgpt.tokens.use.direct' });
+      }
+      return Response.json({ models: [{ slug: 'model', display_name: 'Model', visibility: 'list' }] });
+    },
+  });
+  auth.oidc = { issuer: 'https://auth.openai.com' };
+  const connection = await auth.signIn(undefined, (event) => {
+    authorize = new URL(event.authorizationUrl);
+    assert.equal(authorize.origin, 'https://auth.openai.com');
+    assert.equal(authorize.searchParams.get('client_id'), 'dynamic_agent_client');
+    assert.equal(authorize.searchParams.get('agent_name_hint'), 'Shizue');
+    assert.equal(authorize.searchParams.get('code_challenge_method'), 'S256');
+    assert.equal(new URL(authorize.searchParams.get('redirect_uri')).hostname, '127.0.0.1');
+    const callback = new URL(authorize.searchParams.get('redirect_uri'));
+    callback.search = new URLSearchParams({ state: authorize.searchParams.get('state'), code: 'code', client_id: 'oaiapp_issued' });
+    // A callback for another sign-in is ignored.
+    assert.equal(loopback.deliver(`${callback.origin}${callback.pathname}?state=other&code=code`), false);
+    assert.equal(loopback.deliver(callback), true);
+  }, new AbortController().signal);
+  assert.equal(exchanges, 1);
+  assert.equal(connection.connected, true);
+  assert.equal(connection.activeId, 'oaiapp_issued');
+  assert.equal((await vault.read()).hostId, authorize.searchParams.get('ext_agent_host_id'));
+  assert.equal(JSON.stringify(connection).includes('login-secret'), false);
+  // Reconnect and sign in after sign-out both reuse the original registration.
+  for (const retainedSession of [true, false]) {
+    if (!retainedSession) await vault.locked((data) => {
+      delete data.accounts[0].tokens;
+      data.activeId = null;
+    });
+    const returning = await auth.signIn(undefined, (event) => {
+      authorize = new URL(event.authorizationUrl);
+      assert.equal(authorize.searchParams.get('client_id'), 'oaiapp_issued');
+      assert.equal(authorize.searchParams.has('agent_name_hint'), false);
+      assert.equal(authorize.searchParams.has('id_token_hint'), retainedSession);
+      const callback = new URL(authorize.searchParams.get('redirect_uri'));
+      callback.search = new URLSearchParams({ state: authorize.searchParams.get('state'), code: 'returning-code' });
+      loopback.deliver(callback);
+    }, new AbortController().signal);
+    assert.equal(returning.activeId, 'oaiapp_issued');
+    assert.equal(returning.accounts.length, 1);
+    assert.equal((await vault.read()).hostId, authorize.searchParams.get('ext_agent_host_id'));
+  }
+  assert.equal(exchanges, 3);
+});
+
+test('sign-out clears tokens, retains registration and reports failed revocation', async () => {
+  const vault = memoryVault();
+  await vault.locked((data) => {
+    data.activeId = 'oaiapp_issued';
+    data.accounts.push({ clientId: data.activeId, subject: 'user', label: 'Account', tokens: { refreshToken: 'refresh-secret' } });
+  });
+  const auth = new ChatGPTAuth(vault, { fetch: async (_url, options) => {
+    assert.equal(options.body.get('token_type_hint'), 'refresh_token');
+    assert.equal(options.body.get('client_id'), 'oaiapp_issued');
+    return new Response('', { status: 400 });
+  } });
+  auth.oidc = { issuer: 'https://auth.openai.com', revocation_endpoint: 'https://auth.openai.com/oauth/revoke' };
+  const result = await auth.signOut('oaiapp_issued');
+  assert.equal(result.revocationPending, true);
+  assert.equal(result.activeId, null);
+  const saved = await vault.read();
+  assert.equal(saved.accounts[0].clientId, 'oaiapp_issued');
+  assert.equal(saved.accounts[0].subject, 'user');
+  assert.equal(saved.accounts[0].tokens, undefined);
+});
+
+test('malformed JSON never echoes credential contents into error replies', async () => {
+  const malformed = '{"accessToken":"secret-value",BROKEN}';
+  await assert.rejects(readJSON(new Response(malformed)), (error) => error.code === 'invalid_provider_response' && !error.message.includes('secret-value'));
+});
+
+async function withRegistrationFixture(run, accounts = [], revocationStatus = 200) {
+  const vault = memoryVault();
+  await vault.locked((data) => { data.accounts = structuredClone(accounts); data.activeId = accounts[0]?.clientId ?? null; });
+  const revoked = [], authorizations = [];
+  const register = async (clientId, subject, beforeCallback = async () => {}) => {
     let authorize;
-    let exchanges = 0;
+    const loopback = testLoopback();
     const auth = new ChatGPTAuth(vault, {
+      loopback,
       verify: async (_token, _keys, options) => {
-        assert.equal(options.audience, 'oaiapp_issued');
-        return { payload: { sub: 'user', email: 'same@example.com', nonce: authorize.searchParams.get('nonce') } };
+        assert.equal(options.audience, clientId);
+        return { payload: { sub: subject, email: 'same@example.com', nonce: authorize.searchParams.get('nonce') } };
       },
       fetch: async (url, options) => {
-        if (String(url).endsWith('/oauth/token')) {
-          exchanges++;
-          assert.equal(options.body.get('client_id'), 'oaiapp_issued');
-          assert.equal(options.body.get('redirect_uri'), authorize.searchParams.get('redirect_uri'));
-          const { createHash } = await import('node:crypto');
-          assert.equal(createHash('sha256').update(options.body.get('code_verifier')).digest('base64url'), authorize.searchParams.get('code_challenge'));
-          return Response.json({ access_token: 'login-secret', refresh_token: 'refresh-secret', id_token: 'test-token', expires_in: 3600, scope: 'openid chatgpt.tokens.use.direct' });
+        if (String(url).endsWith('/oauth/token')) return Response.json({ access_token: `access-${clientId}`, refresh_token: `refresh-${clientId}`, id_token: 'synthetic-id', expires_in: 3600, scope: 'openid chatgpt.tokens.use.direct' });
+        if (String(url).endsWith('/oauth/revoke')) {
+          revoked.push({ clientId: options.body.get('client_id'), token: options.body.get('token') });
+          return new Response('', { status: revocationStatus });
         }
         return Response.json({ models: [{ slug: 'model', display_name: 'Model', visibility: 'list' }] });
       },
     });
-    auth.oidc = { issuer: 'https://auth.openai.com' };
-    const connection = await auth.signIn(undefined, (event) => {
-      authorize = new URL(event.authorizationUrl);
-      assert.equal(authorize.origin, 'https://auth.openai.com');
-      assert.equal(authorize.searchParams.get('client_id'), 'dynamic_agent_client');
-      assert.equal(authorize.searchParams.get('agent_name_hint'), 'Shizue');
-      assert.equal(authorize.searchParams.get('code_challenge_method'), 'S256');
-      assert.equal(new URL(authorize.searchParams.get('redirect_uri')).hostname, '127.0.0.1');
-      const callback = new URL(authorize.searchParams.get('redirect_uri'));
-      callback.search = new URLSearchParams({ state: authorize.searchParams.get('state'), code: 'code', client_id: 'oaiapp_issued' });
-      void fetch(callback).catch(() => {});
-    }, new AbortController().signal);
-    assert.equal(exchanges, 1);
-    assert.equal(connection.connected, true);
-    assert.equal(connection.activeId, 'oaiapp_issued');
-    assert.equal((await vault.read()).hostId, authorize.searchParams.get('ext_agent_host_id'));
-    assert.equal(JSON.stringify(connection).includes('login-secret'), false);
-    // Reconnect and sign in after sign-out both reuse the original registration.
-    for (const retainedSession of [true, false]) {
-      if (!retainedSession) await vault.locked((data) => {
-        delete data.accounts[0].tokens;
-        data.activeId = null;
-      });
-      const returning = await auth.signIn(undefined, (event) => {
-        authorize = new URL(event.authorizationUrl);
-        assert.equal(authorize.searchParams.get('client_id'), 'oaiapp_issued');
-        assert.equal(authorize.searchParams.has('agent_name_hint'), false);
-        assert.equal(authorize.searchParams.has('id_token_hint'), retainedSession);
-        const callback = new URL(authorize.searchParams.get('redirect_uri'));
-        callback.search = new URLSearchParams({ state: authorize.searchParams.get('state'), code: 'returning-code' });
-        void fetch(callback).catch(() => {});
-      }, new AbortController().signal);
-      assert.equal(returning.activeId, 'oaiapp_issued');
-      assert.equal(returning.accounts.length, 1);
-      assert.equal((await vault.read()).hostId, authorize.searchParams.get('ext_agent_host_id'));
-    }
-    assert.equal(exchanges, 3);
-  } finally { await rm(directory, { recursive: true, force: true }); }
-});
-
-test('sign-out clears tokens, retains registration and reports failed revocation', async () => {
-  const directory = await mkdtemp(join(tmpdir(), 'shizue-signout-'));
-  try {
-    const vault = new Vault(directory);
-    await vault.locked((data) => {
-      data.activeId = 'oaiapp_issued';
-      data.accounts.push({ clientId: data.activeId, subject: 'user', label: 'Account', tokens: { refreshToken: 'refresh-secret' } });
-    });
-    const auth = new ChatGPTAuth(vault, { fetch: async (_url, options) => {
-      assert.equal(options.body.get('token_type_hint'), 'refresh_token');
-      assert.equal(options.body.get('client_id'), 'oaiapp_issued');
-      return new Response('', { status: 400 });
-    } });
     auth.oidc = { issuer: 'https://auth.openai.com', revocation_endpoint: 'https://auth.openai.com/oauth/revoke' };
-    const result = await auth.signOut('oaiapp_issued');
-    assert.equal(result.revocationPending, true);
-    assert.equal(result.activeId, null);
-    const saved = await vault.read();
-    assert.equal(saved.accounts[0].clientId, 'oaiapp_issued');
-    assert.equal(saved.accounts[0].subject, 'user');
-    assert.equal(saved.accounts[0].tokens, undefined);
-  } finally { await rm(directory, { recursive: true, force: true }); }
-});
-
-test('malformed JSON never echoes credential contents into extension error replies', async () => {
-  const directory = await mkdtemp(join(tmpdir(), 'shizue-invalid-'));
-  try {
-    const malformed = '{"accessToken":"secret-value",BROKEN}';
-    await writeFile(join(directory, 'credentials.json'), malformed, { mode: 0o600 });
-    await assert.rejects(new Vault(directory).read(), (error) => !error.message.includes('secret-value'));
-    await assert.rejects(readJSON(new Response(malformed)), (error) => error.code === 'invalid_provider_response' && !error.message.includes('secret-value'));
-  } finally { await rm(directory, { recursive: true, force: true }); }
-});
-
-async function withRegistrationFixture(run, accounts = [], revocationStatus = 200) {
-  const directory = await mkdtemp(join(tmpdir(), 'shizue-registration-'));
-  try {
-    const vault = new Vault(directory);
-    await vault.locked((data) => { data.accounts = structuredClone(accounts); data.activeId = accounts[0]?.clientId ?? null; });
-    const revoked = [], authorizations = [];
-    const register = async (clientId, subject, beforeCallback = async () => {}) => {
-      let authorize;
-      const auth = new ChatGPTAuth(vault, {
-        verify: async (_token, _keys, options) => {
-          assert.equal(options.audience, clientId);
-          return { payload: { sub: subject, email: 'same@example.com', nonce: authorize.searchParams.get('nonce') } };
-        },
-        fetch: async (url, options) => {
-          if (String(url).endsWith('/oauth/token')) return Response.json({ access_token: `access-${clientId}`, refresh_token: `refresh-${clientId}`, id_token: 'synthetic-id', expires_in: 3600, scope: 'openid chatgpt.tokens.use.direct' });
-          if (String(url).endsWith('/oauth/revoke')) {
-            revoked.push({ clientId: options.body.get('client_id'), token: options.body.get('token') });
-            return new Response('', { status: revocationStatus });
-          }
-          return Response.json({ models: [{ slug: 'model', display_name: 'Model', visibility: 'list' }] });
-        },
-      });
-      auth.oidc = { issuer: 'https://auth.openai.com', revocation_endpoint: 'https://auth.openai.com/oauth/revoke' };
-      return auth.signIn(undefined, (event) => {
-        authorize = new URL(event.authorizationUrl);
-        authorizations.push(authorize);
-        const callback = new URL(authorize.searchParams.get('redirect_uri'));
-        callback.search = new URLSearchParams({ state: authorize.searchParams.get('state'), code: 'synthetic-code', client_id: clientId });
-        void beforeCallback().then(() => fetch(callback)).catch(() => {});
-      }, new AbortController().signal);
-    };
-    await run({ vault, revoked, register, authorizations });
-  } finally { await rm(directory, { recursive: true, force: true }); }
+    return auth.signIn(undefined, (event) => {
+      authorize = new URL(event.authorizationUrl);
+      authorizations.push(authorize);
+      const callback = new URL(authorize.searchParams.get('redirect_uri'));
+      callback.search = new URLSearchParams({ state: authorize.searchParams.get('state'), code: 'synthetic-code', client_id: clientId });
+      void beforeCallback().then(() => loopback.deliver(callback));
+    }, new AbortController().signal);
+  };
+  await run({ vault, revoked, register, authorizations });
 }
 
 const savedRegistration = {
