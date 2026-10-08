@@ -2,7 +2,7 @@ import TopMenu from '@/components/Chat/TopRightMenu';
 import Footer from '@/components/Footer';
 import MemoListModalContent from '@/components/Memo/MemoListModalContent';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
-import SettingsModalContent from '@/components/Setting/SettingsModalContent';
+import SettingsModal from '@/components/Setting/SettingsModal';
 import { threadIdAtom } from '@/hooks/global';
 import { getI8NLanguage, useLanguage } from '@/hooks/language';
 import { useThemeValue } from '@/hooks/layout';
@@ -434,12 +434,7 @@ const Memo = () => {
 
         {/* Settings Modal */}
         {isSettingsOpen && (
-          <SidePanelFullModal
-            onClose={closeSettings}
-            size="base"
-            minHeight="374px"
-            content={<SettingsModalContent />}
-          />
+          <SettingsModal onClose={closeSettings} />
         )}
 
         {/* Memo List Modal */}

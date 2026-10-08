@@ -4,41 +4,32 @@ import {
   STORAGE_OPENAI_KEY,
   STORAGE_OPENROUTER_KEY,
 } from '@/config/constants';
-import { chromeStorageBackend } from '@/lib/storageBackend';
+import { atomWithChromeStorage } from '@/lib/atomWithChromeStorage';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
 
 export const defaultOpenAIKey = '';
 export const defaultGeminiKey = '';
 export const defaultAnthropicKey = '';
 export const defaultOpenRouterKey = '';
 
-export const openAIKeyAtom = atomWithStorage<string>(
+export const openAIKeyAtom = atomWithChromeStorage<string>(
   STORAGE_OPENAI_KEY,
-  defaultOpenAIKey,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultOpenAIKey
 );
 
-export const geminiKeyAtom = atomWithStorage<string>(
+export const geminiKeyAtom = atomWithChromeStorage<string>(
   STORAGE_GEMINI_KEY,
-  defaultGeminiKey,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultGeminiKey
 );
 
-export const anthropicKeyAtom = atomWithStorage<string>(
+export const anthropicKeyAtom = atomWithChromeStorage<string>(
   STORAGE_ANTHROPIC_KEY,
-  defaultAnthropicKey,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultAnthropicKey
 );
 
-export const openRouterKeyAtom = atomWithStorage<string>(
+export const openRouterKeyAtom = atomWithChromeStorage<string>(
   STORAGE_OPENROUTER_KEY,
-  defaultOpenRouterKey,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultOpenRouterKey
 );
 
 export const useOpenAIKey = () => useAtom(openAIKeyAtom);

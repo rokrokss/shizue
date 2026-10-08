@@ -1,7 +1,6 @@
 import { STORAGE_USER_MEMORY } from '@/config/constants';
-import { chromeStorageBackend } from '@/lib/storageBackend';
+import { atomWithChromeStorage } from '@/lib/atomWithChromeStorage';
 import { useAtom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
 
 const KEY = 'USER_MEMORY';
 const area = 'local';
@@ -14,11 +13,9 @@ export const defaultUserMemory: UserMemory = {
   text: '',
 };
 
-export const userMemoryAtom = atomWithStorage<UserMemory>(
+export const userMemoryAtom = atomWithChromeStorage<UserMemory>(
   STORAGE_USER_MEMORY,
-  defaultUserMemory,
-  chromeStorageBackend(area),
-  { getOnInit: true }
+  defaultUserMemory
 );
 
 export const useUserMemory = () => useAtom(userMemoryAtom);

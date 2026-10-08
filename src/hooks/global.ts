@@ -1,7 +1,7 @@
 import { SelectionActionType, STORAGE_GLOBAL_STATE } from '@/config/constants';
-import { chromeStorageBackend } from '@/lib/storageBackend';
+import { atomWithChromeStorage } from '@/lib/atomWithChromeStorage';
 import { atom, useAtom } from 'jotai';
-import { atomWithStorage, unwrap } from 'jotai/utils';
+import { unwrap } from 'jotai/utils';
 
 export const messageAddedInPanelAtom = atom<number | null>(null);
 
@@ -27,11 +27,9 @@ export const defaultGlobalState: GlobalState = {
   actionType: 'chat',
 };
 
-export const globalStateAtom = atomWithStorage<GlobalState>(
+export const globalStateAtom = atomWithChromeStorage<GlobalState>(
   STORAGE_GLOBAL_STATE,
-  defaultGlobalState,
-  chromeStorageBackend<GlobalState>('local'),
-  { getOnInit: true }
+  defaultGlobalState
 );
 
 // Resolve asynchronous action data before initializing the panel.

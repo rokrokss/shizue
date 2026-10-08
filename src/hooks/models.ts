@@ -33,9 +33,8 @@ import {
   ModelProvider,
   TranslateModel,
 } from '@/lib/modelRegistry';
-import { chromeStorageBackend } from '@/lib/storageBackend';
+import { atomWithChromeStorage } from '@/lib/atomWithChromeStorage';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
 import { useTranslation } from 'react-i18next';
 import { ChatGPTConnection, disconnectedChatGPT } from '@/lib/chatgpt';
 import { defaultOpenAIChatModel, defaultOpenAITranslateModel, ProviderModelPreferences, registeredAIProviders } from '@/lib/modelPreferences';
@@ -53,72 +52,54 @@ export const defaultAnthropicValidated = undefined;
 export const defaultOpenRouterValidated = undefined;
 export const defaultConnectionMode: ConnectionMode = 'direct';
 
-export const chatModelAtom = atomWithStorage<ChatModel>(
+export const chatModelAtom = atomWithChromeStorage<ChatModel>(
   STORAGE_CHAT_MODEL,
-  defaultOpenAIChatModel,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultOpenAIChatModel
 );
-export const translateModelAtom = atomWithStorage<TranslateModel>(
+export const translateModelAtom = atomWithChromeStorage<TranslateModel>(
   STORAGE_TRANSLATE_MODEL,
-  defaultOpenAITranslateModel,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultOpenAITranslateModel
 );
 
-export const providerModelPreferencesAtom = atomWithStorage<ProviderModelPreferences>(
+export const providerModelPreferencesAtom = atomWithChromeStorage<ProviderModelPreferences>(
   STORAGE_PROVIDER_MODEL_PREFERENCES,
-  { selections: {} },
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  { selections: {} }
 );
 export const useProviderModelPreferences = () => useAtom(providerModelPreferencesAtom);
 
-export const openAIValidatedAtom = atomWithStorage<boolean | undefined>(
+export const openAIValidatedAtom = atomWithChromeStorage<boolean | undefined>(
   STORAGE_OPENAI_VALIDATED,
-  defaultOpenAIValidated,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultOpenAIValidated
 );
-export const geminiValidatedAtom = atomWithStorage<boolean | undefined>(
+export const geminiValidatedAtom = atomWithChromeStorage<boolean | undefined>(
   STORAGE_GEMINI_VALIDATED,
-  defaultGeminiValidated,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultGeminiValidated
 );
 
-export const anthropicValidatedAtom = atomWithStorage<boolean | undefined>(
+export const anthropicValidatedAtom = atomWithChromeStorage<boolean | undefined>(
   STORAGE_ANTHROPIC_VALIDATED,
-  defaultAnthropicValidated,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultAnthropicValidated
 );
 
-export const openRouterValidatedAtom = atomWithStorage<boolean | undefined>(
+export const openRouterValidatedAtom = atomWithChromeStorage<boolean | undefined>(
   STORAGE_OPENROUTER_VALIDATED,
-  defaultOpenRouterValidated,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultOpenRouterValidated
 );
 
-export const connectionModeAtom = atomWithStorage<ConnectionMode>(
+export const connectionModeAtom = atomWithChromeStorage<ConnectionMode>(
   STORAGE_CONNECTION_MODE,
-  defaultConnectionMode,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultConnectionMode
 );
 
 // The connected local server and its chat models; null until the user connects one.
-export const localServerAtom = atomWithStorage<LocalServerConfig | null>(
+export const localServerAtom = atomWithChromeStorage<LocalServerConfig | null>(
   STORAGE_LOCAL_SERVER,
-  null,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  null
 );
 
 // Public account labels and model choices only. OAuth credentials are held by the native helper.
-export const chatGPTConnectionAtom = atomWithStorage<ChatGPTConnection>(
-  STORAGE_CHATGPT_CONNECTION, disconnectedChatGPT, chromeStorageBackend('local'), { getOnInit: true }
+export const chatGPTConnectionAtom = atomWithChromeStorage<ChatGPTConnection>(
+  STORAGE_CHATGPT_CONNECTION, disconnectedChatGPT
 );
 export const useChatGPTConnectionValue = () => useAtomValue(chatGPTConnectionAtom);
 

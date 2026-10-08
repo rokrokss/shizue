@@ -8,9 +8,8 @@ import {
   STORAGE_USE_YOUTUBE_KEYBOARD_NAVIGATE,
   STORAGE_YOUTUBE_CAPTION_SIZE_RATIO,
 } from '@/config/constants';
-import { chromeStorageBackend } from '@/lib/storageBackend';
+import { atomWithChromeStorage } from '@/lib/atomWithChromeStorage';
 import { useAtom, useAtomValue } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
 
 export type Theme = 'light' | 'dark';
 
@@ -23,60 +22,44 @@ export const defaultUseYoutubeKeyboardNavigate = true;
 export const defaultCaptionSizeRatio = 1.0;
 export const defaultToggleHiddenSiteList: string[] = [];
 
-export const themeAtom = atomWithStorage<Theme>(
+export const themeAtom = atomWithChromeStorage<Theme>(
   STORAGE_THEME,
-  defaultTheme,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultTheme
 );
 
-export const showToggleAtom = atomWithStorage<boolean>(
+export const showToggleAtom = atomWithChromeStorage<boolean>(
   STORAGE_SHOW_TOGGLE,
-  defaultShowToggle,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultShowToggle
 );
 
-export const toggleYPositionAtom = atomWithStorage<number>(
+export const toggleYPositionAtom = atomWithChromeStorage<number>(
   STORAGE_TOGGLE_Y_POSITION,
-  defaultToggleYPosition,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultToggleYPosition
 );
 
-export const youtubeShowCaptionToggleAtom = atomWithStorage<boolean>(
+export const youtubeShowCaptionToggleAtom = atomWithChromeStorage<boolean>(
   STORAGE_SHOW_YOUTUBE_CAPTION_TOGGLE,
-  defaultShowYoutubeCaptionToggle,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultShowYoutubeCaptionToggle
 );
 
-export const youtubeShowBilingualCaptionAtom = atomWithStorage<boolean>(
+export const youtubeShowBilingualCaptionAtom = atomWithChromeStorage<boolean>(
   STORAGE_SHOW_YOUTUBE_BILINGUAL_CAPTION,
-  defaultShowYoutubeBilingualCaption,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultShowYoutubeBilingualCaption
 );
 
-export const useYoutubeKeyboardNavigateAtom = atomWithStorage<boolean>(
+export const useYoutubeKeyboardNavigateAtom = atomWithChromeStorage<boolean>(
   STORAGE_USE_YOUTUBE_KEYBOARD_NAVIGATE,
-  defaultUseYoutubeKeyboardNavigate,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultUseYoutubeKeyboardNavigate
 );
 
-export const youtubeCaptionSizeRatioAtom = atomWithStorage<number>(
+export const youtubeCaptionSizeRatioAtom = atomWithChromeStorage<number>(
   STORAGE_YOUTUBE_CAPTION_SIZE_RATIO,
-  defaultCaptionSizeRatio,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultCaptionSizeRatio
 );
 
-export const toggleHiddenSiteListAtom = atomWithStorage<string[]>(
+export const toggleHiddenSiteListAtom = atomWithChromeStorage<string[]>(
   STORAGE_TOGGLE_HIDDEN_SITE_LIST,
-  defaultToggleHiddenSiteList,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  defaultToggleHiddenSiteList
 );
 
 export const useTheme = () => useAtom(themeAtom);

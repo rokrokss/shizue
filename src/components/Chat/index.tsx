@@ -3,6 +3,7 @@ import ChatInput from '@/components/Chat/ChatInput';
 import { DotCycle } from '@/components/Loader/DotCycle';
 import TopMenu from '@/components/Chat/TopRightMenu';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
+import SettingsModal from '@/components/Setting/SettingsModal';
 import { isSelectionActionType, MESSAGE_LOAD_THREAD } from '@/config/constants';
 import { chatStatusAtom, createThreadMessageCountAtom, isChatIdle } from '@/hooks/chat';
 import { ActionType, threadIdAtom } from '@/hooks/global';
@@ -21,7 +22,6 @@ import { useTranslation } from 'react-i18next';
 const ChatContainer = lazy(() => import('@/components/Chat/ChatContainer'));
 const ThreadListModalContent = lazy(() => import('@/components/Chat/ThreadListModalContent'));
 const TokenUsageModalContent = lazy(() => import('@/components/Chat/TokenUsageModalContent'));
-const SettingsModalContent = lazy(() => import('@/components/Setting/SettingsModalContent'));
 
 export interface Message {
   role: 'human' | 'system' | 'ai';
@@ -588,12 +588,7 @@ const Chat = () => {
         />
       </div>
       {isSettingsOpen && (
-        <SidePanelFullModal
-          onClose={closeSettings}
-          size="base"
-          minHeight="374px"
-          content={<SettingsModalContent />}
-        />
+        <SettingsModal onClose={closeSettings} />
       )}
       {isHistoryOpen && (
         <SidePanelFullModal

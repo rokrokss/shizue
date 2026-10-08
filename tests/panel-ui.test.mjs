@@ -90,7 +90,7 @@ const stubs = {
   '@/services/chatService': 'export const chatService = { cancelNotStartedMessage: async () => {} };',
 };
 for (const path of ['@/components/Chat/ThreadListModalContent', '@/components/Chat/TokenUsageModalContent',
-  '@/components/Chat/TopRightMenu', '@/components/Modal/SidePanelFullModal', '@/components/Setting/SettingsModalContent']) {
+  '@/components/Chat/TopRightMenu', '@/components/Modal/SidePanelFullModal', '@/components/Setting/SettingsModal']) {
   stubs[path] = 'export default () => null;';
 }
 
@@ -150,7 +150,7 @@ async function run() {
 
   // Reopen into a new store with a legacy saved selection. It must start blank,
   // while explicitly selecting a history entry in the open panel still works.
-  fixture.state = { actionType: 'chat', threadId: 'A' };
+  await chrome.storage.local.set({ GLOBAL_STATE: { actionType: 'chat', threadId: 'A' } });
   fixture.rows = new Map([['A', [ai('A CONTENT')]], ['B', [ai('B CONTENT')]]]);
   fixture.frames = []; fixture.loads = []; fixture.streams = []; counts.clear();
   fixture.store = createStore();

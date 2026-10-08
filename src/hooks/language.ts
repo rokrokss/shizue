@@ -1,9 +1,8 @@
 import { STORAGE_LANGUAGE, STORAGE_TRANSLATE_TARGET_LANGUAGE } from '@/config/constants';
 import i18n from '@/i18n';
 import { determineAppLanguage } from '@/lib/language';
-import { chromeStorageBackend } from '@/lib/storageBackend';
+import { atomWithChromeStorage } from '@/lib/atomWithChromeStorage';
 import { useAtom, useAtomValue } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
 
 export type Language =
   | 'English'
@@ -35,18 +34,14 @@ const fallbackLanguage: Language = (() => {
   return determineAppLanguage(uiLang);
 })();
 
-export const languageAtom = atomWithStorage<Language>(
+export const languageAtom = atomWithChromeStorage<Language>(
   STORAGE_LANGUAGE,
-  fallbackLanguage,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  fallbackLanguage
 );
 
-export const targetLanguageAtom = atomWithStorage<Language>(
+export const targetLanguageAtom = atomWithChromeStorage<Language>(
   STORAGE_TRANSLATE_TARGET_LANGUAGE,
-  fallbackLanguage,
-  chromeStorageBackend('local'),
-  { getOnInit: true }
+  fallbackLanguage
 );
 
 export const getI8NLanguage = (language: Language) => {

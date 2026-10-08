@@ -1,11 +1,26 @@
 import { useThemeValue } from '@/hooks/layout';
+import { preloadSettings } from '@/components/Setting/SettingsModal';
 import { SettingOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
 
 const TopMenu = ({ onSettingsClick }: { onSettingsClick: () => void }) => {
   const theme = useThemeValue();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    // Let the chat paint first, then prepare only this frequently used screen.
+    let idle: number | undefined;
+    const timer = window.setTimeout(() => {
+      if ('requestIdleCallback' in window) idle = window.requestIdleCallback(preloadSettings);
+      else preloadSettings();
+    }, 250);
+    return () => {
+      window.clearTimeout(timer);
+      if (idle !== undefined) window.cancelIdleCallback(idle);
+    };
+  }, []);
 
   return (
     <Tooltip
@@ -36,6 +51,8 @@ const TopMenu = ({ onSettingsClick }: { onSettingsClick: () => void }) => {
         ${theme == 'dark' ? 'sz:bg-[#1C1D26]' : 'sz:bg-white'}
       `}
         onClick={onSettingsClick}
+        onPointerEnter={preloadSettings}
+        onFocus={preloadSettings}
       >
         <SettingOutlined
           style={{
