@@ -3,8 +3,12 @@ import { ChatAnthropic } from '@langchain/anthropic';
 import { ChatGoogle } from '@langchain/google';
 import { ChatOllama } from '@langchain/ollama';
 import { ChatOpenAI } from '@langchain/openai';
+import { ChatGPTPlanModel } from '@/lib/chatgptModel';
 import {
   isLocalModel,
+  isChatGPTModel,
+  chatGPTModelId,
+  chatGPTFastEffort,
   localModelId,
   MODELS,
   type ApiKeyProvider,
@@ -71,7 +75,7 @@ function createOpenAI(spec: ModelSpec, opts: ModelOptions) {
     ...temperatureFor(spec, temperature),
     modelKwargs: {
       ...(maxTokens ? { max_completion_tokens: maxTokens } : {}),
-      ...(fast ? { reasoning_effort: 'none' } : {}),
+      ...(fast ? { reasoning_effort: spec.openaiFastEffort ?? 'none' } : {}),
       ...(jsonSchema ? { response_format: { type: 'json_object' } } : {}),
     },
   });
@@ -210,6 +214,10 @@ function createLocal(model: LocalModelRef, opts: ModelOptions) {
 
 export function getModelInstance(opts: ModelOptions) {
   const { modelName } = opts.modelPreset;
+  if (isChatGPTModel(modelName)) {
+    const model = chatGPTModelId(modelName);
+    return new ChatGPTPlanModel(model, Boolean(opts.jsonSchema), opts.fast ? chatGPTFastEffort(model) : undefined);
+  }
   if (isLocalModel(modelName)) return createLocal(modelName, opts);
   const spec = MODELS[modelName];
   if (opts.modelPreset.connectionMode === 'openrouter') return createOpenRouter(spec, opts);

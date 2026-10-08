@@ -1,5 +1,6 @@
 import { LoadingLabel } from '@/components/Loader/LoadingLabel';
 import LocalModelSettings from '@/components/Setting/LocalModelSettings';
+import ChatGPTSettings from '@/components/Setting/ChatGPTSettings';
 import { Language, useLanguage, useTranslateTargetLanguage } from '@/hooks/language';
 import {
   Theme,
@@ -12,12 +13,14 @@ import {
 import {
   useAnthropicValidated,
   useChatModel,
+  useChatGPTConnectionValue,
   useConnectionMode,
   useGeminiValidated,
   useLocalServerValue,
   useModelOptions,
   useOpenAIValidated,
   useOpenRouterValidated,
+  useProviderModelPreferences,
   useTranslateModel,
 } from '@/hooks/models';
 import {
@@ -27,14 +30,19 @@ import {
   useSetOpenRouterKey,
 } from '@/hooks/settings';
 import { languageOptions } from '@/lib/language';
-import { ApiKeyProvider, ChatModel, TranslateModel } from '@/lib/modelRegistry';
+import {
+  ChatModel,
+  TranslateModel,
+  isChatGPTModel,
+} from '@/lib/modelRegistry';
+import { AIProvider, isProviderModel, rememberProviderModels, resolveProviderModels } from '@/lib/modelPreferences';
 import { getOS } from '@/lib/userOS';
 import { validateApiKey } from '@/lib/validateApiKey';
 import { debugLog } from '@/logs';
 import { SmileOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Input, List, Select, Tabs, Tag } from 'antd';
 import { useSetAtom } from 'jotai';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const SettingsModalContent = () => {
@@ -61,18 +69,37 @@ const SettingsModalContent = () => {
   const [showToggle, setShowToggle] = useShowToggle();
   const setToggleYPosition = useSetAtom(toggleYPositionAtom);
   const [showYoutubeCaptionToggle, setShowYoutubeCaptionToggle] = useShowYoutubeCaptionToggle();
-  const [selectedProvider, setSelectedProvider] = useState<ApiKeyProvider | 'local'>(
-    'openrouter-api-key'
+  const [modelPreferences, setModelPreferences] = useProviderModelPreferences();
+  const selectedProvider: AIProvider = modelPreferences.provider ?? (
+    isChatGPTModel(chatModel) && isChatGPTModel(translateModel) ? 'chatgpt' : 'openrouter-api-key'
   );
   const localServer = useLocalServerValue();
+  const chatGPT = useChatGPTConnectionValue();
   const [toggleHiddenSiteList, setToggleHiddenSiteList] = useToggleHiddenSiteList();
 
-  const modelOptions = useModelOptions().map(({ value, label, available }) => ({
-    value,
-    label,
-    className: 'sz:font-ycom',
-    disabled: !available,
-  }));
+  const chatGPTSelected = selectedProvider === 'chatgpt';
+  const modelOptions = useModelOptions()
+    .filter(({ value }) => isProviderModel(selectedProvider, value))
+    .map(({ value, label, available }) => ({
+      value,
+      label,
+      className: 'sz:font-ycom',
+      disabled: !available,
+    }));
+  const chatGPTModelsUnavailable = chatGPTSelected && !modelOptions.some(({ disabled }) => !disabled);
+
+  useEffect(() => {
+    const selection = resolveProviderModels(
+      selectedProvider,
+      { chat: chatModel, translation: translateModel },
+      modelPreferences.selections[selectedProvider],
+      { chatGPT: chatGPT.models, local: localServer?.models ?? [] },
+    );
+    if (selection.chat && selection.chat !== chatModel) setChatModel(selection.chat);
+    if (selection.translation && selection.translation !== translateModel) setTranslateModel(selection.translation);
+    const remembered = rememberProviderModels(modelPreferences, selectedProvider, selection);
+    if (remembered !== modelPreferences) setModelPreferences(remembered);
+  }, [selectedProvider, chatGPT, localServer, chatModel, translateModel, modelPreferences, setChatModel, setTranslateModel, setModelPreferences]);
 
   const handleSelectLanguage = (value: string) => {
     setLang(value as Language);
@@ -83,7 +110,16 @@ const SettingsModalContent = () => {
   };
 
   const handleSelectProvider = (value: string) => {
-    setSelectedProvider(value as ApiKeyProvider | 'local');
+    const provider = value as AIProvider;
+    const current = { chat: chatModel, translation: translateModel };
+    const remembered = rememberProviderModels(modelPreferences, selectedProvider, current);
+    const selection = resolveProviderModels(
+      provider, current, remembered.selections[provider],
+      { chatGPT: chatGPT.models, local: localServer?.models ?? [] },
+    );
+    setModelPreferences(rememberProviderModels(remembered, provider, selection));
+    if (selection.chat) setChatModel(selection.chat);
+    if (selection.translation) setTranslateModel(selection.translation);
     setApiKey('');
   };
 
@@ -116,7 +152,7 @@ const SettingsModalContent = () => {
   const userOS = getOS();
 
   const onClickValidate = async () => {
-    if (selectedProvider === 'local' || isLoading) return;
+    if (selectedProvider === 'local' || selectedProvider === 'chatgpt' || isLoading) return;
     setIsLoading(true);
     const trimmedKey = apiKey.trim();
     const isValid = await validateApiKey(trimmedKey, selectedProvider);
@@ -302,6 +338,7 @@ const SettingsModalContent = () => {
                     onChange={handleSelectProvider}
                     className="sz:font-ycom sz:w-50"
                     options={[
+                      { value: 'chatgpt', label: t('chatgpt.providerTitle'), className: 'sz:font-ycom' },
                       {
                         value: 'openrouter-api-key',
                         label: t('onboarding.selectProvider.openRouterApiKey.title'),
@@ -329,7 +366,9 @@ const SettingsModalContent = () => {
                       },
                     ]}
                   />
-                  {selectedProvider === 'local' ? (
+                  {selectedProvider === 'chatgpt' ? (
+                    <ChatGPTSettings className="sz:w-50 sz:mb-1" />
+                  ) : selectedProvider === 'local' ? (
                     <LocalModelSettings className="sz:w-50 sz:mb-1" />
                   ) : (
                     <div className="sz:flex sz:flex-row sz:items-center sz:w-50 sz:mb-1">
@@ -376,12 +415,10 @@ const SettingsModalContent = () => {
                     {t('settings.registered')}
                   </div>
                   <div className="sz:flex sz:flex-row sz:items-center sz:w-50 sz:mb-1 sz:wrap-normal sz:flex-wrap sz:gap-[1px]">
-                    <Tag
-                      style={{ fontSize: '11px' }}
-                      color={openAIValidated ? 'success' : 'default'}
-                    >
-                      OpenAI
+                    <Tag style={{ fontSize: '11px' }} color={localServer ? 'success' : 'default'}>
+                      {t('local.tag')}
                     </Tag>
+                    <Tag style={{ fontSize: '11px' }} color={chatGPT.connected ? 'success' : 'default'}>ChatGPT</Tag>
                     <Tag
                       style={{ fontSize: '11px' }}
                       color={geminiValidated ? 'success' : 'default'}
@@ -400,11 +437,14 @@ const SettingsModalContent = () => {
                     >
                       OpenRouter
                     </Tag>
-                    <Tag style={{ fontSize: '11px' }} color={localServer ? 'success' : 'default'}>
-                      {t('local.tag')}
+                    <Tag
+                      style={{ fontSize: '11px' }}
+                      color={openAIValidated ? 'success' : 'default'}
+                    >
+                      OpenAI API
                     </Tag>
                   </div>
-                  {openRouterValidated &&
+                  {!chatGPTSelected && openRouterValidated &&
                     (openAIValidated || geminiValidated || anthropicValidated) && (
                       <Checkbox
                         checked={connectionMode === 'openrouter'}
@@ -422,7 +462,9 @@ const SettingsModalContent = () => {
                     {t('settings.chatModel')}
                   </div>
                   <Select
-                    value={chatModel}
+                    value={isProviderModel(selectedProvider, chatModel) ? chatModel : undefined}
+                    disabled={chatGPTModelsUnavailable}
+                    placeholder={t('settings.chatModel')}
                     onChange={handleSelectChatModel}
                     className="sz:font-ycom sz:w-50"
                     options={modelOptions}
@@ -435,7 +477,9 @@ const SettingsModalContent = () => {
                     {t('settings.translateModel')}
                   </div>
                   <Select
-                    value={translateModel}
+                    value={isProviderModel(selectedProvider, translateModel) ? translateModel : undefined}
+                    disabled={chatGPTModelsUnavailable}
+                    placeholder={t('settings.translateModel')}
                     onChange={handleSelectTranslateModel}
                     className="sz:font-ycom sz:w-50"
                     options={modelOptions}

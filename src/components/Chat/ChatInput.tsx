@@ -1,5 +1,5 @@
 import Footer from '@/components/Footer';
-import { MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE } from '@/config/constants';
+import { requestPageSummary } from '@/services/pageSummary';
 import { ChatStatus, isChatWaiting } from '@/hooks/chat';
 import { useThemeValue } from '@/hooks/layout';
 import { useChatModel, useLocalServerValue } from '@/hooks/models';
@@ -15,7 +15,7 @@ import {
   TranslationOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import { Button, Input, Tooltip, Upload } from 'antd';
+import { Alert, Button, Input, Tooltip, Upload } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -39,6 +39,7 @@ const ChatInput = ({
 }) => {
   const { t } = useTranslation();
   const [chatInput, setChatInput] = useState('');
+  const [summaryFailed, setSummaryFailed] = useState(false);
   const [isComposing, setIsComposing] = useState(false);
   const [isCancelHovered, setIsCancelHovered] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
@@ -82,20 +83,18 @@ const ChatInput = ({
   const handleSummaryClick = async () => {
     debugLog('ChatInput: [handleSummaryClick] trigger summarize page');
 
+    setSummaryFailed(false);
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-      if (!tab?.id) {
-        debugLog('ChatInput: [handleSummaryClick] no active tab found');
-        return;
+      if (tab?.id === undefined) {
+        throw new Error('No active page available.');
       }
 
-      // Toggle의 MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE 리스너가 처리
-      chrome.tabs.sendMessage(tab.id, {
-        action: MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE,
-      });
+      await requestPageSummary(tab.id);
     } catch (error) {
       debugLog('ChatInput: [handleSummaryClick] error', error);
+      setSummaryFailed(true);
     }
   };
 
@@ -147,6 +146,8 @@ const ChatInput = ({
 
   return (
     <div className="sz-chat-input sz:w-full sz:px-2 sz:flex sz:flex-col sz:items-center sz:justify-center">
+      {summaryFailed && <Alert type="warning" showIcon closable onClose={() => setSummaryFailed(false)}
+        className="sz:w-full sz:mb-2 sz:font-ycom" message={t('chat.pageUnavailable')} />}
       <div className="sz:flex sz:flex-col sz:w-full sz:h-45 sz:px-2">
         <div className="sz:flex sz:items-center sz:justify-center">
           <div className="sz:flex sz:w-full sz:items-center sz:justify-start">

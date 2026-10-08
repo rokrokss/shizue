@@ -1,9 +1,11 @@
 import '@/assets/global.css';
 import '@/assets/tailwind.css';
 import Toggle from '@/components/Toggle';
-import { contentScriptLog } from '@/logs';
+import { contentScriptLog, errorLog } from '@/logs';
 import AntdProvider from '@/providers/AntdProvider';
 import LanguageProvider from '@/providers/LanguageProvider';
+import { registerPageSummaryListener } from '@/services/pageSummary';
+import { registerContentScriptConnection } from '@/lib/contentScriptConnection';
 import { StyleProvider as AntdStyleProvider, createCache } from '@ant-design/cssinjs';
 import '@ant-design/v5-patch-for-react-19';
 import { ConfigProvider } from 'antd';
@@ -18,7 +20,12 @@ export default defineContentScript({
   // @layer names reordered the page's own layers, and page CSS restyled the toggle.
   cssInjectionMode: 'ui',
   main(ctx) {
+    ctx.onInvalidated(registerContentScriptConnection('toggle'));
+    ctx.onInvalidated(registerPageSummaryListener());
+    // WXT invalidates the previous instance; also remove orphaned hosts left by older builds.
+    document.querySelectorAll('shizue-toggle').forEach((host) => host.remove());
     const mountUi = async () => {
+      if (ctx.isInvalid) return;
       contentScriptLog('Toggle');
 
       let root: Root | null = null;
@@ -97,13 +104,15 @@ export default defineContentScript({
         },
       });
 
+      if (ctx.isInvalid) { ui.remove(); return; }
       ui.mount();
     };
 
-    if (document.readyState === 'complete') {
-      requestIdleCallback(mountUi);
+    const mount = () => { void mountUi().catch((error) => errorLog('Toggle recovery mount failed', error)); };
+    if (document.body) {
+      mount();
     } else {
-      window.addEventListener('load', () => requestIdleCallback(mountUi), { once: true });
+      ctx.addEventListener(document, 'DOMContentLoaded', mount, { once: true });
     }
   },
 });

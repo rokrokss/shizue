@@ -1,4 +1,7 @@
 {
+  "chatgpt": {
+    "providerTitle": "Entrar com o ChatGPT"
+  },
   "extension_name": "Shizue: Tradutor IA + Assistente de Superpoderes LLM",
   "extension_description": "Tradutor AI + Assistente de Superpoderes LLM",
   "toggle_description": "Alternar Shizue",
@@ -49,6 +52,7 @@
     "greeting": "Olá,",
     "main_0": "Como está o seu dia?",
     "askAnything": "Pergunte qualquer coisa",
+    "pageUnavailable": "Não foi possível conectar a esta página. Atualize a página e tente novamente. Páginas restritas, como as configurações do navegador, não são compatíveis.",
     "connectionError": "Bip bip...🚨 Erro de sistema... 📡 🥺",
     "retry": "Tentar novamente",
     "history": "Histórico",

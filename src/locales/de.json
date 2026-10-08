@@ -1,4 +1,7 @@
 {
+  "chatgpt": {
+    "providerTitle": "Mit ChatGPT anmelden"
+  },
   "extension_name": "Shizue: KI-Übersetzer + LLM-Superkraft-Assistent",
   "extension_description": "KI-Übersetzer + LLM-Superkraft-Assistent",
   "toggle_description": "Shizue umschalten",
@@ -49,6 +52,7 @@
     "greeting": "Hallo,",
     "main_0": "Wie geht es dir heute?",
     "askAnything": "Frag irgendwas",
+    "pageUnavailable": "Keine Verbindung zu dieser Seite möglich. Lade die Seite neu und versuche es erneut. Geschützte Seiten wie die Browsereinstellungen werden nicht unterstützt.",
     "connectionError": "Piep piep...🚨 Systemfehler... 📡 🥺",
     "retry": "Wiederholen",
     "history": "Verlauf",

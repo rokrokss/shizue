@@ -1,4 +1,7 @@
 {
+  "chatgpt": {
+    "providerTitle": "ChatGPT से साइन इन करें"
+  },
   "extension_name": "Shizue: AI अनुवादक + LLM सुपरपावर सहायक",
   "extension_description": "AI अनुवादक + LLM सुपरपावर सहायक",
   "toggle_description": "Shizue टॉगल करें",
@@ -49,6 +52,7 @@
     "greeting": "नमस्ते,",
     "main_0": "आपका दिन कैसा जा रहा है?",
     "askAnything": "कुछ भी पूछें",
+    "pageUnavailable": "इस पेज से कनेक्ट नहीं हो पा रहा है। पेज रीफ़्रेश करके फिर कोशिश करें। ब्राउज़र सेटिंग जैसे प्रतिबंधित पेज समर्थित नहीं हैं।",
     "connectionError": "बीप बीप...🚨 सिस्टम त्रुटि... 📡 🥺",
     "retry": "पुनः प्रयास करें",
     "history": "इतिहास",

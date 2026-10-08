@@ -1,4 +1,7 @@
 {
+  "chatgpt": {
+    "providerTitle": "ChatGPT کے ذریعے سائن ان کریں"
+  },
   "extension_name": "Shizue: AI مترجم + LLM سپر پاور اسسٹنٹ",
   "extension_description": "AI مترجم + LLM سپر پاور اسسٹنٹ",
   "toggle_description": "Shizue کو ٹوگل کریں",
@@ -49,6 +52,7 @@
     "greeting": "ہیلو،",
     "main_0": "آپ کا دن کیسا جا رہا ہے؟",
     "askAnything": "کچھ بھی پوچھیں",
+    "pageUnavailable": "اس صفحے سے رابطہ نہیں ہو سکا۔ صفحہ ریفریش کر کے دوبارہ کوشش کریں۔ براؤزر کی ترتیبات جیسے محدود صفحات معاونت یافتہ نہیں ہیں۔",
     "connectionError": "بیپ بیپ...🚨 سسٹم خرابی... 📡 🥺",
     "retry": "دوبارہ کوشش کریں",
     "history": "تاریخ",

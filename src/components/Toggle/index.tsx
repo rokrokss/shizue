@@ -15,7 +15,6 @@ import {
   MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE,
   MESSAGE_CONTEXT_MENU_EXTRACT_IMAGE_TEXT,
   MESSAGE_CONTEXT_MENU_SELECTION_ACTION,
-  MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE,
   MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
   MESSAGE_UPDATE_PANEL_INIT_DATA,
   SelectionActionType,
@@ -39,14 +38,14 @@ import {
   initExtractImageTextContent,
   initMemoPageContent,
   initSelectionActionContent,
-  initSummarizePageContent,
 } from '@/lib/initPanelData';
 import { languageOptions } from '@/lib/language';
 import { TranslateModel } from '@/lib/modelRegistry';
 import { getPageTranslator } from '@/lib/pageTranslator';
 import { debugLog } from '@/logs';
 import { panelService } from '@/services/panelService';
-import { Button, Select } from 'antd';
+import { summarizeCurrentPage } from '@/services/pageSummary';
+import { Alert, Button, Select } from 'antd';
 import { motion, PanInfo } from 'framer-motion';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -65,6 +64,7 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
   const [translateSettingsModalOpen, setTranslateSettingsModalOpen] = useState(false);
   const [closeIconModalOpen, setCloseIconModalOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [panelConnectionFailed, setPanelConnectionFailed] = useState(false);
   const [toggleYPosition, setToggleYPosition] = useToggleYPosition();
   const [isTranslationActive, setIsTranslationActive] = useState(false);
   const isTranslationActiveRef = useRef(isTranslationActive);
@@ -147,11 +147,11 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
   }, [isTranslationActive]);
 
   const setPanelOpenOrNot = () => {
-    panelService.setPanelOpenOrNot();
+    void panelService.setPanelOpenOrNot().then((opened) => setPanelConnectionFailed(!opened));
   };
 
   const setPanelOpen = () => {
-    panelService.openPanel();
+    void panelService.openPanel().then((opened) => setPanelConnectionFailed(!opened));
   };
 
   const handleClick = () => {
@@ -206,12 +206,14 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
   const handleSummarizePage = useCallback(async () => {
     debugLog('Summarize page clicked');
     if (isDragging) return;
-    const pageText = document.body.innerText.slice(0, SUMMARY_PAGE_TEXT_MAX_CHARS);
-    await initSummarizePageContent(document.title, pageText, window.location.href);
-    void chrome.runtime.sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA }).catch((err) => {
-      debugLog('handleSummarizePage: Panel not opened yet', err);
-    });
+    // Keep the panel request inside the click, before any storage or network await.
     setPanelOpen();
+    try {
+      await summarizeCurrentPage();
+    } catch (error) {
+      debugLog('Summary connection unavailable', error);
+      setPanelConnectionFailed(true);
+    }
   }, [isDragging]);
 
   const handleDescribeImage = useCallback(
@@ -219,6 +221,7 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
       debugLog('Describe image clicked', srcUrl);
       if (isDragging) return;
 
+      setPanelOpen();
       // 이미지를 다운로드하여 Base64로 변환
       try {
         const response = await fetch(srcUrl);
@@ -234,7 +237,6 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
             .catch((err) => {
               debugLog('handleDescribeImage: Panel not opened yet', err);
             });
-          setPanelOpen();
         };
 
         reader.readAsDataURL(blob);
@@ -250,6 +252,7 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
       debugLog('Extract image text clicked', srcUrl);
       if (isDragging) return;
 
+      setPanelOpen();
       // 이미지를 다운로드하여 Base64로 변환
       try {
         const response = await fetch(srcUrl);
@@ -265,7 +268,6 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
             .catch((err) => {
               debugLog('handleExtractImageText: Panel not opened yet', err);
             });
-          setPanelOpen();
         };
 
         reader.readAsDataURL(blob);
@@ -287,11 +289,11 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
         SUMMARY_PAGE_TEXT_MAX_CHARS
       );
       if (!text) return;
+      setPanelOpen();
       await initSelectionActionContent(actionType, text, document.title, window.location.href);
       void chrome.runtime.sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA }).catch((err) => {
         debugLog('handleSelectionAction: Panel not opened yet', err);
       });
-      setPanelOpen();
     },
     []
   );
@@ -321,11 +323,11 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
   const handleMemoClick = async () => {
     debugLog('handleMemoClick');
     if (isDragging) return;
+    setPanelOpen();
     await initMemoPageContent();
     void chrome.runtime.sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA }).catch((err) => {
       debugLog('handleMemoClick: Panel not opened yet', err);
     });
-    setPanelOpen();
   };
 
   const handleTranslatePage = useCallback(async () => {
@@ -352,8 +354,6 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
     const messageListener = (message: any) => {
       if (message.action === MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE) {
         if (!isTranslationActiveRef.current) handleTranslatePage();
-      } else if (message.action === MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE) {
-        handleSummarizePage();
       } else if (message.action === MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE) {
         handleDescribeImage(message.srcUrl);
       } else if (message.action === MESSAGE_CONTEXT_MENU_EXTRACT_IMAGE_TEXT) {
@@ -367,7 +367,7 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
     return () => {
       chrome.runtime.onMessage.removeListener(messageListener);
     };
-  }, [handleTranslatePage, handleSummarizePage, handleDescribeImage, handleSelectionAction]);
+  }, [handleTranslatePage, handleDescribeImage, handleExtractImageText, handleSelectionAction]);
 
   return (
     !isCurrentSiteHidden && (
@@ -384,6 +384,11 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
         }}
         className="sz:fixed sz:right-0 sz:bottom-[26px] sz:flex sz:flex-col sz:items-end sz:z-2147483647"
       >
+        {panelConnectionFailed && <div className="sz:w-64 sz:max-w-[calc(100vw-16px)] sz:mr-2 sz:mb-2"
+          style={{ filter: theme === 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none' }}>
+          <Alert type="warning" showIcon closable onClose={() => setPanelConnectionFailed(false)}
+            className="sz:font-ycom" message={t('chat.pageUnavailable')} />
+        </div>}
         <div
           className="sz:flex sz:flex-col sz:items-end sz:z-2147483647"
           style={{

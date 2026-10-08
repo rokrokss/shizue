@@ -1,4 +1,7 @@
 {
+  "chatgpt": {
+    "providerTitle": "Đăng nhập bằng ChatGPT"
+  },
   "extension_name": "Shizue: Trình dịch AI + Trợ lý siêu năng lực LLM",
   "extension_description": "Người dịch AI + Trợ lý siêu năng lực LLM",
   "toggle_description": "Chuyển đổi Shizue",
@@ -49,6 +52,7 @@
     "greeting": "Xin chào,",
     "main_0": "Ngày của bạn thế nào?",
     "askAnything": "Hỏi bất cứ điều gì",
+    "pageUnavailable": "Không thể kết nối với trang này. Hãy tải lại trang rồi thử lại. Các trang bị hạn chế truy cập, như cài đặt trình duyệt, không được hỗ trợ.",
     "connectionError": "Beep beep...🚨 Lỗi Hệ thống... 📡 🥺",
     "retry": "Thử lại",
     "history": "Lịch sử",

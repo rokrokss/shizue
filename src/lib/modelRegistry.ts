@@ -28,7 +28,15 @@ export type CloudModel =
 // models supports, is the stored LocalServerConfig. Chat and translation can pick different ones.
 export type LocalModelRef = `local:${string}`;
 
-export type ChatModel = CloudModel | LocalModelRef;
+export type ChatGPTModelRef = `chatgpt:${string}`;
+export type ChatModel = CloudModel | LocalModelRef | ChatGPTModelRef;
+export const isChatGPTModel = (model: string): model is ChatGPTModelRef => model.startsWith('chatgpt:');
+export const chatGPTModelRef = (id: string): ChatGPTModelRef => `chatgpt:${id}`;
+export const chatGPTModelId = (model: ChatGPTModelRef) => model.slice('chatgpt:'.length);
+
+// App-level exclusions apply to both the account catalog and previously saved selections.
+export const isSelectableChatGPTModelId = (id: string): boolean =>
+  !['gpt-6-sol', 'gpt-5.6-sol', 'gpt-5.6-luna'].includes(id);
 
 export type TranslateModel = ChatModel;
 
@@ -76,6 +84,8 @@ export interface ModelSpec {
   supportsTemperature: boolean;
   // Whether the model takes image input (`input_modalities` on OpenRouter).
   supportsImages: boolean;
+  // Lowest supported reasoning effort for latency-sensitive OpenAI API calls.
+  openaiFastEffort?: 'none' | 'low';
   openrouter: {
     // OpenRouter IDs don't follow the provider's (claude-haiku-4-5 is anthropic/claude-haiku-4.5).
     id: string;
@@ -91,12 +101,13 @@ export interface ModelSpec {
 
 export const MODELS: Record<CloudModel, ModelSpec> = {
   gpt: {
-    id: 'gpt-6-sol',
-    label: 'GPT-6 Sol',
+    id: 'gpt-6.1-sol',
+    label: 'GPT-6.1 Sol',
     provider: 'openai-api-key',
     supportsTemperature: false,
     supportsImages: true,
-    openrouter: { id: 'openai/gpt-6-sol', fastEffort: 'none' },
+    openaiFastEffort: 'low',
+    openrouter: { id: 'openai/gpt-6.1-sol', fastEffort: 'low' },
   },
   'gpt-mini': {
     id: 'gpt-6-luna',
@@ -104,6 +115,7 @@ export const MODELS: Record<CloudModel, ModelSpec> = {
     provider: 'openai-api-key',
     supportsTemperature: false,
     supportsImages: true,
+    openaiFastEffort: 'none',
     openrouter: { id: 'openai/gpt-6-luna', fastEffort: 'none' },
   },
   'gemini-flash': {
@@ -166,6 +178,13 @@ export const MODELS: Record<CloudModel, ModelSpec> = {
   },
 };
 
+// Reuse verified OpenAI effort settings for the account catalog. Unknown models retain their
+// server default rather than receiving a potentially unsupported effort.
+export function chatGPTFastEffort(model: string): 'none' | 'low' | undefined {
+  if (model === 'gpt-6-astra') return 'low';
+  return Object.values(MODELS).find((spec) => spec.provider === 'openai-api-key' && spec.id === model)?.openaiFastEffort;
+}
+
 export const MODEL_OPTIONS = Object.keys(MODELS) as CloudModel[];
 
 const LOCAL_PREFIX = 'local:';
@@ -179,7 +198,7 @@ export const localModelId = (model: LocalModelRef) => model.slice(LOCAL_PREFIX.l
 
 export const isChatModel = (value: unknown): value is ChatModel =>
   typeof value === 'string' &&
-  (value in MODELS || (value.startsWith(LOCAL_PREFIX) && value.length > LOCAL_PREFIX.length));
+  (Object.hasOwn(MODELS, value) || (value.startsWith(LOCAL_PREFIX) && value.length > LOCAL_PREFIX.length) || (isChatGPTModel(value) && value.length > 'chatgpt:'.length));
 
 // Undefined when the model isn't on the connected server (e.g. after connecting another one).
 export const resolveLocalModel = (
@@ -201,12 +220,14 @@ export const resolveLocalModel = (
 };
 
 export const modelSupportsImages = (model: ChatModel, localServer?: LocalServerConfig | null) =>
-  isLocalModel(model)
+  // The ChatGPT plan Responses flow supports image inputs. The server validates model support.
+  isChatGPTModel(model) ? true : isLocalModel(model)
     ? Boolean(resolveLocalModel(model, localServer)?.supportsImages)
     : MODELS[model].supportsImages;
 
 // Usage records written before model IDs were stored hold slot names or retired model IDs.
 const legacyModelLabels: Record<string, string> = {
+  'gpt-6-sol': 'GPT-6 Sol',
   gpt: 'GPT 4.1',
   'gpt-4.1': 'GPT 4.1',
   'gpt-mini': 'GPT 4.1 Mini',
@@ -222,8 +243,9 @@ const legacyModelLabels: Record<string, string> = {
 };
 
 export const formatModelName = (modelName: string) => {
-  const spec = Object.values(MODELS).find((m) => m.id === modelName);
-  return spec?.label ?? legacyModelLabels[modelName] ?? modelName;
+  const id = isChatGPTModel(modelName) ? chatGPTModelId(modelName) : modelName;
+  const spec = Object.values(MODELS).find((m) => m.id === id);
+  return spec?.label ?? legacyModelLabels[id] ?? id;
 };
 
 export const providerFromName = (modelName: string): ModelProvider => {

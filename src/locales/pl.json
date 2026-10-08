@@ -1,4 +1,7 @@
 {
+  "chatgpt": {
+    "providerTitle": "Zaloguj się przez ChatGPT"
+  },
   "extension_name": "Shizue: Tłumacz AI + Asystent Supermocy LLM",
   "extension_description": "Tłumacz AI + Asystent Supermocy LLM",
   "toggle_description": "Przełącz Shizue",
@@ -49,6 +52,7 @@
     "greeting": "Cześć,",
     "main_0": "Jak mija dzień?",
     "askAnything": "Zapytaj o cokolwiek",
+    "pageUnavailable": "Nie można połączyć się z tą stroną. Odśwież ją i spróbuj ponownie. Strony z ograniczonym dostępem, takie jak ustawienia przeglądarki, nie są obsługiwane.",
     "connectionError": "Pip pip...🚨 Błąd systemu... 📡 🥺",
     "retry": "Spróbuj ponownie",
     "history": "Historia",

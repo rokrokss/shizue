@@ -25,12 +25,16 @@ export default defineConfig({
       // none.
       permissions: [
         'storage',
+        'scripting',
+        'nativeMessaging',
         'sidePanel',
         'activeTab',
         'contextMenus',
         'declarativeNetRequestWithHostAccess',
       ],
-      host_permissions: ['http://localhost/*', 'http://127.0.0.1/*'],
+      // Reconnect the same web pages our declarative content scripts already run on.
+      // This also covers the local model endpoints.
+      host_permissions: ['http://*/*', 'https://*/*'],
       default_locale: 'en',
       side_panel: {
         default_path: 'sidepanel.html',

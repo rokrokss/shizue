@@ -3,7 +3,6 @@ import {
   MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE,
   MESSAGE_CONTEXT_MENU_EXTRACT_IMAGE_TEXT,
   MESSAGE_CONTEXT_MENU_SELECTION_ACTION,
-  MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE,
   MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
 } from '@/config/constants';
 import { getCurrentChatModel, getCurrentLocalServer } from '@/entrypoints/background/states/models';
@@ -15,6 +14,9 @@ import {
   modelSupportsImages,
 } from '@/lib/modelRegistry';
 import { errorLog } from '@/logs';
+import { openPanel } from '@/entrypoints/background/sidepanel';
+import { requestPageSummary } from '@/services/pageSummary';
+import { recoverTabContentScripts } from '@/services/background/contentScriptRecovery';
 import { i18n } from '#i18n';
 
 // Image actions run on the chat model, so they are greyed out for text-only models.
@@ -31,6 +33,38 @@ const updateImageMenuItems = (model: ChatModel, localServer?: LocalServerConfig 
 };
 
 export const createContextMenu = async () => {
+  // Service-worker event listeners must be registered before the first await.
+  chrome.contextMenus.onClicked.addListener((info, tab) => {
+    if (tab?.id !== undefined) {
+      if (info.menuItemId === 'translatePage') {
+        void chrome.tabs.sendMessage(tab.id, {
+          action: MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
+        }).catch((error) => errorLog('Page action receiver unavailable; reload the page', error));
+      } else if (info.menuItemId === 'summarizePage') {
+        // Open in the context-menu gesture, before messaging or storage work.
+        void openPanel(tab.windowId).catch((error) => errorLog('Open summary panel', error));
+        void requestPageSummary(tab.id, recoverTabContentScripts).catch((error) => errorLog('Page summary unavailable', error));
+      } else if (info.menuItemId === 'describeImage') {
+        void chrome.tabs.sendMessage(tab.id, {
+          action: MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE,
+          srcUrl: info.srcUrl,
+        }).catch((error) => errorLog('Page action receiver unavailable; reload the page', error));
+      } else if (info.menuItemId === 'extractImageText') {
+        void chrome.tabs.sendMessage(tab.id, {
+          action: MESSAGE_CONTEXT_MENU_EXTRACT_IMAGE_TEXT,
+          srcUrl: info.srcUrl,
+        }).catch((error) => errorLog('Page action receiver unavailable; reload the page', error));
+      } else if (isSelectionActionType(info.menuItemId)) {
+        void chrome.tabs.sendMessage(tab.id, {
+          action: MESSAGE_CONTEXT_MENU_SELECTION_ACTION,
+          actionType: info.menuItemId,
+          selectionText: info.selectionText,
+          frameId: info.frameId,
+        }).catch((error) => errorLog('Page action receiver unavailable; reload the page', error));
+      }
+    }
+  });
+
   if (chrome.contextMenus) {
     // Menus persist across service worker restarts; clear them before re-creating the same IDs.
     await chrome.contextMenus.removeAll();
@@ -99,36 +133,7 @@ export const createContextMenu = async () => {
     chrome.contextMenus.create(item);
   }
 
-  chrome.contextMenus.onClicked.addListener((info, tab) => {
-    if (tab?.id) {
-      if (info.menuItemId === 'translatePage') {
-        chrome.tabs.sendMessage(tab.id, {
-          action: MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
-        });
-      } else if (info.menuItemId === 'summarizePage') {
-        chrome.tabs.sendMessage(tab.id, {
-          action: MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE,
-        });
-      } else if (info.menuItemId === 'describeImage') {
-        chrome.tabs.sendMessage(tab.id, {
-          action: MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE,
-          srcUrl: info.srcUrl,
-        });
-      } else if (info.menuItemId === 'extractImageText') {
-        chrome.tabs.sendMessage(tab.id, {
-          action: MESSAGE_CONTEXT_MENU_EXTRACT_IMAGE_TEXT,
-          srcUrl: info.srcUrl,
-        });
-      } else if (isSelectionActionType(info.menuItemId)) {
-        chrome.tabs.sendMessage(tab.id, {
-          action: MESSAGE_CONTEXT_MENU_SELECTION_ACTION,
-          actionType: info.menuItemId,
-          selectionText: info.selectionText,
-          frameId: info.frameId,
-        });
-      }
-    }
-  });
+
 
   // Read the changed values directly: the model state's own listener may not have run yet.
   chrome.storage.onChanged.addListener((changes, area) => {

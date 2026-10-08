@@ -13,7 +13,7 @@ import { useTranslateTargetLanguageValue } from '@/hooks/language';
 import { addMessage, createThread } from '@/lib/indexDB';
 import { getSelectionActionPrompt, getSummarizePageTextPrompt } from '@/lib/prompts';
 import { readStorage, setStorage } from '@/lib/storageBackend';
-import { debugLog } from '@/logs';
+import { debugLog, errorLog } from '@/logs';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +35,8 @@ const SidePanelProvider = ({
   const navigate = useNavigate();
   const { t } = useTranslation();
   const isProcessingActionRef = useRef(false);
+  const actionRefreshPendingRef = useRef(false);
+  const refreshActionRef = useRef<() => Promise<void>>(async () => {});
 
   const rollbackActionType = useCallback(async () => {
     setActionType('chat');
@@ -54,224 +56,233 @@ const SidePanelProvider = ({
 
   const getInitData = useCallback(async () => {
     if (isProcessingActionRef.current) {
+      actionRefreshPendingRef.current = true;
       debugLog('SidePanelProvider: [getInitData] already processing action, skipping');
       return;
     }
     
-    const initData = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
-    debugLog('initData', initData);
+    // Lock before reading storage: mount, storage and message events can arrive together.
+    isProcessingActionRef.current = true;
+    try {
+      const initData = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
+      debugLog('initData', initData);
     
-    if (isChatWaiting(chatStatus)) {
-      debugLog('SidePanelProvider: [getInitData] skip initData for chatStatus', chatStatus);
-      return;
-    } else if (initData?.actionType === 'chat' && window.location.hash === '#/shizue-memo') {
-      debugLog('SidePanelProvider: [getInitData] skip initData for actionType chat and memo url');
-      return;
-    } else if (initData?.actionType === 'askForSummary') {
-      // Clear the action immediately to prevent duplicate processing
-      isProcessingActionRef.current = true;
-      await rollbackActionType();
-      const { summaryTitle, summaryText, summaryPageLink } = initData;
+      if (isChatWaiting(chatStatus)) {
+        debugLog('SidePanelProvider: [getInitData] skip initData for chatStatus', chatStatus);
+        return;
+      } else if (initData?.actionType === 'chat' && window.location.hash === '#/shizue-memo') {
+        debugLog('SidePanelProvider: [getInitData] skip initData for actionType chat and memo url');
+        return;
+      } else if (initData?.actionType === 'askForSummary') {
+        // Clear the action immediately to prevent duplicate processing
+        await rollbackActionType();
+        const { summaryTitle, summaryText, summaryPageLink } = initData;
 
-      debugLog('SidePanelProvider: [getInitData] summaryTitle', summaryTitle);
-      debugLog('SidePanelProvider: [getInitData] threadId', threadId);
+        debugLog('SidePanelProvider: [getInitData] summaryTitle', summaryTitle);
+        debugLog('SidePanelProvider: [getInitData] threadId', threadId);
 
-      let isNewThread = false;
+        let isNewThread = false;
 
-      const isInMemoPage = window.location.hash === '#/shizue-memo';
+        const isInMemoPage = window.location.hash === '#/shizue-memo';
 
-      let tid = threadId;
-      if (!tid || isInMemoPage) {
-        tid = await createThread(summaryTitle!.slice(0, 20));
-        isNewThread = true;
-      }
+        let tid = threadId;
+        if (!tid || isInMemoPage) {
+          tid = await createThread(summaryTitle!.slice(0, 20));
+          isNewThread = true;
+        }
 
-      const summarizePageTextPrompt = getSummarizePageTextPrompt(summaryTitle!, summaryText!);
+        const summarizePageTextPrompt = getSummarizePageTextPrompt(summaryTitle!, summaryText!);
 
-      await addMessage({
-        id: crypto.randomUUID(),
-        threadId: tid,
-        role: 'human',
-        actionType: 'askForSummary',
-        summaryTitle: summaryTitle,
-        summaryPageLink: summaryPageLink,
-        translateMode: false,
-        content: summarizePageTextPrompt,
-        createdAt: Date.now(),
-        done: true,
-        onInterrupt: false,
-        stopped: false,
-      });
+        await addMessage({
+          id: crypto.randomUUID(),
+          threadId: tid,
+          role: 'human',
+          actionType: 'askForSummary',
+          summaryTitle: summaryTitle,
+          summaryPageLink: summaryPageLink,
+          translateMode: false,
+          content: summarizePageTextPrompt,
+          createdAt: Date.now(),
+          done: true,
+          onInterrupt: false,
+          stopped: false,
+        });
 
-      debugLog('SidePanelProvider: [getInitData] setThreadId', tid);
+        debugLog('SidePanelProvider: [getInitData] setThreadId', tid);
 
-      if (isNewThread) {
-        setThreadId(tid);
-      }
+        if (isNewThread) {
+          setThreadId(tid);
+        }
 
-      if (isInMemoPage) {
-        debugLog('SidePanelProvider: [getInitData] navigate to /');
-        navigate('/');
-      }
-    } else if (initData && isSelectionActionType(initData.actionType)) {
-      // Clear the action immediately to prevent duplicate processing
-      isProcessingActionRef.current = true;
-      await rollbackActionType();
-      const actionType = initData.actionType;
-      const { selectionText, summaryTitle, summaryPageLink } = initData;
+        if (isInMemoPage) {
+          debugLog('SidePanelProvider: [getInitData] navigate to /');
+          navigate('/');
+        }
+      } else if (initData && isSelectionActionType(initData.actionType)) {
+        // Clear the action immediately to prevent duplicate processing
+        await rollbackActionType();
+        const actionType = initData.actionType;
+        const { selectionText, summaryTitle, summaryPageLink } = initData;
 
-      debugLog('SidePanelProvider: [getInitData] selection action', actionType);
-      debugLog('SidePanelProvider: [getInitData] threadId', threadId);
+        debugLog('SidePanelProvider: [getInitData] selection action', actionType);
+        debugLog('SidePanelProvider: [getInitData] threadId', threadId);
 
-      let isNewThread = false;
-      const isInMemoPage = window.location.hash === '#/shizue-memo';
+        let isNewThread = false;
+        const isInMemoPage = window.location.hash === '#/shizue-memo';
 
-      let tid = threadId;
-      if (!tid || isInMemoPage) {
-        tid = await createThread(selectionText!.slice(0, 20));
-        isNewThread = true;
-      }
+        let tid = threadId;
+        if (!tid || isInMemoPage) {
+          tid = await createThread(selectionText!.slice(0, 20));
+          isNewThread = true;
+        }
 
-      await addMessage({
-        id: crypto.randomUUID(),
-        threadId: tid,
-        role: 'human',
-        actionType,
-        summaryTitle,
-        summaryPageLink,
-        selectionText,
-        content: getSelectionActionPrompt(
+        await addMessage({
+          id: crypto.randomUUID(),
+          threadId: tid,
+          role: 'human',
           actionType,
-          selectionText!,
-          summaryTitle ?? '',
-          targetLanguage
-        ),
-        createdAt: Date.now(),
-        done: true,
-        onInterrupt: false,
-        stopped: false,
-      });
+          summaryTitle,
+          summaryPageLink,
+          selectionText,
+          content: getSelectionActionPrompt(
+            actionType,
+            selectionText!,
+            summaryTitle ?? '',
+            targetLanguage
+          ),
+          createdAt: Date.now(),
+          done: true,
+          onInterrupt: false,
+          stopped: false,
+        });
 
-      debugLog('SidePanelProvider: [getInitData] setThreadId', tid);
+        debugLog('SidePanelProvider: [getInitData] setThreadId', tid);
 
-      if (isNewThread) {
-        setThreadId(tid);
+        if (isNewThread) {
+          setThreadId(tid);
+        }
+
+        if (isInMemoPage) {
+          debugLog('SidePanelProvider: [getInitData] navigate to /');
+          navigate('/');
+        }
+      } else if (initData?.actionType === 'memo') {
+        debugLog('SidePanelProvider: [getInitData] memo');
+        await rollbackActionType();
+
+        const isInMemoPage = window.location.hash === '#/shizue-memo';
+
+        debugLog('SidePanelProvider: [getInitData] isInMemoPage', isInMemoPage);
+
+        if (!isInMemoPage) {
+          debugLog('SidePanelProvider: [getInitData] navigate to /shizue-memo');
+          setTimeout(() => {
+            navigate('/shizue-memo');
+          }, 100);
+        }
+      } else if (initData?.actionType === 'describeImage') {
+        // Clear the action immediately to prevent duplicate processing
+        await rollbackActionType();
+        const { imageBase64, imageUrl } = initData;
+
+        debugLog('SidePanelProvider: [getInitData] describeImage', imageUrl);
+        debugLog('SidePanelProvider: [getInitData] threadId', threadId);
+
+        if (!imageBase64) {
+          debugLog('SidePanelProvider: [getInitData] imageBase64 is undefined');
+          return;
+        }
+
+        let isNewThread = false;
+        const isInMemoPage = window.location.hash === '#/shizue-memo';
+
+        let tid = threadId;
+        if (!tid || isInMemoPage) {
+          tid = await createThread(t('chat.describeImageRequest'));
+          isNewThread = true;
+        }
+
+        // Base64 이미지 처리 (File 변환은 필요시에만)
+        await addMessage({
+          id: crypto.randomUUID(),
+          threadId: tid,
+          role: 'human',
+          actionType: 'describeImage',
+          content: t('chat.describeImageRequest'),
+          images: [imageBase64],
+          createdAt: Date.now(),
+          done: true,
+          onInterrupt: false,
+          stopped: false,
+        });
+
+        debugLog('SidePanelProvider: [getInitData] setThreadId', tid);
+
+        if (isNewThread) {
+          setThreadId(tid);
+        }
+
+        if (isInMemoPage) {
+          debugLog('SidePanelProvider: [getInitData] navigate to /');
+          navigate('/');
+        }
+      } else if (initData?.actionType === 'extractImageText') {
+        // Clear the action immediately to prevent duplicate processing
+        await rollbackActionType();
+        const { imageBase64, imageUrl } = initData;
+
+        debugLog('SidePanelProvider: [getInitData] extractImageText', imageUrl);
+        debugLog('SidePanelProvider: [getInitData] threadId', threadId);
+
+        if (!imageBase64) {
+          debugLog('SidePanelProvider: [getInitData] imageBase64 is undefined');
+          return;
+        }
+
+        let isNewThread = false;
+        const isInMemoPage = window.location.hash === '#/shizue-memo';
+
+        let tid = threadId;
+        if (!tid || isInMemoPage) {
+          tid = await createThread(t('chat.extractImageTextRequest'));
+          isNewThread = true;
+        }
+
+        await addMessage({
+          id: crypto.randomUUID(),
+          threadId: tid,
+          role: 'human',
+          actionType: 'extractImageText',
+          content: t('chat.extractImageTextRequest'),
+          images: [imageBase64],
+          createdAt: Date.now(),
+          done: true,
+          onInterrupt: false,
+          stopped: false,
+        });
+
+        debugLog('SidePanelProvider: [getInitData] setThreadId', tid);
+
+        if (isNewThread) {
+          setThreadId(tid);
+        }
+
+        if (isInMemoPage) {
+          debugLog('SidePanelProvider: [getInitData] navigate to /');
+          navigate('/');
+        }
       }
-
-      if (isInMemoPage) {
-        debugLog('SidePanelProvider: [getInitData] navigate to /');
-        navigate('/');
-      }
-    } else if (initData?.actionType === 'memo') {
-      debugLog('SidePanelProvider: [getInitData] memo');
-      await rollbackActionType();
-
-      const isInMemoPage = window.location.hash === '#/shizue-memo';
-
-      debugLog('SidePanelProvider: [getInitData] isInMemoPage', isInMemoPage);
-
-      if (!isInMemoPage) {
-        debugLog('SidePanelProvider: [getInitData] navigate to /shizue-memo');
-        setTimeout(() => {
-          navigate('/shizue-memo');
-        }, 100);
-      }
-    } else if (initData?.actionType === 'describeImage') {
-      // Clear the action immediately to prevent duplicate processing
-      isProcessingActionRef.current = true;
-      await rollbackActionType();
-      const { imageBase64, imageUrl } = initData;
-
-      debugLog('SidePanelProvider: [getInitData] describeImage', imageUrl);
-      debugLog('SidePanelProvider: [getInitData] threadId', threadId);
-
-      if (!imageBase64) {
-        debugLog('SidePanelProvider: [getInitData] imageBase64 is undefined');
-        return;
-      }
-
-      let isNewThread = false;
-      const isInMemoPage = window.location.hash === '#/shizue-memo';
-
-      let tid = threadId;
-      if (!tid || isInMemoPage) {
-        tid = await createThread(t('chat.describeImageRequest'));
-        isNewThread = true;
-      }
-
-      // Base64 이미지 처리 (File 변환은 필요시에만)
-      await addMessage({
-        id: crypto.randomUUID(),
-        threadId: tid,
-        role: 'human',
-        actionType: 'describeImage',
-        content: t('chat.describeImageRequest'),
-        images: [imageBase64],
-        createdAt: Date.now(),
-        done: true,
-        onInterrupt: false,
-        stopped: false,
-      });
-
-      debugLog('SidePanelProvider: [getInitData] setThreadId', tid);
-
-      if (isNewThread) {
-        setThreadId(tid);
-      }
-
-      if (isInMemoPage) {
-        debugLog('SidePanelProvider: [getInitData] navigate to /');
-        navigate('/');
-      }
-    } else if (initData?.actionType === 'extractImageText') {
-      // Clear the action immediately to prevent duplicate processing
-      isProcessingActionRef.current = true;
-      await rollbackActionType();
-      const { imageBase64, imageUrl } = initData;
-
-      debugLog('SidePanelProvider: [getInitData] extractImageText', imageUrl);
-      debugLog('SidePanelProvider: [getInitData] threadId', threadId);
-
-      if (!imageBase64) {
-        debugLog('SidePanelProvider: [getInitData] imageBase64 is undefined');
-        return;
-      }
-
-      let isNewThread = false;
-      const isInMemoPage = window.location.hash === '#/shizue-memo';
-
-      let tid = threadId;
-      if (!tid || isInMemoPage) {
-        tid = await createThread(t('chat.extractImageTextRequest'));
-        isNewThread = true;
-      }
-
-      await addMessage({
-        id: crypto.randomUUID(),
-        threadId: tid,
-        role: 'human',
-        actionType: 'extractImageText',
-        content: t('chat.extractImageTextRequest'),
-        images: [imageBase64],
-        createdAt: Date.now(),
-        done: true,
-        onInterrupt: false,
-        stopped: false,
-      });
-
-      debugLog('SidePanelProvider: [getInitData] setThreadId', tid);
-
-      if (isNewThread) {
-        setThreadId(tid);
-      }
-
-      if (isInMemoPage) {
-        debugLog('SidePanelProvider: [getInitData] navigate to /');
-        navigate('/');
+    } catch (error) {
+      errorLog('Unable to initialize the side panel action', error);
+    } finally {
+      isProcessingActionRef.current = false;
+      if (actionRefreshPendingRef.current) {
+        actionRefreshPendingRef.current = false;
+        void refreshActionRef.current();
       }
     }
-    isProcessingActionRef.current = false;
   }, [threadId, setThreadId, rollbackActionType, chatStatus, navigate, t, targetLanguage]);
+  refreshActionRef.current = getInitData;
 
   // Not async: Chrome takes a listener's returned promise as its reply, so an async listener here
   // answered every message (e.g. a content script's translation batch) with undefined before the
@@ -293,7 +304,7 @@ const SidePanelProvider = ({
   useEffect(() => {
     if (!sidePanelHydrated) return;
     getInitData();
-  }, [sidePanelHydrated]);
+  }, [sidePanelHydrated, getInitData]);
 
   useEffect(() => {
     // This effect runs after the first render.
@@ -305,12 +316,18 @@ const SidePanelProvider = ({
   useEffect(() => {
     setPanelInitialized(true);
 
+    const handleStorage = (changes: Record<string, chrome.storage.StorageChange>, area: string) => {
+      const action = changes[STORAGE_GLOBAL_STATE]?.newValue?.actionType;
+      if (area === 'local' && action && action !== 'chat') void getInitData();
+    };
     chrome.runtime.onMessage.addListener(handleMessage);
+    chrome.storage.onChanged.addListener(handleStorage);
 
     return () => {
       chrome.runtime.onMessage.removeListener(handleMessage);
+      chrome.storage.onChanged.removeListener(handleStorage);
     };
-  }, [handleMessage]);
+  }, [handleMessage, getInitData]);
 
   return <>{panelInitialized ? children : loadingComponent}</>;
 };

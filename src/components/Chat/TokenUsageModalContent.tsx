@@ -1,5 +1,5 @@
 import { useThemeValue } from '@/hooks/layout';
-import { formatModelName } from '@/lib/modelRegistry';
+import { formatModelName, isChatGPTModel, chatGPTModelId } from '@/lib/modelRegistry';
 import { debugLog } from '@/logs';
 import { DailyUsage, fetchUsageData } from '@/services/usageService';
 import { ReloadOutlined } from '@ant-design/icons';
@@ -37,6 +37,7 @@ const MODEL_COLORS = {
   'claude-sonnet': '#DCC6B7',
   'claude-haiku': '#1FFFFC',
   'gpt-6-sol': '#32CCBC',
+  'gpt-6.1-sol': '#32CCBC',
   'gpt-6-luna': '#ABDCFF',
   'gemini-3.8-flash': '#FFF6B7',
   'gemini-3.5-flash-lite': '#CE9FFC',
@@ -85,14 +86,14 @@ const TokenUsageModalContent = () => {
     // Add actual token count for each model
     day.modelUsage.forEach((modelUsage) => {
       const modelName = formatModelName(modelUsage.model);
-      chartItem[modelName] = modelUsage.totalTokens;
+      chartItem[modelName] = Number(chartItem[modelName] || 0) + modelUsage.totalTokens;
     });
 
     return chartItem;
   });
 
   const allModels = Array.from(
-    new Set(usageData.flatMap((day) => day.modelUsage.map((m) => m.model)))
+    new Map(usageData.flatMap((day) => day.modelUsage.map((m) => [formatModelName(m.model), m.model] as const))).values()
   );
 
   debugLog('TokenUsageTab [allModels]', allModels);
@@ -227,6 +228,7 @@ const TokenUsageModalContent = () => {
               />
               {allModels.map((model, index) => {
                 const modelName = formatModelName(model);
+                const modelId = isChatGPTModel(model) ? chatGPTModelId(model) : model;
                 debugLog('TokenUsageTab [modelName]', modelName);
                 return (
                   <Bar
@@ -234,7 +236,7 @@ const TokenUsageModalContent = () => {
                     key={modelName}
                     dataKey={modelName}
                     stackId="tokens"
-                    fill={MODEL_COLORS[model as keyof typeof MODEL_COLORS] || MODEL_COLORS.default}
+                    fill={MODEL_COLORS[modelId as keyof typeof MODEL_COLORS] || MODEL_COLORS.default}
                     name={modelName}
                     radius={index === allModels.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
                   />

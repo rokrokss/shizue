@@ -57,7 +57,7 @@ export const getVideoId = () => {
 const playerCaptionUrls = new Map<string, string>();
 
 export const watchPlayerCaptionRequests = () => {
-  new PerformanceObserver((list) => {
+  const observer = new PerformanceObserver((list) => {
     for (const entry of list.getEntries() as PerformanceResourceTiming[]) {
       // Skip our own caption fetches; the player requests them with XHR.
       if (!entry.name.includes('timedtext') || entry.initiatorType === 'fetch') continue;
@@ -67,7 +67,9 @@ export const watchPlayerCaptionRequests = () => {
         playerCaptionUrls.set(videoId, entry.name);
       }
     }
-  }).observe({ type: 'resource', buffered: true });
+  });
+  observer.observe({ type: 'resource', buffered: true });
+  return () => observer.disconnect();
 };
 
 const getPlayerCaptionUrl = async (videoId: string): Promise<string | null> => {

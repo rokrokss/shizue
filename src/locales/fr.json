@@ -1,4 +1,7 @@
 {
+  "chatgpt": {
+    "providerTitle": "Se connecter avec ChatGPT"
+  },
   "extension_name": "Shizue: Traducteur IA + Assistant de Super Pouvoirs LLM",
   "extension_description": "Traducteur IA + Assistant de Super Pouvoirs LLM",
   "toggle_description": "Activer/Désactiver Shizue",
@@ -49,6 +52,7 @@
     "greeting": "Bonjour,",
     "main_0": "Comment se passe ta journée ?",
     "askAnything": "Demandez n'importe quoi",
+    "pageUnavailable": "Impossible de se connecter à cette page. Actualisez-la et réessayez. Les pages restreintes, comme les paramètres du navigateur, ne sont pas prises en charge.",
     "connectionError": "Bip bip...🚨 Erreur système... 📡 🥺",
     "retry": "Réessayer",
     "history": "Historique",

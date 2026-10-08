@@ -1,4 +1,7 @@
 {
+  "chatgpt": {
+    "providerTitle": "ChatGPT ile giriş yap"
+  },
   "extension_name": "Shizue: AI Çevirmen + LLM Süper Güç Asistanı",
   "extension_description": "AI Çevirmen + LLM Süper Güç Asistanı",
   "toggle_description": "Shizue'yi Aç/Kapat",
@@ -49,6 +52,7 @@
     "greeting": "Merhaba,",
     "main_0": "Günün nasıl gidiyor?",
     "askAnything": "Herhangi bir şey sor",
+    "pageUnavailable": "Bu sayfaya bağlanılamıyor. Sayfayı yenileyip tekrar deneyin. Tarayıcı ayarları gibi erişimi kısıtlı sayfalar desteklenmez.",
     "connectionError": "Bip bip...🚨 Sistem Hatası... 📡 🥺",
     "retry": "Yeniden Dene",
     "history": "Geçmiş",

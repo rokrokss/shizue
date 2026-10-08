@@ -4,9 +4,11 @@ import {
   STORAGE_CONNECTION_MODE,
   STORAGE_GEMINI_VALIDATED,
   STORAGE_LOCAL_SERVER,
+  STORAGE_CHATGPT_CONNECTION,
   STORAGE_OPENAI_VALIDATED,
   STORAGE_OPENROUTER_VALIDATED,
   STORAGE_TRANSLATE_MODEL,
+  STORAGE_PROVIDER_MODEL_PREFERENCES,
 } from '@/config/constants';
 import {
   anthropicKeyAtom,
@@ -18,6 +20,11 @@ import {
   ChatModel,
   ConnectionMode,
   isLocalModel,
+  isChatGPTModel,
+  isSelectableChatGPTModelId,
+  chatGPTModelId,
+  chatGPTModelRef,
+  formatModelName,
   localModelId,
   localModelRef,
   LocalServerConfig,
@@ -30,15 +37,15 @@ import { chromeStorageBackend } from '@/lib/storageBackend';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { useTranslation } from 'react-i18next';
+import { ChatGPTConnection, disconnectedChatGPT } from '@/lib/chatgpt';
+import { defaultOpenAIChatModel, defaultOpenAITranslateModel, ProviderModelPreferences, registeredAIProviders } from '@/lib/modelPreferences';
 
-export const defaultOpenAIChatModel: ChatModel = 'gpt';
-export const defaultOpenAITranslateModel: TranslateModel = 'gpt-mini';
-export const defaultGeminiChatModel: ChatModel = 'gemini-flash';
-export const defaultGeminiTranslateModel: TranslateModel = 'gemini-flash-lite';
-export const defaultAnthropicChatModel: ChatModel = 'claude-sonnet';
-export const defaultAnthropicTranslateModel: TranslateModel = 'claude-haiku';
-export const defaultOpenRouterChatModel: ChatModel = 'gpt';
-export const defaultOpenRouterTranslateModel: TranslateModel = 'gpt-mini';
+export {
+  defaultOpenAIChatModel, defaultOpenAITranslateModel,
+  defaultGeminiChatModel, defaultGeminiTranslateModel,
+  defaultAnthropicChatModel, defaultAnthropicTranslateModel,
+  defaultOpenRouterChatModel, defaultOpenRouterTranslateModel,
+} from '@/lib/modelPreferences';
 
 export const defaultOpenAIValidated = undefined;
 export const defaultGeminiValidated = undefined;
@@ -58,6 +65,14 @@ export const translateModelAtom = atomWithStorage<TranslateModel>(
   chromeStorageBackend('local'),
   { getOnInit: true }
 );
+
+export const providerModelPreferencesAtom = atomWithStorage<ProviderModelPreferences>(
+  STORAGE_PROVIDER_MODEL_PREFERENCES,
+  { selections: {} },
+  chromeStorageBackend('local'),
+  { getOnInit: true }
+);
+export const useProviderModelPreferences = () => useAtom(providerModelPreferencesAtom);
 
 export const openAIValidatedAtom = atomWithStorage<boolean | undefined>(
   STORAGE_OPENAI_VALIDATED,
@@ -100,6 +115,12 @@ export const localServerAtom = atomWithStorage<LocalServerConfig | null>(
   chromeStorageBackend('local'),
   { getOnInit: true }
 );
+
+// Public account labels and model choices only. OAuth credentials are held by the native helper.
+export const chatGPTConnectionAtom = atomWithStorage<ChatGPTConnection>(
+  STORAGE_CHATGPT_CONNECTION, disconnectedChatGPT, chromeStorageBackend('local'), { getOnInit: true }
+);
+export const useChatGPTConnectionValue = () => useAtomValue(chatGPTConnectionAtom);
 
 // A storage atom holds the promise chrome.storage resolves to until its first change, so unwrap it
 // before treating the flag as missing and falling back to whether a key is set.
@@ -151,6 +172,18 @@ export const useConnectionMode = () => useAtom(connectionModeAtom);
 export const useLocalServer = () => useAtom(localServerAtom);
 export const useLocalServerValue = () => useAtomValue(localServerAtom);
 
+export const useRegisteredAIProviders = () => registeredAIProviders({
+  'openai-api-key': useAtomValue(openAIKeyAtom),
+  'openrouter-api-key': useAtomValue(openRouterKeyAtom),
+  'gemini-api-key': useAtomValue(geminiKeyAtom),
+  'anthropic-api-key': useAtomValue(anthropicKeyAtom),
+}, {
+  'openai-api-key': useAtomValue(openAIValidatedSafeAtom),
+  'openrouter-api-key': useAtomValue(openRouterValidatedSafeAtom),
+  'gemini-api-key': useAtomValue(geminiValidatedSafeAtom),
+  'anthropic-api-key': useAtomValue(anthropicValidatedSafeAtom),
+}, useLocalServerValue()?.models ?? []);
+
 export interface ModelOption {
   value: ChatModel;
   label: string;
@@ -165,6 +198,7 @@ export const useModelOptions = (): ModelOption[] => {
   const { t } = useTranslation();
   const openRouterValidated = useAtomValue(openRouterValidatedSafeAtom);
   const localServer = useAtomValue(localServerAtom);
+  const chatGPT = useChatGPTConnectionValue();
   const chatModel = useAtomValue(chatModelAtom);
   const translateModel = useAtomValue(translateModelAtom);
   const directValidated: Record<ModelProvider, boolean | undefined> = {
@@ -190,6 +224,11 @@ export const useModelOptions = (): ModelOption[] => {
       label: localLabel(id),
       available: false,
     })),
+    ...chatGPT.models.filter(({ id }) => isSelectableChatGPTModelId(id))
+      .map((model) => ({ value: chatGPTModelRef(model.id), label: model.label, available: chatGPT.connected })),
+    ...[...new Set([chatModel, translateModel].filter(isChatGPTModel))]
+      .filter((model) => isSelectableChatGPTModelId(chatGPTModelId(model)) && !chatGPT.models.some((entry) => chatGPTModelRef(entry.id) === model))
+      .map((model) => ({ value: model, label: formatModelName(model), available: false })),
   ];
 };
 export const useAnyModelAvailable = () => useModelOptions().some((option) => option.available);

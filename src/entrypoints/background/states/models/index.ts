@@ -14,6 +14,7 @@ import {
   isChatModel,
   isConnectionMode,
   isLocalModel,
+  isChatGPTModel,
   LocalModelConfig,
   LocalServerConfig,
   MODELS,
@@ -52,7 +53,7 @@ export const getLocalModelFor = (model: ChatModel): LocalModelConfig | undefined
 // OpenRouter-only models always return 'openrouter', so a missing key is reported as OpenRouter's.
 // Local models need no key and call the user's own server.
 export const getConnectionModeFor = (model: ChatModel): ConnectionMode => {
-  if (isLocalModel(model)) return 'direct';
+  if (isLocalModel(model) || isChatGPTModel(model)) return 'direct';
   const { provider } = MODELS[model];
   if (!provider) return 'openrouter';
   const directKey = {

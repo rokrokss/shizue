@@ -1,5 +1,6 @@
 import { LoadingLabel } from '@/components/Loader/LoadingLabel';
 import LocalModelSettings from '@/components/Setting/LocalModelSettings';
+import ChatGPTSettings from '@/components/Setting/ChatGPTSettings';
 import { useThemeValue } from '@/hooks/layout';
 import {
   defaultAnthropicChatModel,
@@ -11,11 +12,12 @@ import {
   defaultOpenRouterChatModel,
   defaultOpenRouterTranslateModel,
   useSetAnthropicValidated,
-  useSetChatModel,
+  useChatModel,
   useSetGeminiValidated,
   useSetOpenAIValidated,
   useSetOpenRouterValidated,
-  useSetTranslateModel,
+  useTranslateModel,
+  useProviderModelPreferences,
 } from '@/hooks/models';
 import {
   useSetAnthropicKey,
@@ -24,6 +26,7 @@ import {
   useSetOpenRouterKey,
 } from '@/hooks/settings';
 import { ApiKeyProvider, LocalModelRef } from '@/lib/modelRegistry';
+import { rememberProviderModels } from '@/lib/modelPreferences';
 import { validateApiKey } from '@/lib/validateApiKey';
 import { debugLog } from '@/logs';
 import { SmileOutlined } from '@ant-design/icons';
@@ -36,20 +39,22 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isInvalidApiKey, setIsInvalidApiKey] = useState(false);
   const [canProceed, setCanProceed] = useState(false);
+  const [isChatGPTWelcomeVisible, setIsChatGPTWelcomeVisible] = useState(false);
   const [apiKey, setApiKey] = useState(
     process.env.NODE_ENV === 'development' ? import.meta.env.WXT_OPENROUTER_API_KEY : ''
   );
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [selectedProvider, setSelectedProvider] = useState<ApiKeyProvider | 'local'>(
-    'openrouter-api-key'
+  const [selectedProvider, setSelectedProvider] = useState<ApiKeyProvider | 'local' | 'chatgpt'>(
+    'chatgpt'
   );
   const setOpenAIKey = useSetOpenAIKey();
   const setGeminiKey = useSetGeminiKey();
   const setAnthropicKey = useSetAnthropicKey();
   const setOpenRouterKey = useSetOpenRouterKey();
-  const setChatModel = useSetChatModel();
-  const setTranslateModel = useSetTranslateModel();
+  const [chatModel, setChatModel] = useChatModel();
+  const [translateModel, setTranslateModel] = useTranslateModel();
+  const [modelPreferences, setModelPreferences] = useProviderModelPreferences();
   const theme = useThemeValue();
   const setOpenAIValidated = useSetOpenAIValidated();
   const setGeminiValidated = useSetGeminiValidated();
@@ -57,10 +62,10 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
   const setOpenRouterValidated = useSetOpenRouterValidated();
   const lines = [
     t('onboarding.selectProvider.title'),
-    selectedProvider === 'local'
+    selectedProvider === 'chatgpt' ? '' : selectedProvider === 'local'
       ? t('local.description')
       : t('onboarding.selectProvider.openaiApiKey.description_0'),
-    selectedProvider === 'local'
+    selectedProvider === 'local' || selectedProvider === 'chatgpt'
       ? ''
       : selectedProvider === 'openrouter-api-key'
       ? t('onboarding.selectProvider.openRouterApiKey.description')
@@ -68,8 +73,9 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
   ];
 
   const handleSelect = (value: string) => {
-    setSelectedProvider(value as ApiKeyProvider | 'local');
+    setSelectedProvider(value as ApiKeyProvider | 'local' | 'chatgpt');
     setApiKey('');
+    setCanProceed(false);
   };
 
   const onLocalModelPicked = (model: LocalModelRef) => {
@@ -79,7 +85,7 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
   };
 
   const onClickValidate = async () => {
-    if (selectedProvider === 'local' || isLoading) return;
+    if (selectedProvider === 'local' || selectedProvider === 'chatgpt' || isLoading) return;
     setIsLoading(true);
     const trimmedKey = apiKey.trim();
     const isValid = await validateApiKey(trimmedKey, selectedProvider);
@@ -115,20 +121,23 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
   };
 
   const onClickNext = () => {
+    setModelPreferences(rememberProviderModels(modelPreferences, selectedProvider, { chat: chatModel, translation: translateModel }));
     debugLog('Onboarding: [onClickNext] navigate to /chat');
     navigate('/chat');
   };
 
   return (
     <div className="sz:flex sz:flex-col sz:pt-30">
+      {!isChatGPTWelcomeVisible && <>
       <div className="sz:text-lg whitespace-pre-wrap sz:min-h-13 sz:w-80 sz:flex sz:items-center sz:justify-center">
         {lines[0]}
       </div>
       <Select
         value={selectedProvider}
         onChange={handleSelect}
-        className="sz:font-ycom"
+        className="sz:font-ycom sz:w-80 sz:min-w-0 sz:max-w-full"
         options={[
+          { value: 'chatgpt', label: t('chatgpt.providerTitle'), className: 'sz:font-ycom' },
           {
             value: 'openrouter-api-key',
             label: t('onboarding.selectProvider.openRouterApiKey.title'),
@@ -156,14 +165,14 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
           },
         ]}
       />
-      <div
+      {(lines[1] || lines[2]) && <div
         className={`
           sz:flex
           sz:flex-col
           sz:items-start
           sz:w-80
           sz:text-sm
-          sz:text-gray-500
+          ${theme === 'dark' ? 'sz:text-gray-400' : 'sz:text-gray-500'}
           sz:pl-1
           sz:pt-[3px]
           sz:mb-3
@@ -171,8 +180,13 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
       >
         <div>{lines[1]}</div>
         <div>{lines[2]}</div>
-      </div>
-      {selectedProvider === 'local' ? (
+      </div>}
+      </>}
+      {selectedProvider === 'chatgpt' ? (
+        <ChatGPTSettings className="sz:w-80 sz:mt-1" onReadyChange={setCanProceed} onWelcomeChange={setIsChatGPTWelcomeVisible} onWelcomeConfirmed={onClickNext} onConnected={(chat, translation) => {
+          setChatModel(chat); setTranslateModel(translation); setCanProceed(true);
+        }} />
+      ) : selectedProvider === 'local' ? (
         <LocalModelSettings className="sz:w-80" pickModel onModelPicked={onLocalModelPicked} />
       ) : (
         <div className="sz:flex sz:flex-row sz:items-center sz:w-80">
@@ -208,7 +222,7 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
           </Button>
         </div>
       )}
-      <Button
+      {!isChatGPTWelcomeVisible && <Button
         className={`sz:mt-2 sz:font-semibold sz:text-base sz:font-ycom ${
           theme == 'dark' ? 'sz:text-black' : ''
         }`}
@@ -217,7 +231,7 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
         onClick={onClickNext}
       >
         {t('onboarding.next')}
-      </Button>
+      </Button>}
       <Button
         className="sz:mt-1 sz:font-semibold sz:text-base sz:font-ycom"
         type="dashed"

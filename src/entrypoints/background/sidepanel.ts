@@ -19,14 +19,14 @@ const updateCurrentWindowId = () => {
 // starts, currentWindowId is still being looked up.
 export const openPanel = (windowId: number | undefined) => {
   windowId ??= currentWindowId;
-  if (windowId === undefined) return;
+  if (windowId === undefined) return Promise.reject(new Error('No window available for the side panel.'));
   // A no-op when the panel is already open.
-  chrome.sidePanel.open({ windowId }).catch((error) => errorLog('sidePanel.open', error));
+  return chrome.sidePanel.open({ windowId });
 };
 
 export const closePanel = () => {
-  chrome.sidePanel.setOptions({ enabled: false }).then(() => {
-    chrome.sidePanel.setOptions({ enabled: true });
+  return chrome.sidePanel.setOptions({ enabled: false }).then(() => {
+    return chrome.sidePanel.setOptions({ enabled: true });
   });
 };
 
@@ -40,8 +40,8 @@ export const togglePanel = (windowId: number | undefined) => {
   const wasOpen = chrome.runtime
     .getContexts({ contextTypes: [chrome.runtime.ContextType.SIDE_PANEL] })
     .then((contexts) => contexts.length > 0);
-  openPanel(windowId);
-  wasOpen.then((open) => open && closePanel()).catch((error) => errorLog('getContexts', error));
+  const opened = openPanel(windowId);
+  return Promise.all([wasOpen, opened]).then(([open]) => { if (open) return closePanel(); });
 };
 
 export const sidebarToggleListeners = () => {
@@ -67,14 +67,13 @@ export const sidebarToggleListeners = () => {
     updateCurrentWindowId();
   });
 
-  chrome.action.onClicked.addListener((tab) => {
-    togglePanel(tab.windowId);
-  });
+  // Chrome handles toolbar clicks through setPanelBehavior; toggling a second time
+  // here could immediately close the panel Chrome just opened.
 
   chrome.commands.onCommand.addListener((command, tab) => {
     if (command === 'toggle-sidepanel') {
       debugLog('toggle-sidepanel command received');
-      togglePanel(tab?.windowId);
+      void togglePanel(tab?.windowId).catch((error) => errorLog('toggle-sidepanel', error));
     }
   });
 };

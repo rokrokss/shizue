@@ -1,4 +1,7 @@
 {
+  "chatgpt": {
+    "providerTitle": "使用 ChatGPT 登入"
+  },
   "extension_name": "Shizue: AI翻譯員 + LLM超能力助手",
   "extension_description": "AI翻譯員 + LLM超能力助手",
   "toggle_description": "切換 Shizue",
@@ -49,6 +52,7 @@
     "greeting": "你好，",
     "main_0": "今天過得怎麼樣？",
     "askAnything": "隨便問",
+    "pageUnavailable": "無法連線到此頁面。請重新整理頁面後再試。瀏覽器設定等受限頁面不受支援。",
     "connectionError": "嗶嗶...🚨 系統錯誤... 📡 🥺",
     "retry": "重試",
     "history": "歷史記錄",

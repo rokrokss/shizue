@@ -1,4 +1,7 @@
 {
+  "chatgpt": {
+    "providerTitle": "ورود با ChatGPT"
+  },
   "extension_name": "Shizue: مترجم هوش مصنوعی + دستیار ابرقدرت LLM",
   "extension_description": "مترجم هوشمند + دستیار ابرقدرتی LLM",
   "toggle_description": "Shizue را تغییر دهید",
@@ -49,6 +52,7 @@
     "greeting": "سلام،",
     "main_0": "روز شما چطور می‌گذرد؟",
     "askAnything": "هر چیزی بپرسید",
+    "pageUnavailable": "اتصال به این صفحه ممکن نیست. صفحه را تازه‌سازی کنید و دوباره تلاش کنید. صفحات محدودشده، مانند تنظیمات مرورگر، پشتیبانی نمی‌شوند.",
     "connectionError": "بیپ بیپ...🚨 خطای سیستم... 📡 🥺",
     "retry": "دوباره تلاش کنید",
     "history": "تاریخچه",

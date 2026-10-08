@@ -1,4 +1,7 @@
 {
+  "chatgpt": {
+    "providerTitle": "ChatGPTでログイン"
+  },
   "extension_name": "しずえ: AI翻訳者 + LLMスーパーパワーアシスタント",
   "extension_description": "AI翻訳者 + LLMスーパーパワーアシスタント",
   "toggle_description": "しずえを切り替え",
@@ -49,6 +52,7 @@
     "greeting": "こんにちは、",
     "main_0": "今日の調子はどうですか？",
     "askAnything": "何でも聞いてください",
+    "pageUnavailable": "このページに接続できません。ページを再読み込みして、もう一度お試しください。ブラウザーの設定など、アクセスが制限されたページでは使用できません。",
     "connectionError": "ピーピー...🚨 システムエラー... 📡 🥺",
     "retry": "再試行",
     "history": "履歴",

@@ -99,6 +99,12 @@ importers:
       '@wxt-dev/module-react':
         specifier: ^1.2.2
         version: 1.2.2(vite@7.3.6(@types/node@22.15.21)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.51.2)(yaml@2.8.0))(wxt@0.21.4(eslint@9.39.4(jiti@2.7.0))(rollup@4.63.5)(typescript@5.9.3)(vite@7.3.6(@types/node@22.15.21)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.51.2)(yaml@2.8.0))(web-ext@10.7.0(jiti@2.7.0)))
+      esbuild:
+        specifier: ^0.28.2
+        version: 0.28.2
+      jose:
+        specifier: ^6.2.12
+        version: 6.2.12
       postcss:
         specifier: ^8.5.28
         version: 8.5.28

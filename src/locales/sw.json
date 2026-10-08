@@ -1,4 +1,7 @@
 {
+  "chatgpt": {
+    "providerTitle": "Ingia kwa ChatGPT"
+  },
   "extension_name": "Shizue: Mfasiri wa AI + Msaidizi wa Nguvu za Kipekee za LLM",
   "extension_description": "Mtafsiri wa AI + Msaidizi wa Nguvu za LLM",
   "toggle_description": "Badilisha Shizue",
@@ -49,6 +52,7 @@
     "greeting": "Hujambo,",
     "main_0": "Siku yako inaendeleaje?",
     "askAnything": "Uliza chochote",
+    "pageUnavailable": "Haiwezekani kuunganisha kwenye ukurasa huu. Pakia ukurasa upya na ujaribu tena. Kurasa zenye ufikiaji uliozuiwa, kama mipangilio ya kivinjari, hazitumiki.",
     "connectionError": "Beep beep...🚨 Hitilafu ya Mfumo... 📡 🥺",
     "retry": "Jaribu tena",
     "history": "Historia",

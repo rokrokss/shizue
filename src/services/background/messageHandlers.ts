@@ -15,7 +15,7 @@ async function handleSetPanelOpenOrNot(
   sendResponse: (response?: any) => void,
   sender: chrome.runtime.MessageSender
 ) {
-  togglePanel(sender.tab?.windowId);
+  await togglePanel(sender.tab?.windowId);
   sendResponse({ status: 'success' });
 }
 
@@ -61,7 +61,7 @@ async function handleOpenPanel(
   sendResponse: (response?: any) => void,
   sender: chrome.runtime.MessageSender
 ) {
-  openPanel(sender.tab?.windowId);
+  await openPanel(sender.tab?.windowId);
   sendResponse({ status: 'success' });
 }
 

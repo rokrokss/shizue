@@ -1,4 +1,7 @@
 {
+  "chatgpt": {
+    "providerTitle": "تسجيل الدخول باستخدام ChatGPT"
+  },
   "extension_name": "Shizue: مترجم الذكاء الاصطناعي + مساعد القوة الخارقة LLM",
   "extension_description": "مترجم ذكي + مساعد خارق LLM",
   "toggle_description": "تبديل Shizue",
@@ -49,6 +52,7 @@
     "greeting": "مرحبًا،",
     "main_0": "كيف يسير يومك؟",
     "askAnything": "اسأل أي شيء",
+    "pageUnavailable": "تعذر الاتصال بهذه الصفحة. حدّث الصفحة وحاول مرة أخرى. الصفحات المقيّدة، مثل إعدادات المتصفح، غير مدعومة.",
     "connectionError": "بيب بيب...🚨 خطأ في النظام... 📡 🥺",
     "retry": "إعادة المحاولة",
     "history": "السجل",

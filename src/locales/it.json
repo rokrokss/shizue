@@ -1,4 +1,7 @@
 {
+  "chatgpt": {
+    "providerTitle": "Accedi con ChatGPT"
+  },
   "extension_name": "Shizue: Traduttore AI + Assistente ai Superpoteri LLM",
   "extension_description": "Traduttore AI + Assistente Superpoteri LLM",
   "toggle_description": "Attiva/Disattiva Shizue",
@@ -49,6 +52,7 @@
     "greeting": "Ciao,",
     "main_0": "Come sta andando la tua giornata?",
     "askAnything": "Chiedi qualsiasi cosa",
+    "pageUnavailable": "Impossibile connettersi a questa pagina. Ricaricala e riprova. Le pagine con accesso limitato, come le impostazioni del browser, non sono supportate.",
     "connectionError": "Beep beep...🚨 Errore di sistema... 📡 🥺",
     "retry": "Riprova",
     "history": "Cronologia",

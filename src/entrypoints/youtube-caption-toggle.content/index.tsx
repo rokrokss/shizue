@@ -2,7 +2,8 @@ import '@/assets/global.css';
 import '@/assets/tailwind.css';
 import YoutubeSubtitleToggle from '@/components/Youtube/YoutubeCaptionToggle';
 import { watchPlayerCaptionRequests } from '@/lib/youtube';
-import { contentScriptLog } from '@/logs';
+import { contentScriptLog, errorLog } from '@/logs';
+import { registerContentScriptConnection } from '@/lib/contentScriptConnection';
 import AntdProvider from '@/providers/AntdProvider';
 import LanguageProvider from '@/providers/LanguageProvider';
 import { StyleProvider as AntdStyleProvider, createCache } from '@ant-design/cssinjs';
@@ -21,13 +22,19 @@ export default defineContentScript({
   runAt: 'document_idle',
   cssInjectionMode: 'ui',
   async main(ctx) {
-    watchPlayerCaptionRequests();
+    ctx.onInvalidated(registerContentScriptConnection('youtube-caption-toggle'));
+    ctx.onInvalidated(watchPlayerCaptionRequests());
+    document.getElementById(YOUTUBE_TOGGLE_SHADOW_HOST_ID)?.remove();
+    document.querySelectorAll(YOUTUBE_POPUP_HOST_TAG).forEach((host) => host.remove());
+    let mounting = false;
 
     const mountUi = async () => {
+      if (ctx.isInvalid || mounting) return;
       if (document.getElementById(YOUTUBE_TOGGLE_SHADOW_HOST_ID)) return;
 
       const anchor = document.querySelector('.ytp-right-controls');
       if (!anchor) return;
+      mounting = true;
 
       contentScriptLog('Youtube');
 
@@ -47,69 +54,80 @@ export default defineContentScript({
       });
       anchor?.prepend(customDiv);
 
-      const ui = await createShadowRootUi(ctx, {
-        name: 'shizue-youtube-caption-toggle',
-        position: 'inline',
-        anchor: `#${YOUTUBE_TOGGLE_SHADOW_HOST_ID}`,
-        append: 'first',
-        mode: 'open',
-        onMount: (container, shadow) => {
-          root = createRoot(container);
-          container.classList.add('sz:h-full');
-          container.classList.add('sz:flex');
-          container.classList.add('sz:flex-col');
-          container.classList.add('sz:m-0');
+      try {
+        const ui = await createShadowRootUi(ctx, {
+          name: 'shizue-youtube-caption-toggle',
+          position: 'inline',
+          anchor: `#${YOUTUBE_TOGGLE_SHADOW_HOST_ID}`,
+          append: 'first',
+          mode: 'open',
+          onMount: (container, shadow) => {
+            root = createRoot(container);
+            container.classList.add('sz:h-full');
+            container.classList.add('sz:flex');
+            container.classList.add('sz:flex-col');
+            container.classList.add('sz:m-0');
 
-          // Add :host styles to shadow DOM
-          const hostStyle = document.createElement('style');
-          hostStyle.textContent = `
-            :host {
-              display: inline-block !important;
-              height: 100% !important;
-              line-height: 0 !important;
-              vertical-align: middle !important;
-            }
-            :host > * {
-              height: 100% !important;
-            }
-          `;
-          shadow.appendChild(hostStyle);
+            // Add :host styles to shadow DOM
+            const hostStyle = document.createElement('style');
+            hostStyle.textContent = `
+              :host {
+                display: inline-block !important;
+                height: 100% !important;
+                line-height: 0 !important;
+                vertical-align: middle !important;
+              }
+              :host > * {
+                height: 100% !important;
+              }
+            `;
+            shadow.appendChild(hostStyle);
 
-          // Tooltips and dropdowns still open on <body>, but inside their own shadow root that
-          // reuses the stylesheet WXT put in this one.
-          document.querySelector(YOUTUBE_POPUP_HOST_TAG)?.remove();
-          const popupHost = document.createElement(YOUTUBE_POPUP_HOST_TAG);
-          const popupShadow = popupHost.attachShadow({ mode: 'open' });
-          const popupContainer = document.createElement('div');
-          popupShadow.append(shadow.querySelector('style')!.cloneNode(true), popupContainer);
-          document.body.append(popupHost);
-          ctx.onInvalidated(() => popupHost.remove());
+            // Tooltips and dropdowns still open on <body>, but inside their own shadow root that
+            // reuses the stylesheet WXT put in this one.
+            document.querySelector(YOUTUBE_POPUP_HOST_TAG)?.remove();
+            const popupHost = document.createElement(YOUTUBE_POPUP_HOST_TAG);
+            const popupShadow = popupHost.attachShadow({ mode: 'open' });
+            const popupContainer = document.createElement('div');
+            popupShadow.append(shadow.querySelector('style')!.cloneNode(true), popupContainer);
+            document.body.append(popupHost);
+            ctx.onInvalidated(() => popupHost.remove());
 
-          root.render(
-            <StrictMode>
-              <JotaiProvider>
-                <LanguageProvider loadingComponent={null}>
-                  <AntdStyleProvider container={popupShadow} cache={createCache()}>
-                    <AntdProvider>
-                      <ConfigProvider getPopupContainer={() => popupContainer}>
-                        <YoutubeSubtitleToggle />
-                      </ConfigProvider>
-                    </AntdProvider>
-                  </AntdStyleProvider>
-                </LanguageProvider>
-              </JotaiProvider>
-            </StrictMode>
-          );
-          return root;
-        },
-      });
+            root.render(
+              <StrictMode>
+                <JotaiProvider>
+                  <LanguageProvider loadingComponent={null}>
+                    <AntdStyleProvider container={popupShadow} cache={createCache()}>
+                      <AntdProvider>
+                        <ConfigProvider getPopupContainer={() => popupContainer}>
+                          <YoutubeSubtitleToggle />
+                        </ConfigProvider>
+                      </AntdProvider>
+                    </AntdStyleProvider>
+                  </LanguageProvider>
+                </JotaiProvider>
+              </StrictMode>
+            );
+            return root;
+          },
+          onRemove: () => {
+            root?.unmount();
+            customDiv.remove();
+          },
+        });
 
-      ui.mount();
+        if (ctx.isInvalid || !customDiv.isConnected) { ui.remove(); return; }
+        ui.mount();
+      } catch (error) {
+        customDiv.remove();
+        throw error;
+      } finally { mounting = false; }
     };
 
-    await mountUi();
+    const mount = () => { void mountUi().catch((error) => errorLog('YouTube recovery mount failed', error)); };
+    mount();
 
-    window.addEventListener('yt-navigate-finish', mountUi, {
+    ctx.addEventListener(window, 'yt-navigate-finish', mount, {
       passive: true,
     });
   },

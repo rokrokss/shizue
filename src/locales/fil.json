@@ -1,4 +1,7 @@
 {
+  "chatgpt": {
+    "providerTitle": "Mag-sign in gamit ang ChatGPT"
+  },
   "extension_name": "Shizue: AI Translator + LLM Superpower Assistant",
   "extension_description": "AI Translator + LLM Superpower Assistant",
   "toggle_description": "Toggle Shizue",
@@ -49,6 +52,7 @@
     "greeting": "Kamusta,",
     "main_0": "Kumusta ang iyong araw?",
     "askAnything": "Magtanong ng kahit ano",
+    "pageUnavailable": "Hindi makakonekta sa pahinang ito. I-refresh ang pahina at subukang muli. Hindi suportado ang mga pahinang may limitadong access, tulad ng mga setting ng browser.",
     "connectionError": "Beep beep...🚨 System Error... 📡 🥺",
     "retry": "Subukan ulit",
     "history": "Kasaysayan",
