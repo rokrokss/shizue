@@ -30,7 +30,7 @@
   "faq_free_q": "Gerçekten ücretsiz mi?",
   "faq_free_a": "Evet, ücretsiz kalmaya da devam edecek. Yaptığınız API çağrılarının ücretini doğrudan yapay zeka sağlayıcınıza (ya da OpenRouter'a) ödersiniz. “Token Kullanımı” grafiği de her modelin kaç token kullandığını gösterir.",
   "faq_data_q": "Tarayıcımdan dışarıya ne gönderiliyor?",
-  "faq_data_a": "Yalnızca bir özelliğin ihtiyaç duyduğu içerik, örneğin özet için sayfanın metni. Bu içerik tarayıcınızdan doğrudan seçtiğiniz sağlayıcıya gider. Shizue sunucusu da analiz aracı da yoktur. Ayrıntılar için <a href=\"https://github.com/rokrokss/shizue/blob/develop/privacy_policy.md\">gizlilik politikasına</a> göz atın.",
+  "faq_data_a": "Yalnızca bir özelliğin ihtiyaç duyduğu içerik, örneğin özet için sayfanın metni. Bu içerik tarayıcınızdan doğrudan seçtiğiniz sağlayıcıya gider. Shizue sunucusu da analiz aracı da yoktur. Ayrıntılar için <a href=\"https://github.com/rokrokss/shizue/blob/main/privacy_policy.md\">gizlilik politikasına</a> göz atın.",
   "faq_key_q": "Hangi anahtarı almalıyım?",
   "faq_key_a": "En kolayı tek bir <a href=\"https://openrouter.ai/keys\">OpenRouter anahtarı</a>: DeepSeek dahil Shizue'deki tüm modelleri kullanmanızı sağlar. Zaten bir OpenAI, Anthropic ya da Gemini anahtarınız varsa o da olur.",
   "faq_more_q": "Yerel modelleri ya da Firefox'u destekliyor mu?",

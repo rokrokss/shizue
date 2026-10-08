@@ -30,7 +30,7 @@
   "faq_free_q": "Is it really free?",
   "faq_free_a": "Yes, and it will stay free. You pay your AI provider (or OpenRouter) directly for the API calls you make, and the Token Usage chart shows how many tokens each model used.",
   "faq_data_q": "What leaves my browser?",
-  "faq_data_a": "Only the content a feature needs, such as the page text for a summary, sent straight from your browser to the provider you chose. There is no Shizue server and no analytics. See the <a href=\"https://github.com/rokrokss/shizue/blob/develop/privacy_policy.md\">privacy policy</a>.",
+  "faq_data_a": "Only the content a feature needs, such as the page text for a summary, sent straight from your browser to the provider you chose. There is no Shizue server and no analytics. See the <a href=\"https://github.com/rokrokss/shizue/blob/main/privacy_policy.md\">privacy policy</a>.",
   "faq_key_q": "Which key should I get?",
   "faq_key_a": "The simplest is one <a href=\"https://openrouter.ai/keys\">OpenRouter key</a>: it unlocks every model in Shizue, including DeepSeek. If you already have an OpenAI, Anthropic, or Gemini key, that works too.",
   "faq_more_q": "Does it support local models or Firefox?",

@@ -30,7 +30,7 @@
   "faq_free_q": "Je, ni bure kweli?",
   "faq_free_a": "Ndiyo, na itaendelea kuwa bure. Unamlipa mtoa huduma wako wa AI (au OpenRouter) moja kwa moja kwa maombi ya API unayotuma, na chati ya “Matumizi ya Token” inaonyesha kila modeli imetumia token ngapi.",
   "faq_data_q": "Ni nini kinachotoka kwenye kivinjari changu?",
-  "faq_data_a": "Maudhui yanayohitajika na kipengele pekee, kama maandishi ya ukurasa kwa ajili ya muhtasari, ambayo hutumwa moja kwa moja kutoka kwenye kivinjari chako hadi kwa mtoa huduma uliyemchagua. Hakuna seva ya Shizue wala zana za takwimu. Soma <a href=\"https://github.com/rokrokss/shizue/blob/develop/privacy_policy.md\">sera ya faragha</a>.",
+  "faq_data_a": "Maudhui yanayohitajika na kipengele pekee, kama maandishi ya ukurasa kwa ajili ya muhtasari, ambayo hutumwa moja kwa moja kutoka kwenye kivinjari chako hadi kwa mtoa huduma uliyemchagua. Hakuna seva ya Shizue wala zana za takwimu. Soma <a href=\"https://github.com/rokrokss/shizue/blob/main/privacy_policy.md\">sera ya faragha</a>.",
   "faq_key_q": "Nipate ufunguo upi?",
   "faq_key_a": "Rahisi zaidi ni <a href=\"https://openrouter.ai/keys\">ufunguo wa OpenRouter</a>: ufunguo mmoja unafungua kila modeli ndani ya Shizue, ikiwemo DeepSeek. Ikiwa tayari una ufunguo wa OpenAI, Anthropic au Gemini, huo pia unafanya kazi.",
   "faq_more_q": "Je, inafanya kazi na modeli za ndani au kwenye Firefox?",

@@ -30,7 +30,7 @@
   "faq_free_q": "本当に無料ですか？",
   "faq_free_a": "はい、これからも無料です。APIの利用料金はAIプロバイダー（またはOpenRouter）に直接支払います。各モデルが使ったトークン数は「トークン使用量」グラフで確認できます。",
   "faq_data_q": "ブラウザの外に何が送信されますか？",
-  "faq_data_a": "送信されるのは、機能に必要な内容だけです。たとえば要約ならページのテキストが、ブラウザから選択したAIプロバイダーへ直接送られます。Shizueのサーバーも解析ツールもありません。詳しくは<a href=\"https://github.com/rokrokss/shizue/blob/develop/privacy_policy.md\">プライバシーポリシー</a>をご覧ください。",
+  "faq_data_a": "送信されるのは、機能に必要な内容だけです。たとえば要約ならページのテキストが、ブラウザから選択したAIプロバイダーへ直接送られます。Shizueのサーバーも解析ツールもありません。詳しくは<a href=\"https://github.com/rokrokss/shizue/blob/main/privacy_policy.md\">プライバシーポリシー</a>をご覧ください。",
   "faq_key_q": "どのキーを用意すればいいですか？",
   "faq_key_a": "いちばん簡単なのは<a href=\"https://openrouter.ai/keys\">OpenRouterのキー</a>を1つ用意することです。DeepSeekを含め、Shizueのすべてのモデルが使えます。OpenAI、Anthropic、Geminiのキーをすでにお持ちなら、それも使えます。",
   "faq_more_q": "ローカルモデルやFirefoxには対応していますか？",

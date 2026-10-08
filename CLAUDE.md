@@ -22,7 +22,7 @@ store/render.sh       # Render Chrome Web Store images (store/src → store/out)
 - `github-social-1280x640.png` is the GitHub social preview, not a store image. It is uploaded in the repo's Settings → General → Social preview.
 
 ### Landing Page (shizue.net)
-- `site/index.html` is the landing page. `site/build.sh` assembles it into `_site/` with images copied from `store/out`, and `.github/workflows/pages.yml` deploys it to GitHub Pages on push to `develop`. Re-rendered store images update the site too.
+- `site/index.html` is the landing page. `site/build.sh` assembles it into `_site/` with images copied from `store/out`, and `.github/workflows/pages.yml` deploys it to GitHub Pages on push to `main`. Re-rendered store images update the site too.
 - `site/index.html` is a template: `site/render.mjs` fills its `{{key}}` placeholders from each `site/locales/<lang>.json` (English at `/`, others at `/<lang>/`, with hreflang links and the header language menu). Strings are HTML fragments, and the build fails if a locale is missing a key or changes the tags of `en.json`. When page copy changes, update every locale file; asset paths in the template must be root-absolute (`/img/...`).
 
 ### Testing Extension

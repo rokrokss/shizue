@@ -30,7 +30,7 @@
   "faq_free_q": "真的免費嗎？",
   "faq_free_a": "是的，而且會一直免費。API 呼叫費用由你直接付給 AI 供應商（或 OpenRouter），「權杖使用量」圖表會顯示每個模型用了多少權杖。",
   "faq_data_q": "哪些內容會離開我的瀏覽器？",
-  "faq_data_a": "只有功能需要的內容，例如總結時的頁面文字，會從瀏覽器直接傳送到你選擇的 AI 供應商。沒有 Shizue 伺服器，也沒有分析工具。詳情請見<a href=\"https://github.com/rokrokss/shizue/blob/develop/privacy_policy.md\">隱私權政策</a>。",
+  "faq_data_a": "只有功能需要的內容，例如總結時的頁面文字，會從瀏覽器直接傳送到你選擇的 AI 供應商。沒有 Shizue 伺服器，也沒有分析工具。詳情請見<a href=\"https://github.com/rokrokss/shizue/blob/main/privacy_policy.md\">隱私權政策</a>。",
   "faq_key_q": "應該申請哪種金鑰？",
   "faq_key_a": "最簡單的是一組 <a href=\"https://openrouter.ai/keys\">OpenRouter 金鑰</a>：可以使用 Shizue 的所有模型，包括 DeepSeek。如果你已經有 OpenAI、Anthropic 或 Gemini 的金鑰，也可以直接使用。",
   "faq_more_q": "支援本機模型或 Firefox 嗎？",

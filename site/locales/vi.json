@@ -30,7 +30,7 @@
   "faq_free_q": "Có thật sự miễn phí không?",
   "faq_free_a": "Có, và sẽ luôn miễn phí. Bạn trả phí gọi API trực tiếp cho nhà cung cấp AI (hoặc OpenRouter), và biểu đồ “Sử dụng Token” cho biết mỗi mô hình đã dùng bao nhiêu token.",
   "faq_data_q": "Những gì được gửi ra khỏi trình duyệt?",
-  "faq_data_a": "Chỉ nội dung mà tính năng cần, chẳng hạn văn bản của trang khi tóm tắt, được gửi thẳng từ trình duyệt đến nhà cung cấp AI bạn đã chọn. Không có máy chủ Shizue và không có công cụ phân tích. Xem <a href=\"https://github.com/rokrokss/shizue/blob/develop/privacy_policy.md\">chính sách quyền riêng tư</a>.",
+  "faq_data_a": "Chỉ nội dung mà tính năng cần, chẳng hạn văn bản của trang khi tóm tắt, được gửi thẳng từ trình duyệt đến nhà cung cấp AI bạn đã chọn. Không có máy chủ Shizue và không có công cụ phân tích. Xem <a href=\"https://github.com/rokrokss/shizue/blob/main/privacy_policy.md\">chính sách quyền riêng tư</a>.",
   "faq_key_q": "Nên dùng khóa nào?",
   "faq_key_a": "Đơn giản nhất là một <a href=\"https://openrouter.ai/keys\">khóa OpenRouter</a>: dùng được mọi mô hình trong Shizue, kể cả DeepSeek. Nếu bạn đã có khóa OpenAI, Anthropic hoặc Gemini thì cũng dùng được.",
   "faq_more_q": "Có hỗ trợ mô hình chạy cục bộ hoặc Firefox không?",

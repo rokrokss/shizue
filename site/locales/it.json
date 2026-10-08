@@ -30,7 +30,7 @@
   "faq_free_q": "È davvero gratis?",
   "faq_free_a": "Sì, e resterà gratis. Le chiamate API le paghi direttamente al tuo provider AI (o a OpenRouter), e il grafico «Utilizzo Token» mostra quanti token ha usato ogni modello.",
   "faq_data_q": "Cosa esce dal mio browser?",
-  "faq_data_a": "Solo il contenuto che serve a una funzione, come il testo della pagina per un riassunto, inviato direttamente dal tuo browser al provider che hai scelto. Non c'è nessun server di Shizue e nessuno strumento di analisi. Per i dettagli, leggi l'<a href=\"https://github.com/rokrokss/shizue/blob/develop/privacy_policy.md\">informativa sulla privacy</a>.",
+  "faq_data_a": "Solo il contenuto che serve a una funzione, come il testo della pagina per un riassunto, inviato direttamente dal tuo browser al provider che hai scelto. Non c'è nessun server di Shizue e nessuno strumento di analisi. Per i dettagli, leggi l'<a href=\"https://github.com/rokrokss/shizue/blob/main/privacy_policy.md\">informativa sulla privacy</a>.",
   "faq_key_q": "Quale chiave mi serve?",
   "faq_key_a": "La scelta più semplice è una sola <a href=\"https://openrouter.ai/keys\">chiave OpenRouter</a>: sblocca tutti i modelli di Shizue, DeepSeek compreso. Se hai già una chiave OpenAI, Anthropic o Gemini, va bene anche quella.",
   "faq_more_q": "Supporta i modelli locali o Firefox?",
