@@ -19,7 +19,7 @@
     "chatgpt:install": "node scripts/install-chatgpt-host.mjs",
     "test:chatgpt": "node --experimental-strip-types --test tests/chatgpt*.test.mjs",
     "test:models": "node --experimental-strip-types --test tests/model-preferences.test.mjs",
-    "test:panel": "node --experimental-strip-types --test tests/panel-connection.test.mjs tests/content-recovery.test.mjs",
+    "test:panel": "node --experimental-strip-types --test tests/panel-*.test.mjs tests/content-recovery.test.mjs",
     "postinstall": "wxt prepare"
   },
   "dependencies": {

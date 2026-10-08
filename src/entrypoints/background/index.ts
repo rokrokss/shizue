@@ -1,4 +1,4 @@
-import { MESSAGE_OPEN_PANEL, MESSAGE_SET_PANEL_OPEN_OR_NOT } from '@/config/constants';
+import { MESSAGE_OPEN_PANEL, MESSAGE_SET_PANEL_OPEN_OR_NOT, MESSAGE_WAIT_PANEL_SUMMARY } from '@/config/constants';
 import { createContextMenu } from '@/entrypoints/background/contextMenu';
 import { onInstalled } from '@/entrypoints/background/onInstalled';
 import {
@@ -15,7 +15,7 @@ import { handleChatGPTSettings } from '@/services/background/chatgptNative';
 import { RECOVER_CONTENT_SCRIPTS } from '@/lib/contentScriptConnection';
 import { contentScriptRecoveryListeners, recoverTabContentScripts } from '@/services/background/contentScriptRecovery';
 
-const PANEL_OPEN_ACTIONS = new Set([MESSAGE_OPEN_PANEL, MESSAGE_SET_PANEL_OPEN_OR_NOT]);
+const IMMEDIATE_PANEL_ACTIONS = new Set([MESSAGE_OPEN_PANEL, MESSAGE_SET_PANEL_OPEN_OR_NOT, MESSAGE_WAIT_PANEL_SUMMARY]);
 
 export default defineBackground(() => {
   onInstalled();
@@ -47,8 +47,8 @@ export default defineBackground(() => {
     (async () => {
       try {
         // sidePanel.open() must run synchronously within the sender's user gesture,
-        // which is lost after an await.
-        if (!PANEL_OPEN_ACTIONS.has(msg.action)) await whenBackgroundStateReady();
+        // which is lost after an await. Summary readiness also needs no model setup.
+        if (!IMMEDIATE_PANEL_ACTIONS.has(msg.action)) await whenBackgroundStateReady();
         await handler(msg, sendResponse, sender);
       } catch (err) {
         errorLog('Message handler failed:', msg.action, err);

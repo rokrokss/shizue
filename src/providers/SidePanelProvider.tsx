@@ -1,20 +1,21 @@
 import {
   isSelectionActionType,
   MESSAGE_UPDATE_PANEL_INIT_DATA,
+  MESSAGE_WAIT_PANEL_SUMMARY,
   STORAGE_GLOBAL_STATE,
 } from '@/config/constants';
 import { chatStatusAtom, isChatWaiting } from '@/hooks/chat';
 import {
-  actionTypeAtom,
   sidePanelHydratedAtom,
   threadIdAtom,
+  updateGlobalStateAtom,
 } from '@/hooks/global';
 import { useTranslateTargetLanguageValue } from '@/hooks/language';
 import { addMessage, createThread } from '@/lib/indexDB';
 import { getSelectionActionPrompt, getSummarizePageTextPrompt } from '@/lib/prompts';
-import { readStorage, setStorage } from '@/lib/storageBackend';
+import { readStorage } from '@/lib/storageBackend';
 import { debugLog, errorLog } from '@/logs';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom, useStore } from 'jotai';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -27,9 +28,10 @@ const SidePanelProvider = ({
   children: ReactNode;
 }) => {
   const [panelInitialized, setPanelInitialized] = useState(false);
-  const [sidePanelHydrated, setSidePanelHydrated] = useAtom(sidePanelHydratedAtom);
-  const [threadId, setThreadId] = useAtom(threadIdAtom);
-  const setActionType = useSetAtom(actionTypeAtom);
+  const sidePanelHydrated = useAtomValue(sidePanelHydratedAtom);
+  const setThreadId = useSetAtom(threadIdAtom);
+  const updateGlobalState = useSetAtom(updateGlobalStateAtom);
+  const store = useStore();
   const chatStatus = useAtomValue(chatStatusAtom);
   const targetLanguage = useTranslateTargetLanguageValue();
   const navigate = useNavigate();
@@ -39,11 +41,8 @@ const SidePanelProvider = ({
   const refreshActionRef = useRef<() => Promise<void>>(async () => {});
 
   const rollbackActionType = useCallback(async () => {
-    setActionType('chat');
-    // Clear the action-specific data from global state to prevent duplicate processing
-    const prevGlobalState = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
-    await setStorage(STORAGE_GLOBAL_STATE, {
-      ...(prevGlobalState ?? {}),
+    // Clear once through the atom so its selected thread and storage stay in sync.
+    await updateGlobalState({
       actionType: 'chat',
       summaryTitle: undefined,
       summaryPageLink: undefined,
@@ -52,9 +51,10 @@ const SidePanelProvider = ({
       imageBase64: undefined,
       imageUrl: undefined,
     });
-  }, [setActionType]);
+  }, [updateGlobalState]);
 
   const getInitData = useCallback(async () => {
+    if (!sidePanelHydrated) return;
     if (isProcessingActionRef.current) {
       actionRefreshPendingRef.current = true;
       debugLog('SidePanelProvider: [getInitData] already processing action, skipping');
@@ -64,11 +64,14 @@ const SidePanelProvider = ({
     // Lock before reading storage: mount, storage and message events can arrive together.
     isProcessingActionRef.current = true;
     try {
+      await chrome.runtime.sendMessage({ action: MESSAGE_WAIT_PANEL_SUMMARY });
       const initData = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
+      // Use the same storage snapshot as the action, not a pre-hydration render.
+      const threadId = initData?.threadId;
       debugLog('initData', initData);
     
-      if (isChatWaiting(chatStatus)) {
-        debugLog('SidePanelProvider: [getInitData] skip initData for chatStatus', chatStatus);
+      if (isChatWaiting(store.get(chatStatusAtom))) {
+        debugLog('SidePanelProvider: [getInitData] skip initData while a chat is running');
         return;
       } else if (initData?.actionType === 'chat' && window.location.hash === '#/shizue-memo') {
         debugLog('SidePanelProvider: [getInitData] skip initData for actionType chat and memo url');
@@ -111,7 +114,7 @@ const SidePanelProvider = ({
         debugLog('SidePanelProvider: [getInitData] setThreadId', tid);
 
         if (isNewThread) {
-          setThreadId(tid);
+          await setThreadId(tid);
         }
 
         if (isInMemoPage) {
@@ -159,7 +162,7 @@ const SidePanelProvider = ({
         debugLog('SidePanelProvider: [getInitData] setThreadId', tid);
 
         if (isNewThread) {
-          setThreadId(tid);
+          await setThreadId(tid);
         }
 
         if (isInMemoPage) {
@@ -176,9 +179,7 @@ const SidePanelProvider = ({
 
         if (!isInMemoPage) {
           debugLog('SidePanelProvider: [getInitData] navigate to /shizue-memo');
-          setTimeout(() => {
-            navigate('/shizue-memo');
-          }, 100);
+          navigate('/shizue-memo');
         }
       } else if (initData?.actionType === 'describeImage') {
         // Clear the action immediately to prevent duplicate processing
@@ -219,7 +220,7 @@ const SidePanelProvider = ({
         debugLog('SidePanelProvider: [getInitData] setThreadId', tid);
 
         if (isNewThread) {
-          setThreadId(tid);
+          await setThreadId(tid);
         }
 
         if (isInMemoPage) {
@@ -264,7 +265,7 @@ const SidePanelProvider = ({
         debugLog('SidePanelProvider: [getInitData] setThreadId', tid);
 
         if (isNewThread) {
-          setThreadId(tid);
+          await setThreadId(tid);
         }
 
         if (isInMemoPage) {
@@ -279,9 +280,11 @@ const SidePanelProvider = ({
       if (actionRefreshPendingRef.current) {
         actionRefreshPendingRef.current = false;
         void refreshActionRef.current();
+      } else {
+        setPanelInitialized(true);
       }
     }
-  }, [threadId, setThreadId, rollbackActionType, chatStatus, navigate, t, targetLanguage]);
+  }, [sidePanelHydrated, setThreadId, rollbackActionType, chatStatus, navigate, t, targetLanguage, store]);
   refreshActionRef.current = getInitData;
 
   // Not async: Chrome takes a listener's returned promise as its reply, so an async listener here
@@ -298,24 +301,11 @@ const SidePanelProvider = ({
   );
 
   useEffect(() => {
-    debugLog('SidePanelProvider: [useEffect] threadId', threadId);
-  }, [threadId]);
-
-  useEffect(() => {
     if (!sidePanelHydrated) return;
     getInitData();
   }, [sidePanelHydrated, getInitData]);
 
   useEffect(() => {
-    // This effect runs after the first render.
-    // We assume atomWithStorage has loaded the initial value from localStorage by this time.
-    // This is usually safe for client-side rendering with localStorage.
-    setSidePanelHydrated(true);
-  }, [setSidePanelHydrated]);
-
-  useEffect(() => {
-    setPanelInitialized(true);
-
     const handleStorage = (changes: Record<string, chrome.storage.StorageChange>, area: string) => {
       const action = changes[STORAGE_GLOBAL_STATE]?.newValue?.actionType;
       if (area === 'local' && action && action !== 'chat') void getInitData();
@@ -329,7 +319,7 @@ const SidePanelProvider = ({
     };
   }, [handleMessage, getInitData]);
 
-  return <>{panelInitialized ? children : loadingComponent}</>;
+  return <>{sidePanelHydrated && panelInitialized ? children : loadingComponent}</>;
 };
 
 export default SidePanelProvider;

@@ -3,6 +3,7 @@ import ChatGreeting from '@/components/Chat/ChatGreeting';
 import ChatInput from '@/components/Chat/ChatInput';
 import ThreadListModalContent from '@/components/Chat/ThreadListModalContent';
 import TokenUsageModalContent from '@/components/Chat/TokenUsageModalContent';
+import { DotCycle } from '@/components/Loader/DotCycle';
 import TopMenu from '@/components/Chat/TopRightMenu';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import SettingsModalContent from '@/components/Setting/SettingsModalContent';
@@ -14,9 +15,10 @@ import { useChromePortStream } from '@/hooks/portStream';
 import { convertFilesToBase64Array } from '@/lib/imageUtils';
 import { addMessage, createThread, touchThread } from '@/lib/indexDB';
 import { throttleTrailing } from '@/lib/throttleTrailing';
+import { createThreadLoader } from '@/lib/threadLoader';
 import { debugLog, errorLog } from '@/logs';
 import { chatService } from '@/services/chatService';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useStore } from 'jotai';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -40,12 +42,16 @@ const Chat = () => {
   const theme = useThemeValue();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [messagesThreadId, setMessagesThreadId] = useState<string>();
   const [chatStatus, setChatStatus] = useAtom(chatStatusAtom);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isUsageOpen, setIsUsageOpen] = useState(false);
 
   const [threadId, setThreadId] = useAtom(threadIdAtom);
-  const threadIdRef = useRef(threadId);
+  const store = useStore();
+  const threadLoader = useMemo(() => createThreadLoader<Message[]>((id) =>
+    chrome.runtime.sendMessage({ action: MESSAGE_LOAD_THREAD, threadId: id })
+  ), []);
   const messageCountAtom = useMemo(() => createThreadMessageCountAtom(threadId), [threadId]);
   const messageCount = useAtomValue(messageCountAtom);
   const prevMessageCountRef = useRef(messageCount);
@@ -54,7 +60,6 @@ const Chat = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const aiIndexRef = useRef<number>(-1);
   const actionType = useRef<ActionType>('chat');
-  const isLoadingThreadRef = useRef(false);
 
   const { t } = useTranslation();
 
@@ -131,6 +136,7 @@ const Chat = () => {
   const handleRequestFromContextMenu = useCallback(
     async (tId: string, requestedActionType: ActionType) => {
       debugLog('handleRequestFromContextMenu called');
+      threadLoader.invalidate();
       setChatStatus('waiting');
 
       actionType.current = requestedActionType;
@@ -181,21 +187,17 @@ const Chat = () => {
         }
       );
     },
-    [setChatStatus, startStream, scrollToBottomThrottled, setMessages, addAIMessage]
+    [setChatStatus, startStream, scrollToBottomThrottled, setMessages, addAIMessage, threadLoader]
   );
 
   const loadThreadBackground = useCallback(
     async (tId: string) => {
-      if (isLoadingThreadRef.current) {
-        debugLog('loadThreadBackground skipped - already loading');
-        return;
-      }
-      isLoadingThreadRef.current = true;
       debugLog('loadThreadBackground called with threadId:', tId);
-      chrome.runtime
-        .sendMessage({ action: MESSAGE_LOAD_THREAD, threadId: tId })
-        .then((res: Message[]) => {
-          if (!Array.isArray(res)) return;
+      await threadLoader.load(tId)
+        .then((res) => {
+          if (!Array.isArray(res) || store.get(threadIdAtom) !== tId ||
+              !isChatIdle(store.get(chatStatusAtom))) return;
+          setMessagesThreadId(tId);
           setMessages(res);
           debugLog('loadThreadBackground set messages', res);
           if (res.length > 0) {
@@ -214,11 +216,11 @@ const Chat = () => {
             }
           }
         })
-        .finally(() => {
-          isLoadingThreadRef.current = false;
+        .catch((error) => {
+          errorLog('Unable to load chat thread', error);
         });
     },
-    [handleRequestFromContextMenu, setMessages]
+    [handleRequestFromContextMenu, store, threadLoader]
   );
 
   const handleCancel = async () => {
@@ -251,7 +253,9 @@ const Chat = () => {
   const addTranslateModeMessage = async (tId: string) => {
     const text = t('chat.translateModeDescription');
 
+    setMessagesThreadId(tId);
     setMessages((prev) => {
+      if (messagesThreadId !== tId) prev = [];
       actionType.current = 'chat';
       // human 메시지 + AI 메시지를 추가하므로 AI 메시지는 prev.length + 1 위치
       aiIndexRef.current = prev.length + 1;
@@ -296,7 +300,9 @@ const Chat = () => {
     const imageBase64Array =
       images && images.length > 0 ? await convertFilesToBase64Array(images) : undefined;
 
+    setMessagesThreadId(tId);
     setMessages((prev) => {
+      if (messagesThreadId !== tId) prev = [];
       actionType.current = 'chat';
       // human 메시지 + AI 메시지를 추가하므로 AI 메시지는 prev.length + 1 위치
       aiIndexRef.current = prev.length + 1;
@@ -346,24 +352,21 @@ const Chat = () => {
     if (!threadId) {
       cancelStream();
       setMessages([]);
+      setMessagesThreadId(undefined);
     }
-  }, [threadId]);
-
-  useEffect(() => {
-    threadIdRef.current = threadId;
-    debugLog('threadId', threadId);
-    debugLog('threadIdRef.current', threadIdRef.current);
+    return () => threadLoader.invalidate();
   }, [threadId]);
 
   useEffect(() => {
     // Only load thread when messageCount actually increases (new message from outside)
-    if (messageCount > 0 && threadId && messageCount > prevMessageCountRef.current) {
+    if (isChatIdle(chatStatus) && messageCount > 0 && threadId && messageCount > prevMessageCountRef.current) {
       loadThreadBackground(threadId);
     }
     prevMessageCountRef.current = messageCount;
   }, [messageCount, threadId]);
 
   const handleSubmit = async (text: string, images?: File[]) => {
+    threadLoader.invalidate();
     setChatStatus('waiting');
 
     const tId = await checkIfThreadExists(text);
@@ -411,6 +414,7 @@ const Chat = () => {
   const handleRetry = async (messageIdxToRetry: number) => {
     if (!threadId) return;
 
+    threadLoader.invalidate();
     setChatStatus('waiting');
 
     actionType.current = messages[messageIdxToRetry - 1].actionType;
@@ -485,6 +489,7 @@ const Chat = () => {
   };
 
   const handleTranslateMode = async () => {
+    threadLoader.invalidate();
     setChatStatus('waiting');
 
     let tId = threadId;
@@ -554,8 +559,11 @@ const Chat = () => {
       "
       >
         {/* **** aiIndexRef: {aiIndexRef.current} **** */}
-        {threadId && messages.length > 0 ? (
+        {threadId && messagesThreadId !== threadId ? (
+          <div className="sz:pt-15" aria-busy="true"><DotCycle /></div>
+        ) : threadId && messages.length > 0 ? (
           <ChatContainer
+            key={threadId}
             messages={messages}
             onRetry={handleRetry}
             scrollToBottom={scrollToBottomThrottled}

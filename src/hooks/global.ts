@@ -1,9 +1,7 @@
 import { SelectionActionType, STORAGE_GLOBAL_STATE } from '@/config/constants';
 import { chromeStorageBackend } from '@/lib/storageBackend';
-import { Atom, atom, useAtom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
-
-export const sidePanelHydratedAtom = atom(false);
+import { atom, useAtom } from 'jotai';
+import { atomWithStorage, unwrap } from 'jotai/utils';
 
 export const messageAddedInPanelAtom = atom<number | null>(null);
 
@@ -33,24 +31,31 @@ export const defaultGlobalState: GlobalState = {
 export const globalStateAtom = atomWithStorage<GlobalState>(
   STORAGE_GLOBAL_STATE,
   defaultGlobalState,
-  chromeStorageBackend('local'),
-  { getOnInit: false }
+  chromeStorageBackend<GlobalState>('local'),
+  { getOnInit: true }
+);
+
+// Chrome storage is asynchronous. Reading properties from its promise loses the
+// saved thread, even after that promise resolves. Keep readiness explicit.
+const resolvedGlobalStateAtom = unwrap(globalStateAtom);
+export const sidePanelHydratedAtom = atom((get) => get(resolvedGlobalStateAtom) !== undefined);
+
+export const updateGlobalStateAtom = atom(null, (_get, set, changes: Partial<GlobalState>) =>
+  set(globalStateAtom, (prev) => prev instanceof Promise
+    ? prev.then((state) => ({ ...state, ...changes }))
+    : { ...prev, ...changes })
 );
 
 export const threadIdAtom = atom(
-  (get) => get(globalStateAtom as Atom<GlobalState>).threadId,
-  (get, set, newThreadId: string | undefined) => {
-    const globalState = get(globalStateAtom);
-    set(globalStateAtom, { ...globalState, threadId: newThreadId });
-  }
+  (get) => get(resolvedGlobalStateAtom)?.threadId,
+  (_get, set, newThreadId: string | undefined) =>
+    set(updateGlobalStateAtom, { threadId: newThreadId })
 );
 
 export const actionTypeAtom = atom(
-  (get) => get(globalStateAtom as Atom<GlobalState>).actionType,
-  (get, set, newActionType: ActionType) => {
-    const globalState = get(globalStateAtom);
-    set(globalStateAtom, { ...globalState, actionType: newActionType });
-  }
+  (get) => get(resolvedGlobalStateAtom)?.actionType ?? 'chat',
+  (_get, set, newActionType: ActionType) =>
+    set(updateGlobalStateAtom, { actionType: newActionType })
 );
 
 export const useActionType = () => useAtom(actionTypeAtom);

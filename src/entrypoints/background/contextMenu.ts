@@ -14,9 +14,7 @@ import {
   modelSupportsImages,
 } from '@/lib/modelRegistry';
 import { errorLog } from '@/logs';
-import { openPanel } from '@/entrypoints/background/sidepanel';
-import { requestPageSummary } from '@/services/pageSummary';
-import { recoverTabContentScripts } from '@/services/background/contentScriptRecovery';
+import { openPanelForSummary } from '@/services/background/panelSummary';
 import { i18n } from '#i18n';
 
 // Image actions run on the chat model, so they are greyed out for text-only models.
@@ -42,8 +40,7 @@ export const createContextMenu = async () => {
         }).catch((error) => errorLog('Page action receiver unavailable; reload the page', error));
       } else if (info.menuItemId === 'summarizePage') {
         // Open in the context-menu gesture, before messaging or storage work.
-        void openPanel(tab.windowId).catch((error) => errorLog('Open summary panel', error));
-        void requestPageSummary(tab.id, recoverTabContentScripts).catch((error) => errorLog('Page summary unavailable', error));
+        void openPanelForSummary(tab.id, tab.windowId).catch((error) => errorLog('Page summary unavailable', error));
       } else if (info.menuItemId === 'describeImage') {
         void chrome.tabs.sendMessage(tab.id, {
           action: MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE,

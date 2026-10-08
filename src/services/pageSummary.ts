@@ -37,8 +37,12 @@ export async function requestPageSummary(tabId: number, recover = async (id: num
 export function registerPageSummaryListener() {
   const listener = (message: any, _sender: chrome.runtime.MessageSender, sendResponse: (response: { success: boolean }) => void) => {
     if (message?.action !== MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE) return false;
-    if (message.openPanel !== false) void panelService.openPanel();
-    void summarizeCurrentPage().then(() => sendResponse({ success: true }), (error) => {
+    const summary = message.openPanel !== false
+      ? panelService.openPanel({ summarizePage: true }).then((success) => {
+        if (!success) throw new Error('Unable to open the summary panel.');
+      })
+      : summarizeCurrentPage();
+    void summary.then(() => sendResponse({ success: true }), (error) => {
       debugLog('Page summary failed', error);
       sendResponse({ success: false });
     });

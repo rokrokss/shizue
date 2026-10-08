@@ -51,6 +51,109 @@ test('panel request is sent synchronously in the click before its promise settle
   });
 });
 
+test('summary panel intent is sent with the synchronous open request', async () => {
+  const calls = [];
+  const chrome = { runtime: { sendMessage(message) {
+    calls.push(message);
+    return Promise.resolve({ status: 'success' });
+  } } };
+  await withModule('../src/services/panelService.ts', { chrome }, async ({ panelService }) => {
+    const pending = panelService.openPanel({ summarizePage: true });
+    assert.deepEqual(calls, [{ action: 'action_open_panel', summarizePage: true }]);
+    assert.equal(await pending, true);
+  });
+});
+
+const panelSummaryStubs = {
+  '@/entrypoints/background/sidepanel': 'export const openPanel = id => globalThis.openSummaryPanel(id);',
+  '@/services/pageSummary': 'export const requestPageSummary = id => globalThis.deliverSummary(id);',
+  '@/services/background/contentScriptRecovery': 'export const recoverTabContentScripts = async () => true;',
+};
+
+test('a cold panel waits for summary delivery while opening immediately in the gesture', async () => {
+  const events = [];
+  let finishSummary;
+  await withModule('../src/services/background/panelSummary.ts', {
+    openSummaryPanel: id => { events.push(['open', id]); return Promise.resolve(); },
+    deliverSummary: id => { events.push(['summary', id]); return new Promise(resolve => { finishSummary = resolve; }); },
+  }, async ({ openPanelForSummary, waitForPanelSummary }) => {
+    const opening = openPanelForSummary(7, 2);
+    assert.deepEqual(events, [['open', 2], ['summary', 7]]);
+    let ready = false;
+    const waiting = waitForPanelSummary().then(() => { ready = true; });
+    await new Promise(setImmediate);
+    assert.equal(ready, false);
+    finishSummary();
+    await opening;
+    await waiting;
+    assert.equal(ready, true);
+    await waitForPanelSummary();
+  }, panelSummaryStubs);
+});
+
+test('failed summary delivery releases the initial panel gate and still reports the error', async () => {
+  let failSummary;
+  await withModule('../src/services/background/panelSummary.ts', {
+    openSummaryPanel: async () => {},
+    deliverSummary: () => new Promise((_resolve, reject) => { failSummary = reject; }),
+  }, async ({ openPanelForSummary, waitForPanelSummary }) => {
+    const opening = assert.rejects(openPanelForSummary(7, 2), /Page unavailable/);
+    const waiting = waitForPanelSummary();
+    failSummary(new Error('Page unavailable'));
+    await opening;
+    await waiting;
+    await waitForPanelSummary();
+  }, panelSummaryStubs);
+});
+
+test('a summary started during initialization is included in the panel wait', async () => {
+  const finish = [];
+  await withModule('../src/services/background/panelSummary.ts', {
+    openSummaryPanel: async () => {},
+    deliverSummary: () => new Promise(resolve => { finish.push(resolve); }),
+  }, async ({ openPanelForSummary, waitForPanelSummary }) => {
+    const first = openPanelForSummary(7, 2);
+    let ready = false;
+    const waiting = waitForPanelSummary().then(() => { ready = true; });
+    const second = openPanelForSummary(8, 2);
+    finish[0]();
+    await first;
+    await new Promise(setImmediate);
+    assert.equal(ready, false);
+    finish[1]();
+    await second;
+    await waiting;
+    assert.equal(ready, true);
+  }, panelSummaryStubs);
+});
+
+test('background routes summary opens and panel readiness through the same handoff', async () => {
+  const events = [];
+  let finishSummary;
+  await withModule('../src/services/background/messageHandlers.ts', {
+    openSummaryPanel: id => { events.push(['open', id]); return Promise.resolve(); },
+    deliverSummary: id => { events.push(['summary', id]); return new Promise(resolve => { finishSummary = resolve; }); },
+  }, async ({ messageHandlers }) => {
+    const replies = [];
+    const opening = messageHandlers.action_open_panel({ summarizePage: true }, reply => replies.push(reply), { tab: { id: 7, windowId: 2 } });
+    assert.deepEqual(events, [['open', 2], ['summary', 7]]);
+    let ready = false;
+    const waiting = messageHandlers.wait_panel_summary({}, () => { ready = true; });
+    await new Promise(setImmediate);
+    assert.equal(ready, false);
+    assert.equal(replies.length, 0);
+    finishSummary();
+    await Promise.all([opening, waiting]);
+    assert.equal(ready, true);
+    assert.deepEqual(replies, [{ status: 'success' }]);
+  }, {
+    ...panelSummaryStubs,
+    '@/entrypoints/background/sidepanel': 'export const openPanel = id => globalThis.openSummaryPanel(id); export const togglePanel = async () => {};',
+    '@/lib/indexDB': 'export const db = {}; export const getLatestMessageForThread = async () => null; export const loadThread = async () => [];',
+    '@/services/background/translationHandler': 'export const getTranslationHandler = () => ({});',
+  });
+});
+
 function summaryFixture() {
   const listeners = new Set(), writes = [], sent = [];
   const data = { GLOBAL_STATE: { actionType: 'chat', threadId: 'existing-thread' } };

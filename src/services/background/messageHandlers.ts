@@ -2,6 +2,7 @@ import {
   MESSAGE_CANCEL_NOT_STARTED_MESSAGE,
   MESSAGE_LOAD_THREAD,
   MESSAGE_OPEN_PANEL,
+  MESSAGE_WAIT_PANEL_SUMMARY,
   MESSAGE_SET_PANEL_OPEN_OR_NOT,
   MESSAGE_TRANSLATE_HTML_TEXT_BATCH,
   MESSAGE_TRANSLATE_YOUTUBE_CAPTION,
@@ -9,6 +10,7 @@ import {
 import { openPanel, togglePanel } from '@/entrypoints/background/sidepanel';
 import { db, getLatestMessageForThread, loadThread } from '@/lib/indexDB';
 import { getTranslationHandler } from '@/services/background/translationHandler';
+import { openPanelForSummary, waitForPanelSummary } from '@/services/background/panelSummary';
 
 async function handleSetPanelOpenOrNot(
   msg: any,
@@ -61,7 +63,16 @@ async function handleOpenPanel(
   sendResponse: (response?: any) => void,
   sender: chrome.runtime.MessageSender
 ) {
-  await openPanel(sender.tab?.windowId);
+  if (msg.summarizePage === true && sender.tab?.id !== undefined) {
+    await openPanelForSummary(sender.tab.id, sender.tab.windowId);
+  } else {
+    await openPanel(sender.tab?.windowId);
+  }
+  sendResponse({ status: 'success' });
+}
+
+async function handleWaitPanelSummary(_msg: any, sendResponse: (response?: any) => void) {
+  await waitForPanelSummary();
   sendResponse({ status: 'success' });
 }
 
@@ -86,6 +97,7 @@ export const messageHandlers = {
   [MESSAGE_CANCEL_NOT_STARTED_MESSAGE]: handleLatestMessageForThread,
   [MESSAGE_SET_PANEL_OPEN_OR_NOT]: handleSetPanelOpenOrNot,
   [MESSAGE_OPEN_PANEL]: handleOpenPanel,
+  [MESSAGE_WAIT_PANEL_SUMMARY]: handleWaitPanelSummary,
   [MESSAGE_TRANSLATE_HTML_TEXT_BATCH]: handleTranslateHtmlTextBatch,
   [MESSAGE_TRANSLATE_YOUTUBE_CAPTION]: handleTranslateYoutubeCaption,
 };

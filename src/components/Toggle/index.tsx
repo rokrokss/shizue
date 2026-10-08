@@ -44,7 +44,6 @@ import { TranslateModel } from '@/lib/modelRegistry';
 import { getPageTranslator } from '@/lib/pageTranslator';
 import { debugLog } from '@/logs';
 import { panelService } from '@/services/panelService';
-import { summarizeCurrentPage } from '@/services/pageSummary';
 import { Alert, Button, Select } from 'antd';
 import { motion, PanInfo } from 'framer-motion';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -206,14 +205,9 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
   const handleSummarizePage = useCallback(async () => {
     debugLog('Summarize page clicked');
     if (isDragging) return;
-    // Keep the panel request inside the click, before any storage or network await.
-    setPanelOpen();
-    try {
-      await summarizeCurrentPage();
-    } catch (error) {
-      debugLog('Summary connection unavailable', error);
-      setPanelConnectionFailed(true);
-    }
+    // The background opens immediately and tracks the summary handoff for the panel.
+    const opened = await panelService.openPanel({ summarizePage: true });
+    setPanelConnectionFailed(!opened);
   }, [isDragging]);
 
   const handleDescribeImage = useCallback(

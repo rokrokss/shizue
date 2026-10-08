@@ -2,6 +2,7 @@
 export const MESSAGE_SET_PANEL_OPEN_OR_NOT = 'set_panel_open_or_not';
 export const MESSAGE_OPEN_PANEL = 'action_open_panel';
 export const MESSAGE_UPDATE_PANEL_INIT_DATA = 'update_panel_init_data';
+export const MESSAGE_WAIT_PANEL_SUMMARY = 'wait_panel_summary';
 export const MESSAGE_LOAD_THREAD = 'action_load_thread';
 export const MESSAGE_RUN_GRAPH_STREAM = 'run_graph_stream';
 export const MESSAGE_RETRY_GRAPH_STREAM = 'retry_graph_stream';
