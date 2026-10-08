@@ -389,12 +389,9 @@ export class PageTranslator {
         }
       }
 
-      // Show the loader on every queued element now: batches go out one at a time, so elements in
-      // later batches would otherwise show nothing until their turn.
+      // Track queued elements now; attach loaders when their batch starts processing.
       queueAbleItems.forEach(({ element }) => {
         this.queuedElements.add(element);
-        this.visitedElements.add(element);
-        this.overlayFor(element).setLoading(true);
       });
 
       const batches = this.createTranslationBatches(queueAbleItems);
@@ -537,7 +534,7 @@ export class PageTranslator {
     return overlay;
   }
 
-  // The overlay attached when the element was queued, or a new one.
+  // Reuse an existing overlay, or attach one when the element is processed.
   private overlayFor(element: Element): ShizueTranslationOverlay {
     const existing = Array.from(element.children).find(
       (child) => child.tagName === 'SHIZUE-TRANSLATION-OVERLAY'
