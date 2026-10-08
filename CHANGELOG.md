@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.3.4
+
+- Add ChatGPT sign-in and automatically restore disconnected page scripts
+- Show page translation loaders only for batches currently being translated
+- Fix a previous chat briefly appearing when opening a page summary; reopening the side panel starts a new chat while keeping saved history
+- Speed up side panel startup and settings opening, and remove repeated loading when reopening settings
+- Fix the white flash on dark-mode startup and dark-mode settings and memo icon colors
+- Remove the extra Shizue label from the loading screen
+
 ## v0.3.3
 
 - Fix Cmd/Ctrl+Shift+E and the in-page toggle not closing the side panel after the browser had been idle for a while
