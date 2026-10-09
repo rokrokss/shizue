@@ -304,6 +304,10 @@ In-page UI (toggle, YouTube caption toggle, caption overlay) renders inside shad
 - Elements placed in the page's own DOM (e.g. the YouTube player-bar holder) can't use `sz:` classes; style them inline.
 - `rem` still follows the page's root font size (YouTube's is 10px, and the YouTube UI is tuned to it), so prefer px values in new content-script UI.
 
+### Character Sprites
+- `assets/character/*.png` are pixel-art sprite sheets. The mascot bunny (`standing.png`, `walking_forward.png`) is 8 frames of 14×17 with a 34px gap. The logo (`public/icon.svg`, `public/icon/*.png`) is its face on a 12×12 grid (cells of 16/12 on a 16×16 viewBox) with a mint outline.
+- In dark mode the greeting, chat rows and in-page toggle draw characters through `invert(1) hue-rotate(180deg)`, which turns a white body black. The bunny's `*_dark.png` twins differ only in a cream body (243,242,192) that inverts to dark olive; components pick them with the `dark` prop. Change a bunny sheet and its twin together.
+
 ## Storage Architecture
 
 This project uses **three distinct storage layers** with different purposes:
