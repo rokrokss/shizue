@@ -1,9 +1,12 @@
-🌸 Shizue ni msaidizi wa AI aliye kwenye paneli ya upande ya Chrome, anayefanya kazi na mpango wako wa ChatGPT: ingia tu kwa ChatGPT, bila kuhitaji ufunguo wa API. Unaweza kupiga gumzo na AI bila kubadilisha kichupo, kufupisha unachosoma kwa kubofya mara moja, na kusoma kurasa za wavuti na kutazama video za YouTube huku ukiona maandishi ya asili na tafsiri kwa pamoja.
+🌸 Shizue ni msaidizi wa AI aliye kwenye paneli ya upande ya Chrome. Unaweza kupiga gumzo na AI bila kubadilisha kichupo, kufupisha unachosoma kwa kubofya mara moja, na kusoma kurasa za wavuti na kutazama video za YouTube huku ukiona maandishi ya asili na tafsiri kwa pamoja.
 
-Shizue ni bure na ni programu huria (MIT). Unaweza pia kutumia ufunguo wako mwenyewe wa API kutoka kwa mtoa huduma wa AI unayemchagua na kulipa kwa kiasi unachotumia tu, au kuendesha modeli kwenye kompyuta yako mwenyewe, bila ufunguo na bila gharama. Shizue yenyewe haina akaunti, usajili wa kulipia, wala seva.
+Shizue ni bure na ni programu huria (MIT). Ingia kwa ChatGPT ili utumie mpango wako, au tumia ufunguo wako mwenyewe wa API kutoka kwa mtoa huduma wa AI unayemchagua na ulipe kwa kiasi unachotumia tu. Unaweza pia kuendesha modeli kwenye kompyuta yako mwenyewe, bila ufunguo na bila gharama. Shizue yenyewe haina akaunti, usajili wa kulipia, wala seva.
 
 
 ✨ Vipengele
+
+🔐 Ingia kwa ChatGPT
+- Ingia tu ili utumie mpango ulio nao tayari, bila ufunguo wa API
 
 💬 Gumzo kwenye paneli ya upande
 - Fungua popote kwa Ctrl+Shift+E (Cmd+Shift+E kwenye Mac)
@@ -34,7 +37,7 @@ Shizue ni bure na ni programu huria (MIT). Unaweza pia kutumia ufunguo wako mwen
 
 
 🔒 Faragha
-- Taarifa za kuingia, funguo za API, historia ya gumzo, na memo hubaki kwenye kivinjari chako
+- Taarifa za kuingia, funguo, historia ya gumzo, na memo hubaki kwenye kivinjari chako
 - Unapotumia kipengele, maudhui yanayohitajika na kipengele hicho pekee ndiyo hutumwa moja kwa moja kutoka kwenye kivinjari chako hadi kwa mtoa huduma wa AI uliyemchagua
 - Ukitumia modeli ya ndani, hakuna kinachotoka nje ya kompyuta yako
 - Hakuna zana za takwimu wala ufuatiliaji

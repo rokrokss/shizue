@@ -1,9 +1,12 @@
-🌸 Shizue là trợ lý AI nằm trong bảng điều khiển bên của Chrome, dùng được với gói ChatGPT của bạn: chỉ cần đăng nhập bằng ChatGPT, không cần khóa API. Trò chuyện với AI mà không phải chuyển tab, tóm tắt nội dung đang đọc chỉ với một cú nhấp, đọc trang web và xem video YouTube với cả bản gốc lẫn bản dịch.
+🌸 Shizue là trợ lý AI nằm trong bảng điều khiển bên của Chrome. Trò chuyện với AI mà không phải chuyển tab, tóm tắt nội dung đang đọc chỉ với một cú nhấp, đọc trang web và xem video YouTube với cả bản gốc lẫn bản dịch.
 
-Shizue miễn phí và là phần mềm mã nguồn mở (MIT). Bạn cũng có thể dùng khóa API của riêng bạn từ nhà cung cấp AI bạn chọn và chỉ trả theo mức đã dùng, hoặc dùng mô hình chạy trên chính máy tính của mình, không cần khóa và không mất phí. Bản thân Shizue không có tài khoản, gói thuê bao hay máy chủ.
+Shizue miễn phí và là phần mềm mã nguồn mở (MIT). Bạn có thể đăng nhập bằng ChatGPT để dùng gói của mình, hoặc dùng khóa API của riêng bạn từ nhà cung cấp AI bạn chọn và chỉ trả theo mức đã dùng. Bạn cũng có thể dùng mô hình chạy trên chính máy tính của mình, không cần khóa và không mất phí. Bản thân Shizue không có tài khoản, gói thuê bao hay máy chủ.
 
 
 ✨ Tính năng
+
+🔐 Đăng nhập bằng ChatGPT
+- Chỉ cần đăng nhập là dùng được gói bạn đang có, không cần khóa API
 
 💬 Trò chuyện trong bảng điều khiển bên
 - Mở ở bất cứ đâu bằng Ctrl+Shift+E (Cmd+Shift+E trên Mac)
@@ -34,7 +37,7 @@ Shizue miễn phí và là phần mềm mã nguồn mở (MIT). Bạn cũng có 
 
 
 🔒 Quyền riêng tư
-- Thông tin đăng nhập, khóa API, lịch sử trò chuyện và ghi chú chỉ được lưu trong trình duyệt
+- Thông tin đăng nhập, khóa, lịch sử trò chuyện và ghi chú chỉ được lưu trong trình duyệt
 - Khi dùng một tính năng, chỉ nội dung mà tính năng đó cần mới được gửi thẳng từ trình duyệt đến nhà cung cấp AI đã chọn
 - Khi dùng mô hình cục bộ, không có gì rời khỏi máy tính của bạn
 - Không dùng công cụ phân tích hay theo dõi

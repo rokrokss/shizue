@@ -1,9 +1,12 @@
-🌸 Shizue umieszcza w panelu bocznym Chrome asystenta AI, który działa z Twoim planem ChatGPT: wystarczy zalogować się przez ChatGPT, bez klucza API. Możesz rozmawiać z AI bez przełączania kart, jednym kliknięciem podsumować to, co czytasz, a na stronach internetowych i w filmach na YouTube widzieć oryginał razem z tłumaczeniem.
+🌸 Shizue umieszcza asystenta AI w panelu bocznym Chrome. Możesz rozmawiać z AI bez przełączania kart, jednym kliknięciem podsumować to, co czytasz, a na stronach internetowych i w filmach na YouTube widzieć oryginał razem z tłumaczeniem.
 
-Shizue to darmowe rozszerzenie open source (MIT). Możesz też używać własnego klucza API od wybranego dostawcy AI i płacić tylko za to, czego używasz, albo modelu działającego na własnym komputerze – bez klucza i bez kosztów. Samo Shizue nie wymaga konta ani abonamentu i nie ma własnego serwera.
+Shizue to darmowe rozszerzenie open source (MIT). Zaloguj się przez ChatGPT, aby korzystać ze swojego planu, albo używaj własnego klucza API od wybranego dostawcy AI i płać tylko za to, czego używasz. Możesz też korzystać z modelu działającego na własnym komputerze – bez klucza i bez kosztów. Samo Shizue nie wymaga konta ani abonamentu i nie ma własnego serwera.
 
 
 ✨ Funkcje
+
+🔐 Zaloguj się przez ChatGPT
+- Wystarczy się zalogować, by korzystać z planu, który już masz, bez klucza API
 
 💬 Czat w panelu bocznym
 - Otwiera się w dowolnym miejscu skrótem Ctrl+Shift+E (Cmd+Shift+E na Macu)
@@ -34,7 +37,7 @@ Shizue to darmowe rozszerzenie open source (MIT). Możesz też używać własneg
 
 
 🔒 Prywatność
-- Dane logowania, klucze API, historia czatów i notatki zostają w Twojej przeglądarce
+- Dane logowania, klucze, historia czatów i notatki zostają w Twojej przeglądarce
 - Gdy używasz jakiejś funkcji, tylko potrzebna jej treść trafia prosto z przeglądarki do wybranego przez Ciebie dostawcy AI
 - Z modelem lokalnym nic nie opuszcza Twojego komputera
 - Bez analityki i śledzenia

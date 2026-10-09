@@ -1,9 +1,12 @@
-🌸 Ang Shizue ay AI assistant sa side panel ng Chrome na gumagana gamit ang iyong ChatGPT plan: mag-sign in lang gamit ang ChatGPT, walang kailangang API key. Makipag-chat sa AI nang hindi lumilipat ng tab, ibuod ang binabasa sa isang click, at magbasa ng web page o manood ng YouTube video nang sabay na nakikita ang orihinal at ang salin.
+🌸 Ang Shizue ay AI assistant sa side panel ng Chrome. Makipag-chat sa AI nang hindi lumilipat ng tab, ibuod ang binabasa sa isang click, at magbasa ng web page o manood ng YouTube video nang sabay na nakikita ang orihinal at ang salin.
 
-Libre at open source (MIT) ang Shizue. Puwede mo ring gamitin ang sarili mong API key mula sa AI provider na pipiliin mo at bayaran lang ang nagamit mo, o gumamit ng model na tumatakbo sa sarili mong computer, nang walang key at walang bayad. Walang sariling account, subscription, o server ang Shizue.
+Libre at open source (MIT) ang Shizue. Mag-sign in gamit ang ChatGPT para magamit ang iyong plan, o gamitin ang sarili mong API key mula sa AI provider na pipiliin mo at bayaran lang ang nagamit mo. Puwede ka ring gumamit ng model na tumatakbo sa sarili mong computer, nang walang key at walang bayad. Walang sariling account, subscription, o server ang Shizue.
 
 
 ✨ Mga Feature
+
+🔐 Mag-sign in gamit ang ChatGPT
+- Mag-sign in lang para magamit ang plan na mayroon ka na, walang kailangang API key
 
 💬 Chat sa side panel
 - Buksan kahit saan gamit ang Ctrl+Shift+E (Cmd+Shift+E sa Mac)
@@ -34,7 +37,7 @@ Libre at open source (MIT) ang Shizue. Puwede mo ring gamitin ang sarili mong AP
 
 
 🔒 Privacy
-- Nasa browser mo lang ang sign-in, mga API key, kasaysayan ng chat, at memo
+- Nasa browser mo lang ang sign-in, mga key, kasaysayan ng chat, at memo
 - Kapag gumamit ng isang feature, ang nilalaman lang na kailangan nito ang direktang ipinapadala mula sa browser mo papunta sa AI provider na pinili mo
 - Kapag local model ang gamit, walang lumalabas sa computer mo
 - Walang analytics o tracking

@@ -1,9 +1,12 @@
-🌸 Shizue bringt einen KI-Assistenten in die Seitenleiste von Chrome, und er läuft mit deinem ChatGPT-Plan: einfach mit ChatGPT anmelden, ganz ohne API-Schlüssel. Du kannst chatten, ohne den Tab zu wechseln, mit einem Klick zusammenfassen lassen, was du gerade liest, und bei Webseiten und YouTube-Videos Original und Übersetzung gleichzeitig sehen.
+🌸 Shizue bringt einen KI-Assistenten in die Seitenleiste von Chrome. Du kannst chatten, ohne den Tab zu wechseln, mit einem Klick zusammenfassen lassen, was du gerade liest, und bei Webseiten und YouTube-Videos Original und Übersetzung gleichzeitig sehen.
 
-Shizue ist kostenlos und Open Source (MIT). Du kannst auch deinen eigenen API-Schlüssel von dem KI-Anbieter deiner Wahl verwenden und nur bezahlen, was du verbrauchst, oder ein Modell nutzen, das auf deinem eigenen Computer läuft – ohne Schlüssel und ohne Kosten. Shizue selbst hat kein Konto, kein Abo und keinen Server.
+Shizue ist kostenlos und Open Source (MIT). Melde dich mit ChatGPT an und nutze deinen Plan, oder verwende deinen eigenen API-Schlüssel von dem KI-Anbieter deiner Wahl und bezahle nur, was du verbrauchst. Du kannst auch ein Modell nutzen, das auf deinem eigenen Computer läuft – ohne Schlüssel und ohne Kosten. Shizue selbst hat kein Konto, kein Abo und keinen Server.
 
 
 ✨ Funktionen
+
+🔐 Mit ChatGPT anmelden
+- Einfach anmelden und den Plan nutzen, den du schon hast, ganz ohne API-Schlüssel
 
 💬 Chat in der Seitenleiste
 - Überall mit Ctrl+Shift+E öffnen (Cmd+Shift+E am Mac)
@@ -34,7 +37,7 @@ Shizue ist kostenlos und Open Source (MIT). Du kannst auch deinen eigenen API-Sc
 
 
 🔒 Datenschutz
-- Anmeldedaten, API-Schlüssel, Chatverlauf und Memos bleiben in deinem Browser
+- Anmeldedaten, Schlüssel, Chatverlauf und Memos bleiben in deinem Browser
 - Wenn du eine Funktion nutzt, geht nur der Inhalt, den sie braucht, direkt von deinem Browser an den KI-Anbieter, den du gewählt hast
 - Mit einem lokalen Modell verlässt nichts deinen Computer
 - Keine Nutzungsanalyse, kein Tracking

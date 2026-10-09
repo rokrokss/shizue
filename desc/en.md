@@ -1,9 +1,12 @@
-🌸 Shizue puts an AI assistant in Chrome's side panel, and it works with your ChatGPT plan: just sign in with ChatGPT, no API key needed. Chat without switching tabs, summarize what you're reading in one click, and read web pages and YouTube videos with the original and the translation together.
+🌸 Shizue puts an AI assistant in Chrome's side panel. Chat without switching tabs, summarize what you're reading in one click, and read web pages and YouTube videos with the original and the translation together.
 
-Shizue is free and open source (MIT). You can also use your own API key from the AI provider you choose and pay that provider only for what you use, or a model that runs on your own computer, with no key and no cost. Shizue itself has no account, no subscription, and no server.
+Shizue is free and open source (MIT). Sign in with ChatGPT to use your plan, or use your own API key from the AI provider you choose and pay that provider only for what you use. You can also use a model that runs on your own computer, with no key and no cost. Shizue itself has no account, no subscription, and no server.
 
 
 ✨ Features
+
+🔐 Sign in with ChatGPT
+- Just sign in and use the plan you already have, no API key needed
 
 💬 Side panel chat
 - Open it anywhere with Ctrl+Shift+E (Cmd+Shift+E on Mac)
@@ -34,7 +37,7 @@ Shizue is free and open source (MIT). You can also use your own API key from the
 
 
 🔒 Privacy
-- Sign-in details, API keys, chat history, and memos stay in your browser
+- Sign-in details, keys, chat history, and memos stay in your browser
 - When you use a feature, only the content it needs goes straight from your browser to the AI provider you chose
 - With a local model, nothing leaves your computer
 - No analytics or tracking

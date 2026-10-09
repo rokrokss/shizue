@@ -1,9 +1,12 @@
-🌸 A Shizue põe no painel lateral do Chrome um assistente de IA que funciona com o teu plano do ChatGPT: basta iniciar sessão com o ChatGPT, sem chave de API. Podes conversar sem mudar de separador, resumir com um clique o que estás a ler e ver o original e a tradução juntos em páginas web e vídeos do YouTube.
+🌸 A Shizue põe um assistente de IA no painel lateral do Chrome. Podes conversar sem mudar de separador, resumir com um clique o que estás a ler e ver o original e a tradução juntos em páginas web e vídeos do YouTube.
 
-A Shizue é gratuita e de código aberto (MIT). Também podes usar a tua própria chave de API do fornecedor de IA que escolheres e pagar só pelo que usares, ou um modelo a correr no teu próprio computador, sem chave e sem custos. A Shizue não tem conta, subscrição nem servidor próprios.
+A Shizue é gratuita e de código aberto (MIT). Inicia sessão com o ChatGPT para usares o teu plano, ou usa a tua própria chave de API do fornecedor de IA que escolheres e paga só pelo que usares. Também podes usar um modelo a correr no teu próprio computador, sem chave e sem custos. A Shizue não tem conta, subscrição nem servidor próprios.
 
 
 ✨ Funcionalidades
+
+🔐 Iniciar sessão com o ChatGPT
+- Basta iniciar sessão e usar o plano que já tens, sem chave de API
 
 💬 Conversa no painel lateral
 - Abre-se em qualquer lado com Ctrl+Shift+E (Cmd+Shift+E no Mac)
@@ -34,7 +37,7 @@ A Shizue é gratuita e de código aberto (MIT). Também podes usar a tua própri
 
 
 🔒 Privacidade
-- Os dados de início de sessão, as chaves de API, o histórico de conversas e os memos ficam no teu navegador
+- Os dados de início de sessão, as chaves, o histórico de conversas e os memos ficam no teu navegador
 - Quando usas uma funcionalidade, só o conteúdo de que ela precisa segue diretamente do teu navegador para o fornecedor de IA que escolheste
 - Com um modelo local, nada sai do teu computador
 - Sem ferramentas de análise ou de rastreio
