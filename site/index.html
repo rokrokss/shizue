@@ -108,6 +108,8 @@
   h1 { font: 800 clamp(40px, 6vw, 68px)/1.02 var(--head); letter-spacing: -0.04em; margin: 20px 0 18px; }
   h1 .w { background: var(--mint-2); padding: 0 6px; border-radius: 6px; }
   .lede { font-size: 19px; color: var(--ink-2); max-width: 480px; }
+  /* Sign in with ChatGPT: marked like the h1 highlight, and the mark follows the text across line breaks. */
+  .lede b { color: var(--ink); background: linear-gradient(transparent 55%, var(--mint-2) 55%); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
   .ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
   .proof { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
   .shot { border-radius: 16px; overflow: hidden; border: 1px solid rgba(16, 48, 43, .14); box-shadow: 0 30px 60px -20px rgba(16, 48, 43, .4); }
@@ -209,6 +211,10 @@
 
   <section id="faq" class="faq">
     <h2>{{faq_title}}</h2>
+    <details>
+      <summary>{{faq_signin_q}}</summary>
+      <p>{{faq_signin_a}}</p>
+    </details>
     <details>
       <summary>{{faq_free_q}}</summary>
       <p>{{faq_free_a}}</p>
