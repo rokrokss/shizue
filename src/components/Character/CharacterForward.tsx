@@ -1,7 +1,17 @@
+// yellow-bodied sheet for dark mode: the invert filter turns a white body black
+import walkingForwardDark from '@/assets/character/walking_forward_dark.png';
 import walkingForward from '@/assets/character/walking_forward.png';
 import { useEffect, useState } from 'react';
 
-const CharacterForward = ({ scale, marginLeft }: { scale: number; marginLeft: string }) => {
+const CharacterForward = ({
+  scale,
+  marginLeft,
+  dark,
+}: {
+  scale: number;
+  marginLeft: string;
+  dark?: boolean;
+}) => {
   const [frame, setFrame] = useState(0);
 
   const frameWidth = 14;
@@ -26,7 +36,7 @@ const CharacterForward = ({ scale, marginLeft }: { scale: number; marginLeft: st
       style={{
         width: `${frameWidth * scale}px`,
         height: `${frameHeight * scale}px`,
-        backgroundImage: `url(${walkingForward})`,
+        backgroundImage: `url(${dark ? walkingForwardDark : walkingForward})`,
         backgroundRepeat: 'no-repeat',
         backgroundPosition: `${x * scale}px 0px`,
         backgroundSize: `auto ${frameHeight * scale}px`,

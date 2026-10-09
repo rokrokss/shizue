@@ -567,7 +567,7 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
               pointerEvents: 'auto',
             }}
           >
-            <CharacterPickToggle index={characterIndex} />
+            <CharacterPickToggle index={characterIndex} dark={theme == 'dark'} />
           </div>
           <div
             className="sz:relative sz:mr-0 sz:ml-0 sz:mb-0"

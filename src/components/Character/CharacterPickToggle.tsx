@@ -8,11 +8,12 @@ import ChickenEating from '@/components/Character/ChickenEating';
 
 interface CharacterPickToggleProps {
   index: number;
+  dark?: boolean;
 }
 
 export const characterCountChat = 7;
 
-const CharacterPickToggle = ({ index }: CharacterPickToggleProps) => {
+const CharacterPickToggle = ({ index, dark }: CharacterPickToggleProps) => {
   const characters = [
     <BabyCowEating key="2" scale={1.8} marginLeft={'6px'} />,
     <BabyCowWalking key="3" scale={1.75} marginLeft={'6px'} />,
@@ -20,7 +21,7 @@ const CharacterPickToggle = ({ index }: CharacterPickToggleProps) => {
     <Chicken key="5" scale={2.2} marginLeft={'6px'} />,
     <BabyCowSniff key="6" scale={1.9} marginLeft={'4.5px'} />,
     <ChickenEating key="7" scale={2.2} marginLeft={'6px'} />,
-    <CharacterStanding key="8" scale={1.9} marginLeft={'6px'} />,
+    <CharacterStanding key="8" scale={1.9} marginLeft={'6px'} dark={dark} />,
   ];
 
   return characters[index % characters.length];

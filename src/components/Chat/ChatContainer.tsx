@@ -147,7 +147,12 @@ const ChatContainer = ({
                 filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
               }}
             >
-              <CharacterPickChat index={charIndex} scale={1} marginLeft="0.25rem" />
+              <CharacterPickChat
+                index={charIndex}
+                scale={1}
+                marginLeft="0.25rem"
+                dark={theme == 'dark'}
+              />
               <div
                 key={idx}
                 className="

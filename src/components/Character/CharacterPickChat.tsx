@@ -12,13 +12,14 @@ interface CharacterPickChatProps {
   index: number;
   scale: number;
   marginLeft: string;
+  dark?: boolean;
 }
 
 export const characterCount = 9;
 
-const CharacterPickChat = ({ index, scale, marginLeft }: CharacterPickChatProps) => {
+const CharacterPickChat = ({ index, scale, marginLeft, dark }: CharacterPickChatProps) => {
   const characters = [
-    <CharacterForward key="0" scale={2 * scale} marginLeft={marginLeft} />,
+    <CharacterForward key="0" scale={2 * scale} marginLeft={marginLeft} dark={dark} />,
     <CowEating key="1" scale={1.9 * scale} marginLeft={marginLeft} />,
     <BabyCowEating key="2" scale={2.15 * scale} marginLeft={marginLeft} />,
     <BabyCowWalking key="3" scale={2.1 * scale} marginLeft={marginLeft} />,
@@ -26,7 +27,7 @@ const CharacterPickChat = ({ index, scale, marginLeft }: CharacterPickChatProps)
     <Chicken key="5" scale={2.5 * scale} marginLeft={marginLeft} />,
     <BabyCowSniff key="6" scale={2.25 * scale} marginLeft={marginLeft} />,
     <ChickenEating key="7" scale={2.5 * scale} marginLeft={marginLeft} />,
-    <CharacterStanding key="8" scale={2 * scale} marginLeft={marginLeft} />,
+    <CharacterStanding key="8" scale={2 * scale} marginLeft={marginLeft} dark={dark} />,
   ];
 
   return <div>{characters[index % characters.length]}</div>;

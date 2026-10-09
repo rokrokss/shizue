@@ -1,3 +1,5 @@
+// yellow-bodied sheet for dark mode: the invert filter turns a white body black
+import standingDark from '@/assets/character/standing_dark.png';
 import standing from '@/assets/character/standing.png';
 import { useEffect, useState } from 'react';
 
@@ -5,10 +7,12 @@ const CharacterStanding = ({
   scale,
   marginLeft,
   invert,
+  dark,
 }: {
   scale: number;
   marginLeft: string;
   invert?: boolean;
+  dark?: boolean;
 }) => {
   const [frame, setFrame] = useState(0);
 
@@ -34,7 +38,7 @@ const CharacterStanding = ({
       style={{
         width: `${frameWidth * scale}px`,
         height: `${frameHeight * scale}px`,
-        backgroundImage: `url(${standing})`,
+        backgroundImage: `url(${dark ? standingDark : standing})`,
         backgroundRepeat: 'no-repeat',
         backgroundPosition: `${x * scale}px 0px`,
         backgroundSize: `auto ${frameHeight * scale}px`,
