@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.5
+
+- New look: the mascot and the extension icon are now a blue bunny
+
 ## v0.3.4
 
 - Add ChatGPT sign-in and automatically restore disconnected page scripts
