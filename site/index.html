@@ -5,6 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{title}}</title>
 <meta name="description" content="{{description}}">
+<script>
+  // GitHub Pages can't read Accept-Language, so the English page at / sends visitors to their language:
+  // the one last picked in the header menu, else the first of the browser's languages the site has.
+  if (document.documentElement.lang === 'en') {
+    const langs = {{langs}};
+    let lang;
+    try { lang = localStorage.getItem('lang'); } catch {}
+    if (!langs.includes(lang)) {
+      // Matched like src/lib/language.ts: Chinese and Portuguese by region, the rest by base language.
+      lang = navigator.languages.map((tag) => {
+        const base = tag.split('-')[0].toLowerCase();
+        if (base === 'zh') return /-(tw|hk|mo|hant)\b/i.test(tag) ? 'zh-TW' : 'zh-CN';
+        if (base === 'pt') return /-pt\b/i.test(tag) ? 'pt-PT' : 'pt-BR';
+        return base;
+      }).find((code) => langs.includes(code));
+    }
+    // replace() keeps / out of the history, so Back doesn't land on it and redirect again.
+    if (lang && lang !== 'en') location.replace(`/${lang}/${location.search}${location.hash}`);
+  }
+</script>
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="canonical" href="{{url}}">
 {{alternates}}
@@ -228,9 +248,14 @@
   </div>
 </footer>
 <script>
-  // The language menu is a plain <details>; this only closes it on an outside click or Escape.
+  // The language menu is a plain <details>; this closes it on an outside click or Escape.
   const lang = document.querySelector('details.lang');
   document.addEventListener('click', (e) => { if (lang.open && !lang.contains(e.target)) lang.open = false; });
+  // A language picked here is remembered, so / doesn't send the visitor back to their browser's language.
+  lang.querySelector('.lang-menu').addEventListener('click', (e) => {
+    const a = e.target.closest('a');
+    if (a) try { localStorage.setItem('lang', a.hreflang); } catch {}
+  });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && lang.open) { lang.open = false; lang.querySelector('summary').focus(); }
   });

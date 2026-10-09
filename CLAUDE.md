@@ -24,6 +24,7 @@ store/render.sh       # Render Chrome Web Store images (store/src → store/out)
 ### Landing Page (shizue.net)
 - `site/index.html` is the landing page. `site/build.sh` assembles it into `_site/` with images copied from `store/out`, and `.github/workflows/pages.yml` deploys it to GitHub Pages on push to `main`. Re-rendered store images update the site too.
 - `site/index.html` is a template: `site/render.mjs` fills its `{{key}}` placeholders from each `site/locales/<lang>.json` (English at `/`, others at `/<lang>/`, with hreflang links and the header language menu). Strings are HTML fragments, and the build fails if a locale is missing a key or changes the tags of `en.json`. When page copy changes, update every locale file; asset paths in the template must be root-absolute (`/img/...`).
+- `/` (English) redirects in a `<head>` script to the language last picked in the header menu (`localStorage` `lang`), else to the first `navigator.languages` entry the site has. Other language pages never redirect. To see `/` in English locally, pick English in the menu.
 
 ### Testing Extension
 1. Build: `pnpm build`

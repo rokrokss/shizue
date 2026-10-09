@@ -47,6 +47,7 @@ for (const { lang, path, strings } of locales) {
     url: ORIGIN + path,
     alternates,
     lang_menu: menu,
+    langs: JSON.stringify(locales.map((l) => l.lang)),
     // The store listing has a description in each of these languages.
     store_url: lang === 'en' ? STORE_URL : `${STORE_URL}&amp;hl=${lang}`,
   };
