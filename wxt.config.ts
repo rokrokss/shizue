@@ -20,10 +20,10 @@ export default defineConfig({
       },
       author: { email: 'q0115643@gmail.com' },
       // declarativeNetRequestWithHostAccess (no install warning) lets src/lib/localServer.ts rewrite
-      // the Origin header that Ollama rejects, and services/background/chatgpt.ts catch the ChatGPT
-      // sign-in callback on 127.0.0.1; such rules need host access to those addresses. The
-      // <all_urls> content scripts already put every site under the install warning, so these add
-      // none.
+      // the Origin header that Ollama rejects, services/background/chatgpt.ts catch the ChatGPT
+      // sign-in callback on 127.0.0.1, and plot-signin-rules.json pass Shizue Plot's callback on to
+      // its site; such rules need host access to those addresses. The <all_urls> content scripts
+      // already put every site under the install warning, so these add none.
       permissions: [
         'storage',
         'scripting',
@@ -54,6 +54,15 @@ export default defineConfig({
       // Content scripts keep their CSS in shadow roots (cssInjectionMode: 'ui'). The only CSS
       // injected into pages is this @font-face file, since shadow roots ignore @font-face.
       content_scripts: [{ matches: ['<all_urls>'], css: ['fonts/fonts.css'] }],
+      // Shizue Plot's sign-in (src/lib/plotSignIn.ts): static rules send OpenAI's loopback callback
+      // for the site's port (47811, and 47801 for local development) on to the site, and the site
+      // may ask whether Shizue is installed. Neither adds an install warning.
+      declarative_net_request: {
+        rule_resources: [{ id: 'plot_signin', enabled: true, path: 'plot-signin-rules.json' }],
+      },
+      externally_connectable: {
+        matches: ['https://plot.shizue.net/*', 'http://localhost/*'],
+      },
       web_accessible_resources: [
         { resources: ['fonts/*.woff2'], matches: ['<all_urls>'] },
         // A session rule redirects ChatGPT's loopback sign-in callback here, and redirects may only

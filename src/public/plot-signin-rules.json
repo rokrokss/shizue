@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "condition": {
+      "urlFilter": "|http://127.0.0.1:47811/auth/callback?",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    },
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "transform": {
+          "scheme": "https",
+          "host": "plot.shizue.net",
+          "port": "",
+          "path": "/api/chatgpt/callback"
+        }
+      }
+    }
+  },
+  {
+    "id": 2,
+    "priority": 1,
+    "condition": {
+      "urlFilter": "|http://127.0.0.1:47801/auth/callback?",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    },
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "transform": {
+          "scheme": "http",
+          "host": "localhost",
+          "port": "13000",
+          "path": "/api/chatgpt/callback"
+        }
+      }
+    }
+  }
+]
