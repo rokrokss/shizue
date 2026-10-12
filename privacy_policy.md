@@ -1,6 +1,6 @@
 # Shizue Privacy Policy (개인정보처리방침)
 
-**Last Updated: [2026-10-09]**
+**Last Updated: [2026-10-12]**
 
 Shizue is a Chrome extension designed to enhance your Browse experience by integrating Large Language Models (LLMs).
 
@@ -10,6 +10,7 @@ Shizue's developers **do not operate any server that receives your data, and do 
 
 * **User API Keys:** Your OpenAI, Google Gemini, Anthropic, and OpenRouter API keys are stored **only on your local device** (using Chrome's local storage). Each key is sent only to its own provider's API. It is never sent to Shizue's developers or any other third party. An optional key for a local model server is stored the same way and sent only to that server.
 * **Sign in with ChatGPT:** OpenAI's sign-in returns to a loopback address (`127.0.0.1`), which Shizue catches inside the browser; nothing listens on your computer. Access, refresh, and ID tokens are stored **only on your local device** in Chrome's local extension storage, like API keys, and are sent only to OpenAI. When you choose a ChatGPT model, Shizue sends the feature's content directly from your browser to OpenAI's Responses API with `store: false` and streams the response back to the extension. Requests count toward your ChatGPT plan's Work/Codex usage. Signing out removes local credentials and attempts to revoke access with OpenAI; the UI reports when remote revocation could not be confirmed. No credentials or content are sent to Shizue's developers.
+* **Shizue Plot sign-in:** Shizue Plot (`plot.shizue.net`) is a separate website. When you choose Sign in with ChatGPT on that website, OpenAI returns to a loopback address that a website cannot receive, so Shizue's built-in rule sends that one browser navigation on to `plot.shizue.net`. This happens only for the address OpenAI uses for Shizue Plot (`127.0.0.1` port 47811). Shizue does not read, store, or send the sign-in code itself: the website receives it and keeps your Shizue Plot account under its own privacy policy. The website can also ask Shizue whether it is installed; the answer contains only Shizue's version. Nothing changes for Shizue's own features.
 * **Content Sent to AI Providers:** When you use a feature, the content that feature needs is sent **directly from your browser to the AI provider you selected** (OpenAI, Google, or Anthropic), using your API key. If you chose OpenRouter as your connection, it is sent to OpenRouter, which forwards it to the model's provider. Requests to OpenRouter also carry two headers, `HTTP-Referer: https://shizue.net` and `X-OpenRouter-Title: Shizue`, so OpenRouter can count usage under the Shizue app; they identify the app, not you, and nothing is sent to shizue.net:
   * Chat: the messages and images in the conversation.
   * Page summary: the page title and page text.
@@ -39,7 +40,7 @@ If you have any questions about this Privacy Policy, please contact us by email 
 
 # Shizue 개인정보처리방침
 
-**최종 업데이트: [2026-10-09]**
+**최종 업데이트: [2026-10-12]**
 
 Shizue는 대규모 언어 모델(LLM)을 통합하여 여러분의 브라우징 경험을 향상시키기 위해 설계된 크롬 확장 프로그램입니다.
 
@@ -49,6 +50,7 @@ Shizue 개발자는 **여러분의 데이터를 받는 서버를 운영하지 �
 
 * **사용자 API 키:** 여러분의 OpenAI, Google Gemini, Anthropic, OpenRouter API 키는 **오직 로컬 기기(크롬의 로컬 저장소 사용)에만 저장**됩니다. 각 키는 해당 제공사의 API로만 전송되며, Shizue 개발자나 그 밖의 제3자에게 절대 전송되지 않습니다. 로컬 모델 서버용 키(선택 사항)도 같은 방식으로 저장되며 그 서버로만 전송됩니다.
 * **Sign in with ChatGPT:** OpenAI 로그인은 루프백 주소(`127.0.0.1`)로 돌아오며, Shizue가 이 주소를 브라우저 안에서 받아 처리합니다. 기기에서 대기하는 프로그램은 없습니다. 액세스·갱신·ID 토큰은 API 키와 마찬가지로 **오직 로컬 기기**의 크롬 확장 로컬 저장소에 저장되며 OpenAI로만 전송됩니다. ChatGPT 모델을 선택하면 Shizue가 기능에 필요한 콘텐츠를 `store: false`로 브라우저에서 OpenAI Responses API에 직접 보내고 응답을 확장으로 스트리밍합니다. 요청은 ChatGPT 구독의 Work/Codex 사용량에 포함됩니다. 로그아웃하면 기기의 인증 정보를 삭제하고 OpenAI에 연결 해제를 요청하며, 원격 해제를 확인하지 못한 경우 화면에 안내합니다. 인증 정보나 콘텐츠는 Shizue 개발자에게 전송되지 않습니다.
+* **Shizue Plot 로그인:** Shizue Plot(`plot.shizue.net`)은 별도의 웹사이트입니다. 그 사이트에서 ChatGPT로 로그인하면 OpenAI가 웹사이트는 받을 수 없는 루프백 주소로 돌아오는데, Shizue에 내장된 규칙이 이 브라우저 이동 한 번만 `plot.shizue.net`으로 넘겨 줍니다. OpenAI가 Shizue Plot용으로 쓰는 주소(`127.0.0.1` 포트 47811)에만 적용됩니다. Shizue는 로그인 코드를 읽거나 저장하거나 전송하지 않습니다. 코드는 웹사이트가 받으며, Shizue Plot 계정은 그 사이트의 개인정보처리방침에 따라 관리됩니다. 웹사이트는 Shizue 설치 여부를 물을 수 있고, 그 답에는 Shizue의 버전만 담깁니다. Shizue 자체 기능에는 달라지는 것이 없습니다.
 * **AI 제공사로 전송되는 콘텐츠:** 기능을 사용하면 그 기능에 필요한 콘텐츠가 여러분의 API 키로 **여러분이 선택한 AI 제공사(OpenAI, Google, Anthropic)에 브라우저에서 직접 전송**됩니다. 연결 방식으로 OpenRouter를 선택했다면 OpenRouter로 전송되며, OpenRouter가 이를 해당 모델의 제공사로 전달합니다. OpenRouter로 가는 요청에는 OpenRouter가 사용량을 Shizue 앱으로 집계할 수 있도록 `HTTP-Referer: https://shizue.net`, `X-OpenRouter-Title: Shizue` 두 헤더가 붙습니다. 이 헤더는 사용자가 아니라 앱을 식별하며, shizue.net으로는 아무것도 전송되지 않습니다.
   * 채팅: 대화의 메시지와 이미지
   * 페이지 요약: 페이지 제목과 본문 텍스트

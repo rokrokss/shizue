@@ -14,6 +14,7 @@ import { CHATGPT_CALLBACK_MESSAGE, CHATGPT_SETTINGS_MESSAGE } from '@/lib/chatgp
 import { handleChatGPTCallback, handleChatGPTSettings } from '@/services/background/chatgpt';
 import { RECOVER_CONTENT_SCRIPTS } from '@/lib/contentScriptConnection';
 import { contentScriptRecoveryListeners, recoverTabContentScripts } from '@/services/background/contentScriptRecovery';
+import { plotSignInPing } from '@/lib/plotSignIn';
 
 const IMMEDIATE_PANEL_ACTIONS = new Set([MESSAGE_OPEN_PANEL, MESSAGE_SET_PANEL_OPEN_OR_NOT, MESSAGE_WAIT_PANEL_SUMMARY]);
 
@@ -63,4 +64,11 @@ export default defineBackground(() => {
     return true;
   });
   contentScriptRecoveryListeners();
+
+  // Shizue Plot's login page asks whether Shizue is here to carry its sign-in (see plotSignIn.ts).
+  chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
+    const reply = plotSignInPing(msg, sender.url, chrome.runtime.getManifest().version);
+    if (reply) sendResponse(reply);
+    return false;
+  });
 });

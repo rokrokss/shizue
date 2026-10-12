@@ -32,6 +32,7 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 ### 🔐 Sign in with ChatGPT:
   - Use your ChatGPT plan instead of an API key: choose Sign in with ChatGPT during onboarding or in Settings → AI provider. Chat, summaries, image actions, and translation then use the models your plan offers, with nothing to install.
   - Requests count toward your plan's usage, which you can review in [ChatGPT settings](https://chatgpt.com/settings/usage).
+  - Shizue also completes Sign in with ChatGPT on the [Shizue Plot](https://plot.shizue.net) website, which cannot receive OpenAI's loopback callback on its own.
 
 ### 💬 AI Chat Sidebar:
   - Quickly launch the sidebar using a keyboard shortcut (default: Ctrl/Cmd+Shift+E) to interact with LLMs via a side panel for queries, brainstorming, or information retrieval without navigating away from the current page.
