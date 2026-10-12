@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.7
+
+- Settings show the panel shortcut you actually have (or "Not set"), and "Change" opens Chrome's shortcut page with the new keys showing up in the panel as soon as you press them
+
 ## v0.3.6
 
 - Sign in with ChatGPT now also works on the Shizue Plot website (plot.shizue.net): Shizue passes OpenAI's loopback sign-in callback on to the site, with no new permissions
