@@ -1,6 +1,7 @@
 import { LoadingLabel } from '@/components/Loader/LoadingLabel';
 import LocalModelSettings from '@/components/Setting/LocalModelSettings';
 import ChatGPTSettings from '@/components/Setting/ChatGPTSettings';
+import ShortcutSettings from '@/components/Setting/ShortcutSettings';
 import { Language, useLanguage, useTranslateTargetLanguage } from '@/hooks/language';
 import {
   Theme,
@@ -36,7 +37,6 @@ import {
   isChatGPTModel,
 } from '@/lib/modelRegistry';
 import { AIProvider, isProviderModel, rememberProviderModels, resolveProviderModels } from '@/lib/modelPreferences';
-import { getOS } from '@/lib/userOS';
 import { validateApiKey } from '@/lib/validateApiKey';
 import { debugLog } from '@/logs';
 import { SmileOutlined } from '@ant-design/icons';
@@ -149,8 +149,6 @@ const SettingsModalContent = () => {
     setTheme(value as Theme);
   };
 
-  const userOS = getOS();
-
   const onClickValidate = async () => {
     if (selectedProvider === 'local' || selectedProvider === 'chatgpt' || isLoading) return;
     setIsLoading(true);
@@ -257,20 +255,7 @@ const SettingsModalContent = () => {
                     }}
                   />
                 </div>
-                <div className="sz:flex sz:flex-col sz:items-center sz:gap-2">
-                  <div
-                    className={`sz:text-base ${
-                      theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'
-                    }`}
-                  >
-                    {t('settings.shortcut')}
-                  </div>
-                  <Input
-                    className="sz:w-60"
-                    style={{ caretColor: 'transparent' }}
-                    value={userOS === 'mac' ? '⌘ + Shift + E' : 'Ctrl + Shift + E'}
-                  />
-                </div>
+                <ShortcutSettings />
                 {toggleHiddenSiteList.length > 0 && (
                   <div className="sz:flex sz:flex-col sz:items-center sz:justify-center sz:gap-2 sz:w-full">
                     <div
