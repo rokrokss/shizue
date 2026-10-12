@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.6
+
+- Sign in with ChatGPT now also works on the Shizue Plot website (plot.shizue.net): Shizue passes OpenAI's loopback sign-in callback on to the site, with no new permissions
+
 ## v0.3.5
 
 - New look: the mascot and the extension icon are now a blue bunny
