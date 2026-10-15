@@ -160,9 +160,7 @@
     "sourceUnavailable": "Indisponible sur ce stream",
     "streamLanguage": "Langue du stream",
     "speechConsent": "La reconnaissance vocale envoie le son de cet onglet au service de reconnaissance vocale de Google.",
-    "speechConsentLocal": "Le son reste sur cet appareil.",
     "agreeAndActivate": "Accepter et activer",
-    "downloadLocalSpeech": "Télécharger la reconnaissance sur l'appareil (environ 60 Mo)",
     "revokeSpeechConsent": "Retirer le consentement à la reconnaissance vocale",
     "switchToSpeech": "Utiliser la reconnaissance vocale",
     "speechStopped": "La reconnaissance vocale s'est arrêtée"

@@ -160,9 +160,7 @@
     "sourceUnavailable": "Indisponível nesta live",
     "streamLanguage": "Idioma da live",
     "speechConsent": "O reconhecimento de voz envia o áudio desta aba para o serviço de reconhecimento de voz do Google.",
-    "speechConsentLocal": "O áudio fica neste dispositivo.",
     "agreeAndActivate": "Concordar e ativar",
-    "downloadLocalSpeech": "Baixar o reconhecimento no dispositivo (cerca de 60 MB)",
     "revokeSpeechConsent": "Revogar o consentimento do reconhecimento de voz",
     "switchToSpeech": "Usar reconhecimento de voz",
     "speechStopped": "O reconhecimento de voz parou"

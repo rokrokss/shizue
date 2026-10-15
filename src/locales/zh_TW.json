@@ -160,9 +160,7 @@
     "sourceUnavailable": "此實況沒有",
     "streamLanguage": "實況語言",
     "speechConsent": "語音辨識會將此分頁的音訊傳送至 Google 語音辨識服務。",
-    "speechConsentLocal": "音訊不會離開這部裝置。",
     "agreeAndActivate": "同意並啟用",
-    "downloadLocalSpeech": "下載裝置端辨識（約 60 MB）",
     "revokeSpeechConsent": "撤銷語音辨識同意",
     "switchToSpeech": "使用語音辨識",
     "speechStopped": "語音辨識已停止"

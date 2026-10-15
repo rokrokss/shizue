@@ -160,9 +160,7 @@
     "sourceUnavailable": "Indisponível nesta transmissão",
     "streamLanguage": "Idioma da transmissão",
     "speechConsent": "O reconhecimento de voz envia o áudio deste separador para o serviço de reconhecimento de voz da Google.",
-    "speechConsentLocal": "O áudio fica neste dispositivo.",
     "agreeAndActivate": "Concordar e ativar",
-    "downloadLocalSpeech": "Transferir o reconhecimento no dispositivo (cerca de 60 MB)",
     "revokeSpeechConsent": "Revogar o consentimento do reconhecimento de voz",
     "switchToSpeech": "Usar o reconhecimento de voz",
     "speechStopped": "O reconhecimento de voz parou"

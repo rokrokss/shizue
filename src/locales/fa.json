@@ -160,9 +160,7 @@
     "sourceUnavailable": "در این پخش موجود نیست",
     "streamLanguage": "زبان پخش",
     "speechConsent": "تشخیص گفتار صدای این زبانه را به سرویس تشخیص گفتار Google می‌فرستد.",
-    "speechConsentLocal": "صدا روی همین دستگاه می‌ماند.",
     "agreeAndActivate": "موافقت و فعال‌سازی",
-    "downloadLocalSpeech": "دانلود تشخیص گفتار روی دستگاه (حدود 60 MB)",
     "revokeSpeechConsent": "لغو رضایت تشخیص گفتار",
     "switchToSpeech": "استفاده از تشخیص گفتار",
     "speechStopped": "تشخیص گفتار متوقف شد"

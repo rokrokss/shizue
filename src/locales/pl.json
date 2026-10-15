@@ -160,9 +160,7 @@
     "sourceUnavailable": "Brak w tym streamie",
     "streamLanguage": "Język streamu",
     "speechConsent": "Rozpoznawanie mowy wysyła dźwięk z tej karty do usługi rozpoznawania mowy Google.",
-    "speechConsentLocal": "Dźwięk zostaje na tym urządzeniu.",
     "agreeAndActivate": "Zgódź się i aktywuj",
-    "downloadLocalSpeech": "Pobierz rozpoznawanie na urządzeniu (ok. 60 MB)",
     "revokeSpeechConsent": "Wycofaj zgodę na rozpoznawanie mowy",
     "switchToSpeech": "Użyj rozpoznawania mowy",
     "speechStopped": "Rozpoznawanie mowy zostało zatrzymane"

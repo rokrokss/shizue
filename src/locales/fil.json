@@ -160,9 +160,7 @@
     "sourceUnavailable": "Wala sa stream na ito",
     "streamLanguage": "Wika ng stream",
     "speechConsent": "Ipinapadala ng speech recognition ang audio ng tab na ito sa speech recognition service ng Google.",
-    "speechConsentLocal": "Nananatili sa device na ito ang audio.",
     "agreeAndActivate": "Pumayag at i-activate",
-    "downloadLocalSpeech": "I-download ang on-device recognition (mga 60 MB)",
     "revokeSpeechConsent": "Bawiin ang pahintulot sa speech recognition",
     "switchToSpeech": "Gamitin ang speech recognition",
     "speechStopped": "Huminto ang speech recognition"

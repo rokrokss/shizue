@@ -347,10 +347,10 @@ Twitch has no caption track or caption API, so captions are translated as they a
    - Sessions restart on `end`, and after 20 s without results. Cloud sessions stall and end with `network` every few minutes.
    - Recognition pauses on the player's paused state. Don't use the `<video>`'s `pause` event, which also fires while buffering.
    - The language comes from Twitch's own GQL (`broadcastSettings.language`, asked by the bridge with the page's client ID; tags are unreliable). A per-channel pick in the menu (`STORAGE_TWITCH_CHANNEL_LANGUAGE`) wins over it.
-   - Consent is asked once (`STORAGE_SPEECH_RECOGNITION_CONSENT`, revocable in settings), because cloud recognition sends the audio to Google. On-device recognition is used when `available()` says so. `install()` needs the click itself as user activation.
-   - On-device is much better: on the same English stream in Chrome 155, cloud got 11 words in 60 s and on-device got 99 words in 90 s.
-     - So auto mode falls back to speech recognition only when the stream's language is installed on the device (`onDeviceSpeech`). Otherwise it waits for captions, and Stream Closed Captioner showing up first takes over. Cloud recognition runs only when the viewer picks "speech recognition" as the source.
-     - Wherever speech recognition is how captions would come, the menu offers the download, even after consent. Once it's installed, auto switches to it and running cloud recognition restarts on-device.
+   - On-device recognition is used when `available()` says so. It is much better: on the same English stream in Chrome 155, cloud got 11 words in 60 s and on-device got 99 words in 90 s.
+     - So auto mode falls back to speech recognition only when the stream's language is installed on the device (`onDeviceSpeech`). Otherwise it waits for captions, and Stream Closed Captioner showing up first takes over.
+     - The viewer isn't asked about the download. When speech recognition is how captions would come, activating (a click, which `install()` needs as user activation) starts the download of about 60 MB, and the button spins until it's done. Then auto switches to it, and running cloud recognition restarts on-device.
+   - Cloud recognition runs only when the viewer picks "speech recognition" as the source and the language isn't on the device. Only that asks for consent (`STORAGE_SPEECH_RECOGNITION_CONSENT`, revocable in settings), because it sends the audio to Google. On-device recognition needs none.
    - In auto mode, two caption updates within 10 s from a caption source replace speech recognition.
 
 **Splitting into sentences.** `lib/liveCaption/segmenter.ts` turns snapshots into sentences.

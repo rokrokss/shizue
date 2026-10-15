@@ -144,7 +144,6 @@ const TwitchCaptionToggle = () => {
 
   // Speech recognition is running, or is how this mode would get captions once it can run.
   const usesSpeech = status.activeSource === 'stt' || controller.speechRelevant(sourceMode);
-  const onDevice = status.onDeviceSpeech;
 
   // Whether recognition can run on this device for the stream's language (no audio leaves it).
   useEffect(() => {
@@ -202,12 +201,6 @@ const TwitchCaptionToggle = () => {
     controller.setSpeechLanguage(value);
   };
 
-  // The click on this button is the user activation that Chrome requires for the download.
-  const handleInstallOnDevice = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    controller.downloadOnDeviceSpeech();
-  };
-
   if (!showToggle || status.adPlaying || (!status.available.length && !status.active)) return null;
 
   const sourceOptions = [
@@ -220,9 +213,12 @@ const TwitchCaptionToggle = () => {
   ];
   const sourceValueLabel = (() => {
     if (status.activeSource === 'stt' && status.speechError) return t('twitch.speechStopped');
-    // Auto mode still waiting for captions has no source to name yet.
-    const current =
-      status.active && status.activeSource && status.available.includes(status.activeSource)
+    // Auto mode still waiting for captions has no source to name yet, unless the on-device
+    // download it waits on is running.
+    const preparingSpeech = status.active && status.onDeviceSpeech === 'downloading' && usesSpeech;
+    const current = preparingSpeech
+      ? 'stt'
+      : status.active && status.activeSource && status.available.includes(status.activeSource)
         ? status.activeSource
         : null;
     if (sourceMode === 'auto') {
@@ -231,18 +227,13 @@ const TwitchCaptionToggle = () => {
     return t(sourceLabelKey[sourceMode]);
   })();
 
-  // Speech recognition needs consent once; the activate button turns into the consent prompt.
-  const needsConsent = !consent && controller.needsSpeech(sourceMode);
+  // Cloud recognition needs consent once; the activate button turns into the consent prompt.
+  const needsConsent = !consent && controller.needsConsent(sourceMode);
   const consentFooter = needsConsent ? (
     <div className="sz:flex sz:flex-col sz:gap-2 sz:p-2" style={{ maxWidth: 230 }}>
       <span className="sz:text-[12px] sz:text-gray-300 sz:whitespace-normal">
-        {onDevice === 'available' ? t('twitch.speechConsentLocal') : t('twitch.speechConsent')}
+        {t('twitch.speechConsent')}
       </span>
-      {onDevice === 'downloadable' && (
-        <Button size="small" type="link" className="sz:text-[12px] sz:p-0" onClick={handleInstallOnDevice}>
-          {t('twitch.downloadLocalSpeech')}
-        </Button>
-      )}
       <Space className="sz:w-full sz:flex sz:flex-row sz:justify-center sz:items-center sz:gap-4">
         <Button type="primary" size="small" className="sz:w-full sz:text-[13px]" onClick={handleAgreeAndActivate}>
           {t('twitch.agreeAndActivate')}
@@ -322,27 +313,6 @@ const TwitchCaptionToggle = () => {
                     onOpenChange={(open) => setOpenPopover(open ? 'speech' : null)}
                     onSelect={handleSelectSpeechLanguage}
                   />
-                ),
-              },
-            ]
-          : []),
-        // Cloud recognition catches far fewer words, so keep offering the download after consent.
-        ...(usesSpeech && !needsConsent && (onDevice === 'downloadable' || onDevice === 'downloading')
-          ? [
-              {
-                key: 'onDeviceSpeech',
-                label: (
-                  <div onClick={(e) => e.stopPropagation()}>
-                    <Button
-                      size="small"
-                      type="link"
-                      className="sz:text-[12px] sz:p-0"
-                      loading={onDevice === 'downloading'}
-                      onClick={handleInstallOnDevice}
-                    >
-                      {t('twitch.downloadLocalSpeech')}
-                    </Button>
-                  </div>
                 ),
               },
             ]

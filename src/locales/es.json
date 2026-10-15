@@ -160,9 +160,7 @@
     "sourceUnavailable": "No disponible en este directo",
     "streamLanguage": "Idioma del directo",
     "speechConsent": "El reconocimiento de voz envía el audio de esta pestaña al servicio de reconocimiento de voz de Google.",
-    "speechConsentLocal": "El audio se queda en este dispositivo.",
     "agreeAndActivate": "Aceptar y activar",
-    "downloadLocalSpeech": "Descargar el reconocimiento en el dispositivo (unos 60 MB)",
     "revokeSpeechConsent": "Retirar el consentimiento del reconocimiento de voz",
     "switchToSpeech": "Usar reconocimiento de voz",
     "speechStopped": "El reconocimiento de voz se detuvo"

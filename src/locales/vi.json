@@ -160,9 +160,7 @@
     "sourceUnavailable": "Không có trong buổi phát này",
     "streamLanguage": "Ngôn ngữ buổi phát",
     "speechConsent": "Nhận dạng giọng nói sẽ gửi âm thanh của thẻ này đến dịch vụ nhận dạng giọng nói của Google.",
-    "speechConsentLocal": "Âm thanh ở lại trên thiết bị này.",
     "agreeAndActivate": "Đồng ý và kích hoạt",
-    "downloadLocalSpeech": "Tải nhận dạng trên thiết bị (khoảng 60 MB)",
     "revokeSpeechConsent": "Thu hồi đồng ý nhận dạng giọng nói",
     "switchToSpeech": "Dùng nhận dạng giọng nói",
     "speechStopped": "Nhận dạng giọng nói đã dừng"

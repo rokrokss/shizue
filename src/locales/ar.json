@@ -160,9 +160,7 @@
     "sourceUnavailable": "غير متوفر في هذا البث",
     "streamLanguage": "لغة البث",
     "speechConsent": "يرسل التعرف على الكلام صوت علامة التبويب هذه إلى خدمة التعرف على الكلام من Google.",
-    "speechConsentLocal": "يبقى الصوت على هذا الجهاز.",
     "agreeAndActivate": "موافقة وتنشيط",
-    "downloadLocalSpeech": "تنزيل التعرف على الجهاز (حوالي 60 MB)",
     "revokeSpeechConsent": "إلغاء الموافقة على التعرف على الكلام",
     "switchToSpeech": "استخدام التعرف على الكلام",
     "speechStopped": "توقف التعرف على الكلام"

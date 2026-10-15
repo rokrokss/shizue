@@ -160,9 +160,7 @@
     "sourceUnavailable": "ไม่มีในสตรีมนี้",
     "streamLanguage": "ภาษาของสตรีม",
     "speechConsent": "การรู้จำเสียงพูดจะส่งเสียงของแท็บนี้ไปยังบริการรู้จำเสียงพูดของ Google",
-    "speechConsentLocal": "เสียงจะอยู่ในอุปกรณ์นี้เท่านั้น",
     "agreeAndActivate": "ยอมรับและเปิดใช้งาน",
-    "downloadLocalSpeech": "ดาวน์โหลดการรู้จำเสียงในอุปกรณ์ (ประมาณ 60 MB)",
     "revokeSpeechConsent": "เพิกถอนความยินยอมการรู้จำเสียงพูด",
     "switchToSpeech": "ใช้การรู้จำเสียงพูด",
     "speechStopped": "การรู้จำเสียงพูดหยุดทำงาน"

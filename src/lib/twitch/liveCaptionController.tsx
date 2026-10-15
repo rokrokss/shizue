@@ -185,7 +185,13 @@ class TwitchLiveCaptions {
       available,
       active: !!this.settings,
       activeSource: this.activeSource,
-      loading: this.loading,
+      // Waiting on the on-device download counts as loading.
+      loading:
+        this.loading ||
+        (!!this.settings &&
+          this.activeSource !== 'stt' &&
+          this.onDeviceSpeech === 'downloading' &&
+          this.speechRelevant(this.mode)),
       speechLanguage: this.speechLanguage,
       speechError: this.speechError,
       onDeviceSpeech: this.onDeviceSpeech,
@@ -201,14 +207,18 @@ class TwitchLiveCaptions {
   // The source 'auto' would pick right now. Captions the streamer provides beat recognizing
   // the stream's audio, which also hears game sound and music. Auto only falls back to speech
   // recognition on the device: the cloud caught about a tenth of the words (11 in 60 s, against
-  // 99 in 90 s on-device, on the same stream).
+  // 99 in 90 s on-device, on the same stream). On-device recognition needs no consent: the audio
+  // stays on the device.
   private chooseSource(): CaptionSource | null {
-    if (this.mode === 'stt') return this.speechAllowed && isSpeechRecognitionSupported() ? 'stt' : null;
+    const onDevice = this.onDeviceSpeech === 'available';
+    if (this.mode === 'stt') {
+      return onDevice || (this.speechAllowed && isSpeechRecognitionSupported()) ? 'stt' : null;
+    }
     if (this.mode !== 'auto') return this.mode;
     if (this.seen.has('cea608')) return 'cea608';
     if (this.seen.has('scc')) return 'scc';
-    if (this.speechAllowed && this.onDeviceSpeech === 'available') return 'stt';
-    // Otherwise wait for the streamer's captions.
+    if (onDevice) return 'stt';
+    // Otherwise wait for the streamer's captions (or the on-device download).
     return 'cea608';
   }
 
@@ -218,10 +228,10 @@ class TwitchLiveCaptions {
     return mode === 'auto' && !this.seen.has('cea608') && !this.seen.has('scc');
   }
 
-  // Whether starting now in this mode would run speech recognition (and so needs consent).
-  needsSpeech(mode: CaptionSourceMode) {
-    if (mode === 'stt') return true;
-    return this.speechRelevant(mode) && this.onDeviceSpeech === 'available';
+  // Whether starting now in this mode would send the audio to the cloud, which needs consent. Only
+  // the speech recognition source does, when the language can't be recognized on this device.
+  needsConsent(mode: CaptionSourceMode) {
+    return mode === 'stt' && this.onDeviceSpeech === 'unavailable';
   }
 
   private handleCaptions(source: 'cea608' | 'scc', text: string) {
@@ -332,14 +342,14 @@ class TwitchLiveCaptions {
     if (language !== this.speechLanguage || availability === this.onDeviceSpeech) return;
     this.onDeviceSpeech = availability;
     const previous = this.activeSource;
-    if (this.settings && this.mode === 'auto') this.useSource(this.chooseSource());
+    if (this.settings) this.useSource(this.chooseSource());
     // Recognition already running in the cloud moves on-device.
     if (availability === 'available' && previous === 'stt' && this.activeSource === 'stt') this.startSpeech();
     this.emit();
   }
 
-  // Call it straight from the click: Chrome needs that user activation for the download.
-  downloadOnDeviceSpeech() {
+  // Call it from a click: Chrome needs that user activation for the download.
+  private downloadOnDeviceSpeech() {
     const install = installOnDeviceSpeech(this.speechLanguage);
     this.onDeviceSpeech = 'downloading';
     this.emit();
@@ -413,6 +423,9 @@ class TwitchLiveCaptions {
     });
     this.setNativeCaptionsHidden(true);
     this.tickTimer = setInterval(() => this.tick(), TICK_MS);
+    // Starting is a click, so this is where the on-device model (about 60 MB per language) is
+    // downloaded when speech recognition is how captions would come.
+    if (this.speechRelevant(mode) && this.onDeviceSpeech === 'downloadable') this.downloadOnDeviceSpeech();
     this.useSource(this.chooseSource());
     this.emit();
   }

@@ -160,9 +160,7 @@
     "sourceUnavailable": "اس اسٹریم میں دستیاب نہیں",
     "streamLanguage": "اسٹریم کی زبان",
     "speechConsent": "آواز کی شناخت اس ٹیب کی آڈیو Google کی آواز کی شناخت کی سروس کو بھیجتی ہے۔",
-    "speechConsentLocal": "آڈیو اسی ڈیوائس پر رہتی ہے۔",
     "agreeAndActivate": "متفق ہوں اور فعال کریں",
-    "downloadLocalSpeech": "ڈیوائس پر شناخت ڈاؤن لوڈ کریں (تقریباً 60 MB)",
     "revokeSpeechConsent": "آواز کی شناخت کی رضامندی واپس لیں",
     "switchToSpeech": "آواز کی شناخت استعمال کریں",
     "speechStopped": "آواز کی شناخت رک گئی"
