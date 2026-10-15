@@ -1,4 +1,9 @@
-import LanguageOptionItem from '@/components/Youtube/LanguageOptionItem';
+import {
+  CaptionMenuLanguageRow,
+  CaptionMenuRow,
+  CaptionMenuTitle,
+  CaptionToggle,
+} from '@/components/Caption/CaptionToggle';
 import { Language, useTranslateTargetLanguage } from '@/hooks/language';
 import {
   useShowYoutubeBilingualCaption,
@@ -13,20 +18,8 @@ import useAdObserver from '@/lib/useAdObserver';
 import { getVideoData, getVideoId } from '@/lib/youtube';
 import { debugLog } from '@/logs';
 import { panelService } from '@/services/panelService';
-import { LoadingOutlined, ReadFilled } from '@ant-design/icons';
-import {
-  Button,
-  ConfigProvider,
-  Divider,
-  Dropdown,
-  InputNumber,
-  Popover,
-  Space,
-  Switch,
-  theme,
-  Tooltip,
-} from 'antd';
-import { cloneElement, useCallback, useEffect, useRef, useState } from 'react';
+import { InputNumber, Switch } from 'antd';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const ERROR_TO_IGNORE = 'trigger element and popup element should in same shadow root';
@@ -311,360 +304,116 @@ const YoutubeCaptionToggle = () => {
   return (
     isCaptionAvailable &&
     showYoutubeCaptionToggle && (
-      <ConfigProvider
-        prefixCls="sz-ant-"
-        iconPrefixCls="sz-ant-icon-"
-        theme={{
-          token: {
-            colorPrimary: '#32CCBC',
+      <CaptionToggle
+        className="
+          sz-youtube-caption-toggle
+          sz:flex
+          sz:flex-col
+          sz:justify-center
+          sz:items-center
+          sz:h-full
+          sz:px-2
+          sz:mx-2
+          sz:my-0
+          sz:py-0
+          sz:rounded-lg
+          sz:font-youtube
+        "
+        triggerRef={dropdownTriggerRef}
+        tooltip={t('youtube.aiCaption')}
+        open={isDropdownOpen}
+        onOpenChange={handleDropdownOpenChange}
+        items={[
+          {
+            key: 'aiCaption',
+            label: <CaptionMenuTitle label={t('youtube.aiCaption')} />,
           },
-          algorithm: theme.darkAlgorithm,
-        }}
-      >
-        <div
-          className="
-            sz-youtube-caption-toggle
-            sz:flex
-            sz:flex-col
-            sz:justify-center
-            sz:items-center
-            sz:h-full
-            sz:px-2
-            sz:mx-2
-            sz:my-0
-            sz:py-0
-            sz:rounded-lg
-            sz:font-youtube
-          "
-          ref={dropdownTriggerRef}
-        >
-          <Tooltip
-            placement="top"
-            title={t('youtube.aiCaption')}
-            arrow={false}
-            styles={{
-              body: {
-                color: '#E8E9EA',
-                backgroundColor: 'rgba(0, 0, 0, 0.72)',
-                fontSize: '13px',
-                maxHeight: '24px',
-                marginBottom: '27px',
-                paddingTop: '2px',
-                paddingBottom: '2px',
-                minHeight: '24px',
-                height: '24px',
-                borderRadius: '4px',
-                display: isDropdownOpen ? 'none' : 'block',
-              },
-            }}
-          >
-            <Dropdown
-              placement="top"
-              trigger={['click']}
-              overlayStyle={{
-                paddingBottom: '24px',
-              }}
-              open={isDropdownOpen}
-              onOpenChange={handleDropdownOpenChange}
-              menu={{
-                items: [
-                  {
-                    key: 'aiCaption',
-                    label: (
-                      <div
-                        className="
-                          sz:flex
-                          sz:flex-row
-                          sz:items-center
-                          sz:gap-2
-                          sz:cursor-default
-                          sz:text-[13px]
-                        "
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        <span className="sz:text-white">{t('youtube.aiCaption')}</span>
-                      </div>
-                    ),
-                  },
-                  {
-                    key: 'selectLanguage',
-                    label: (
-                      <Popover
-                        placement="rightBottom"
-                        styles={{
-                          body: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            transform: 'translateY(7px)',
-                            marginLeft: '7px',
-                            padding: 0,
-                          },
-                        }}
-                        arrow={false}
-                        open={isDropdownOpen && isLanguagePopoverOpen}
-                        onOpenChange={setIsLanguagePopoverOpen}
-                        content={
-                          <div
-                            className="
-                              sz:flex
-                              sz:flex-col
-                              sz:rounded-lg
-                              sz:m-0 sz:p-0
-                            "
-                            style={{
-                              height: '170px',
-                              overflowY: 'auto',
-                            }}
-                          >
-                            {languageOptions(t).map((option, index) => {
-                              const isFirst = index === 0;
-                              const isLast = index === languageOptions(t).length - 1;
-                              return (
-                                <LanguageOptionItem
-                                  key={option.value}
-                                  option={option}
-                                  isFirst={isFirst}
-                                  isLast={isLast}
-                                  onClick={() => {
-                                    handleSelectTargetLanguage(option.value);
-                                    setIsLanguagePopoverOpen(false);
-                                  }}
-                                />
-                              );
-                            })}
-                          </div>
-                        }
-                      >
-                        <div
-                          className="
-                            sz:flex
-                            sz:flex-row
-                            sz:items-center
-                            sz:justify-between
-                            sz:gap-4
-                            sz:cursor-default
-                            sz:text-[13px]
-                          "
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                        >
-                          <span className="sz:text-white">{t('settings.targetLanguage')}</span>
-                          <span className="sz:text-gray-400">
-                            {t(`language.${targetLanguage.split('_')[0]}`)}
-                          </span>
-                        </div>
-                      </Popover>
-                    ),
-                  },
-                  {
-                    key: 'seeOriginal',
-                    label: (
-                      <div
-                        className="
-                          sz:flex
-                          sz:flex-row
-                          sz:items-center
-                          sz:justify-between
-                          sz:gap-4
-                          sz:cursor-default
-                          sz:text-[13px]
-                        "
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        <span className="sz:text-white">{t('youtube.bilingual')}</span>
-                        <Switch
-                          size="small"
-                          checked={showYoutubeBilingualCaption}
-                          onChange={setShowYoutubeBilingualCaption}
-                        />
-                      </div>
-                    ),
-                  },
-                  {
-                    key: 'useKeyboardNavigate',
-                    label: (
-                      <div
-                        className="
-                          sz:flex
-                          sz:flex-row
-                          sz:items-center
-                          sz:justify-between
-                          sz:gap-4
-                          sz:cursor-default
-                          sz:text-[13px]
-                        "
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        <span className="sz:text-white">{t('youtube.useKeyboardNavigate')}</span>
-                        <Switch
-                          size="small"
-                          checked={useYoutubeKeyboardNavigate}
-                          onChange={setUseYoutubeKeyboardNavigate}
-                        />
-                      </div>
-                    ),
-                  },
-                  {
-                    key: 'numLines',
-                    label: (
-                      <div
-                        className="
-                          sz:flex
-                          sz:flex-row
-                          sz:items-center
-                          sz:justify-between
-                          sz:gap-4
-                          sz:cursor-default
-                          sz:text-[13px]
-                        "
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        <span className="sz:text-white">{t('youtube.numCaptLines')}</span>
-                        <InputNumber
-                          min={1}
-                          max={5}
-                          value={numLines}
-                          size="small"
-                          style={{ textAlign: 'right', fontSize: '12px', width: '45px' }}
-                          onChange={(value) => {
-                            if (value) {
-                              setNumLines(value);
-                            }
-                          }}
-                        />
-                      </div>
-                    ),
-                  },
-                  {
-                    key: 'captionSizeRatio',
-                    label: (
-                      <div
-                        className="
-                          sz:flex
-                          sz:flex-row
-                          sz:items-center
-                          sz:justify-between
-                          sz:gap-4
-                          sz:cursor-default
-                          sz:text-[13px]
-                        "
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        <span className="sz:text-white">{t('youtube.captionSizeRatio')}</span>
-                        <InputNumber<number>
-                          defaultValue={captionSizeRatio * 100}
-                          size="small"
-                          min={0}
-                          max={500}
-                          step={5}
-                          style={{ textAlign: 'right', fontSize: '12px', width: '67px' }}
-                          formatter={(value) => `${value}%`}
-                          parser={(value) => value?.replace('%', '') as unknown as number}
-                          onChange={(value) => {
-                            if (value) {
-                              setCaptionSizeRatio(value / 100);
-                            }
-                          }}
-                        />
-                      </div>
-                    ),
-                  },
-                ],
-              }}
-              popupRender={(menu) => (
-                <div
-                  className="
-                    sz-dropdown-caption-menu
-                    sz:bg-black/72
-                    sz:rounded-lg
-                  "
-                >
-                  {cloneElement(
-                    menu as React.ReactElement<{
-                      style: React.CSSProperties;
-                    }>,
-                    {
-                      style: { padding: 0, backgroundColor: 'transparent' },
+          {
+            key: 'selectLanguage',
+            label: (
+              <CaptionMenuLanguageRow
+                label={t('settings.targetLanguage')}
+                valueLabel={t(`language.${targetLanguage.split('_')[0]}`)}
+                options={languageOptions(t)}
+                open={isDropdownOpen && isLanguagePopoverOpen}
+                onOpenChange={setIsLanguagePopoverOpen}
+                onSelect={handleSelectTargetLanguage}
+              />
+            ),
+          },
+          {
+            key: 'seeOriginal',
+            label: (
+              <CaptionMenuRow label={t('youtube.bilingual')}>
+                <Switch
+                  size="small"
+                  checked={showYoutubeBilingualCaption}
+                  onChange={setShowYoutubeBilingualCaption}
+                />
+              </CaptionMenuRow>
+            ),
+          },
+          {
+            key: 'useKeyboardNavigate',
+            label: (
+              <CaptionMenuRow label={t('youtube.useKeyboardNavigate')}>
+                <Switch
+                  size="small"
+                  checked={useYoutubeKeyboardNavigate}
+                  onChange={setUseYoutubeKeyboardNavigate}
+                />
+              </CaptionMenuRow>
+            ),
+          },
+          {
+            key: 'numLines',
+            label: (
+              <CaptionMenuRow label={t('youtube.numCaptLines')}>
+                <InputNumber
+                  min={1}
+                  max={5}
+                  value={numLines}
+                  size="small"
+                  style={{ textAlign: 'right', fontSize: '12px', width: '45px' }}
+                  onChange={(value) => {
+                    if (value) {
+                      setNumLines(value);
                     }
-                  )}
-                  <Divider style={{ margin: 0 }} />
-                  <Space
-                    style={{ padding: 6 }}
-                    className="sz:w-full sz:flex sz:flex-row sz:justify-center sz:items-center sz:gap-4"
-                  >
-                    <Button
-                      type="primary"
-                      size="small"
-                      className="sz:w-full sz:text-[13px]"
-                      onClick={handleGenerateCaption}
-                    >
-                      {t('youtube.activate')}
-                    </Button>
-                    <Button
-                      type="dashed"
-                      size="small"
-                      className="sz:w-full sz:text-[13px]"
-                      onClick={handleDeactivateCaption}
-                    >
-                      {t('youtube.deactivate')}
-                    </Button>
-                  </Space>
-                </div>
-              )}
-            >
-              <div
-                className="
-                  sz:flex
-                  sz:flex-col
-                  sz:justify-center
-                  sz:items-center
-                  sz:h-full
-                  sz:px-3
-                  sz:gap-2
-                  sz:cursor-pointer
-                "
-              >
-                {isLoading ? (
-                  <LoadingOutlined
-                    style={{
-                      fontSize: '21px',
-                      color: 'rgb(255, 255, 255)',
-                    }}
-                  />
-                ) : (
-                  <ReadFilled
-                    style={{
-                      fontSize: '24px',
-                      color: 'rgb(255, 255, 255)',
-                    }}
-                  />
-                )}
-                <div
-                  style={{
-                    position: 'absolute',
-                    borderRadius: '20%',
-                    height: '3px',
-                    width: isActivated ? '24px' : 0,
-                    backgroundColor: '#32CCBC',
-                    bottom: '10%',
-                    transition: 'width 0.5s ease-in-out',
                   }}
                 />
-              </div>
-            </Dropdown>
-          </Tooltip>
-        </div>
-      </ConfigProvider>
+              </CaptionMenuRow>
+            ),
+          },
+          {
+            key: 'captionSizeRatio',
+            label: (
+              <CaptionMenuRow label={t('youtube.captionSizeRatio')}>
+                <InputNumber<number>
+                  defaultValue={captionSizeRatio * 100}
+                  size="small"
+                  min={0}
+                  max={500}
+                  step={5}
+                  style={{ textAlign: 'right', fontSize: '12px', width: '67px' }}
+                  formatter={(value) => `${value}%`}
+                  parser={(value) => value?.replace('%', '') as unknown as number}
+                  onChange={(value) => {
+                    if (value) {
+                      setCaptionSizeRatio(value / 100);
+                    }
+                  }}
+                />
+              </CaptionMenuRow>
+            ),
+          },
+        ]}
+        activateLabel={t('youtube.activate')}
+        deactivateLabel={t('youtube.deactivate')}
+        onActivate={handleGenerateCaption}
+        onDeactivate={handleDeactivateCaption}
+        isLoading={isLoading}
+        isActivated={isActivated}
+      />
     )
   );
 };
