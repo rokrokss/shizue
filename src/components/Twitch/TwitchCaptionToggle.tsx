@@ -47,6 +47,7 @@ const initialStatus: CaptionStatus = {
   loading: false,
   speechLanguage: 'en-US',
   speechError: null,
+  adPlaying: false,
 };
 
 // The same button and menu as the YouTube caption toggle (CaptionToggle). Twitch adds where the
@@ -161,12 +162,14 @@ const TwitchCaptionToggle = () => {
   const handleInstallOnDevice = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setOnDevice('downloading');
-    void installOnDeviceSpeech(status.speechLanguage).then(async () =>
-      setOnDevice(await speechAvailability(status.speechLanguage, true))
-    );
+    void installOnDeviceSpeech(status.speechLanguage).then(async () => {
+      const availability = await speechAvailability(status.speechLanguage, true);
+      setOnDevice(availability);
+      if (availability === 'available') controller.restartSpeech();
+    });
   };
 
-  if (!showToggle || (!status.available.length && !status.active)) return null;
+  if (!showToggle || status.adPlaying || (!status.available.length && !status.active)) return null;
 
   const sourceOptions = [
     { value: 'auto', label: t('twitch.sourceAuto'), desc: t('twitch.sourceAuto') },
@@ -272,6 +275,27 @@ const TwitchCaptionToggle = () => {
                     onOpenChange={(open) => setOpenPopover(open ? 'speech' : null)}
                     onSelect={handleSelectSpeechLanguage}
                   />
+                ),
+              },
+            ]
+          : []),
+        // Cloud recognition catches far fewer words, so keep offering the download after consent.
+        ...(usesSpeech && !needsConsent && (onDevice === 'downloadable' || onDevice === 'downloading')
+          ? [
+              {
+                key: 'onDeviceSpeech',
+                label: (
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <Button
+                      size="small"
+                      type="link"
+                      className="sz:text-[12px] sz:p-0"
+                      loading={onDevice === 'downloading'}
+                      onClick={handleInstallOnDevice}
+                    >
+                      {t('twitch.downloadLocalSpeech')}
+                    </Button>
+                  </div>
                 ),
               },
             ]

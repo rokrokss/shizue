@@ -46,6 +46,8 @@ export type CaptionStatus = {
   // The language speech recognition listens for on this channel.
   speechLanguage: string;
   speechError: string | null;
+  // An ad is playing; captions and speech recognition wait, and the button hides as on YouTube.
+  adPlaying: boolean;
 };
 
 const OVERLAY_HOST_ID = 'shizue-twitch-caption-overlay';
@@ -59,6 +61,8 @@ const LOADING_TIMEOUT_MS = 5000;
 const UPGRADE_UPDATES = 2;
 const UPGRADE_WINDOW_MS = 10_000;
 const DEFAULT_SPEECH_LANGUAGE = 'en-US';
+// Twitch's ad label and countdown over the player (as of 2026-10, per Purple-adblock's findings).
+const AD_SELECTOR = '[data-a-target="video-ad-label"], [data-a-target="video-ad-countdown"]';
 
 export const isTwitchVod = () => location.pathname.startsWith('/videos/');
 
@@ -95,6 +99,8 @@ class TwitchLiveCaptions {
   private languageRequestedAt = 0;
   private speechLanguage = DEFAULT_SPEECH_LANGUAGE;
   private speechError: string | null = null;
+  private playerPaused = false;
+  private adPlaying = false;
   private metadata: LiveCaptionMetadata = {};
   private root: Root | null = null;
   private host: HTMLDivElement | null = null;
@@ -115,6 +121,7 @@ class TwitchLiveCaptions {
     });
     this.requestLanguage();
     setInterval(() => {
+      this.checkAd();
       // The bridge can start after this script and miss a request, so ask until it answers.
       if (this.languagePath !== location.pathname && Date.now() - this.languageRequestedAt > 1000) {
         this.requestLanguage();
@@ -171,6 +178,7 @@ class TwitchLiveCaptions {
       loading: this.loading,
       speechLanguage: this.speechLanguage,
       speechError: this.speechError,
+      adPlaying: this.adPlaying,
     };
   }
 
@@ -240,7 +248,19 @@ class TwitchLiveCaptions {
   }
 
   private handlePlayerState(paused: boolean) {
-    if (this.activeSource === 'stt') getWebSpeechSource().setPaused(paused);
+    this.playerPaused = paused;
+    if (this.activeSource === 'stt') getWebSpeechSource().setPaused(this.playerPaused || this.adPlaying);
+  }
+
+  // Ads are stitched into the stream: speech recognition would transcribe them, and the
+  // streamer's captions stop. Clear what is shown and wait for the stream to come back.
+  private checkAd() {
+    const adPlaying = !!document.querySelector(AD_SELECTOR);
+    if (adPlaying === this.adPlaying) return;
+    this.adPlaying = adPlaying;
+    if (adPlaying) this.restart('ad');
+    if (this.activeSource === 'stt') getWebSpeechSource().setPaused(this.playerPaused || this.adPlaying);
+    this.emit();
   }
 
   private requestLanguage() {
@@ -280,6 +300,11 @@ class TwitchLiveCaptions {
     this.emit();
   }
 
+  // On-device recognition was just installed; starting again picks it up.
+  restartSpeech() {
+    if (this.activeSource === 'stt') this.startSpeech();
+  }
+
   get channelLogin() {
     return this.login;
   }
@@ -287,18 +312,25 @@ class TwitchLiveCaptions {
   private startSpeech() {
     this.speechError = null;
     this.segmenter?.push({ kind: 'break', at: Date.now() });
-    void getWebSpeechSource().start(this.speechLanguage, {
-      onSnapshot: (text, at) => {
-        if (this.activeSource === 'stt') this.segmenter?.push({ kind: 'snapshot', text, at });
-      },
-      onBreak: (at) => {
-        if (this.activeSource === 'stt') this.segmenter?.push({ kind: 'break', at });
-      },
-      onError: (error) => {
-        this.speechError = error;
-        this.emit();
-      },
-    });
+    void getWebSpeechSource()
+      .start(this.speechLanguage, {
+        onSnapshot: (text, at) => {
+          if (this.activeSource === 'stt') this.segmenter?.push({ kind: 'snapshot', text, at });
+        },
+        onBreak: (at) => {
+          if (this.activeSource === 'stt') this.segmenter?.push({ kind: 'break', at });
+        },
+        onError: (error) => {
+          this.speechError = error;
+          this.emit();
+        },
+      })
+      // Starting during an ad or a pause (channel switch, language change) starts paused.
+      .then(() => {
+        if (this.activeSource === 'stt') {
+          getWebSpeechSource().setPaused(this.playerPaused || this.adPlaying);
+        }
+      });
   }
 
   private useSource(source: CaptionSource | null) {

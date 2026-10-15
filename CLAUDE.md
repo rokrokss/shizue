@@ -318,6 +318,10 @@ Twitch has no caption track or caption API, so captions are translated as they a
 - The menu popups live in their own shadow host. That host moves into `document.fullscreenElement` on `fullscreenchange`, because fullscreen draws only the app root.
 - The settings Twitch shares with YouTube are target language, bilingual and caption size. Only `STORAGE_SHOW_TWITCH_CAPTION_TOGGLE` is Twitch's own.
 - Live streams don't pause when the menu opens, because that would put them behind live. VODs pause, as on YouTube.
+- **Ads.** Ads are stitched into the stream. While Twitch shows its ad label or countdown (`[data-a-target="video-ad-label"]`, `[data-a-target="video-ad-countdown"]`):
+  - captions clear and speech recognition pauses, because it would transcribe the ad;
+  - the button hides, as on YouTube.
+  - These selectors come from Purple-adblock's 2026-10 findings; they haven't been seen on a real ad here yet.
 
 **Sources.** There are three. The `'auto'` mode (`STORAGE_TWITCH_CAPTION_SOURCE`) picks them in this order, because captions the streamer makes from a clean microphone beat recognizing game audio.
 1. **Broadcaster CEA-608.**
@@ -339,6 +343,7 @@ Twitch has no caption track or caption API, so captions are translated as they a
    - Recognition pauses on the player's paused state. Don't use the `<video>`'s `pause` event, which also fires while buffering.
    - The language comes from Twitch's own GQL (`broadcastSettings.language`, asked by the bridge with the page's client ID; tags are unreliable). A per-channel pick in the menu (`STORAGE_TWITCH_CHANNEL_LANGUAGE`) wins over it.
    - Consent is asked once (`STORAGE_SPEECH_RECOGNITION_CONSENT`, revocable in settings), because cloud recognition sends the audio to Google. On-device recognition is used when `available()` says so. `install()` needs the click itself as user activation.
+   - On-device is much better: on the same English stream in Chrome 155, cloud got 11 words in 60 s and on-device got 99 words in 90 s. So the menu offers the download even after consent, and recognition restarts on-device once it's installed.
    - In auto mode, two caption updates within 10 s from a caption source replace speech recognition.
 
 **Splitting into sentences.** `lib/liveCaption/segmenter.ts` turns snapshots into sentences.
