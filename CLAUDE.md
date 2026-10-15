@@ -368,6 +368,7 @@ Twitch has no caption track or caption API, so captions are translated as they a
   - A model download needs a recent click: activating, the switch, and picking a language prepare the pair. The button spins while it downloads, and lines show their original meanwhile.
   - `create()` stays pending when Chrome can't fetch the model (Chrome for Testing never starts the download), so it times out after 90 s. A pair Chrome can't translate falls back to the LLM.
   - `Translator` is looked up at call time, so tests can install a stand-in in the content script's world.
+  - **The words still being spoken are translated too**, at most every 300 ms, and show as the newest line with the words under them (bilingual). Committed chunks still get their own translation. Waiting for a chunk to be committed had held translations back 2–4 s after their first word (4–6 s on SCC), while Google Translate based caption extensions translate the window as it changes. The LLM doesn't do this: it would be a request every 300 ms.
 - **The LLM** gets `MESSAGE_TRANSLATE_LIVE_CAPTION`, with the same JSON contract and halves retry as YouTube.
 - The last 3 translated pairs go along to the LLM as context, with at most 2 requests in flight.
 - Sentences still waiting after 15 s are dropped.
@@ -375,7 +376,7 @@ Twitch has no caption track or caption API, so captions are translated as they a
 **Overlay.** `lib/twitch/liveCaptionController.tsx` renders `CaptionDisplay` in a closed shadow root inside `.video-player__container`.
 - Fullscreen makes `.root` the fullscreen element, which contains the player, so the overlay stays visible. It also survives theatre mode.
 - Native captions are hidden with a `<style>` in `<head>`, not inline, because Twitch recreates the caption box between cues.
-- A line waiting for its translation shows its original, as on YouTube. With bilingual on, the words still being spoken show as one more original line. Each line leaves 6 s after it last changed (shown, then translated), even while the speaker keeps talking.
+- A line waiting for its translation shows its original, as on YouTube. The words still being spoken show as one more line: Chrome's live translation, or with bilingual on and no translation yet, the words themselves. Each line leaves 6 s after it last changed (shown, then translated), even while the speaker keeps talking.
 - It resets on seek and on channel change. It polls `location.pathname`, because Twitch keeps the same `<video>` and player across channels.
 
 ### Character Sprites

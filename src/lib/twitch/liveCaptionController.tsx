@@ -72,6 +72,10 @@ const TICK_MS = 100;
 // A line leaves the screen this long after it last changed (shown, then translated), even while
 // the speaker keeps talking.
 const LINE_LINGER_MS = 6000;
+// Chrome translates in milliseconds, so the words still being spoken are translated as they come
+// (at most this often), as caption extensions that use Google Translate do. Waiting for a chunk to
+// be committed held translations back 2–4 s, and 4–6 s on Stream Closed Captioner.
+const LIVE_TRANSLATION_MS = 300;
 const LOADING_TIMEOUT_MS = 5000;
 // While speech recognition stands in, this many caption updates within the window means the
 // streamer's own captions (or Stream Closed Captioner) are running: switch to them.
@@ -104,6 +108,10 @@ class TwitchLiveCaptions {
   private lines: Line[] = [];
   private interim = '';
   private interimChangedAt = 0;
+  // Chrome's translation of the words still being spoken, and what makes older answers stale.
+  private interimTranslation = '';
+  private interimGeneration = 0;
+  private interimTimer: ReturnType<typeof setTimeout> | null = null;
   private activatedAt = 0;
   private tickTimer: ReturnType<typeof setInterval> | null = null;
   private seen = new Set<CaptionSource>();
@@ -279,13 +287,38 @@ class TwitchLiveCaptions {
       onInterim: (text) => {
         this.interim = text;
         this.interimChangedAt = Date.now();
+        if (!text) this.clearInterimTranslation();
+        this.scheduleInterimTranslation();
       },
       onSentence: (sentence) => {
+        // The committed words leave the interim, so its translation no longer matches.
+        this.clearInterimTranslation();
         const line = { id: sentence.id, original: sentence.text, translation: undefined, changedAt: Date.now() };
         this.lines = [...this.lines, line].slice(-20);
         this.queue?.enqueue(sentence);
       },
     });
+  }
+
+  private clearInterimTranslation() {
+    this.interimTranslation = '';
+    this.interimGeneration++;
+  }
+
+  private scheduleInterimTranslation() {
+    if (this.interimTimer || !this.interim || !this.usesChromeTranslation()) return;
+    this.interimTimer = setTimeout(() => {
+      this.interimTimer = null;
+      const text = this.interim;
+      const target = this.settings?.targetLanguage;
+      if (!text || !target) return;
+      const generation = this.interimGeneration;
+      void translateOnDevice(this.speechLanguage, target, [text]).then((translations) => {
+        if (generation !== this.interimGeneration || !translations?.[0]) return;
+        this.interimTranslation = translations[0];
+        this.interimChangedAt = Date.now();
+      });
+    }, LIVE_TRANSLATION_MS);
   }
 
   // Stream Closed Captioner text, relayed from its frame.
@@ -365,6 +398,7 @@ class TwitchLiveCaptions {
   // The AI translation switch in the menu (a click).
   setAiTranslation(on: boolean) {
     this.aiTranslation = on;
+    if (on) this.clearInterimTranslation();
     this.prepareTranslation();
   }
 
@@ -498,6 +532,7 @@ class TwitchLiveCaptions {
     this.settings = null;
     this.lines = [];
     this.interim = '';
+    this.clearInterimTranslation();
     this.loading = false;
     this.root?.unmount();
     this.root = null;
@@ -516,6 +551,7 @@ class TwitchLiveCaptions {
     this.queue?.clear();
     this.lines = [];
     this.interim = '';
+    this.clearInterimTranslation();
   }
 
   private setNativeCaptionsHidden(hidden: boolean) {
@@ -587,9 +623,15 @@ class TwitchLiveCaptions {
     const lines = shown.map((line) => line.translation || line.original);
     // A line still waiting for its translation shows its original once, as YouTube does.
     const originalLines = shown.map((line) => (line.translation ? line.original : ''));
-    if (settings.bilingual && this.interim && now - this.interimChangedAt <= LINE_LINGER_MS) {
-      lines.push(this.interim);
-      originalLines.push('');
+    // The words still being spoken: Chrome's live translation over them, or (bilingual) the words.
+    if (this.interim && now - this.interimChangedAt <= LINE_LINGER_MS) {
+      if (this.interimTranslation) {
+        lines.push(this.interimTranslation);
+        originalLines.push(this.interim);
+      } else if (settings.bilingual) {
+        lines.push(this.interim);
+        originalLines.push('');
+      }
     }
 
     const key = JSON.stringify([lines, originalLines, settings.bilingual, settings.captionSizeRatio]);
