@@ -150,6 +150,23 @@
     "captionSizeRatio": "Kichwa cha Caption",
     "useKeyboardNavigate": "Abiri Manukuu kwa A/D"
   },
+  "twitch": {
+    "twitchCaptionButton": "Kitufe cha Caption ya Twitch",
+    "source": "Chanzo cha manukuu",
+    "sourceAuto": "Kiotomatiki",
+    "sourceCaptions": "Manukuu ya mtiririshaji",
+    "sourceScc": "Stream CC",
+    "sourceSpeech": "Utambuzi wa sauti",
+    "sourceUnavailable": "Hakuna kwenye mtiririko huu",
+    "streamLanguage": "Lugha ya mtiririko",
+    "speechConsent": "Utambuzi wa sauti hutuma sauti ya kichupo hiki kwa huduma ya utambuzi wa sauti ya Google.",
+    "speechConsentLocal": "Sauti inabaki kwenye kifaa hiki.",
+    "agreeAndActivate": "Kubali na amilisha",
+    "downloadLocalSpeech": "Pakua utambuzi wa kwenye kifaa (takriban MB 60)",
+    "revokeSpeechConsent": "Ondoa idhini ya utambuzi wa sauti",
+    "switchToSpeech": "Tumia utambuzi wa sauti",
+    "speechStopped": "Utambuzi wa sauti umesimama"
+  },
   "usage": {
     "title": "Matumizi ya Token",
     "total": "Jumla",

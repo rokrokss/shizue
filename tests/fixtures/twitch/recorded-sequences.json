@@ -1,0 +1,61 @@
+{
+  "_note": "Recorded 2026-10-15 from live Twitch streams (headless Chrome 155 / Claude built-in browser). Text copied verbatim from probe output; PlayerTextCue texts were truncated to 200 chars by the probe. Use as segmenter test fixtures.",
+  "domRollup_annemunition": {
+    "source": ".player-captions-container__caption-line snapshots, ms since observer start",
+    "updates": [
+      [0, ["Potential to dominate and", "fights. Okay"]],
+      [282, ["Okay. So"]],
+      [1344, ["Okay. So we have"]],
+      [2141, ["Okay. So we have one"]],
+      [2408, ["Okay. So we have one of each"]],
+      [5063, ["Okay. So we have one of each. Of"]],
+      [6391, ["Okay. So we have one of each. Of", "the"]],
+      [7188, ["Okay. So we have one of each. Of", "the aardvarks so"]],
+      [7454, ["Okay. So we have one of each. Of", "the aardvarks so that's"]],
+      [8782, ["Okay. So we have one of each. Of", "the aardvarks so that's Max"]],
+      [9047, ["the aardvarks so that's Max cuz", "they"]],
+      [9313, ["aardvarks so that's Max cuz they", "don't"]],
+      [9844, ["aardvarks so that's Max cuz they", "don't want"]],
+      [10375, ["aardvarks so that's Max cuz they", "don't want more than"]],
+      [10641, ["cuz they don't want more than", "that"]],
+      [19672, ["cuz they don't want more than", "that. And then"]]
+    ]
+  },
+  "playerTextCue_8bitdee": {
+    "source": "IVS mediaPlayerInstance 'PlayerTextCue' events (startTime = player position, text = full roll-up window, \\r\\n line breaks). Native CC was OFF.",
+    "events": [
+      { "startTime": 0.1, "text": "Are great for me because they\r\nmake cool warm and then an\r\nin-between neutral or Peach I\r\nusually have to b" },
+      { "startTime": 0.233, "text": "Are great for me because they\r\nmake cool warm and then an\r\nin-between neutral or Peach I\r\nusually have " },
+      { "startTime": 0.5, "text": "make cool warm and then an\r\nin-between neutral or Peach I\r\nusually have to buy neutral or\r\nPeach" },
+      { "startTime": 0.6, "text": "make cool warm and then an\r\nin-between neutral or Peach I\r\nusually have to buy neutral or\r\nPeach I" },
+      { "startTime": 0.666, "text": "make cool warm and then an\r\nin-between neutral or Peach I\r\nusually have to buy neutral or\r\nPeach I actu" },
+      { "startTime": 1.1, "text": "make cool warm and then an\r\nin-between neutral or Peach I\r\nusually have to buy neutral or\r\nPeach I actually" },
+      { "startTime": 2.084, "text": "in-between neutral or Peach I\r\nusually have to buy neutral or\r\nPeach I actually have Peach\r\nundertones" },
+      { "startTime": 2.717, "text": "" },
+      { "startTime": 2.917, "text": "in-between neutral or Peach I\r\nusually have to buy neutral or\r\nPeach I actually have Peach\r\nundertones " }
+    ],
+    "alsoSeen": "PlayerTextMetadataCue {description:'segmentmetadata', text:'{\"cmd\":\"ld_lat_data\",...}'} about every 2 s"
+  },
+  "scc_scaryume_paragraphLayout": {
+    "source": "Stream Closed Captioner frame (mobile.html), non-empty <span> texts joined with ' ¦ ', ms since start (last 220 chars). Portuguese.",
+    "updates": [
+      [12500, " safados  divisão de Infantaria ir aos mortos do batalhão perdido  ¦ ele guarda o trauma"],
+      [13000, " safados  divisão de Infantaria ir aos mortos do batalhão perdido  ¦ ele guarda o trauma dele no"],
+      [13500, " safados  divisão de Infantaria ir aos mortos do batalhão perdido  ele guarda o trauma dele no bolso"],
+      [15000, " safados  divisão de Infantaria ir aos mortos do batalhão perdido  ele guarda o trauma dele no bolso  ¦ então"],
+      [17500, " safados  divisão de Infantaria ir aos mortos do batalhão perdido  ele guarda o trauma dele no bolso  então né"],
+      [18000, " safados  divisão de Infantaria ir aos mortos do batalhão perdido  ele guarda o trauma dele no bolso  então né  ¦ é"],
+      [18500, " safados  divisão de Infantaria ir aos mortos do batalhão perdido  ele guarda o trauma dele no bolso  então né  uma lembrança"],
+      [19500, " safados  divisão de Infantaria ir aos mortos do batalhão perdido  ele guarda o trauma dele no bolso  então né  uma lembrança  ¦ conhecimentos"]
+    ]
+  },
+  "webSpeech_cloud": {
+    "source": "SpeechRecognition.start(video.captureStream() audio track), en-US, continuous, interimResults. Chrome 155 headless.",
+    "milquetoast_claire_25s": {
+      "finals": ["and that horious xdx", " with the special sign"],
+      "interimTail": [" with the special", " with the special sign", " with the special sign"]
+    },
+    "isolatedWorld_8bitdee_20s": { "results": 17, "finals": ["I don't eat dinner"] },
+    "sessionMeasurements": "see webspeech-session-*.json"
+  }
+}

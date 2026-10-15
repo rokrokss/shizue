@@ -9,10 +9,13 @@ import {
   getCurrentTranslateModel,
 } from '@/entrypoints/background/states/models';
 import { ModelPreset, getModelInstance, isLocalModel } from '@/lib/models';
+import type { TranslationContext } from '@/lib/liveCaption/types';
 import {
   getHtmlTranslationBatchPrompt,
   getHtmlTranslationPrompt,
+  getLiveCaptionTranslationPrompt,
   getYoutubeCaptionTranslationPrompt,
+  LiveCaptionMetadata,
 } from '@/lib/prompts';
 import { trackTokenUsage } from '@/lib/tokenUsageTracker';
 import { Caption, VideoMetadata } from '@/lib/youtube';
@@ -34,6 +37,12 @@ export interface BatchTranslationResult {
 export interface YoutubeCaptionTranslationResult {
   success: boolean;
   captions?: Caption[];
+  error?: string;
+}
+
+export interface LiveCaptionTranslationResult {
+  success: boolean;
+  translations?: string[];
   error?: string;
 }
 
@@ -250,6 +259,71 @@ export class TranslationHandler {
       success: true,
       captions: results.flatMap((result, i) =>
         result.success && result.captions ? result.captions : parts[i]
+      ),
+    };
+  }
+
+  public async translateLiveCaption(
+    lines: string[],
+    context: TranslationContext[],
+    targetLanguage: Language,
+    metadata: LiveCaptionMetadata
+  ): Promise<LiveCaptionTranslationResult> {
+    try {
+      const prompt = getLiveCaptionTranslationPrompt(lines, context, targetLanguage, metadata);
+      const modelPreset = getTranslationModelPreset();
+      const llm = getModelInstance({
+        temperature: 0.1,
+        streaming: false,
+        fast: true,
+        modelPreset,
+        jsonSchema: translationsSchemaFor(modelPreset, lines.length),
+      });
+      debugLog('TranslationHandler [translateLiveCaption] prompt:', prompt);
+      const response = await invokeTranslation(llm, prompt, modelPreset);
+      await trackTokenUsage(modelPreset, response);
+
+      const rawResponseContent = response.text.trim();
+      let translations: unknown;
+      try {
+        translations = JSON.parse(stripMarkdownCodeFence(rawResponseContent))?.translations;
+      } catch (parseError) {
+        errorLog('TranslationHandler [translateLiveCaption] JSON parsing error:', rawResponseContent);
+        return { success: false, error: `Failed to parse model response. Error: ${(parseError as Error).message}` };
+      }
+      if (!Array.isArray(translations) || !translations.every((item) => typeof item === 'string')) {
+        errorLog('TranslationHandler [translateLiveCaption] invalid response:', rawResponseContent);
+        return { success: false, error: "AI response is not a JSON object with a 'translations' array of strings." };
+      }
+      if (translations.length !== lines.length) {
+        errorLog('TranslationHandler [translateLiveCaption] item count mismatch:', translations.length, lines.length);
+        if (lines.length > 1) return this.translateLiveCaptionInHalves(lines, context, targetLanguage, metadata);
+        return { success: false, error: `Item count mismatch: ${translations.length} for ${lines.length}.` };
+      }
+      return { success: true, translations };
+    } catch (err) {
+      errorLog('TranslationHandler [translateLiveCaption] general error:', err);
+      return { success: false, error: `Live caption translation failed: ${(err as Error).message ?? String(err)}` };
+    }
+  }
+
+  // Same recovery as YouTube captions: a batch whose count comes back wrong is retried in halves,
+  // and a part that still fails comes back as an empty string.
+  private async translateLiveCaptionInHalves(
+    lines: string[],
+    context: TranslationContext[],
+    targetLanguage: Language,
+    metadata: LiveCaptionMetadata
+  ): Promise<LiveCaptionTranslationResult> {
+    const middle = Math.ceil(lines.length / 2);
+    const parts = [lines.slice(0, middle), lines.slice(middle)];
+    const results = await Promise.all(
+      parts.map((part) => this.translateLiveCaption(part, context, targetLanguage, metadata))
+    );
+    return {
+      success: true,
+      translations: results.flatMap((result, i) =>
+        result.success && result.translations ? result.translations : parts[i].map(() => '')
       ),
     };
   }

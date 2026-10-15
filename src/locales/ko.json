@@ -175,6 +175,23 @@
     "captionSizeRatio": "자막 크기",
     "useKeyboardNavigate": "A/D 자막 이동"
   },
+  "twitch": {
+    "twitchCaptionButton": "트위치 자막 버튼",
+    "source": "원문 출처",
+    "sourceAuto": "자동",
+    "sourceCaptions": "스트리머 자막",
+    "sourceScc": "Stream CC",
+    "sourceSpeech": "음성 인식",
+    "sourceUnavailable": "이 방송에는 없음",
+    "streamLanguage": "방송 언어",
+    "speechConsent": "음성 인식을 켜면 이 탭의 소리가 Google 음성 인식 서버로 전송돼요.",
+    "speechConsentLocal": "소리가 기기 밖으로 나가지 않아요.",
+    "agreeAndActivate": "동의하고 생성",
+    "downloadLocalSpeech": "기기 안 음성 인식 받기(약 60MB)",
+    "revokeSpeechConsent": "음성 인식 동의 취소",
+    "switchToSpeech": "음성 인식으로 바꾸기",
+    "speechStopped": "음성 인식이 멈췄어요"
+  },
   "home": {
     "title": "홈으로 이동"
   },

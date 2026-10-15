@@ -150,6 +150,23 @@
     "captionSizeRatio": "字幕大小",
     "useKeyboardNavigate": "使用A/D键导航字幕"
   },
+  "twitch": {
+    "twitchCaptionButton": "Twitch 字幕按钮",
+    "source": "字幕来源",
+    "sourceAuto": "自动",
+    "sourceCaptions": "主播字幕",
+    "sourceScc": "Stream CC",
+    "sourceSpeech": "语音识别",
+    "sourceUnavailable": "此直播没有",
+    "streamLanguage": "直播语言",
+    "speechConsent": "语音识别会将此标签页的音频发送到 Google 语音识别服务。",
+    "speechConsentLocal": "音频不会离开此设备。",
+    "agreeAndActivate": "同意并激活",
+    "downloadLocalSpeech": "下载设备端识别（约 60 MB）",
+    "revokeSpeechConsent": "撤销语音识别同意",
+    "switchToSpeech": "使用语音识别",
+    "speechStopped": "语音识别已停止"
+  },
   "usage": {
     "title": "令牌使用量",
     "total": "总计",

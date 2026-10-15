@@ -9,6 +9,10 @@ export const MESSAGE_RETRY_GRAPH_STREAM = 'retry_graph_stream';
 export const MESSAGE_CANCEL_NOT_STARTED_MESSAGE = 'cancel_not_started_message';
 export const MESSAGE_TRANSLATE_HTML_TEXT_BATCH = 'translate_html_text_batch';
 export const MESSAGE_TRANSLATE_YOUTUBE_CAPTION = 'translate_youtube_caption';
+export const MESSAGE_TRANSLATE_LIVE_CAPTION = 'translate_live_caption';
+export const MESSAGE_INJECT_TWITCH_BRIDGE = 'inject_twitch_bridge';
+export const MESSAGE_SCC_CAPTION_SNAPSHOT = 'scc_caption_snapshot';
+export const MESSAGE_SCC_SET_HIDDEN = 'scc_set_hidden';
 export const MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE = 'context_menu_translate_page';
 export const MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE = 'context_menu_summarize_page';
 export const MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE = 'context_menu_describe_image';
@@ -47,6 +51,10 @@ export const STORAGE_SHOW_YOUTUBE_CAPTION_TOGGLE = 'SHOW_YOUTUBE_CAPTION_TOGGLE'
 export const STORAGE_SHOW_YOUTUBE_BILINGUAL_CAPTION = 'SHOW_YOUTUBE_BILINGUAL_CAPTION';
 export const STORAGE_USE_YOUTUBE_KEYBOARD_NAVIGATE = 'USE_YOUTUBE_KEYBOARD_NAVIGATE';
 export const STORAGE_YOUTUBE_CAPTION_SIZE_RATIO = 'YOUTUBE_CAPTION_SIZE_RATIO';
+export const STORAGE_SHOW_TWITCH_CAPTION_TOGGLE = 'SHOW_TWITCH_CAPTION_TOGGLE';
+export const STORAGE_TWITCH_CAPTION_SOURCE = 'TWITCH_CAPTION_SOURCE';
+export const STORAGE_TWITCH_CHANNEL_LANGUAGE = 'TWITCH_CHANNEL_LANGUAGE';
+export const STORAGE_SPEECH_RECOGNITION_CONSENT = 'SPEECH_RECOGNITION_CONSENT';
 export const STORAGE_TOGGLE_HIDDEN_SITE_LIST = 'TOGGLE_HIDDEN_SITE_LIST';
 
 /* parameters */

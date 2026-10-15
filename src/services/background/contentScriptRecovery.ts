@@ -12,8 +12,13 @@ export function scriptsForPage(value: string | undefined): ContentScriptName[] {
     if (!['http:', 'https:'].includes(url.protocol)) return [];
     if (url.hostname === 'chromewebstore.google.com' ||
         (url.hostname === 'chrome.google.com' && url.pathname.startsWith('/webstore'))) return [];
-    return url.protocol === 'https:' && ['youtube.com', 'www.youtube.com'].includes(url.hostname)
-      ? ['toggle', 'youtube-caption-toggle'] : ['toggle'];
+    if (url.protocol === 'https:' && ['youtube.com', 'www.youtube.com'].includes(url.hostname)) {
+      return ['toggle', 'youtube-caption-toggle'];
+    }
+    if (url.protocol === 'https:' && ['twitch.tv', 'www.twitch.tv'].includes(url.hostname)) {
+      return ['toggle', 'twitch-caption'];
+    }
+    return ['toggle'];
   } catch { return []; }
 }
 

@@ -1,10 +1,14 @@
 import {
   MESSAGE_CANCEL_NOT_STARTED_MESSAGE,
+  MESSAGE_INJECT_TWITCH_BRIDGE,
+  MESSAGE_SCC_CAPTION_SNAPSHOT,
+  MESSAGE_SCC_SET_HIDDEN,
   MESSAGE_LOAD_THREAD,
   MESSAGE_OPEN_PANEL,
   MESSAGE_WAIT_PANEL_SUMMARY,
   MESSAGE_SET_PANEL_OPEN_OR_NOT,
   MESSAGE_TRANSLATE_HTML_TEXT_BATCH,
+  MESSAGE_TRANSLATE_LIVE_CAPTION,
   MESSAGE_TRANSLATE_YOUTUBE_CAPTION,
 } from '@/config/constants';
 import { openPanel, togglePanel } from '@/entrypoints/background/sidepanel';
@@ -92,6 +96,58 @@ async function handleTranslateYoutubeCaption(msg: any, sendResponse: (response?:
   sendResponse(translatedCaptions);
 }
 
+async function handleTranslateLiveCaption(msg: any, sendResponse: (response?: any) => void) {
+  const { lines, context, targetLanguage, metadata } = msg;
+  sendResponse(
+    await getTranslationHandler().translateLiveCaption(lines, context, targetLanguage, metadata)
+  );
+}
+
+// The Twitch caption script asks for its MAIN-world bridge when the tab predates the extension's
+// install or update (recovery injects isolated scripts only).
+async function handleInjectTwitchBridge(
+  _msg: any,
+  sendResponse: (response?: any) => void,
+  sender: chrome.runtime.MessageSender
+) {
+  if (sender.tab?.id === undefined) return sendResponse({ status: 'error' });
+  await chrome.scripting.executeScript({
+    target: { tabId: sender.tab.id, frameIds: [sender.frameId ?? 0] },
+    world: 'MAIN',
+    files: ['content-scripts/twitch-player-bridge.js'],
+  });
+  sendResponse({ status: 'success' });
+}
+
+// Stream Closed Captioner text comes from a nested extension frame; the caption script runs in
+// the tab's top frame.
+async function handleSccCaptionSnapshot(
+  msg: any,
+  sendResponse: (response?: any) => void,
+  sender: chrome.runtime.MessageSender
+) {
+  if (sender.tab?.id !== undefined) {
+    await chrome.tabs
+      .sendMessage(sender.tab.id, { action: MESSAGE_SCC_CAPTION_SNAPSHOT, text: msg.text }, { frameId: 0 })
+      .catch(() => {});
+  }
+  sendResponse({ status: 'success' });
+}
+
+// From the top frame to every frame of the tab; only the SCC frame acts on it.
+async function handleSccSetHidden(
+  msg: any,
+  sendResponse: (response?: any) => void,
+  sender: chrome.runtime.MessageSender
+) {
+  if (sender.tab?.id !== undefined) {
+    await chrome.tabs
+      .sendMessage(sender.tab.id, { action: MESSAGE_SCC_SET_HIDDEN, hidden: msg.hidden === true })
+      .catch(() => {});
+  }
+  sendResponse({ status: 'success' });
+}
+
 export const messageHandlers = {
   [MESSAGE_LOAD_THREAD]: handleLoadThread,
   [MESSAGE_CANCEL_NOT_STARTED_MESSAGE]: handleLatestMessageForThread,
@@ -100,4 +156,8 @@ export const messageHandlers = {
   [MESSAGE_WAIT_PANEL_SUMMARY]: handleWaitPanelSummary,
   [MESSAGE_TRANSLATE_HTML_TEXT_BATCH]: handleTranslateHtmlTextBatch,
   [MESSAGE_TRANSLATE_YOUTUBE_CAPTION]: handleTranslateYoutubeCaption,
+  [MESSAGE_TRANSLATE_LIVE_CAPTION]: handleTranslateLiveCaption,
+  [MESSAGE_INJECT_TWITCH_BRIDGE]: handleInjectTwitchBridge,
+  [MESSAGE_SCC_CAPTION_SNAPSHOT]: handleSccCaptionSnapshot,
+  [MESSAGE_SCC_SET_HIDDEN]: handleSccSetHidden,
 };

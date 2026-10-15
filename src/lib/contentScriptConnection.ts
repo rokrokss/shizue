@@ -1,6 +1,6 @@
 export const CONTENT_SCRIPT_PING = 'shizue_content_script_ping';
 export const RECOVER_CONTENT_SCRIPTS = 'shizue_recover_content_scripts';
-export type ContentScriptName = 'toggle' | 'youtube-caption-toggle';
+export type ContentScriptName = 'toggle' | 'youtube-caption-toggle' | 'twitch-caption';
 
 export function registerContentScriptConnection(script: ContentScriptName) {
   const listener = (message: any, _sender: chrome.runtime.MessageSender, sendResponse: (reply: unknown) => void) => {

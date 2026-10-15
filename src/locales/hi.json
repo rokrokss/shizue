@@ -150,6 +150,23 @@
     "captionSizeRatio": "कैप्शन आकार",
     "useKeyboardNavigate": "A/D के साथ उपशीर्षक नेविगेट करें"
   },
+  "twitch": {
+    "twitchCaptionButton": "ट्विच कैप्शन बटन",
+    "source": "कैप्शन का स्रोत",
+    "sourceAuto": "स्वचालित",
+    "sourceCaptions": "स्ट्रीमर के कैप्शन",
+    "sourceScc": "Stream CC",
+    "sourceSpeech": "वाक् पहचान",
+    "sourceUnavailable": "इस स्ट्रीम पर उपलब्ध नहीं",
+    "streamLanguage": "स्ट्रीम की भाषा",
+    "speechConsent": "वाक् पहचान इस टैब का ऑडियो Google की वाक् पहचान सेवा को भेजती है।",
+    "speechConsentLocal": "ऑडियो इसी डिवाइस पर रहता है।",
+    "agreeAndActivate": "सहमत हों और सक्रिय करें",
+    "downloadLocalSpeech": "डिवाइस पर पहचान डाउनलोड करें (लगभग 60 MB)",
+    "revokeSpeechConsent": "वाक् पहचान की सहमति वापस लें",
+    "switchToSpeech": "वाक् पहचान का उपयोग करें",
+    "speechStopped": "वाक् पहचान रुक गई"
+  },
   "usage": {
     "title": "टोकन उपयोग",
     "total": "कुल",

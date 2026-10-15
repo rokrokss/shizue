@@ -1,5 +1,6 @@
 import { SelectionActionType } from '@/config/constants';
 import { Language } from '@/hooks/language';
+import type { TranslationContext } from '@/lib/liveCaption/types';
 import { Caption, VideoMetadata } from '@/lib/youtube';
 import { debugLog } from '@/logs';
 
@@ -208,5 +209,57 @@ ${JSON.stringify(captions.map((c) => c.text))}
 **Final Check before generating:** Does my output array have exactly ${
     captions.length
   } items? If not, I must correct it.
+`;
+};
+
+export type LiveCaptionMetadata = {
+  title?: string;
+  category?: string;
+  channel?: string;
+};
+
+export const getLiveCaptionTranslationPrompt = (
+  lines: string[],
+  context: TranslationContext[],
+  targetLanguage: Language,
+  metadata: LiveCaptionMetadata
+) => {
+  return `You are a live-stream caption translator. Captions come from a live broadcast as it happens, so lines can be fragments, lack punctuation, or contain speech-recognition mistakes.
+
+**Your Task:**
+Translate each line from the input array into **${targetLanguage}**.
+
+**--- Core Principles (MUST be followed unconditionally) ---**
+
+1.  **Strict Length Match:** The output "translations" array MUST contain the exact same number of strings as the input array.
+
+2.  **One line, one translation:** Translate each line on its own. Do not move words between lines and do not merge lines.
+
+3.  **Use the earlier lines only for context:** They were already shown to the viewer. Use them to resolve pronouns, names and topic, but do NOT translate them again.
+
+4.  **Keep it short and natural:** Viewers read these while watching. If a word is clearly a recognition mistake, translate what the speaker most likely said.
+
+**--- Output Format ---**
+
+-   You MUST return your response as a single, valid JSON object.
+-   The JSON object must contain one key: "translations".
+-   The value of "translations" must be a JSON array of strings.
+-   Do NOT include any text, explanations, or markdown formatting (like \`\`\`json) outside the JSON object itself.
+
+===Stream (for Tonal Context Only)===
+${JSON.stringify(metadata)}
+
+===Earlier Lines (already translated, context only)===
+${JSON.stringify(context)}
+
+===Input Lines to Translate (Line Count: ${lines.length})===
+${JSON.stringify(lines)}
+
+===Example of the EXACT JSON Output Format expected===
+{
+  "translations": ["translated_line_1", ..., "translated_line_n"]
+}
+
+**Final Check before generating:** Does my output array have exactly ${lines.length} items? If not, I must correct it.
 `;
 };

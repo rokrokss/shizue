@@ -36,7 +36,7 @@ export const CaptionDisplay = ({
     <div className="sz:w-fit" style={{ fontSize }}>
       {lines.map((line, index) => (
         <Fragment key={index}>
-          {bilingual && (
+          {bilingual && originalLines[index] && (
             <div>
               <span className="sz:px-2 sz:py-1 sz:inline-block sz:bg-[rgba(8,8,8,0.75)] sz:text-white sz:fill-white">
                 {originalLines[index]}

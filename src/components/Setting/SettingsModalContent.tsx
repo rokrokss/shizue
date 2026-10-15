@@ -7,6 +7,8 @@ import {
   Theme,
   toggleYPositionAtom,
   useShowToggle,
+  useShowTwitchCaptionToggle,
+  useSpeechRecognitionConsent,
   useShowYoutubeCaptionToggle,
   useTheme,
   useToggleHiddenSiteList,
@@ -69,6 +71,8 @@ const SettingsModalContent = () => {
   const [showToggle, setShowToggle] = useShowToggle();
   const setToggleYPosition = useSetAtom(toggleYPositionAtom);
   const [showYoutubeCaptionToggle, setShowYoutubeCaptionToggle] = useShowYoutubeCaptionToggle();
+  const [showTwitchCaptionToggle, setShowTwitchCaptionToggle] = useShowTwitchCaptionToggle();
+  const [speechConsent, setSpeechConsent] = useSpeechRecognitionConsent();
   const [modelPreferences, setModelPreferences] = useProviderModelPreferences();
   const selectedProvider: AIProvider = modelPreferences.provider ?? (
     isChatGPTModel(chatModel) && isChatGPTModel(translateModel) ? 'chatgpt' : 'openrouter-api-key'
@@ -139,6 +143,10 @@ const SettingsModalContent = () => {
 
   const handleToggleShowToggle = () => {
     setShowToggle(!showToggle);
+  };
+
+  const handleToggleTwitchCaptionToggle = () => {
+    setShowTwitchCaptionToggle(!showTwitchCaptionToggle);
   };
 
   const handleToggleYoutubeCaptionToggle = () => {
@@ -548,6 +556,29 @@ const SettingsModalContent = () => {
                       >
                         {t('layout.hideToggle')}
                       </Checkbox>
+                    </div>
+                  </div>
+                  <div className="sz:flex sz:flex-col sz:items-center sz:w-50 sz:mt-1">
+                    <div
+                      className={`sz:text-base ${
+                        theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'
+                      }`}
+                    >
+                      {t('twitch.twitchCaptionButton')}
+                    </div>
+                    <div className="sz:flex sz:flex-col sz:items-center sz:justify-center sz:w-50 sz:mt-2">
+                      <Checkbox
+                        checked={!showTwitchCaptionToggle}
+                        onChange={handleToggleTwitchCaptionToggle}
+                        className="sz:font-ycom sz:w-50 sz:flex sz:flex-row sz:items-center sz:justify-center"
+                      >
+                        {t('layout.hideToggle')}
+                      </Checkbox>
+                      {speechConsent && (
+                        <Button size="small" className="sz:mt-2" onClick={() => setSpeechConsent(false)}>
+                          {t('twitch.revokeSpeechConsent')}
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -32,6 +32,11 @@ store/render.sh       # Render Chrome Web Store images (store/src → store/out)
 3. Enable "Developer mode"
 4. Click "Load unpacked" → select `dist/chrome-mv3/`
 
+### Automated browser testing
+- Branded Chrome 137+ ignores `--load-extension`. Use Chrome for Testing (Playwright's `chromium-*` download) with `--load-extension` and a temporary `--user-data-dir`.
+- After a rebuild, start from a fresh profile. A reused profile keeps the old build's service worker, even though content scripts update; new background message handlers then silently don't exist.
+- The user's Mac is shared with heavy apps. Run one test browser at a time, never alongside a build, at the lowest video quality, and kill it after each batch.
+
 ### Debugging
 - **Background Script**: chrome://extensions → Service Worker → Inspect
 - **Side Panel**: Right-click panel → Inspect
@@ -304,6 +309,54 @@ In-page UI (toggle, YouTube caption toggle, caption overlay) renders inside shad
 - Listeners on `document` see the shadow host as the event target: read `e.composedPath()[0]`, and hit-test with `shadowRoot.elementFromPoint`.
 - Elements placed in the page's own DOM (e.g. the YouTube player-bar holder) can't use `sz:` classes; style them inline.
 - `rem` still follows the page's root font size (YouTube's is 10px, and the YouTube UI is tuned to it), so prefer px values in new content-script UI.
+
+### Twitch Live Captions
+Twitch has no caption track or caption API, so captions are translated as they appear instead of being prepared like YouTube's. The design and its research are in the gitignored `reports/Twitch 이중자막 설계.md`.
+
+**UI.** It looks and works like the YouTube feature.
+- The button and menu are `components/Caption/CaptionToggle.tsx`, shared with `YoutubeCaptionToggle`. `twitch-caption.content` puts the button at the front of the `.player-controls__right-control-group` that sits next to the `<video>` (Twitch renders a second, hidden set of controls). It re-attaches every second, because navigation and theatre mode rebuild the controls.
+- The menu popups live in their own shadow host. That host moves into `document.fullscreenElement` on `fullscreenchange`, because fullscreen draws only the app root.
+- The settings Twitch shares with YouTube are target language, bilingual and caption size. Only `STORAGE_SHOW_TWITCH_CAPTION_TOGGLE` is Twitch's own.
+- Live streams don't pause when the menu opens, because that would put them behind live. VODs pause, as on YouTube.
+
+**Sources.** There are three. The `'auto'` mode (`STORAGE_TWITCH_CAPTION_SOURCE`) picks them in this order, because captions the streamer makes from a clean microphone beat recognizing game audio.
+1. **Broadcaster CEA-608.**
+   - The IVS player sends `PlayerTextCue` events carrying the whole roll-up window (lines joined by `\r\n`). They arrive even when native CC is off, and on VODs too, including after a seek.
+   - The player object is only reachable through React props (`mediaPlayerInstance` above `[data-a-target="player-overlay-click-handler"]`). The isolated world can't see React props, so `twitch-player-bridge.content` (`world: 'MAIN'`) relays it as `CustomEvent`s with a JSON-string `detail` (`lib/twitch/bridgeProtocol.ts`).
+   - Tabs opened before an install or update get the isolated script back through recovery. If the bridge doesn't answer a ping, the script asks the background to inject it (`MESSAGE_INJECT_TWITCH_BRIDGE`).
+2. **Stream Closed Captioner (SCC)**, a Twitch extension.
+   - Its server socket needs the JWT Twitch issues to that extension, so its captions are read from its page. That page is a frame (`h1ekceo16erc49snp0sine3k9ccbh9.ext-twitch.tv`) inside Twitch's `supervisor.ext-twitch.tv` frame.
+   - `twitch-scc.content` (`allFrames`) finds the caption box, a `<main class="caption-styles__Captions-…">` made only of `span`s. It falls back to any element of that shape. It sends the joined text through the background (`MESSAGE_SCC_CAPTION_SNAPSHOT`) to the top frame.
+   - While SCC is the source, the background tells every frame `MESSAGE_SCC_SET_HIDDEN`. The overlay view (`video_overlay.html`) then hides `#app-container`, which also hides SCC's settings button; the panel view stays.
+   - Tabs open before an install get no frame script until they reload.
+   - SCC shows the words being spoken, then rewrites them when its recognizer finalizes them. So the segmenter waits 3 s of stillness for SCC instead of 1.5 s; committing earlier repeats phrases.
+3. **Speech recognition** (`lib/twitch/webSpeechSource.ts`).
+   - The audio track comes from `<video>.captureStream()`, not `tabCapture`. A button inside the player doesn't count as invoking the extension, and `captureStream` keeps working when the viewer mutes.
+   - The track goes to `SpeechRecognition.start(track)`, which needs no microphone permission.
+   - Keep one recognizer per page: two at once starved each other of audio.
+   - A channel switch keeps the `<video>` but fires `addtrack`. The old track stays `live` but goes silent, so always take the newest live track.
+   - Sessions restart on `end`, and after 20 s without results. Cloud sessions stall and end with `network` every few minutes.
+   - Recognition pauses on the player's paused state. Don't use the `<video>`'s `pause` event, which also fires while buffering.
+   - The language comes from Twitch's own GQL (`broadcastSettings.language`, asked by the bridge with the page's client ID; tags are unreliable). A per-channel pick in the menu (`STORAGE_TWITCH_CHANNEL_LANGUAGE`) wins over it.
+   - Consent is asked once (`STORAGE_SPEECH_RECOGNITION_CONSENT`, revocable in settings), because cloud recognition sends the audio to Google. On-device recognition is used when `available()` says so. `install()` needs the click itself as user activation.
+   - In auto mode, two caption updates within 10 s from a caption source replace speech recognition.
+
+**Splitting into sentences.** `lib/liveCaption/segmenter.ts` turns snapshots into sentences.
+- It aligns each snapshot against the text received so far, looking only at the snapshot's last 60 tokens. SCC's paragraph can be far longer than the 80 committed tokens kept for alignment, and aligning the whole paragraph used to re-commit it forever. Windows only move forward, and a match that reaches the end, or covers the whole snapshot, wins over a longer partial match.
+- Words that scroll off before their sentence ends are kept. The uncommitted tail takes the newest wording, because 608 erases and redraws words (`16 Dam` → `16` → `16 damage`).
+- It commits at punctuation followed by more words, after 1.5 s without a change, or at 35 tokens. Japanese and Chinese are split per character.
+- `pnpm test:live-caption` replays recorded Twitch captions from `tests/fixtures/twitch/`.
+
+**Translation.** `lib/liveCaption/translationQueue.ts` sends 1–3 sentences per `MESSAGE_TRANSLATE_LIVE_CAPTION`.
+- It uses the same JSON contract and halves retry as YouTube.
+- The last 3 translated pairs go along as context, with at most 2 requests in flight.
+- Sentences still waiting after 15 s are dropped.
+
+**Overlay.** `lib/twitch/liveCaptionController.tsx` renders `CaptionDisplay` in a closed shadow root inside `.video-player__container`.
+- Fullscreen makes `.root` the fullscreen element, which contains the player, so the overlay stays visible. It also survives theatre mode.
+- Native captions are hidden with a `<style>` in `<head>`, not inline, because Twitch recreates the caption box between cues.
+- A line waiting for its translation shows its original, as on YouTube. With bilingual on, the words still being spoken show as one more original line. Lines leave 8 s after the last change.
+- It resets on seek and on channel change. It polls `location.pathname`, because Twitch keeps the same `<video>` and player across channels.
 
 ### Character Sprites
 - `assets/character/*.png` are pixel-art sprite sheets. The mascot bunny (`standing.png`, `walking_forward.png`) is 8 frames of 14×17 with a 34px gap. The logo (`public/icon.svg`, `public/icon/*.png`) is its face on a 12×12 grid (cells of 16/12 on a 16×16 viewBox) with a mint outline.

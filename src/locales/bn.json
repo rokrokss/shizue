@@ -150,6 +150,23 @@
     "captionSizeRatio": "ক্যাপশন সাইজ রেটিও",
     "useKeyboardNavigate": "A/D দিয়ে সাবটাইটেল নেভিগেট করুন"
   },
+  "twitch": {
+    "twitchCaptionButton": "টুইচ ক্যাপশন বোতাম",
+    "source": "ক্যাপশনের উৎস",
+    "sourceAuto": "স্বয়ংক্রিয়",
+    "sourceCaptions": "স্ট্রিমারের ক্যাপশন",
+    "sourceScc": "Stream CC",
+    "sourceSpeech": "কণ্ঠস্বর শনাক্তকরণ",
+    "sourceUnavailable": "এই স্ট্রিমে নেই",
+    "streamLanguage": "স্ট্রিমের ভাষা",
+    "speechConsent": "কণ্ঠস্বর শনাক্তকরণ এই ট্যাবের অডিও Google-এর কণ্ঠস্বর শনাক্তকরণ পরিষেবায় পাঠায়।",
+    "speechConsentLocal": "অডিও এই ডিভাইসেই থাকে।",
+    "agreeAndActivate": "সম্মত হন ও সক্রিয় করুন",
+    "downloadLocalSpeech": "ডিভাইসে শনাক্তকরণ ডাউনলোড করুন (প্রায় 60 MB)",
+    "revokeSpeechConsent": "কণ্ঠস্বর শনাক্তকরণের সম্মতি প্রত্যাহার করুন",
+    "switchToSpeech": "কণ্ঠস্বর শনাক্তকরণ ব্যবহার করুন",
+    "speechStopped": "কণ্ঠস্বর শনাক্তকরণ বন্ধ হয়ে গেছে"
+  },
   "usage": {
     "title": "টোকেন ব্যবহার",
     "total": "মোট",

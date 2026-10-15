@@ -1,5 +1,9 @@
 import {
   STORAGE_SHOW_TOGGLE,
+  STORAGE_SHOW_TWITCH_CAPTION_TOGGLE,
+  STORAGE_SPEECH_RECOGNITION_CONSENT,
+  STORAGE_TWITCH_CAPTION_SOURCE,
+  STORAGE_TWITCH_CHANNEL_LANGUAGE,
   STORAGE_SHOW_YOUTUBE_BILINGUAL_CAPTION,
   STORAGE_SHOW_YOUTUBE_CAPTION_TOGGLE,
   STORAGE_THEME,
@@ -17,6 +21,7 @@ export const defaultTheme: Theme = 'light';
 export const defaultShowToggle = true;
 export const defaultToggleYPosition = -18;
 export const defaultShowYoutubeCaptionToggle = true;
+export const defaultShowTwitchCaptionToggle = true;
 export const defaultShowYoutubeBilingualCaption = false;
 export const defaultUseYoutubeKeyboardNavigate = true;
 export const defaultCaptionSizeRatio = 1.0;
@@ -40,6 +45,31 @@ export const toggleYPositionAtom = atomWithChromeStorage<number>(
 export const youtubeShowCaptionToggleAtom = atomWithChromeStorage<boolean>(
   STORAGE_SHOW_YOUTUBE_CAPTION_TOGGLE,
   defaultShowYoutubeCaptionToggle
+);
+
+export const twitchShowCaptionToggleAtom = atomWithChromeStorage<boolean>(
+  STORAGE_SHOW_TWITCH_CAPTION_TOGGLE,
+  defaultShowTwitchCaptionToggle
+);
+
+// 'auto' picks the streamer's captions, then Stream Closed Captioner, then speech recognition.
+export type TwitchCaptionSourceMode = 'auto' | 'cea608' | 'scc' | 'stt';
+
+export const twitchCaptionSourceAtom = atomWithChromeStorage<TwitchCaptionSourceMode>(
+  STORAGE_TWITCH_CAPTION_SOURCE,
+  'auto'
+);
+
+// Spoken language per Twitch channel login, only for channels where the viewer changed it.
+export const twitchChannelLanguageAtom = atomWithChromeStorage<Record<string, string>>(
+  STORAGE_TWITCH_CHANNEL_LANGUAGE,
+  {}
+);
+
+// The viewer agreed that speech recognition may send the tab's audio to Google.
+export const speechRecognitionConsentAtom = atomWithChromeStorage<boolean>(
+  STORAGE_SPEECH_RECOGNITION_CONSENT,
+  false
 );
 
 export const youtubeShowBilingualCaptionAtom = atomWithChromeStorage<boolean>(
@@ -69,6 +99,11 @@ export const useShowToggleValue = () => useAtomValue(showToggleAtom);
 export const useToggleYPosition = () => useAtom(toggleYPositionAtom);
 export const useShowYoutubeCaptionToggle = () => useAtom(youtubeShowCaptionToggleAtom);
 export const useShowYoutubeCaptionToggleValue = () => useAtomValue(youtubeShowCaptionToggleAtom);
+export const useShowTwitchCaptionToggle = () => useAtom(twitchShowCaptionToggleAtom);
+export const useShowTwitchCaptionToggleValue = () => useAtomValue(twitchShowCaptionToggleAtom);
+export const useTwitchCaptionSource = () => useAtom(twitchCaptionSourceAtom);
+export const useTwitchChannelLanguage = () => useAtom(twitchChannelLanguageAtom);
+export const useSpeechRecognitionConsent = () => useAtom(speechRecognitionConsentAtom);
 export const useShowYoutubeBilingualCaption = () => useAtom(youtubeShowBilingualCaptionAtom);
 export const useUseYoutubeKeyboardNavigate = () => useAtom(useYoutubeKeyboardNavigateAtom);
 export const useYoutubeCaptionSizeRatio = () => useAtom(youtubeCaptionSizeRatioAtom);

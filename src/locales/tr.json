@@ -150,6 +150,23 @@
     "captionSizeRatio": "Altyazı Boyutu",
     "useKeyboardNavigate": "A/D ile Altyazı Gezinme"
   },
+  "twitch": {
+    "twitchCaptionButton": "Twitch Altyazı Düğmesi",
+    "source": "Altyazı kaynağı",
+    "sourceAuto": "Otomatik",
+    "sourceCaptions": "Yayıncı altyazıları",
+    "sourceScc": "Stream CC",
+    "sourceSpeech": "Konuşma tanıma",
+    "sourceUnavailable": "Bu yayında yok",
+    "streamLanguage": "Yayın dili",
+    "speechConsent": "Konuşma tanıma, bu sekmenin sesini Google'ın konuşma tanıma hizmetine gönderir.",
+    "speechConsentLocal": "Ses bu cihazda kalır.",
+    "agreeAndActivate": "Kabul et ve aktif et",
+    "downloadLocalSpeech": "Cihaz üzerinde tanımayı indir (yaklaşık 60 MB)",
+    "revokeSpeechConsent": "Konuşma tanıma onayını geri al",
+    "switchToSpeech": "Konuşma tanımayı kullan",
+    "speechStopped": "Konuşma tanıma durdu"
+  },
   "usage": {
     "title": "Token Kullanımı",
     "total": "Toplam",

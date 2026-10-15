@@ -150,6 +150,23 @@
     "captionSizeRatio": "Dimensione sottotitoli",
     "useKeyboardNavigate": "Naviga sottotitoli con A/D"
   },
+  "twitch": {
+    "twitchCaptionButton": "Pulsante sottotitoli Twitch",
+    "source": "Fonte dei sottotitoli",
+    "sourceAuto": "Automatica",
+    "sourceCaptions": "Sottotitoli dello streamer",
+    "sourceScc": "Stream CC",
+    "sourceSpeech": "Riconoscimento vocale",
+    "sourceUnavailable": "Non disponibile in questa diretta",
+    "streamLanguage": "Lingua della diretta",
+    "speechConsent": "Il riconoscimento vocale invia l'audio di questa scheda al servizio di riconoscimento vocale di Google.",
+    "speechConsentLocal": "L'audio resta su questo dispositivo.",
+    "agreeAndActivate": "Accetta e attiva",
+    "downloadLocalSpeech": "Scarica il riconoscimento sul dispositivo (circa 60 MB)",
+    "revokeSpeechConsent": "Revoca il consenso al riconoscimento vocale",
+    "switchToSpeech": "Usa il riconoscimento vocale",
+    "speechStopped": "Il riconoscimento vocale si è interrotto"
+  },
   "usage": {
     "title": "Utilizzo Token",
     "total": "Totale",

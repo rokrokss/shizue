@@ -1,6 +1,6 @@
 # Shizue Privacy Policy (개인정보처리방침)
 
-**Last Updated: [2026-10-12]**
+**Last Updated: [2026-10-15]**
 
 Shizue is a Chrome extension designed to enhance your Browse experience by integrating Large Language Models (LLMs).
 
@@ -16,9 +16,11 @@ Shizue's developers **do not operate any server that receives your data from Shi
   * Page summary: the page title and page text.
   * Page translation: the text of the page elements being translated.
   * YouTube caption translation: the caption text and the video's details (title, description, channel, keywords, duration).
+  * Twitch caption translation: the caption text, the last few caption lines and their translations as context, and the stream's title, category, and channel. Shizue reads the captions the streamer added to the broadcast from Twitch's player on that page.
   * Image description and text extraction: the selected image.
 
   This content is handled under the provider's own terms and privacy policy ([OpenAI](https://openai.com/policies/privacy-policy), [Google](https://policies.google.com/privacy), [Anthropic](https://www.anthropic.com/legal/privacy), [OpenRouter](https://openrouter.ai/privacy)). Nothing is sent until you use a feature.
+* **Speech Recognition on Twitch:** On a Twitch stream without captions, you can turn on speech recognition from Shizue's caption button. It asks for your consent first. Shizue then gives the stream's audio from that tab to Chrome's built-in speech recognition (the Web Speech API). Unless your device has Chrome's on-device recognition for the stream's language, Chrome sends that audio to Google's speech recognition service, under [Google's privacy policy](https://policies.google.com/privacy). The recognized text is then translated like captions above. Audio is only captured while the feature is on, and is never sent to Shizue's developers. You can withdraw consent in Settings.
 * **Local Models:** If you choose a local model, the same content is sent to the model server at the address you set (for example, Ollama or LM Studio on your computer) instead of an AI provider. When that server runs on your computer, the content does not leave your device. Shizue sets the `Origin` header of its own requests to an Ollama server on your computer to that server's address, because Ollama rejects browser extensions otherwise; no other requests are changed.
 * **Chat History, Memos & Settings:** Chat history, memos, token usage statistics, and your extension settings (e.g., color themes, language preferences) are stored **only on your local device.** This data is not collected or transmitted.
 
@@ -40,7 +42,7 @@ If you have any questions about this Privacy Policy, please contact us by email 
 
 # Shizue 개인정보처리방침
 
-**최종 업데이트: [2026-10-12]**
+**최종 업데이트: [2026-10-15]**
 
 Shizue는 대규모 언어 모델(LLM)을 통합하여 여러분의 브라우징 경험을 향상시키기 위해 설계된 크롬 확장 프로그램입니다.
 
@@ -56,9 +58,11 @@ Shizue 개발자는 **Shizue의 기능으로 여러분의 데이터를 받는 �
   * 페이지 요약: 페이지 제목과 본문 텍스트
   * 페이지 번역: 번역 대상 요소의 텍스트
   * 유튜브 자막 번역: 자막 텍스트와 영상 정보(제목, 설명, 채널, 키워드, 길이)
+  * 트위치 자막 번역: 자막 텍스트, 문맥으로 쓰는 직전 자막 몇 줄과 그 번역, 방송 정보(제목, 카테고리, 채널). Shizue는 스트리머가 방송에 넣은 자막을 그 페이지의 트위치 플레이어에서 읽습니다.
   * 이미지 설명 및 텍스트 추출: 선택한 이미지
 
   이 콘텐츠는 각 제공사의 약관과 개인정보처리방침([OpenAI](https://openai.com/policies/privacy-policy), [Google](https://policies.google.com/privacy), [Anthropic](https://www.anthropic.com/legal/privacy), [OpenRouter](https://openrouter.ai/privacy))에 따라 처리됩니다. 기능을 사용하기 전에는 아무것도 전송되지 않습니다.
+* **트위치 음성 인식:** 자막이 없는 트위치 방송에서는 Shizue 자막 버튼으로 음성 인식을 켤 수 있으며, 처음 켤 때 동의를 받습니다. 그러면 Shizue는 그 탭에서 나오는 방송 소리를 크롬 내장 음성 인식(Web Speech API)에 넘깁니다. 기기에 그 방송 언어의 크롬 기기 내 인식이 없으면 크롬이 이 소리를 Google 음성 인식 서비스로 보내며, [Google 개인정보처리방침](https://policies.google.com/privacy)에 따라 처리됩니다. 인식된 텍스트는 위의 자막과 같은 방식으로 번역됩니다. 소리는 이 기능이 켜져 있는 동안에만 사용되며, Shizue 개발자에게는 전송되지 않습니다. 동의는 설정에서 취소할 수 있습니다.
 * **로컬 모델:** 로컬 모델을 선택하면 같은 콘텐츠가 AI 제공사 대신 여러분이 설정한 주소의 모델 서버(예: 내 컴퓨터의 Ollama나 LM Studio)로 전송됩니다. 그 서버가 내 컴퓨터에서 실행 중이라면 콘텐츠는 기기 밖으로 나가지 않습니다. Ollama는 브라우저 확장 프로그램의 요청을 거부하므로, Shizue는 내 컴퓨터의 Ollama 서버로 보내는 자신의 요청에 한해 `Origin` 헤더를 그 서버의 주소로 바꿉니다. 다른 요청은 바꾸지 않습니다.
 * **대화 기록, 메모 및 설정:** 대화 기록, 메모, 토큰 사용량 통계, 확장 프로그램 설정(예: 색상 테마, 언어 기본 설정)은 **오직 로컬 기기에만 저장**됩니다. 이 데이터는 수집되거나 전송되지 않습니다.
 

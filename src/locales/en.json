@@ -175,6 +175,23 @@
     "captionSizeRatio": "Caption Size",
     "useKeyboardNavigate": "Navigate Subtitles with A/D"
   },
+  "twitch": {
+    "twitchCaptionButton": "Twitch Caption Button",
+    "source": "Caption source",
+    "sourceAuto": "Auto",
+    "sourceCaptions": "Streamer captions",
+    "sourceScc": "Stream CC",
+    "sourceSpeech": "Speech recognition",
+    "sourceUnavailable": "None on this stream",
+    "streamLanguage": "Stream language",
+    "speechConsent": "Speech recognition sends this tab's audio to Google's speech recognition service.",
+    "speechConsentLocal": "Audio stays on this device.",
+    "agreeAndActivate": "Agree and activate",
+    "downloadLocalSpeech": "Download on-device recognition (about 60 MB)",
+    "revokeSpeechConsent": "Revoke speech recognition consent",
+    "switchToSpeech": "Use speech recognition",
+    "speechStopped": "Speech recognition stopped"
+  },
   "home": {
     "title": "Go to Home"
   },

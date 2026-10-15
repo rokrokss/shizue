@@ -1,10 +1,14 @@
 import {
   MESSAGE_TRANSLATE_HTML_TEXT_BATCH,
+  MESSAGE_TRANSLATE_LIVE_CAPTION,
   MESSAGE_TRANSLATE_YOUTUBE_CAPTION,
 } from '@/config/constants';
+import type { TranslationContext } from '@/lib/liveCaption/types';
+import type { LiveCaptionMetadata } from '@/lib/prompts';
 import { Caption, VideoMetadata } from '@/lib/youtube';
 import {
   BatchTranslationResult,
+  LiveCaptionTranslationResult,
   YoutubeCaptionTranslationResult,
 } from '@/services/background/translationHandler';
 
@@ -30,7 +34,24 @@ async function translateYoutubeCaption(
   return result;
 }
 
+async function translateLiveCaption(
+  lines: string[],
+  context: TranslationContext[],
+  targetLanguage: Language,
+  metadata: LiveCaptionMetadata
+) {
+  const result: LiveCaptionTranslationResult = await chrome.runtime.sendMessage({
+    action: MESSAGE_TRANSLATE_LIVE_CAPTION,
+    lines,
+    context,
+    targetLanguage,
+    metadata,
+  });
+  return result;
+}
+
 export const translationService = {
   translateHtmlTextBatch,
   translateYoutubeCaption,
+  translateLiveCaption,
 };
