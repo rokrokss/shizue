@@ -315,6 +315,7 @@ Twitch has no caption track or caption API, so captions are translated as they a
 
 **UI.** It looks and works like the YouTube feature.
 - The button and menu are `components/Caption/CaptionToggle.tsx`, shared with `YoutubeCaptionToggle`. `twitch-caption.content` puts the button at the front of the `.player-controls__right-control-group` that sits next to the `<video>` (Twitch renders a second, hidden set of controls). It re-attaches every second, because navigation and theatre mode rebuild the controls.
+- The menu's lists (target language, source, stream language) open to the left (`side="left"`), over the video. The button sits at the player's right edge, next to the chat.
 - The menu popups live in their own shadow host. That host moves into `document.fullscreenElement` on `fullscreenchange`, because fullscreen draws only the app root.
 - The settings Twitch shares with YouTube are target language, bilingual and caption size. Only `STORAGE_SHOW_TWITCH_CAPTION_TOGGLE` is Twitch's own.
 - Live streams don't pause when the menu opens, because that would put them behind live. VODs pause, as on YouTube.

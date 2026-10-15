@@ -31,6 +31,7 @@ const LanguageOptionItem = ({
         borderBottomLeftRadius: isLast ? '8px' : '0',
         borderBottomRightRadius: isLast ? '8px' : '0',
         paddingLeft: '12px',
+        paddingRight: '12px',
         height: '34px',
         maxHeight: '34px',
         minHeight: '34px',

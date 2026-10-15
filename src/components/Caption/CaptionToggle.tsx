@@ -54,7 +54,7 @@ export const CaptionMenuRow = ({ label, children }: { label: string; children: R
   </div>
 );
 
-// A row whose value opens a language list to the right of the menu.
+// A row whose value opens a language list beside the menu, to the right unless `side` says left.
 export const CaptionMenuLanguageRow = ({
   label,
   valueLabel,
@@ -62,6 +62,7 @@ export const CaptionMenuLanguageRow = ({
   open,
   onOpenChange,
   onSelect,
+  side = 'right',
 }: {
   label: string;
   valueLabel: string;
@@ -69,14 +70,15 @@ export const CaptionMenuLanguageRow = ({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSelect: (value: string) => void;
+  side?: 'left' | 'right';
 }) => (
   <Popover
-    placement="rightBottom"
+    placement={side === 'left' ? 'leftBottom' : 'rightBottom'}
     styles={{
       body: {
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
         transform: 'translateY(7px)',
-        marginLeft: '7px',
+        ...(side === 'left' ? { marginRight: '7px' } : { marginLeft: '7px' }),
         padding: 0,
       },
     }}
@@ -92,7 +94,7 @@ export const CaptionMenuLanguageRow = ({
           sz:m-0 sz:p-0
         "
         style={{
-          height: '170px',
+          maxHeight: '170px',
           overflowY: 'auto',
         }}
       >

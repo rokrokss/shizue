@@ -274,6 +274,7 @@ const TwitchCaptionToggle = () => {
       open={isDropdownOpen}
       onOpenChange={handleDropdownOpenChange}
       footer={consentFooter}
+      // The button sits at the right of the player, next to the chat, so lists open to the left.
       items={[
         {
           key: 'aiCaption',
@@ -283,6 +284,7 @@ const TwitchCaptionToggle = () => {
           key: 'selectLanguage',
           label: (
             <CaptionMenuLanguageRow
+              side="left"
               label={t('settings.targetLanguage')}
               valueLabel={t(`language.${targetLanguage.split('_')[0]}`)}
               options={languageOptions(t)}
@@ -296,6 +298,7 @@ const TwitchCaptionToggle = () => {
           key: 'source',
           label: (
             <CaptionMenuLanguageRow
+              side="left"
               label={t('twitch.source')}
               valueLabel={sourceValueLabel}
               options={sourceOptions}
@@ -311,6 +314,7 @@ const TwitchCaptionToggle = () => {
                 key: 'speechLanguage',
                 label: (
                   <CaptionMenuLanguageRow
+                    side="left"
                     label={t('twitch.streamLanguage')}
                     valueLabel={speechLanguageLabel(status.speechLanguage)}
                     options={SPEECH_LANGUAGES}
