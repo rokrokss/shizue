@@ -356,7 +356,8 @@ Twitch has no caption track or caption API, so captions are translated as they a
 **Splitting into sentences.** `lib/liveCaption/segmenter.ts` turns snapshots into sentences.
 - It aligns each snapshot against the text received so far, looking only at the snapshot's last 60 tokens. SCC's paragraph can be far longer than the 80 committed tokens kept for alignment, and aligning the whole paragraph used to re-commit it forever. Windows only move forward, and a match that reaches the end, or covers the whole snapshot, wins over a longer partial match.
 - Words that scroll off before their sentence ends are kept. The uncommitted tail takes the newest wording, because 608 erases and redraws words (`16 Dam` → `16` → `16 damage`).
-- It commits at punctuation followed by more words, after 1.5 s without a change, or at 35 tokens. Japanese and Chinese are split per character.
+- It commits at punctuation followed by more words, or after 1.5 s without a change. Japanese and Chinese are split per character.
+- It also commits when the pending text passes 80 columns (about a caption line; Japanese, Chinese and Korean characters count two) or 35 tokens, at a comma in the second half when there is one. Most 608 and speech recognition text, and SCC, has no punctuation: a speaker who didn't pause used to grow one sentence to 35 words, and the overlay filled the screen.
 - `pnpm test:live-caption` replays recorded Twitch captions from `tests/fixtures/twitch/`.
 
 **Translation.** `lib/liveCaption/translationQueue.ts` sends 1–3 sentences per `MESSAGE_TRANSLATE_LIVE_CAPTION`.
@@ -367,7 +368,7 @@ Twitch has no caption track or caption API, so captions are translated as they a
 **Overlay.** `lib/twitch/liveCaptionController.tsx` renders `CaptionDisplay` in a closed shadow root inside `.video-player__container`.
 - Fullscreen makes `.root` the fullscreen element, which contains the player, so the overlay stays visible. It also survives theatre mode.
 - Native captions are hidden with a `<style>` in `<head>`, not inline, because Twitch recreates the caption box between cues.
-- A line waiting for its translation shows its original, as on YouTube. With bilingual on, the words still being spoken show as one more original line. Lines leave 8 s after the last change.
+- A line waiting for its translation shows its original, as on YouTube. With bilingual on, the words still being spoken show as one more original line. Each line leaves 6 s after it last changed (shown, then translated), even while the speaker keeps talking.
 - It resets on seek and on channel change. It polls `location.pathname`, because Twitch keeps the same `<video>` and player across channels.
 
 ### Character Sprites

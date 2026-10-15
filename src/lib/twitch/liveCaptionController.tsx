@@ -41,7 +41,7 @@ export type ActivateOptions = CaptionSettings & {
   speechAllowed: boolean;
 };
 
-type Line = { id: string; original: string; translation: string | null | undefined };
+type Line = { id: string; original: string; translation: string | null | undefined; changedAt: number };
 
 export type CaptionStatus = {
   // Caption sources that produced text on this channel or video, plus 'stt' when supported.
@@ -61,8 +61,9 @@ export type CaptionStatus = {
 const OVERLAY_HOST_ID = 'shizue-twitch-caption-overlay';
 const HIDE_NATIVE_STYLE_ID = 'shizue-twitch-hide-native-captions';
 const TICK_MS = 100;
-// Captions leave the screen this long after the last change, as when a speaker stops.
-const LINE_LINGER_MS = 8000;
+// A line leaves the screen this long after it last changed (shown, then translated), even while
+// the speaker keeps talking.
+const LINE_LINGER_MS = 6000;
 const LOADING_TIMEOUT_MS = 5000;
 // While speech recognition stands in, this many caption updates within the window means the
 // streamer's own captions (or Stream Closed Captioner) are running: switch to them.
@@ -93,7 +94,7 @@ class TwitchLiveCaptions {
   private queue: TranslationQueue | null = null;
   private lines: Line[] = [];
   private interim = '';
-  private lastActivityAt = 0;
+  private interimChangedAt = 0;
   private activatedAt = 0;
   private tickTimer: ReturnType<typeof setInterval> | null = null;
   private seen = new Set<CaptionSource>();
@@ -265,11 +266,11 @@ class TwitchLiveCaptions {
       pauseMs: source === 'scc' ? 3000 : 1500,
       onInterim: (text) => {
         this.interim = text;
-        this.lastActivityAt = Date.now();
+        this.interimChangedAt = Date.now();
       },
       onSentence: (sentence) => {
-        this.lines = [...this.lines, { id: sentence.id, original: sentence.text, translation: undefined }].slice(-20);
-        this.lastActivityAt = Date.now();
+        const line = { id: sentence.id, original: sentence.text, translation: undefined, changedAt: Date.now() };
+        this.lines = [...this.lines, line].slice(-20);
         this.queue?.enqueue(sentence);
       },
     });
@@ -417,8 +418,9 @@ class TwitchLiveCaptions {
         return result?.success ? (result.translations ?? null) : null;
       },
       onResult: (id, translation) => {
-        this.lines = this.lines.map((line) => (line.id === id ? { ...line, translation } : line));
-        this.lastActivityAt = Date.now();
+        this.lines = this.lines.map((line) =>
+          line.id === id ? { ...line, translation, changedAt: Date.now() } : line
+        );
       },
     });
     this.setNativeCaptionsHidden(true);
@@ -539,12 +541,11 @@ class TwitchLiveCaptions {
     const root = this.ensureOverlay();
     if (!root) return;
 
-    const visible = now - this.lastActivityAt <= LINE_LINGER_MS;
-    const shown = visible ? this.lines.slice(-settings.numLines) : [];
+    const shown = this.lines.filter((line) => now - line.changedAt <= LINE_LINGER_MS).slice(-settings.numLines);
     const lines = shown.map((line) => line.translation || line.original);
     // A line still waiting for its translation shows its original once, as YouTube does.
     const originalLines = shown.map((line) => (line.translation ? line.original : ''));
-    if (visible && settings.bilingual && this.interim) {
+    if (settings.bilingual && this.interim && now - this.interimChangedAt <= LINE_LINGER_MS) {
       lines.push(this.interim);
       originalLines.push('');
     }

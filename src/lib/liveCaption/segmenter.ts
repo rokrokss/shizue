@@ -14,8 +14,12 @@ export type SegmenterOptions = {
   // A sentence ending in punctuation is committed once it has at least this many tokens;
   // a shorter one waits and joins the next sentence.
   minTokens?: number;
-  // Never let the pending text grow past this many tokens.
+  // Never let the pending text grow past this many tokens, or wider than this many columns
+  // (about a caption line or two; Japanese, Chinese and Korean characters count as two). Live
+  // captions often have no punctuation, and a speaker who doesn't pause would otherwise fill the
+  // screen with one sentence.
   maxTokens?: number;
+  maxWidth?: number;
   onInterim?: (text: string) => void;
   onSentence?: (sentence: Sentence) => void;
 };
@@ -23,6 +27,9 @@ export type SegmenterOptions = {
 // Japanese and Chinese have no spaces, so each character is a token. Hangul uses spaces.
 const CJK_CHAR = /[　-〿぀-ヿ㐀-䶿一-鿿豈-﫿＀-￯]/u;
 const SENTENCE_END = /[.?!…。？！]["'”’)\]」』]*$/u;
+// Where a sentence cut at the length limit would rather end.
+const SOFT_BREAK = /[,;:、，；：]["'”’)\]」』]*$/u;
+const WIDE_CHAR = /[ᄀ-ᇿ　-〿぀-ヿㄱ-ㆎ㐀-䶿一-鿿가-힣豈-﫿＀-｠￠-￦]/u;
 const EDGE_PUNCTUATION = /^[\p{P}\p{S}]+|[\p{P}\p{S}]+$/gu;
 // Only the end of a snapshot can hold new words. Stream Closed Captioner shows a paragraph of
 // up to 30 finished segments; aligning all of it against the trimmed committed text would fail and
@@ -67,10 +74,21 @@ export function joinTokens(tokens: { text: string; cjk: boolean }[]): string {
   return text;
 }
 
+// How wide the text is on screen, in columns.
+export function textWidth(tokens: { text: string; cjk: boolean }[]): number {
+  let width = 0;
+  tokens.forEach((token, index) => {
+    if (index > 0 && !(token.cjk && tokens[index - 1].cjk)) width += 1;
+    for (const char of token.text) width += WIDE_CHAR.test(char) ? 2 : 1;
+  });
+  return width;
+}
+
 export function createSegmenter(options: SegmenterOptions = {}) {
   const pauseMs = options.pauseMs ?? 1500;
   const minTokens = options.minTokens ?? 4;
   const maxTokens = options.maxTokens ?? 35;
+  const maxWidth = options.maxWidth ?? 80;
 
   let received: Token[] = [];
   let committed = 0;
@@ -109,8 +127,20 @@ export function createSegmenter(options: SegmenterOptions = {}) {
     }
   };
 
+  // How many pending tokens to commit when they are over the length caps: as many as fit, ending
+  // at a comma when one falls in the second half.
+  const overLimit = (tokens: Token[]) => {
+    if (tokens.length <= maxTokens && textWidth(tokens) <= maxWidth) return 0;
+    let fit = 1;
+    while (fit < tokens.length && fit < maxTokens && textWidth(tokens.slice(0, fit + 1)) <= maxWidth) fit++;
+    for (let end = fit; end > fit / 2; end--) {
+      if (SOFT_BREAK.test(tokens[end - 1].text)) return end;
+    }
+    return fit;
+  };
+
   // Commits finished sentences: ones that end in punctuation and that the speaker has already
-  // moved past, plus anything over the length cap.
+  // moved past, plus anything over the length caps.
   const commitFinished = (at: number) => {
     for (;;) {
       const tokens = pending();
@@ -125,8 +155,9 @@ export function createSegmenter(options: SegmenterOptions = {}) {
         commit(end + 1, at);
         continue;
       }
-      if (tokens.length > maxTokens) {
-        commit(maxTokens, at);
+      const cut = overLimit(tokens);
+      if (cut) {
+        commit(cut, at);
         continue;
       }
       return;

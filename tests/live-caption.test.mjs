@@ -19,7 +19,7 @@ const load = async (source) => {
   after(() => rm(outfile, { force: true }));
   return import(pathToFileURL(outfile).href);
 };
-const { createSegmenter, tokenize, joinTokens } = await load('segmenter');
+const { createSegmenter, tokenize, joinTokens, textWidth } = await load('segmenter');
 const { createTranslationQueue } = await load('translationQueue');
 const fixture = async (name) =>
   JSON.parse(await readFile(new URL(`./fixtures/twitch/${name}`, import.meta.url), 'utf8'));
@@ -63,14 +63,15 @@ test('roll-up DOM captions keep words that scroll off before their sentence ends
   ]);
 });
 
-test('PlayerTextCue windows on a live stream become one sentence without repeats', async () => {
+test('PlayerTextCue windows on a live stream become caption-line chunks without repeats', async () => {
   const { playerTextCue_8bitdee: cues } = await fixture('recorded-sequences.json');
   const { sentences, segmenter, now } = replay(
     cues.events.map((event) => [event.startTime * 1000, event.text.replace(/\r\n/g, ' ')])
   );
   segmenter.tick(now + 2000);
   assert.deepEqual(sentences, [
-    'Are great for me because they make cool warm and then an in-between neutral or Peach I usually have to buy neutral or Peach I actually have Peach undertones',
+    'Are great for me because they make cool warm and then an in-between neutral or',
+    'Peach I usually have to buy neutral or Peach I actually have Peach undertones',
   ]);
 });
 
@@ -99,7 +100,8 @@ test('Stream Closed Captioner paragraph text is split at pauses', async () => {
   const { sentences, segmenter, now } = replay(scc.updates.map(([at, text]) => [at, text.replace(/¦/g, ' ')]));
   segmenter.tick(now + 2000);
   assert.deepEqual(sentences, [
-    'safados divisão de Infantaria ir aos mortos do batalhão perdido ele guarda o trauma dele no bolso então',
+    'safados divisão de Infantaria ir aos mortos do batalhão perdido ele guarda o',
+    'trauma dele no bolso então',
     'né uma lembrança conhecimentos',
   ]);
 });
@@ -148,7 +150,8 @@ test('recorded Stream Closed Captioner snapshots become sentences without repeat
   }
   const last = updates[updates.length - 1][1].trim().split(/\s+/).slice(-8).join(' ');
   assert.ok(sentences.join(' ').endsWith(last), `missing the end: ${last}`);
-  assert.ok(sentences.length >= 4 && sentences.length <= 8, `${sentences.length} sentences`);
+  assert.ok(sentences.length >= 4 && sentences.length <= 12, `${sentences.length} sentences`);
+  for (const sentence of sentences) assert.ok(sentence.length <= 80, `too long: ${sentence}`);
 });
 
 test('a rewritten speech hypothesis replaces the uncommitted tail', () => {
@@ -187,6 +190,21 @@ test('a speaker who never pauses is cut at the length limit', () => {
   assert.equal(sentences.length, 2);
   assert.equal(words(sentences[0]).length, 20);
   assert.equal(words(interim).length, 10);
+});
+
+test('unpunctuated speech is cut at about a caption line, at a comma when one is in reach', () => {
+  const { sentences, interim } = replay([[0, 'aaa bbb ccc ddd, eee fff ggg hhh iii jjj']], { maxWidth: 30 });
+  assert.deepEqual(sentences, ['aaa bbb ccc ddd,']);
+  assert.equal(interim, 'eee fff ggg hhh iii jjj');
+});
+
+test('Japanese, Chinese and Korean characters count as two columns', () => {
+  assert.equal(textWidth(tokenize('hello world')), 11);
+  assert.equal(textWidth(tokenize('日本語')), 6);
+  assert.equal(textWidth(tokenize('가나 다')), 7);
+  const { sentences, interim } = replay([[0, 'あ'.repeat(40)]], { maxWidth: 30 });
+  assert.deepEqual(sentences, ['あ'.repeat(15), 'あ'.repeat(15)]);
+  assert.equal(interim, 'あ'.repeat(10));
 });
 
 test('a break commits pending text and the next snapshot starts fresh', () => {
