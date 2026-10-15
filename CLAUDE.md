@@ -330,7 +330,7 @@ Twitch has no caption track or caption API, so captions are translated as they a
 **Sources.** There are three. The `'auto'` mode (`STORAGE_TWITCH_CAPTION_SOURCE`) picks them in this order, because captions the streamer makes from a clean microphone beat recognizing game audio.
 1. **Broadcaster CEA-608.**
    - The IVS player sends `PlayerTextCue` events carrying the whole roll-up window (lines joined by `\r\n`). They arrive even when native CC is off, and on VODs too, including after a seek.
-   - The player object is only reachable through React props (`mediaPlayerInstance` above `[data-a-target="player-overlay-click-handler"]`). The isolated world can't see React props, so `twitch-player-bridge.content` (`world: 'MAIN'`) relays it as `CustomEvent`s with a JSON-string `detail` (`lib/twitch/bridgeProtocol.ts`).
+   - The player object is only reachable through React props (`mediaPlayerInstance` above `[data-a-target="player-overlay-click-handler"]`, or about 30 fibers above `[data-a-target="video-ref"]`; an offline channel's page has only the latter). The isolated world can't see React props, so `twitch-player-bridge.content` (`world: 'MAIN'`) relays it as `CustomEvent`s with a JSON-string `detail` (`lib/twitch/bridgeProtocol.ts`).
    - Tabs opened before an install or update get the isolated script back through recovery. If the bridge doesn't answer a ping, the script asks the background to inject it (`MESSAGE_INJECT_TWITCH_BRIDGE`).
 2. **Stream Closed Captioner (SCC)**, a Twitch extension.
    - Its server socket needs the JWT Twitch issues to that extension, so its captions are read from its page. That page is a frame (`h1ekceo16erc49snp0sine3k9ccbh9.ext-twitch.tv`) inside Twitch's `supervisor.ext-twitch.tv` frame.

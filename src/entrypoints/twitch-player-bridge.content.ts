@@ -31,14 +31,19 @@ export default defineContentScript({
       );
     };
 
+    // Elements whose React fiber leads up to the player. An offline channel's page has no overlay
+    // click handler, and either could be renamed, so `video-ref` (where Twitch tracks the mouse,
+    // about 30 fibers below the player) is tried too.
+    const PLAYER_ANCHORS = '[data-a-target="player-overlay-click-handler"], [data-a-target="video-ref"]';
+
     const findPlayer = (): TwitchPlayer | null => {
-      const element = document.querySelector('[data-a-target="player-overlay-click-handler"]');
-      if (!element) return null;
-      const key = Object.keys(element).find((name) => name.startsWith('__reactFiber$'));
-      let fiber = key ? (element as any)[key] : null;
-      for (let depth = 0; fiber && depth < 50; depth++, fiber = fiber.return) {
-        const player = fiber.memoizedProps?.mediaPlayerInstance;
-        if (player?.addEventListener) return player;
+      for (const element of document.querySelectorAll(PLAYER_ANCHORS)) {
+        const key = Object.keys(element).find((name) => name.startsWith('__reactFiber$'));
+        let fiber = key ? (element as any)[key] : null;
+        for (let depth = 0; fiber && depth < 50; depth++, fiber = fiber.return) {
+          const player = fiber.memoizedProps?.mediaPlayerInstance;
+          if (player?.addEventListener) return player;
+        }
       }
       return null;
     };
