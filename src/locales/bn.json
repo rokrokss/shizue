@@ -163,7 +163,8 @@
     "agreeAndActivate": "সম্মত হন ও সক্রিয় করুন",
     "revokeSpeechConsent": "কণ্ঠস্বর শনাক্তকরণের সম্মতি প্রত্যাহার করুন",
     "switchToSpeech": "কণ্ঠস্বর শনাক্তকরণ ব্যবহার করুন",
-    "speechStopped": "কণ্ঠস্বর শনাক্তকরণ বন্ধ হয়ে গেছে"
+    "speechStopped": "কণ্ঠস্বর শনাক্তকরণ বন্ধ হয়ে গেছে",
+    "aiTranslation": "AI অনুবাদ"
   },
   "usage": {
     "title": "টোকেন ব্যবহার",

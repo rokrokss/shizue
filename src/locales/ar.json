@@ -163,7 +163,8 @@
     "agreeAndActivate": "موافقة وتنشيط",
     "revokeSpeechConsent": "إلغاء الموافقة على التعرف على الكلام",
     "switchToSpeech": "استخدام التعرف على الكلام",
-    "speechStopped": "توقف التعرف على الكلام"
+    "speechStopped": "توقف التعرف على الكلام",
+    "aiTranslation": "ترجمة بالذكاء الاصطناعي"
   },
   "usage": {
     "title": "استخدام الرموز",

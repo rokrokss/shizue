@@ -188,7 +188,8 @@
     "agreeAndActivate": "동의하고 생성",
     "revokeSpeechConsent": "음성 인식 동의 취소",
     "switchToSpeech": "음성 인식으로 바꾸기",
-    "speechStopped": "음성 인식이 멈췄어요"
+    "speechStopped": "음성 인식이 멈췄어요",
+    "aiTranslation": "AI 번역"
   },
   "home": {
     "title": "홈으로 이동"

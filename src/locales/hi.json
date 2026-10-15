@@ -163,7 +163,8 @@
     "agreeAndActivate": "सहमत हों और सक्रिय करें",
     "revokeSpeechConsent": "वाक् पहचान की सहमति वापस लें",
     "switchToSpeech": "वाक् पहचान का उपयोग करें",
-    "speechStopped": "वाक् पहचान रुक गई"
+    "speechStopped": "वाक् पहचान रुक गई",
+    "aiTranslation": "AI अनुवाद"
   },
   "usage": {
     "title": "टोकन उपयोग",

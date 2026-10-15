@@ -2,6 +2,7 @@ import {
   STORAGE_SHOW_TOGGLE,
   STORAGE_SHOW_TWITCH_CAPTION_TOGGLE,
   STORAGE_SPEECH_RECOGNITION_CONSENT,
+  STORAGE_TWITCH_AI_TRANSLATION,
   STORAGE_TWITCH_CAPTION_SOURCE,
   STORAGE_TWITCH_CHANNEL_LANGUAGE,
   STORAGE_SHOW_YOUTUBE_BILINGUAL_CAPTION,
@@ -66,6 +67,9 @@ export const twitchChannelLanguageAtom = atomWithChromeStorage<Record<string, st
   {}
 );
 
+// Twitch captions are translated by the chosen LLM instead of Chrome's on-device translator.
+export const twitchAiTranslationAtom = atomWithChromeStorage<boolean>(STORAGE_TWITCH_AI_TRANSLATION, false);
+
 // The viewer agreed that speech recognition may send the tab's audio to Google.
 export const speechRecognitionConsentAtom = atomWithChromeStorage<boolean>(
   STORAGE_SPEECH_RECOGNITION_CONSENT,
@@ -104,6 +108,7 @@ export const useShowTwitchCaptionToggleValue = () => useAtomValue(twitchShowCapt
 export const useTwitchCaptionSource = () => useAtom(twitchCaptionSourceAtom);
 export const useTwitchChannelLanguage = () => useAtom(twitchChannelLanguageAtom);
 export const useSpeechRecognitionConsent = () => useAtom(speechRecognitionConsentAtom);
+export const useTwitchAiTranslation = () => useAtom(twitchAiTranslationAtom);
 export const useShowYoutubeBilingualCaption = () => useAtom(youtubeShowBilingualCaptionAtom);
 export const useUseYoutubeKeyboardNavigate = () => useAtom(useYoutubeKeyboardNavigateAtom);
 export const useYoutubeCaptionSizeRatio = () => useAtom(youtubeCaptionSizeRatioAtom);

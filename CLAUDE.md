@@ -360,9 +360,16 @@ Twitch has no caption track or caption API, so captions are translated as they a
 - It also commits when the pending text passes 80 columns (about a caption line; Japanese, Chinese and Korean characters count two) or 35 tokens, at a comma in the second half when there is one. Most 608 and speech recognition text, and SCC, has no punctuation: a speaker who didn't pause used to grow one sentence to 35 words, and the overlay filled the screen.
 - `pnpm test:live-caption` replays recorded Twitch captions from `tests/fixtures/twitch/`.
 
-**Translation.** `lib/liveCaption/translationQueue.ts` sends 1–3 sentences per `MESSAGE_TRANSLATE_LIVE_CAPTION`.
-- It uses the same JSON contract and halves retry as YouTube.
-- The last 3 translated pairs go along as context, with at most 2 requests in flight.
+**Translation.** `lib/liveCaption/translationQueue.ts` sends 1–3 sentences at a time to the translator.
+- **Chrome's on-device translator by default** (`lib/twitch/chromeTranslator.ts`, the Translator API, Chrome 138+). The "AI translation" switch in the menu (`STORAGE_TWITCH_AI_TRANSLATION`) uses the chosen LLM instead.
+  - In Chrome 155, en→ko took 4–19 ms per line once its model was there (about 25 s to download). The LLM takes seconds. It translates each line alone and drops clauses more often ("like you know what I mean like I feel like you should you should spend the money" → "내가 무슨 말인지 알잖아").
+  - It needs no API key, so the Twitch menu opens without one. Turning AI translation on without a model opens the panel instead.
+  - The source language is the stream language (`speechLanguage`), so its menu row shows whenever Chrome translates.
+  - A model download needs a recent click: activating, the switch, and picking a language prepare the pair. The button spins while it downloads, and lines show their original meanwhile.
+  - `create()` stays pending when Chrome can't fetch the model (Chrome for Testing never starts the download), so it times out after 90 s. A pair Chrome can't translate falls back to the LLM.
+  - `Translator` is looked up at call time, so tests can install a stand-in in the content script's world.
+- **The LLM** gets `MESSAGE_TRANSLATE_LIVE_CAPTION`, with the same JSON contract and halves retry as YouTube.
+- The last 3 translated pairs go along to the LLM as context, with at most 2 requests in flight.
 - Sentences still waiting after 15 s are dropped.
 
 **Overlay.** `lib/twitch/liveCaptionController.tsx` renders `CaptionDisplay` in a closed shadow root inside `.video-player__container`.

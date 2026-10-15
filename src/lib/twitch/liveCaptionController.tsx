@@ -10,6 +10,12 @@ import {
   parseBridgeMessage,
 } from '@/lib/twitch/bridgeProtocol';
 import { MESSAGE_SCC_SET_HIDDEN, STORAGE_TWITCH_CHANNEL_LANGUAGE } from '@/config/constants';
+import {
+  isChromeTranslatorPending,
+  isChromeTranslatorSupported,
+  prepareChromeTranslator,
+  translateOnDevice,
+} from '@/lib/twitch/chromeTranslator';
 import { speechLanguageForTwitchCode } from '@/lib/twitch/speechLanguage';
 import {
   getWebSpeechSource,
@@ -39,6 +45,8 @@ export type ActivateOptions = CaptionSettings & {
   mode: CaptionSourceMode;
   // The viewer agreed to speech recognition; without it the speech source is never started.
   speechAllowed: boolean;
+  // Translate with the chosen LLM instead of Chrome's on-device translator.
+  aiTranslation: boolean;
 };
 
 type Line = { id: string; original: string; translation: string | null | undefined; changedAt: number };
@@ -89,6 +97,7 @@ class TwitchLiveCaptions {
   private settings: CaptionSettings | null = null;
   private mode: CaptionSourceMode = 'auto';
   private speechAllowed = false;
+  private aiTranslation = false;
   private activeSource: CaptionSource | null = null;
   private segmenter: Segmenter | null = null;
   private queue: TranslationQueue | null = null;
@@ -186,13 +195,16 @@ class TwitchLiveCaptions {
       available,
       active: !!this.settings,
       activeSource: this.activeSource,
-      // Waiting on the on-device download counts as loading.
+      // Waiting on an on-device download (speech recognition or translation) counts as loading.
       loading:
         this.loading ||
         (!!this.settings &&
           this.activeSource !== 'stt' &&
           this.onDeviceSpeech === 'downloading' &&
-          this.speechRelevant(this.mode)),
+          this.speechRelevant(this.mode)) ||
+        (!!this.settings &&
+          this.usesChromeTranslation() &&
+          isChromeTranslatorPending(this.speechLanguage, this.settings.targetLanguage)),
       speechLanguage: this.speechLanguage,
       speechError: this.speechError,
       onDeviceSpeech: this.onDeviceSpeech,
@@ -333,7 +345,27 @@ class TwitchLiveCaptions {
     this.speechLanguage = language;
     if (this.activeSource === 'stt') this.startSpeech();
     void this.refreshOnDeviceSpeech();
+    this.prepareTranslation();
     this.emit();
+  }
+
+  // Chrome's on-device translator, unless the viewer turned on AI translation (or Chrome has none).
+  private usesChromeTranslation() {
+    return !this.aiTranslation && isChromeTranslatorSupported();
+  }
+
+  // Call it from a click: the translator's model may need downloading.
+  private prepareTranslation() {
+    const target = this.settings?.targetLanguage;
+    if (!target || !this.usesChromeTranslation()) return;
+    void prepareChromeTranslator(this.speechLanguage, target).then(() => this.emit());
+    this.emit();
+  }
+
+  // The AI translation switch in the menu (a click).
+  setAiTranslation(on: boolean) {
+    this.aiTranslation = on;
+    this.prepareTranslation();
   }
 
   // Also called when the menu opens: Chrome may have finished a download in the meantime.
@@ -400,9 +432,10 @@ class TwitchLiveCaptions {
 
   activate(options: ActivateOptions) {
     if (this.settings) this.deactivate();
-    const { mode, speechAllowed, ...settings } = options;
+    const { mode, speechAllowed, aiTranslation, ...settings } = options;
     this.mode = mode;
     this.speechAllowed = speechAllowed;
+    this.aiTranslation = aiTranslation;
     this.settings = settings;
     this.metadata = streamMetadata();
     this.activatedAt = Date.now();
@@ -413,6 +446,11 @@ class TwitchLiveCaptions {
       translate: async (texts, context) => {
         const target = this.settings?.targetLanguage;
         if (!target) return null;
+        if (this.usesChromeTranslation()) {
+          const translations = await translateOnDevice(this.speechLanguage, target, texts);
+          // undefined: Chrome can't translate this pair on this device, so the LLM does.
+          if (translations !== undefined) return translations;
+        }
         const result = await translationService.translateLiveCaption(texts, context, target, this.metadata);
         if (!result?.success) debugLog('[Twitch] live caption translation failed', result?.error);
         return result?.success ? (result.translations ?? null) : null;
@@ -428,14 +466,18 @@ class TwitchLiveCaptions {
     // Starting is a click, so this is where the on-device model (about 60 MB per language) is
     // downloaded when speech recognition is how captions would come.
     if (this.speechRelevant(mode) && this.onDeviceSpeech === 'downloadable') this.downloadOnDeviceSpeech();
+    this.prepareTranslation();
     this.useSource(this.chooseSource());
     this.emit();
   }
 
   updateSettings(settings: CaptionSettings) {
     if (!this.settings) return;
+    const targetChanged = settings.targetLanguage !== this.settings.targetLanguage;
     this.settings = settings;
     this.lastRendered = '';
+    // Picking a target language in the menu is a click, recent enough for the model download.
+    if (targetChanged) this.prepareTranslation();
   }
 
   // Our overlay shows SCC's text, so its own captions on the video would be shown twice.

@@ -163,7 +163,8 @@
     "agreeAndActivate": "Zustimmen und aktivieren",
     "revokeSpeechConsent": "Zustimmung zur Spracherkennung widerrufen",
     "switchToSpeech": "Spracherkennung verwenden",
-    "speechStopped": "Spracherkennung wurde beendet"
+    "speechStopped": "Spracherkennung wurde beendet",
+    "aiTranslation": "KI-Übersetzung"
   },
   "usage": {
     "title": "Token-Verbrauch",

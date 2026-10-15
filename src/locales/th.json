@@ -163,7 +163,8 @@
     "agreeAndActivate": "ยอมรับและเปิดใช้งาน",
     "revokeSpeechConsent": "เพิกถอนความยินยอมการรู้จำเสียงพูด",
     "switchToSpeech": "ใช้การรู้จำเสียงพูด",
-    "speechStopped": "การรู้จำเสียงพูดหยุดทำงาน"
+    "speechStopped": "การรู้จำเสียงพูดหยุดทำงาน",
+    "aiTranslation": "แปลด้วย AI"
   },
   "usage": {
     "title": "การใช้โทเค็น",

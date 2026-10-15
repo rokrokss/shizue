@@ -163,7 +163,8 @@
     "agreeAndActivate": "Kubali na amilisha",
     "revokeSpeechConsent": "Ondoa idhini ya utambuzi wa sauti",
     "switchToSpeech": "Tumia utambuzi wa sauti",
-    "speechStopped": "Utambuzi wa sauti umesimama"
+    "speechStopped": "Utambuzi wa sauti umesimama",
+    "aiTranslation": "Tafsiri ya AI"
   },
   "usage": {
     "title": "Matumizi ya Token",

@@ -163,7 +163,8 @@
     "agreeAndActivate": "同意して有効",
     "revokeSpeechConsent": "音声認識への同意を取り消す",
     "switchToSpeech": "音声認識を使う",
-    "speechStopped": "音声認識が停止しました"
+    "speechStopped": "音声認識が停止しました",
+    "aiTranslation": "AI翻訳"
   },
   "usage": {
     "title": "トークン使用量",

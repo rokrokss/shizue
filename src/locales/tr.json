@@ -163,7 +163,8 @@
     "agreeAndActivate": "Kabul et ve aktif et",
     "revokeSpeechConsent": "Konuşma tanıma onayını geri al",
     "switchToSpeech": "Konuşma tanımayı kullan",
-    "speechStopped": "Konuşma tanıma durdu"
+    "speechStopped": "Konuşma tanıma durdu",
+    "aiTranslation": "Yapay zekâ çevirisi"
   },
   "usage": {
     "title": "Token Kullanımı",

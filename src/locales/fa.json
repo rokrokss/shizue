@@ -163,7 +163,8 @@
     "agreeAndActivate": "موافقت و فعال‌سازی",
     "revokeSpeechConsent": "لغو رضایت تشخیص گفتار",
     "switchToSpeech": "استفاده از تشخیص گفتار",
-    "speechStopped": "تشخیص گفتار متوقف شد"
+    "speechStopped": "تشخیص گفتار متوقف شد",
+    "aiTranslation": "ترجمه با هوش مصنوعی"
   },
   "usage": {
     "title": "استفاده از توکن",
