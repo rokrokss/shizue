@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.8
+
+- Bilingual captions on Twitch, like on YouTube, for live streams and VODs: Shizue translates the streamer's own captions or Stream Closed Captioner, and recognizes speech on streams without captions (on-device recognition is a one-time download from the caption menu)
+- Twitch captions work in theatre mode and fullscreen, and pause while an ad plays
+
 ## v0.3.7
 
 - Settings show the panel shortcut you actually have (or "Not set"), and "Change" opens Chrome's shortcut page with the new keys showing up in the panel as soon as you press them
