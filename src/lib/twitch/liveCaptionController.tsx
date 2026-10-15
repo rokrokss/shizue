@@ -11,7 +11,13 @@ import {
 } from '@/lib/twitch/bridgeProtocol';
 import { MESSAGE_SCC_SET_HIDDEN, STORAGE_TWITCH_CHANNEL_LANGUAGE } from '@/config/constants';
 import { speechLanguageForTwitchCode } from '@/lib/twitch/speechLanguage';
-import { getWebSpeechSource, isSpeechRecognitionSupported } from '@/lib/twitch/webSpeechSource';
+import {
+  getWebSpeechSource,
+  installOnDeviceSpeech,
+  isSpeechRecognitionSupported,
+  SpeechAvailability,
+  speechAvailability,
+} from '@/lib/twitch/webSpeechSource';
 import { debugLog } from '@/logs';
 import { translationService } from '@/services/translationService';
 import { StrictMode } from 'react';
@@ -46,6 +52,8 @@ export type CaptionStatus = {
   // The language speech recognition listens for on this channel.
   speechLanguage: string;
   speechError: string | null;
+  // Whether that language can be recognized on this device (no audio leaves it).
+  onDeviceSpeech: SpeechAvailability;
   // An ad is playing; captions and speech recognition wait, and the button hides as on YouTube.
   adPlaying: boolean;
 };
@@ -99,6 +107,7 @@ class TwitchLiveCaptions {
   private languageRequestedAt = 0;
   private speechLanguage = DEFAULT_SPEECH_LANGUAGE;
   private speechError: string | null = null;
+  private onDeviceSpeech: SpeechAvailability = 'unavailable';
   private playerPaused = false;
   private adPlaying = false;
   private metadata: LiveCaptionMetadata = {};
@@ -120,6 +129,7 @@ class TwitchLiveCaptions {
       }
     });
     this.requestLanguage();
+    void this.refreshOnDeviceSpeech();
     setInterval(() => {
       this.checkAd();
       // The bridge can start after this script and miss a request, so ask until it answers.
@@ -178,6 +188,7 @@ class TwitchLiveCaptions {
       loading: this.loading,
       speechLanguage: this.speechLanguage,
       speechError: this.speechError,
+      onDeviceSpeech: this.onDeviceSpeech,
       adPlaying: this.adPlaying,
     };
   }
@@ -188,26 +199,38 @@ class TwitchLiveCaptions {
   }
 
   // The source 'auto' would pick right now. Captions the streamer provides beat recognizing
-  // the stream's audio, which also hears game sound and music.
+  // the stream's audio, which also hears game sound and music. Auto only falls back to speech
+  // recognition on the device: the cloud caught about a tenth of the words (11 in 60 s, against
+  // 99 in 90 s on-device, on the same stream).
   private chooseSource(): CaptionSource | null {
     if (this.mode === 'stt') return this.speechAllowed && isSpeechRecognitionSupported() ? 'stt' : null;
     if (this.mode !== 'auto') return this.mode;
     if (this.seen.has('cea608')) return 'cea608';
     if (this.seen.has('scc')) return 'scc';
-    if (this.speechAllowed && isSpeechRecognitionSupported()) return 'stt';
-    // Without consent, wait for the streamer's captions.
+    if (this.speechAllowed && this.onDeviceSpeech === 'available') return 'stt';
+    // Otherwise wait for the streamer's captions.
     return 'cea608';
   }
 
-  // Whether starting now in this mode would need speech recognition (and so consent).
-  needsSpeech(mode: CaptionSourceMode) {
+  // Whether speech recognition is how this mode would get captions right now, once it can run.
+  speechRelevant(mode: CaptionSourceMode) {
     if (mode === 'stt') return true;
     return mode === 'auto' && !this.seen.has('cea608') && !this.seen.has('scc');
   }
 
+  // Whether starting now in this mode would run speech recognition (and so needs consent).
+  needsSpeech(mode: CaptionSourceMode) {
+    if (mode === 'stt') return true;
+    return this.speechRelevant(mode) && this.onDeviceSpeech === 'available';
+  }
+
   private handleCaptions(source: 'cea608' | 'scc', text: string) {
     if (text.trim() && !this.seen.has(source)) {
+      // Auto mode without captions waits on the streamer's; Stream Closed Captioner showing up
+      // first takes over.
+      const waiting = this.mode === 'auto' && this.activeSource === 'cea608' && !this.seen.has('cea608');
       this.seen.add(source);
+      if (this.settings && waiting) this.useSource(this.chooseSource());
       this.emit();
     }
     if (!this.settings || !text.trim()) return;
@@ -289,6 +312,7 @@ class TwitchLiveCaptions {
     if (language === this.speechLanguage) return this.emit();
     this.speechLanguage = language;
     if (this.activeSource === 'stt') this.startSpeech();
+    void this.refreshOnDeviceSpeech();
     this.emit();
   }
 
@@ -297,12 +321,29 @@ class TwitchLiveCaptions {
     if (language === this.speechLanguage) return;
     this.speechLanguage = language;
     if (this.activeSource === 'stt') this.startSpeech();
+    void this.refreshOnDeviceSpeech();
     this.emit();
   }
 
-  // On-device recognition was just installed; starting again picks it up.
-  restartSpeech() {
-    if (this.activeSource === 'stt') this.startSpeech();
+  // Also called when the menu opens: Chrome may have finished a download in the meantime.
+  async refreshOnDeviceSpeech() {
+    const language = this.speechLanguage;
+    const availability = await speechAvailability(language, true);
+    if (language !== this.speechLanguage || availability === this.onDeviceSpeech) return;
+    this.onDeviceSpeech = availability;
+    const previous = this.activeSource;
+    if (this.settings && this.mode === 'auto') this.useSource(this.chooseSource());
+    // Recognition already running in the cloud moves on-device.
+    if (availability === 'available' && previous === 'stt' && this.activeSource === 'stt') this.startSpeech();
+    this.emit();
+  }
+
+  // Call it straight from the click: Chrome needs that user activation for the download.
+  downloadOnDeviceSpeech() {
+    const install = installOnDeviceSpeech(this.speechLanguage);
+    this.onDeviceSpeech = 'downloading';
+    this.emit();
+    void install.then(() => this.refreshOnDeviceSpeech());
   }
 
   get channelLogin() {

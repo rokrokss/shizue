@@ -24,11 +24,6 @@ import {
   isTwitchVod,
 } from '@/lib/twitch/liveCaptionController';
 import { SPEECH_LANGUAGES, speechLanguageLabel } from '@/lib/twitch/speechLanguage';
-import {
-  installOnDeviceSpeech,
-  SpeechAvailability,
-  speechAvailability,
-} from '@/lib/twitch/webSpeechSource';
 import { panelService } from '@/services/panelService';
 import { Button, InputNumber, Space, Switch } from 'antd';
 import { useEffect, useRef, useState } from 'react';
@@ -47,6 +42,7 @@ const initialStatus: CaptionStatus = {
   loading: false,
   speechLanguage: 'en-US',
   speechError: null,
+  onDeviceSpeech: 'unavailable',
   adPlaying: false,
 };
 
@@ -59,7 +55,6 @@ const TwitchCaptionToggle = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [openPopover, setOpenPopover] = useState<'target' | 'source' | 'speech' | null>(null);
   const [numLines, setNumLines] = useState(1);
-  const [onDevice, setOnDevice] = useState<SpeechAvailability>('unavailable');
   const dropdownTriggerRef = useRef<HTMLDivElement>(null);
   const [targetLanguage, setTargetLanguage] = useTranslateTargetLanguage();
   const [bilingual, setBilingual] = useShowYoutubeBilingualCaption();
@@ -99,13 +94,14 @@ const TwitchCaptionToggle = () => {
     return () => observer.disconnect();
   }, [isDropdownOpen]);
 
-  const usesSpeech = status.active ? status.activeSource === 'stt' : controller.needsSpeech(sourceMode);
+  // Speech recognition is running, or is how this mode would get captions once it can run.
+  const usesSpeech = status.activeSource === 'stt' || controller.speechRelevant(sourceMode);
+  const onDevice = status.onDeviceSpeech;
 
   // Whether recognition can run on this device for the stream's language (no audio leaves it).
   useEffect(() => {
-    if (!isDropdownOpen || !usesSpeech) return;
-    void speechAvailability(status.speechLanguage, true).then(setOnDevice);
-  }, [isDropdownOpen, usesSpeech, status.speechLanguage]);
+    if (isDropdownOpen && usesSpeech) void controller.refreshOnDeviceSpeech();
+  }, [controller, isDropdownOpen, usesSpeech]);
 
   const handleDropdownOpenChange = (open: boolean) => {
     if (!anyModelAvailable) {
@@ -161,12 +157,7 @@ const TwitchCaptionToggle = () => {
   // The click on this button is the user activation that Chrome requires for the download.
   const handleInstallOnDevice = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    setOnDevice('downloading');
-    void installOnDeviceSpeech(status.speechLanguage).then(async () => {
-      const availability = await speechAvailability(status.speechLanguage, true);
-      setOnDevice(availability);
-      if (availability === 'available') controller.restartSpeech();
-    });
+    controller.downloadOnDeviceSpeech();
   };
 
   if (!showToggle || status.adPlaying || (!status.available.length && !status.active)) return null;
@@ -181,7 +172,11 @@ const TwitchCaptionToggle = () => {
   ];
   const sourceValueLabel = (() => {
     if (status.activeSource === 'stt' && status.speechError) return t('twitch.speechStopped');
-    const current = status.active ? status.activeSource : null;
+    // Auto mode still waiting for captions has no source to name yet.
+    const current =
+      status.active && status.activeSource && status.available.includes(status.activeSource)
+        ? status.activeSource
+        : null;
     if (sourceMode === 'auto') {
       return current ? `${t('twitch.sourceAuto')} · ${t(sourceLabelKey[current])}` : t('twitch.sourceAuto');
     }
