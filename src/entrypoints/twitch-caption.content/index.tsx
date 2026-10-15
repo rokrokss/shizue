@@ -4,6 +4,7 @@ import TwitchCaptionToggle from '@/components/Twitch/TwitchCaptionToggle';
 import { MESSAGE_INJECT_TWITCH_BRIDGE, MESSAGE_SCC_CAPTION_SNAPSHOT } from '@/config/constants';
 import { registerContentScriptConnection } from '@/lib/contentScriptConnection';
 import { getTwitchLiveCaptions } from '@/lib/twitch/liveCaptionController';
+import { TWITCH_POPUP_HOST_TAG } from '@/lib/twitch/playerControls';
 import { contentScriptLog, errorLog } from '@/logs';
 import AntdProvider from '@/providers/AntdProvider';
 import LanguageProvider from '@/providers/LanguageProvider';
@@ -16,7 +17,6 @@ import { StrictMode } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 
 const TWITCH_TOGGLE_SHADOW_HOST_ID = 'shizue-twitch-caption-toggle-shadow-host';
-const TWITCH_POPUP_HOST_TAG = 'shizue-twitch-caption-popups';
 
 // Twitch renders a second, hidden set of player controls around the same video; use the one
 // that is laid out.

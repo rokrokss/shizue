@@ -23,6 +23,12 @@ import {
   getTwitchLiveCaptions,
   isTwitchVod,
 } from '@/lib/twitch/liveCaptionController';
+import {
+  hideTwitchControls,
+  showTwitchControls,
+  TWITCH_POPUP_HOST_TAG,
+  twitchPlayerAround,
+} from '@/lib/twitch/playerControls';
 import { SPEECH_LANGUAGES, speechLanguageLabel } from '@/lib/twitch/speechLanguage';
 import { panelService } from '@/services/panelService';
 import { Button, InputNumber, Space, Switch } from 'antd';
@@ -92,6 +98,48 @@ const TwitchCaptionToggle = () => {
     );
     observer.observe(dropdownTriggerRef.current);
     return () => observer.disconnect();
+  }, [isDropdownOpen]);
+
+  // The open menu counts as part of the player. It opens outside the player, so Twitch would take
+  // the mouse moving onto it as leaving and hide its controls. Instead the controls stay while the
+  // mouse is over the player or the menu, and when it leaves both the menu closes with them.
+  // (YouTube doesn't need this: its menu pauses the video, which keeps the controls up.)
+  useEffect(() => {
+    if (!isDropdownOpen) return;
+    const player = twitchPlayerAround(
+      (dropdownTriggerRef.current?.getRootNode() as ShadowRoot | undefined)?.host
+    );
+    const popups = document.querySelector(TWITCH_POPUP_HOST_TAG);
+    if (!player || !popups) return;
+    const hovered = () => player.matches(':hover') || popups.matches(':hover');
+    // Undo Twitch's leave in the same event dispatch, so its controls don't fade out and back.
+    const onEnterMenu = () => showTwitchControls(player);
+    let closeTimer: ReturnType<typeof setTimeout> | null = null;
+    // Moving between the two isn't leaving. The short wait also covers the gap before the
+    // language list.
+    const onLeave = () => {
+      if (closeTimer) clearTimeout(closeTimer);
+      closeTimer = setTimeout(() => {
+        if (hovered()) return;
+        setIsDropdownOpen(false);
+        setOpenPopover(null);
+        hideTwitchControls(player);
+      }, 300);
+    };
+    // A mouse resting on the menu would otherwise hide the controls after 5 s.
+    const keepAlive = setInterval(() => {
+      if (hovered()) showTwitchControls(player);
+    }, 1000);
+    popups.addEventListener('mouseover', onEnterMenu);
+    player.addEventListener('mouseleave', onLeave);
+    popups.addEventListener('mouseleave', onLeave);
+    return () => {
+      popups.removeEventListener('mouseover', onEnterMenu);
+      player.removeEventListener('mouseleave', onLeave);
+      popups.removeEventListener('mouseleave', onLeave);
+      clearInterval(keepAlive);
+      if (closeTimer) clearTimeout(closeTimer);
+    };
   }, [isDropdownOpen]);
 
   // Speech recognition is running, or is how this mode would get captions once it can run.

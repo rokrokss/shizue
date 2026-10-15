@@ -318,6 +318,10 @@ Twitch has no caption track or caption API, so captions are translated as they a
 - The menu popups live in their own shadow host. That host moves into `document.fullscreenElement` on `fullscreenchange`, because fullscreen draws only the app root.
 - The settings Twitch shares with YouTube are target language, bilingual and caption size. Only `STORAGE_SHOW_TWITCH_CAPTION_TOGGLE` is Twitch's own.
 - Live streams don't pause when the menu opens, because that would put them behind live. VODs pause, as on YouTube.
+- **The open menu counts as part of the player** (`lib/twitch/playerControls.ts`). Twitch's `[data-a-target="video-ref"]` shows the controls on `mouseenter` and mouse moves, and hides them on `mouseleave` or after about 5 s without a move.
+  - The menu lives outside the player, so moving onto it reads as leaving. While the menu is open and the mouse is over the player or the menu, `TwitchCaptionToggle` sends `video-ref` a `mouseenter` (on entering the menu, and every second).
+  - 300 ms after the mouse leaves both, the menu closes and `video-ref` gets a `mouseleave`.
+  - YouTube needs none of this: its menu pauses the video, which keeps the controls up.
 - **Ads.** Ads are stitched into the stream. While Twitch shows its ad label or countdown (`[data-a-target="video-ad-label"]`, `[data-a-target="video-ad-countdown"]`):
   - captions clear and speech recognition pauses, because it would transcribe the ad;
   - the button hides, as on YouTube.
