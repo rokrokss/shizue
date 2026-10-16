@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.11
+
+- Chat replies stay in your chosen language, page summaries included, but when you ask for another language (say, an email draft in English) Shizue now writes it in that language instead of refusing
+
 ## v0.3.10
 
 - Twitch captions: the caption menu's "Chrome built-in translation" switch (on by default) picks the translator. On, Chrome's on-device translator translates everything; off, your LLM does. A line's translation no longer changes after it appears
