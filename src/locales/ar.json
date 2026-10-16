@@ -1,6 +1,23 @@
 {
   "chatgpt": {
-    "providerTitle": "تسجيل الدخول باستخدام ChatGPT"
+    "providerTitle": "تسجيل الدخول باستخدام ChatGPT",
+    "continue": "Continue with ChatGPT",
+    "account": "حساب ChatGPT",
+    "accountAlreadyRegistered": "يوجد اتصال ChatGPT محفوظ بالفعل. أعد فتح الإعدادات للتحقق من حالته.",
+    "duplicateAccountRevocationPending": "تم الإبقاء على اتصال ChatGPT الحالي. تعذّر تأكيد إلغاء الجلسة الجديدة؛ راجع اتصالات Shizue في إعدادات ChatGPT.",
+    "reconnect": "تسجيل الدخول إلى ChatGPT مرة أخرى",
+    "signInRequired": "انتهت صلاحية جلسة ChatGPT أو أُلغي الوصول. يُرجى تسجيل الدخول مرة أخرى.",
+    "signOut": "تسجيل الخروج",
+    "retry": "التحقق من الاتصال",
+    "reconnectError": "تعذّر تحميل نماذج ChatGPT. يُرجى التحقق من الاتصال مرة أخرى بعد قليل.",
+    "timeout": "لم يستجب ChatGPT في الوقت المحدد. يُرجى المحاولة مرة أخرى.",
+    "revocationPending": "تم تسجيل الخروج على هذا الجهاز. تعذّر تأكيد قطع الاتصال عن بُعد؛ افصل Shizue في إعدادات ChatGPT.",
+    "welcomeTitle": "أنت تستخدم خطة ChatGPT الخاصة بك",
+    "welcomeDescription": "تُحتسب طلبات Shizue ضمن حدود استخدام ChatGPT Work/Codex. يمكنك مراجعة الاستخدام وتعيين حدّ للتطبيق في إعدادات ChatGPT.",
+    "callbackWorking": "جارٍ إكمال تسجيل الدخول إلى ChatGPT…",
+    "callbackExpired": "انتهت عملية تسجيل الدخول هذه. عُد إلى Shizue وسجّل الدخول مرة أخرى.",
+    "gotIt": "حسنًا",
+    "accountUnavailable": "تغيّر اتصال ChatGPT المحفوظ. أعد فتح الإعدادات للمتابعة."
   },
   "extension_name": "Shizue: مترجم الذكاء الاصطناعي + مساعد القوة الخارقة LLM",
   "extension_description": "مترجم ذكي + مساعد خارق LLM",

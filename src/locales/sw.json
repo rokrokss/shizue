@@ -1,6 +1,23 @@
 {
   "chatgpt": {
-    "providerTitle": "Ingia kwa ChatGPT"
+    "providerTitle": "Ingia kwa ChatGPT",
+    "continue": "Continue with ChatGPT",
+    "account": "Akaunti ya ChatGPT",
+    "accountAlreadyRegistered": "Muunganisho wa ChatGPT tayari umehifadhiwa. Fungua mipangilio tena ili kuangalia hali yake.",
+    "duplicateAccountRevocationPending": "Muunganisho wako uliopo wa ChatGPT umehifadhiwa. Haikuwezekana kuthibitisha kubatilishwa kwa kipindi kipya; kagua miunganisho ya Shizue katika mipangilio ya ChatGPT.",
+    "reconnect": "Ingia kwenye ChatGPT tena",
+    "signInRequired": "Kipindi chako cha ChatGPT kimeisha muda au ruhusa imebatilishwa. Tafadhali ingia tena.",
+    "signOut": "Ondoka",
+    "retry": "Angalia muunganisho",
+    "reconnectError": "Imeshindwa kupakia modeli za ChatGPT. Tafadhali angalia muunganisho tena baada ya muda mfupi.",
+    "timeout": "ChatGPT haikujibu kwa wakati. Tafadhali jaribu tena.",
+    "revocationPending": "Umetoka kwenye kifaa hiki. Haikuwezekana kuthibitisha kukatwa kwa muunganisho wa mbali; tenganisha Shizue katika mipangilio ya ChatGPT.",
+    "welcomeTitle": "Unatumia mpango wako wa ChatGPT",
+    "welcomeDescription": "Maombi ya Shizue yanahesabiwa katika vikomo vyako vya matumizi ya ChatGPT Work/Codex. Unaweza kukagua matumizi na kuweka kikomo cha programu katika mipangilio ya ChatGPT.",
+    "callbackWorking": "Inakamilisha kuingia kwenye ChatGPT…",
+    "callbackExpired": "Kuingia huku kumekwisha. Rudi kwenye Shizue na uingie tena.",
+    "gotIt": "Nimeelewa",
+    "accountUnavailable": "Muunganisho wa ChatGPT uliohifadhiwa umebadilika. Fungua mipangilio tena ili kuendelea."
   },
   "extension_name": "Shizue: Mfasiri wa AI + Msaidizi wa Nguvu za Kipekee za LLM",
   "extension_description": "Mtafsiri wa AI + Msaidizi wa Nguvu za LLM",

@@ -1,6 +1,23 @@
 {
   "chatgpt": {
-    "providerTitle": "ChatGPT ile giriş yap"
+    "providerTitle": "ChatGPT ile giriş yap",
+    "continue": "Continue with ChatGPT",
+    "account": "ChatGPT hesabı",
+    "accountAlreadyRegistered": "Kayıtlı bir ChatGPT bağlantısı zaten var. Durumunu kontrol etmek için ayarları yeniden açın.",
+    "duplicateAccountRevocationPending": "Mevcut ChatGPT bağlantınız korundu. Yeni oturumun iptal edildiği doğrulanamadı; ChatGPT ayarlarında Shizue bağlantılarını kontrol edin.",
+    "reconnect": "ChatGPT'ye yeniden giriş yap",
+    "signInRequired": "ChatGPT oturumunuzun süresi doldu veya erişim iptal edildi. Lütfen yeniden giriş yapın.",
+    "signOut": "Çıkış yap",
+    "retry": "Bağlantıyı kontrol et",
+    "reconnectError": "ChatGPT modelleri yüklenemedi. Lütfen birazdan bağlantıyı yeniden kontrol edin.",
+    "timeout": "ChatGPT zamanında yanıt vermedi. Lütfen yeniden deneyin.",
+    "revocationPending": "Bu cihazda çıkış yapıldı. Uzaktan bağlantı kesme doğrulanamadı; ChatGPT ayarlarında Shizue bağlantısını kesin.",
+    "welcomeTitle": "ChatGPT planınızı kullanıyorsunuz",
+    "welcomeDescription": "Shizue istekleri ChatGPT Work/Codex kullanım sınırlarınıza sayılır. ChatGPT ayarlarında kullanımı inceleyebilir ve uygulama için bir sınır belirleyebilirsiniz.",
+    "callbackWorking": "ChatGPT girişi tamamlanıyor…",
+    "callbackExpired": "Bu giriş sona erdi. Shizue'ye dönüp yeniden giriş yapın.",
+    "gotIt": "Anladım",
+    "accountUnavailable": "Kayıtlı ChatGPT bağlantısı değişti. Devam etmek için ayarları yeniden açın."
   },
   "extension_name": "Shizue: AI Çevirmen + LLM Süper Güç Asistanı",
   "extension_description": "AI Çevirmen + LLM Süper Güç Asistanı",

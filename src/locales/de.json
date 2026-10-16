@@ -1,6 +1,23 @@
 {
   "chatgpt": {
-    "providerTitle": "Mit ChatGPT anmelden"
+    "providerTitle": "Mit ChatGPT anmelden",
+    "continue": "Continue with ChatGPT",
+    "account": "ChatGPT-Konto",
+    "accountAlreadyRegistered": "Es ist bereits eine ChatGPT-Verbindung gespeichert. Öffne die Einstellungen erneut, um ihren Status zu prüfen.",
+    "duplicateAccountRevocationPending": "Deine bestehende ChatGPT-Verbindung wurde beibehalten. Der Widerruf der neuen Sitzung konnte nicht bestätigt werden; prüfe die Shizue-Verbindungen in den ChatGPT-Einstellungen.",
+    "reconnect": "Erneut bei ChatGPT anmelden",
+    "signInRequired": "Deine ChatGPT-Sitzung ist abgelaufen oder der Zugriff wurde widerrufen. Bitte melde dich erneut an.",
+    "signOut": "Abmelden",
+    "retry": "Verbindung prüfen",
+    "reconnectError": "ChatGPT-Modelle konnten nicht geladen werden. Bitte prüfe die Verbindung gleich noch einmal.",
+    "timeout": "ChatGPT hat nicht rechtzeitig geantwortet. Bitte versuche es erneut.",
+    "revocationPending": "Auf diesem Gerät abgemeldet. Die Trennung aus der Ferne konnte nicht bestätigt werden; trenne Shizue in den ChatGPT-Einstellungen.",
+    "welcomeTitle": "Du nutzt dein ChatGPT-Abo",
+    "welcomeDescription": "Anfragen von Shizue zählen zu deinen ChatGPT-Work/Codex-Nutzungslimits. In den ChatGPT-Einstellungen kannst du die Nutzung einsehen und ein Limit für die App festlegen.",
+    "callbackWorking": "ChatGPT-Anmeldung wird abgeschlossen…",
+    "callbackExpired": "Diese Anmeldung ist beendet. Kehre zu Shizue zurück und melde dich erneut an.",
+    "gotIt": "Verstanden",
+    "accountUnavailable": "Die gespeicherte ChatGPT-Verbindung hat sich geändert. Öffne die Einstellungen erneut, um fortzufahren."
   },
   "extension_name": "Shizue: KI-Übersetzer + LLM-Superkraft-Assistent",
   "extension_description": "KI-Übersetzer + LLM-Superkraft-Assistent",

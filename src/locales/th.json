@@ -1,6 +1,23 @@
 {
   "chatgpt": {
-    "providerTitle": "ลงชื่อเข้าใช้ด้วย ChatGPT"
+    "providerTitle": "ลงชื่อเข้าใช้ด้วย ChatGPT",
+    "continue": "Continue with ChatGPT",
+    "account": "บัญชี ChatGPT",
+    "accountAlreadyRegistered": "มีการเชื่อมต่อ ChatGPT ที่บันทึกไว้แล้ว เปิดการตั้งค่าอีกครั้งเพื่อตรวจสอบสถานะ",
+    "duplicateAccountRevocationPending": "เก็บการเชื่อมต่อ ChatGPT เดิมไว้แล้ว ไม่สามารถยืนยันการเพิกถอนเซสชันใหม่ได้ โปรดตรวจสอบการเชื่อมต่อของ Shizue ในการตั้งค่า ChatGPT",
+    "reconnect": "ลงชื่อเข้าใช้ ChatGPT อีกครั้ง",
+    "signInRequired": "เซสชัน ChatGPT หมดอายุหรือสิทธิ์เข้าถึงถูกเพิกถอน โปรดลงชื่อเข้าใช้อีกครั้ง",
+    "signOut": "ออกจากระบบ",
+    "retry": "ตรวจสอบการเชื่อมต่อ",
+    "reconnectError": "ไม่สามารถโหลดโมเดล ChatGPT ได้ โปรดตรวจสอบการเชื่อมต่ออีกครั้งในอีกสักครู่",
+    "timeout": "ChatGPT ไม่ตอบกลับภายในเวลาที่กำหนด โปรดลองอีกครั้ง",
+    "revocationPending": "ออกจากระบบบนอุปกรณ์นี้แล้ว ไม่สามารถยืนยันการยกเลิกการเชื่อมต่อจากระยะไกลได้ โปรดยกเลิกการเชื่อมต่อ Shizue ในการตั้งค่า ChatGPT",
+    "welcomeTitle": "คุณกำลังใช้แพ็กเกจ ChatGPT ของคุณ",
+    "welcomeDescription": "คำขอของ Shizue จะนับรวมในขีดจำกัดการใช้งาน ChatGPT Work/Codex ของคุณ คุณสามารถดูการใช้งานและกำหนดขีดจำกัดสำหรับแอปได้ในการตั้งค่า ChatGPT",
+    "callbackWorking": "กำลังลงชื่อเข้าใช้ ChatGPT ให้เสร็จสมบูรณ์…",
+    "callbackExpired": "การลงชื่อเข้าใช้นี้สิ้นสุดแล้ว กลับไปที่ Shizue แล้วลงชื่อเข้าใช้อีกครั้ง",
+    "gotIt": "เข้าใจแล้ว",
+    "accountUnavailable": "การเชื่อมต่อ ChatGPT ที่บันทึกไว้มีการเปลี่ยนแปลง เปิดการตั้งค่าอีกครั้งเพื่อดำเนินการต่อ"
   },
   "extension_name": "Shizue: ผู้แปลภาษา AI + ผู้ช่วย LLM ซุปเปอร์พาวเวอร์",
   "extension_description": "AI แปลภาษา + ผู้ช่วยพิเศษ LLM",

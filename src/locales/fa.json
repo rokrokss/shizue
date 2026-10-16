@@ -1,6 +1,23 @@
 {
   "chatgpt": {
-    "providerTitle": "ورود با ChatGPT"
+    "providerTitle": "ورود با ChatGPT",
+    "continue": "Continue with ChatGPT",
+    "account": "حساب ChatGPT",
+    "accountAlreadyRegistered": "یک اتصال ChatGPT از قبل ذخیره شده است. برای بررسی وضعیت آن، تنظیمات را دوباره باز کنید.",
+    "duplicateAccountRevocationPending": "اتصال فعلی ChatGPT شما حفظ شد. لغو نشست جدید تأیید نشد؛ اتصال‌های Shizue را در تنظیمات ChatGPT بررسی کنید.",
+    "reconnect": "ورود دوباره به ChatGPT",
+    "signInRequired": "نشست ChatGPT شما منقضی شده یا دسترسی لغو شده است. لطفاً دوباره وارد شوید.",
+    "signOut": "خروج",
+    "retry": "بررسی اتصال",
+    "reconnectError": "بارگیری مدل‌های ChatGPT ممکن نشد. لطفاً کمی بعد دوباره اتصال را بررسی کنید.",
+    "timeout": "ChatGPT به‌موقع پاسخ نداد. لطفاً دوباره تلاش کنید.",
+    "revocationPending": "از این دستگاه خارج شدید. قطع اتصال از راه دور تأیید نشد؛ اتصال Shizue را در تنظیمات ChatGPT قطع کنید.",
+    "welcomeTitle": "از اشتراک ChatGPT خود استفاده می‌کنید",
+    "welcomeDescription": "درخواست‌های Shizue جزو سقف استفاده ChatGPT Work/Codex شما حساب می‌شوند. می‌توانید در تنظیمات ChatGPT میزان استفاده را ببینید و برای برنامه سقف تعیین کنید.",
+    "callbackWorking": "در حال تکمیل ورود به ChatGPT…",
+    "callbackExpired": "این ورود به پایان رسیده است. به Shizue برگردید و دوباره وارد شوید.",
+    "gotIt": "متوجه شدم",
+    "accountUnavailable": "اتصال ذخیره‌شده ChatGPT تغییر کرده است. برای ادامه، تنظیمات را دوباره باز کنید."
   },
   "extension_name": "Shizue: مترجم هوش مصنوعی + دستیار ابرقدرت LLM",
   "extension_description": "مترجم هوشمند + دستیار ابرقدرتی LLM",

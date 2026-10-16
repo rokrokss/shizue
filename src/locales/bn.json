@@ -1,6 +1,23 @@
 {
   "chatgpt": {
-    "providerTitle": "ChatGPT দিয়ে সাইন ইন করুন"
+    "providerTitle": "ChatGPT দিয়ে সাইন ইন করুন",
+    "continue": "Continue with ChatGPT",
+    "account": "ChatGPT অ্যাকাউন্ট",
+    "accountAlreadyRegistered": "একটি ChatGPT সংযোগ ইতিমধ্যে সংরক্ষিত আছে। এর অবস্থা দেখতে সেটিংস আবার খুলুন।",
+    "duplicateAccountRevocationPending": "আপনার বিদ্যমান ChatGPT সংযোগ রাখা হয়েছে। নতুন সেশন বাতিল হয়েছে কিনা নিশ্চিত করা যায়নি; ChatGPT সেটিংসে Shizue-এর সংযোগগুলো দেখুন।",
+    "reconnect": "আবার ChatGPT-এ সাইন ইন করুন",
+    "signInRequired": "আপনার ChatGPT সেশনের মেয়াদ শেষ হয়েছে বা অ্যাক্সেস প্রত্যাহার করা হয়েছে। অনুগ্রহ করে আবার সাইন ইন করুন।",
+    "signOut": "সাইন আউট",
+    "retry": "সংযোগ পরীক্ষা করুন",
+    "reconnectError": "ChatGPT মডেল লোড করা যায়নি। কিছুক্ষণ পর আবার সংযোগ পরীক্ষা করুন।",
+    "timeout": "ChatGPT সময়মতো সাড়া দেয়নি। অনুগ্রহ করে আবার চেষ্টা করুন।",
+    "revocationPending": "এই ডিভাইসে সাইন আউট করা হয়েছে। দূর থেকে সংযোগ বিচ্ছিন্ন হয়েছে কিনা নিশ্চিত করা যায়নি; ChatGPT সেটিংসে Shizue-এর সংযোগ বিচ্ছিন্ন করুন।",
+    "welcomeTitle": "আপনি আপনার ChatGPT প্ল্যান ব্যবহার করছেন",
+    "welcomeDescription": "Shizue-এর অনুরোধগুলো আপনার ChatGPT Work/Codex ব্যবহারের সীমায় গণনা করা হয়। ChatGPT সেটিংসে ব্যবহার দেখতে এবং অ্যাপের জন্য সীমা ঠিক করতে পারেন।",
+    "callbackWorking": "ChatGPT সাইন-ইন সম্পন্ন হচ্ছে…",
+    "callbackExpired": "এই সাইন-ইন শেষ হয়ে গেছে। Shizue-তে ফিরে গিয়ে আবার সাইন ইন করুন।",
+    "gotIt": "বুঝেছি",
+    "accountUnavailable": "সংরক্ষিত ChatGPT সংযোগ পরিবর্তিত হয়েছে। চালিয়ে যেতে সেটিংস আবার খুলুন।"
   },
   "extension_name": "Shizue: AI অনুবাদক + LLM সুপারপাওয়ার সহায়ক",
   "extension_description": "AI অনুবাদক + LLM সুপারপাওয়ার সহায়ক",

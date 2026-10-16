@@ -1,6 +1,23 @@
 {
   "chatgpt": {
-    "providerTitle": "Đăng nhập bằng ChatGPT"
+    "providerTitle": "Đăng nhập bằng ChatGPT",
+    "continue": "Continue with ChatGPT",
+    "account": "Tài khoản ChatGPT",
+    "accountAlreadyRegistered": "Đã có một kết nối ChatGPT được lưu. Hãy mở lại cài đặt để kiểm tra trạng thái.",
+    "duplicateAccountRevocationPending": "Kết nối ChatGPT hiện có của bạn đã được giữ lại. Không thể xác nhận việc thu hồi phiên mới; hãy kiểm tra các kết nối của Shizue trong cài đặt ChatGPT.",
+    "reconnect": "Đăng nhập lại ChatGPT",
+    "signInRequired": "Phiên ChatGPT của bạn đã hết hạn hoặc quyền truy cập đã bị thu hồi. Vui lòng đăng nhập lại.",
+    "signOut": "Đăng xuất",
+    "retry": "Kiểm tra kết nối",
+    "reconnectError": "Không thể tải các mô hình ChatGPT. Vui lòng kiểm tra lại kết nối sau ít phút.",
+    "timeout": "ChatGPT không phản hồi kịp thời. Vui lòng thử lại.",
+    "revocationPending": "Đã đăng xuất trên thiết bị này. Không thể xác nhận việc ngắt kết nối từ xa; hãy ngắt kết nối Shizue trong cài đặt ChatGPT.",
+    "welcomeTitle": "Bạn đang dùng gói ChatGPT của mình",
+    "welcomeDescription": "Các yêu cầu của Shizue được tính vào giới hạn sử dụng ChatGPT Work/Codex của bạn. Bạn có thể xem mức sử dụng và đặt giới hạn cho ứng dụng trong cài đặt ChatGPT.",
+    "callbackWorking": "Đang hoàn tất đăng nhập ChatGPT…",
+    "callbackExpired": "Lần đăng nhập này đã kết thúc. Hãy quay lại Shizue và đăng nhập lại.",
+    "gotIt": "Đã hiểu",
+    "accountUnavailable": "Kết nối ChatGPT đã lưu đã thay đổi. Hãy mở lại cài đặt để tiếp tục."
   },
   "extension_name": "Shizue: Trình dịch AI + Trợ lý siêu năng lực LLM",
   "extension_description": "Người dịch AI + Trợ lý siêu năng lực LLM",

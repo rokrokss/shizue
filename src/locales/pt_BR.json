@@ -1,6 +1,23 @@
 {
   "chatgpt": {
-    "providerTitle": "Entrar com o ChatGPT"
+    "providerTitle": "Entrar com o ChatGPT",
+    "continue": "Continue with ChatGPT",
+    "account": "Conta do ChatGPT",
+    "accountAlreadyRegistered": "Já existe uma conexão do ChatGPT salva. Abra as configurações novamente para verificar o status.",
+    "duplicateAccountRevocationPending": "Sua conexão existente com o ChatGPT foi mantida. Não foi possível confirmar a revogação da nova sessão; verifique as conexões do Shizue nas configurações do ChatGPT.",
+    "reconnect": "Entrar no ChatGPT novamente",
+    "signInRequired": "Sua sessão do ChatGPT expirou ou o acesso foi revogado. Entre novamente.",
+    "signOut": "Sair",
+    "retry": "Verificar conexão",
+    "reconnectError": "Não foi possível carregar os modelos do ChatGPT. Verifique a conexão novamente em instantes.",
+    "timeout": "O ChatGPT não respondeu a tempo. Tente novamente.",
+    "revocationPending": "Você saiu neste dispositivo. Não foi possível confirmar a desconexão remota; desconecte o Shizue nas configurações do ChatGPT.",
+    "welcomeTitle": "Você está usando seu plano do ChatGPT",
+    "welcomeDescription": "As solicitações do Shizue contam para os limites de uso do ChatGPT Work/Codex. Nas configurações do ChatGPT, você pode ver o uso e definir um limite para o app.",
+    "callbackWorking": "Concluindo o login no ChatGPT…",
+    "callbackExpired": "Este login foi encerrado. Volte ao Shizue e entre novamente.",
+    "gotIt": "Entendi",
+    "accountUnavailable": "A conexão salva do ChatGPT mudou. Abra as configurações novamente para continuar."
   },
   "extension_name": "Shizue: Tradutor IA + Assistente de Superpoderes LLM",
   "extension_description": "Tradutor AI + Assistente de Superpoderes LLM",

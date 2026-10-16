@@ -1,6 +1,23 @@
 {
   "chatgpt": {
-    "providerTitle": "ChatGPT से साइन इन करें"
+    "providerTitle": "ChatGPT से साइन इन करें",
+    "continue": "Continue with ChatGPT",
+    "account": "ChatGPT खाता",
+    "accountAlreadyRegistered": "एक ChatGPT कनेक्शन पहले से सहेजा गया है। उसकी स्थिति जाँचने के लिए सेटिंग्स फिर से खोलें।",
+    "duplicateAccountRevocationPending": "आपका मौजूदा ChatGPT कनेक्शन बनाए रखा गया। नए सेशन को रद्द किए जाने की पुष्टि नहीं हो सकी; ChatGPT सेटिंग्स में Shizue के कनेक्शन जाँचें।",
+    "reconnect": "ChatGPT में फिर से साइन इन करें",
+    "signInRequired": "आपका ChatGPT सेशन समाप्त हो गया है या एक्सेस वापस ले लिया गया है। कृपया फिर से साइन इन करें।",
+    "signOut": "साइन आउट",
+    "retry": "कनेक्शन जाँचें",
+    "reconnectError": "ChatGPT मॉडल लोड नहीं हो सके। कृपया थोड़ी देर बाद कनेक्शन फिर से जाँचें।",
+    "timeout": "ChatGPT ने समय पर जवाब नहीं दिया। कृपया फिर से प्रयास करें।",
+    "revocationPending": "इस डिवाइस पर साइन आउट हो गया। रिमोट डिस्कनेक्शन की पुष्टि नहीं हो सकी; ChatGPT सेटिंग्स में Shizue को डिस्कनेक्ट करें।",
+    "welcomeTitle": "आप अपने ChatGPT प्लान का उपयोग कर रहे हैं",
+    "welcomeDescription": "Shizue के अनुरोध आपकी ChatGPT Work/Codex उपयोग सीमा में गिने जाते हैं। ChatGPT सेटिंग्स में आप उपयोग देख सकते हैं और ऐप के लिए सीमा तय कर सकते हैं।",
+    "callbackWorking": "ChatGPT साइन-इन पूरा हो रहा है…",
+    "callbackExpired": "यह साइन-इन समाप्त हो चुका है। Shizue पर लौटकर फिर से साइन इन करें।",
+    "gotIt": "ठीक है",
+    "accountUnavailable": "सहेजा गया ChatGPT कनेक्शन बदल गया है। जारी रखने के लिए सेटिंग्स फिर से खोलें।"
   },
   "extension_name": "Shizue: AI अनुवादक + LLM सुपरपावर सहायक",
   "extension_description": "AI अनुवादक + LLM सुपरपावर सहायक",

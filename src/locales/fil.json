@@ -1,6 +1,23 @@
 {
   "chatgpt": {
-    "providerTitle": "Mag-sign in gamit ang ChatGPT"
+    "providerTitle": "Mag-sign in gamit ang ChatGPT",
+    "continue": "Continue with ChatGPT",
+    "account": "ChatGPT account",
+    "accountAlreadyRegistered": "May naka-save nang koneksyon sa ChatGPT. Buksan muli ang mga setting para tingnan ang status nito.",
+    "duplicateAccountRevocationPending": "Pinanatili ang kasalukuyan mong koneksyon sa ChatGPT. Hindi makumpirma ang pagbawi sa bagong session; suriin ang mga koneksyon ng Shizue sa mga setting ng ChatGPT.",
+    "reconnect": "Mag-sign in muli sa ChatGPT",
+    "signInRequired": "Nag-expire ang iyong ChatGPT session o binawi ang access. Mangyaring mag-sign in muli.",
+    "signOut": "Mag-sign out",
+    "retry": "Suriin ang koneksyon",
+    "reconnectError": "Hindi ma-load ang mga modelo ng ChatGPT. Pakisuri muli ang koneksyon maya-maya.",
+    "timeout": "Hindi sumagot ang ChatGPT sa takdang oras. Pakisubukan muli.",
+    "revocationPending": "Naka-sign out na sa device na ito. Hindi makumpirma ang pagdiskonekta sa server; idiskonekta ang Shizue sa mga setting ng ChatGPT.",
+    "welcomeTitle": "Ginagamit mo ang iyong ChatGPT plan",
+    "welcomeDescription": "Binibilang ang mga request ng Shizue sa iyong ChatGPT Work/Codex usage limits. Maaari mong tingnan ang usage at magtakda ng limit para sa app sa mga setting ng ChatGPT.",
+    "callbackWorking": "Tinatapos ang pag-sign in sa ChatGPT…",
+    "callbackExpired": "Tapos na ang pag-sign in na ito. Bumalik sa Shizue at mag-sign in muli.",
+    "gotIt": "Sige",
+    "accountUnavailable": "Nagbago ang naka-save na koneksyon sa ChatGPT. Buksan muli ang mga setting para magpatuloy."
   },
   "extension_name": "Shizue: AI Translator + LLM Superpower Assistant",
   "extension_description": "AI Translator + LLM Superpower Assistant",

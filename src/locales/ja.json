@@ -1,6 +1,23 @@
 {
   "chatgpt": {
-    "providerTitle": "ChatGPTでログイン"
+    "providerTitle": "ChatGPTでログイン",
+    "continue": "Continue with ChatGPT",
+    "account": "ChatGPTアカウント",
+    "accountAlreadyRegistered": "ChatGPTの接続はすでに保存されています。設定を開き直して接続状態を確認してください。",
+    "duplicateAccountRevocationPending": "既存のChatGPT接続を維持しました。新しいセッションの取り消しを確認できなかったため、ChatGPTの設定でShizueの接続を確認してください。",
+    "reconnect": "ChatGPTに再ログイン",
+    "signInRequired": "ChatGPTのセッションが期限切れになったか、アクセスが取り消されました。もう一度ログインしてください。",
+    "signOut": "ログアウト",
+    "retry": "接続を確認",
+    "reconnectError": "ChatGPTのモデルを読み込めませんでした。しばらくしてからもう一度接続を確認してください。",
+    "timeout": "ChatGPTから時間内に応答がありませんでした。もう一度お試しください。",
+    "revocationPending": "このデバイスではログアウトしました。リモートでの接続解除を確認できなかったため、ChatGPTの設定でShizueの接続を解除してください。",
+    "welcomeTitle": "ChatGPTのプランを使用しています",
+    "welcomeDescription": "ShizueのリクエストはChatGPT Work/Codexの利用上限にカウントされます。ChatGPTの設定で利用状況を確認し、アプリごとの上限を設定できます。",
+    "callbackWorking": "ChatGPTへのログインを完了しています…",
+    "callbackExpired": "このログインはすでに終了しています。Shizueに戻って、もう一度ログインしてください。",
+    "gotIt": "OK",
+    "accountUnavailable": "保存されたChatGPT接続が変更されました。設定を開き直してください。"
   },
   "extension_name": "しずえ: AI翻訳者 + LLMスーパーパワーアシスタント",
   "extension_description": "AI翻訳者 + LLMスーパーパワーアシスタント",

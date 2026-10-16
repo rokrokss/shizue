@@ -1,6 +1,23 @@
 {
   "chatgpt": {
-    "providerTitle": "Iniciar sesión con ChatGPT"
+    "providerTitle": "Iniciar sesión con ChatGPT",
+    "continue": "Continue with ChatGPT",
+    "account": "Cuenta de ChatGPT",
+    "accountAlreadyRegistered": "Ya hay una conexión de ChatGPT guardada. Vuelve a abrir la configuración para comprobar su estado.",
+    "duplicateAccountRevocationPending": "Se mantuvo tu conexión de ChatGPT actual. No se pudo confirmar la revocación de la nueva sesión; revisa las conexiones de Shizue en la configuración de ChatGPT.",
+    "reconnect": "Volver a iniciar sesión en ChatGPT",
+    "signInRequired": "Tu sesión de ChatGPT caducó o se revocó el acceso. Vuelve a iniciar sesión.",
+    "signOut": "Cerrar sesión",
+    "retry": "Comprobar conexión",
+    "reconnectError": "No se pudieron cargar los modelos de ChatGPT. Vuelve a comprobar la conexión en unos momentos.",
+    "timeout": "ChatGPT no respondió a tiempo. Inténtalo de nuevo.",
+    "revocationPending": "Se cerró la sesión en este dispositivo. No se pudo confirmar la desconexión remota; desconecta Shizue en la configuración de ChatGPT.",
+    "welcomeTitle": "Estás usando tu plan de ChatGPT",
+    "welcomeDescription": "Las solicitudes de Shizue cuentan para tus límites de uso de ChatGPT Work/Codex. Puedes revisar el uso y fijar un límite para la app en la configuración de ChatGPT.",
+    "callbackWorking": "Completando el inicio de sesión en ChatGPT…",
+    "callbackExpired": "Este inicio de sesión ha terminado. Vuelve a Shizue e inicia sesión de nuevo.",
+    "gotIt": "Entendido",
+    "accountUnavailable": "La conexión de ChatGPT guardada cambió. Vuelve a abrir la configuración para continuar."
   },
   "extension_name": "Shizue: Traductor IA + Asistente de Súper Poderes LLM",
   "extension_description": "Traductor IA + Asistente de Súper Poderes LLM",

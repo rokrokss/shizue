@@ -1,6 +1,23 @@
 {
   "chatgpt": {
-    "providerTitle": "使用 ChatGPT 登录"
+    "providerTitle": "使用 ChatGPT 登录",
+    "continue": "Continue with ChatGPT",
+    "account": "ChatGPT 账号",
+    "accountAlreadyRegistered": "已保存一个 ChatGPT 连接。请重新打开设置查看其状态。",
+    "duplicateAccountRevocationPending": "已保留你现有的 ChatGPT 连接。无法确认新会话已被撤销，请在 ChatGPT 设置中检查 Shizue 的连接。",
+    "reconnect": "重新登录 ChatGPT",
+    "signInRequired": "ChatGPT 会话已过期或访问权限已被撤销。请重新登录。",
+    "signOut": "退出登录",
+    "retry": "检查连接",
+    "reconnectError": "无法加载 ChatGPT 模型。请稍后再次检查连接。",
+    "timeout": "ChatGPT 未能及时响应。请重试。",
+    "revocationPending": "已在此设备上退出登录。无法确认已远程断开连接，请在 ChatGPT 设置中断开 Shizue 的连接。",
+    "welcomeTitle": "你正在使用自己的 ChatGPT 套餐",
+    "welcomeDescription": "Shizue 的请求会计入你的 ChatGPT Work/Codex 使用限额。你可以在 ChatGPT 设置中查看用量，并为应用设置限额。",
+    "callbackWorking": "正在完成 ChatGPT 登录…",
+    "callbackExpired": "此次登录已结束。请返回 Shizue 重新登录。",
+    "gotIt": "知道了",
+    "accountUnavailable": "已保存的 ChatGPT 连接已更改。请重新打开设置以继续。"
   },
   "extension_name": "Shizue: AI翻译员 + LLM超能力助手",
   "extension_description": "AI翻译员 + LLM超能力助手",

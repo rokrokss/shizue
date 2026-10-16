@@ -1,6 +1,23 @@
 {
   "chatgpt": {
-    "providerTitle": "ChatGPT کے ذریعے سائن ان کریں"
+    "providerTitle": "ChatGPT کے ذریعے سائن ان کریں",
+    "continue": "Continue with ChatGPT",
+    "account": "ChatGPT اکاؤنٹ",
+    "accountAlreadyRegistered": "ایک ChatGPT کنکشن پہلے سے محفوظ ہے۔ اس کی حالت دیکھنے کے لیے ترتیبات دوبارہ کھولیں۔",
+    "duplicateAccountRevocationPending": "آپ کا موجودہ ChatGPT کنکشن برقرار رکھا گیا۔ نئے سیشن کی منسوخی کی تصدیق نہیں ہو سکی؛ ChatGPT کی ترتیبات میں Shizue کے کنکشنز چیک کریں۔",
+    "reconnect": "ChatGPT میں دوبارہ سائن ان کریں",
+    "signInRequired": "آپ کے ChatGPT سیشن کی میعاد ختم ہو گئی ہے یا رسائی منسوخ کر دی گئی ہے۔ برائے کرم دوبارہ سائن ان کریں۔",
+    "signOut": "سائن آؤٹ",
+    "retry": "کنکشن چیک کریں",
+    "reconnectError": "ChatGPT ماڈلز لوڈ نہیں ہو سکے۔ برائے کرم تھوڑی دیر بعد کنکشن دوبارہ چیک کریں۔",
+    "timeout": "ChatGPT نے وقت پر جواب نہیں دیا۔ برائے کرم دوبارہ کوشش کریں۔",
+    "revocationPending": "اس ڈیوائس پر سائن آؤٹ ہو گیا۔ ریموٹ کنکشن منقطع ہونے کی تصدیق نہیں ہو سکی؛ ChatGPT کی ترتیبات میں Shizue کا کنکشن منقطع کریں۔",
+    "welcomeTitle": "آپ اپنا ChatGPT پلان استعمال کر رہے ہیں",
+    "welcomeDescription": "Shizue کی درخواستیں آپ کی ChatGPT Work/Codex استعمال کی حدود میں شمار ہوتی ہیں۔ ChatGPT کی ترتیبات میں آپ استعمال دیکھ سکتے ہیں اور ایپ کے لیے حد مقرر کر سکتے ہیں۔",
+    "callbackWorking": "ChatGPT سائن ان مکمل کیا جا رہا ہے…",
+    "callbackExpired": "یہ سائن ان ختم ہو چکا ہے۔ Shizue پر واپس جا کر دوبارہ سائن ان کریں۔",
+    "gotIt": "ٹھیک ہے",
+    "accountUnavailable": "محفوظ شدہ ChatGPT کنکشن تبدیل ہو گیا ہے۔ جاری رکھنے کے لیے ترتیبات دوبارہ کھولیں۔"
   },
   "extension_name": "Shizue: AI مترجم + LLM سپر پاور اسسٹنٹ",
   "extension_description": "AI مترجم + LLM سپر پاور اسسٹنٹ",

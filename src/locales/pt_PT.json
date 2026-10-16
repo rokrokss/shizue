@@ -1,6 +1,23 @@
 {
   "chatgpt": {
-    "providerTitle": "Iniciar sessão com o ChatGPT"
+    "providerTitle": "Iniciar sessão com o ChatGPT",
+    "continue": "Continue with ChatGPT",
+    "account": "Conta do ChatGPT",
+    "accountAlreadyRegistered": "Já existe uma ligação ao ChatGPT guardada. Abra novamente as definições para verificar o estado.",
+    "duplicateAccountRevocationPending": "A sua ligação existente ao ChatGPT foi mantida. Não foi possível confirmar a revogação da nova sessão; verifique as ligações do Shizue nas definições do ChatGPT.",
+    "reconnect": "Iniciar sessão no ChatGPT novamente",
+    "signInRequired": "A sua sessão do ChatGPT expirou ou o acesso foi revogado. Inicie sessão novamente.",
+    "signOut": "Terminar sessão",
+    "retry": "Verificar ligação",
+    "reconnectError": "Não foi possível carregar os modelos do ChatGPT. Volte a verificar a ligação daqui a pouco.",
+    "timeout": "O ChatGPT não respondeu a tempo. Tente novamente.",
+    "revocationPending": "Sessão terminada neste dispositivo. Não foi possível confirmar o encerramento remoto da ligação; desligue o Shizue nas definições do ChatGPT.",
+    "welcomeTitle": "Está a usar o seu plano do ChatGPT",
+    "welcomeDescription": "Os pedidos do Shizue contam para os limites de utilização do ChatGPT Work/Codex. Nas definições do ChatGPT, pode consultar a utilização e definir um limite para a app.",
+    "callbackWorking": "A concluir o início de sessão no ChatGPT…",
+    "callbackExpired": "Este início de sessão terminou. Volte ao Shizue e inicie sessão novamente.",
+    "gotIt": "Entendido",
+    "accountUnavailable": "A ligação guardada ao ChatGPT mudou. Abra novamente as definições para continuar."
   },
   "extension_name": "Shizue: Tradutor IA + Assistente de Superpoderes LLM",
   "extension_description": "Tradutor AI + Assistente de Superpoderes LLM",

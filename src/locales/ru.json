@@ -1,6 +1,23 @@
 {
   "chatgpt": {
-    "providerTitle": "Войти через ChatGPT"
+    "providerTitle": "Войти через ChatGPT",
+    "continue": "Continue with ChatGPT",
+    "account": "Аккаунт ChatGPT",
+    "accountAlreadyRegistered": "Подключение к ChatGPT уже сохранено. Откройте настройки заново, чтобы проверить его состояние.",
+    "duplicateAccountRevocationPending": "Существующее подключение к ChatGPT сохранено. Не удалось подтвердить отзыв новой сессии; проверьте подключения Shizue в настройках ChatGPT.",
+    "reconnect": "Снова войти в ChatGPT",
+    "signInRequired": "Сессия ChatGPT истекла или доступ был отозван. Войдите снова.",
+    "signOut": "Выйти",
+    "retry": "Проверить подключение",
+    "reconnectError": "Не удалось загрузить модели ChatGPT. Проверьте подключение ещё раз чуть позже.",
+    "timeout": "ChatGPT не ответил вовремя. Попробуйте ещё раз.",
+    "revocationPending": "Выполнен выход на этом устройстве. Не удалось подтвердить удалённое отключение; отключите Shizue в настройках ChatGPT.",
+    "welcomeTitle": "Вы используете свой план ChatGPT",
+    "welcomeDescription": "Запросы Shizue учитываются в лимитах использования ChatGPT Work/Codex. В настройках ChatGPT можно посмотреть использование и задать лимит для приложения.",
+    "callbackWorking": "Завершение входа в ChatGPT…",
+    "callbackExpired": "Этот вход уже завершён. Вернитесь в Shizue и войдите снова.",
+    "gotIt": "Понятно",
+    "accountUnavailable": "Сохранённое подключение к ChatGPT изменилось. Откройте настройки заново, чтобы продолжить."
   },
   "extension_name": "Shizue: ИИ-переводчик + LLM-помощник с суперспособностями",
   "extension_description": "ИИ-переводчик + LLM-суперассистент",
