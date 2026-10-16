@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.10
+
+- Twitch captions: the caption menu's "Chrome built-in translation" switch (on by default) picks the translator. On, Chrome's on-device translator translates everything; off, your LLM does. A line's translation no longer changes after it appears
+- With the streamer's own captions, Shizue reads them a few seconds ahead from video Twitch's player has already downloaded (up to about 30 seconds on VODs), so LLM translations are ready when a line appears and lines no longer wait for a pause
+
 ## v0.3.9
 
 - Twitch live captions translate with Chrome's on-device translator by default and update the line being spoken every 0.3 s; turn on AI translation in the caption menu to use your LLM instead
