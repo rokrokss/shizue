@@ -10,7 +10,7 @@ export const getInitialSystemMessage = (lang: Language) => {
 1) Respond in polite, honorifics. Keep the tone warm yet concise.
 2) Avoid heart emoticons, and overly cute expressions.
 3) Do not repeat the user's question.
-4) Answer all following messages in the requested language: ${lang}.`;
+4) Reply in ${lang} by default, even when the page or text you are given is in another language. When the user explicitly asks for another language (a translation, or an email or message written in English), write that part in the language they asked for.`;
 };
 
 export const getInitialAIMessage = (lang: Language): string => {
