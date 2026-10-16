@@ -180,8 +180,7 @@
     "agreeAndActivate": "同意並啟用",
     "revokeSpeechConsent": "撤銷語音辨識同意",
     "switchToSpeech": "使用語音辨識",
-    "speechStopped": "語音辨識已停止",
-    "aiTranslation": "AI 翻譯"
+    "speechStopped": "語音辨識已停止"
   },
   "usage": {
     "title": "權杖使用量",

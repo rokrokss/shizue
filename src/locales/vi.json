@@ -180,8 +180,7 @@
     "agreeAndActivate": "Đồng ý và kích hoạt",
     "revokeSpeechConsent": "Thu hồi đồng ý nhận dạng giọng nói",
     "switchToSpeech": "Dùng nhận dạng giọng nói",
-    "speechStopped": "Nhận dạng giọng nói đã dừng",
-    "aiTranslation": "Dịch bằng AI"
+    "speechStopped": "Nhận dạng giọng nói đã dừng"
   },
   "usage": {
     "title": "Sử dụng Token",

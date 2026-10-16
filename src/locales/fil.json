@@ -180,8 +180,7 @@
     "agreeAndActivate": "Pumayag at i-activate",
     "revokeSpeechConsent": "Bawiin ang pahintulot sa speech recognition",
     "switchToSpeech": "Gamitin ang speech recognition",
-    "speechStopped": "Huminto ang speech recognition",
-    "aiTranslation": "Pagsasalin gamit ang AI"
+    "speechStopped": "Huminto ang speech recognition"
   },
   "usage": {
     "title": "Paggamit ng Token",

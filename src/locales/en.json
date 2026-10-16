@@ -188,8 +188,7 @@
     "agreeAndActivate": "Agree and activate",
     "revokeSpeechConsent": "Revoke speech recognition consent",
     "switchToSpeech": "Use speech recognition",
-    "speechStopped": "Speech recognition stopped",
-    "aiTranslation": "AI translation"
+    "speechStopped": "Speech recognition stopped"
   },
   "home": {
     "title": "Go to Home"

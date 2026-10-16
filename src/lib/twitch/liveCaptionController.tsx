@@ -45,11 +45,18 @@ export type ActivateOptions = CaptionSettings & {
   mode: CaptionSourceMode;
   // The viewer agreed to speech recognition; without it the speech source is never started.
   speechAllowed: boolean;
-  // Translate with the chosen LLM instead of Chrome's on-device translator.
-  aiTranslation: boolean;
+  // A model is set up for translation; without one Chrome's on-device translation is all there is.
+  llmAvailable: boolean;
 };
 
-type Line = { id: string; original: string; translation: string | null | undefined; changedAt: number };
+// `llm`: the translation is the LLM's, which Chrome's no longer replaces.
+type Line = {
+  id: string;
+  original: string;
+  translation: string | null | undefined;
+  llm?: boolean;
+  changedAt: number;
+};
 
 export type CaptionStatus = {
   // Caption sources that produced text on this channel or video, plus 'stt' when supported.
@@ -101,7 +108,9 @@ class TwitchLiveCaptions {
   private settings: CaptionSettings | null = null;
   private mode: CaptionSourceMode = 'auto';
   private speechAllowed = false;
-  private aiTranslation = false;
+  private llmAvailable = false;
+  // Line IDs stay unique across sources: each new segmenter numbers its sentences from 1.
+  private lineSequence = 0;
   private activeSource: CaptionSource | null = null;
   private segmenter: Segmenter | null = null;
   private queue: TranslationQueue | null = null;
@@ -211,7 +220,7 @@ class TwitchLiveCaptions {
           this.onDeviceSpeech === 'downloading' &&
           this.speechRelevant(this.mode)) ||
         (!!this.settings &&
-          this.usesChromeTranslation() &&
+          isChromeTranslatorSupported() &&
           isChromeTranslatorPending(this.speechLanguage, this.settings.targetLanguage)),
       speechLanguage: this.speechLanguage,
       speechError: this.speechError,
@@ -293,9 +302,11 @@ class TwitchLiveCaptions {
       onSentence: (sentence) => {
         // The committed words leave the interim, so its translation no longer matches.
         this.clearInterimTranslation();
-        const line = { id: sentence.id, original: sentence.text, translation: undefined, changedAt: Date.now() };
+        const id = `l${++this.lineSequence}`;
+        const line = { id, original: sentence.text, translation: undefined, changedAt: Date.now() };
         this.lines = [...this.lines, line].slice(-20);
-        this.queue?.enqueue(sentence);
+        this.translateLineOnDevice(id, sentence.text);
+        if (this.llmAvailable) this.queue?.enqueue({ ...sentence, id });
       },
     });
   }
@@ -306,7 +317,7 @@ class TwitchLiveCaptions {
   }
 
   private scheduleInterimTranslation() {
-    if (this.interimTimer || !this.interim || !this.usesChromeTranslation()) return;
+    if (this.interimTimer || !this.interim || !isChromeTranslatorSupported()) return;
     this.interimTimer = setTimeout(() => {
       this.interimTimer = null;
       const text = this.interim;
@@ -319,6 +330,19 @@ class TwitchLiveCaptions {
         this.interimChangedAt = Date.now();
       });
     }, LIVE_TRANSLATION_MS);
+  }
+
+  // Chrome's translation shows in milliseconds; the LLM's, with context, replaces it when it comes.
+  private translateLineOnDevice(id: string, text: string) {
+    const target = this.settings?.targetLanguage;
+    if (!target || !isChromeTranslatorSupported()) return;
+    void translateOnDevice(this.speechLanguage, target, [text]).then((translations) => {
+      const translation = translations?.[0];
+      if (!translation) return;
+      this.lines = this.lines.map((line) =>
+        line.id === id && !line.llm ? { ...line, translation, changedAt: Date.now() } : line
+      );
+    });
   }
 
   // Stream Closed Captioner text, relayed from its frame.
@@ -382,24 +406,12 @@ class TwitchLiveCaptions {
     this.emit();
   }
 
-  // Chrome's on-device translator, unless the viewer turned on AI translation (or Chrome has none).
-  private usesChromeTranslation() {
-    return !this.aiTranslation && isChromeTranslatorSupported();
-  }
-
   // Call it from a click: the translator's model may need downloading.
   private prepareTranslation() {
     const target = this.settings?.targetLanguage;
-    if (!target || !this.usesChromeTranslation()) return;
+    if (!target || !isChromeTranslatorSupported()) return;
     void prepareChromeTranslator(this.speechLanguage, target).then(() => this.emit());
     this.emit();
-  }
-
-  // The AI translation switch in the menu (a click).
-  setAiTranslation(on: boolean) {
-    this.aiTranslation = on;
-    if (on) this.clearInterimTranslation();
-    this.prepareTranslation();
   }
 
   // Also called when the menu opens: Chrome may have finished a download in the meantime.
@@ -466,10 +478,10 @@ class TwitchLiveCaptions {
 
   activate(options: ActivateOptions) {
     if (this.settings) this.deactivate();
-    const { mode, speechAllowed, aiTranslation, ...settings } = options;
+    const { mode, speechAllowed, llmAvailable, ...settings } = options;
     this.mode = mode;
     this.speechAllowed = speechAllowed;
-    this.aiTranslation = aiTranslation;
+    this.llmAvailable = llmAvailable;
     this.settings = settings;
     this.metadata = streamMetadata();
     this.activatedAt = Date.now();
@@ -480,18 +492,15 @@ class TwitchLiveCaptions {
       translate: async (texts, context) => {
         const target = this.settings?.targetLanguage;
         if (!target) return null;
-        if (this.usesChromeTranslation()) {
-          const translations = await translateOnDevice(this.speechLanguage, target, texts);
-          // undefined: Chrome can't translate this pair on this device, so the LLM does.
-          if (translations !== undefined) return translations;
-        }
         const result = await translationService.translateLiveCaption(texts, context, target, this.metadata);
         if (!result?.success) debugLog('[Twitch] live caption translation failed', result?.error);
         return result?.success ? (result.translations ?? null) : null;
       },
       onResult: (id, translation) => {
+        // A dropped or failed request keeps Chrome's translation.
+        if (!translation) return;
         this.lines = this.lines.map((line) =>
-          line.id === id ? { ...line, translation, changedAt: Date.now() } : line
+          line.id === id ? { ...line, translation, llm: true, changedAt: Date.now() } : line
         );
       },
     });

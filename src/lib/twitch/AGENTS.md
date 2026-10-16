@@ -36,9 +36,10 @@ Twitch has no caption track or caption API, so captions are translated as they a
 
 `lib/liveCaption/translationQueue.ts` sends 1–3 sentences at a time.
 
-- Chrome's on-device Translator API (`chromeTranslator.ts`) is the default; the menu's "AI translation" switch (`STORAGE_TWITCH_AI_TRANSLATION`) uses the chosen LLM instead. Chrome takes milliseconds per line and needs no API key, so the Twitch menu opens without one. Turning AI translation on without a model opens the side panel instead.
-- A model download needs a recent click: activating, the switch and picking a language prepare the language pair. `create()` stays pending when Chrome can't fetch the model, so it times out after 90 s. A pair Chrome can't translate falls back to the LLM. `Translator` is looked up at call time so tests can install a stand-in.
-- With Chrome's translator, the words still being spoken are translated too, at most every 300 ms, and show as the newest line. The LLM doesn't do this, because it would be a request every 300 ms.
+- There is no choice of translator. Chrome's on-device Translator API (`chromeTranslator.ts`) translates every line first: it takes milliseconds and needs no API key, so the Twitch menu opens without one. With a model set up, the LLM's translation, which has context, then replaces each committed line (`Line.llm`); a failed or dropped LLM request keeps Chrome's.
+- Line IDs are the controller's own (`l1`, `l2`, …), because each new segmenter numbers its sentences from 1 and late translations would land on the wrong line.
+- A model download needs a recent click: activating and picking a language prepare the language pair. `create()` stays pending when Chrome can't fetch the model, so it times out after 90 s. Lines show their original until a translation arrives. `Translator` is looked up at call time so tests can install a stand-in.
+- The words still being spoken are translated by Chrome too, at most every 300 ms, and show as the newest line. The LLM doesn't do this, because it would be a request every 300 ms.
 - The LLM path is `MESSAGE_TRANSLATE_LIVE_CAPTION`, with the same JSON contract and halves retry as YouTube, the last 3 translated pairs as context, and at most 2 requests in flight. Sentences still waiting after 15 s are dropped.
 
 ## Overlay

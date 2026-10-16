@@ -180,8 +180,7 @@
     "agreeAndActivate": "متفق ہوں اور فعال کریں",
     "revokeSpeechConsent": "آواز کی شناخت کی رضامندی واپس لیں",
     "switchToSpeech": "آواز کی شناخت استعمال کریں",
-    "speechStopped": "آواز کی شناخت رک گئی",
-    "aiTranslation": "AI ترجمہ"
+    "speechStopped": "آواز کی شناخت رک گئی"
   },
   "usage": {
     "title": "ٹوکن کا استعمال",

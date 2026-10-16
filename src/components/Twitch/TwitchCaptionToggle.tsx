@@ -10,7 +10,6 @@ import {
   useShowTwitchCaptionToggleValue,
   useShowYoutubeBilingualCaption,
   useSpeechRecognitionConsent,
-  useTwitchAiTranslation,
   useTwitchCaptionSource,
   useTwitchChannelLanguage,
   useYoutubeCaptionSizeRatio,
@@ -70,11 +69,11 @@ const TwitchCaptionToggle = () => {
   const [sourceMode, setSourceMode] = useTwitchCaptionSource();
   const [consent, setConsent] = useSpeechRecognitionConsent();
   const [channelLanguages, setChannelLanguages] = useTwitchChannelLanguage();
-  const [aiTranslation, setAiTranslation] = useTwitchAiTranslation();
   const showToggle = useShowTwitchCaptionToggleValue();
   const anyModelAvailable = useAnyModelAvailable();
-  // Chrome's on-device translator by default; the switch hands translation to the chosen LLM.
-  const chromeTranslation = !aiTranslation && isChromeTranslatorSupported();
+  // Chrome's on-device translator shows translations right away and needs no API key; with a
+  // model set up, the LLM's translation replaces each line when it comes.
+  const chromeTranslation = isChromeTranslatorSupported();
 
   useEffect(() => controller.subscribe(setStatus), [controller]);
 
@@ -171,7 +170,7 @@ const TwitchCaptionToggle = () => {
   const activate = (speechAllowed: boolean) => {
     setIsDropdownOpen(false);
     setOpenPopover(null);
-    controller.activate({ ...settings, mode: sourceMode, speechAllowed, aiTranslation });
+    controller.activate({ ...settings, mode: sourceMode, speechAllowed, llmAvailable: anyModelAvailable });
     const video = document.querySelector('video');
     if (isTwitchVod() && video?.paused) void video.play();
   };
@@ -198,16 +197,9 @@ const TwitchCaptionToggle = () => {
     const mode = value as TwitchCaptionSourceMode;
     void setSourceMode(mode);
     // Switching while captions are on takes effect right away.
-    if (status.active) controller.activate({ ...settings, mode, speechAllowed: consent, aiTranslation });
-  };
-
-  const handleAiTranslationChange = (on: boolean) => {
-    if (on && !anyModelAvailable) {
-      panelService.openPanel();
-      return;
+    if (status.active) {
+      controller.activate({ ...settings, mode, speechAllowed: consent, llmAvailable: anyModelAvailable });
     }
-    void setAiTranslation(on);
-    controller.setAiTranslation(on);
   };
 
   const handleSelectSpeechLanguage = (value: string) => {
@@ -330,18 +322,6 @@ const TwitchCaptionToggle = () => {
                     onOpenChange={(open) => setOpenPopover(open ? 'speech' : null)}
                     onSelect={handleSelectSpeechLanguage}
                   />
-                ),
-              },
-            ]
-          : []),
-        ...(isChromeTranslatorSupported()
-          ? [
-              {
-                key: 'aiTranslation',
-                label: (
-                  <CaptionMenuRow label={t('twitch.aiTranslation')}>
-                    <Switch size="small" checked={aiTranslation} onChange={handleAiTranslationChange} />
-                  </CaptionMenuRow>
                 ),
               },
             ]

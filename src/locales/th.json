@@ -180,8 +180,7 @@
     "agreeAndActivate": "ยอมรับและเปิดใช้งาน",
     "revokeSpeechConsent": "เพิกถอนความยินยอมการรู้จำเสียงพูด",
     "switchToSpeech": "ใช้การรู้จำเสียงพูด",
-    "speechStopped": "การรู้จำเสียงพูดหยุดทำงาน",
-    "aiTranslation": "แปลด้วย AI"
+    "speechStopped": "การรู้จำเสียงพูดหยุดทำงาน"
   },
   "usage": {
     "title": "การใช้โทเค็น",

@@ -180,8 +180,7 @@
     "agreeAndActivate": "Aceptar y activar",
     "revokeSpeechConsent": "Retirar el consentimiento del reconocimiento de voz",
     "switchToSpeech": "Usar reconocimiento de voz",
-    "speechStopped": "El reconocimiento de voz se detuvo",
-    "aiTranslation": "Traducción con IA"
+    "speechStopped": "El reconocimiento de voz se detuvo"
   },
   "usage": {
     "title": "Uso de Tokens",
