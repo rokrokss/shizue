@@ -180,7 +180,8 @@
     "agreeAndActivate": "Согласиться и активировать",
     "revokeSpeechConsent": "Отозвать согласие на распознавание речи",
     "switchToSpeech": "Использовать распознавание речи",
-    "speechStopped": "Распознавание речи остановлено"
+    "speechStopped": "Распознавание речи остановлено",
+    "chromeTranslation": "Встроенный перевод Chrome"
   },
   "usage": {
     "title": "Использование токенов",

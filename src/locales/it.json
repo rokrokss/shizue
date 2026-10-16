@@ -180,7 +180,8 @@
     "agreeAndActivate": "Accetta e attiva",
     "revokeSpeechConsent": "Revoca il consenso al riconoscimento vocale",
     "switchToSpeech": "Usa il riconoscimento vocale",
-    "speechStopped": "Il riconoscimento vocale si è interrotto"
+    "speechStopped": "Il riconoscimento vocale si è interrotto",
+    "chromeTranslation": "Traduzione integrata di Chrome"
   },
   "usage": {
     "title": "Utilizzo Token",

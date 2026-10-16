@@ -180,7 +180,8 @@
     "agreeAndActivate": "Pumayag at i-activate",
     "revokeSpeechConsent": "Bawiin ang pahintulot sa speech recognition",
     "switchToSpeech": "Gamitin ang speech recognition",
-    "speechStopped": "Huminto ang speech recognition"
+    "speechStopped": "Huminto ang speech recognition",
+    "chromeTranslation": "Built-in na pagsasalin ng Chrome"
   },
   "usage": {
     "title": "Paggamit ng Token",

@@ -180,7 +180,8 @@
     "agreeAndActivate": "同意并激活",
     "revokeSpeechConsent": "撤销语音识别同意",
     "switchToSpeech": "使用语音识别",
-    "speechStopped": "语音识别已停止"
+    "speechStopped": "语音识别已停止",
+    "chromeTranslation": "Chrome 内置翻译"
   },
   "usage": {
     "title": "令牌使用量",

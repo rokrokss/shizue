@@ -180,7 +180,8 @@
     "agreeAndActivate": "موافقت و فعال‌سازی",
     "revokeSpeechConsent": "لغو رضایت تشخیص گفتار",
     "switchToSpeech": "استفاده از تشخیص گفتار",
-    "speechStopped": "تشخیص گفتار متوقف شد"
+    "speechStopped": "تشخیص گفتار متوقف شد",
+    "chromeTranslation": "ترجمهٔ داخلی Chrome"
   },
   "usage": {
     "title": "استفاده از توکن",

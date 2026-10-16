@@ -16,7 +16,7 @@ Shizue's developers **do not operate any server that receives your data from Shi
   * Page summary: the page title and page text.
   * Page translation: the text of the page elements being translated.
   * YouTube caption translation: the caption text and the video's details (title, description, channel, keywords, duration).
-  * Twitch caption translation: the caption text, the last few caption lines and their translations as context, and the stream's title, category, and channel. Each line is first translated by Chrome's built-in on-device translator (the Translator API), which keeps the text on your device (Chrome downloads its translation model for the language pair from Google); when you have set up an AI provider, its translation then replaces Chrome's. Without one, only Chrome's on-device translation is used. Shizue reads the captions from Twitch's player, from the Stream Closed Captioner extension on that page, or from speech recognition (below).
+  * Twitch caption translation: the caption text, the last few caption lines and their translations as context, and the stream's title, category, and channel. By default ("Chrome built-in translation" on in the caption menu), Twitch captions are translated only by Chrome's built-in on-device translator (the Translator API), and the text stays on your device (Chrome downloads its translation model for the language pair from Google). With that switch off, they are sent to your AI provider as above; for the broadcaster's own captions this includes captions Shizue reads a few seconds ahead from video Twitch's player has already buffered. Shizue reads the captions from Twitch's player, from the Stream Closed Captioner extension on that page, or from speech recognition (below).
   * Image description and text extraction: the selected image.
 
   This content is handled under the provider's own terms and privacy policy ([OpenAI](https://openai.com/policies/privacy-policy), [Google](https://policies.google.com/privacy), [Anthropic](https://www.anthropic.com/legal/privacy), [OpenRouter](https://openrouter.ai/privacy)). Nothing is sent until you use a feature.
@@ -58,7 +58,7 @@ Shizue 개발자는 **Shizue의 기능으로 여러분의 데이터를 받는 �
   * 페이지 요약: 페이지 제목과 본문 텍스트
   * 페이지 번역: 번역 대상 요소의 텍스트
   * 유튜브 자막 번역: 자막 텍스트와 영상 정보(제목, 설명, 채널, 키워드, 길이)
-  * 트위치 자막 번역: 자막 텍스트, 문맥으로 쓰는 직전 자막 몇 줄과 그 번역, 방송 정보(제목, 카테고리, 채널). 각 줄은 먼저 크롬 내장 기기 내 번역기(Translator API)가 번역하며, 이 번역에서는 텍스트가 기기 밖으로 나가지 않습니다(크롬이 언어 쌍의 번역 모델을 Google에서 내려받습니다). AI 제공사를 설정해 두었다면 그 제공사의 번역이 이어서 크롬 번역을 대신합니다. 설정하지 않았다면 크롬의 기기 내 번역만 사용합니다. Shizue는 자막을 트위치 플레이어, 그 페이지의 Stream Closed Captioner 확장, 또는 아래의 음성 인식에서 읽습니다.
+  * 트위치 자막 번역: 자막 텍스트, 문맥으로 쓰는 직전 자막 몇 줄과 그 번역, 방송 정보(제목, 카테고리, 채널). 기본적으로(자막 메뉴의 "크롬 내장 번역" 켜짐) 트위치 자막은 크롬 내장 기기 내 번역기(Translator API)만 번역하며, 텍스트는 기기 밖으로 나가지 않습니다(크롬이 언어 쌍의 번역 모델을 Google에서 내려받습니다). 이 스위치를 끄면 자막은 위와 같이 AI 제공사로 전송되며, 스트리머가 넣은 자막의 경우 트위치 플레이어가 이미 받아 둔 영상에서 몇 초 앞서 읽은 자막도 포함됩니다. Shizue는 자막을 트위치 플레이어, 그 페이지의 Stream Closed Captioner 확장, 또는 아래의 음성 인식에서 읽습니다.
   * 이미지 설명 및 텍스트 추출: 선택한 이미지
 
   이 콘텐츠는 각 제공사의 약관과 개인정보처리방침([OpenAI](https://openai.com/policies/privacy-policy), [Google](https://policies.google.com/privacy), [Anthropic](https://www.anthropic.com/legal/privacy), [OpenRouter](https://openrouter.ai/privacy))에 따라 처리됩니다. 기능을 사용하기 전에는 아무것도 전송되지 않습니다.

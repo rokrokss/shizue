@@ -180,7 +180,8 @@
     "agreeAndActivate": "متفق ہوں اور فعال کریں",
     "revokeSpeechConsent": "آواز کی شناخت کی رضامندی واپس لیں",
     "switchToSpeech": "آواز کی شناخت استعمال کریں",
-    "speechStopped": "آواز کی شناخت رک گئی"
+    "speechStopped": "آواز کی شناخت رک گئی",
+    "chromeTranslation": "Chrome کا بلٹ اِن ترجمہ"
   },
   "usage": {
     "title": "ٹوکن کا استعمال",

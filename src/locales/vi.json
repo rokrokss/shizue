@@ -180,7 +180,8 @@
     "agreeAndActivate": "Đồng ý và kích hoạt",
     "revokeSpeechConsent": "Thu hồi đồng ý nhận dạng giọng nói",
     "switchToSpeech": "Dùng nhận dạng giọng nói",
-    "speechStopped": "Nhận dạng giọng nói đã dừng"
+    "speechStopped": "Nhận dạng giọng nói đã dừng",
+    "chromeTranslation": "Dịch tích hợp của Chrome"
   },
   "usage": {
     "title": "Sử dụng Token",

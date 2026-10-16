@@ -180,7 +180,8 @@
     "agreeAndActivate": "Zustimmen und aktivieren",
     "revokeSpeechConsent": "Zustimmung zur Spracherkennung widerrufen",
     "switchToSpeech": "Spracherkennung verwenden",
-    "speechStopped": "Spracherkennung wurde beendet"
+    "speechStopped": "Spracherkennung wurde beendet",
+    "chromeTranslation": "Integrierte Chrome-Übersetzung"
   },
   "usage": {
     "title": "Token-Verbrauch",

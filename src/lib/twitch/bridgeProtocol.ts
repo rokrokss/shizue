@@ -12,6 +12,9 @@ export type BridgeMessage =
   | { type: 'seeked' }
   // The page's player object was replaced or found for the first time.
   | { type: 'player' }
+  // CEA-608 byte pairs [presentation time s, byte 1, byte 2] read from the video the player has
+  // buffered but not shown yet (twitch-player-worker.content).
+  | { type: 'captionData'; pairs: number[][] }
   // The broadcast language of the channel (or of a VOD's channel), e.g. "EN"; null if unknown.
   | { type: 'language'; path: string; login: string | null; code: string | null };
 

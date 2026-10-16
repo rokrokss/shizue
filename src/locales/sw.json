@@ -180,7 +180,8 @@
     "agreeAndActivate": "Kubali na amilisha",
     "revokeSpeechConsent": "Ondoa idhini ya utambuzi wa sauti",
     "switchToSpeech": "Tumia utambuzi wa sauti",
-    "speechStopped": "Utambuzi wa sauti umesimama"
+    "speechStopped": "Utambuzi wa sauti umesimama",
+    "chromeTranslation": "Tafsiri iliyojengwa ndani ya Chrome"
   },
   "usage": {
     "title": "Matumizi ya Token",

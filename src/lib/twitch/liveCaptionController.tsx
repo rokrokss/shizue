@@ -3,6 +3,7 @@ import { CaptionDisplay } from '@/components/Youtube/CaptionDisplay';
 import { Language } from '@/hooks/language';
 import { createSegmenter, Segmenter } from '@/lib/liveCaption/segmenter';
 import { createTranslationQueue, TranslationQueue } from '@/lib/liveCaption/translationQueue';
+import type { TranslationContext } from '@/lib/liveCaption/types';
 import type { LiveCaptionMetadata } from '@/lib/prompts';
 import {
   BRIDGE_TO_CONTENT_EVENT,
@@ -12,10 +13,10 @@ import {
 import { MESSAGE_SCC_SET_HIDDEN, STORAGE_TWITCH_CHANNEL_LANGUAGE } from '@/config/constants';
 import {
   isChromeTranslatorPending,
-  isChromeTranslatorSupported,
   prepareChromeTranslator,
   translateOnDevice,
 } from '@/lib/twitch/chromeTranslator';
+import { CaptionPrefetch, chunkKey, createCaptionPrefetch } from '@/lib/twitch/captionPrefetch';
 import { speechLanguageForTwitchCode } from '@/lib/twitch/speechLanguage';
 import {
   getWebSpeechSource,
@@ -45,18 +46,12 @@ export type ActivateOptions = CaptionSettings & {
   mode: CaptionSourceMode;
   // The viewer agreed to speech recognition; without it the speech source is never started.
   speechAllowed: boolean;
-  // A model is set up for translation; without one Chrome's on-device translation is all there is.
-  llmAvailable: boolean;
+  // Chrome's on-device translator translates everything; otherwise only the LLM does. A line's
+  // translation never changes once shown.
+  chromeTranslation: boolean;
 };
 
-// `llm`: the translation is the LLM's, which Chrome's no longer replaces.
-type Line = {
-  id: string;
-  original: string;
-  translation: string | null | undefined;
-  llm?: boolean;
-  changedAt: number;
-};
+type Line = { id: string; original: string; translation: string | null | undefined; changedAt: number };
 
 export type CaptionStatus = {
   // Caption sources that produced text on this channel or video, plus 'stt' when supported.
@@ -94,6 +89,10 @@ const AD_SELECTOR = '[data-a-target="video-ad-label"], [data-a-target="video-ad-
 
 export const isTwitchVod = () => location.pathname.startsWith('/videos/');
 
+const playerVideo = () =>
+  document.querySelector<HTMLVideoElement>('.video-player__container video') ??
+  document.querySelector('video');
+
 const channelLogin = () => (isTwitchVod() ? null : location.pathname.split('/')[1] || null);
 
 const streamMetadata = (): LiveCaptionMetadata => ({
@@ -108,12 +107,14 @@ class TwitchLiveCaptions {
   private settings: CaptionSettings | null = null;
   private mode: CaptionSourceMode = 'auto';
   private speechAllowed = false;
-  private llmAvailable = false;
+  private chromeTranslation = false;
   // Line IDs stay unique across sources: each new segmenter numbers its sentences from 1.
   private lineSequence = 0;
   private activeSource: CaptionSource | null = null;
   private segmenter: Segmenter | null = null;
   private queue: TranslationQueue | null = null;
+  // Broadcaster captions read ahead of playback from the player's buffered video.
+  private prefetch: CaptionPrefetch | null = null;
   private lines: Line[] = [];
   private interim = '';
   private interimChangedAt = 0;
@@ -149,6 +150,7 @@ class TwitchLiveCaptions {
       if (!message) return;
       if (message.type === 'cue') this.handleCaptions('cea608', message.text.replace(/\r\n/g, ' '));
       else if (message.type === 'seeked') this.restart('seeked');
+      else if (message.type === 'captionData') this.handleCaptionData(message.pairs);
       else if (message.type === 'state') this.handlePlayerState(message.paused);
       else if (message.type === 'language' && message.path === location.pathname) {
         this.languagePath = message.path;
@@ -220,7 +222,7 @@ class TwitchLiveCaptions {
           this.onDeviceSpeech === 'downloading' &&
           this.speechRelevant(this.mode)) ||
         (!!this.settings &&
-          isChromeTranslatorSupported() &&
+          this.chromeTranslation &&
           isChromeTranslatorPending(this.speechLanguage, this.settings.targetLanguage)),
       speechLanguage: this.speechLanguage,
       speechError: this.speechError,
@@ -297,16 +299,28 @@ class TwitchLiveCaptions {
         this.interim = text;
         this.interimChangedAt = Date.now();
         if (!text) this.clearInterimTranslation();
+        // The buffered captions already show this chunk ends here: don't wait for the pause.
+        if (this.prefetch?.isComplete(text)) {
+          this.segmenter?.commitPending(Date.now());
+          return;
+        }
         this.scheduleInterimTranslation();
       },
       onSentence: (sentence) => {
         // The committed words leave the interim, so its translation no longer matches.
         this.clearInterimTranslation();
         const id = `l${++this.lineSequence}`;
-        const line = { id, original: sentence.text, translation: undefined, changedAt: Date.now() };
-        this.lines = [...this.lines, line].slice(-20);
-        this.translateLineOnDevice(id, sentence.text);
-        if (this.llmAvailable) this.queue?.enqueue({ ...sentence, id });
+        if (this.chromeTranslation) {
+          this.lines = [...this.lines, { id, original: sentence.text, translation: undefined, changedAt: Date.now() }].slice(-20);
+          this.translateLineOnDevice(id, sentence.text);
+          return;
+        }
+        // The LLM: a translation requested ahead shows at once, or fills the line when it comes
+        // (applyPrefetched); a line it doesn't cover is translated now and shows its original until then.
+        const prefetched = this.prefetch?.chunk(sentence.text);
+        const translation = prefetched?.status === 'done' ? prefetched.translation : undefined;
+        this.lines = [...this.lines, { id, original: sentence.text, translation, changedAt: Date.now() }].slice(-20);
+        if (!prefetched || prefetched.status === 'unavailable') this.queue?.enqueue({ ...sentence, id });
       },
     });
   }
@@ -317,7 +331,7 @@ class TwitchLiveCaptions {
   }
 
   private scheduleInterimTranslation() {
-    if (this.interimTimer || !this.interim || !isChromeTranslatorSupported()) return;
+    if (this.interimTimer || !this.interim || !this.chromeTranslation) return;
     this.interimTimer = setTimeout(() => {
       this.interimTimer = null;
       const text = this.interim;
@@ -332,18 +346,49 @@ class TwitchLiveCaptions {
     }, LIVE_TRANSLATION_MS);
   }
 
-  // Chrome's translation shows in milliseconds; the LLM's, with context, replaces it when it comes.
+  // Chrome's translation shows in milliseconds.
   private translateLineOnDevice(id: string, text: string) {
     const target = this.settings?.targetLanguage;
-    if (!target || !isChromeTranslatorSupported()) return;
+    if (!target) return;
     void translateOnDevice(this.speechLanguage, target, [text]).then((translations) => {
       const translation = translations?.[0];
       if (!translation) return;
-      this.lines = this.lines.map((line) =>
-        line.id === id && !line.llm ? { ...line, translation, changedAt: Date.now() } : line
-      );
+      this.lines = this.lines.map((line) => (line.id === id ? { ...line, translation, changedAt: Date.now() } : line));
     });
   }
+
+  // CEA-608 pairs from the player's buffered video (twitch-player-worker.content).
+  private handleCaptionData(pairs: number[][]) {
+    if (!this.prefetch || this.activeSource !== 'cea608') return;
+    const video = playerVideo();
+    if (video) this.prefetch.add(pairs, video.currentTime);
+  }
+
+  // Lets the read-ahead captions know how far the player has buffered (see advance()).
+  private advancePrefetch() {
+    const video = playerVideo();
+    if (!this.prefetch || this.activeSource !== 'cea608' || !video) return;
+    const { buffered, currentTime } = video;
+    for (let i = 0; i < buffered.length; i++) {
+      if (buffered.start(i) <= currentTime && currentTime <= buffered.end(i)) {
+        this.prefetch.advance(buffered.end(i));
+      }
+    }
+  }
+
+  private applyPrefetched(key: string, translation: string) {
+    this.lines = this.lines.map((line) =>
+      !line.translation && chunkKey(line.original) === key ? { ...line, translation, changedAt: Date.now() } : line
+    );
+  }
+
+  private translateWithLlm = async (texts: string[], context: TranslationContext[]) => {
+    const target = this.settings?.targetLanguage;
+    if (!target) return null;
+    const result = await translationService.translateLiveCaption(texts, context, target, this.metadata);
+    if (!result?.success) debugLog('[Twitch] live caption translation failed', result?.error);
+    return result?.success ? (result.translations ?? null) : null;
+  };
 
   // Stream Closed Captioner text, relayed from its frame.
   handleSccSnapshot(text: string) {
@@ -409,7 +454,7 @@ class TwitchLiveCaptions {
   // Call it from a click: the translator's model may need downloading.
   private prepareTranslation() {
     const target = this.settings?.targetLanguage;
-    if (!target || !isChromeTranslatorSupported()) return;
+    if (!target || !this.chromeTranslation) return;
     void prepareChromeTranslator(this.speechLanguage, target).then(() => this.emit());
     this.emit();
   }
@@ -478,29 +523,29 @@ class TwitchLiveCaptions {
 
   activate(options: ActivateOptions) {
     if (this.settings) this.deactivate();
-    const { mode, speechAllowed, llmAvailable, ...settings } = options;
+    const { mode, speechAllowed, chromeTranslation, ...settings } = options;
     this.mode = mode;
     this.speechAllowed = speechAllowed;
-    this.llmAvailable = llmAvailable;
+    this.chromeTranslation = chromeTranslation;
     this.settings = settings;
     this.metadata = streamMetadata();
     this.activatedAt = Date.now();
     this.loading = true;
     this.segmenter = this.createSegmenterFor(null);
+    this.prefetch = createCaptionPrefetch({
+      translate: chromeTranslation ? null : this.translateWithLlm,
+      onTranslation: (key, translation) => this.applyPrefetched(key, translation),
+      onChunk: () => {
+        if (this.interim && this.prefetch?.isComplete(this.interim)) this.segmenter?.commitPending(Date.now());
+      },
+      position: () => playerVideo()?.currentTime ?? null,
+    });
     this.queue = createTranslationQueue({
       now: () => Date.now(),
-      translate: async (texts, context) => {
-        const target = this.settings?.targetLanguage;
-        if (!target) return null;
-        const result = await translationService.translateLiveCaption(texts, context, target, this.metadata);
-        if (!result?.success) debugLog('[Twitch] live caption translation failed', result?.error);
-        return result?.success ? (result.translations ?? null) : null;
-      },
+      translate: this.translateWithLlm,
       onResult: (id, translation) => {
-        // A dropped or failed request keeps Chrome's translation.
-        if (!translation) return;
         this.lines = this.lines.map((line) =>
-          line.id === id ? { ...line, translation, llm: true, changedAt: Date.now() } : line
+          line.id === id ? { ...line, translation, changedAt: Date.now() } : line
         );
       },
     });
@@ -537,6 +582,8 @@ class TwitchLiveCaptions {
     this.tickTimer = null;
     this.queue?.clear();
     this.queue = null;
+    this.prefetch?.dispose();
+    this.prefetch = null;
     this.segmenter = null;
     this.settings = null;
     this.lines = [];
@@ -558,6 +605,8 @@ class TwitchLiveCaptions {
     debugLog('[Twitch] restarting live captions:', reason);
     this.segmenter?.push({ kind: 'break', at: Date.now() });
     this.queue?.clear();
+    // An ad only pauses the stream; a seek or another channel breaks what was read ahead.
+    if (reason !== 'ad') this.prefetch?.reset(reason === 'navigation');
     this.lines = [];
     this.interim = '';
     this.clearInterimTranslation();
@@ -579,6 +628,7 @@ class TwitchLiveCaptions {
 
   private tick() {
     const now = Date.now();
+    this.advancePrefetch();
     this.segmenter?.tick(now);
     if (this.loading && (this.lines.length > 0 || now - this.activatedAt > LOADING_TIMEOUT_MS)) {
       this.loading = false;

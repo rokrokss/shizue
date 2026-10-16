@@ -36,11 +36,25 @@ Twitch has no caption track or caption API, so captions are translated as they a
 
 `lib/liveCaption/translationQueue.ts` sends 1–3 sentences at a time.
 
-- There is no choice of translator. Chrome's on-device Translator API (`chromeTranslator.ts`) translates every line first: it takes milliseconds and needs no API key, so the Twitch menu opens without one. With a model set up, the LLM's translation, which has context, then replaces each committed line (`Line.llm`); a failed or dropped LLM request keeps Chrome's.
+- The menu's "Chrome built-in translation" switch (`STORAGE_TWITCH_CHROME_TRANSLATION`, on by default) picks one translator, and a line's translation never changes once shown: Chrome's translation turning into the LLM's read as a glitch.
+  - On: Chrome's on-device Translator API (`chromeTranslator.ts`) translates everything and no LLM request is made. It takes milliseconds and needs no API key, so the Twitch menu opens without one.
+  - Off: only the LLM, which has context. A line shows its original until its translation arrives, as on YouTube. Turning it off without a model opens the side panel instead.
+  - Browsers without the Translator API hide the switch and use the LLM.
 - Line IDs are the controller's own (`l1`, `l2`, …), because each new segmenter numbers its sentences from 1 and late translations would land on the wrong line.
-- A model download needs a recent click: activating and picking a language prepare the language pair. `create()` stays pending when Chrome can't fetch the model, so it times out after 90 s. Lines show their original until a translation arrives. `Translator` is looked up at call time so tests can install a stand-in.
-- The words still being spoken are translated by Chrome too, at most every 300 ms, and show as the newest line. The LLM doesn't do this, because it would be a request every 300 ms.
+- A model download needs a recent click: activating, the switch and picking a language prepare the language pair. `create()` stays pending when Chrome can't fetch the model, so it times out after 90 s. Lines show their original until a translation arrives. `Translator` is looked up at call time so tests can install a stand-in.
+- With Chrome, the words still being spoken are translated too, at most every 300 ms, and show as the newest line. The LLM doesn't do this, because it would be a request every 300 ms.
 - The LLM path is `MESSAGE_TRANSLATE_LIVE_CAPTION`, with the same JSON contract and halves retry as YouTube, the last 3 translated pairs as context, and at most 2 requests in flight. Sentences still waiting after 15 s are dropped.
+
+## Reading captions ahead (broadcaster CEA-608 only)
+
+Twitch's player appends the stream to a MediaSource inside its worker 1–3 s ahead of playback on live streams and 10–35 s on VODs, and CEA-608 captions ride in that video. Reading them there lets the LLM translate a chunk before the viewer reaches it. Measured on a recorded live stream, 91% of on-screen chunks found their translation requested a median 1.5 s earlier, at about 15% more LLM requests.
+
+- `twitch-player-worker.content` (MAIN world, `document_start`) wraps `Worker`. For the player's worker (a blob that imports `amazon-ivs-wasmworker`), it reads the blob's source with a synchronous XHR and prepends a hook. The hook wraps `SourceBuffer.appendBuffer` there (and in the page) and runs `captionExtractor.ts` on each append. Twitch ad-block userscripts wrap `Worker` the same way, so chaining with them should work (unverified). Anything else passes through, and any error leaves the player untouched.
+- The extractor and the hook are stringified into the worker, so they use nothing from module scope; a test runs the extractor from its source text. They post only `[pts, byte 1, byte 2]` pairs over a `BroadcastChannel`, which the MAIN-world script relays to the isolated world as a `captionData` bridge message. Copying video to the page would be too much at 1080p.
+- `cea608.ts` turns the pairs into the windows PlayerTextCue would report. It follows the player where the player departs from the standard: EOC moves hidden memory to the screen and empties it (no swap), extended characters show straight quotes, and only the state a frame ends with is reported. Tests check it against recorded PlayerTextCue on a pop-on VOD and a three-row pop-on live stream.
+- `captionPrefetch.ts` splits the windows into chunks with the same segmenter, in media time: `at` is the presentation time, frames tick it, and the controller's 100 ms tick passes the end of the buffered range (`advance()`, minus 0.3 s for pairs still in flight), because silent video carries no captions. Pairs outside playback −5 s … +90 s are ignored (Twitch keeps a second worker), frames already read are skipped (a quality switch re-appends them), and `seeked` or playback 90 s behind what was read resets it.
+- With the LLM, each chunk it ends is translated at once. Every chunk is remembered by its words (`chunkKey`) with its media time. Enqueued chunks are stamped with wall time, because the queue drops chunks by `Date.now()`. The first chunk after a reset starts mid-window and is skipped.
+- The on-screen path is unchanged except that, when its pending text matches a chunk read ahead within 1 s of that chunk's media time, it commits without waiting for the pause (`commitPending`, which unlike a break keeps the text for alignment). With the LLM, a matching line shows its translation right away or as soon as the pending request answers; a miss is translated on screen as usual. With Chrome, ending chunks early is all it does. Matching needs the time, because short chunks ("I") recur and a VOD reads half a minute ahead.
 
 ## Overlay
 

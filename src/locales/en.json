@@ -188,7 +188,8 @@
     "agreeAndActivate": "Agree and activate",
     "revokeSpeechConsent": "Revoke speech recognition consent",
     "switchToSpeech": "Use speech recognition",
-    "speechStopped": "Speech recognition stopped"
+    "speechStopped": "Speech recognition stopped",
+    "chromeTranslation": "Chrome built-in translation"
   },
   "home": {
     "title": "Go to Home"
