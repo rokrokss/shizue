@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.3.9
+
+- Twitch live captions translate with Chrome's on-device translator by default and update the line being spoken every 0.3 s; turn on AI translation in the caption menu to use your LLM instead
+- Twitch captions show one line at a time (about 80 characters), and each line disappears after 6 seconds
+- Twitch auto captions use speech recognition only when on-device recognition is available; picking speech recognition downloads the on-device model right away, and consent is asked only for cloud recognition
+- The Twitch caption menu keeps the player controls visible while open, closes when you leave the video and the menu, and opens its submenus to the left
+- Twitch captions find the player more reliably
+- Sign in with ChatGPT is translated into every supported language
+
 ## v0.3.8
 
 - Bilingual captions on Twitch, like on YouTube, for live streams and VODs: Shizue translates the streamer's own captions or Stream Closed Captioner, and recognizes speech on streams without captions (on-device recognition is a one-time download from the caption menu)
