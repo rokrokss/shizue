@@ -8,7 +8,7 @@ import { randomUUID } from 'node:crypto';
 const load = async (source) => {
   const outfile = fileURLToPath(new URL(`../.wxt/live-caption-${randomUUID()}.mjs`, import.meta.url));
   await build({
-    entryPoints: [fileURLToPath(new URL(`../src/lib/liveCaption/${source}.ts`, import.meta.url))],
+    entryPoints: [fileURLToPath(new URL(`../src/lib/${source}.ts`, import.meta.url))],
     outfile,
     bundle: true,
     platform: 'node',
@@ -19,8 +19,11 @@ const load = async (source) => {
   after(() => rm(outfile, { force: true }));
   return import(pathToFileURL(outfile).href);
 };
-const { createSegmenter, tokenize, joinTokens, textWidth } = await load('segmenter');
-const { createTranslationQueue } = await load('translationQueue');
+const { createSegmenter, tokenize, joinTokens, textWidth } = await load('liveCaption/segmenter');
+const { createTranslationQueue } = await load('liveCaption/translationQueue');
+const { createCea608Decoder } = await load('twitch/cea608');
+const { createCaptionExtractor } = await load('twitch/captionExtractor');
+const { createCaptionPrefetch, chunkKey } = await load('twitch/captionPrefetch');
 const fixture = async (name) =>
   JSON.parse(await readFile(new URL(`./fixtures/twitch/${name}`, import.meta.url), 'utf8'));
 
@@ -205,6 +208,224 @@ test('Japanese, Chinese and Korean characters count as two columns', () => {
   const { sentences, interim } = replay([[0, 'あ'.repeat(40)]], { maxWidth: 30 });
   assert.deepEqual(sentences, ['あ'.repeat(15), 'あ'.repeat(15)]);
   assert.equal(interim, 'あ'.repeat(10));
+});
+
+test('commitPending commits what is pending but keeps it for aligning the window', () => {
+  const sentences = [];
+  let interim = '';
+  const segmenter = createSegmenter({
+    onSentence: (sentence) => sentences.push(sentence.text),
+    onInterim: (text) => (interim = text),
+  });
+  segmenter.push({ kind: 'snapshot', text: 'we were talking about this', at: 0 });
+  segmenter.commitPending(100);
+  assert.deepEqual(sentences, ['we were talking about this']);
+  assert.equal(interim, '');
+  // The roll-up window still shows those words: only the new ones are pending.
+  segmenter.push({ kind: 'snapshot', text: 'we were talking about this and that', at: 200 });
+  assert.equal(interim, 'and that');
+  segmenter.tick(5000);
+  assert.deepEqual(sentences, ['we were talking about this', 'and that']);
+});
+
+test("CEA-608 from the player's buffered video decodes to the same windows as PlayerTextCue", async () => {
+  const { pairs, cues } = await fixture('vod-cea608-pairs.json');
+  const windows = [];
+  const decoder = createCea608Decoder((pts, text) => windows.push([pts, text]));
+  for (const [pts, b1, b2] of pairs) decoder.push(pts, b1, b2);
+  decoder.flush();
+  const last = cues[cues.length - 1][0];
+  const collapse = (list) => list.filter((item, i) => i === 0 || item[1] !== list[i - 1][1]);
+  const decoded = collapse(windows.filter(([pts]) => pts <= last + 0.5));
+  const shown = collapse(cues);
+  assert.deepEqual(
+    decoded.map(([, text]) => text),
+    shown.map(([, text]) => text)
+  );
+  // The player reports cues about every 0.26 s; decoded times are frame times.
+  decoded.forEach(([pts], i) => assert.ok(Math.abs(pts - shown[i][0]) < 0.35, `${pts} vs ${shown[i][0]}`));
+});
+
+test('the caption extractor reads CEA-608 out of a recorded fMP4 fragment, also as a string', async () => {
+  const { init, fragment, offset, pairs } = await fixture('vod-fmp4-fragment.json');
+  const bytes = (base64) => new Uint8Array(Buffer.from(base64, 'base64'));
+  // Twitch's worker gets the function's source, so it must not depend on anything around it.
+  const standalone = new Function(`return (${createCaptionExtractor.toString()})`)();
+  for (const create of [createCaptionExtractor, standalone]) {
+    const extractor = create();
+    assert.deepEqual(extractor.extract(bytes(init), 0), []);
+    assert.deepEqual(extractor.extract(bytes(fragment), offset), pairs);
+  }
+});
+
+test('captions read ahead translate each on-screen chunk early and end it without the pause', async () => {
+  const { pairs, cues } = await fixture('vod-cea608-pairs.json');
+  // Plays the recorded cues through an on-screen segmenter like the controller's, with or without
+  // the read-ahead captions (fed all at once, as a VOD buffers them well ahead).
+  const play = async (withPrefetch) => {
+    const lines = [];
+    let pending = '';
+    let segmenter;
+    const prefetch = createCaptionPrefetch({
+      translate: async (texts) => texts.map((text) => `[KO] ${text}`),
+      onTranslation: () => {},
+      onChunk: () => {
+        if (pending && prefetch.isComplete(pending)) segmenter.commitPending(now);
+      },
+      position: () => now / 1000,
+    });
+    let now = cues[0][0] * 1000;
+    segmenter = createSegmenter({
+      onInterim: (text) => {
+        pending = text;
+        if (withPrefetch && prefetch.isComplete(text)) segmenter.commitPending(now);
+      },
+      onSentence: (sentence) => lines.push({ text: sentence.text, at: now / 1000, chunk: prefetch.chunk(sentence.text) }),
+    });
+    if (withPrefetch) {
+      prefetch.add(pairs, cues[0][0]);
+      prefetch.advance(pairs[pairs.length - 1][0] + 5);
+      await new Promise((resolve) => setTimeout(resolve, 20));
+    }
+    for (const [position, text] of cues) {
+      for (; now < position * 1000; now += 100) segmenter.tick(now);
+      segmenter.push({ kind: 'snapshot', text: text.replace(/\r\n/g, ' '), at: now });
+    }
+    for (const end = now + 3000; now < end; now += 100) segmenter.tick(now);
+    return lines;
+  };
+  const before = await play(false);
+  const after = await play(true);
+  // Ending a chunk early can leave off punctuation that arrives with the next words.
+  assert.deepEqual(
+    after.map((line) => chunkKey(line.text)),
+    before.map((line) => chunkKey(line.text)),
+    'the chunks on screen stay the same'
+  );
+  // The first chunk read starts mid-window and is skipped; the last is still open.
+  for (const line of after.slice(1, -1)) {
+    assert.equal(line.chunk?.status, 'done', `no translation ready for "${line.text}"`);
+    assert.equal(chunkKey(line.chunk.translation), chunkKey(`[KO] ${line.text}`));
+  }
+  const okay = (lines) => lines.find((line) => line.text === 'Okay').at;
+  assert.ok(okay(after) < okay(before) - 1, `"Okay" ended at ${okay(after)}, before ${okay(before)}`);
+});
+
+test('three-row pop-on captions on a live stream decode to the same windows as PlayerTextCue', async () => {
+  const { raw, cues } = await fixture('live-cea608-8bitdee.json');
+  const windows = [];
+  const decoder = createCea608Decoder((pts, text) => windows.push([pts, text]));
+  let frontier = -Infinity;
+  for (const [, , pairs] of raw) {
+    const before = frontier;
+    for (const [pts, b1, b2] of pairs) {
+      if (pts <= before) continue;
+      decoder.push(pts, b1, b2);
+      frontier = Math.max(frontier, pts);
+    }
+  }
+  decoder.flush();
+  const first = cues[0][0];
+  const last = cues[cues.length - 1][0];
+  const collapse = (list) => list.filter((item, i) => i === 0 || item[1] !== list[i - 1][1]);
+  // Decoded times run up to 0.3 s ahead of cue positions, and the recording ends right after the
+  // last cue.
+  const decoded = collapse(windows.filter(([pts]) => pts >= first - 0.35 && pts <= last + 0.02));
+  const shown = collapse(cues.map(([position, text]) => [position, text]));
+  assert.deepEqual(
+    decoded.map(([, text]) => text),
+    shown.map(([, text]) => text)
+  );
+  decoded.forEach(([pts], i) => assert.ok(Math.abs(pts - shown[i][0]) < 0.35, `${pts} vs ${shown[i][0]}`));
+});
+
+test('on a live stream most chunks on screen find a translation requested ahead', async () => {
+  const { raw, cues, buffered } = await fixture('live-cea608-8bitdee.json');
+  // The recorded wall clock drives both paths, as in the controller: worker batches and the
+  // buffered end feed the read-ahead, PlayerTextCue feeds the on-screen segmenter.
+  const play = async (withPrefetch) => {
+    let now = 0;
+    let sample = buffered[0];
+    let pending = '';
+    const requested = new Set();
+    const lines = [];
+    let screen;
+    const prefetch = createCaptionPrefetch({
+      translate: async (texts) => {
+        texts.forEach((text) => requested.add(chunkKey(text)));
+        return texts.map((text) => `[KO] ${text}`);
+      },
+      onTranslation: () => {},
+      onChunk: () => {
+        if (pending && prefetch.isComplete(pending)) screen.commitPending(now);
+      },
+      position: () => sample[1],
+    });
+    screen = createSegmenter({
+      onInterim: (text) => {
+        pending = text;
+        if (withPrefetch && text && prefetch.isComplete(text)) screen.commitPending(now);
+      },
+      onSentence: (sentence) => lines.push(prefetch.chunk(sentence.text)),
+    });
+    const end = cues[cues.length - 1][2] + 3000;
+    for (let b = 0, r = 0, c = 0; now <= end; now += 100) {
+      while (b < buffered.length && buffered[b][0] <= now) sample = buffered[b++];
+      if (withPrefetch) {
+        while (r < raw.length && raw[r][0] <= now) prefetch.add(raw[r][2], raw[r++][1]);
+        if (sample[2] !== null) prefetch.advance(sample[2]);
+      }
+      while (c < cues.length && cues[c][2] <= now) {
+        screen.push({ kind: 'snapshot', text: cues[c++][1].replace(/\r\n/g, ' '), at: now });
+      }
+      screen.tick(now);
+      await new Promise((resolve) => setImmediate(resolve));
+    }
+    return { lines, requested };
+  };
+  const before = await play(false);
+  const { lines, requested } = await play(true);
+  const hits = lines.filter((chunk) => chunk?.status === 'done' || chunk?.status === 'pending').length;
+  assert.ok(lines.length >= 8, `${lines.length} lines`);
+  // Over two minutes of this stream 91% matched; the first chunk read is always skipped, and
+  // re-worded windows split differently now and then.
+  assert.ok(hits / lines.length >= 0.75, `${hits} of ${lines.length} lines found a translation`);
+  // Ending chunks early must not split sentences into more lines ("I" matching a later "I").
+  assert.ok(lines.length <= before.lines.length + 1, `${lines.length} lines, ${before.lines.length} without read-ahead`);
+  // Misses are translated again on screen; read-ahead chunks that never show are extra requests.
+  assert.ok(requested.size + (lines.length - hits) <= lines.length * 1.3, `${requested.size} requested ahead`);
+});
+
+test('a chunk read ahead matches the screen only around its own time', () => {
+  // Pop-on windows: "warm up" (skipped as the first chunk), "I" at 10 s, other words, and "I"
+  // again at 30 s.
+  const pairs = [];
+  const say = (pts, text) => {
+    pairs.push([pts, 0x14, 0x2e], [pts, 0x14, 0x20], [pts, 0x14, 0x60]);
+    for (let i = 0; i < text.length; i += 2) {
+      pairs.push([pts, text.charCodeAt(i), i + 1 < text.length ? text.charCodeAt(i + 1) : 0]);
+    }
+    pairs.push([pts, 0x14, 0x2f]);
+  };
+  say(1, 'warm up');
+  say(10, 'I');
+  say(20, 'something else');
+  say(30, 'I');
+  let position = 0;
+  const prefetch = createCaptionPrefetch({
+    translate: null,
+    onTranslation: () => {},
+    onChunk: () => {},
+    position: () => position,
+  });
+  prefetch.add(pairs, 0);
+  prefetch.advance(40);
+  position = 10.2;
+  assert.equal(prefetch.isComplete('I'), false, 'the later "I" is the one remembered, at 30 s');
+  position = 30.3;
+  assert.equal(prefetch.isComplete('I'), true);
+  position = 45;
+  assert.equal(prefetch.isComplete('I'), false);
 });
 
 test('a break commits pending text and the next snapshot starts fresh', () => {

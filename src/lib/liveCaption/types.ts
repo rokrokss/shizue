@@ -11,6 +11,8 @@ export type Sentence = {
   text: string;
   startedAt: number;
   committedAt: number;
+  // When its words last changed: the end of speech, while committedAt may come after a pause.
+  endedAt?: number;
 };
 
 export type TranslationContext = { source: string; translation: string };

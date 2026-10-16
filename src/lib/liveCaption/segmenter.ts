@@ -117,6 +117,7 @@ export function createSegmenter(options: SegmenterOptions = {}) {
       text: joinTokens(tokens),
       startedAt: pendingSince || at,
       committedAt: at,
+      endedAt: lastChangeAt || at,
     });
     pendingSince = committed < received.length ? at : 0;
     if (committed > KEEP_COMMITTED_TOKENS) {
@@ -235,6 +236,14 @@ export function createSegmenter(options: SegmenterOptions = {}) {
         return;
       }
       snapshot(update.text, update.at);
+    },
+    // Commits what is pending now, when the speaker is known to have moved on. Unlike a break, it
+    // keeps the received text, which a roll-up window still shows, for aligning what comes next.
+    commitPending(at: number) {
+      if (committed < received.length) {
+        commit(received.length - committed, at);
+        emitInterim();
+      }
     },
     // Called on a timer: commits what is pending once the source has been still for `pauseMs`.
     tick(now: number) {
