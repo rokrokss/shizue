@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.3.12
+
+- Bilingual captions on Netflix: Shizue shows the title's subtitles in the language being spoken (closed captions first, also on a dub) together with your target language, and you can pick another original track from the caption menu
+- When Netflix has subtitles in your target language, Shizue pairs them with the original lines, with no AI request and no API key. Otherwise your LLM translates ahead of playback, with the lines around each batch as context
+- Netflix captions show the original right away and fill in translations as they arrive, carry on into the next episode, and work in fullscreen. Netflix has its own Bilingual switch, on by default
+- Settings: hide the Netflix caption button
+- YouTube captions: Traditional Chinese (zh-Hant) tracks are recognized as Traditional Chinese
+
 ## v0.3.11
 
 - Chat replies stay in your chosen language, page summaries included, but when you ask for another language (say, an email draft in English) Shizue now writes it in that language instead of refusing
