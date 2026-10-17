@@ -9,7 +9,7 @@ pnpm dev                 # dev build with hot reload
 pnpm build               # production build into dist/chrome-mv3/
 pnpm compile             # type check (tsc --noEmit)
 pnpm zip                 # store ZIP
-pnpm test:models         # also test:panel, test:chatgpt, test:plot-signin, test:live-caption
+pnpm test:models         # also test:panel, test:chatgpt, test:plot-signin, test:live-caption, test:netflix
 store/render.sh          # Chrome Web Store images, store/src → store/out
 site/build.sh            # shizue.net landing page into _site/
 ```
@@ -37,7 +37,7 @@ site/build.sh            # shizue.net landing page into _site/
 - `src/entrypoints/background/`: the service worker. It routes messages, owns context menus, opens and closes the side panel, and caches settings in `states/`.
 - `src/services/background/`: what the router calls. `messageHandlers.ts` is the registry, `chatModelHandler.ts` streams chat, `translationHandler.ts` translates in batches, and `chatgpt.ts` runs ChatGPT sign-in.
 - `src/entrypoints/sidepanel/`: the React app, with routes `/chat`, `/shizue-memo` and `/onboarding`.
-- `src/entrypoints/*.content*`: in-page toggle, YouTube captions, Twitch captions, the Twitch player bridge and player worker hook (MAIN world) and the Stream Closed Captioner frame reader.
+- `src/entrypoints/*.content*`: in-page toggle, YouTube captions, Twitch captions, the Twitch player bridge and player worker hook (MAIN world), the Stream Closed Captioner frame reader, and Netflix captions with their player bridge (MAIN world).
 - `src/lib/`: shared logic. `src/hooks/`: Jotai atoms and hooks. `src/config/constants.ts`: every `MESSAGE_*`, `PORT_*` and `STORAGE_*` name.
 - To add a message, add a `MESSAGE_*` constant, a handler, and its entry in the `messageHandlers.ts` registry. A `chrome.runtime.onMessage` listener that answers asynchronously returns `true`; otherwise the channel closes before `sendResponse` runs.
 - Chat and translation stream over `chrome.runtime.connect` ports. The background posts `{ delta }`, `{ error }` and `{ done }` messages.
@@ -97,3 +97,7 @@ site/build.sh            # shizue.net landing page into _site/
 ## Twitch live captions
 
 Read `src/lib/twitch/AGENTS.md` before changing Twitch captions: `src/lib/twitch/`, `src/lib/liveCaption/`, the `twitch-*` entrypoints, `src/components/Twitch/`, and `src/components/Caption/CaptionToggle.tsx` (shared with YouTube).
+
+## Netflix captions
+
+Read `src/lib/netflix/AGENTS.md` before changing Netflix captions: `src/lib/netflix/`, the `netflix-*` entrypoints and `src/components/Netflix/`.

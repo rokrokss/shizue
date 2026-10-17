@@ -183,6 +183,11 @@
     "speechStopped": "تشخیص گفتار متوقف شد",
     "chromeTranslation": "ترجمهٔ داخلی Chrome"
   },
+  "netflix": {
+    "netflixCaptionButton": "دکمه زیرنویس نتفلیکس",
+    "originalSubtitles": "زیرنویس اصلی",
+    "loadFailed": "زیرنویس بارگیری نشد"
+  },
   "usage": {
     "title": "استفاده از توکن",
     "total": "کل",

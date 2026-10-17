@@ -183,6 +183,11 @@
     "speechStopped": "語音辨識已停止",
     "chromeTranslation": "Chrome 內建翻譯"
   },
+  "netflix": {
+    "netflixCaptionButton": "Netflix 字幕按鈕",
+    "originalSubtitles": "原文字幕",
+    "loadFailed": "無法載入字幕"
+  },
   "usage": {
     "title": "權杖使用量",
     "total": "總計",

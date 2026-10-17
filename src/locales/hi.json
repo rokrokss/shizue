@@ -183,6 +183,11 @@
     "speechStopped": "वाक् पहचान रुक गई",
     "chromeTranslation": "Chrome का बिल्ट-इन अनुवाद"
   },
+  "netflix": {
+    "netflixCaptionButton": "नेटफ्लिक्स कैप्शन बटन",
+    "originalSubtitles": "मूल सबटाइटल",
+    "loadFailed": "सबटाइटल लोड नहीं हो सके"
+  },
   "usage": {
     "title": "टोकन उपयोग",
     "total": "कुल",

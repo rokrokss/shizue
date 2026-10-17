@@ -21,6 +21,7 @@
     "test:panel": "node --experimental-strip-types --test tests/panel-*.test.mjs tests/content-recovery.test.mjs",
     "test:plot-signin": "node --experimental-strip-types --test tests/plot-signin.test.mjs",
     "test:live-caption": "node --experimental-strip-types --test tests/live-caption.test.mjs",
+    "test:netflix": "node --experimental-strip-types --test tests/netflix.test.mjs",
     "postinstall": "wxt prepare"
   },
   "dependencies": {

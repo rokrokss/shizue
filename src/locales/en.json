@@ -191,6 +191,11 @@
     "speechStopped": "Speech recognition stopped",
     "chromeTranslation": "Chrome built-in translation"
   },
+  "netflix": {
+    "netflixCaptionButton": "Netflix Caption Button",
+    "originalSubtitles": "Original subtitles",
+    "loadFailed": "Couldn't load subtitles"
+  },
   "home": {
     "title": "Go to Home"
   },

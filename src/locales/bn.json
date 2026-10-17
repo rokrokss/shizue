@@ -183,6 +183,11 @@
     "speechStopped": "কণ্ঠস্বর শনাক্তকরণ বন্ধ হয়ে গেছে",
     "chromeTranslation": "Chrome-এর বিল্ট-ইন অনুবাদ"
   },
+  "netflix": {
+    "netflixCaptionButton": "নেটফ্লিক্স ক্যাপশন বোতাম",
+    "originalSubtitles": "মূল সাবটাইটেল",
+    "loadFailed": "সাবটাইটেল লোড করা যায়নি"
+  },
   "usage": {
     "title": "টোকেন ব্যবহার",
     "total": "মোট",

@@ -5,7 +5,7 @@ export const languageCodeToLanguage = (languageCode: string): Language | undefin
   if (languageCode.startsWith('ko')) {
     return 'Korean_한국어';
   } else if (languageCode.startsWith('zh')) {
-    if (languageCode.includes('TW') || languageCode.includes('HK')) {
+    if (languageCode.includes('TW') || languageCode.includes('HK') || languageCode.includes('Hant')) {
       return 'ChineseTraditional_繁體中文';
     } else {
       return 'ChineseSimplified_简体中文';

@@ -183,6 +183,11 @@
     "speechStopped": "Rozpoznawanie mowy zostało zatrzymane",
     "chromeTranslation": "Wbudowane tłumaczenie Chrome"
   },
+  "netflix": {
+    "netflixCaptionButton": "Przycisk napisy Netflix",
+    "originalSubtitles": "Napisy oryginalne",
+    "loadFailed": "Nie udało się wczytać napisów"
+  },
   "usage": {
     "title": "Wykorzystanie Tokenów",
     "total": "Łącznie",

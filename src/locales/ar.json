@@ -183,6 +183,11 @@
     "speechStopped": "توقف التعرف على الكلام",
     "chromeTranslation": "ترجمة Chrome المدمجة"
   },
+  "netflix": {
+    "netflixCaptionButton": "زر التعليقات التوضيحية لنتفليكس",
+    "originalSubtitles": "الترجمة الأصلية",
+    "loadFailed": "تعذّر تحميل الترجمة"
+  },
   "usage": {
     "title": "استخدام الرموز",
     "total": "الإجمالي",

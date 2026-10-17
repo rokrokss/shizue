@@ -18,6 +18,9 @@ export function scriptsForPage(value: string | undefined): ContentScriptName[] {
     if (url.protocol === 'https:' && ['twitch.tv', 'www.twitch.tv'].includes(url.hostname)) {
       return ['toggle', 'twitch-caption'];
     }
+    if (url.protocol === 'https:' && url.hostname === 'www.netflix.com') {
+      return ['toggle', 'netflix-caption'];
+    }
     return ['toggle'];
   } catch { return []; }
 }

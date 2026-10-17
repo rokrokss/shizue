@@ -183,6 +183,11 @@
     "speechStopped": "语音识别已停止",
     "chromeTranslation": "Chrome 内置翻译"
   },
+  "netflix": {
+    "netflixCaptionButton": "Netflix 字幕按钮",
+    "originalSubtitles": "原文字幕",
+    "loadFailed": "无法加载字幕"
+  },
   "usage": {
     "title": "令牌使用量",
     "total": "总计",

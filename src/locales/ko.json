@@ -191,6 +191,11 @@
     "speechStopped": "음성 인식이 멈췄어요",
     "chromeTranslation": "크롬 내장 번역"
   },
+  "netflix": {
+    "netflixCaptionButton": "넷플릭스 자막 버튼",
+    "originalSubtitles": "원문 자막",
+    "loadFailed": "자막을 불러오지 못했어요"
+  },
   "home": {
     "title": "홈으로 이동"
   },

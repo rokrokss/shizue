@@ -212,6 +212,61 @@ ${JSON.stringify(captions.map((c) => c.text))}
 `;
 };
 
+export type SubtitleMetadata = { title?: string };
+
+// Netflix subtitles: a title's whole track is known, so each request carries the lines before
+// (with their translations) and after it, which keeps names, pronouns and forms of address
+// consistent across chunks.
+export const getSubtitleTranslationPrompt = (
+  lines: string[],
+  context: TranslationContext[],
+  following: string[],
+  targetLanguage: Language,
+  metadata: SubtitleMetadata
+) => {
+  return `You are a subtitle translator for films and TV series. The input lines are consecutive subtitles of one title, in order.
+
+**Your Task:**
+Translate each line from the input array into **${targetLanguage}**.
+
+**--- Core Principles (MUST be followed unconditionally) ---**
+
+1.  **Strict Length Match:** The output "translations" array MUST contain the exact same number of strings as the input array.
+
+2.  **One subtitle, one translation:** Each line is one subtitle shown on its own. Do not move words between lines and do not merge lines. When a sentence runs across lines, split your translation at the same point.
+
+3.  **Use the surrounding lines only for context:** The earlier lines were already shown (with their translations, when known) and the following lines come next. Use them to keep names, pronouns, tone and forms of address consistent, but translate ONLY the input lines.
+
+4.  **Write subtitles:** Natural, concise lines a viewer can read at a glance. Keep a line break inside a line where it separates two speakers, keep the leading dashes that mark speakers, and keep sound descriptions in brackets.
+
+**--- Output Format ---**
+
+-   You MUST return your response as a single, valid JSON object.
+-   The JSON object must contain one key: "translations".
+-   The value of "translations" must be a JSON array of strings.
+-   Do NOT include any text, explanations, or markdown formatting (like \`\`\`json) outside the JSON object itself.
+
+===Title (for Tonal Context Only)===
+${JSON.stringify(metadata)}
+
+===Earlier Lines (already shown, context only)===
+${JSON.stringify(context)}
+
+===Following Lines (context only)===
+${JSON.stringify(following)}
+
+===Input Lines to Translate (Line Count: ${lines.length})===
+${JSON.stringify(lines)}
+
+===Example of the EXACT JSON Output Format expected===
+{
+  "translations": ["translated_line_1", ..., "translated_line_n"]
+}
+
+**Final Check before generating:** Does my output array have exactly ${lines.length} items? If not, I must correct it.
+`;
+};
+
 export type LiveCaptionMetadata = {
   title?: string;
   category?: string;

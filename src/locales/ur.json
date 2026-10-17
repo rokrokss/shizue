@@ -183,6 +183,11 @@
     "speechStopped": "آواز کی شناخت رک گئی",
     "chromeTranslation": "Chrome کا بلٹ اِن ترجمہ"
   },
+  "netflix": {
+    "netflixCaptionButton": "نیٹ فلکس کیپشن بٹن",
+    "originalSubtitles": "اصل سب ٹائٹلز",
+    "loadFailed": "سب ٹائٹلز لوڈ نہیں ہو سکے"
+  },
   "usage": {
     "title": "ٹوکن کا استعمال",
     "total": "کل",

@@ -183,6 +183,11 @@
     "speechStopped": "O reconhecimento de voz parou",
     "chromeTranslation": "Tradução integrada do Chrome"
   },
+  "netflix": {
+    "netflixCaptionButton": "Botão de legenda Netflix",
+    "originalSubtitles": "Legenda original",
+    "loadFailed": "Não foi possível carregar a legenda"
+  },
   "usage": {
     "title": "Uso de Tokens",
     "total": "Total",

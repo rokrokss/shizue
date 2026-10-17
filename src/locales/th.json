@@ -183,6 +183,11 @@
     "speechStopped": "การรู้จำเสียงพูดหยุดทำงาน",
     "chromeTranslation": "การแปลในตัวของ Chrome"
   },
+  "netflix": {
+    "netflixCaptionButton": "ปุ่มคำบรรยาย Netflix",
+    "originalSubtitles": "คำบรรยายต้นฉบับ",
+    "loadFailed": "โหลดคำบรรยายไม่ได้"
+  },
   "usage": {
     "title": "การใช้โทเค็น",
     "total": "รวม",

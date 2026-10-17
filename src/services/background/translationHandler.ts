@@ -14,8 +14,10 @@ import {
   getHtmlTranslationBatchPrompt,
   getHtmlTranslationPrompt,
   getLiveCaptionTranslationPrompt,
+  getSubtitleTranslationPrompt,
   getYoutubeCaptionTranslationPrompt,
   LiveCaptionMetadata,
+  SubtitleMetadata,
 } from '@/lib/prompts';
 import { trackTokenUsage } from '@/lib/tokenUsageTracker';
 import { Caption, VideoMetadata } from '@/lib/youtube';
@@ -269,8 +271,36 @@ export class TranslationHandler {
     targetLanguage: Language,
     metadata: LiveCaptionMetadata
   ): Promise<LiveCaptionTranslationResult> {
+    return this.translateLines(
+      lines,
+      (part) => getLiveCaptionTranslationPrompt(part, context, targetLanguage, metadata),
+      'translateLiveCaption'
+    );
+  }
+
+  // Netflix subtitles, with the lines around them as context.
+  public async translateSubtitles(
+    lines: string[],
+    context: TranslationContext[],
+    following: string[],
+    targetLanguage: Language,
+    metadata: SubtitleMetadata
+  ): Promise<LiveCaptionTranslationResult> {
+    return this.translateLines(
+      lines,
+      (part) => getSubtitleTranslationPrompt(part, context, following, targetLanguage, metadata),
+      'translateSubtitles'
+    );
+  }
+
+  // One translation per line, from a prompt that carries its own context.
+  private async translateLines(
+    lines: string[],
+    buildPrompt: (lines: string[]) => string,
+    name: string
+  ): Promise<LiveCaptionTranslationResult> {
     try {
-      const prompt = getLiveCaptionTranslationPrompt(lines, context, targetLanguage, metadata);
+      const prompt = buildPrompt(lines);
       const modelPreset = getTranslationModelPreset();
       const llm = getModelInstance({
         temperature: 0.1,
@@ -279,7 +309,7 @@ export class TranslationHandler {
         modelPreset,
         jsonSchema: translationsSchemaFor(modelPreset, lines.length),
       });
-      debugLog('TranslationHandler [translateLiveCaption] prompt:', prompt);
+      debugLog(`TranslationHandler [${name}] prompt:`, prompt);
       const response = await invokeTranslation(llm, prompt, modelPreset);
       await trackTokenUsage(modelPreset, response);
 
@@ -288,38 +318,35 @@ export class TranslationHandler {
       try {
         translations = JSON.parse(stripMarkdownCodeFence(rawResponseContent))?.translations;
       } catch (parseError) {
-        errorLog('TranslationHandler [translateLiveCaption] JSON parsing error:', rawResponseContent);
+        errorLog(`TranslationHandler [${name}] JSON parsing error:`, rawResponseContent);
         return { success: false, error: `Failed to parse model response. Error: ${(parseError as Error).message}` };
       }
       if (!Array.isArray(translations) || !translations.every((item) => typeof item === 'string')) {
-        errorLog('TranslationHandler [translateLiveCaption] invalid response:', rawResponseContent);
+        errorLog(`TranslationHandler [${name}] invalid response:`, rawResponseContent);
         return { success: false, error: "AI response is not a JSON object with a 'translations' array of strings." };
       }
       if (translations.length !== lines.length) {
-        errorLog('TranslationHandler [translateLiveCaption] item count mismatch:', translations.length, lines.length);
-        if (lines.length > 1) return this.translateLiveCaptionInHalves(lines, context, targetLanguage, metadata);
+        errorLog(`TranslationHandler [${name}] item count mismatch:`, translations.length, lines.length);
+        if (lines.length > 1) return this.translateLinesInHalves(lines, buildPrompt, name);
         return { success: false, error: `Item count mismatch: ${translations.length} for ${lines.length}.` };
       }
       return { success: true, translations };
     } catch (err) {
-      errorLog('TranslationHandler [translateLiveCaption] general error:', err);
-      return { success: false, error: `Live caption translation failed: ${(err as Error).message ?? String(err)}` };
+      errorLog(`TranslationHandler [${name}] general error:`, err);
+      return { success: false, error: `Caption translation failed: ${(err as Error).message ?? String(err)}` };
     }
   }
 
   // Same recovery as YouTube captions: a batch whose count comes back wrong is retried in halves,
   // and a part that still fails comes back as an empty string.
-  private async translateLiveCaptionInHalves(
+  private async translateLinesInHalves(
     lines: string[],
-    context: TranslationContext[],
-    targetLanguage: Language,
-    metadata: LiveCaptionMetadata
+    buildPrompt: (lines: string[]) => string,
+    name: string
   ): Promise<LiveCaptionTranslationResult> {
     const middle = Math.ceil(lines.length / 2);
     const parts = [lines.slice(0, middle), lines.slice(middle)];
-    const results = await Promise.all(
-      parts.map((part) => this.translateLiveCaption(part, context, targetLanguage, metadata))
-    );
+    const results = await Promise.all(parts.map((part) => this.translateLines(part, buildPrompt, name)));
     return {
       success: true,
       translations: results.flatMap((result, i) =>

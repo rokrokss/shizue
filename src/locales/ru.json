@@ -183,6 +183,11 @@
     "speechStopped": "Распознавание речи остановлено",
     "chromeTranslation": "Встроенный перевод Chrome"
   },
+  "netflix": {
+    "netflixCaptionButton": "Кнопка субтитров Netflix",
+    "originalSubtitles": "Исходные субтитры",
+    "loadFailed": "Не удалось загрузить субтитры"
+  },
   "usage": {
     "title": "Использование токенов",
     "total": "Всего",

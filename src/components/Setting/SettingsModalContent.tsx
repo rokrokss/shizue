@@ -6,6 +6,7 @@ import { Language, useLanguage, useTranslateTargetLanguage } from '@/hooks/langu
 import {
   Theme,
   toggleYPositionAtom,
+  useShowNetflixCaptionToggle,
   useShowToggle,
   useShowTwitchCaptionToggle,
   useSpeechRecognitionConsent,
@@ -72,6 +73,7 @@ const SettingsModalContent = () => {
   const setToggleYPosition = useSetAtom(toggleYPositionAtom);
   const [showYoutubeCaptionToggle, setShowYoutubeCaptionToggle] = useShowYoutubeCaptionToggle();
   const [showTwitchCaptionToggle, setShowTwitchCaptionToggle] = useShowTwitchCaptionToggle();
+  const [showNetflixCaptionToggle, setShowNetflixCaptionToggle] = useShowNetflixCaptionToggle();
   const [speechConsent, setSpeechConsent] = useSpeechRecognitionConsent();
   const [modelPreferences, setModelPreferences] = useProviderModelPreferences();
   const selectedProvider: AIProvider = modelPreferences.provider ?? (
@@ -147,6 +149,10 @@ const SettingsModalContent = () => {
 
   const handleToggleTwitchCaptionToggle = () => {
     setShowTwitchCaptionToggle(!showTwitchCaptionToggle);
+  };
+
+  const handleToggleNetflixCaptionToggle = () => {
+    setShowNetflixCaptionToggle(!showNetflixCaptionToggle);
   };
 
   const handleToggleYoutubeCaptionToggle = () => {
@@ -579,6 +585,24 @@ const SettingsModalContent = () => {
                           {t('twitch.revokeSpeechConsent')}
                         </Button>
                       )}
+                    </div>
+                  </div>
+                  <div className="sz:flex sz:flex-col sz:items-center sz:w-50 sz:mt-1">
+                    <div
+                      className={`sz:text-base ${
+                        theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'
+                      }`}
+                    >
+                      {t('netflix.netflixCaptionButton')}
+                    </div>
+                    <div className="sz:flex sz:flex-col sz:items-center sz:justify-center sz:w-50 sz:mt-2">
+                      <Checkbox
+                        checked={!showNetflixCaptionToggle}
+                        onChange={handleToggleNetflixCaptionToggle}
+                        className="sz:font-ycom sz:w-50 sz:flex sz:flex-row sz:items-center sz:justify-center"
+                      >
+                        {t('layout.hideToggle')}
+                      </Checkbox>
                     </div>
                   </div>
                 </div>

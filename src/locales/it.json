@@ -183,6 +183,11 @@
     "speechStopped": "Il riconoscimento vocale si è interrotto",
     "chromeTranslation": "Traduzione integrata di Chrome"
   },
+  "netflix": {
+    "netflixCaptionButton": "Pulsante sottotitoli Netflix",
+    "originalSubtitles": "Sottotitoli originali",
+    "loadFailed": "Impossibile caricare i sottotitoli"
+  },
   "usage": {
     "title": "Utilizzo Token",
     "total": "Totale",

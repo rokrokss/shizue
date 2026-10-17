@@ -183,6 +183,11 @@
     "speechStopped": "音声認識が停止しました",
     "chromeTranslation": "Chrome 内蔵翻訳"
   },
+  "netflix": {
+    "netflixCaptionButton": "Netflix 字幕ボタン",
+    "originalSubtitles": "原文の字幕",
+    "loadFailed": "字幕を読み込めませんでした"
+  },
   "usage": {
     "title": "トークン使用量",
     "total": "合計",

@@ -183,6 +183,11 @@
     "speechStopped": "Nhận dạng giọng nói đã dừng",
     "chromeTranslation": "Dịch tích hợp của Chrome"
   },
+  "netflix": {
+    "netflixCaptionButton": "Nút Chú thích Netflix",
+    "originalSubtitles": "Phụ đề gốc",
+    "loadFailed": "Không tải được phụ đề"
+  },
   "usage": {
     "title": "Sử dụng Token",
     "total": "Tổng cộng",

@@ -183,6 +183,11 @@
     "speechStopped": "Konuşma tanıma durdu",
     "chromeTranslation": "Chrome yerleşik çevirisi"
   },
+  "netflix": {
+    "netflixCaptionButton": "Netflix Altyazı Düğmesi",
+    "originalSubtitles": "Orijinal altyazı",
+    "loadFailed": "Altyazı yüklenemedi"
+  },
   "usage": {
     "title": "Token Kullanımı",
     "total": "Toplam",

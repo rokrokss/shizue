@@ -183,6 +183,11 @@
     "speechStopped": "Spracherkennung wurde beendet",
     "chromeTranslation": "Integrierte Chrome-Übersetzung"
   },
+  "netflix": {
+    "netflixCaptionButton": "Netflix-Untertitel-Schaltfläche",
+    "originalSubtitles": "Originaluntertitel",
+    "loadFailed": "Untertitel konnten nicht geladen werden"
+  },
   "usage": {
     "title": "Token-Verbrauch",
     "total": "Gesamt",

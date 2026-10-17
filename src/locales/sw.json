@@ -183,6 +183,11 @@
     "speechStopped": "Utambuzi wa sauti umesimama",
     "chromeTranslation": "Tafsiri iliyojengwa ndani ya Chrome"
   },
+  "netflix": {
+    "netflixCaptionButton": "Kitufe cha Caption ya Netflix",
+    "originalSubtitles": "Manukuu asili",
+    "loadFailed": "Imeshindwa kupakia manukuu"
+  },
   "usage": {
     "title": "Matumizi ya Token",
     "total": "Jumla",

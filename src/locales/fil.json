@@ -183,6 +183,11 @@
     "speechStopped": "Huminto ang speech recognition",
     "chromeTranslation": "Built-in na pagsasalin ng Chrome"
   },
+  "netflix": {
+    "netflixCaptionButton": "Netflix Caption Button",
+    "originalSubtitles": "Orihinal na subtitle",
+    "loadFailed": "Hindi ma-load ang subtitle"
+  },
   "usage": {
     "title": "Paggamit ng Token",
     "total": "Kabuuan",

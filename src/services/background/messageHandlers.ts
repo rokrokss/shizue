@@ -1,5 +1,6 @@
 import {
   MESSAGE_CANCEL_NOT_STARTED_MESSAGE,
+  MESSAGE_INJECT_NETFLIX_BRIDGE,
   MESSAGE_INJECT_TWITCH_BRIDGE,
   MESSAGE_SCC_CAPTION_SNAPSHOT,
   MESSAGE_SCC_SET_HIDDEN,
@@ -9,6 +10,7 @@ import {
   MESSAGE_SET_PANEL_OPEN_OR_NOT,
   MESSAGE_TRANSLATE_HTML_TEXT_BATCH,
   MESSAGE_TRANSLATE_LIVE_CAPTION,
+  MESSAGE_TRANSLATE_SUBTITLES,
   MESSAGE_TRANSLATE_YOUTUBE_CAPTION,
 } from '@/config/constants';
 import { openPanel, togglePanel } from '@/entrypoints/background/sidepanel';
@@ -103,6 +105,13 @@ async function handleTranslateLiveCaption(msg: any, sendResponse: (response?: an
   );
 }
 
+async function handleTranslateSubtitles(msg: any, sendResponse: (response?: any) => void) {
+  const { lines, context, following, targetLanguage, metadata } = msg;
+  sendResponse(
+    await getTranslationHandler().translateSubtitles(lines, context, following, targetLanguage, metadata)
+  );
+}
+
 // The Twitch caption script asks for its MAIN-world bridge when the tab predates the extension's
 // install or update (recovery injects isolated scripts only).
 async function handleInjectTwitchBridge(
@@ -115,6 +124,21 @@ async function handleInjectTwitchBridge(
     target: { tabId: sender.tab.id, frameIds: [sender.frameId ?? 0] },
     world: 'MAIN',
     files: ['content-scripts/twitch-player-bridge.js'],
+  });
+  sendResponse({ status: 'success' });
+}
+
+// Likewise for the Netflix caption script and its player bridge.
+async function handleInjectNetflixBridge(
+  _msg: any,
+  sendResponse: (response?: any) => void,
+  sender: chrome.runtime.MessageSender
+) {
+  if (sender.tab?.id === undefined) return sendResponse({ status: 'error' });
+  await chrome.scripting.executeScript({
+    target: { tabId: sender.tab.id, frameIds: [sender.frameId ?? 0] },
+    world: 'MAIN',
+    files: ['content-scripts/netflix-player-bridge.js'],
   });
   sendResponse({ status: 'success' });
 }
@@ -157,7 +181,9 @@ export const messageHandlers = {
   [MESSAGE_TRANSLATE_HTML_TEXT_BATCH]: handleTranslateHtmlTextBatch,
   [MESSAGE_TRANSLATE_YOUTUBE_CAPTION]: handleTranslateYoutubeCaption,
   [MESSAGE_TRANSLATE_LIVE_CAPTION]: handleTranslateLiveCaption,
+  [MESSAGE_TRANSLATE_SUBTITLES]: handleTranslateSubtitles,
   [MESSAGE_INJECT_TWITCH_BRIDGE]: handleInjectTwitchBridge,
+  [MESSAGE_INJECT_NETFLIX_BRIDGE]: handleInjectNetflixBridge,
   [MESSAGE_SCC_CAPTION_SNAPSHOT]: handleSccCaptionSnapshot,
   [MESSAGE_SCC_SET_HIDDEN]: handleSccSetHidden,
 };

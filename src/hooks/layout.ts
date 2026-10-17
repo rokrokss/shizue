@@ -1,4 +1,6 @@
 import {
+  STORAGE_NETFLIX_BILINGUAL_CAPTION,
+  STORAGE_SHOW_NETFLIX_CAPTION_TOGGLE,
   STORAGE_SHOW_TOGGLE,
   STORAGE_SHOW_TWITCH_CAPTION_TOGGLE,
   STORAGE_SPEECH_RECOGNITION_CONSENT,
@@ -23,6 +25,7 @@ export const defaultShowToggle = true;
 export const defaultToggleYPosition = -18;
 export const defaultShowYoutubeCaptionToggle = true;
 export const defaultShowTwitchCaptionToggle = true;
+export const defaultShowNetflixCaptionToggle = true;
 export const defaultShowYoutubeBilingualCaption = false;
 export const defaultUseYoutubeKeyboardNavigate = true;
 export const defaultCaptionSizeRatio = 1.0;
@@ -52,6 +55,14 @@ export const twitchShowCaptionToggleAtom = atomWithChromeStorage<boolean>(
   STORAGE_SHOW_TWITCH_CAPTION_TOGGLE,
   defaultShowTwitchCaptionToggle
 );
+
+export const netflixShowCaptionToggleAtom = atomWithChromeStorage<boolean>(
+  STORAGE_SHOW_NETFLIX_CAPTION_TOGGLE,
+  defaultShowNetflixCaptionToggle
+);
+
+// Netflix's own, and on by default: Netflix already shows one language, so the point there is two.
+export const netflixBilingualCaptionAtom = atomWithChromeStorage<boolean>(STORAGE_NETFLIX_BILINGUAL_CAPTION, true);
 
 // 'auto' picks the streamer's captions, then Stream Closed Captioner, then speech recognition.
 export type TwitchCaptionSourceMode = 'auto' | 'cea608' | 'scc' | 'stt';
@@ -105,6 +116,9 @@ export const useShowYoutubeCaptionToggle = () => useAtom(youtubeShowCaptionToggl
 export const useShowYoutubeCaptionToggleValue = () => useAtomValue(youtubeShowCaptionToggleAtom);
 export const useShowTwitchCaptionToggle = () => useAtom(twitchShowCaptionToggleAtom);
 export const useShowTwitchCaptionToggleValue = () => useAtomValue(twitchShowCaptionToggleAtom);
+export const useShowNetflixCaptionToggle = () => useAtom(netflixShowCaptionToggleAtom);
+export const useShowNetflixCaptionToggleValue = () => useAtomValue(netflixShowCaptionToggleAtom);
+export const useNetflixBilingualCaption = () => useAtom(netflixBilingualCaptionAtom);
 export const useTwitchCaptionSource = () => useAtom(twitchCaptionSourceAtom);
 export const useTwitchChannelLanguage = () => useAtom(twitchChannelLanguageAtom);
 export const useSpeechRecognitionConsent = () => useAtom(speechRecognitionConsentAtom);
