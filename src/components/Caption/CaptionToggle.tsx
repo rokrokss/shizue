@@ -92,6 +92,7 @@ export const CaptionMenuLanguageRow = ({
           sz:flex-col
           sz:rounded-lg
           sz:m-0 sz:p-0
+          sz:scrollbar-visible
         "
         style={{
           maxHeight: '170px',
@@ -135,6 +136,11 @@ type CaptionToggleProps = {
   onDeactivate: (e: React.MouseEvent<HTMLButtonElement>) => void;
   isLoading: boolean;
   isActivated: boolean;
+  // Netflix sizes the icon like its own controls; YouTube and Twitch keep 24px.
+  iconSize?: string;
+  // Where the bar under an activated icon starts, from the top of the icon's own box (whose middle
+  // is the icon's); by default 10% above the bottom of the controls.
+  underlineTop?: string;
 };
 
 export const CaptionToggle = ({
@@ -151,6 +157,8 @@ export const CaptionToggle = ({
   onDeactivate,
   isLoading,
   isActivated,
+  iconSize = '24px',
+  underlineTop,
 }: CaptionToggleProps) => (
   <ConfigProvider
     prefixCls="sz-ant-"
@@ -246,18 +254,19 @@ export const CaptionToggle = ({
               sz:gap-2
               sz:cursor-pointer
             "
+            style={underlineTop ? { position: 'relative' } : undefined}
           >
             {isLoading ? (
               <LoadingOutlined
                 style={{
-                  fontSize: '21px',
+                  fontSize: `calc(${iconSize} * 0.875)`,
                   color: 'rgb(255, 255, 255)',
                 }}
               />
             ) : (
               <ReadFilled
                 style={{
-                  fontSize: '24px',
+                  fontSize: iconSize,
                   color: 'rgb(255, 255, 255)',
                 }}
               />
@@ -267,9 +276,9 @@ export const CaptionToggle = ({
                 position: 'absolute',
                 borderRadius: '20%',
                 height: '3px',
-                width: isActivated ? '24px' : 0,
+                width: isActivated ? iconSize : 0,
                 backgroundColor: '#32CCBC',
-                bottom: '10%',
+                ...(underlineTop ? { top: underlineTop } : { bottom: '10%' }),
                 transition: 'width 0.5s ease-in-out',
               }}
             />

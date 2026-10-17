@@ -25,28 +25,51 @@ const keepEventsInside = (element: HTMLElement) => {
   for (const type of OWN_EVENTS) element.addEventListener(type, (event) => event.stopPropagation());
 };
 
-// Where the button goes: before the rightmost button of the bottom row (fullscreen), so it sits
-// with the right-hand group. Netflix removes the row while its controls are hidden, and the
-// buttons' names differ between films and series, so the row is found by layout.
-const findButtonSlot = (): { row: Element; before: Element; height: number } | null => {
+type ButtonSlot = { row: Element; before: Element; first: HTMLElement; gap: number };
+
+// Where the button goes: first in the right-hand group of the bottom row, before "next episode" on
+// a series. Netflix removes the row while its controls are hidden, and the buttons' names differ
+// between films and series, so the row is found by layout: the widest space between its buttons,
+// where the title sits, separates the left group from the right. `gap` is the space Netflix leaves
+// between the right group's first two buttons.
+const findButtonSlot = (): ButtonSlot | null => {
   const controls = document.querySelector('[data-uia="controls-standard"]');
   if (!controls) return null;
   const buttons = [...controls.querySelectorAll<HTMLElement>('button[data-uia^="control-"]')]
     .filter((button) => !button.closest(`#${NETFLIX_TOGGLE_SHADOW_HOST_ID}`))
     .map((button) => ({ button, rect: button.getBoundingClientRect() }))
     .filter(({ rect }) => rect.width > 0);
-  if (buttons.length < 2) return null;
-  const rightmost = buttons.reduce((a, b) => (b.rect.right > a.rect.right ? b : a));
+  if (!buttons.length) return null;
+  // The bottom row is the lowest; the top one (back, flag) reaches almost as far right.
   const middle = (rect: DOMRect) => rect.top + rect.height / 2;
-  const neighbour = buttons
-    .filter(({ button, rect }) => button !== rightmost.button && Math.abs(middle(rect) - middle(rightmost.rect)) < 10)
-    .reduce<(typeof buttons)[number] | null>((a, b) => (!a || b.rect.right > a.rect.right ? b : a), null);
-  if (!neighbour) return null;
-  let row: Element | null = rightmost.button.parentElement;
-  while (row && !row.contains(neighbour.button)) row = row.parentElement;
+  const lowest = buttons.reduce((a, b) => (middle(b.rect) > middle(a.rect) ? b : a));
+  const inRow = buttons
+    .filter(({ rect }) => Math.abs(middle(rect) - middle(lowest.rect)) < 10)
+    .sort((a, b) => a.rect.left - b.rect.left);
+  const space = (i: number) => inRow[i].rect.left - inRow[i - 1].rect.right;
+  let split = 1;
+  for (let i = 2; i < inRow.length; i++) if (space(i) > space(split)) split = i;
+  const [first, second] = [inRow[split], inRow[split + 1]];
+  if (!first || !second) return null;
+  let row: Element | null = first.button.parentElement;
+  while (row && !row.contains(second.button)) row = row.parentElement;
   if (!row) return null;
-  const before = [...row.children].find((child) => child.contains(rightmost.button));
-  return before ? { row, before, height: rightmost.rect.height } : null;
+  const before = [...row.children].find((child) => child.contains(first.button));
+  return before ? { row, before, first: first.button, gap: space(split + 1) } : null;
+};
+
+// Netflix sizes its buttons and the space between them to the window. The button copies the size
+// of the one it sits before, and its icon size, and keeps the same space from it as Netflix's
+// buttons keep from each other.
+const fitButton = (div: HTMLDivElement, slot: ButtonSlot) => {
+  const size = slot.first.getBoundingClientRect();
+  div.style.width = `${size.width}px`;
+  div.style.height = `${size.height}px`;
+  const icon = slot.first.querySelector('svg')?.getBoundingClientRect().height;
+  if (icon) div.style.setProperty('--sz-netflix-icon-size', `${icon}px`);
+  const margin = parseFloat(div.style.marginRight) || 0;
+  const space = slot.first.getBoundingClientRect().left - div.getBoundingClientRect().right - margin;
+  div.style.marginRight = `${Math.max(0, slot.gap - space)}px`;
 };
 
 export default defineContentScript({
@@ -81,6 +104,7 @@ export default defineContentScript({
       Object.assign(div.style, {
         display: 'inline-flex',
         alignItems: 'center',
+        justifyContent: 'center',
         padding: '0',
         lineHeight: '0',
         position: 'relative',
@@ -180,23 +204,32 @@ export default defineContentScript({
           .catch((error) => errorLog('Netflix caption toggle mount failed', error));
         return;
       }
-      customDiv.style.height = `${slot.height}px`;
       if (customDiv.parentElement !== slot.row || customDiv.nextElementSibling !== slot.before) {
         slot.row.insertBefore(customDiv, slot.before);
+      }
+      fitButton(customDiv, slot);
+      if (watchedRow !== slot.row) {
+        resizeObserver.disconnect();
+        resizeObserver.observe(slot.row);
+        watchedRow = slot.row;
       }
     };
 
     // Netflix adds the control row when the mouse moves over the player; put the button in the
-    // same frame.
+    // same frame. A window resize restyles the row without adding nodes, so its size is watched too.
     let scheduled = false;
-    const observer = new MutationObserver(() => {
+    const schedule = () => {
       if (scheduled) return;
       scheduled = true;
       requestAnimationFrame(() => {
         scheduled = false;
         place();
       });
-    });
+    };
+    let watchedRow: Element | null = null;
+    const resizeObserver = new ResizeObserver(schedule);
+    ctx.onInvalidated(() => resizeObserver.disconnect());
+    const observer = new MutationObserver(schedule);
     observer.observe(document.body, { childList: true, subtree: true });
     ctx.onInvalidated(() => observer.disconnect());
     place();

@@ -27,3 +27,19 @@
     display: none;
   }
 }
+
+/* A thin scrollbar that stays visible, so a long list shows it has more. macOS hides its overlay
+   scrollbars until you scroll; custom ::-webkit-scrollbar styles replace them. */
+@utility scrollbar-visible {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 6px 0;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+  }
+}

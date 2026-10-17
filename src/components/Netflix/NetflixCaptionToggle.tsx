@@ -12,6 +12,7 @@ import {
 } from '@/hooks/layout';
 import { useAnyModelAvailable } from '@/hooks/models';
 import { languageOptions } from '@/lib/language';
+import type { NetflixTrack } from '@/lib/netflix/bridgeProtocol';
 import {
   CaptionSettings,
   getNetflixCaptions,
@@ -31,6 +32,21 @@ const initialStatus: NetflixCaptionStatus = {
   loading: false,
   failed: false,
   adPlaying: false,
+};
+
+// The content script sets this to the size of Netflix's own icons.
+const ICON_SIZE = 'var(--sz-netflix-icon-size, 24px)';
+
+// Netflix names closed captions and plain subtitles in one language alike; its own menu marks CC.
+const trackLabel = (track: NetflixTrack) => (track.closedCaptions ? `${track.label} [CC]` : track.label);
+
+// The language's own name, shown in gray beside the label as in the target language list.
+const nativeName = (tag: string) => {
+  try {
+    return new Intl.DisplayNames([tag], { type: 'language' }).of(tag) ?? tag;
+  } catch {
+    return tag;
+  }
 };
 
 // The same button and menu as the YouTube caption toggle (CaptionToggle). Netflix adds which of
@@ -102,13 +118,18 @@ const NetflixCaptionToggle = () => {
 
   if (!showToggle || status.adPlaying || (!status.available && !status.active)) return null;
 
-  const originalOptions = status.tracks.map((track) => ({
-    value: track.trackId,
-    label: track.label,
-    desc: track.label,
-  }));
+  const originalOptions = status.tracks.map((track) => {
+    const label = trackLabel(track);
+    const native = nativeName(track.language);
+    // LanguageOptionItem leaves out a gray name equal to the label, e.g. 한국어 in Korean.
+    return { value: track.trackId, label, desc: native === track.label ? label : native };
+  });
   const originalTrack = status.tracks.find((track) => track.trackId === status.originalTrackId);
-  const originalValueLabel = status.failed ? t('netflix.loadFailed') : (originalTrack?.label ?? '');
+  const originalValueLabel = status.failed
+    ? t('netflix.loadFailed')
+    : originalTrack
+      ? trackLabel(originalTrack)
+      : '';
 
   return (
     <CaptionToggle
@@ -119,7 +140,6 @@ const NetflixCaptionToggle = () => {
         sz:justify-center
         sz:items-center
         sz:h-full
-        sz:px-1
         sz:my-0
         sz:py-0
         sz:rounded-lg
@@ -215,6 +235,10 @@ const NetflixCaptionToggle = () => {
       onDeactivate={handleDeactivate}
       isLoading={status.loading}
       isActivated={status.active}
+      iconSize={ICON_SIZE}
+      // Netflix's buttons are about as tall as their icons, so the bar goes below the icon: the book's
+      // glyph ends 0.39em below its middle, and the bar starts a quarter em lower, as on YouTube.
+      underlineTop={`calc(50% + ${ICON_SIZE} * 0.64)`}
     />
   );
 };
