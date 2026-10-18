@@ -1,5 +1,6 @@
 // Renders the site/index.html template once per site/locales/<lang>.json into _site/:
-// English at /, every other language at /<lang>/. Run from the repo root by site/build.sh.
+// English at /, every other language at /<lang>/, plus sitemap.xml and robots.txt listing them.
+// Run from the repo root by site/build.sh.
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 
 const ORIGIN = 'https://shizue.net';
@@ -58,3 +59,11 @@ for (const { lang, path, strings } of locales) {
   mkdirSync(`_site${path}`, { recursive: true });
   writeFileSync(`_site${path}index.html`, html);
 }
+
+// The pages already link each other through hreflang; the sitemap only lists them for discovery.
+const urls = locales.map(({ path }) => `  <url><loc>${ORIGIN}${path}</loc></url>`).join('\n');
+writeFileSync(
+  '_site/sitemap.xml',
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`,
+);
+writeFileSync('_site/robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${ORIGIN}/sitemap.xml\n`);
