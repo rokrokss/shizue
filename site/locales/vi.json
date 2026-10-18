@@ -31,6 +31,8 @@
   "alt_translate": "Dịch trang web song ngữ: bản dịch hiện ngay dưới từng đoạn văn gốc",
   "alt_image_text": "Trích xuất văn bản từ hình ảnh bằng menu chuột phải",
   "alt_models": "Chọn mô hình, mức sử dụng token và lưu trữ cục bộ",
+  "alt_twitch": "Phụ đề Twitch song ngữ: tiếng Nhật, bên dưới là bản dịch tiếng Anh",
+  "alt_netflix": "Phụ đề Netflix song ngữ: tiếng Hàn, bên dưới là bản dịch tiếng Anh",
   "faq_title": "Câu hỏi thường gặp",
   "faq_signin_q": "Tôi có thể dùng gói ChatGPT thay cho khóa API không?",
   "faq_signin_a": "Có. Chọn “Đăng nhập bằng ChatGPT” khi thiết lập lần đầu hoặc sau đó trong Cài đặt, và Shizue sẽ dùng các mô hình mà gói của bạn cung cấp. Các yêu cầu được tính vào mức sử dụng của gói, bạn có thể xem trong <a href=\"https://chatgpt.com/settings/usage\">cài đặt ChatGPT</a>.",

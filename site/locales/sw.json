@@ -31,6 +31,8 @@
   "alt_translate": "Tafsiri ya ukurasa kwa lugha mbili, maandishi ya asili na tafsiri kando kwa kando",
   "alt_image_text": "Kutoa maandishi kwenye picha kwa menyu ya kubofya kulia",
   "alt_models": "Kuchagua modeli, matumizi ya token, na hifadhi ya ndani",
+  "alt_twitch": "Manukuu ya Twitch kwa lugha mbili: Kijapani, na tafsiri ya Kiingereza chini yake",
+  "alt_netflix": "Manukuu ya Netflix kwa lugha mbili: Kikorea, na tafsiri ya Kiingereza chini yake",
   "faq_title": "Maswali yanayoulizwa mara kwa mara",
   "faq_signin_q": "Je, naweza kutumia mpango wangu wa ChatGPT badala ya ufunguo wa API?",
   "faq_signin_a": "Ndiyo. Chagua “Ingia kwa ChatGPT” unapoweka mipangilio ya mwanzo au baadaye kwenye Mipangilio, na Shizue itatumia modeli zinazotolewa na mpango wako. Maombi yanahesabiwa kwenye matumizi ya mpango, ambayo unaweza kuyaona kwenye <a href=\"https://chatgpt.com/settings/usage\">mipangilio ya ChatGPT</a>.",

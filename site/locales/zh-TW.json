@@ -31,6 +31,8 @@
   "alt_translate": "網頁雙語對照翻譯：譯文顯示在每段原文下方",
   "alt_image_text": "透過右鍵選單擷取圖片中的文字",
   "alt_models": "模型選擇、權杖使用量和本機儲存",
+  "alt_twitch": "Twitch 雙語字幕：日文字幕下方顯示英文譯文",
+  "alt_netflix": "Netflix 雙語字幕：韓文字幕下方顯示英文譯文",
   "faq_title": "常見問題",
   "faq_signin_q": "可以不用 API 金鑰，直接用我的 ChatGPT 方案嗎？",
   "faq_signin_a": "可以。在初次設定時或在設定中選擇「使用 ChatGPT 登入」，Shizue 就會使用你的方案提供的模型。請求會計入方案用量，可以在 <a href=\"https://chatgpt.com/settings/usage\">ChatGPT 設定</a>中查看。",

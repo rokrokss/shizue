@@ -31,6 +31,8 @@
   "alt_translate": "Bilingual page translation, original and translation side by side",
   "alt_image_text": "Extracting text from an image with the right-click menu",
   "alt_models": "Model selection, token usage, and local storage",
+  "alt_twitch": "Bilingual Twitch captions: Japanese with the English translation underneath",
+  "alt_netflix": "Bilingual Netflix captions: Korean with the English translation underneath",
   "faq_title": "FAQ",
   "faq_signin_q": "Can I use my ChatGPT plan instead of an API key?",
   "faq_signin_a": "Yes. Choose “Sign in with ChatGPT” when you set up Shizue or later in Settings, and Shizue uses the models your plan offers. Requests count toward your plan's usage, which you can check in <a href=\"https://chatgpt.com/settings/usage\">ChatGPT settings</a>.",

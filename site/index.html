@@ -126,6 +126,7 @@
   .captions { padding-bottom: 88px; }
   .captions h2 { margin-bottom: 10px; }
   .captions .sub { font-size: 19px; color: var(--ink-2); max-width: 620px; margin-bottom: 28px; }
+  .captions .gallery { padding-bottom: 28px; }
   .screens { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .screen {
     position: relative; overflow: hidden; padding: 22px 22px 30px;
@@ -232,6 +233,10 @@
   <section id="captions" class="captions">
     <h2>{{captions_title}}</h2>
     <p class="sub">{{captions_body}}</p>
+    <div class="gallery">
+      <img class="shot" src="/img/screenshot-6-twitch.png" width="1280" height="800" loading="lazy" alt="{{alt_twitch}}">
+      <img class="shot" src="/img/screenshot-7-netflix.png" width="1280" height="800" loading="lazy" alt="{{alt_netflix}}">
+    </div>
     <div class="screens">
       <div class="screen" style="--played: 34%"><h3>YouTube</h3><p>{{captions_youtube}}</p></div>
       <div class="screen" style="--played: 100%"><h3>Twitch</h3><p>{{captions_twitch}}</p></div>

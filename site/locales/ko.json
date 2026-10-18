@@ -31,6 +31,8 @@
   "alt_translate": "웹페이지 이중 언어 번역: 문단마다 원문 바로 아래에 번역이 붙은 화면",
   "alt_image_text": "우클릭 메뉴로 이미지 속 텍스트를 추출하는 화면",
   "alt_models": "모델 선택, 토큰 사용량, 로컬 저장을 보여 주는 화면",
+  "alt_twitch": "Twitch 이중 자막: 일본어 자막 아래에 영어 번역이 표시된 화면",
+  "alt_netflix": "Netflix 이중 자막: 한국어 자막 아래에 영어 번역이 표시된 화면",
   "faq_title": "자주 묻는 질문",
   "faq_signin_q": "API 키 대신 ChatGPT 구독으로 쓸 수 있나요?",
   "faq_signin_a": "네. 처음 설정할 때나 설정에서 “ChatGPT 로그인”을 고르면 내 구독에서 제공하는 모델로 Shizue를 쓸 수 있습니다. 요청은 구독 사용량에 포함되며, <a href=\"https://chatgpt.com/settings/usage\">ChatGPT 설정</a>에서 확인할 수 있습니다.",

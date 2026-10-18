@@ -31,6 +31,8 @@
   "alt_translate": "Traduction bilingue d'une page, l'original et la traduction côte à côte",
   "alt_image_text": "Extraction du texte d'une image avec le menu du clic droit",
   "alt_models": "Choix du modèle, utilisation des tokens et stockage local",
+  "alt_twitch": "Sous-titres Twitch bilingues : le japonais, avec la traduction anglaise en dessous",
+  "alt_netflix": "Sous-titres Netflix bilingues : le coréen, avec la traduction anglaise en dessous",
   "faq_title": "FAQ",
   "faq_signin_q": "Puis-je utiliser mon forfait ChatGPT au lieu d'une clé API ?",
   "faq_signin_a": "Oui. Choisissez « Se connecter avec ChatGPT » lors de la configuration ou plus tard dans les Paramètres, et Shizue utilise les modèles inclus dans votre forfait. Les requêtes comptent dans l'utilisation de votre forfait, que vous pouvez consulter dans les <a href=\"https://chatgpt.com/settings/usage\">paramètres de ChatGPT</a>.",

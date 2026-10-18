@@ -31,6 +31,8 @@
   "alt_translate": "Tradução bilíngue de uma página, com o original e a tradução lado a lado",
   "alt_image_text": "Extraindo o texto de uma imagem pelo menu do botão direito",
   "alt_models": "Escolha de modelo, uso de tokens e armazenamento local",
+  "alt_twitch": "Legendas bilíngues na Twitch: japonês com a tradução em inglês embaixo",
+  "alt_netflix": "Legendas bilíngues na Netflix: coreano com a tradução em inglês embaixo",
   "faq_title": "Perguntas frequentes",
   "faq_signin_q": "Posso usar meu plano do ChatGPT em vez de uma chave de API?",
   "faq_signin_a": "Pode. Escolha “Entrar com o ChatGPT” na configuração inicial ou depois em Configurações, e você passa a usar os modelos que o seu plano oferece. As solicitações contam no uso do plano, que você pode conferir nas <a href=\"https://chatgpt.com/settings/usage\">configurações do ChatGPT</a>.",

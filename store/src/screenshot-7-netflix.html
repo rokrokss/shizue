@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<style>
+  .canvas { width: 1280px; height: 800px; }
+  .top { position: absolute; left: 64px; top: 52px; }
+  .headline { font-size: 66px; margin-top: 22px; }
+  .sub { font-size: 23px; margin-top: 14px; }
+
+  .player {
+    position: absolute; left: 64px; top: 268px; width: 1152px; height: 500px;
+    border-radius: 16px; overflow: hidden; background: #000;
+    box-shadow: 0 30px 60px -20px rgba(16, 48, 43, 0.4), 0 12px 24px -12px rgba(16, 48, 43, 0.25);
+    font-family: Helvetica, Arial, sans-serif;
+  }
+  /* video frame: a pixel night market after the rain */
+  .scene { position: absolute; inset: 0; background: linear-gradient(180deg, #0c1428 0%, #1b2c4c 55%, #2a3550 100%); }
+  .scene .moon { position: absolute; left: 540px; top: 46px; width: 56px; height: 56px; background: #fff6cf; box-shadow: 0 0 0 10px rgba(255, 246, 207, 0.12); }
+  .scene .bldg { position: absolute; bottom: 210px; background:
+      repeating-linear-gradient(90deg, transparent 0 14px, rgba(255, 214, 140, 0.85) 14px 26px, transparent 26px 40px) 0 18px / 100% 16px repeat-y,
+      #1f2b45; }
+  .scene .bldg.dim { background:
+      repeating-linear-gradient(90deg, transparent 0 18px, rgba(144, 247, 236, 0.35) 18px 28px, transparent 28px 44px) 0 22px / 100% 18px repeat-y,
+      #18223a; }
+  .scene .bldg::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(180deg, transparent 0 16px, #1f2b45 16px 34px); }
+  .scene .bldg.dim::after { background: repeating-linear-gradient(180deg, transparent 0 18px, #18223a 18px 40px); }
+  .scene .street { position: absolute; left: 0; right: 0; bottom: 0; height: 210px; background: linear-gradient(180deg, #232a3d, #151a28); }
+  /* puddle reflections */
+  .scene .puddle { position: absolute; height: 10px; border-radius: 5px; background: rgba(255, 214, 140, 0.28); }
+  /* lantern string */
+  .scene .wire { position: absolute; left: 0; right: 0; top: 108px; height: 2px; background: #3a4560; }
+  .scene .lanterns { position: absolute; left: 30px; top: 110px; width: 16px; height: 22px; background: #ff9f6b;
+    box-shadow: 0 0 18px 4px rgba(255, 159, 107, 0.5),
+      110px 0 #ffd25e, 220px 0 #ff9f6b, 330px 0 #ffd25e, 440px 0 #ff9f6b, 550px 0 #ffd25e, 660px 0 #ff9f6b, 770px 0 #ffd25e, 880px 0 #ff9f6b, 990px 0 #ffd25e; }
+  /* market stall */
+  .scene .stall { position: absolute; left: 300px; bottom: 210px; width: 300px; height: 110px; background: #3b2f2a; }
+  .scene .stall::before { content: ''; position: absolute; left: -16px; right: -16px; top: -26px; height: 34px;
+    background: repeating-linear-gradient(90deg, var(--mint) 0 30px, #f6f3dc 30px 60px); clip-path: polygon(0 0, 100% 0, 100% 70%, 95% 100%, 90% 70%, 85% 100%, 80% 70%, 75% 100%, 70% 70%, 65% 100%, 60% 70%, 55% 100%, 50% 70%, 45% 100%, 40% 70%, 35% 100%, 30% 70%, 25% 100%, 20% 70%, 15% 100%, 10% 70%, 5% 100%, 0 70%); }
+  .scene .stall::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 46px; background: #6b4f3a; box-shadow: inset 0 6px 0 #8a6a4e; }
+  /* light rain */
+  .scene .rain { position: absolute; inset: 0; background: repeating-linear-gradient(105deg, transparent 0 22px, rgba(203, 251, 246, 0.07) 22px 24px); }
+  .scene .sprite { position: absolute; }
+
+  /* captions (mirrors Youtube/CaptionDisplay, which Netflix uses too) */
+  .caps { position: absolute; left: 40px; right: 380px; bottom: 108px; text-align: center; font-size: 27px; line-height: 1.22; white-space: nowrap; }
+  .caps span { display: inline-block; padding: 4px 8px; background: rgba(8, 8, 8, 0.75); color: #fff; }
+  .caps .orig span { color: #e6e6e6; }
+
+  .back { position: absolute; left: 22px; top: 20px; }
+  .back svg { width: 30px; height: 30px; fill: #fff; display: block; }
+
+  .progress { position: absolute; left: 22px; right: 86px; bottom: 76px; height: 4px; background: rgba(255, 255, 255, 0.3); }
+  .progress b { position: absolute; left: 0; top: 0; bottom: 0; width: 58%; background: #fff; }
+  .progress i { position: absolute; left: 58%; top: -6px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transform: translateX(-50%); }
+  .time { position: absolute; right: 22px; bottom: 68px; color: #fff; font-size: 15px; }
+
+  .controls { position: absolute; left: 0; right: 0; bottom: 0; height: 64px; padding: 0 22px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7)); display: flex; align-items: center; gap: 26px; color: #fff; font-size: 16px; }
+  .controls .sp { flex: 1; }
+  .controls svg { width: 28px; height: 28px; fill: #fff; display: block; }
+  .controls .title { font-weight: 700; }
+  .controls .title span { font-weight: 400; color: #d1d5db; margin-left: 8px; }
+  .controls .sz { position: relative; }
+  .controls .sz::after { content: ''; position: absolute; left: 0; right: 0; bottom: -9px; height: 3px; border-radius: 2px; background: var(--mint); }
+
+  /* Shizue AI Caption menu (mirrors NetflixCaptionToggle) */
+  .menu { position: absolute; right: 196px; bottom: 98px; width: 300px; background: rgba(0, 0, 0, 0.8); border-radius: 8px; color: #fff; font-size: 13px; overflow: hidden; backdrop-filter: blur(6px); }
+  .menu .row { height: 38px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; }
+  .menu .row span.v { color: #9ca3af; }
+  .menu .sw { width: 28px; height: 16px; border-radius: 8px; background: var(--mint); position: relative; }
+  .menu .sw::after { content: ''; position: absolute; right: 2px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; }
+  .menu .num { min-width: 46px; height: 22px; border: 1px solid #424242; border-radius: 4px; text-align: right; padding: 2px 6px; font-size: 12px; }
+  .menu .btns { border-top: 1px solid #303030; display: flex; gap: 10px; padding: 8px; }
+  .menu .btns span { flex: 1; height: 26px; border-radius: 4px; display: grid; place-items: center; }
+  .menu .btns .p { background: var(--mint); color: #fff; }
+  .menu .btns .d { border: 1px dashed #424242; color: #ddd; }
+
+  .badge { position: absolute; right: 64px; top: 170px; display: flex; gap: 10px; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="glow" style="left:860px;top:-160px;width:560px;height:420px;background:rgba(144,247,236,.5)"></div>
+
+  <div class="top">
+    <span class="eyebrow"><span class="dot"></span>Netflix captions</span>
+    <h1 class="headline">Binge in <span class="mark">two languages</span></h1>
+    <p class="sub">Official subtitles in your language when there are any, AI when there aren't.</p>
+  </div>
+
+  <div class="badge">
+    <span class="chip">Korean → English</span>
+    <span class="chip">Next episode too</span>
+  </div>
+
+  <div class="player">
+    <div class="scene">
+      <div class="moon"></div>
+      <div class="bldg" style="left:-20px;width:220px;height:230px"></div>
+      <div class="bldg dim" style="left:190px;width:150px;height:170px"></div>
+      <div class="bldg dim" style="left:660px;width:170px;height:200px"></div>
+      <div class="bldg" style="left:820px;width:260px;height:250px"></div>
+      <div class="bldg dim" style="left:1070px;width:120px;height:160px"></div>
+      <div class="wire"></div>
+      <div class="lanterns"></div>
+      <div class="street"></div>
+      <div class="puddle" style="left:70px;bottom:176px;width:130px"></div>
+      <div class="stall"></div>
+      <div class="sprite sp-stand" style="--s:6;left:390px;bottom:206px"></div>
+      <div class="sprite sp-bluechicken" style="--s:4;left:520px;bottom:256px"></div>
+      <div class="rain"></div>
+    </div>
+
+    <div class="back"><svg viewBox="0 0 24 24"><path d="M20 11H7.8l5.6-5.6L12 4l-8 8 8 8 1.4-1.4L7.8 13H20z"/></svg></div>
+
+    <div class="caps">
+      <div class="orig"><span>비가 그치면 시장에 가 보자.</span></div>
+      <div><span>Let's go to the market once the rain stops.</span></div>
+    </div>
+
+    <div class="menu">
+      <div class="row">Shizue AI Caption</div>
+      <div class="row">Target Language <span class="v">English ›</span></div>
+      <div class="row">Original subtitles <span class="v">Korean [CC] ›</span></div>
+      <div class="row">Bilingual <span class="sw"></span></div>
+      <div class="row">Number of Lines <span class="num">2</span></div>
+      <div class="row">Caption Size <span class="num">100%</span></div>
+      <div class="btns"><span class="p">Activate</span><span class="d">Deactivate</span></div>
+    </div>
+
+    <div class="progress"><b></b><i></i></div>
+    <div class="time">21:48</div>
+    <div class="controls">
+      <svg viewBox="0 0 24 24"><path d="M7 5h3.5v14H7zm6.5 0H17v14h-3.5z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 5V2L7 6l5 4V7a6 6 0 1 1-6 6H4a8 8 0 1 0 8-8z"/><text x="12" y="16" font-size="6.5" text-anchor="middle" font-family="Arial" font-weight="700">10</text></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 5V2l5 4-5 4V7a6 6 0 1 0 6 6h2a8 8 0 1 1-8-8z"/><text x="12" y="16" font-size="6.5" text-anchor="middle" font-family="Arial" font-weight="700">10</text></svg>
+      <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.47 4.47 0 0 0 2.5-4z"/></svg>
+      <span class="sp"></span>
+      <span class="title">Night Market<span>E3 After the Rain</span></span>
+      <span class="sp"></span>
+      <span class="sz"><svg viewBox="64 64 896 896"><path d="M928 161H699.2c-49.1 0-97.1 14.1-138.4 40.7L512 233l-48.8-31.3A255.2 255.2 0 00324.8 161H96c-17.7 0-32 14.3-32 32v568c0 17.7 14.3 32 32 32h228.8c49.1 0 97.1 14.1 138.4 40.7l44.4 28.6c1.3.8 2.8 1.3 4.3 1.3s3-.4 4.3-1.3l44.4-28.6C602 807.1 650.1 793 699.2 793H928c17.7 0 32-14.3 32-32V193c0-17.7-14.3-32-32-32zM404 553.5c0 4.1-3.2 7.5-7.1 7.5H211.1c-3.9 0-7.1-3.4-7.1-7.5v-45c0-4.1 3.2-7.5 7.1-7.5h185.7c3.9 0 7.1 3.4 7.1 7.5v45zm0-140c0 4.1-3.2 7.5-7.1 7.5H211.1c-3.9 0-7.1-3.4-7.1-7.5v-45c0-4.1 3.2-7.5 7.1-7.5h185.7c3.9 0 7.1 3.4 7.1 7.5v45zm416 140c0 4.1-3.2 7.5-7.1 7.5H627.1c-3.9 0-7.1-3.4-7.1-7.5v-45c0-4.1 3.2-7.5 7.1-7.5h185.7c3.9 0 7.1 3.4 7.1 7.5v45zm0-140c0 4.1-3.2 7.5-7.1 7.5H627.1c-3.9 0-7.1-3.4-7.1-7.5v-45c0-4.1 3.2-7.5 7.1-7.5h185.7c3.9 0 7.1 3.4 7.1 7.5v45z"/></svg></span>
+      <svg viewBox="0 0 24 24"><path d="M5 5l9 7-9 7zm11 0h3v14h-3z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M3 5h18v12H8l-5 4zm4 5v2h6v-2zm8 0v2h2v-2zm-8 3v1.5h2V13zm4 0v1.5h6V13z" fill-rule="evenodd"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+    </div>
+  </div>
+</div>
+</body>
+</html>

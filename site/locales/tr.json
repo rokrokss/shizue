@@ -31,6 +31,8 @@
   "alt_translate": "İki dilli sayfa çevirisi: orijinal metin ve çevirisi yan yana",
   "alt_image_text": "Sağ tık menüsüyle bir görseldeki metni çıkarma",
   "alt_models": "Model seçimi, token kullanımı ve yerel depolama",
+  "alt_twitch": "İki dilli Twitch altyazıları: Japonca altyazının altında İngilizce çevirisi",
+  "alt_netflix": "İki dilli Netflix altyazıları: Korece altyazının altında İngilizce çevirisi",
   "faq_title": "Sıkça sorulan sorular",
   "faq_signin_q": "API anahtarı yerine ChatGPT planımı kullanabilir miyim?",
   "faq_signin_a": "Evet. Kurulum sırasında ya da daha sonra Ayarlar’da “ChatGPT ile giriş yap” seçeneğini seçin; Shizue planınızın sunduğu modelleri kullanır. İstekler planınızın kullanımına sayılır, bunu <a href=\"https://chatgpt.com/settings/usage\">ChatGPT ayarlarından</a> görebilirsiniz.",

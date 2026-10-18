@@ -15,6 +15,8 @@ TARGETS=(
   "screenshot-3-youtube:1280:800"
   "screenshot-4-context-menu:1280:800"
   "screenshot-5-models:1280:800"
+  "screenshot-6-twitch:1280:800"
+  "screenshot-7-netflix:1280:800"
   "promo-small-440x280:440:280"
   "promo-marquee-1400x560:1400:560"
   "store-icon-128:128:128"

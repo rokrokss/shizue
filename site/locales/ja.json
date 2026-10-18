@@ -31,6 +31,8 @@
   "alt_translate": "ウェブページのバイリンガル翻訳：各段落の原文のすぐ下に訳文を表示",
   "alt_image_text": "右クリックメニューで画像からテキストを抽出しているところ",
   "alt_models": "モデルの選択、トークン使用量、ブラウザ内への保存",
+  "alt_twitch": "Twitchのバイリンガル字幕：日本語の字幕の下に英語の訳文を表示",
+  "alt_netflix": "Netflixのバイリンガル字幕：韓国語の字幕の下に英語の訳文を表示",
   "faq_title": "よくある質問",
   "faq_signin_q": "APIキーの代わりにChatGPTのプランで使えますか？",
   "faq_signin_a": "はい。初回設定のときか設定画面で「ChatGPTでログイン」を選ぶと、ご契約中のプランで使えるモデルでShizueを使えます。リクエストはプランの利用量に含まれ、<a href=\"https://chatgpt.com/settings/usage\">ChatGPTの設定</a>で確認できます。",

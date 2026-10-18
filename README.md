@@ -57,6 +57,10 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 <p align="center">
   <img src="store/out/screenshot-3-youtube.png" alt="Bilingual YouTube captions" width="640" />
 </p>
+<p align="center">
+  <img src="store/out/screenshot-6-twitch.png" alt="Bilingual Twitch captions" width="400" />
+  <img src="store/out/screenshot-7-netflix.png" alt="Bilingual Netflix captions" width="400" />
+</p>
 
 ### 📝 Memo & Note-taking:
   - Create, edit, and manage personal notes directly within the extension. Features auto-save, pinning important memos, and organized note management.

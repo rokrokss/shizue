@@ -31,6 +31,8 @@
   "alt_translate": "Traduzione bilingue di una pagina, con originale e traduzione affiancati",
   "alt_image_text": "Estrazione del testo da un'immagine con il menu del tasto destro",
   "alt_models": "Scelta del modello, utilizzo dei token e archiviazione locale",
+  "alt_twitch": "Sottotitoli Twitch bilingui: giapponese con la traduzione inglese sotto",
+  "alt_netflix": "Sottotitoli Netflix bilingui: coreano con la traduzione inglese sotto",
   "faq_title": "FAQ",
   "faq_signin_q": "Posso usare il mio piano ChatGPT invece di una chiave API?",
   "faq_signin_a": "Sì. Scegli «Accedi con ChatGPT» durante la configurazione o più tardi nelle Impostazioni, e Shizue userà i modelli inclusi nel tuo piano. Le richieste rientrano nell'utilizzo del piano, che puoi controllare nelle <a href=\"https://chatgpt.com/settings/usage\">impostazioni di ChatGPT</a>.",

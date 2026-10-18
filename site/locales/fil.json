@@ -31,6 +31,8 @@
   "alt_translate": "Bilingual na salin ng pahina, magkatabi ang orihinal at ang salin",
   "alt_image_text": "Pagkuha ng teksto mula sa larawan gamit ang right-click menu",
   "alt_models": "Pagpili ng model, paggamit ng token, at local storage",
+  "alt_twitch": "Bilingual na Twitch caption: Hapon sa itaas, at ang salin sa Ingles sa ilalim",
+  "alt_netflix": "Bilingual na Netflix caption: Koreano sa itaas, at ang salin sa Ingles sa ilalim",
   "faq_title": "Mga madalas itanong",
   "faq_signin_q": "Puwede ko bang gamitin ang aking ChatGPT plan sa halip na API key?",
   "faq_signin_a": "Oo. Piliin ang “Mag-sign in gamit ang ChatGPT” sa unang setup o sa Mga Setting, at gagamitin ng Shizue ang mga model na kasama sa iyong plan. Kasama ang mga request sa paggamit ng plan, na makikita mo sa <a href=\"https://chatgpt.com/settings/usage\">ChatGPT settings</a>.",

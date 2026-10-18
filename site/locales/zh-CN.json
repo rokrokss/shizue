@@ -31,6 +31,8 @@
   "alt_translate": "网页双语对照翻译：译文显示在每段原文下方",
   "alt_image_text": "通过右键菜单提取图片中的文字",
   "alt_models": "模型选择、令牌使用量和本地存储",
+  "alt_twitch": "Twitch 双语字幕：日语字幕下方显示英语译文",
+  "alt_netflix": "Netflix 双语字幕：韩语字幕下方显示英语译文",
   "faq_title": "常见问题",
   "faq_signin_q": "可以不用 API 密钥，直接用我的 ChatGPT 套餐吗？",
   "faq_signin_a": "可以。在初次设置时或在设置中选择“使用 ChatGPT 登录”，Shizue 就会使用你的套餐提供的模型。请求计入套餐用量，可以在 <a href=\"https://chatgpt.com/settings/usage\">ChatGPT 设置</a>中查看。",
