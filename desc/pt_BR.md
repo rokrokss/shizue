@@ -1,4 +1,4 @@
-🌸 Shizue coloca um assistente de IA no painel lateral do Chrome. Você pode conversar sem trocar de aba, resumir com um clique o que está lendo e ver o original e a tradução juntos em páginas da web e vídeos do YouTube.
+🌸 Shizue coloca um assistente de IA no painel lateral do Chrome. Você pode conversar sem trocar de aba, resumir com um clique o que está lendo e ver o original e a tradução juntos em páginas da web e vídeos.
 
 Shizue é grátis e de código aberto (MIT). Entre com o ChatGPT para usar o seu plano, ou use a sua própria chave de API do provedor de IA que você escolher e pague só pelo que usar. Você também pode usar um modelo que roda no seu próprio computador, sem chave e sem custo. Shizue não tem conta, assinatura nem servidor próprios.
 
@@ -18,9 +18,10 @@ Shizue é grátis e de código aberto (MIT). Entre com o ChatGPT para usar o seu
 🌐 Páginas da web bilíngues
 - A tradução aparece embaixo de cada parágrafo, e o texto original fica onde está
 
-🎬 Legendas bilíngues no YouTube
-- As legendas são traduzidas enquanto você assiste e aparecem embaixo da linha original
-- Escolha o idioma de destino e o número de linhas, e use A ou D para ir para a legenda anterior ou a próxima
+🎬 Legendas bilíngues em vídeos
+- YouTube: enquanto você assiste, o seu idioma aparece embaixo da linha original. Use A ou D para ir para a linha anterior ou a próxima
+- Twitch: lives e VODs, a partir das legendas do streamer ou do reconhecimento de voz. A tradução integrada do Chrome roda no seu dispositivo, sem custo
+- Netflix: quando o título tem legendas no seu idioma, elas aparecem embaixo do original. Se não tiver, Shizue passa o texto para o seu idioma com antecedência
 
 🎯 Menu do botão direito
 - Texto selecionado: traduzir, explicar, resumir ou corrigir a gramática

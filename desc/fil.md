@@ -1,4 +1,4 @@
-🌸 Ang Shizue ay AI assistant sa side panel ng Chrome. Makipag-chat sa AI nang hindi lumilipat ng tab, ibuod ang binabasa sa isang click, at magbasa ng web page o manood ng YouTube video nang sabay na nakikita ang orihinal at ang salin.
+🌸 Ang Shizue ay AI assistant sa side panel ng Chrome. Makipag-chat sa AI nang hindi lumilipat ng tab, ibuod ang binabasa sa isang click, at magbasa ng web page o manood ng video nang sabay na nakikita ang orihinal at ang salin.
 
 Libre at open source (MIT) ang Shizue. Mag-sign in gamit ang ChatGPT para magamit ang iyong plan, o gamitin ang sarili mong API key mula sa AI provider na pipiliin mo at bayaran lang ang nagamit mo. Puwede ka ring gumamit ng model na tumatakbo sa sarili mong computer, nang walang key at walang bayad. Walang sariling account, subscription, o server ang Shizue.
 
@@ -18,9 +18,10 @@ Libre at open source (MIT) ang Shizue. Mag-sign in gamit ang ChatGPT para magami
 🌐 Bilingual na web page
 - Lumalabas ang salin sa ilalim ng bawat talata, kaya nananatili sa puwesto ang orihinal
 
-🎬 Bilingual na YouTube caption
-- Isinasalin ang mga caption habang nanonood at ipinapakita sa ilalim ng orihinal na linya
-- Piliin ang target language at ang bilang ng linya, at pindutin ang A o D para lumipat sa nakaraan o susunod na caption
+🎬 Bilingual na caption sa video
+- YouTube: makikita mo nang sabay ang orihinal at ang wika mo habang nanonood. Pindutin ang A o D para lumipat sa nakaraan o susunod na linya
+- Twitch: live stream at VOD, mula sa caption ng streamer o speech recognition. Libreng isinasalin ito ng Chrome sa mismong device mo
+- Netflix: kapag may subtitle ang palabas sa wika mo, lalabas ito sa ilalim ng orihinal. Kung wala, inihahanda ito nang maaga, bago pa ito i-play
 
 🎯 Right-click menu
 - Napiling teksto: isalin, ipaliwanag, ibuod, o ayusin ang grammar

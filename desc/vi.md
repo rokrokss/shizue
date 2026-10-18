@@ -1,4 +1,4 @@
-🌸 Shizue là trợ lý AI nằm trong bảng điều khiển bên của Chrome. Trò chuyện với AI mà không phải chuyển tab, tóm tắt nội dung đang đọc chỉ với một cú nhấp, đọc trang web và xem video YouTube với cả bản gốc lẫn bản dịch.
+🌸 Shizue là trợ lý AI nằm trong bảng điều khiển bên của Chrome. Trò chuyện với AI mà không phải chuyển tab, tóm tắt nội dung đang đọc chỉ với một cú nhấp, đọc trang web và xem video với cả bản gốc lẫn bản dịch.
 
 Shizue miễn phí và là phần mềm mã nguồn mở (MIT). Bạn có thể đăng nhập bằng ChatGPT để dùng gói của mình, hoặc dùng khóa API của riêng bạn từ nhà cung cấp AI bạn chọn và chỉ trả theo mức đã dùng. Bạn cũng có thể dùng mô hình chạy trên chính máy tính của mình, không cần khóa và không mất phí. Bản thân Shizue không có tài khoản, gói thuê bao hay máy chủ.
 
@@ -18,9 +18,10 @@ Shizue miễn phí và là phần mềm mã nguồn mở (MIT). Bạn có thể 
 🌐 Trang web song ngữ
 - Bản dịch hiện ngay dưới từng đoạn văn, nên văn bản gốc vẫn giữ nguyên vị trí
 
-🎬 Phụ đề YouTube song ngữ
-- Phụ đề được dịch trong lúc xem và hiện bên dưới dòng phụ đề gốc
-- Chọn ngôn ngữ đích và số dòng, nhấn A hoặc D để chuyển đến phụ đề trước hoặc sau
+🎬 Phụ đề video song ngữ
+- YouTube: ngôn ngữ của bạn hiện ngay dưới dòng gốc trong lúc xem. Nhấn A hoặc D để chuyển đến dòng trước hoặc sau
+- Twitch: cả livestream lẫn VOD, từ phụ đề của streamer hoặc nhận dạng giọng nói. Chrome dịch ngay trên thiết bị, miễn phí
+- Netflix: nếu phim có phụ đề bằng ngôn ngữ của bạn, chúng hiện ngay dưới bản gốc. Nếu không, chúng được chuẩn bị sẵn trước khi phát tới
 
 🎯 Menu chuột phải
 - Văn bản đã chọn: dịch, giải thích, tóm tắt, sửa ngữ pháp

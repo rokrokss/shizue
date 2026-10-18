@@ -1,4 +1,4 @@
-🌸 Shizue puts an AI assistant in Chrome's side panel. Chat without switching tabs, summarize what you're reading in one click, and read web pages and YouTube videos with the original and the translation together.
+🌸 Shizue puts an AI assistant in Chrome's side panel. Chat without switching tabs, summarize what you're reading in one click, and read web pages and watch videos with the original and the translation together.
 
 Shizue is free and open source (MIT). Sign in with ChatGPT to use your plan, or use your own API key from the AI provider you choose and pay that provider only for what you use. You can also use a model that runs on your own computer, with no key and no cost. Shizue itself has no account, no subscription, and no server.
 
@@ -18,9 +18,10 @@ Shizue is free and open source (MIT). Sign in with ChatGPT to use your plan, or 
 🌐 Bilingual web pages
 - The translation appears under each paragraph, so the original stays in place
 
-🎬 Bilingual YouTube captions
-- Captions are translated as you watch and shown under the original line
-- Choose the target language and the number of lines, and press A or D to jump to the previous or next caption
+🎬 Bilingual video captions
+- YouTube: captions are translated as you watch and shown under the original line. Press A or D to jump to the previous or next one
+- Twitch: live streams and VODs, from the streamer's captions or speech recognition. Chrome's built-in translation runs on your device at no cost
+- Netflix: when a title has subtitles in your language, they appear under the original. Otherwise they're translated ahead of playback
 
 🎯 Right-click menu
 - Selected text: translate, explain, summarize, or fix the grammar

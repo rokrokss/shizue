@@ -1,4 +1,4 @@
-🌸 Shizue, Chrome'un yan paneline bir yapay zeka asistanı ekler. Sekme değiştirmeden sohbet edebilir, okuduğunuz içeriği tek tıkla özetleyebilir, web sayfalarını ve YouTube videolarını orijinal metinle çeviriyi birlikte görerek takip edebilirsiniz.
+🌸 Shizue, Chrome'un yan paneline bir yapay zeka asistanı ekler. Sekme değiştirmeden sohbet edebilir, okuduğunuz içeriği tek tıkla özetleyebilir, web sayfalarını ve videoları orijinal metinle çeviriyi birlikte görerek takip edebilirsiniz.
 
 Shizue ücretsiz ve açık kaynaklıdır (MIT). ChatGPT ile giriş yapıp planınızı kullanabilir ya da seçtiğiniz yapay zeka sağlayıcısından aldığınız kendi API anahtarınızla yalnızca kullandığınız kadar ödeyebilirsiniz. Kendi bilgisayarınızda çalışan bir modeli de anahtarsız ve ücretsiz kullanabilirsiniz. Shizue'nin kendisinde hesap, abonelik ya da sunucu yoktur.
 
@@ -18,9 +18,10 @@ Shizue ücretsiz ve açık kaynaklıdır (MIT). ChatGPT ile giriş yapıp planı
 🌐 İki dilli web sayfaları
 - Çeviri her paragrafın altında görünür, orijinal metin yerinde kalır
 
-🎬 İki dilli YouTube altyazıları
-- Altyazılar siz izlerken çevrilir ve orijinal satırın altında gösterilir
-- Hedef dili ve satır sayısını seçebilir, A ve D tuşlarıyla önceki ya da sonraki altyazıya geçebilirsiniz
+🎬 İki dilli video altyazıları
+- YouTube: siz izlerken orijinal satırın hemen altında kendi dilinizdeki altyazı belirir. A ve D tuşlarıyla önceki ya da sonraki satıra geçebilirsiniz
+- Twitch: canlı yayınlarda ve VOD'larda yayıncı altyazılarını ya da konuşma tanımayı kullanır. Chrome yerleşik çevirisi cihazınızda ücretsiz çalışır
+- Netflix: bir yapımın sizin dilinizde altyazısı varsa orijinalin altında gösterilir. Yoksa Shizue onu oynatmanın bir adım önünde hazırlar
 
 🎯 Sağ tık menüsü
 - Seçili metin: çevir, açıkla, özetle ya da dilbilgisini düzelt

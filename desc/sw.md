@@ -1,4 +1,4 @@
-🌸 Shizue ni msaidizi wa AI aliye kwenye paneli ya upande ya Chrome. Unaweza kupiga gumzo na AI bila kubadilisha kichupo, kufupisha unachosoma kwa kubofya mara moja, na kusoma kurasa za wavuti na kutazama video za YouTube huku ukiona maandishi ya asili na tafsiri kwa pamoja.
+🌸 Shizue ni msaidizi wa AI aliye kwenye paneli ya upande ya Chrome. Unaweza kupiga gumzo na AI bila kubadilisha kichupo, kufupisha unachosoma kwa kubofya mara moja, na kusoma kurasa za wavuti na kutazama video huku ukiona maandishi ya asili na tafsiri kwa pamoja.
 
 Shizue ni bure na ni programu huria (MIT). Ingia kwa ChatGPT ili utumie mpango wako, au tumia ufunguo wako mwenyewe wa API kutoka kwa mtoa huduma wa AI unayemchagua na ulipe kwa kiasi unachotumia tu. Unaweza pia kuendesha modeli kwenye kompyuta yako mwenyewe, bila ufunguo na bila gharama. Shizue yenyewe haina akaunti, usajili wa kulipia, wala seva.
 
@@ -18,9 +18,10 @@ Shizue ni bure na ni programu huria (MIT). Ingia kwa ChatGPT ili utumie mpango w
 🌐 Kurasa za wavuti kwa lugha mbili
 - Tafsiri huonekana chini ya kila aya, kwa hiyo maandishi ya asili hubaki pale pale
 
-🎬 Manukuu ya YouTube kwa lugha mbili
-- Manukuu hutafsiriwa unapotazama na kuonyeshwa chini ya mstari wa asili
-- Chagua lugha lengwa na idadi ya mistari, na ubonyeze A au D kwenda kwenye manukuu yaliyotangulia au yanayofuata
+🎬 Manukuu ya video kwa lugha mbili
+- YouTube: lugha yako huonekana chini ya mstari wa asili unapotazama. Bonyeza A au D kwenda kwenye mstari uliotangulia au unaofuata
+- Twitch: matangazo ya moja kwa moja na marudio yake, kutoka kwa manukuu ya mtiririshaji au utambuzi wa sauti. Chrome hutafsiri papo hapo kwenye kifaa chako bila gharama
+- Netflix: filamu au kipindi kikiwa na manukuu ya lugha yako, yanaonyeshwa chini ya maandishi ya asili. Vinginevyo, yanaandaliwa mapema kabla ya kuchezwa
 
 🎯 Menyu ya kubofya kulia
 - Maandishi yaliyochaguliwa: tafsiri, eleza, fupisha, au rekebisha sarufi

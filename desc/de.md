@@ -1,4 +1,4 @@
-🌸 Shizue bringt einen KI-Assistenten in die Seitenleiste von Chrome. Du kannst chatten, ohne den Tab zu wechseln, mit einem Klick zusammenfassen lassen, was du gerade liest, und bei Webseiten und YouTube-Videos Original und Übersetzung gleichzeitig sehen.
+🌸 Shizue bringt einen KI-Assistenten in die Seitenleiste von Chrome. Du kannst chatten, ohne den Tab zu wechseln, mit einem Klick zusammenfassen lassen, was du gerade liest, und bei Webseiten und Videos Original und Übersetzung gleichzeitig sehen.
 
 Shizue ist kostenlos und Open Source (MIT). Melde dich mit ChatGPT an und nutze deinen Plan, oder verwende deinen eigenen API-Schlüssel von dem KI-Anbieter deiner Wahl und bezahle nur, was du verbrauchst. Du kannst auch ein Modell nutzen, das auf deinem eigenen Computer läuft – ohne Schlüssel und ohne Kosten. Shizue selbst hat kein Konto, kein Abo und keinen Server.
 
@@ -18,9 +18,10 @@ Shizue ist kostenlos und Open Source (MIT). Melde dich mit ChatGPT an und nutze 
 🌐 Zweisprachige Webseiten
 - Die Übersetzung erscheint unter jedem Absatz, das Original bleibt, wo es ist
 
-🎬 Zweisprachige YouTube-Untertitel
-- Untertitel werden beim Ansehen übersetzt und unter der Originalzeile angezeigt
-- Zielsprache und Anzahl der Zeilen wählen und mit A oder D zum vorherigen oder nächsten Untertitel springen
+🎬 Zweisprachige Video-Untertitel
+- YouTube: Beim Ansehen erscheint deine Sprache direkt unter der Originalzeile. Mit A oder D springst du eine Zeile zurück oder vor
+- Twitch: Livestreams und VODs, aus den Untertiteln des Streamers oder per Spracherkennung. Die integrierte Chrome-Übersetzung läuft kostenlos direkt auf deinem Gerät
+- Netflix: Hat ein Titel Untertitel in deiner Sprache, erscheinen sie unter dem Original. Sonst überträgt Shizue den Text vorab in deine Sprache
 
 🎯 Rechtsklickmenü
 - Ausgewählter Text: übersetzen, erklären, zusammenfassen oder Grammatik korrigieren

@@ -47,6 +47,8 @@ Shizue is a Chrome extension that integrates Large Language Models (LLMs) into w
 │ • API Management    │ • Memo/Notes      │ • YouTube Captions│
 │ • Context Menus     │ • Settings        │ • Page Overlay    │
 │ • State Sync        │                   │ • Translation UI  │
+│                     │                   │ • Twitch Captions │
+│                     │                   │ • Netflix Captions│
 └─────────────────────┴───────────────────┴───────────────────┘
 ```
 
@@ -72,13 +74,25 @@ Shizue is a Chrome extension that integrates Large Language Models (LLMs) into w
 - **Features**: Real-time translation, keyboard navigation support
 - **Content Script**: `youtube-caption-toggle.content`
 
-### 4. Memo/Note System
+### 4. Twitch Live Captions
+- **Components**: `src/components/Twitch/`, `src/lib/twitch/`, `src/lib/liveCaption/`
+- **Features**: Live streams and VODs; captions from the streamer's CEA-608 captions, Stream Closed Captioner, or speech recognition; Chrome's on-device Translator API by default, or the LLM with captions read ahead from the player's buffer
+- **Content Scripts**: `twitch-caption.content`, `twitch-player-bridge.content`, `twitch-player-worker.content`, `twitch-scc.content`
+- **Notes**: `src/lib/twitch/AGENTS.md`
+
+### 5. Netflix Captions
+- **Components**: `src/components/Netflix/`, `src/lib/netflix/`
+- **Features**: Original track in the spoken language (CC first); Netflix's own subtitles in the target language when they exist, otherwise LLM translation ahead of playback with surrounding lines as context
+- **Content Scripts**: `netflix-caption.content`, `netflix-player-bridge.content`
+- **Notes**: `src/lib/netflix/AGENTS.md`
+
+### 6. Memo/Note System
 - **Component**: `src/components/Memo/`
 - **Storage**: IndexedDB via Dexie
 - **Features**: Auto-save, pinning, search
 - **Route**: `/shizue-memo`
 
-### 5. Context Menu Actions
+### 7. Context Menu Actions
 - **File**: `src/entrypoints/background/contextMenu.ts`
 - **Actions**:
   - Translate page
@@ -91,14 +105,17 @@ Shizue is a Chrome extension that integrates Large Language Models (LLMs) into w
 ```
 src/
 ├── components/          # React components
+│   ├── Caption/        # Caption button and menu shared by YouTube and Twitch
 │   ├── Chat/           # Chat interface components
 │   ├── Character/      # Animated characters/mascots
 │   ├── Memo/          # Note-taking components
 │   ├── Modal/         # Modal dialogs
+│   ├── Netflix/       # Netflix caption button and menu
 │   ├── Onboarding/    # First-time user flow
 │   ├── Setting/       # Settings interface
 │   ├── Toggle/        # Floating toggle button
 │   ├── Translation/   # Translation overlay
+│   ├── Twitch/        # Twitch caption button and menu
 │   └── Youtube/       # YouTube caption components
 ├── config/            # Configuration constants
 ├── entrypoints/       # Extension entry points
@@ -150,6 +167,18 @@ store/
 - Detects YouTube videos
 - Injects translation controls
 - Manages caption overlay
+
+#### Twitch Captions
+**File**: `src/entrypoints/twitch-caption.content/index.tsx`
+- Adds the caption button to the player controls
+- Reads captions through the MAIN-world player bridge and worker hook, or the Stream Closed Captioner frame
+- Renders the live caption overlay, including theatre mode and fullscreen
+
+#### Netflix Captions
+**File**: `src/entrypoints/netflix-caption.content/index.tsx`
+- Adds the caption button to the player's control row
+- Loads subtitle tracks through the MAIN-world player bridge
+- Renders the caption overlay and follows the next episode
 
 ## 🔌 Services & APIs
 

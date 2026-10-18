@@ -48,8 +48,11 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   <img src="store/out/screenshot-2-translate.png" alt="Bilingual page translation" width="640" />
 </p>
 
-### 📺 LLM Translations for Youtube Captions:
-  - Generate LLM based translations for Youtube captions in realtime.
+### 📺 Bilingual Captions on YouTube, Twitch, and Netflix:
+  - Watch with the original line on screen and your language right under it.
+  - **YouTube**: your AI model translates the captions as you watch. Press A or D to jump to the previous or next line.
+  - **Twitch**: live streams and VODs, in theatre mode and fullscreen too. Captions come from the streamer, from Stream Closed Captioner, or from speech recognition on streams without them. Chrome's built-in translator works on your device by default, with no API key; turn off "Chrome built-in translation" in the caption menu to use your AI model, which reads the streamer's captions a few seconds ahead so translations are ready when the line appears.
+  - **Netflix**: the original is the subtitle track in the language being spoken (closed captions first, even on a dub). When Netflix has subtitles in your language, Shizue pairs them with the original, with no AI request or API key; otherwise your AI model translates ahead of playback, using the surrounding lines as context. Captions carry on into the next episode.
 
 <p align="center">
   <img src="store/out/screenshot-3-youtube.png" alt="Bilingual YouTube captions" width="640" />
@@ -114,6 +117,8 @@ There is no Shizue server. API keys, chat history, memos, and settings stay in y
 
 With Sign in with ChatGPT, the same content goes directly from your browser to OpenAI. OpenAI's sign-in returns to a `127.0.0.1` address, as its sign-in flow requires; nothing listens there, and Shizue catches that address inside the browser to finish signing in. OAuth tokens are kept in the extension's local storage, like API keys.
 
+Video captions follow the same rule, and two paths send nothing to an AI provider: Twitch captions translated by Chrome's built-in translator (the default) stay on your device, and Netflix titles with subtitles in your language use those subtitles. Speech recognition on Twitch also runs on your device. Only if you pick it for a language your device can't recognize yet does Chrome send the tab's audio to Google, and Shizue asks you first.
+
 **What does OpenRouter see about Shizue?**
 Requests to OpenRouter carry `HTTP-Referer: https://shizue.net` and `X-OpenRouter-Title: Shizue`, so OpenRouter counts the usage under the Shizue app. These headers identify the app, not you, and nothing is sent to shizue.net.
 
@@ -123,7 +128,7 @@ Requests to OpenRouter carry `HTTP-Referer: https://shizue.net` and `X-OpenRoute
 - `sidePanel`: the chat side panel
 - `activeTab`: work with the tab you're on when you open Shizue or use a right-click action
 - `contextMenus`: the right-click actions
-- Content scripts on all sites: the floating toggle button and page translation; on YouTube, the caption translation
+- Content scripts on all sites: the floating toggle button and page translation; on YouTube, Twitch, and Netflix, the caption button and bilingual captions
 - `declarativeNetRequestWithHostAccess` and access to `localhost`: reach a model server on your computer. Ollama rejects requests from browser extensions, so Shizue sets the `Origin` header of its own requests to Ollama to Ollama's address. During Sign in with ChatGPT, it also sends the browser's return to `127.0.0.1` to Shizue's own sign-in page. No other requests are changed.
 
 **Do existing pages need a refresh after an update?**

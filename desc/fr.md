@@ -1,4 +1,4 @@
-🌸 Shizue ajoute un assistant IA au panneau latéral de Chrome. Vous pouvez discuter sans changer d'onglet, résumer en un clic ce que vous lisez, et voir l'original et la traduction ensemble sur les pages web et les vidéos YouTube.
+🌸 Shizue ajoute un assistant IA au panneau latéral de Chrome. Vous pouvez discuter sans changer d'onglet, résumer en un clic ce que vous lisez, et voir l'original et la traduction ensemble sur les pages web et les vidéos.
 
 Shizue est une extension gratuite et open source (MIT). Connectez-vous avec ChatGPT pour utiliser votre forfait, ou utilisez votre propre clé API du fournisseur d'IA de votre choix et ne payez que ce que vous utilisez. Vous pouvez aussi utiliser un modèle qui tourne sur votre propre ordinateur, sans clé et sans frais. Shizue elle-même n'a ni compte, ni abonnement, ni serveur.
 
@@ -18,9 +18,10 @@ Shizue est une extension gratuite et open source (MIT). Connectez-vous avec Chat
 🌐 Pages web bilingues
 - La traduction s'affiche sous chaque paragraphe, et le texte original reste à sa place
 
-🎬 Sous-titres YouTube bilingues
-- Les sous-titres sont traduits pendant que vous regardez la vidéo et s'affichent sous la ligne d'origine
-- Choisissez la langue cible et le nombre de lignes, et passez au sous-titre précédent ou suivant avec A ou D
+🎬 Sous-titres vidéo bilingues
+- YouTube : votre langue s'affiche sous la ligne d'origine pendant que vous regardez. Passez à la ligne précédente ou suivante avec A ou D
+- Twitch : lives et VOD, à partir des sous-titres du streamer ou de la reconnaissance vocale. La traduction intégrée de Chrome fonctionne sur votre appareil, sans frais
+- Netflix : si un titre propose des sous-titres dans votre langue, ils s'affichent sous l'original. Sinon, Shizue transpose le texte dans votre langue en avance sur la lecture
 
 🎯 Menu du clic droit
 - Texte sélectionné : traduire, expliquer, résumer ou corriger la grammaire

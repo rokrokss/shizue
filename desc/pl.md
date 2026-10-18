@@ -1,4 +1,4 @@
-🌸 Shizue umieszcza asystenta AI w panelu bocznym Chrome. Możesz rozmawiać z AI bez przełączania kart, jednym kliknięciem podsumować to, co czytasz, a na stronach internetowych i w filmach na YouTube widzieć oryginał razem z tłumaczeniem.
+🌸 Shizue umieszcza asystenta AI w panelu bocznym Chrome. Możesz rozmawiać z AI bez przełączania kart, jednym kliknięciem podsumować to, co czytasz, a na stronach internetowych i w filmach widzieć oryginał razem z tłumaczeniem.
 
 Shizue to darmowe rozszerzenie open source (MIT). Zaloguj się przez ChatGPT, aby korzystać ze swojego planu, albo używaj własnego klucza API od wybranego dostawcy AI i płać tylko za to, czego używasz. Możesz też korzystać z modelu działającego na własnym komputerze – bez klucza i bez kosztów. Samo Shizue nie wymaga konta ani abonamentu i nie ma własnego serwera.
 
@@ -18,9 +18,10 @@ Shizue to darmowe rozszerzenie open source (MIT). Zaloguj się przez ChatGPT, ab
 🌐 Dwujęzyczne strony internetowe
 - Tłumaczenie pojawia się pod każdym akapitem, a oryginał zostaje na swoim miejscu
 
-🎬 Dwujęzyczne napisy na YouTube
-- Napisy są tłumaczone podczas oglądania i wyświetlane pod oryginalnym wierszem
-- Możesz wybrać język docelowy i liczbę wierszy, a klawiszami A i D przechodzić do poprzedniego lub następnego napisu
+🎬 Dwujęzyczne napisy do filmów
+- YouTube: podczas oglądania Twój język pojawia się pod oryginalnym wierszem. Klawiszami A i D przejdziesz do poprzedniego lub następnego wiersza
+- Twitch: streamy na żywo i VOD-y, na podstawie napisów streamera lub rozpoznawania mowy. Wbudowane tłumaczenie Chrome działa na Twoim urządzeniu i nic nie kosztuje
+- Netflix: jeśli tytuł ma napisy w Twoim języku, pojawiają się pod oryginałem. W przeciwnym razie Shizue z wyprzedzeniem przekłada tekst na Twój język
 
 🎯 Menu pod prawym przyciskiem myszy
 - Zaznaczony tekst: tłumaczenie, wyjaśnienie, podsumowanie lub poprawa gramatyki
