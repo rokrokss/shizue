@@ -165,7 +165,10 @@
     "youtubeCaptionButton": "YouTube 字幕按钮",
     "bilingual": "双语",
     "captionSizeRatio": "字幕大小",
-    "useKeyboardNavigate": "使用A/D键导航字幕"
+    "useKeyboardNavigate": "使用A/D键导航字幕",
+    "sourceTrack": "YouTube 字幕",
+    "spokenLanguage": "所说语言",
+    "speechUnavailable": "此设备无法识别这种语言的语音"
   },
   "twitch": {
     "twitchCaptionButton": "Twitch 字幕按钮",

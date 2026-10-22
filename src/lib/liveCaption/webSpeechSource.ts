@@ -1,7 +1,7 @@
 import { debugLog } from '@/logs';
 
-// Speech recognition on the stream's own audio, for streams without captions. The audio comes
-// from the <video> element (captureStream), not tabCapture: a button inside the player cannot
+// Speech recognition on the stream's own audio, for streams and videos without captions. The audio
+// comes from the <video> element (captureStream), not tabCapture: a button inside the player cannot
 // count as invoking the extension, and captureStream keeps working when the viewer mutes.
 
 type SpeechRecognitionLike = {
@@ -61,7 +61,7 @@ export const installOnDeviceSpeech = async (lang: string) => {
   try {
     return (await recognitionClass()?.install?.({ langs: [lang], processLocally: true })) === true;
   } catch (error) {
-    debugLog('[Twitch] on-device speech install failed', error);
+    debugLog('[LiveCaption] on-device speech install failed', error);
     return false;
   }
 };
@@ -73,12 +73,9 @@ const STALL_MS = 20_000;
 // Keep the snapshot short: the segmenter only needs the part that is still changing.
 const MAX_SNAPSHOT_CHARS = 400;
 
-const findVideo = () =>
-  document.querySelector<HTMLVideoElement>('.video-player__container video') ??
-  document.querySelector<HTMLVideoElement>('video');
-
 class WebSpeechSource {
   private callbacks: WebSpeechCallbacks | null = null;
+  private findVideo: () => HTMLVideoElement | null = () => null;
   private lang = 'en-US';
   private processLocally = false;
   private recognition: SpeechRecognitionLike | null = null;
@@ -92,9 +89,11 @@ class WebSpeechSource {
   private restartTimer: ReturnType<typeof setTimeout> | null = null;
   private watchdog: ReturnType<typeof setInterval> | null = null;
 
-  async start(lang: string, callbacks: WebSpeechCallbacks) {
+  // findVideo returns the site's player <video>.
+  async start(lang: string, callbacks: WebSpeechCallbacks, findVideo: () => HTMLVideoElement | null) {
     this.stop();
     this.callbacks = callbacks;
+    this.findVideo = findVideo;
     this.lang = lang;
     this.processLocally = (await speechAvailability(lang, true)) === 'available';
     this.running = true;
@@ -137,11 +136,21 @@ class WebSpeechSource {
   // One capture per <video>. When Twitch switches channels it keeps the element but adds a new
   // audio track; the old one stays "live" and goes silent, so always take the newest live track.
   private currentTrack(): MediaStreamTrack | null {
-    const video = findVideo();
+    const video = this.findVideo();
     if (!video) return null;
     if (video !== this.video) {
+      let stream: MediaStream;
+      try {
+        stream = (video as any).captureStream() as MediaStream;
+      } catch (error) {
+        // Encrypted (DRM) media can't be captured; restarting won't help.
+        debugLog('[LiveCaption] audio capture failed', error);
+        this.callbacks?.onError('audio-capture');
+        this.stop();
+        return null;
+      }
       this.video = video;
-      this.stream = (video as any).captureStream() as MediaStream;
+      this.stream = stream;
       this.stream.addEventListener('addtrack', () => {
         if (this.running && !this.paused) this.restartSession();
       });
@@ -181,7 +190,7 @@ class WebSpeechSource {
     };
     recognition.onerror = (event) => {
       const error = String(event?.error ?? 'unknown');
-      debugLog('[Twitch] speech recognition error', error);
+      debugLog('[LiveCaption] speech recognition error', error);
       if (FATAL_ERRORS.has(error)) {
         this.callbacks?.onError(error);
         this.stop();
@@ -201,7 +210,7 @@ class WebSpeechSource {
     try {
       recognition.start(track);
     } catch (error) {
-      debugLog('[Twitch] speech recognition could not start', error);
+      debugLog('[LiveCaption] speech recognition could not start', error);
       this.recognition = null;
       this.scheduleRestart(2000);
     }
@@ -224,7 +233,7 @@ class WebSpeechSource {
     if (!this.running || this.paused || !this.recognition) return;
     const trackChanged = this.track && this.track !== this.currentTrack();
     if (trackChanged || Date.now() - this.lastResultAt > STALL_MS) {
-      debugLog('[Twitch] restarting speech recognition:', trackChanged ? 'new track' : 'stalled');
+      debugLog('[LiveCaption] restarting speech recognition:', trackChanged ? 'new track' : 'stalled');
       this.restartSession();
     }
   }

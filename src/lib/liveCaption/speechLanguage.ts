@@ -53,5 +53,13 @@ const TWITCH_CODE_TO_SPEECH: Record<string, string> = {
 export const speechLanguageForTwitchCode = (code: string | null | undefined) =>
   code ? (TWITCH_CODE_TO_SPEECH[code.toUpperCase()] ?? null) : null;
 
+// A BCP 47 code from Chrome's language detector or a YouTube caption track ("en", "zh-Hant", "pt-BR").
+export const speechLanguageForCode = (code: string | null | undefined) => {
+  if (!code) return null;
+  const upper = code.toUpperCase();
+  if (/^ZH-(HANT|TW|HK|MO)/.test(upper)) return 'cmn-Hant-TW';
+  return TWITCH_CODE_TO_SPEECH[upper] ?? TWITCH_CODE_TO_SPEECH[upper.split('-')[0]] ?? null;
+};
+
 export const speechLanguageLabel = (value: string | null | undefined) =>
   SPEECH_LANGUAGES.find((option) => option.value === value)?.label ?? value ?? '';

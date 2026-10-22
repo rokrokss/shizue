@@ -165,7 +165,10 @@
     "youtubeCaptionButton": "دکمه زیرنویس یوتیوب",
     "bilingual": "دو زبانه",
     "captionSizeRatio": "اندازه زیرنویس",
-    "useKeyboardNavigate": "پیمایش زیرنویس با A/D"
+    "useKeyboardNavigate": "پیمایش زیرنویس با A/D",
+    "sourceTrack": "زیرنویس یوتیوب",
+    "spokenLanguage": "زبان گفتاری",
+    "speechUnavailable": "این دستگاه نمی‌تواند گفتار را به این زبان تشخیص دهد"
   },
   "twitch": {
     "twitchCaptionButton": "دکمه زیرنویس توییچ",

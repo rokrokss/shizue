@@ -165,7 +165,10 @@
     "youtubeCaptionButton": "Botón de subtítulos de YouTube",
     "bilingual": "Bilingüe",
     "captionSizeRatio": "Tamaño de subtítulos",
-    "useKeyboardNavigate": "Navegar subtítulos con A/D"
+    "useKeyboardNavigate": "Navegar subtítulos con A/D",
+    "sourceTrack": "Subtítulos de YouTube",
+    "spokenLanguage": "Idioma hablado",
+    "speechUnavailable": "Este dispositivo no puede reconocer la voz en este idioma"
   },
   "twitch": {
     "twitchCaptionButton": "Botón de subtítulos de Twitch",

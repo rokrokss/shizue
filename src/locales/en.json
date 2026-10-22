@@ -173,7 +173,10 @@
     "youtubeCaptionButton": "Youtube Caption Button",
     "bilingual": "Bilingual",
     "captionSizeRatio": "Caption Size",
-    "useKeyboardNavigate": "Navigate Subtitles with A/D"
+    "useKeyboardNavigate": "Navigate Subtitles with A/D",
+    "sourceTrack": "YouTube captions",
+    "spokenLanguage": "Spoken language",
+    "speechUnavailable": "This device can't recognize speech in this language"
   },
   "twitch": {
     "twitchCaptionButton": "Twitch Caption Button",

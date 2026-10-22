@@ -165,7 +165,10 @@
     "youtubeCaptionButton": "Кнопка субтитров YouTube",
     "bilingual": "Двуязычный",
     "captionSizeRatio": "Размер субтитров",
-    "useKeyboardNavigate": "Навигация по субтитрам с A/D"
+    "useKeyboardNavigate": "Навигация по субтитрам с A/D",
+    "sourceTrack": "Субтитры YouTube",
+    "spokenLanguage": "Язык речи",
+    "speechUnavailable": "Это устройство не может распознавать речь на этом языке"
   },
   "twitch": {
     "twitchCaptionButton": "Кнопка субтитров Twitch",

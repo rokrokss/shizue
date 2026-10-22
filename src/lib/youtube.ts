@@ -25,6 +25,16 @@ export type Caption = {
   text: string;
 };
 
+// Live streams have no caption tracks to download: their captions come with the media and are
+// read from the screen (lib/youtubeCaption).
+export type LiveInfo = {
+  isLive: boolean;
+  // Only normal-latency streams can carry captions; no low-latency one did in testing.
+  normalLatency: boolean;
+  // The broadcaster's CEA-608 captions, or YouTube's speech recognition (kind 'asr').
+  captionTrack?: { languageCode: string; kind?: string };
+};
+
 // Regex to parse the player response from the page
 const YT_INITIAL_PLAYER_RESPONSE_RE =
   /ytInitialPlayerResponse\s*=\s*({.+?})\s*;\s*(?:var\s+(?:meta|head)|<\/script|\n)/;
@@ -49,6 +59,12 @@ function compareTracks(track1: any, track2: any) {
 
 export const getVideoId = () => {
   return new URLSearchParams(window.location.search).get('v');
+};
+
+// YouTube fills its ad module while an ad plays.
+export const isYoutubeAdPlaying = () => {
+  const ad = document.querySelector<HTMLDivElement>('.ytp-ad-module');
+  return !!ad && ((ad.textContent?.trim().length ?? 0) > 0 || ad.childElementCount > 0);
 };
 
 // The player's own timedtext request carries whatever this session needs to get captions
@@ -165,12 +181,25 @@ const getTranscriptMetadata = async (player: any): Promise<TranscriptMetadata[] 
   }
 };
 
+const getLiveInfo = (player: any): LiveInfo => {
+  const latencyClass: string | undefined = player?.videoDetails?.latencyClass;
+  const captionTrack = player?.streamingData?.adaptiveFormats?.find((f: any) => f.captionTrack)?.captionTrack;
+  return {
+    isLive: !!player?.videoDetails?.isLive,
+    normalLatency: !!latencyClass?.endsWith('LATENCY_NORMAL'),
+    captionTrack: captionTrack?.languageCode
+      ? { languageCode: captionTrack.languageCode, kind: captionTrack.kind }
+      : undefined,
+  };
+};
+
 export const getVideoData = async (videoId: string) => {
   const player = await getPlayerData(videoId);
   if (!player) {
     errorLog('[Youtube] getVideoData: Unable to get player data');
     return { videoId };
   }
+  const live = getLiveInfo(player);
   const metadata: VideoMetadata = {
     title: player.videoDetails.title,
     duration: player.videoDetails.lengthSeconds,
@@ -184,8 +213,8 @@ export const getVideoData = async (videoId: string) => {
   const transcriptMetadata = await getTranscriptMetadata(player);
   if (!transcriptMetadata) {
     debugLog('[Youtube] getVideoData: No transcript data found');
-    return { videoId, metadata };
+    return { videoId, metadata, live };
   }
 
-  return { videoId, metadata, transcriptMetadata };
+  return { videoId, metadata, transcriptMetadata, live };
 };

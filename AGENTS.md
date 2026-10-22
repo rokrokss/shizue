@@ -16,7 +16,7 @@ site/build.sh            # shizue.net landing page into _site/
 
 - Tests are `node --test` files in `tests/`. Run the script for the area you changed, plus `pnpm compile`. There is no lint script.
 - `pnpm test:panel` and `node scripts/check-panel-settings.mjs` (run after `pnpm build`) start a headless Chrome, so the memory rules below apply to them.
-- `pnpm test:live-caption` replays recorded Twitch captions from `tests/fixtures/twitch/`.
+- `pnpm test:live-caption` replays recorded Twitch and YouTube live captions from `tests/fixtures/twitch/` and `tests/fixtures/youtube/`.
 
 ## Trying changes in a browser
 
@@ -97,6 +97,12 @@ site/build.sh            # shizue.net landing page into _site/
 ## Twitch live captions
 
 Read `src/lib/twitch/AGENTS.md` before changing Twitch captions: `src/lib/twitch/`, `src/lib/liveCaption/`, the `twitch-*` entrypoints, `src/components/Twitch/`, and `src/components/Caption/CaptionToggle.tsx` (shared with YouTube).
+
+## YouTube live captions
+
+Live streams and videos without caption tracks use the Twitch live caption controller (`lib/liveCaption/liveCaptionController.tsx`) with `lib/youtubeCaption/youtubePlatform.ts`; videos with caption tracks keep `captionInjector`. `YoutubeCaptionToggle` creates the controller only when that path is used (a live stream, a video without captions, or speech recognition picked as the source) and disposes it when the viewer leaves the video or goes back to the caption track. Live captions are read from YouTube's own caption box (`#ytp-caption-window-container`, kept updating under `visibility: hidden`), with the CC button pressed and put back afterwards. Speech recognition here is on-device only (`allowCloudSpeech: false`).
+
+Live captions are also read ahead, 12–21 s before they show: `youtube-player-hook.content` (MAIN world, `document_start`) wraps `fetch` and, only while the realtime path reads a live caption track (`hookProtocol.ts` turns it on and off), copies the player's SABR responses. `lib/youtubeCaption/sabr.ts` streams their UMP parts, skipping audio and video, and takes itag 386: 5 s fMP4 segments whose sample is srv3 XML (`<p t d>`, ms from the segment's MediaHeader start). `captionReadAhead.ts` feeds the cues to the shared read-ahead chunks (`lib/liveCaption/readAheadChunks.ts`, also behind Twitch's `captionPrefetch`), so the LLM translates a chunk before it shows and the screen commits it on match. YouTube's live recognition shows two-line blocks, not roll-up, so its segmenters use `blocks: true` (no search of earlier text, which matched a phrase said again). The first ~15 s after activating aren't read ahead: the player had already fetched them. The read-ahead is a bonus; the screen path works without it. The design is in the gitignored `reports/YouTube 라이브·무자막 자막 설계.md`. Read `src/lib/twitch/AGENTS.md` too: the controller is shared.
 
 ## Netflix captions
 

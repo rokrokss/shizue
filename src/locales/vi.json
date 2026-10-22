@@ -165,7 +165,10 @@
     "youtubeCaptionButton": "Nút Chú thích Youtube",
     "bilingual": "Song ngữ",
     "captionSizeRatio": "Kích thước chú thích",
-    "useKeyboardNavigate": "Điều hướng phụ đề bằng A/D"
+    "useKeyboardNavigate": "Điều hướng phụ đề bằng A/D",
+    "sourceTrack": "Phụ đề YouTube",
+    "spokenLanguage": "Ngôn ngữ nói",
+    "speechUnavailable": "Thiết bị này không thể nhận dạng giọng nói bằng ngôn ngữ này"
   },
   "twitch": {
     "twitchCaptionButton": "Nút Chú thích Twitch",

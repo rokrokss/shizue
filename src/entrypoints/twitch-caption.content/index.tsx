@@ -3,7 +3,7 @@ import '@/assets/tailwind.css';
 import TwitchCaptionToggle from '@/components/Twitch/TwitchCaptionToggle';
 import { MESSAGE_INJECT_TWITCH_BRIDGE, MESSAGE_SCC_CAPTION_SNAPSHOT } from '@/config/constants';
 import { registerContentScriptConnection } from '@/lib/contentScriptConnection';
-import { getTwitchLiveCaptions } from '@/lib/twitch/liveCaptionController';
+import { getTwitchLiveCaptions, pingTwitchBridge } from '@/lib/twitch/liveCaptionController';
 import { TWITCH_POPUP_HOST_TAG } from '@/lib/twitch/playerControls';
 import { contentScriptLog, errorLog } from '@/logs';
 import AntdProvider from '@/providers/AntdProvider';
@@ -39,13 +39,13 @@ export default defineContentScript({
     const controller = getTwitchLiveCaptions();
     // The bridge is declared in the manifest, but tabs open before an install or update only get
     // this script back through recovery, so bring the bridge back too.
-    void controller.pingBridge().then((alive) => {
+    void pingTwitchBridge().then((alive) => {
       if (!alive && !ctx.isInvalid) void chrome.runtime.sendMessage({ action: MESSAGE_INJECT_TWITCH_BRIDGE });
     });
     ctx.onInvalidated(() => controller.deactivate());
     const onSccSnapshot = (message: any) => {
       if (message?.action === MESSAGE_SCC_CAPTION_SNAPSHOT && typeof message.text === 'string') {
-        controller.handleSccSnapshot(message.text);
+        controller.handleCaptions('scc', message.text);
       }
     };
     chrome.runtime.onMessage.addListener(onSccSnapshot);

@@ -165,7 +165,10 @@
     "youtubeCaptionButton": "YouTube-Untertitel-Schaltfläche",
     "bilingual": "Zweisprachig",
     "captionSizeRatio": "Untertitelgröße",
-    "useKeyboardNavigate": "Untertitel mit A/D navigieren"
+    "useKeyboardNavigate": "Untertitel mit A/D navigieren",
+    "sourceTrack": "YouTube-Untertitel",
+    "spokenLanguage": "Gesprochene Sprache",
+    "speechUnavailable": "Dieses Gerät kann Sprache in dieser Sprache nicht erkennen"
   },
   "twitch": {
     "twitchCaptionButton": "Twitch-Untertitel-Schaltfläche",

@@ -165,7 +165,10 @@
     "youtubeCaptionButton": "زر التعليقات التوضيحية لليوتيوب",
     "bilingual": "ثنائي اللغة",
     "captionSizeRatio": "حجم التعليقات التوضيحية",
-    "useKeyboardNavigate": "التنقل في الترجمة بـ A/D"
+    "useKeyboardNavigate": "التنقل في الترجمة بـ A/D",
+    "sourceTrack": "تعليقات يوتيوب التوضيحية",
+    "spokenLanguage": "اللغة المنطوقة",
+    "speechUnavailable": "لا يستطيع هذا الجهاز التعرّف على الكلام بهذه اللغة"
   },
   "twitch": {
     "twitchCaptionButton": "زر التعليقات التوضيحية لتويتش",

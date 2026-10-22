@@ -165,7 +165,10 @@
     "youtubeCaptionButton": "ปุ่มคำบรรยาย Youtube",
     "bilingual": "สองภาษา",
     "captionSizeRatio": "ขนาดคำบรรยาย",
-    "useKeyboardNavigate": "นำทางคำบรรยายด้วย A/D"
+    "useKeyboardNavigate": "นำทางคำบรรยายด้วย A/D",
+    "sourceTrack": "คำบรรยาย YouTube",
+    "spokenLanguage": "ภาษาที่พูด",
+    "speechUnavailable": "อุปกรณ์นี้ไม่สามารถรู้จำเสียงพูดในภาษานี้ได้"
   },
   "twitch": {
     "twitchCaptionButton": "ปุ่มคำบรรยาย Twitch",

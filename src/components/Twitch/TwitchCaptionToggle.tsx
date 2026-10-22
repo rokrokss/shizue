@@ -30,8 +30,8 @@ import {
   TWITCH_POPUP_HOST_TAG,
   twitchPlayerAround,
 } from '@/lib/twitch/playerControls';
-import { isChromeTranslatorSupported } from '@/lib/twitch/chromeTranslator';
-import { SPEECH_LANGUAGES, speechLanguageLabel } from '@/lib/twitch/speechLanguage';
+import { isChromeTranslatorSupported } from '@/lib/liveCaption/chromeTranslator';
+import { SPEECH_LANGUAGES, speechLanguageLabel } from '@/lib/liveCaption/speechLanguage';
 import { panelService } from '@/services/panelService';
 import { Button, InputNumber, Space, Switch } from 'antd';
 import { useEffect, useRef, useState } from 'react';
@@ -213,7 +213,7 @@ const TwitchCaptionToggle = () => {
   };
 
   const handleSelectSpeechLanguage = (value: string) => {
-    const login = controller.channelLogin;
+    const login = controller.channel;
     if (login) void setChannelLanguages({ ...channelLanguages, [login]: value });
     controller.setSpeechLanguage(value);
   };

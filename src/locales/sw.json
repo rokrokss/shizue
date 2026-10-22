@@ -165,7 +165,10 @@
     "youtubeCaptionButton": "Kitufe cha Caption ya Youtube",
     "bilingual": "Lugha mbili",
     "captionSizeRatio": "Kichwa cha Caption",
-    "useKeyboardNavigate": "Abiri Manukuu kwa A/D"
+    "useKeyboardNavigate": "Abiri Manukuu kwa A/D",
+    "sourceTrack": "Manukuu ya YouTube",
+    "spokenLanguage": "Lugha inayozungumzwa",
+    "speechUnavailable": "Kifaa hiki hakiwezi kutambua sauti katika lugha hii"
   },
   "twitch": {
     "twitchCaptionButton": "Kitufe cha Caption ya Twitch",

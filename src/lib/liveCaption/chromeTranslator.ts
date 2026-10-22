@@ -88,7 +88,7 @@ export const prepareChromeTranslator = (speechLanguage: string, target: Language
       else failed.add(pair.key);
     })
     .catch((error) => {
-      debugLog('[Twitch] Chrome translator unavailable for', pair.key, error);
+      debugLog('[LiveCaption] Chrome translator unavailable for', pair.key, error);
       failed.add(pair.key);
     })
     .finally(() => pending.delete(pair.key));

@@ -165,7 +165,10 @@
     "youtubeCaptionButton": "Pulsante sottotitoli YouTube",
     "bilingual": "Bilingue",
     "captionSizeRatio": "Dimensione sottotitoli",
-    "useKeyboardNavigate": "Naviga sottotitoli con A/D"
+    "useKeyboardNavigate": "Naviga sottotitoli con A/D",
+    "sourceTrack": "Sottotitoli di YouTube",
+    "spokenLanguage": "Lingua parlata",
+    "speechUnavailable": "Questo dispositivo non può riconoscere il parlato in questa lingua"
   },
   "twitch": {
     "twitchCaptionButton": "Pulsante sottotitoli Twitch",

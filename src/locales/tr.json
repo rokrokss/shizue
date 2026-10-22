@@ -165,7 +165,10 @@
     "youtubeCaptionButton": "YouTube Altyazı Düğmesi",
     "bilingual": "İki Dilli",
     "captionSizeRatio": "Altyazı Boyutu",
-    "useKeyboardNavigate": "A/D ile Altyazı Gezinme"
+    "useKeyboardNavigate": "A/D ile Altyazı Gezinme",
+    "sourceTrack": "YouTube altyazıları",
+    "spokenLanguage": "Konuşulan dil",
+    "speechUnavailable": "Bu cihaz bu dildeki konuşmayı tanıyamıyor"
   },
   "twitch": {
     "twitchCaptionButton": "Twitch Altyazı Düğmesi",

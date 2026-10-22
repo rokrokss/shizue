@@ -165,7 +165,10 @@
     "youtubeCaptionButton": "Botão de legenda YouTube",
     "bilingual": "Bilingue",
     "captionSizeRatio": "Tamanho da legenda",
-    "useKeyboardNavigate": "Navegar legendas com A/D"
+    "useKeyboardNavigate": "Navegar legendas com A/D",
+    "sourceTrack": "Legendas do YouTube",
+    "spokenLanguage": "Idioma falado",
+    "speechUnavailable": "Este dispositivo não consegue reconhecer fala neste idioma"
   },
   "twitch": {
     "twitchCaptionButton": "Botão de legenda Twitch",

@@ -165,7 +165,10 @@
     "youtubeCaptionButton": "یوٹیوب کیپشن بٹن",
     "bilingual": "دو لسانی",
     "captionSizeRatio": "کیپشن سائز",
-    "useKeyboardNavigate": "A/D کے ساتھ سب ٹائٹل نیویگیٹ کریں"
+    "useKeyboardNavigate": "A/D کے ساتھ سب ٹائٹل نیویگیٹ کریں",
+    "sourceTrack": "یوٹیوب کیپشنز",
+    "spokenLanguage": "بولی جانے والی زبان",
+    "speechUnavailable": "یہ آلہ اس زبان میں آواز کی شناخت نہیں کر سکتا"
   },
   "twitch": {
     "twitchCaptionButton": "ٹوئچ کیپشن بٹن",

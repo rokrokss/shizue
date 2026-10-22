@@ -165,7 +165,10 @@
     "youtubeCaptionButton": "यूट्यूब कैप्शन बटन",
     "bilingual": "द्विभाषी",
     "captionSizeRatio": "कैप्शन आकार",
-    "useKeyboardNavigate": "A/D के साथ उपशीर्षक नेविगेट करें"
+    "useKeyboardNavigate": "A/D के साथ उपशीर्षक नेविगेट करें",
+    "sourceTrack": "यूट्यूब कैप्शन",
+    "spokenLanguage": "बोली जाने वाली भाषा",
+    "speechUnavailable": "यह डिवाइस इस भाषा में वाक् पहचान नहीं कर सकता"
   },
   "twitch": {
     "twitchCaptionButton": "ट्विच कैप्शन बटन",

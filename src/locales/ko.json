@@ -173,7 +173,10 @@
     "youtubeCaptionButton": "유튜브 자막 버튼",
     "bilingual": "이중 언어",
     "captionSizeRatio": "자막 크기",
-    "useKeyboardNavigate": "A/D 자막 이동"
+    "useKeyboardNavigate": "A/D 자막 이동",
+    "sourceTrack": "유튜브 자막",
+    "spokenLanguage": "말하는 언어",
+    "speechUnavailable": "이 언어는 이 기기에서 음성 인식을 할 수 없어요"
   },
   "twitch": {
     "twitchCaptionButton": "트위치 자막 버튼",

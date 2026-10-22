@@ -24,8 +24,11 @@ const { createTranslationQueue } = await load('liveCaption/translationQueue');
 const { createCea608Decoder } = await load('twitch/cea608');
 const { createCaptionExtractor } = await load('twitch/captionExtractor');
 const { createCaptionPrefetch, chunkKey } = await load('twitch/captionPrefetch');
-const fixture = async (name) =>
-  JSON.parse(await readFile(new URL(`./fixtures/twitch/${name}`, import.meta.url), 'utf8'));
+const { joinCaptionLines } = await load('youtubeCaption/domCaptionSource');
+const { cuesFromSegment, createUmpCaptionReader } = await load('youtubeCaption/sabr');
+const { createLiveCaptionReadAhead } = await load('youtubeCaption/captionReadAhead');
+const fixture = async (name, site = 'twitch') =>
+  JSON.parse(await readFile(new URL(`./fixtures/${site}/${name}`, import.meta.url), 'utf8'));
 
 // Replays [time ms, text] snapshots with a 100 ms timer, as the content script does.
 const replay = (updates, options = {}) => {
@@ -426,6 +429,148 @@ test('a chunk read ahead matches the screen only around its own time', () => {
   assert.equal(prefetch.isComplete('I'), true);
   position = 45;
   assert.equal(prefetch.isComplete('I'), false);
+});
+
+test('YouTube live caption lines lose speaker marks, and live recognition its repeated words', () => {
+  assert.equal(joinCaptionLines(['>> ALL RIGHT. THESE WERE 40s ', 'FROM WHAT WAS '], false), 'ALL RIGHT. THESE WERE 40s FROM WHAT WAS');
+  assert.equal(joinCaptionLines(['credits have sent premiums', 'premiums soaring This year'], true), 'credits have sent premiums soaring This year');
+  // CEA-608 is typed by a person: a repeated word is meant.
+  assert.equal(joinCaptionLines(['NO NO', 'NO'], false), 'NO NO NO');
+  assert.equal(joinCaptionLines([], true), '');
+});
+
+test('YouTube live CEA-608 roll-up on screen becomes sentences', async () => {
+  const { updates } = await fixture('live-cnn-608-dom.json', 'youtube');
+  const { sentences, segmenter, now } = replay(updates.map(([at, lines]) => [at, joinCaptionLines(lines, false)]));
+  segmenter.tick(now + 2000);
+  assert.deepEqual(sentences, [
+    'ALL RIGHT. THESE WERE 40s FROM WHAT WAS A 90 MINUTE RALLY IN NEBRASKA.',
+    'BUT THOSE 40s DROVE THE MEDIA CONVERSATION FOR DAYS.',
+    "NOW, THIS IS HAPPENING BECAUSE OF WHAT'S CALLED THE CLIPPING INDUSTRY.",
+    'THESE ARE FOLKS THAT MAKE A LIVING BY WATCHING POLITICAL RALLIES AND CAMPAIGN',
+    'EVENTS, AND POSTING HUNDREDS OF CLIPS ON SOCIAL MEDIA EVERY SINGLE DAY.',
+    "I WANT EVERYBODY WHO'S CLIPPING THIS DEBATE ONLINE TONIGHT TO ROLL",
+    'THAT TAPE. AARON RUPPERT IS AN INDEPENDENT JOURNALIST AND A TRUMP CRITIC WHO HAS',
+    'BUILT UP A SIGNIFICANT FOLLOWING ON SOCIAL MEDIA AS A CLIPPER CHRONICLING TRUMP',
+    'SINCE HE FIRST RAN IN 2016.',
+    'IT WAS CLEAR TO',
+  ]);
+});
+
+test("YouTube's live recognition shows two-line blocks; each becomes a chunk without repeated words", async () => {
+  // The blocks replace each other every ~3 s without overlapping, so each ends what was pending.
+  const { updates } = await fixture('live-cbs-asr-dom.json', 'youtube');
+  const { sentences, segmenter, now } = replay(updates.map(([at, lines]) => [at, joinCaptionLines(lines, true)]), { blocks: true });
+  segmenter.tick(now + 2000);
+  assert.deepEqual(sentences, [
+    'the',
+    "road If you don't have employer coverage Affordable Care Act",
+    'enrollment begins November 1st Rising health care',
+    'costs and the expiration of enhanced premium tax',
+    'credits have sent premiums soaring This year',
+    'average monthly premium',
+    'payments jumped 58% with another 15%',
+    'increase predicted for 2027 On top of that the maximum',
+    'out-ofpocket limit for individual coverage will climb',
+    'by 13.2%',
+    'to $12,000 To help offset these costs consider',
+    'switching from a silver to a bronze plan which offers lower',
+    'premiums but higher',
+    'deductibles And check with your state because some are',
+  ]);
+});
+
+// UMP's variable-length integers and protobuf varints, to build a SABR response around real segments.
+const umpVarint = (v) =>
+  v < 128 ? [v]
+  : v < 2 ** 14 ? [0x80 | (v & 0x3f), v >> 6]
+  : v < 2 ** 21 ? [0xc0 | (v & 0x1f), (v >> 5) & 0xff, v >> 13]
+  : v < 2 ** 28 ? [0xe0 | (v & 0x0f), (v >> 4) & 0xff, (v >> 12) & 0xff, v >> 20]
+  : [0xf0, v & 0xff, (v >> 8) & 0xff, (v >> 16) & 0xff, v >>> 24];
+const protoVarint = (v) => { const out = []; do { out.push((v % 128) | (v >= 128 ? 0x80 : 0)); v = Math.floor(v / 128); } while (v > 0); return out; };
+const umpPart = (type, payload) => [...umpVarint(type), ...umpVarint(payload.length), ...payload];
+// MediaHeader as the player gets it: 1 header id, 2 video id (a string), 3 itag, 11 start ms, 13 format id (a message).
+const mediaHeader = (id, itag, startMs) => {
+  const videoId = [...Buffer.from('I9M1hVv8V_c.1')];
+  const formatId = [8, ...protoVarint(itag), 16, ...protoVarint(1792651519396559)];
+  return [8, ...protoVarint(id), 18, videoId.length, ...videoId, 24, ...protoVarint(itag), 88, ...protoVarint(startMs), 106, formatId.length, ...formatId];
+};
+
+test('a YouTube live caption segment holds srv3 lines in media time', async () => {
+  const { segments } = await fixture('live-cbs-sabr.json', 'youtube');
+  const cues = cuesFromSegment(Buffer.from(segments[1].hex, 'hex'), segments[1].startMs / 1000);
+  assert.deepEqual(cues, [
+    { start: 27970, end: 27971, text: 'America' },
+    { start: 27971, end: 27974, text: "one day at a time. I'm Tony There are big questions that all" },
+    { start: 27974, end: 27975, text: 'of us are' },
+  ]);
+});
+
+test('SABR responses read in pieces keep only the live caption segments', async () => {
+  const { segments } = await fixture('live-cbs-sabr.json', 'youtube');
+  const caption = [...Buffer.from(segments[2].hex, 'hex')];
+  const response = Uint8Array.from([
+    ...umpPart(35, [1, 2, 3]),
+    ...umpPart(20, mediaHeader(1, 140, segments[2].startMs)),
+    ...umpPart(21, [1, ...Array.from({ length: 3000 }, (_, i) => i % 256)]),
+    ...umpPart(22, [1]),
+    ...umpPart(20, mediaHeader(1, 386, segments[2].startMs)),
+    ...umpPart(21, [1, ...caption.slice(0, 500)]),
+    ...umpPart(21, [1, ...caption.slice(500)]),
+    ...umpPart(22, [1]),
+  ]);
+  const read = [];
+  const reader = createUmpCaptionReader((cues) => read.push(...cues));
+  for (let i = 0; i < response.length; i += 7) reader.push(response.subarray(i, i + 7));
+  assert.deepEqual(read, cuesFromSegment(Uint8Array.from(caption), segments[2].startMs / 1000));
+  assert.ok(read.length > 0);
+});
+
+test('YouTube live captions read from SABR are translated before they show', async () => {
+  const { segments, dom } = await fixture('live-cbs-sabr.json', 'youtube');
+  let now = dom[0][0] * 1000;
+  const requested = [];
+  let segmenter;
+  let pending = '';
+  const reader = createLiveCaptionReadAhead({
+    asr: true,
+    translate: async (texts) => { requested.push(...texts); return texts.map((text) => `[KO] ${text}`); },
+    onTranslation: () => {},
+    onChunk: () => { if (pending && reader.readAhead.isComplete(pending)) segmenter.commitPending(now); },
+    position: () => now / 1000,
+  });
+  const lines = [];
+  segmenter = createSegmenter({
+    blocks: true,
+    onInterim: (text) => { pending = text; if (reader.readAhead.isComplete(text)) segmenter.commitPending(now); },
+    onSentence: (sentence) => lines.push({ text: sentence.text, at: now / 1000, chunk: reader.readAhead.chunk(sentence.text) }),
+  });
+  let next = 0;
+  for (const [position, captionLines] of dom) {
+    for (; now < position * 1000; now += 100) {
+      segmenter.tick(now);
+      while (next < segments.length && segments[next].arrivedAt * 1000 <= now) {
+        const cues = cuesFromSegment(Buffer.from(segments[next].hex, 'hex'), segments[next].startMs / 1000);
+        reader.add(cues.map((cue) => [cue.start, cue.end, cue.text]));
+        next++;
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      }
+    }
+    const text = joinCaptionLines(captionLines, true);
+    if (text) segmenter.push({ kind: 'snapshot', text, at: now });
+  }
+  for (const end = now + 3000; now < end; now += 100) segmenter.tick(now);
+  // The first chunk read is skipped (it may start mid-window); the last is still being read.
+  assert.equal(lines.length, 16);
+  for (const line of lines.slice(1, -1)) {
+    assert.equal(line.chunk?.status, 'done', `no translation ready for "${line.text}"`);
+    assert.equal(chunkKey(line.chunk.translation), chunkKey(`[KO] ${line.text}`));
+  }
+  // Committed as it shows (27980.15), not after the pause; "CBS Evening News" said 15 s earlier
+  // doesn't pull it back.
+  const cbs = lines.find((line) => line.text.startsWith('CBS Evening News.'));
+  assert.ok(cbs.at < 27980.5, `committed at ${cbs.at}`);
+  assert.ok(requested.length >= 14);
 });
 
 test('a break commits pending text and the next snapshot starts fresh', () => {

@@ -20,6 +20,10 @@ export type SegmenterOptions = {
   // screen with one sentence.
   maxTokens?: number;
   maxWidth?: number;
+  // The source replaces whole blocks of lines (YouTube's live recognition) instead of rolling text
+  // up, so a snapshot only ever continues the block before it. Searching earlier text would match a
+  // phrase said again ("CBS Evening News") and cut the new block short.
+  blocks?: boolean;
   onInterim?: (text: string) => void;
   onSentence?: (sentence: Sentence) => void;
 };
@@ -194,7 +198,7 @@ export function createSegmenter(options: SegmenterOptions = {}) {
       }
       if (length >= anchor && (!partial || length > partial.length)) partial = { position, length };
     }
-    if (partial) return partial;
+    if (partial || options.blocks) return partial;
     for (let position = Math.min(windowStart, received.length) - 1; position >= 0; position--) {
       const length = lengthAt(position);
       if (length >= anchor) return { position, length };

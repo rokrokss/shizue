@@ -14,6 +14,7 @@ import {
   STORAGE_TOGGLE_Y_POSITION,
   STORAGE_USE_YOUTUBE_KEYBOARD_NAVIGATE,
   STORAGE_YOUTUBE_CAPTION_SIZE_RATIO,
+  STORAGE_YOUTUBE_CHANNEL_LANGUAGE,
 } from '@/config/constants';
 import { atomWithChromeStorage } from '@/lib/atomWithChromeStorage';
 import { useAtom, useAtomValue } from 'jotai';
@@ -78,7 +79,14 @@ export const twitchChannelLanguageAtom = atomWithChromeStorage<Record<string, st
   {}
 );
 
-// Twitch captions are translated by Chrome's on-device translator; off, by the chosen LLM.
+// Spoken language per YouTube channel ID, only for channels where the viewer changed it.
+export const youtubeChannelLanguageAtom = atomWithChromeStorage<Record<string, string>>(
+  STORAGE_YOUTUBE_CHANNEL_LANGUAGE,
+  {}
+);
+
+// Twitch captions (and YouTube's live captions) are translated by Chrome's on-device translator;
+// off, by the chosen LLM.
 export const twitchChromeTranslationAtom = atomWithChromeStorage<boolean>(STORAGE_TWITCH_CHROME_TRANSLATION, true);
 
 // The viewer agreed that speech recognition may send the tab's audio to Google.
@@ -123,6 +131,7 @@ export const useTwitchCaptionSource = () => useAtom(twitchCaptionSourceAtom);
 export const useTwitchChannelLanguage = () => useAtom(twitchChannelLanguageAtom);
 export const useSpeechRecognitionConsent = () => useAtom(speechRecognitionConsentAtom);
 export const useTwitchChromeTranslation = () => useAtom(twitchChromeTranslationAtom);
+export const useYoutubeChannelLanguage = () => useAtom(youtubeChannelLanguageAtom);
 export const useShowYoutubeBilingualCaption = () => useAtom(youtubeShowBilingualCaptionAtom);
 export const useUseYoutubeKeyboardNavigate = () => useAtom(useYoutubeKeyboardNavigateAtom);
 export const useYoutubeCaptionSizeRatio = () => useAtom(youtubeCaptionSizeRatioAtom);
