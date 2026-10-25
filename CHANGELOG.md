@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.3.13
+
+- Bilingual captions on YouTube live streams and on videos without captions: Shizue reads a live stream's captions from YouTube's own, and uses on-device speech recognition when a video has none. The caption menu gains Caption source, Spoken language and Chrome built-in translation rows
+- YouTube live captions are read 12–21 seconds ahead from what the player has already downloaded, so LLM translations are ready when a line appears
+- YouTube captions: "Auto-activate" in the caption menu turns captions on by themselves for videos spoken in a language you pick, or in any language other than your target language. Deactivate keeps that video off
+- The YouTube caption button comes back after a mid-roll ad
+- Netflix: the caption button sits before the next-episode button, at the size of Netflix's own buttons, and closed-caption tracks are marked [CC] in the original subtitles list
+- Caption menus always show the language list's scrollbar, so it's clear more languages follow
+
 ## v0.3.12
 
 - Bilingual captions on Netflix: Shizue shows the title's subtitles in the language being spoken (closed captions first, also on a dub) together with your target language, and you can pick another original track from the caption menu
