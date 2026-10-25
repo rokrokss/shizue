@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "A/D দিয়ে সাবটাইটেল নেভিগেট করুন",
     "sourceTrack": "ইউটিউব ক্যাপশন",
     "spokenLanguage": "কথ্য ভাষা",
-    "speechUnavailable": "এই ডিভাইস এই ভাষায় কণ্ঠস্বর শনাক্ত করতে পারে না"
+    "speechUnavailable": "এই ডিভাইস এই ভাষায় কণ্ঠস্বর শনাক্ত করতে পারে না",
+    "autoActivate": "স্বয়ংক্রিয়ভাবে সক্রিয়",
+    "autoActivateOff": "বন্ধ",
+    "autoActivateOtherLanguages": "অন্য যেকোনো ভাষা"
   },
   "twitch": {
     "twitchCaptionButton": "টুইচ ক্যাপশন বোতাম",

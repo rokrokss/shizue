@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "Nawiguj napisy z A/D",
     "sourceTrack": "Napisy YouTube",
     "spokenLanguage": "Język mówiony",
-    "speechUnavailable": "To urządzenie nie rozpoznaje mowy w tym języku"
+    "speechUnavailable": "To urządzenie nie rozpoznaje mowy w tym języku",
+    "autoActivate": "Aktywuj automatycznie",
+    "autoActivateOff": "Wyłączone",
+    "autoActivateOtherLanguages": "Każdy inny język"
   },
   "twitch": {
     "twitchCaptionButton": "Przycisk napisy Twitch",

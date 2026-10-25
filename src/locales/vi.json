@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "Điều hướng phụ đề bằng A/D",
     "sourceTrack": "Phụ đề YouTube",
     "spokenLanguage": "Ngôn ngữ nói",
-    "speechUnavailable": "Thiết bị này không thể nhận dạng giọng nói bằng ngôn ngữ này"
+    "speechUnavailable": "Thiết bị này không thể nhận dạng giọng nói bằng ngôn ngữ này",
+    "autoActivate": "Tự động kích hoạt",
+    "autoActivateOff": "Tắt",
+    "autoActivateOtherLanguages": "Mọi ngôn ngữ khác"
   },
   "twitch": {
     "twitchCaptionButton": "Nút Chú thích Twitch",

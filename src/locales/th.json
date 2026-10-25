@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "นำทางคำบรรยายด้วย A/D",
     "sourceTrack": "คำบรรยาย YouTube",
     "spokenLanguage": "ภาษาที่พูด",
-    "speechUnavailable": "อุปกรณ์นี้ไม่สามารถรู้จำเสียงพูดในภาษานี้ได้"
+    "speechUnavailable": "อุปกรณ์นี้ไม่สามารถรู้จำเสียงพูดในภาษานี้ได้",
+    "autoActivate": "เปิดใช้งานอัตโนมัติ",
+    "autoActivateOff": "ปิด",
+    "autoActivateOtherLanguages": "ภาษาอื่นทั้งหมด"
   },
   "twitch": {
     "twitchCaptionButton": "ปุ่มคำบรรยาย Twitch",

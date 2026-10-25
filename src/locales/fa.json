@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "پیمایش زیرنویس با A/D",
     "sourceTrack": "زیرنویس یوتیوب",
     "spokenLanguage": "زبان گفتاری",
-    "speechUnavailable": "این دستگاه نمی‌تواند گفتار را به این زبان تشخیص دهد"
+    "speechUnavailable": "این دستگاه نمی‌تواند گفتار را به این زبان تشخیص دهد",
+    "autoActivate": "فعال‌سازی خودکار",
+    "autoActivateOff": "خاموش",
+    "autoActivateOtherLanguages": "هر زبان دیگر"
   },
   "twitch": {
     "twitchCaptionButton": "دکمه زیرنویس توییچ",

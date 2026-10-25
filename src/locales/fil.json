@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "I-navigate ang Subtitles gamit ang A/D",
     "sourceTrack": "Mga caption ng YouTube",
     "spokenLanguage": "Wikang sinasalita",
-    "speechUnavailable": "Hindi kayang kilalanin ng device na ito ang pananalita sa wikang ito"
+    "speechUnavailable": "Hindi kayang kilalanin ng device na ito ang pananalita sa wikang ito",
+    "autoActivate": "Awtomatikong i-activate",
+    "autoActivateOff": "Naka-off",
+    "autoActivateOtherLanguages": "Anumang ibang wika"
   },
   "twitch": {
     "twitchCaptionButton": "Twitch Caption Button",

@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "A/D کے ساتھ سب ٹائٹل نیویگیٹ کریں",
     "sourceTrack": "یوٹیوب کیپشنز",
     "spokenLanguage": "بولی جانے والی زبان",
-    "speechUnavailable": "یہ آلہ اس زبان میں آواز کی شناخت نہیں کر سکتا"
+    "speechUnavailable": "یہ آلہ اس زبان میں آواز کی شناخت نہیں کر سکتا",
+    "autoActivate": "خودکار طور پر فعال کریں",
+    "autoActivateOff": "بند",
+    "autoActivateOtherLanguages": "کوئی بھی دوسری زبان"
   },
   "twitch": {
     "twitchCaptionButton": "ٹوئچ کیپشن بٹن",

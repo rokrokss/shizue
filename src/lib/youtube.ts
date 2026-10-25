@@ -181,6 +181,14 @@ const getTranscriptMetadata = async (player: any): Promise<TranscriptMetadata[] 
   }
 };
 
+// The language the video is spoken in: YouTube's speech recognition track ('asr') is in it, and
+// without one, a video's only caption track is taken to be.
+const getOriginalLanguageCode = (player: any): string | undefined => {
+  const tracks: any[] = player?.captions?.playerCaptionsTracklistRenderer?.captionTracks ?? [];
+  const asr = tracks.find((track) => track.kind === 'asr');
+  return asr?.languageCode ?? (tracks.length === 1 ? tracks[0].languageCode : undefined);
+};
+
 const getLiveInfo = (player: any): LiveInfo => {
   const latencyClass: string | undefined = player?.videoDetails?.latencyClass;
   const captionTrack = player?.streamingData?.adaptiveFormats?.find((f: any) => f.captionTrack)?.captionTrack;
@@ -216,5 +224,11 @@ export const getVideoData = async (videoId: string) => {
     return { videoId, metadata, live };
   }
 
-  return { videoId, metadata, transcriptMetadata, live };
+  return {
+    videoId,
+    metadata,
+    transcriptMetadata,
+    live,
+    originalLanguageCode: getOriginalLanguageCode(player),
+  };
 };

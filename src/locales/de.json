@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "Untertitel mit A/D navigieren",
     "sourceTrack": "YouTube-Untertitel",
     "spokenLanguage": "Gesprochene Sprache",
-    "speechUnavailable": "Dieses Gerät kann Sprache in dieser Sprache nicht erkennen"
+    "speechUnavailable": "Dieses Gerät kann Sprache in dieser Sprache nicht erkennen",
+    "autoActivate": "Automatisch aktivieren",
+    "autoActivateOff": "Aus",
+    "autoActivateOtherLanguages": "Jede andere Sprache"
   },
   "twitch": {
     "twitchCaptionButton": "Twitch-Untertitel-Schaltfläche",

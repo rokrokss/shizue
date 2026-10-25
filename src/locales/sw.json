@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "Abiri Manukuu kwa A/D",
     "sourceTrack": "Manukuu ya YouTube",
     "spokenLanguage": "Lugha inayozungumzwa",
-    "speechUnavailable": "Kifaa hiki hakiwezi kutambua sauti katika lugha hii"
+    "speechUnavailable": "Kifaa hiki hakiwezi kutambua sauti katika lugha hii",
+    "autoActivate": "Amilisha kiotomatiki",
+    "autoActivateOff": "Imezimwa",
+    "autoActivateOtherLanguages": "Lugha nyingine yoyote"
   },
   "twitch": {
     "twitchCaptionButton": "Kitufe cha Caption ya Twitch",

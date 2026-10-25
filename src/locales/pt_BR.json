@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "Navegar legendas com A/D",
     "sourceTrack": "Legendas do YouTube",
     "spokenLanguage": "Idioma falado",
-    "speechUnavailable": "Este dispositivo não consegue reconhecer fala neste idioma"
+    "speechUnavailable": "Este dispositivo não consegue reconhecer fala neste idioma",
+    "autoActivate": "Ativar automaticamente",
+    "autoActivateOff": "Desativado",
+    "autoActivateOtherLanguages": "Qualquer outro idioma"
   },
   "twitch": {
     "twitchCaptionButton": "Botão de legenda Twitch",

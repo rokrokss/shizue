@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "Naviguer dans les sous-titres avec A/D",
     "sourceTrack": "Sous-titres YouTube",
     "spokenLanguage": "Langue parlée",
-    "speechUnavailable": "Cet appareil ne peut pas reconnaître la parole dans cette langue"
+    "speechUnavailable": "Cet appareil ne peut pas reconnaître la parole dans cette langue",
+    "autoActivate": "Activer automatiquement",
+    "autoActivateOff": "Désactivé",
+    "autoActivateOtherLanguages": "Toute autre langue"
   },
   "twitch": {
     "twitchCaptionButton": "Bouton de sous-titres de Twitch",

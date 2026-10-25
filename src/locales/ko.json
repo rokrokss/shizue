@@ -176,7 +176,10 @@
     "useKeyboardNavigate": "A/D 자막 이동",
     "sourceTrack": "유튜브 자막",
     "spokenLanguage": "말하는 언어",
-    "speechUnavailable": "이 언어는 이 기기에서 음성 인식을 할 수 없어요"
+    "speechUnavailable": "이 언어는 이 기기에서 음성 인식을 할 수 없어요",
+    "autoActivate": "자동으로 켜기",
+    "autoActivateOff": "끔",
+    "autoActivateOtherLanguages": "대상 언어가 아닌 모든 영상"
   },
   "twitch": {
     "twitchCaptionButton": "트위치 자막 버튼",

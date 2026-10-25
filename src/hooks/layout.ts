@@ -13,9 +13,11 @@ import {
   STORAGE_TOGGLE_HIDDEN_SITE_LIST,
   STORAGE_TOGGLE_Y_POSITION,
   STORAGE_USE_YOUTUBE_KEYBOARD_NAVIGATE,
+  STORAGE_YOUTUBE_AUTO_ACTIVATE,
   STORAGE_YOUTUBE_CAPTION_SIZE_RATIO,
   STORAGE_YOUTUBE_CHANNEL_LANGUAGE,
 } from '@/config/constants';
+import type { Language } from '@/hooks/language';
 import { atomWithChromeStorage } from '@/lib/atomWithChromeStorage';
 import { useAtom, useAtomValue } from 'jotai';
 
@@ -110,6 +112,15 @@ export const youtubeCaptionSizeRatioAtom = atomWithChromeStorage<number>(
   defaultCaptionSizeRatio
 );
 
+// Turns captions on by itself on videos spoken in this language, or in any language but the target
+// language ('other').
+export type YoutubeAutoActivate = 'off' | 'other' | Language;
+
+export const youtubeAutoActivateAtom = atomWithChromeStorage<YoutubeAutoActivate>(
+  STORAGE_YOUTUBE_AUTO_ACTIVATE,
+  'off'
+);
+
 export const toggleHiddenSiteListAtom = atomWithChromeStorage<string[]>(
   STORAGE_TOGGLE_HIDDEN_SITE_LIST,
   defaultToggleHiddenSiteList
@@ -135,4 +146,5 @@ export const useYoutubeChannelLanguage = () => useAtom(youtubeChannelLanguageAto
 export const useShowYoutubeBilingualCaption = () => useAtom(youtubeShowBilingualCaptionAtom);
 export const useUseYoutubeKeyboardNavigate = () => useAtom(useYoutubeKeyboardNavigateAtom);
 export const useYoutubeCaptionSizeRatio = () => useAtom(youtubeCaptionSizeRatioAtom);
+export const useYoutubeAutoActivate = () => useAtom(youtubeAutoActivateAtom);
 export const useToggleHiddenSiteList = () => useAtom(toggleHiddenSiteListAtom);

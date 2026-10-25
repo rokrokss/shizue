@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "A/D キーで字幕ナビゲーション",
     "sourceTrack": "YouTube 字幕",
     "spokenLanguage": "話されている言語",
-    "speechUnavailable": "この端末ではこの言語の音声を認識できません"
+    "speechUnavailable": "この端末ではこの言語の音声を認識できません",
+    "autoActivate": "自動で有効にする",
+    "autoActivateOff": "オフ",
+    "autoActivateOtherLanguages": "翻訳先以外のすべての言語"
   },
   "twitch": {
     "twitchCaptionButton": "Twitch 字幕ボタン",

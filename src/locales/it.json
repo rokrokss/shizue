@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "Naviga sottotitoli con A/D",
     "sourceTrack": "Sottotitoli di YouTube",
     "spokenLanguage": "Lingua parlata",
-    "speechUnavailable": "Questo dispositivo non può riconoscere il parlato in questa lingua"
+    "speechUnavailable": "Questo dispositivo non può riconoscere il parlato in questa lingua",
+    "autoActivate": "Attiva automaticamente",
+    "autoActivateOff": "Disattivato",
+    "autoActivateOtherLanguages": "Qualsiasi altra lingua"
   },
   "twitch": {
     "twitchCaptionButton": "Pulsante sottotitoli Twitch",

@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "Навигация по субтитрам с A/D",
     "sourceTrack": "Субтитры YouTube",
     "spokenLanguage": "Язык речи",
-    "speechUnavailable": "Это устройство не может распознавать речь на этом языке"
+    "speechUnavailable": "Это устройство не может распознавать речь на этом языке",
+    "autoActivate": "Включать автоматически",
+    "autoActivateOff": "Выкл.",
+    "autoActivateOtherLanguages": "Любой другой язык"
   },
   "twitch": {
     "twitchCaptionButton": "Кнопка субтитров Twitch",

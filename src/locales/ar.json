@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "التنقل في الترجمة بـ A/D",
     "sourceTrack": "تعليقات يوتيوب التوضيحية",
     "spokenLanguage": "اللغة المنطوقة",
-    "speechUnavailable": "لا يستطيع هذا الجهاز التعرّف على الكلام بهذه اللغة"
+    "speechUnavailable": "لا يستطيع هذا الجهاز التعرّف على الكلام بهذه اللغة",
+    "autoActivate": "تنشيط تلقائي",
+    "autoActivateOff": "إيقاف",
+    "autoActivateOtherLanguages": "أي لغة أخرى"
   },
   "twitch": {
     "twitchCaptionButton": "زر التعليقات التوضيحية لتويتش",

@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "A/D ile Altyazı Gezinme",
     "sourceTrack": "YouTube altyazıları",
     "spokenLanguage": "Konuşulan dil",
-    "speechUnavailable": "Bu cihaz bu dildeki konuşmayı tanıyamıyor"
+    "speechUnavailable": "Bu cihaz bu dildeki konuşmayı tanıyamıyor",
+    "autoActivate": "Otomatik etkinleştir",
+    "autoActivateOff": "Kapalı",
+    "autoActivateOtherLanguages": "Diğer tüm diller"
   },
   "twitch": {
     "twitchCaptionButton": "Twitch Altyazı Düğmesi",

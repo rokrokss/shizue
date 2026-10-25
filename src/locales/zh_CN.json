@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "使用A/D键导航字幕",
     "sourceTrack": "YouTube 字幕",
     "spokenLanguage": "所说语言",
-    "speechUnavailable": "此设备无法识别这种语言的语音"
+    "speechUnavailable": "此设备无法识别这种语言的语音",
+    "autoActivate": "自动激活",
+    "autoActivateOff": "关闭",
+    "autoActivateOtherLanguages": "目标语言以外的所有语言"
   },
   "twitch": {
     "twitchCaptionButton": "Twitch 字幕按钮",

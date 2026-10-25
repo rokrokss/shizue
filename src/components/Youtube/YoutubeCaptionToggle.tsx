@@ -10,12 +10,14 @@ import {
   useShowYoutubeCaptionToggleValue,
   useTwitchChromeTranslation,
   useUseYoutubeKeyboardNavigate,
+  useYoutubeAutoActivate,
   useYoutubeCaptionSizeRatio,
   useYoutubeChannelLanguage,
+  YoutubeAutoActivate,
 } from '@/hooks/layout';
 import { useAnyModelAvailable } from '@/hooks/models';
 import { getCaptionInjector } from '@/lib/captionInjector';
-import { languageOptions } from '@/lib/language';
+import { languageCodeToLanguage, languageOptions } from '@/lib/language';
 import { isChromeTranslatorSupported } from '@/lib/liveCaption/chromeTranslator';
 import type { CaptionStatus } from '@/lib/liveCaption/liveCaptionController';
 import { SPEECH_LANGUAGES, speechLanguageLabel } from '@/lib/liveCaption/speechLanguage';
@@ -56,6 +58,15 @@ const sourceLabelKey: Record<YoutubeCaptionSource | 'stt', string> = {
   stt: 'twitch.sourceSpeech',
 };
 
+// Whether auto-activate turns captions on for a video spoken in this language (YouTube's code). A
+// language the app doesn't list still counts as one other than the target language.
+const autoActivates = (rule: YoutubeAutoActivate, languageCode: string | null, target: Language) => {
+  if (rule === 'off' || !languageCode) return false;
+  const language = languageCodeToLanguage(languageCode);
+  if (language === target) return false;
+  return rule === 'other' || rule === language;
+};
+
 const YoutubeCaptionToggle = () => {
   const { t } = useTranslation();
 
@@ -65,7 +76,9 @@ const YoutubeCaptionToggle = () => {
   const [targetLanguage, setTargetLanguage] = useState<Language>('English');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownTriggerRef = useRef<HTMLDivElement>(null);
-  const [openPopover, setOpenPopover] = useState<'target' | 'source' | 'speech' | null>(null);
+  const [openPopover, setOpenPopover] = useState<
+    'target' | 'source' | 'speech' | 'autoActivate' | null
+  >(null);
   const [isActivated, setIsActivated] = useState(false);
   const animationFrameRef = useRef<number | null>(null);
   const [numLines, setNumLines] = useState(1);
@@ -80,6 +93,11 @@ const YoutubeCaptionToggle = () => {
   const anyModelAvailable = useAnyModelAvailable();
   const [chromeTranslationOn, setChromeTranslationOn] = useTwitchChromeTranslation();
   const [channelLanguages, setChannelLanguages] = useYoutubeChannelLanguage();
+  const [autoActivate, setAutoActivate] = useYoutubeAutoActivate();
+  const [originalLanguageCode, setOriginalLanguageCode] = useState<string | null>(null);
+  // The video whose captions were turned on, by a click or by auto-activate. Auto-activate starts a
+  // video once, so Deactivate keeps it off.
+  const startedVideoRef = useRef<string | null>(null);
   // As on Twitch, Chrome's on-device translator (the default) translates live captions without an
   // API key; with its switch off the chosen LLM does. The caption track path is LLM only.
   const chromeTranslation = isChromeTranslatorSupported() && (chromeTranslationOn || !anyModelAvailable);
@@ -140,6 +158,7 @@ const YoutubeCaptionToggle = () => {
     getCaptionInjector().clear();
     disposeLive();
     setVideo(null);
+    setOriginalLanguageCode(null);
     setSourceMode('auto');
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
@@ -171,6 +190,7 @@ const YoutubeCaptionToggle = () => {
       if (data?.transcriptMetadata && videoElement && data.metadata) {
         lastVideoIdRef.current = vid;
         setIsCaptionAvailable(true);
+        setOriginalLanguageCode(data.originalLanguageCode ?? null);
         getCaptionInjector().setVideoElement(videoElement as HTMLVideoElement);
         getCaptionInjector().setMetaData(data.transcriptMetadata, data.metadata);
       } else {
@@ -307,6 +327,7 @@ const YoutubeCaptionToggle = () => {
   };
 
   const startTrackCaptions = () => {
+    startedVideoRef.current = video?.videoId ?? null;
     setIsLoading(true);
 
     // starting translation in the background
@@ -349,8 +370,36 @@ const YoutubeCaptionToggle = () => {
     });
   };
 
-  const handleGenerateCaption = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
+  // Only videos with caption tracks start by themselves: live captions may need a click for Chrome's
+  // models. A video starts once it plays, so a tab opened in the background waits until it's watched.
+  useEffect(() => {
+    const videoId = video?.videoId;
+    const element = document.querySelector('video');
+    if (!videoId || !element || realtime || isActivated || isAdShowing || !anyModelAvailable) return;
+    if (!autoActivates(autoActivate, originalLanguageCode, targetLanguage)) return;
+    const start = () => {
+      if (startedVideoRef.current === videoId || element.paused || isYoutubeAdPlaying()) return;
+      debugLog('[YouTube] auto-activate caption');
+      startTrackCaptions();
+    };
+    start();
+    element.addEventListener('playing', start);
+    return () => element.removeEventListener('playing', start);
+  }, [
+    video,
+    realtime,
+    isActivated,
+    isAdShowing,
+    anyModelAvailable,
+    autoActivate,
+    originalLanguageCode,
+    targetLanguage,
+    numLines,
+    showYoutubeBilingualCaption,
+    captionSizeRatio,
+  ]);
+
+  const activateCaptions = () => {
     debugLog('[YouTube] generate caption');
     setIsDropdownOpen(false);
     setOpenPopover(null);
@@ -362,6 +411,18 @@ const YoutubeCaptionToggle = () => {
       videoElement.play();
       debugLog('[YouTube] Video played by generate caption');
     }
+  };
+
+  const handleGenerateCaption = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    activateCaptions();
+  };
+
+  // Picking a choice this video falls under turns its captions on now, as Activate does.
+  const handleSelectAutoActivate = (value: string) => {
+    const rule = value as YoutubeAutoActivate;
+    void setAutoActivate(rule);
+    if (!isActivated && autoActivates(rule, originalLanguageCode, targetLanguage)) activateCaptions();
   };
 
   const handleDeactivateCaption = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -478,6 +539,22 @@ const YoutubeCaptionToggle = () => {
     const current = !realtime ? 'track' : liveStatus?.active ? liveStatus.activeSource : null;
     return current ? `${t('twitch.sourceAuto')} · ${t(sourceLabelKey[current])}` : t('twitch.sourceAuto');
   })();
+
+  const autoActivateOptions = [
+    { value: 'off', label: t('youtube.autoActivateOff'), desc: t('youtube.autoActivateOff') },
+    {
+      value: 'other',
+      label: t('youtube.autoActivateOtherLanguages'),
+      desc: t('youtube.autoActivateOtherLanguages'),
+    },
+    ...languageOptions(t).filter((option) => option.value !== targetLanguage),
+  ];
+  const autoActivateLabel =
+    autoActivate === 'off'
+      ? t('youtube.autoActivateOff')
+      : autoActivate === 'other'
+        ? t('youtube.autoActivateOtherLanguages')
+        : t(`language.${autoActivate.split('_')[0]}`);
 
   // Only on-device recognition is used here: a language the device can't recognize can't start.
   const needsSpeech = realtime && (sourceMode === 'stt' || (sourceMode === 'auto' && !liveTrack));
@@ -643,6 +720,24 @@ const YoutubeCaptionToggle = () => {
             </CaptionMenuRow>
           ),
         },
+        // Live captions don't start by themselves.
+        ...(!realtime
+          ? [
+              {
+                key: 'autoActivate',
+                label: (
+                  <CaptionMenuLanguageRow
+                    label={t('youtube.autoActivate')}
+                    valueLabel={autoActivateLabel}
+                    options={autoActivateOptions}
+                    open={isDropdownOpen && openPopover === 'autoActivate'}
+                    onOpenChange={(open) => setOpenPopover(open ? 'autoActivate' : null)}
+                    onSelect={handleSelectAutoActivate}
+                  />
+                ),
+              },
+            ]
+          : []),
       ]}
       activateLabel={t('youtube.activate')}
       deactivateLabel={t('youtube.deactivate')}

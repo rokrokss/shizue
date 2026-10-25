@@ -168,7 +168,10 @@
     "useKeyboardNavigate": "A/D के साथ उपशीर्षक नेविगेट करें",
     "sourceTrack": "यूट्यूब कैप्शन",
     "spokenLanguage": "बोली जाने वाली भाषा",
-    "speechUnavailable": "यह डिवाइस इस भाषा में वाक् पहचान नहीं कर सकता"
+    "speechUnavailable": "यह डिवाइस इस भाषा में वाक् पहचान नहीं कर सकता",
+    "autoActivate": "स्वचालित रूप से सक्रिय करें",
+    "autoActivateOff": "बंद",
+    "autoActivateOtherLanguages": "कोई भी अन्य भाषा"
   },
   "twitch": {
     "twitchCaptionButton": "ट्विच कैप्शन बटन",
