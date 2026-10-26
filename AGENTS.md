@@ -9,7 +9,7 @@ pnpm dev                 # dev build with hot reload
 pnpm build               # production build into dist/chrome-mv3/
 pnpm compile             # type check (tsc --noEmit)
 pnpm zip                 # store ZIP
-pnpm test:models         # also test:panel, test:chatgpt, test:plot-signin, test:live-caption, test:netflix
+pnpm test:models         # also test:chat, test:panel, test:chatgpt, test:plot-signin, test:live-caption, test:netflix
 store/render.sh          # Chrome Web Store images, store/src → store/out
 site/build.sh            # shizue.net landing page into _site/
 ```

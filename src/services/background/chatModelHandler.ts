@@ -1,5 +1,6 @@
 import {
   isSelectionActionType,
+  STORAGE_USER_MEMORY,
   STREAM_FLUSH_THRESHOLD_0,
   STREAM_FLUSH_THRESHOLD_1,
 } from '@/config/constants';
@@ -15,6 +16,7 @@ import {
   getCurrentOpenrouterKey,
 } from '@/entrypoints/background/states/models';
 import { ActionType } from '@/hooks/global';
+import type { UserMemory } from '@/hooks/userMemory';
 import { formatImagesForMessage } from '@/lib/imageFormatHelper';
 import { db, loadThread } from '@/lib/indexDB';
 import {
@@ -26,6 +28,7 @@ import {
   providerFromName,
 } from '@/lib/models';
 import { getInitialAIMessage, getInitialSystemMessage } from '@/lib/prompts';
+import { readStorage } from '@/lib/storageBackend';
 import { trackStreamingTokenUsage } from '@/lib/tokenUsageTracker';
 import { debugLog, errorLog } from '@/logs';
 import {
@@ -309,10 +312,10 @@ export class ChatModelHandler {
 
       const threadHistory = await loadThread(threadId);
 
-      // const memory = (await loadUserMemory()).text; // TODO
+      const customInstructions = (await readStorage<UserMemory>(STORAGE_USER_MEMORY))?.text;
 
       const currentLang = getCurrentLanguage();
-      const initialSystemMessage = getInitialSystemMessage(currentLang);
+      const initialSystemMessage = getInitialSystemMessage(currentLang, customInstructions);
       const initialAIMessage = getInitialAIMessage(currentLang);
       const modelName = getCurrentChatModel();
       const connectionMode = getConnectionModeFor(modelName);
@@ -389,10 +392,10 @@ export class ChatModelHandler {
         contextTruncated: undefined,
       });
 
-      // const memory = (await loadUserMemory()).text; // TODO
+      const customInstructions = (await readStorage<UserMemory>(STORAGE_USER_MEMORY))?.text;
 
       const currentLang = getCurrentLanguage();
-      const initialSystemMessage = getInitialSystemMessage(currentLang);
+      const initialSystemMessage = getInitialSystemMessage(currentLang, customInstructions);
       const initialAIMessage = getInitialAIMessage(currentLang);
       const modelName = getCurrentChatModel();
       const connectionMode = getConnectionModeFor(modelName);

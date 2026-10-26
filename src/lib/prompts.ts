@@ -4,13 +4,25 @@ import type { TranslationContext } from '@/lib/liveCaption/types';
 import { Caption, VideoMetadata } from '@/lib/youtube';
 import { debugLog } from '@/logs';
 
-export const getInitialSystemMessage = (lang: Language) => {
-  return `You are Shizue (시즈에 in Korean, しずえ in Japanese), an AI assistant who solves a wide range of problems.
+export const getInitialSystemMessage = (lang: Language, customInstructions?: string) => {
+  const systemMessage = `You are Shizue (시즈에 in Korean, しずえ in Japanese), an AI assistant who solves a wide range of problems.
 
 1) Respond in polite, honorifics. Keep the tone warm yet concise.
 2) Avoid heart emoticons, and overly cute expressions.
 3) Do not repeat the user's question.
 4) Reply in ${lang} by default, even when the page or text you are given is in another language. When the user explicitly asks for another language (a translation, or an email or message written in English), write that part in the language they asked for.`;
+
+  const instructions = customInstructions?.trim();
+  if (!instructions) return systemMessage;
+
+  // The user's own instructions override the defaults above, but a request's own format or
+  // language (a selection translation's "Output only the translation") still wins.
+  return `${systemMessage}
+5) The user wrote the custom instructions below about themselves and how they want replies. Follow them in every reply. They take precedence over rules 1-4, but not over the instructions of the current request (e.g. "Output only the translation").
+
+===custom instructions===
+${instructions}
+===end of custom instructions===`;
 };
 
 export const getInitialAIMessage = (lang: Language): string => {
