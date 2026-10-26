@@ -113,9 +113,10 @@ const getPlayerCaptionUrl = async (videoId: string): Promise<string | null> => {
   return null;
 };
 
-// lang and kind are the only params that differ between a video's tracks, so swapping them
-// (plus name/tlang) into the player's request keeps its auth params valid for any track.
-const TRACK_PARAMS = ['lang', 'kind', 'name', 'tlang'];
+// A video's tracks differ in lang, kind and sometimes variant (a dub's track has
+// 'timing-optimized'), so swapping them (plus name/tlang) into the player's request keeps its
+// auth params valid for any track.
+const TRACK_PARAMS = ['lang', 'kind', 'variant', 'name', 'tlang'];
 
 const buildCaptionUrl = (trackBaseUrl: string, playerCaptionUrl: string | null) => {
   if (!playerCaptionUrl) {
@@ -152,7 +153,10 @@ const getPlayerData = async (videoId: string) => {
   return playerResponseMatch ? JSON.parse(playerResponseMatch[1]) : null;
 };
 
-const getTranscriptMetadata = async (player: any): Promise<TranscriptMetadata[] | undefined> => {
+const getTranscriptMetadata = async (
+  player: any,
+  originalLanguageCode: string | undefined
+): Promise<TranscriptMetadata[] | undefined> => {
   try {
     const tracks: any[] | undefined =
       player?.captions?.playerCaptionsTracklistRenderer?.captionTracks;
@@ -160,9 +164,19 @@ const getTranscriptMetadata = async (player: any): Promise<TranscriptMetadata[] 
 
     const sortedTracks = tracks.sort(compareTracks);
 
+    // Without captions people wrote, the speech recognition track in the original language. A
+    // dubbed video also has one per dub language, machine-translated from the original, and those
+    // are never used.
     const filteredTracks = sortedTracks.filter((t: any) => t.kind != 'asr');
-    if (!filteredTracks.length && sortedTracks[0]) {
-      filteredTracks.push(sortedTracks[0]);
+    if (!filteredTracks.length) {
+      const originalLanguage = originalLanguageCode?.split('-')[0];
+      const track = originalLanguage
+        ? sortedTracks.find(
+            (t: any) => t.kind === 'asr' && t.languageCode.split('-')[0] === originalLanguage
+          )
+        : sortedTracks[0];
+      if (!track) return;
+      filteredTracks.push(track);
     }
 
     const metadata = filteredTracks.map((track: any) => {
@@ -181,9 +195,21 @@ const getTranscriptMetadata = async (player: any): Promise<TranscriptMetadata[] 
   }
 };
 
-// The language the video is spoken in: YouTube's speech recognition track ('asr') is in it, and
-// without one, a video's only caption track is taken to be.
+// The language the video is spoken in. A video YouTube dubbed has an audio track per language, and
+// the one not marked auto-dubbed is the original, its ID starting with its language ('ko.4').
+// Otherwise YouTube's speech recognition track ('asr') is in it, and without one, a video's only
+// caption track is taken to be.
 const getOriginalLanguageCode = (player: any): string | undefined => {
+  const audioTracks: any[] = (player?.streamingData?.adaptiveFormats ?? [])
+    .map((format: any) => format.audioTrack)
+    .filter(Boolean);
+  const originals = new Set(
+    audioTracks
+      .filter((track) => !track.isAutoDubbed && track.id)
+      .map((track) => track.id.split('.')[0] as string)
+  );
+  if (originals.size === 1) return [...originals][0];
+
   const tracks: any[] = player?.captions?.playerCaptionsTracklistRenderer?.captionTracks ?? [];
   const asr = tracks.find((track) => track.kind === 'asr');
   return asr?.languageCode ?? (tracks.length === 1 ? tracks[0].languageCode : undefined);
@@ -218,17 +244,13 @@ export const getVideoData = async (videoId: string) => {
   };
 
   debugLog('[Youtube] getVideoData: player', player);
-  const transcriptMetadata = await getTranscriptMetadata(player);
+  // Read before getTranscriptMetadata sorts the tracks English first.
+  const originalLanguageCode = getOriginalLanguageCode(player);
+  const transcriptMetadata = await getTranscriptMetadata(player, originalLanguageCode);
   if (!transcriptMetadata) {
     debugLog('[Youtube] getVideoData: No transcript data found');
     return { videoId, metadata, live };
   }
 
-  return {
-    videoId,
-    metadata,
-    transcriptMetadata,
-    live,
-    originalLanguageCode: getOriginalLanguageCode(player),
-  };
+  return { videoId, metadata, transcriptMetadata, live, originalLanguageCode };
 };
