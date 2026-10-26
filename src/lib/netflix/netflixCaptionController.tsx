@@ -54,7 +54,7 @@ const PLACE_INTERVAL_MS = 250;
 
 const isWatchPage = () => location.pathname.startsWith('/watch');
 
-const playerVideo = () =>
+export const playerVideo = () =>
   document.querySelector<HTMLVideoElement>('.watch-video video') ?? document.querySelector('video');
 
 // What the viewer picked as the original, kept across episodes, whose track IDs differ.

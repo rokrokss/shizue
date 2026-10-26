@@ -21,6 +21,7 @@ Netflix has full subtitle files for every title, so this works like YouTube: the
 ## Page
 
 - The button goes first in the right-hand group of the bottom control row (`[data-uia="controls-standard"]`), before "next episode" on a series. The groups are found by layout, split at the widest space between buttons (where the title is), because button names differ between films and series. The button copies the size and icon size of the button after it and Netflix's gap between buttons, and a ResizeObserver on the row refits it when the window resizes. Netflix removes the row while its controls are hidden; one persistent button is moved back in by a MutationObserver.
+- Opening the menu pauses the `<video>` and Activate plays it, as on YouTube. Only writing `currentTime` is known to break the player; `pause()` and `play()` on the element haven't been checked on a real account.
 - While the menu is open, a synthetic `mousemove` and `pointermove` on the player every second keep Netflix's controls (and the button) up. The button and menu stop click and key events from reaching Netflix, which would pause, seek or change the volume.
 - The overlay sits in `.watch-video--player-view` and moves above the control row while it shows. Native subtitles are hidden with a `<style>` (`.player-timedtext` and the image subtitle classes).
 - During an ad (`[data-uia="ads-info-container"]`, unverified) captions clear and the button hides. Whether the ad plan shifts `<video>.currentTime` is unknown.

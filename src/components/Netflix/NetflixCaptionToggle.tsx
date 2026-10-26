@@ -17,6 +17,7 @@ import {
   CaptionSettings,
   getNetflixCaptions,
   NetflixCaptionStatus,
+  playerVideo,
 } from '@/lib/netflix/netflixCaptionController';
 import { keepNetflixControlsShown } from '@/lib/netflix/playerControls';
 import { panelService } from '@/services/panelService';
@@ -96,6 +97,9 @@ const NetflixCaptionToggle = () => {
     }
     setIsDropdownOpen(open);
     if (!open) setOpenPopover(null);
+    // The video waits while the menu is open and plays on Activate, as on YouTube.
+    const video = playerVideo();
+    if (open && video && !video.paused) video.pause();
   };
 
   const handleActivate = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -107,6 +111,8 @@ const NetflixCaptionToggle = () => {
       return;
     }
     controller.activate(settings);
+    const video = playerVideo();
+    if (video?.paused) void video.play();
   };
 
   const handleDeactivate = (e: React.MouseEvent<HTMLButtonElement>) => {
