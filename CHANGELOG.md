@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.14
+
+- YouTube captions work again on videos YouTube dubbed automatically: Shizue uses the original language's captions instead of a dub's machine-translated ones, and Auto-activate sees the language the video is really spoken in
+- YouTube captions: when a video has its own captions in your target language, Bilingual shows the original language's captions with them
+- Netflix: opening the caption menu pauses the video and Activate plays it, as on YouTube
+- Twitch captions: the "Stream language" row is now "Spoken language", as on YouTube
+
 ## v0.3.13
 
 - Bilingual captions on YouTube live streams and on videos without captions: Shizue reads a live stream's captions from YouTube's own, and uses on-device speech recognition when a video has none. The caption menu gains Caption source, Spoken language and Chrome built-in translation rows
