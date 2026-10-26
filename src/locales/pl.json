@@ -181,7 +181,6 @@
     "sourceScc": "Stream CC",
     "sourceSpeech": "Rozpoznawanie mowy",
     "sourceUnavailable": "Brak w tym streamie",
-    "streamLanguage": "Język streamu",
     "speechConsent": "Rozpoznawanie mowy wysyła dźwięk z tej karty do usługi rozpoznawania mowy Google.",
     "agreeAndActivate": "Zgódź się i aktywuj",
     "revokeSpeechConsent": "Wycofaj zgodę na rozpoznawanie mowy",

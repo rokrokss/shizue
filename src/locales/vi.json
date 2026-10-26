@@ -181,7 +181,6 @@
     "sourceScc": "Stream CC",
     "sourceSpeech": "Nhận dạng giọng nói",
     "sourceUnavailable": "Không có trong buổi phát này",
-    "streamLanguage": "Ngôn ngữ buổi phát",
     "speechConsent": "Nhận dạng giọng nói sẽ gửi âm thanh của thẻ này đến dịch vụ nhận dạng giọng nói của Google.",
     "agreeAndActivate": "Đồng ý và kích hoạt",
     "revokeSpeechConsent": "Thu hồi đồng ý nhận dạng giọng nói",

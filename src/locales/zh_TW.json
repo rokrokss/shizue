@@ -181,7 +181,6 @@
     "sourceScc": "Stream CC",
     "sourceSpeech": "語音辨識",
     "sourceUnavailable": "此實況沒有",
-    "streamLanguage": "實況語言",
     "speechConsent": "語音辨識會將此分頁的音訊傳送至 Google 語音辨識服務。",
     "agreeAndActivate": "同意並啟用",
     "revokeSpeechConsent": "撤銷語音辨識同意",

@@ -181,7 +181,6 @@
     "sourceScc": "Stream CC",
     "sourceSpeech": "音声認識",
     "sourceUnavailable": "この配信にはありません",
-    "streamLanguage": "配信の言語",
     "speechConsent": "音声認識を使うと、このタブの音声が Google の音声認識サービスに送信されます。",
     "agreeAndActivate": "同意して有効",
     "revokeSpeechConsent": "音声認識への同意を取り消す",

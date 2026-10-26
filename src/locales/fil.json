@@ -181,7 +181,6 @@
     "sourceScc": "Stream CC",
     "sourceSpeech": "Speech recognition",
     "sourceUnavailable": "Wala sa stream na ito",
-    "streamLanguage": "Wika ng stream",
     "speechConsent": "Ipinapadala ng speech recognition ang audio ng tab na ito sa speech recognition service ng Google.",
     "agreeAndActivate": "Pumayag at i-activate",
     "revokeSpeechConsent": "Bawiin ang pahintulot sa speech recognition",

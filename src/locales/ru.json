@@ -181,7 +181,6 @@
     "sourceScc": "Stream CC",
     "sourceSpeech": "Распознавание речи",
     "sourceUnavailable": "Нет на этой трансляции",
-    "streamLanguage": "Язык трансляции",
     "speechConsent": "Распознавание речи отправляет звук этой вкладки в службу распознавания речи Google.",
     "agreeAndActivate": "Согласиться и активировать",
     "revokeSpeechConsent": "Отозвать согласие на распознавание речи",

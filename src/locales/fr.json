@@ -181,7 +181,6 @@
     "sourceScc": "Stream CC",
     "sourceSpeech": "Reconnaissance vocale",
     "sourceUnavailable": "Indisponible sur ce stream",
-    "streamLanguage": "Langue du stream",
     "speechConsent": "La reconnaissance vocale envoie le son de cet onglet au service de reconnaissance vocale de Google.",
     "agreeAndActivate": "Accepter et activer",
     "revokeSpeechConsent": "Retirer le consentement à la reconnaissance vocale",

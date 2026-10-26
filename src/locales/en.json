@@ -189,7 +189,6 @@
     "sourceScc": "Stream CC",
     "sourceSpeech": "Speech recognition",
     "sourceUnavailable": "None on this stream",
-    "streamLanguage": "Stream language",
     "speechConsent": "Speech recognition sends this tab's audio to Google's speech recognition service.",
     "agreeAndActivate": "Agree and activate",
     "revokeSpeechConsent": "Revoke speech recognition consent",

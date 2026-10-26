@@ -325,7 +325,7 @@ const TwitchCaptionToggle = () => {
                 label: (
                   <CaptionMenuLanguageRow
                     side="left"
-                    label={t('twitch.streamLanguage')}
+                    label={t('youtube.spokenLanguage')}
                     valueLabel={speechLanguageLabel(status.speechLanguage)}
                     options={SPEECH_LANGUAGES}
                     open={isDropdownOpen && openPopover === 'speech'}

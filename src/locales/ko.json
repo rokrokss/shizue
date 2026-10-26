@@ -189,7 +189,6 @@
     "sourceScc": "Stream CC",
     "sourceSpeech": "음성 인식",
     "sourceUnavailable": "이 방송에는 없음",
-    "streamLanguage": "방송 언어",
     "speechConsent": "음성 인식을 켜면 이 탭의 소리가 Google 음성 인식 서버로 전송돼요.",
     "agreeAndActivate": "동의하고 생성",
     "revokeSpeechConsent": "음성 인식 동의 취소",

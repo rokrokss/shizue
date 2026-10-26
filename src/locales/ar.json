@@ -181,7 +181,6 @@
     "sourceScc": "Stream CC",
     "sourceSpeech": "التعرف على الكلام",
     "sourceUnavailable": "غير متوفر في هذا البث",
-    "streamLanguage": "لغة البث",
     "speechConsent": "يرسل التعرف على الكلام صوت علامة التبويب هذه إلى خدمة التعرف على الكلام من Google.",
     "agreeAndActivate": "موافقة وتنشيط",
     "revokeSpeechConsent": "إلغاء الموافقة على التعرف على الكلام",

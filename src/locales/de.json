@@ -181,7 +181,6 @@
     "sourceScc": "Stream CC",
     "sourceSpeech": "Spracherkennung",
     "sourceUnavailable": "Bei diesem Stream nicht verfügbar",
-    "streamLanguage": "Sprache des Streams",
     "speechConsent": "Die Spracherkennung sendet den Ton dieses Tabs an den Spracherkennungsdienst von Google.",
     "agreeAndActivate": "Zustimmen und aktivieren",
     "revokeSpeechConsent": "Zustimmung zur Spracherkennung widerrufen",

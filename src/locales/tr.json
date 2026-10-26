@@ -181,7 +181,6 @@
     "sourceScc": "Stream CC",
     "sourceSpeech": "Konuşma tanıma",
     "sourceUnavailable": "Bu yayında yok",
-    "streamLanguage": "Yayın dili",
     "speechConsent": "Konuşma tanıma, bu sekmenin sesini Google'ın konuşma tanıma hizmetine gönderir.",
     "agreeAndActivate": "Kabul et ve aktif et",
     "revokeSpeechConsent": "Konuşma tanıma onayını geri al",

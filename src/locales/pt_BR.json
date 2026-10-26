@@ -181,7 +181,6 @@
     "sourceScc": "Stream CC",
     "sourceSpeech": "Reconhecimento de voz",
     "sourceUnavailable": "Indisponível nesta live",
-    "streamLanguage": "Idioma da live",
     "speechConsent": "O reconhecimento de voz envia o áudio desta aba para o serviço de reconhecimento de voz do Google.",
     "agreeAndActivate": "Concordar e ativar",
     "revokeSpeechConsent": "Revogar o consentimento do reconhecimento de voz",
