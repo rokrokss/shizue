@@ -1,6 +1,7 @@
 import tailwindRaw from '@/assets/tailwind.css?inline';
 import { CaptionDisplay } from '@/components/Youtube/CaptionDisplay';
 import { Language } from '@/hooks/language';
+import { alignCues } from '@/lib/netflix/subtitles';
 import { Caption, getCaptionUrl, TranscriptMetadata, VideoMetadata } from '@/lib/youtube';
 import { debugLog, errorLog } from '@/logs';
 import AntdProvider from '@/providers/AntdProvider';
@@ -29,6 +30,9 @@ export class CaptionInjector {
   private shadowRoot: ShadowRoot | null = null;
   private transcriptMetadata: TranscriptMetadata[] = [];
   private videoMetadata: VideoMetadata | null = null;
+  private originalTrack: TranscriptMetadata | undefined;
+  // With the target language's own track, the original captions spoken over each of its captions.
+  private nativeOriginalLines: string[] = [];
   private isTranslating = false;
   private translatedChunks = new Set<number>();
   private priorityChunkQueue = new Set<number>();
@@ -38,9 +42,14 @@ export class CaptionInjector {
     this.handleVideoSeeked = this.handleVideoSeeked.bind(this);
   }
 
-  public setMetaData = (transcriptMetadata: TranscriptMetadata[], videoMetadata: VideoMetadata) => {
+  public setMetaData = (
+    transcriptMetadata: TranscriptMetadata[],
+    videoMetadata: VideoMetadata,
+    originalTrack: TranscriptMetadata | undefined
+  ) => {
     this.transcriptMetadata = transcriptMetadata;
     this.videoMetadata = videoMetadata;
+    this.originalTrack = originalTrack;
   };
 
   public setVideoElement = (videoElement: HTMLVideoElement) => {
@@ -195,10 +204,13 @@ export class CaptionInjector {
     if (currentIndex !== null) {
       const startIndex = Math.max(0, currentIndex - this.numLines + 1);
       newLines = allCaptions.slice(startIndex, currentIndex + 1).map((c) => c.text);
-      originalLines = this.captionCache
-        .get(this.baseLanguage)!
-        .slice(startIndex, currentIndex + 1)
-        .map((c) => c.text);
+      originalLines =
+        this.baseLanguage === this.targetLanguage
+          ? this.nativeOriginalLines.slice(startIndex, currentIndex + 1)
+          : this.captionCache
+              .get(this.baseLanguage)!
+              .slice(startIndex, currentIndex + 1)
+              .map((c) => c.text);
     }
 
     if (JSON.stringify(newLines) !== JSON.stringify(this.currentCaptionLines)) {
@@ -230,7 +242,10 @@ export class CaptionInjector {
   private async fetchNativeCaptions(language: Language): Promise<Caption[] | null> {
     const metadata = this.transcriptMetadata.find((m) => m.language === language);
     if (!metadata) return null;
+    return this.fetchCaptions(metadata);
+  }
 
+  private async fetchCaptions(metadata: TranscriptMetadata): Promise<Caption[] | null> {
     try {
       const response = await fetch(await getCaptionUrl(metadata.baseUrl));
       const data = await response.json();
@@ -257,7 +272,7 @@ export class CaptionInjector {
 
       return captionsSqueezed;
     } catch (err) {
-      errorLog(`[YouTube] Failed to fetch captions for ${language}`, err);
+      errorLog(`[YouTube] Failed to fetch captions for ${metadata.language}`, err);
       return null;
     }
   }
@@ -276,6 +291,21 @@ export class CaptionInjector {
         debugLog('[YouTube] Using native captions for', this.targetLanguage);
         this.isTranslating = false;
         this.baseLanguage = this.targetLanguage;
+        this.nativeOriginalLines = [];
+
+        const original = this.originalTrack;
+        if (original && original.language !== this.targetLanguage) {
+          const originalCaptions = await this.fetchCaptions(original);
+          // Unless another video or language took over meanwhile.
+          if (originalCaptions && this.captionCache.get(this.targetLanguage) === nativeCaptions) {
+            // Netflix's pairing with the target track's captions as the lines: each gets every
+            // original caption it substantially overlaps, so a long speech recognition caption
+            // shows under each line it spans. Original captions overlapping none come back as
+            // lines without text, left out.
+            const { cues, translations } = alignCues(nativeCaptions, originalCaptions);
+            this.nativeOriginalLines = translations.filter((_, i) => cues[i].text);
+          }
+        }
         return;
       }
 
@@ -478,6 +508,8 @@ export class CaptionInjector {
   public clear = () => {
     this.transcriptMetadata = [];
     this.videoMetadata = null;
+    this.originalTrack = undefined;
+    this.nativeOriginalLines = [];
     this.captionCache.clear();
     this.targetLanguage = 'English';
     this.lastFoundCaptionIndex = null;

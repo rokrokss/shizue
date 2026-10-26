@@ -192,7 +192,7 @@ const YoutubeCaptionToggle = () => {
         setIsCaptionAvailable(true);
         setOriginalLanguageCode(data.originalLanguageCode ?? null);
         getCaptionInjector().setVideoElement(videoElement as HTMLVideoElement);
-        getCaptionInjector().setMetaData(data.transcriptMetadata, data.metadata);
+        getCaptionInjector().setMetaData(data.transcriptMetadata, data.metadata, data.originalTrack);
       } else {
         setIsCaptionAvailable(false);
       }
