@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.16
+
+- Attach more to a chat: the paperclip button lists the web pages open in this window to tick on or off, attaches a PDF file from your computer, and captures what the current tab shows as an image for models that read images. Pages and files share the limit of 5
+- PDFs: a PDF open in a tab or picked from your computer is read for its text, Korean, Japanese and Chinese included. A scanned PDF with no text isn't sent, with the reason shown
+- Search your chats: a search box at the top of History finds conversations by what their messages say and marks the match
+- Page translation keeps up with the page: text that appears after translation starts (late-loading paragraphs, infinite scroll, sections that open, a new page in a single-page site) is translated without scrolling, text the page changes is translated again, and text inside frames is translated too
+
 ## v0.3.15
 
 - Custom instructions: in Settings → General, tell Shizue about yourself and how you want answers (up to 1,500 characters). Every side panel answer follows them: chat, page summaries, selection actions and image descriptions. Page and caption translation don't use them
