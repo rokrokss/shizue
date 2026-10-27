@@ -1,5 +1,6 @@
 import {
   MESSAGE_CANCEL_NOT_STARTED_MESSAGE,
+  MESSAGE_FRAME_TRANSLATION_STATE,
   MESSAGE_INJECT_NETFLIX_BRIDGE,
   MESSAGE_INJECT_TWITCH_BRIDGE,
   MESSAGE_SCC_CAPTION_SNAPSHOT,
@@ -8,6 +9,7 @@ import {
   MESSAGE_OPEN_PANEL,
   MESSAGE_WAIT_PANEL_SUMMARY,
   MESSAGE_SET_PANEL_OPEN_OR_NOT,
+  MESSAGE_TRANSLATE_FRAMES,
   MESSAGE_TRANSLATE_HTML_TEXT_BATCH,
   MESSAGE_TRANSLATE_LIVE_CAPTION,
   MESSAGE_TRANSLATE_SUBTITLES,
@@ -173,6 +175,31 @@ async function handleSccSetHidden(
   sendResponse({ status: 'success' });
 }
 
+// Page translation in a tab's frames (translate-frame.content.ts): while it is on, the frame
+// translator goes into every frame Shizue may read (it skips the top frame and frames that already
+// have it), then each frame hears whether translation is on.
+async function handleTranslateFrames(
+  msg: any,
+  sendResponse: (response?: any) => void,
+  sender: chrome.runtime.MessageSender
+) {
+  const tabId = sender.tab?.id;
+  if (tabId === undefined) return sendResponse({ status: 'error' });
+  if (msg.active) {
+    await chrome.scripting
+      .executeScript({ target: { tabId, allFrames: true }, files: ['content-scripts/translate-frame.js'] })
+      .catch(() => {});
+  }
+  await chrome.tabs
+    .sendMessage(tabId, {
+      action: MESSAGE_FRAME_TRANSLATION_STATE,
+      active: msg.active === true,
+      targetLanguage: msg.targetLanguage,
+    })
+    .catch(() => {});
+  sendResponse({ status: 'success' });
+}
+
 export const messageHandlers = {
   [MESSAGE_LOAD_THREAD]: handleLoadThread,
   [MESSAGE_CANCEL_NOT_STARTED_MESSAGE]: handleLatestMessageForThread,
@@ -187,4 +214,5 @@ export const messageHandlers = {
   [MESSAGE_INJECT_NETFLIX_BRIDGE]: handleInjectNetflixBridge,
   [MESSAGE_SCC_CAPTION_SNAPSHOT]: handleSccCaptionSnapshot,
   [MESSAGE_SCC_SET_HIDDEN]: handleSccSetHidden,
+  [MESSAGE_TRANSLATE_FRAMES]: handleTranslateFrames,
 };

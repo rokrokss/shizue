@@ -2,6 +2,7 @@ import {
   ShizueTranslationOverlay,
   registerShizueTranslationOverlay,
 } from '@/components/Translation/ShizueTranslationOverlay';
+import { MESSAGE_TRANSLATE_FRAMES } from '@/config/constants';
 import { Language } from '@/hooks/language';
 import { TEXT_ELEMENTS } from '@/lib/html';
 import { debugLog, errorLog } from '@/logs';
@@ -19,6 +20,18 @@ export class PageTranslator {
   private queuedElements: Set<Element> = new Set();
 
   private visitedElements: Set<Element> = new Set();
+
+  // Content the page adds or changes after translation starts is scanned like a scroll: once
+  // the changes pause for 300ms, and at least once a second on pages that never stop changing.
+  private mutationObserver: MutationObserver | null = null;
+  private mutationTimeout: ReturnType<typeof setTimeout> | null = null;
+  private firstMutationTime: number | null = null;
+  private readonly MUTATION_MAX_WAIT = 1000;
+  // An element's own text when it was translated, and the translated elements the page has
+  // touched since: one whose text changed is translated again.
+  private sourceTexts: WeakMap<Element, string> = new WeakMap();
+  private changedElements: Set<Element> = new Set();
+  private framesTimeout: ReturnType<typeof setTimeout> | null = null;
 
   private cachedTranslations: Map<string, Map<string, string>> = new Map();
 
@@ -38,6 +51,7 @@ export class PageTranslator {
     }
     this.startObserving();
     this.translateVisibleElements();
+    if (window === window.top) this.syncFrames();
     debugLog('Page translation activated');
   }
 
@@ -55,6 +69,8 @@ export class PageTranslator {
     this.translationQueue = [];
     this.queuedElements = new Set();
     this.visitedElements = new Set();
+    this.changedElements = new Set();
+    if (window === window.top) this.syncFrames();
     debugLog('Page translation deactivated');
   }
 
@@ -62,13 +78,134 @@ export class PageTranslator {
   private startObserving() {
     // Add scroll event listener
     this.addScrollListener();
+    this.mutationObserver = new MutationObserver(this.handleMutations);
+    this.mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+      attributes: true,
+      attributeFilter: ['style', 'class', 'hidden', 'open'],
+    });
+    // Load events don't bubble, but a capturing listener sees every frame that loads.
+    document.addEventListener('load', this.handleFrameLoad, true);
   }
 
   // Stop observing DOM
   private stopObserving() {
     // Remove scroll event listener
     this.removeScrollListener();
+    this.mutationObserver?.disconnect();
+    this.mutationObserver = null;
+    if (this.mutationTimeout) clearTimeout(this.mutationTimeout);
+    this.mutationTimeout = null;
+    this.firstMutationTime = null;
+    document.removeEventListener('load', this.handleFrameLoad, true);
+    if (this.framesTimeout) clearTimeout(this.framesTimeout);
+    this.framesTimeout = null;
   }
+
+  private handleMutations = (mutations: MutationRecord[]) => {
+    if (!this.isActive) return;
+    let pageChanged = false;
+    for (const mutation of mutations) {
+      if (this.isOwnMutation(mutation)) continue;
+      pageChanged = true;
+      const translated = this.translatedAncestor(mutation.target);
+      if (translated) this.changedElements.add(translated);
+    }
+    if (pageChanged) this.scheduleMutationScan();
+  };
+
+  // Translations, their spinners and Shizue's other elements change the page too; reacting to
+  // them would scan again after every translation.
+  private isOwnMutation(mutation: MutationRecord): boolean {
+    const nodes = [...mutation.addedNodes, ...mutation.removedNodes];
+    if (nodes.length > 0 && nodes.every((node) => this.isShizueElement(node))) return true;
+    for (let node: Node | null = mutation.target; node; node = node.parentNode) {
+      if (this.isShizueElement(node)) return true;
+    }
+    return false;
+  }
+
+  private isShizueElement(node: Node): boolean {
+    return node.nodeType === Node.ELEMENT_NODE && node.nodeName.startsWith('SHIZUE-');
+  }
+
+  private translatedAncestor(node: Node): Element | null {
+    for (let element = node.nodeType === Node.ELEMENT_NODE ? (node as Element) : node.parentElement;
+      element && element !== document.body;
+      element = element.parentElement) {
+      if (this.visitedElements.has(element) || this.queuedElements.has(element)) return element;
+    }
+    return null;
+  }
+
+  private scheduleMutationScan() {
+    const now = Date.now();
+    this.firstMutationTime ??= now;
+    if (this.mutationTimeout) clearTimeout(this.mutationTimeout);
+    const wait = Math.max(0, Math.min(300, this.firstMutationTime + this.MUTATION_MAX_WAIT - now));
+    this.mutationTimeout = setTimeout(() => {
+      this.mutationTimeout = null;
+      this.firstMutationTime = null;
+      if (!this.isActive) return;
+      this.forgetChangedTranslations();
+      this.translateVisibleElements();
+    }, wait);
+  }
+
+  // A translated element whose text the page replaced loses its old translation, so the scan
+  // that follows translates it again.
+  private forgetChangedTranslations() {
+    for (const element of this.changedElements) {
+      const overlay = Array.from(element.children).find(
+        (child) => child.tagName === 'SHIZUE-TRANSLATION-OVERLAY'
+      ) as ShizueTranslationOverlay | undefined;
+      // One still in the queue or on its way is checked again when its translation arrives.
+      const waiting =
+        this.queuedElements.has(element) &&
+        (overlay ? overlay.getLoading() : !this.visitedElements.has(element));
+      if (waiting) continue;
+      this.changedElements.delete(element);
+      const source = this.sourceTexts.get(element);
+      if (source === undefined || source === this.ownText(element)) continue;
+      overlay?.remove();
+      this.visitedElements.delete(element);
+      this.queuedElements.delete(element);
+      this.sourceTexts.delete(element);
+    }
+  }
+
+  // The element's text without the translation Shizue added under it.
+  private ownText(element: Element): string {
+    return Array.from(element.childNodes)
+      .filter((node) => node.nodeName !== 'SHIZUE-TRANSLATION-OVERLAY')
+      .map((node) => node.textContent)
+      .join('');
+  }
+
+  // Frames run their own translator (translate-frame.content.ts). The background injects it
+  // into this tab's frames and passes this page's state on to them: when translation starts or
+  // stops here, and when a frame loads while it is on.
+  private syncFrames() {
+    void chrome.runtime
+      .sendMessage({
+        action: MESSAGE_TRANSLATE_FRAMES,
+        active: this.isActive,
+        targetLanguage: this.targetLanguage,
+      })
+      .catch((error) => debugLog('Frame translation sync failed', error));
+  }
+
+  private handleFrameLoad = (event: Event) => {
+    const target = event.target as Element | null;
+    if (!this.isActive || (target?.tagName !== 'IFRAME' && target?.tagName !== 'FRAME')) return;
+    if (this.framesTimeout) clearTimeout(this.framesTimeout);
+    this.framesTimeout = setTimeout(() => {
+      this.framesTimeout = null;
+      if (this.isActive) this.syncFrames();
+    }, 500);
+  };
 
   // Add scroll event listener
   private addScrollListener() {
@@ -342,6 +479,8 @@ export class PageTranslator {
     } finally {
       debugLog('this.cachedTranslations', this.cachedTranslations);
       this.isProcessingBatch = false;
+      // The page may have changed an element while its translation was on the way.
+      if (this.isActive && this.changedElements.size > 0) this.scheduleMutationScan();
       if (this.isActive) this.processTranslationQueue();
     }
   }
@@ -367,6 +506,7 @@ export class PageTranslator {
       for (let i = 0; i < elements.length; i++) {
         const element = elements[i];
         const text = element.innerHTML?.trim();
+        this.sourceTexts.set(element, this.ownText(element));
         if (this.cachedTranslations.get(this.targetLanguage as string)?.has(text)) {
           const translatedText = this.cachedTranslations
             .get(this.targetLanguage as string)
