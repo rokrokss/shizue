@@ -1,3 +1,5 @@
+import { syncModelList } from '@/services/background/modelListSync';
+
 export const onInstalled = () => {
   chrome.runtime.onInstalled.addListener(async (details) => {
     if (details.reason === 'update') {
@@ -53,6 +55,9 @@ export const onInstalled = () => {
 
       // The PDF translation feature was removed; drop its leftover settings.
       await chrome.storage.local.remove(['PDF_TRANSLATE_TASK_INFO', 'PDF_TRANSLATE_NO_DUAL']);
+
+      // The saved model list was fetched for the previous version; check again now.
+      void syncModelList(true);
     }
   });
 };

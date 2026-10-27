@@ -17,13 +17,15 @@ import {
   isChatGPTModel,
   LocalModelConfig,
   LocalServerConfig,
-  MODELS,
+  getModelSpec,
   resolveLocalModel,
   TranslateModel,
 } from '@/lib/modelRegistry';
+import { bundledModelList } from '@/lib/modelList';
+import { watchModelList } from '@/lib/modelListStorage';
 
-let currentChatModel: ChatModel = 'gpt';
-let currentTranslateModel: TranslateModel = 'gpt-mini';
+let currentChatModel: ChatModel = bundledModelList.defaults['openai-api-key'].chat;
+let currentTranslateModel: TranslateModel = bundledModelList.defaults['openai-api-key'].translation;
 let openaiKey: string | undefined = undefined;
 let geminiKey: string | undefined = undefined;
 let anthropicKey: string | undefined = undefined;
@@ -54,7 +56,7 @@ export const getLocalModelFor = (model: ChatModel): LocalModelConfig | undefined
 // Local models need no key and call the user's own server.
 export const getConnectionModeFor = (model: ChatModel): ConnectionMode => {
   if (isLocalModel(model) || isChatGPTModel(model)) return 'direct';
-  const { provider } = MODELS[model];
+  const provider = getModelSpec(model)?.provider;
   if (!provider) return 'openrouter';
   const directKey = {
     'openai-api-key': openaiKey,
@@ -103,8 +105,9 @@ let modelStateReady: Promise<void> = Promise.resolve();
 export const whenModelStateReady = () => modelStateReady;
 
 export const modelListeners = () => {
-  modelStateReady = chrome.storage.local
-    .get([
+  // The saved model list decides which stored slots are valid, so it loads first.
+  modelStateReady = watchModelList()
+    .then(() => chrome.storage.local.get([
       STORAGE_CHAT_MODEL,
       STORAGE_TRANSLATE_MODEL,
       STORAGE_OPENAI_KEY,
@@ -113,7 +116,7 @@ export const modelListeners = () => {
       STORAGE_OPENROUTER_KEY,
       STORAGE_CONNECTION_MODE,
       STORAGE_LOCAL_SERVER,
-    ])
+    ]))
     .then((res) => {
       if (isChatModel(res.CHAT_MODEL)) changeChatModel(res.CHAT_MODEL);
       if (isChatModel(res.TRANSLATE_MODEL)) changeTranslateModel(res.TRANSLATE_MODEL);

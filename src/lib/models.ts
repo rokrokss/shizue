@@ -10,7 +10,7 @@ import {
   chatGPTModelId,
   chatGPTFastEffort,
   localModelId,
-  MODELS,
+  getModelSpec,
   type ApiKeyProvider,
   type ChatModel,
   type ConnectionMode,
@@ -219,7 +219,12 @@ export function getModelInstance(opts: ModelOptions) {
     return new ChatGPTPlanModel(model, Boolean(opts.jsonSchema), opts.fast ? chatGPTFastEffort(model) : undefined);
   }
   if (isLocalModel(modelName)) return createLocal(modelName, opts);
-  const spec = MODELS[modelName];
+  const spec = getModelSpec(modelName);
+  if (!spec) {
+    const msg = `Unknown model: ${modelName}`;
+    errorLog(msg);
+    throw new Error(msg);
+  }
   if (opts.modelPreset.connectionMode === 'openrouter') return createOpenRouter(spec, opts);
   if (spec.provider === 'openai-api-key') return createOpenAI(spec, opts);
   if (spec.provider === 'gemini-api-key') return createGemini(spec, opts);

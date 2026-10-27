@@ -3,6 +3,7 @@ import '@/assets/tailwindPreflight.css';
 import EmptyPage from '@/components/Loader/EmptyPage';
 import { SidePanelRoutes } from '@/entrypoints/sidepanel/routes';
 import AntdProvider from '@/providers/AntdProvider';
+import { watchModelList } from '@/lib/modelListStorage';
 import LanguageProvider from '@/providers/LanguageProvider';
 import SidePanelProvider from '@/providers/SidePanelProvider';
 import '@ant-design/v5-patch-for-react-19';
@@ -10,6 +11,9 @@ import { Provider as JotaiProvider } from 'jotai';
 import { StrictMode, Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
+
+// Lookups outside the pickers (image support, usage labels) read the saved model list too.
+void watchModelList();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <StrictMode>

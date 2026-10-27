@@ -10,17 +10,12 @@ import {
   isSelectableChatGPTModelId,
   localModelId,
   localModelRef,
-  MODELS,
+  getModelSpec,
 } from '@/lib/modelRegistry';
+import { getModelList, type ModelList } from '@/lib/modelList';
 
-export const defaultOpenAIChatModel: ChatModel = 'gpt';
-export const defaultOpenAITranslateModel: TranslateModel = 'gpt-mini';
-export const defaultGeminiChatModel: ChatModel = 'gemini-flash';
-export const defaultGeminiTranslateModel: TranslateModel = 'gemini-flash-lite';
-export const defaultAnthropicChatModel: ChatModel = 'claude-sonnet';
-export const defaultAnthropicTranslateModel: TranslateModel = 'claude-haiku';
-export const defaultOpenRouterChatModel: ChatModel = 'gpt';
-export const defaultOpenRouterTranslateModel: TranslateModel = 'gpt-mini';
+// The provider's default chat and translation slots in the current model list.
+export const defaultModelsFor = (provider: ApiKeyProvider) => getModelList().defaults[provider];
 
 export type AIProvider = ApiKeyProvider | 'local' | 'chatgpt';
 export interface ProviderModelSelection {
@@ -98,7 +93,7 @@ export function resolveChatGPTSignOut(
   const available = (model: unknown): model is ChatModel => {
     if (!isChatModel(model) || isChatGPTModel(model)) return false;
     if (isLocalModel(model)) return registered.includes('local') && catalogs.local.some(({ id }) => id === localModelId(model));
-    const direct = MODELS[model].provider;
+    const direct = getModelSpec(model)?.provider;
     return registered.includes('openrouter-api-key') || Boolean(direct && registered.includes(direct));
   };
   const saved = preferences.selections[provider];
@@ -112,10 +107,10 @@ export function resolveChatGPTSignOut(
 
 function defaultProviderModels(provider: AIProvider, catalogs: ProviderModelCatalogs): ProviderModelSelection {
   switch (provider) {
-    case 'openrouter-api-key': return { chat: defaultOpenRouterChatModel, translation: defaultOpenRouterTranslateModel };
-    case 'openai-api-key': return { chat: defaultOpenAIChatModel, translation: defaultOpenAITranslateModel };
-    case 'gemini-api-key': return { chat: defaultGeminiChatModel, translation: defaultGeminiTranslateModel };
-    case 'anthropic-api-key': return { chat: defaultAnthropicChatModel, translation: defaultAnthropicTranslateModel };
+    case 'openrouter-api-key':
+    case 'openai-api-key':
+    case 'gemini-api-key':
+    case 'anthropic-api-key': return { ...defaultModelsFor(provider) };
     case 'chatgpt': {
       const models = catalogs.chatGPT.filter(({ id }) => isSelectableChatGPTModelId(id));
       const first = models[0];
@@ -147,4 +142,51 @@ export function resolveProviderModels(
   const pick = (key: keyof ProviderModelSelection) =>
     usable(current[key]) ? current[key] : usable(saved?.[key]) ? saved?.[key] : defaults[key];
   return { chat: pick('chat'), translation: pick('translation') };
+}
+
+export interface SavedModelSelections {
+  chat?: unknown;
+  translation?: unknown;
+  preferences?: ProviderModelPreferences;
+}
+
+// Moves saved choices off slots `list` no longer has: to the slot its successors name, else to the
+// provider's default. ChatGPT choices follow the list's ChatGPT successors; local ones stay.
+// Returns only what changed.
+export function migrateModelSelections(list: ModelList, saved: SavedModelSelections): SavedModelSelections {
+  const isApiKeyProvider = (provider?: AIProvider): provider is ApiKeyProvider =>
+    provider !== undefined && Object.hasOwn(list.defaults, provider);
+  const migrate = (model: unknown, provider: AIProvider | undefined, use: keyof ProviderModelSelection) => {
+    if (typeof model !== 'string' || isLocalModel(model)) return model;
+    if (isChatGPTModel(model)) {
+      const id = chatGPTModelId(model);
+      return Object.hasOwn(list.chatgpt.successors, id) ? chatGPTModelRef(list.chatgpt.successors[id]) : model;
+    }
+    if (list.models.some(({ slot }) => slot === model)) return model;
+    if (Object.hasOwn(list.successors, model)) return list.successors[model];
+    // Preferences saved before providers were remembered don't say which key the slot ran on.
+    return list.defaults[isApiKeyProvider(provider) ? provider : 'openai-api-key'][use];
+  };
+
+  const changes: SavedModelSelections = {};
+  const current = saved.preferences?.provider;
+  const chat = migrate(saved.chat, current, 'chat');
+  const translation = migrate(saved.translation, current, 'translation');
+  if (chat !== saved.chat) changes.chat = chat;
+  if (translation !== saved.translation) changes.translation = translation;
+
+  const selections = { ...saved.preferences?.selections };
+  let changed = false;
+  for (const [provider, selection] of Object.entries(selections) as [AIProvider, ProviderModelSelection | undefined][]) {
+    if (!selection) continue;
+    const next = {
+      chat: migrate(selection.chat, provider, 'chat') as ChatModel | undefined,
+      translation: migrate(selection.translation, provider, 'translation') as TranslateModel | undefined,
+    };
+    if (next.chat === selection.chat && next.translation === selection.translation) continue;
+    selections[provider] = next;
+    changed = true;
+  }
+  if (changed) changes.preferences = { ...saved.preferences!, selections };
+  return changes;
 }

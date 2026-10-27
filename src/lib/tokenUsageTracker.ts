@@ -1,5 +1,5 @@
 import { recordTokenUsage } from '@/lib/indexDB';
-import { isLocalModel, isChatGPTModel, localModelId, MODELS } from '@/lib/modelRegistry';
+import { isLocalModel, isChatGPTModel, localModelId, getModelSpec } from '@/lib/modelRegistry';
 import type { ModelPreset } from '@/lib/models';
 import { debugLog } from '@/logs';
 import { AIMessage, AIMessageChunk } from '@langchain/core/messages';
@@ -38,8 +38,8 @@ export const trackTokenUsage = async (
 
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     const { modelName } = modelPreset;
-    const model = isChatGPTModel(modelName) ? modelName : isLocalModel(modelName) ? localModelId(modelName) : MODELS[modelName].id;
-    const providerKey = isLocalModel(modelName) || isChatGPTModel(modelName) ? undefined : MODELS[modelName].provider;
+    const model = isChatGPTModel(modelName) ? modelName : isLocalModel(modelName) ? localModelId(modelName) : getModelSpec(modelName)?.id ?? modelName;
+    const providerKey = isLocalModel(modelName) || isChatGPTModel(modelName) ? undefined : getModelSpec(modelName)?.provider;
     const provider =
       isChatGPTModel(modelName) ? 'chatgpt' : isLocalModel(modelName)
         ? 'local'

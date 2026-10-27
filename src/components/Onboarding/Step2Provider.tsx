@@ -3,14 +3,6 @@ import LocalModelSettings from '@/components/Setting/LocalModelSettings';
 import ChatGPTSettings from '@/components/Setting/ChatGPTSettings';
 import { useThemeValue } from '@/hooks/layout';
 import {
-  defaultAnthropicChatModel,
-  defaultAnthropicTranslateModel,
-  defaultGeminiChatModel,
-  defaultGeminiTranslateModel,
-  defaultOpenAIChatModel,
-  defaultOpenAITranslateModel,
-  defaultOpenRouterChatModel,
-  defaultOpenRouterTranslateModel,
   useSetAnthropicValidated,
   useChatModel,
   useSetGeminiValidated,
@@ -26,7 +18,7 @@ import {
   useSetOpenRouterKey,
 } from '@/hooks/settings';
 import { ApiKeyProvider, LocalModelRef } from '@/lib/modelRegistry';
-import { rememberProviderModels } from '@/lib/modelPreferences';
+import { defaultModelsFor, rememberProviderModels } from '@/lib/modelPreferences';
 import { validateApiKey } from '@/lib/validateApiKey';
 import { debugLog } from '@/logs';
 import { SmileOutlined } from '@ant-design/icons';
@@ -90,25 +82,20 @@ export default function StepProvider({ onBack }: { onBack: () => void }) {
     const trimmedKey = apiKey.trim();
     const isValid = await validateApiKey(trimmedKey, selectedProvider);
     if (isValid) {
+      const defaults = defaultModelsFor(selectedProvider);
+      setChatModel(defaults.chat);
+      setTranslateModel(defaults.translation);
       if (selectedProvider === 'openrouter-api-key') {
         setOpenRouterKey(trimmedKey);
-        setChatModel(defaultOpenRouterChatModel);
-        setTranslateModel(defaultOpenRouterTranslateModel);
         setOpenRouterValidated(true);
       } else if (selectedProvider === 'openai-api-key') {
         setOpenAIKey(trimmedKey);
-        setChatModel(defaultOpenAIChatModel);
-        setTranslateModel(defaultOpenAITranslateModel);
         setOpenAIValidated(true);
       } else if (selectedProvider === 'gemini-api-key') {
         setGeminiKey(trimmedKey);
-        setChatModel(defaultGeminiChatModel);
-        setTranslateModel(defaultGeminiTranslateModel);
         setGeminiValidated(true);
       } else if (selectedProvider === 'anthropic-api-key') {
         setAnthropicKey(trimmedKey);
-        setChatModel(defaultAnthropicChatModel);
-        setTranslateModel(defaultAnthropicTranslateModel);
         setAnthropicValidated(true);
       }
       setIsInvalidApiKey(false);

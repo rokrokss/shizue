@@ -1,4 +1,6 @@
 // Pure data, safe to import from UI/content scripts (no LangChain imports).
+import { getModelList } from '@/lib/modelList';
+
 export type ModelProvider = 'openai-api-key' | 'gemini-api-key' | 'anthropic-api-key';
 
 // OpenRouter serves every model, so it is a key type, never a model's provider.
@@ -12,18 +14,9 @@ export type ConnectionMode = 'direct' | 'openrouter';
 export const isConnectionMode = (value: unknown): value is ConnectionMode =>
   value === 'direct' || value === 'openrouter';
 
-// Stored in chrome.storage as stable slot names; the real model behind each slot is in MODELS.
-export type CloudModel =
-  | 'gpt'
-  | 'gpt-terra'
-  | 'gpt-mini'
-  | 'gemini-flash'
-  | 'gemini-flash-lite'
-  | 'gemma'
-  | 'claude-sonnet'
-  | 'claude-haiku'
-  | 'deepseek-pro'
-  | 'deepseek-flash';
+// Stored in chrome.storage as stable slot names, e.g. 'gpt'. The real model behind each slot comes
+// from the model list (modelList.ts), which can add, drop or repoint slots without a release.
+export type CloudModel = string;
 
 // A model on the user's own server, stored as 'local:<model id>'. The server, and what each of its
 // models supports, is the stored LocalServerConfig. Chat and translation can pick different ones.
@@ -36,8 +29,7 @@ export const chatGPTModelRef = (id: string): ChatGPTModelRef => `chatgpt:${id}`;
 export const chatGPTModelId = (model: ChatGPTModelRef) => model.slice('chatgpt:'.length);
 
 // App-level exclusions apply to both the account catalog and previously saved selections.
-export const isSelectableChatGPTModelId = (id: string): boolean =>
-  !['gpt-6-sol', 'gpt-5.6-sol', 'gpt-5.6-luna', 'gpt-5.6-terra', 'gpt-5.6-terra-pro'].includes(id);
+export const isSelectableChatGPTModelId = (id: string): boolean => !getModelList().chatgpt.hidden.includes(id);
 
 export type TranslateModel = ChatModel;
 
@@ -100,102 +92,17 @@ export interface ModelSpec {
   };
 }
 
-export const MODELS: Record<CloudModel, ModelSpec> = {
-  gpt: {
-    id: 'gpt-6.1-sol',
-    label: 'GPT-6.1 Sol',
-    provider: 'openai-api-key',
-    supportsTemperature: false,
-    supportsImages: true,
-    openaiFastEffort: 'low',
-    openrouter: { id: 'openai/gpt-6.1-sol', fastEffort: 'low' },
-  },
-  'gpt-terra': {
-    id: 'gpt-6.1-terra',
-    label: 'GPT-6.1 Terra',
-    provider: 'openai-api-key',
-    supportsTemperature: false,
-    supportsImages: true,
-    openaiFastEffort: 'none',
-    openrouter: { id: 'openai/gpt-6.1-terra', fastEffort: 'none' },
-  },
-  'gpt-mini': {
-    id: 'gpt-6-luna',
-    label: 'GPT-6 Luna',
-    provider: 'openai-api-key',
-    supportsTemperature: false,
-    supportsImages: true,
-    openaiFastEffort: 'none',
-    openrouter: { id: 'openai/gpt-6-luna', fastEffort: 'none' },
-  },
-  'gemini-flash': {
-    id: 'gemini-3.8-flash',
-    label: 'Gemini 3.8 Flash',
-    provider: 'gemini-api-key',
-    supportsTemperature: false,
-    supportsImages: true,
-    openrouter: { id: 'google/gemini-3.8-flash', fastEffort: 'low' },
-  },
-  'gemini-flash-lite': {
-    id: 'gemini-3.5-flash-lite',
-    label: 'Gemini 3.5 Flash-Lite',
-    provider: 'gemini-api-key',
-    supportsTemperature: false,
-    supportsImages: true,
-    openrouter: { id: 'google/gemini-3.5-flash-lite', fastEffort: 'minimal' },
-  },
-  gemma: {
-    id: 'gemma-4-31b-it',
-    label: 'Gemma 4 31B',
-    provider: 'gemini-api-key',
-    supportsTemperature: true,
-    supportsImages: true,
-    openrouter: { id: 'google/gemma-4-31b-it' },
-  },
-  'claude-sonnet': {
-    id: 'claude-sonnet-5',
-    label: 'Claude Sonnet 5',
-    provider: 'anthropic-api-key',
-    supportsTemperature: false,
-    supportsImages: true,
-    openrouter: { id: 'anthropic/claude-sonnet-5', fastEffort: 'low' },
-  },
-  'claude-haiku': {
-    id: 'claude-haiku-4-5',
-    label: 'Claude Haiku 4.5',
-    provider: 'anthropic-api-key',
-    supportsTemperature: true,
-    supportsImages: true,
-    openrouter: { id: 'anthropic/claude-haiku-4.5' },
-  },
-  'deepseek-pro': {
-    id: 'deepseek-v4-pro-0813',
-    label: 'DeepSeek V4 Pro',
-    supportsTemperature: false,
-    supportsImages: false,
-    openrouter: {
-      id: 'deepseek/deepseek-v4-pro-0813',
-      fastEffort: 'off',
-      defaultEffort: 'high',
-    },
-  },
-  'deepseek-flash': {
-    id: 'deepseek-v4.1-flash',
-    label: 'DeepSeek V4.1 Flash',
-    supportsTemperature: false,
-    supportsImages: true,
-    openrouter: { id: 'deepseek/deepseek-v4.1-flash', fastEffort: 'off' },
-  },
-};
+// Undefined for a slot the current model list doesn't have.
+export const getModelSpec = (model: CloudModel): ModelSpec | undefined =>
+  getModelList().models.find((spec) => spec.slot === model);
 
 // Reuse verified OpenAI effort settings for the account catalog. Unknown models retain their
 // server default rather than receiving a potentially unsupported effort.
 export function chatGPTFastEffort(model: string): 'none' | 'low' | undefined {
-  if (model === 'gpt-6-astra') return 'low';
-  return Object.values(MODELS).find((spec) => spec.provider === 'openai-api-key' && spec.id === model)?.openaiFastEffort;
+  const { models, chatgpt } = getModelList();
+  if (Object.hasOwn(chatgpt.fastEffort, model)) return chatgpt.fastEffort[model];
+  return models.find((spec) => spec.provider === 'openai-api-key' && spec.id === model)?.openaiFastEffort;
 }
-
-export const MODEL_OPTIONS = Object.keys(MODELS) as CloudModel[];
 
 const LOCAL_PREFIX = 'local:';
 
@@ -208,7 +115,7 @@ export const localModelId = (model: LocalModelRef) => model.slice(LOCAL_PREFIX.l
 
 export const isChatModel = (value: unknown): value is ChatModel =>
   typeof value === 'string' &&
-  (Object.hasOwn(MODELS, value) || (value.startsWith(LOCAL_PREFIX) && value.length > LOCAL_PREFIX.length) || (isChatGPTModel(value) && value.length > 'chatgpt:'.length));
+  (Boolean(getModelSpec(value)) || (value.startsWith(LOCAL_PREFIX) && value.length > LOCAL_PREFIX.length) || (isChatGPTModel(value) && value.length > 'chatgpt:'.length));
 
 // Undefined when the model isn't on the connected server (e.g. after connecting another one).
 export const resolveLocalModel = (
@@ -233,7 +140,7 @@ export const modelSupportsImages = (model: ChatModel, localServer?: LocalServerC
   // The ChatGPT plan Responses flow supports image inputs. The server validates model support.
   isChatGPTModel(model) ? true : isLocalModel(model)
     ? Boolean(resolveLocalModel(model, localServer)?.supportsImages)
-    : MODELS[model].supportsImages;
+    : Boolean(getModelSpec(model)?.supportsImages);
 
 // Usage records written before model IDs were stored hold slot names or retired model IDs.
 const legacyModelLabels: Record<string, string> = {
@@ -254,7 +161,7 @@ const legacyModelLabels: Record<string, string> = {
 
 export const formatModelName = (modelName: string) => {
   const id = isChatGPTModel(modelName) ? chatGPTModelId(modelName) : modelName;
-  const spec = Object.values(MODELS).find((m) => m.id === id);
+  const spec = getModelList().models.find((m) => m.id === id);
   return spec?.label ?? legacyModelLabels[id] ?? id;
 };
 

@@ -15,6 +15,7 @@ import { handleChatGPTCallback, handleChatGPTSettings } from '@/services/backgro
 import { RECOVER_CONTENT_SCRIPTS } from '@/lib/contentScriptConnection';
 import { contentScriptRecoveryListeners, recoverTabContentScripts } from '@/services/background/contentScriptRecovery';
 import { plotSignInPing } from '@/lib/plotSignIn';
+import { syncModelList } from '@/services/background/modelListSync';
 
 const IMMEDIATE_PANEL_ACTIONS = new Set([MESSAGE_OPEN_PANEL, MESSAGE_SET_PANEL_OPEN_OR_NOT, MESSAGE_WAIT_PANEL_SUMMARY]);
 
@@ -26,6 +27,8 @@ export default defineBackground(() => {
   sidePanelMessageListeners();
   modelListeners();
   createContextMenu();
+  // The worker wakes for every panel open and message, so this runs about once a day.
+  void syncModelList();
 
   chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg?.action === RECOVER_CONTENT_SCRIPTS) {

@@ -31,6 +31,8 @@ export const STORAGE_CURRENT_CHAT = 'CURRENT_CHAT';
 export const STORAGE_CHAT_MODEL = 'CHAT_MODEL';
 export const STORAGE_TRANSLATE_MODEL = 'TRANSLATE_MODEL';
 export const STORAGE_PROVIDER_MODEL_PREFERENCES = 'PROVIDER_MODEL_PREFERENCES';
+// The model list fetched from shizue.net (services/background/modelListSync.ts).
+export const STORAGE_MODEL_LIST = 'MODEL_LIST';
 export const STORAGE_OPENAI_KEY = 'OPENAI_KEY';
 export const STORAGE_GEMINI_KEY = 'GEMINI_KEY';
 export const STORAGE_ANTHROPIC_KEY = 'ANTHROPIC_KEY';

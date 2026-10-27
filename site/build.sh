@@ -7,4 +7,6 @@ rm -rf _site
 mkdir -p _site/img
 node site/render.mjs
 cp src/public/icon.svg _site/
+# The model list the extension fetches (src/lib/modelList.ts).
+cp -R site/models _site/
 cp store/out/screenshot-*.png store/out/github-social-1280x640.png _site/img/

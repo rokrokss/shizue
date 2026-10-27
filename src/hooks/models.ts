@@ -28,23 +28,17 @@ import {
   localModelId,
   localModelRef,
   LocalServerConfig,
-  MODEL_OPTIONS,
-  MODELS,
   ModelProvider,
   TranslateModel,
 } from '@/lib/modelRegistry';
 import { atomWithChromeStorage } from '@/lib/atomWithChromeStorage';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useSyncExternalStore } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChatGPTConnection, disconnectedChatGPT } from '@/lib/chatgpt';
-import { defaultOpenAIChatModel, defaultOpenAITranslateModel, ProviderModelPreferences, registeredAIProviders } from '@/lib/modelPreferences';
-
-export {
-  defaultOpenAIChatModel, defaultOpenAITranslateModel,
-  defaultGeminiChatModel, defaultGeminiTranslateModel,
-  defaultAnthropicChatModel, defaultAnthropicTranslateModel,
-  defaultOpenRouterChatModel, defaultOpenRouterTranslateModel,
-} from '@/lib/modelPreferences';
+import { ProviderModelPreferences, registeredAIProviders } from '@/lib/modelPreferences';
+import { bundledModelList, getModelList, onModelListChange } from '@/lib/modelList';
+import { watchModelList } from '@/lib/modelListStorage';
 
 export const defaultOpenAIValidated = undefined;
 export const defaultGeminiValidated = undefined;
@@ -54,11 +48,11 @@ export const defaultConnectionMode: ConnectionMode = 'direct';
 
 export const chatModelAtom = atomWithChromeStorage<ChatModel>(
   STORAGE_CHAT_MODEL,
-  defaultOpenAIChatModel
+  bundledModelList.defaults['openai-api-key'].chat
 );
 export const translateModelAtom = atomWithChromeStorage<TranslateModel>(
   STORAGE_TRANSLATE_MODEL,
-  defaultOpenAITranslateModel
+  bundledModelList.defaults['openai-api-key'].translation
 );
 
 export const providerModelPreferencesAtom = atomWithChromeStorage<ProviderModelPreferences>(
@@ -165,6 +159,14 @@ export const useRegisteredAIProviders = () => registeredAIProviders({
   'anthropic-api-key': useAtomValue(anthropicValidatedSafeAtom),
 }, useLocalServerValue()?.models ?? []);
 
+const subscribeModelList = (listener: () => void) => {
+  void watchModelList();
+  return onModelListChange(listener);
+};
+
+// The current model list; components re-render when the background saves a newer one.
+export const useModelList = () => useSyncExternalStore(subscribeModelList, getModelList);
+
 export interface ModelOption {
   value: ChatModel;
   label: string;
@@ -177,6 +179,7 @@ export interface ModelOption {
 // rather than a derived atom: the storage atoms start as promises, which useAtomValue unwraps.
 export const useModelOptions = (): ModelOption[] => {
   const { t } = useTranslation();
+  const { models } = useModelList();
   const openRouterValidated = useAtomValue(openRouterValidatedSafeAtom);
   const localServer = useAtomValue(localServerAtom);
   const chatGPT = useChatGPTConnectionValue();
@@ -194,10 +197,9 @@ export const useModelOptions = (): ModelOption[] => {
     .map(localModelId)
     .filter((id, i, ids) => !localIds.includes(id) && ids.indexOf(id) === i);
   return [
-    ...MODEL_OPTIONS.map((model) => {
-      const { provider, label } = MODELS[model];
+    ...models.map(({ slot, provider, label }) => {
       const available = Boolean((provider && directValidated[provider]) || openRouterValidated);
-      return { value: model, label, available };
+      return { value: slot, label, available };
     }),
     ...localIds.map((id) => ({ value: localModelRef(id), label: localLabel(id), available: true })),
     ...missingLocalIds.map((id) => ({
