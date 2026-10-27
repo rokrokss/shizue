@@ -14,7 +14,6 @@ import {
   EditOutlined,
   FolderOutlined,
   LineChartOutlined,
-  PauseOutlined,
   PictureOutlined,
   SmileOutlined,
   TranslationOutlined,
@@ -49,7 +48,6 @@ const ChatInput = ({
   const [chatInput, setChatInput] = useState('');
   const [summaryFailed, setSummaryFailed] = useState(false);
   const [isComposing, setIsComposing] = useState(false);
-  const [isCancelHovered, setIsCancelHovered] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const [attachedTabs, setAttachedTabs] = useState<AttachedTab[]>([]);
   const [isReadingPages, setIsReadingPages] = useState(false);
@@ -477,22 +475,21 @@ const ChatInput = ({
         />
       </div>
       {isChatWaiting(chatStatus) && (
-        <div
-          onMouseEnter={() => setIsCancelHovered(true)}
-          onMouseLeave={() => setIsCancelHovered(false)}
-          className="sz:absolute sz:bottom-8 sz:right-6 sz:flex sz:items-center sz:justify-center sz:text-gray-400 sz:hover:text-sz-cyan"
+        // A stop square inside a spinning cyan ring: the ring shows the answer is still coming.
+        <button
+          type="button"
+          onClick={() => onCancel()}
+          className={`sz-stop-button sz:absolute sz:bottom-8 sz:right-6 sz:w-8 sz:h-8 sz:rounded-full sz:cursor-pointer sz:flex sz:items-center sz:justify-center ${
+            theme == 'dark' ? 'sz:bg-[#2A2C38] sz:hover:bg-[#363948]' : 'sz:bg-gray-100 sz:hover:bg-gray-200'
+          }`}
         >
-          <Button
-            shape="circle"
-            onClick={() => onCancel()}
-            icon={
-              <PauseOutlined
-                className={`sz:text-gray-400 ${isCancelHovered ? 'sz:text-sz-cyan' : ''}`}
-              />
-            }
-            size="large"
-          ></Button>
-        </div>
+          <span className="sz:absolute sz:inset-0 sz:rounded-full sz:border-2 sz:border-transparent sz:border-t-sz-cyan sz:border-r-sz-cyan sz:animate-spin sz:motion-reduce:animate-none" />
+          <span
+            className={`sz:w-2.5 sz:h-2.5 sz:rounded-[2.5px] ${
+              theme == 'dark' ? 'sz:bg-white' : 'sz:bg-[#1C1D26]'
+            }`}
+          />
+        </button>
       )}
       <div className="sz-sidepanel-footer sz:h-6 sz:w-full sz:flex sz:items-center sz:justify-center">
         <Footer />
