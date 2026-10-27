@@ -31,29 +31,10 @@ export const readTabPage = async (
   }
 };
 
-// Shares `budget` characters among texts of these lengths: shorter ones keep all their text, and
-// what they leave goes to the longer ones.
-export const splitTextBudget = (lengths: number[], budget: number): number[] => {
-  const limits = new Array<number>(lengths.length);
-  let left = budget;
-  lengths
-    .map((length, index) => ({ length, index }))
-    .sort((a, b) => a.length - b.length)
-    .forEach(({ length, index }, i, sorted) => {
-      limits[index] = Math.min(length, Math.floor(left / (sorted.length - i)));
-      left -= limits[index];
-    });
-  return limits;
-};
-
+// Pages attached together share `budget` characters equally.
 export const toPageAttachments = (pages: PageText[], budget: number): PageAttachment[] => {
-  const limits = splitTextBudget(
-    pages.map((page) => page.text.length),
-    budget
-  );
-  return pages.map((page, i) =>
-    page.text.length > limits[i]
-      ? { ...page, text: page.text.slice(0, limits[i]), truncated: true }
-      : page
+  const limit = Math.floor(budget / pages.length);
+  return pages.map((page) =>
+    page.text.length > limit ? { ...page, text: page.text.slice(0, limit), truncated: true } : page
   );
 };

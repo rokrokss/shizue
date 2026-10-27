@@ -14,7 +14,7 @@ const load = async (source) => {
   return import(pathToFileURL(temporary).href);
 };
 const { getAttachedPagesPrompt, getInitialSystemMessage } = await load('../src/lib/prompts.ts');
-const { splitTextBudget, toPageAttachments } = await load('../src/lib/tabText.ts');
+const { toPageAttachments } = await load('../src/lib/tabText.ts');
 
 const lang = 'Korean_한국어';
 const base = getInitialSystemMessage(lang);
@@ -64,24 +64,12 @@ Price: 12 dollars
 ===end of attached page 2===`);
 });
 
-test('the text budget keeps short pages whole and gives what they leave to long ones', () => {
-  assert.deepEqual(splitTextBudget([100, 200], 1000), [100, 200]);
-  assert.deepEqual(splitTextBudget([100, 5000, 2000], 3000), [100, 1450, 1450]);
-  assert.deepEqual(splitTextBudget([900, 100, 5000], 3000), [900, 100, 2000]);
-  assert.deepEqual(splitTextBudget([100_000], 100_000), [100_000]);
-  for (const lengths of [[1, 2, 3], [99_999, 99_999, 99_999, 99_999, 99_999], [7, 100_001, 30_000, 50_000]]) {
-    const limits = splitTextBudget(lengths, 100_000);
-    assert.ok(limits.reduce((a, b) => a + b, 0) <= 100_000);
-    limits.forEach((limit, i) => assert.ok(limit <= lengths[i]));
-  }
-  // Five full tabs get at least a fifth each.
-  assert.ok(splitTextBudget([200_000, 200_000, 200_000, 200_000, 200_000], 100_000).every((limit) => limit === 20_000));
-});
-
-test('pages over their share are cut and marked; the rest stay as they are', () => {
+test('pages share the budget equally; those over their share are cut and marked', () => {
   const short = { title: 'Short', url: 'https://short.example', text: 'a'.repeat(30) };
   const long = { title: 'Long', url: 'https://long.example', text: 'b'.repeat(100) };
   const [kept, cut] = toPageAttachments([short, long], 80);
   assert.deepEqual(kept, short);
-  assert.deepEqual(cut, { ...long, text: 'b'.repeat(50), truncated: true });
+  assert.deepEqual(cut, { ...long, text: 'b'.repeat(40), truncated: true });
+  assert.deepEqual(toPageAttachments([long], 80), [{ ...long, text: 'b'.repeat(80), truncated: true }]);
+  assert.deepEqual(toPageAttachments([long], 100), [long]);
 });
