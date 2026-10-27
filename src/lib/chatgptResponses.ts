@@ -22,9 +22,10 @@ export interface ResponseRequest {
   input: unknown;
   instructions?: unknown;
   reasoning?: unknown;
+  webSearch?: unknown;
 }
 
-export function responseRequestBody({ model, input, instructions, reasoning }: ResponseRequest) {
+export function responseRequestBody({ model, input, instructions, reasoning, webSearch }: ResponseRequest) {
   if (typeof model !== 'string' || !Array.isArray(input) || (instructions !== undefined && typeof instructions !== 'string')) throw new Error('Invalid ChatGPT request.');
   const effort = (reasoning as { effort?: unknown } | undefined)?.effort;
   if (reasoning !== undefined && (
@@ -36,6 +37,7 @@ export function responseRequestBody({ model, input, instructions, reasoning }: R
     model, input,
     ...(instructions ? { instructions } : {}),
     ...(reasoning ? { reasoning: { effort: effort as 'low' | 'none' } } : {}),
+    ...(webSearch === true ? { tools: [{ type: 'web_search' }] } : {}),
     store: false, stream: true,
   };
 }
@@ -48,6 +50,7 @@ export function visibleModels(body: { models?: unknown }) {
 
 export type ResponseEvent =
   | { delta: string }
+  | { annotation: unknown }
   | { usage: { input_tokens: number; output_tokens: number; total_tokens: number } };
 
 export async function* responseEvents(body: ReadableStream<Uint8Array> | null): AsyncGenerator<ResponseEvent> {
@@ -74,6 +77,7 @@ export async function* responseEvents(body: ReadableStream<Uint8Array> | null): 
         pending = pending.slice(boundary + 2);
         if (!event) continue;
         if (event.type === 'response.output_text.delta') yield { delta: event.delta };
+        if (event.type === 'response.output_text.annotation.added') yield { annotation: event.annotation };
         if (event.type === 'response.failed' || event.type === 'error') {
           throw new ProviderError(event.response?.error?.code || event.code || 'response_failed', 'ChatGPT could not complete this response.');
         }

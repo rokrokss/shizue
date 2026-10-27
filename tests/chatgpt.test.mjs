@@ -113,6 +113,11 @@ test('Responses stream preserves deltas and terminal usage; late quota errors an
   const events = [];
   for await (const event of responseEvents(streamOf([{ type: 'response.output_text.delta', delta: '안녕🙂' }, { type: 'response.completed', response: { usage } }]))) events.push(event);
   assert.deepEqual(events, [{ delta: '안녕🙂' }, { usage }]);
+  // Web search citations arrive as annotations beside the text.
+  const annotation = { type: 'url_citation', url: 'https://example.com/', title: 'Example' };
+  const cited = [];
+  for await (const event of responseEvents(streamOf([{ type: 'response.output_text.delta', delta: 'A' }, { type: 'response.output_text.annotation.added', annotation }, { type: 'response.completed', response: { usage } }]))) cited.push(event);
+  assert.deepEqual(cited, [{ delta: 'A' }, { annotation }, { usage }]);
   const collect = async (input) => { for await (const _event of responseEvents(input)) {} };
   await assert.rejects(collect(streamOf([{ type: 'response.output_text.delta', delta: 'partial' }, { type: 'response.failed', response: { error: { code: 'subscription_sharing_usage_limit_exceeded' } } }])), { code: 'subscription_sharing_usage_limit_exceeded' });
   await assert.rejects(collect(streamOf([{ type: 'response.output_text.delta', delta: 'partial' }])), { code: 'stream_interrupted' });
@@ -136,6 +141,8 @@ test('Responses requests validate effort and retain the supported-field allowlis
   for (const reasoning of [null, false, 'low', [], {}, { effort: null }, { effort: 'high' }, { effort: 'invalid' }]) {
     assert.throws(() => responseRequestBody({ ...base, reasoning }), /Invalid ChatGPT reasoning effort/);
   }
+  assert.deepEqual(responseRequestBody({ ...base, webSearch: true }), { ...base, tools: [{ type: 'web_search' }], store: false, stream: true });
+  assert.deepEqual(responseRequestBody({ ...base, webSearch: 'yes', tools: [{ type: 'code_interpreter' }] }), { ...base, store: false, stream: true });
   assert.throws(() => responseRequestBody({ ...base, input: 'plain string' }), /Invalid ChatGPT request/);
   assert.throws(() => responseRequestBody({ ...base, instructions: [] }), /Invalid ChatGPT request/);
 });

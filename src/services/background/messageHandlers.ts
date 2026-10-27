@@ -10,6 +10,7 @@ import {
   MESSAGE_WAIT_PANEL_SUMMARY,
   MESSAGE_SET_PANEL_OPEN_OR_NOT,
   MESSAGE_TRANSLATE_FRAMES,
+  MESSAGE_REMEMBER_THREAD,
   MESSAGE_TRANSLATE_HTML_TEXT_BATCH,
   MESSAGE_TRANSLATE_LIVE_CAPTION,
   MESSAGE_TRANSLATE_SUBTITLES,
@@ -17,6 +18,7 @@ import {
 } from '@/config/constants';
 import { openPanel, togglePanel } from '@/entrypoints/background/sidepanel';
 import { db, getLatestMessageForThread, loadThread } from '@/lib/indexDB';
+import { getChatModelHandler } from '@/services/background/chatModelHandler';
 import { getTranslationHandler } from '@/services/background/translationHandler';
 import { openPanelForSummary, waitForPanelSummary } from '@/services/background/panelSummary';
 
@@ -45,6 +47,8 @@ async function handleLoadThread(msg: any, sendResponse: (response?: any) => void
         done: m.done,
         images: m.images,
         attachments: m.attachments,
+        webSearch: m.webSearch,
+        sources: m.sources,
         onInterrupt: m.onInterrupt,
         stopped: m.stopped,
         errorMessage: m.errorMessage,
@@ -200,6 +204,12 @@ async function handleTranslateFrames(
   sendResponse({ status: 'success' });
 }
 
+// The side panel moved on from a chat; auto memory reads it if it is on.
+async function handleRememberThread(msg: any, sendResponse: (response?: any) => void) {
+  sendResponse({ status: 'success' });
+  if (typeof msg.threadId === 'string') await getChatModelHandler().rememberThread(msg.threadId);
+}
+
 export const messageHandlers = {
   [MESSAGE_LOAD_THREAD]: handleLoadThread,
   [MESSAGE_CANCEL_NOT_STARTED_MESSAGE]: handleLatestMessageForThread,
@@ -215,4 +225,5 @@ export const messageHandlers = {
   [MESSAGE_SCC_CAPTION_SNAPSHOT]: handleSccCaptionSnapshot,
   [MESSAGE_SCC_SET_HIDDEN]: handleSccSetHidden,
   [MESSAGE_TRANSLATE_FRAMES]: handleTranslateFrames,
+  [MESSAGE_REMEMBER_THREAD]: handleRememberThread,
 };

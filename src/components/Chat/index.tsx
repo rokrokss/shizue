@@ -4,7 +4,8 @@ import { DotCycle } from '@/components/Loader/DotCycle';
 import TopMenu from '@/components/Chat/TopRightMenu';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import SettingsModal from '@/components/Setting/SettingsModal';
-import { isSelectionActionType, MESSAGE_LOAD_THREAD } from '@/config/constants';
+import { isSelectionActionType, MESSAGE_LOAD_THREAD, MESSAGE_REMEMBER_THREAD } from '@/config/constants';
+import { useAutoMemoryValue } from '@/hooks/autoMemory';
 import { chatStatusAtom, createThreadMessageCountAtom, isChatIdle, switchThreadAtom } from '@/hooks/chat';
 import { ActionType, threadIdAtom } from '@/hooks/global';
 import { useThemeValue } from '@/hooks/layout';
@@ -13,6 +14,7 @@ import { convertFilesToBase64Array } from '@/lib/imageUtils';
 import { addMessage, createThread, PageAttachment, touchThread } from '@/lib/indexDB';
 import { throttleTrailing } from '@/lib/throttleTrailing';
 import { createThreadLoader } from '@/lib/threadLoader';
+import type { WebSource } from '@/lib/webSources';
 import { debugLog, errorLog } from '@/logs';
 import { chatService } from '@/services/chatService';
 import { useAtom, useAtomValue, useSetAtom, useStore } from 'jotai';
@@ -33,6 +35,8 @@ export interface Message {
   content: string;
   images?: string[];
   attachments?: PageAttachment[];
+  webSearch?: boolean;
+  sources?: WebSource[];
   done: boolean;
   onInterrupt: boolean;
   stopped: boolean;
@@ -59,6 +63,7 @@ const Chat = () => {
   const messageCount = useAtomValue(messageCountAtom);
   const prevMessageCountRef = useRef(messageCount);
   const { startStream, startRetryStream, cancelStream } = useChromePortStream();
+  const autoMemoryEnabled = useAutoMemoryValue().enabled;
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const aiIndexRef = useRef<number>(-1);
@@ -135,6 +140,9 @@ const Chat = () => {
 
   const markContextTruncated = () =>
     setMessages((cur) => updateAIMessage(cur, { contextTruncated: true }));
+
+  const showSources = (sources: WebSource[]) =>
+    setMessages((cur) => updateAIMessage(cur, { sources }));
 
   const handleRequestFromContextMenu = useCallback(
     async (tId: string, requestedActionType: ActionType) => {
@@ -303,7 +311,8 @@ const Chat = () => {
     tId: string,
     text: string,
     images?: File[],
-    attachments?: PageAttachment[]
+    attachments?: PageAttachment[],
+    webSearch?: boolean
   ) => {
     const imageBase64Array =
       images && images.length > 0 ? await convertFilesToBase64Array(images) : undefined;
@@ -322,6 +331,7 @@ const Chat = () => {
           content: text,
           images: imageBase64Array,
           attachments,
+          ...(webSearch ? { webSearch } : {}),
           done: true,
           onInterrupt: false,
           stopped: false,
@@ -345,6 +355,7 @@ const Chat = () => {
       content: text,
       images: imageBase64Array,
       attachments,
+      ...(webSearch ? { webSearch } : {}),
       createdAt: Date.now(),
       done: true,
       onInterrupt: false,
@@ -352,6 +363,31 @@ const Chat = () => {
     });
     await touchThread(tId);
   };
+
+  // Auto memory reads a chat once the user moves on from it: to another chat, a new one, or by
+  // closing the side panel.
+  const shownThreadRef = useRef(threadId);
+  const autoMemoryRef = useRef(autoMemoryEnabled);
+  autoMemoryRef.current = autoMemoryEnabled;
+  const rememberThread = (id: string) => {
+    if (autoMemoryRef.current) {
+      chrome.runtime.sendMessage({ action: MESSAGE_REMEMBER_THREAD, threadId: id }).catch(() => {});
+    }
+  };
+
+  useEffect(() => {
+    const left = shownThreadRef.current;
+    shownThreadRef.current = threadId;
+    if (left && left !== threadId) rememberThread(left);
+  }, [threadId]);
+
+  useEffect(() => {
+    const handlePageHide = () => {
+      if (shownThreadRef.current) rememberThread(shownThreadRef.current);
+    };
+    window.addEventListener('pagehide', handlePageHide);
+    return () => window.removeEventListener('pagehide', handlePageHide);
+  }, []);
 
   useEffect(() => {
     if (isChatIdle(chatStatus) && threadId) {
@@ -384,19 +420,36 @@ const Chat = () => {
     [messages]
   );
 
-  const handleSubmit = async (text: string, images?: File[], attachments?: PageAttachment[]) => {
+  // Questions typed in this chat, for the chat box's ↑ recall.
+  const previousPrompts = useMemo(
+    () =>
+      messages.flatMap((m) =>
+        m.role === 'human' && m.actionType === 'chat' && !m.translateMode && m.content
+          ? [m.content]
+          : []
+      ),
+    [messages]
+  );
+
+  const handleSubmit = async (
+    text: string,
+    images?: File[],
+    attachments?: PageAttachment[],
+    webSearch?: boolean
+  ) => {
     threadLoader.invalidate();
     setChatStatus('waiting');
 
     const tId = await checkIfThreadExists(text);
 
-    await addHumanMessage(tId, text, images, attachments);
+    await addHumanMessage(tId, text, images, attachments, webSearch);
     scrollToBottomThrottled();
 
     startStream(
       { threadId: tId, actionType: actionType.current },
       {
         onContextTruncated: markContextTruncated,
+        onSources: showSources,
         onDelta: (delta) =>
           setMessages((cur) => {
             const updatedMessages = updateAIMessage(cur, {
@@ -447,6 +500,7 @@ const Chat = () => {
       stopped: false,
       errorMessage: undefined,
       contextTruncated: undefined,
+      sources: undefined,
     })),
       startRetryStream(
         {
@@ -456,6 +510,7 @@ const Chat = () => {
         },
         {
           onContextTruncated: markContextTruncated,
+          onSources: showSources,
           onDelta: (delta) =>
             setMessages((cur) => {
               const updatedMessages = updateAIMessage(cur, {
@@ -598,6 +653,7 @@ const Chat = () => {
         <ChatInput
           chatStatus={chatStatus}
           threadPageUrls={threadPageUrls}
+          previousPrompts={previousPrompts}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           onOpenHistory={handleOpenHistory}

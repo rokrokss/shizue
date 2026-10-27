@@ -34,6 +34,9 @@ export default defineConfig({
         'contextMenus',
         'declarativeNetRequestWithHostAccess',
       ],
+      // Asked for when the user first lists tab groups in the chat box's @ list, so the install
+      // and update prompts stay as they are.
+      optional_permissions: ['tabGroups'],
       // Reconnect the same web pages our declarative content scripts already run on.
       // This also covers the local model endpoints. chrome.tabs.captureVisibleTab needs <all_urls>
       // itself rather than http and https; the content scripts' <all_urls> already warns of it.

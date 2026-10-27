@@ -122,7 +122,8 @@ function createAnthropic(spec: ModelSpec, opts: ModelOptions) {
 }
 
 // OpenRouter speaks the OpenAI Chat Completions API and takes the image_url format for every model.
-function createOpenRouter(spec: ModelSpec, opts: ModelOptions) {
+// With web search on, its web plugin searches first; the citations come only in the raw chunks.
+function createOpenRouter(spec: ModelSpec, opts: ModelOptions, webSearch = false) {
   const { maxTokens, temperature, streaming, fast, jsonSchema, modelPreset } = opts;
   throwIfMissing(modelPreset.openrouterKey, 'openrouter-api-key');
 
@@ -140,9 +141,11 @@ function createOpenRouter(spec: ModelSpec, opts: ModelOptions) {
     streaming: Boolean(streaming),
     ...temperatureFor(spec, temperature),
     ...(maxTokens ? { maxTokens } : {}),
+    ...(webSearch ? { __includeRawResponse: true } : {}),
     modelKwargs: {
       ...(reasoning ? { reasoning } : {}),
       ...(jsonSchema ? { response_format: { type: 'json_object' } } : {}),
+      ...(webSearch ? { plugins: [{ id: 'web', max_results: 5 }] } : {}),
     },
   });
 
@@ -229,4 +232,25 @@ export function getModelInstance(opts: ModelOptions) {
   if (spec.provider === 'openai-api-key') return createOpenAI(spec, opts);
   if (spec.provider === 'gemini-api-key') return createGemini(spec, opts);
   return createAnthropic(spec, opts);
+}
+
+// The chat model with its provider's own web search tool (see modelSupportsWebSearch). The OpenAI
+// tool moves the request to the Responses API.
+export function getWebSearchModelInstance(opts: ModelOptions) {
+  const { modelName, connectionMode } = opts.modelPreset;
+  if (isChatGPTModel(modelName)) {
+    return new ChatGPTPlanModel(chatGPTModelId(modelName), false, undefined, true);
+  }
+  const spec = isLocalModel(modelName) ? undefined : getModelSpec(modelName);
+  if (!spec) throw new Error(`Web search is not available for ${modelName}.`);
+  if (connectionMode === 'openrouter') return createOpenRouter(spec, opts, true);
+  if (spec.provider === 'openai-api-key') {
+    return createOpenAI(spec, opts).bindTools([{ type: 'web_search' }]);
+  }
+  if (spec.provider === 'gemini-api-key') {
+    return createGemini(spec, opts).bindTools([{ googleSearch: {} }]);
+  }
+  return createAnthropic(spec, opts).bindTools([
+    { type: 'web_search_20250305', name: 'web_search', max_uses: 5 },
+  ]);
 }

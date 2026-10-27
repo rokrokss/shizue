@@ -17,6 +17,7 @@ export const MESSAGE_SCC_SET_HIDDEN = 'scc_set_hidden';
 export const MESSAGE_INJECT_NETFLIX_BRIDGE = 'inject_netflix_bridge';
 export const MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE = 'context_menu_translate_page';
 export const MESSAGE_TRANSLATE_FRAMES = 'translate_frames';
+export const MESSAGE_REMEMBER_THREAD = 'action_remember_thread';
 export const MESSAGE_FRAME_TRANSLATION_STATE = 'frame_translation_state';
 export const MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE = 'context_menu_summarize_page';
 export const MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE = 'context_menu_describe_image';
@@ -49,6 +50,7 @@ export const STORAGE_CHATGPT_CONNECTION = 'CHATGPT_CONNECTION';
 // OAuth tokens. Read only by the background (services/background/chatgpt.ts), never by the UI.
 export const STORAGE_CHATGPT_CREDENTIALS = 'CHATGPT_CREDENTIALS';
 export const STORAGE_USER_MEMORY = 'USER_MEMORY';
+export const STORAGE_AUTO_MEMORY = 'AUTO_MEMORY';
 export const STORAGE_GLOBAL_STATE = 'GLOBAL_STATE';
 export const STORAGE_THEME = 'THEME';
 export const STORAGE_SHOW_TOGGLE = 'SHOW_TOGGLE';
@@ -75,8 +77,10 @@ export const STREAM_FLUSH_THRESHOLD_1 = 10;
 export const SUMMARY_PAGE_TEXT_MAX_CHARS = 100_000;
 // Custom instructions go with every chat request, so bound them too (up to ~1,500 tokens).
 export const CUSTOM_INSTRUCTIONS_MAX_CHARS = 1_500;
-// Tabs and PDF files attached to one chat message share SUMMARY_PAGE_TEXT_MAX_CHARS.
+// Tabs, files and pasted text attached to one chat message share SUMMARY_PAGE_TEXT_MAX_CHARS.
 export const MAX_ATTACHED_TABS = 5;
+// Pasting more than this into the chat box attaches it like a file instead.
+export const LONG_PASTE_CHARS = 2_000;
 
 /* selection actions: context menu item IDs, also used as ActionTypes */
 export const SELECTION_ACTION_TYPES = [

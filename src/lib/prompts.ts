@@ -5,26 +5,54 @@ import type { TranslationContext } from '@/lib/liveCaption/types';
 import { Caption, VideoMetadata } from '@/lib/youtube';
 import { debugLog } from '@/logs';
 
-export const getInitialSystemMessage = (lang: Language, customInstructions?: string) => {
+export const getInitialSystemMessage = (
+  lang: Language,
+  customInstructions?: string,
+  rememberedFacts: string[] = []
+) => {
   const systemMessage = `You are Shizue (시즈에 in Korean, しずえ in Japanese), an AI assistant who solves a wide range of problems.
 
 1) Respond in polite, honorifics. Keep the tone warm yet concise.
 2) Avoid heart emoticons, and overly cute expressions.
 3) Do not repeat the user's question.
-4) Reply in ${lang} by default, even when the page or text you are given is in another language. When the user explicitly asks for another language (a translation, or an email or message written in English), write that part in the language they asked for.`;
+4) Reply in ${lang} by default, even when the page or text you are given is in another language. When the user explicitly asks for another language (a translation, or an email or message written in English), write that part in the language they asked for.
+5) When a chart makes numbers clearer (the user asks for one, or you compare several values across categories or over time), you may add one fenced code block with the language \`chart\` holding only JSON, which the app draws: {"type":"bar"|"line"|"area","title":"...","x":"<label key>","series":[{"key":"<value key>","name":"<series name>"}],"data":[{"<label key>":"...","<value key>":0}]}. Use at most 6 series and only numbers you actually have.`;
 
   const instructions = customInstructions?.trim();
-  if (!instructions) return systemMessage;
-
   // The user's own instructions override the defaults above, but a request's own format or
   // language (a selection translation's "Output only the translation") still wins.
-  return `${systemMessage}
-5) The user wrote the custom instructions below about themselves and how they want replies. Follow them in every reply. They take precedence over rules 1-4, but not over the instructions of the current request (e.g. "Output only the translation").
+  const withInstructions = instructions
+    ? `${systemMessage}
+6) The user wrote the custom instructions below about themselves and how they want replies. Follow them in every reply. They take precedence over rules 1-5, but not over the instructions of the current request (e.g. "Output only the translation").
 
 ===custom instructions===
 ${instructions}
-===end of custom instructions===`;
+===end of custom instructions===`
+    : systemMessage;
+  if (rememberedFacts.length === 0) return withInstructions;
+
+  // Auto memory: what earlier chats said about the user, weaker than anything the user says now.
+  return `${withInstructions}
+${instructions ? 7 : 6}) You remember the facts below about the user from earlier chats. Use them when they help with the request, without bringing them up otherwise. The user's ${instructions ? 'custom instructions and ' : ''}messages in this chat win over them.
+
+===remembered facts===
+${rememberedFacts.map((fact) => `- ${fact}`).join('\n')}
+===end of remembered facts===`;
 };
+
+// Auto memory: asks the chat model for lasting facts about the user in one chat's questions.
+export const getMemoryExtractionPrompt = (lang: Language, questions: string[], knownFacts: string[]) =>
+  `Below are messages the user wrote to you in one chat. Pick out facts about the user that will still be true and useful in later, unrelated chats: who they are, what they do or are working on, lasting preferences for how you reply, the tools and languages they use. Leave out one-off requests and questions, facts about other people, and sensitive details (health, money, passwords, addresses, ID numbers). Leave out what the known facts already say, and anything you are unsure about.
+
+Write each fact as one short sentence in ${lang}, about "the user" in the third person. Answer with only a JSON object: {"facts": ["..."]}, with at most 5 facts, or {"facts": []} when nothing is worth remembering.
+
+===known facts===
+${knownFacts.length ? knownFacts.map((fact) => `- ${fact}`).join('\n') : '(none)'}
+===end of known facts===
+
+===messages===
+${questions.map((question) => `- ${question.replace(/\n+/g, ' ')}`).join('\n')}
+===end of messages===`;
 
 export const getInitialAIMessage = (lang: Language): string => {
   switch (lang) {

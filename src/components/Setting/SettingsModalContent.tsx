@@ -1,6 +1,7 @@
 import { LoadingLabel } from '@/components/Loader/LoadingLabel';
 import LocalModelSettings from '@/components/Setting/LocalModelSettings';
 import ChatGPTSettings from '@/components/Setting/ChatGPTSettings';
+import AutoMemorySettings from '@/components/Setting/AutoMemorySettings';
 import CustomInstructionsSettings from '@/components/Setting/CustomInstructionsSettings';
 import ShortcutSettings from '@/components/Setting/ShortcutSettings';
 import { Language, useLanguage, useTranslateTargetLanguage } from '@/hooks/language';
@@ -271,6 +272,7 @@ const SettingsModalContent = () => {
                   />
                 </div>
                 <CustomInstructionsSettings />
+                <AutoMemorySettings />
                 <ShortcutSettings />
                 {toggleHiddenSiteList.length > 0 && (
                   <div className="sz:flex sz:flex-col sz:items-center sz:justify-center sz:gap-2 sz:w-full">

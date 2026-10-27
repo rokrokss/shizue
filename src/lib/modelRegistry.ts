@@ -142,6 +142,10 @@ export const modelSupportsImages = (model: ChatModel, localServer?: LocalServerC
     ? Boolean(resolveLocalModel(model, localServer)?.supportsImages)
     : Boolean(getModelSpec(model)?.supportsImages);
 
+// Web search uses each provider's own search tool (OpenAI's and ChatGPT's web_search, Anthropic's
+// web search, Gemini's Google Search, OpenRouter's web plugin). Local servers have none.
+export const modelSupportsWebSearch = (model: ChatModel) => !isLocalModel(model);
+
 // Usage records written before model IDs were stored hold slot names or retired model IDs.
 const legacyModelLabels: Record<string, string> = {
   'gpt-6-sol': 'GPT-6 Sol',

@@ -1,14 +1,19 @@
 import { isSelectionActionType } from '@/config/constants';
 import { ActionType } from '@/hooks/global';
+import type { WebSource } from '@/lib/webSources';
 import Dexie, { Table } from 'dexie';
 
-// A tab or PDF file attached to a chat message: its text when the message was sent.
+// A tab, file or pasted text attached to a chat message: its text when the message was sent.
 export interface PageAttachment {
   title: string;
-  // Empty for a PDF file picked from the computer.
+  // Empty for a file from the computer and for pasted text.
   url: string;
   text: string;
   pdf?: boolean;
+  // A text or code file from the computer.
+  file?: boolean;
+  // Long text pasted into the chat box.
+  pasted?: boolean;
   // The text was cut to fit the size limit for one message.
   truncated?: boolean;
 }
@@ -25,6 +30,10 @@ export interface Message {
   content: string;
   images?: string[];
   attachments?: PageAttachment[];
+  // The question asked for a web search with its answer.
+  webSearch?: boolean;
+  // The pages a web search answer drew on.
+  sources?: WebSource[];
   createdAt: number;
   done: boolean;
   onInterrupt: boolean;
@@ -38,6 +47,8 @@ export interface ThreadMeta {
   id: string;
   title: string;
   updatedAt: number;
+  // Auto memory has read the questions up to this message's createdAt.
+  memoryReadAt?: number;
 }
 
 export interface TokenUsage {

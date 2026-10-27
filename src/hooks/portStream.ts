@@ -3,6 +3,7 @@ import {
   MESSAGE_RUN_GRAPH_STREAM,
   PORT_STREAM_MESSAGE,
 } from '@/config/constants';
+import type { WebSource } from '@/lib/webSources';
 import { debugLog } from '@/logs';
 import { useCallback, useEffect, useRef } from 'react';
 
@@ -12,6 +13,8 @@ interface StreamOptions {
   onError?: (message: string) => void;
   // The background cut a long message to fit a local model's context.
   onContextTruncated?: () => void;
+  // The pages a web search answer drew on, sent once the answer is complete.
+  onSources?: (sources: WebSource[]) => void;
 }
 
 export const useChromePortStream = () => {
@@ -41,6 +44,8 @@ export const useChromePortStream = () => {
           port.disconnect();
         } else if (msg.contextTruncated) {
           opts.onContextTruncated?.();
+        } else if ('sources' in msg) {
+          opts.onSources?.(msg.sources);
         } else if (msg.done) {
           finished = true;
           opts.onDone();

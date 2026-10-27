@@ -5,17 +5,17 @@ import { isSelectionActionType } from '@/config/constants';
 import { useThemeValue } from '@/hooks/layout';
 import useStreamText from '@/hooks/useStreamText';
 import { hashStringToIndex } from '@/lib/hash';
-import { FilePdfOutlined, InfoCircleOutlined, LinkOutlined } from '@ant-design/icons';
+import {
+  FileOutlined,
+  FilePdfOutlined,
+  GlobalOutlined,
+  InfoCircleOutlined,
+  LinkOutlined,
+  SnippetsOutlined,
+} from '@ant-design/icons';
+import MarkdownMessage from '@/components/Chat/MarkdownMessage';
 import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
-import Markdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-
-// Keep GFM but drop strikethrough, so "3~5일" style tildes render as plain text.
-function remarkNoStrikethrough(this: { data: () => object }) {
-  const data = this.data() as { micromarkExtensions?: unknown[] };
-  (data.micromarkExtensions ||= []).push({ disable: { null: ['strikethrough'] } });
-}
 
 const ChatContainer = ({
   messages,
@@ -37,8 +37,8 @@ const ChatContainer = ({
   const showRetryButton = (message: Message) =>
     (message.onInterrupt && !message.stopped) || message.stopped;
 
-  const getMarkdownText = (content: string) => {
-    return <Markdown remarkPlugins={[remarkGfm, remarkNoStrikethrough]}>{content}</Markdown>;
+  const getMarkdownText = (content: string, streaming = false) => {
+    return <MarkdownMessage content={content} streaming={streaming} />;
   };
 
   return (
@@ -95,7 +95,7 @@ const ChatContainer = ({
                       </>
                     ) : idx === messages.length - 1 && !m.done ? (
                       m.content.trim() ? (
-                        getMarkdownText(animatedText)
+                        getMarkdownText(animatedText, true)
                       ) : isRetryButtonVisible ? null : (
                         <div className="sz:flex sz:flex-row sz:items-center sz:justify-start sz:pl-3 sz:text-xl">
                           <DotCycle />
@@ -105,6 +105,24 @@ const ChatContainer = ({
                       getMarkdownText(m.content)
                     )}
                   </div>
+                  {m.sources?.length ? (
+                    <div className="sz-message-sources sz:flex sz:flex-col sz:gap-0.5 sz:pt-2 sz:text-xs sz:text-gray-500">
+                      <div>{t('chat.sources')}</div>
+                      {m.sources.map((source) => (
+                        <a
+                          key={source.url}
+                          href={source.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={source.url}
+                          className="sz:flex sz:flex-row sz:items-center sz:gap-1 sz:min-w-0 sz:text-gray-500"
+                        >
+                          <LinkOutlined className="sz:shrink-0" />
+                          <span className="sz:truncate">{source.title}</span>
+                        </a>
+                      ))}
+                    </div>
+                  ) : null}
                   {/* <div className="sz:text-xs sz:text-gray-500 sz:pl-0.5 sz:pt-1">
                     onInterrupt: {m.onInterrupt ? 'true' : 'false'} <br />
                     stopped: {m.stopped ? 'true' : 'false'} <br />
@@ -191,10 +209,24 @@ const ChatContainer = ({
                 !m.translateMode ? (
                   <div className="sz:flex sz:flex-col sz:whitespace-pre-wrap sz:break-keep sz:text-left">
                     {m.content}
+                    {m.webSearch ? (
+                      <div className="sz:flex sz:flex-row sz:items-center sz:gap-1 sz:pt-1">
+                        <GlobalOutlined />
+                        <div className="sz:text-sm sz:text-gray-500 sz:pb-[2px]">{t('chat.webSearch')}</div>
+                      </div>
+                    ) : null}
                     {m.attachments?.map((page, pageIdx) => {
                       const row = (
                         <div className="sz:flex sz:flex-row sz:items-center sz:gap-1">
-                          {page.pdf ? <FilePdfOutlined /> : <LinkOutlined />}
+                          {page.pdf ? (
+                            <FilePdfOutlined />
+                          ) : page.file ? (
+                            <FileOutlined />
+                          ) : page.pasted ? (
+                            <SnippetsOutlined />
+                          ) : (
+                            <LinkOutlined />
+                          )}
                           <div className="sz:text-sm sz:text-gray-500 sz:pb-[2px]">
                             {(page.title || page.url).length > 25
                               ? (page.title || page.url).slice(0, 25) + '...'
@@ -202,7 +234,7 @@ const ChatContainer = ({
                           </div>
                         </div>
                       );
-                      // A PDF file from the computer has no address to open.
+                      // A file from the computer and pasted text have no address to open.
                       return page.url ? (
                         <a
                           key={`${idx}-page-${pageIdx}`}

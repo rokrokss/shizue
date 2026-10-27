@@ -1,27 +1,64 @@
 import { MAX_ATTACHED_TABS } from '@/config/constants';
 import { useThemeValue } from '@/hooks/layout';
+import { TEXT_FILE_ACCEPT } from '@/lib/tabText';
 import {
   CameraOutlined,
-  FilePdfOutlined,
+  ExpandOutlined,
+  FileAddOutlined,
   FileTextOutlined,
+  GlobalOutlined,
   PaperClipOutlined,
 } from '@ant-design/icons';
 import { Button, Popover, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const isWebTab = (tab: chrome.tabs.Tab) => tab.id !== undefined && /^https?:/.test(tab.url ?? '');
+export const isWebTab = (tab: chrome.tabs.Tab) =>
+  tab.id !== undefined && /^https?:/.test(tab.url ?? '');
 
-// The paperclip button: the web tabs open in this window to attach or take off, a PDF file from
-// the computer, and a capture of what the current tab shows, for models that read images.
+// A tab's icon, title and site, as the paperclip menu and the @ list show it.
+export const TabSummary = ({ tab }: { tab: chrome.tabs.Tab }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      {tab.favIconUrl ? (
+        <img src={tab.favIconUrl} alt="" className="sz:w-4 sz:h-4 sz:shrink-0" />
+      ) : (
+        <FileTextOutlined className="sz:shrink-0" />
+      )}
+      <div className="sz:min-w-0 sz:flex-1">
+        <div className="sz:truncate sz:text-sm">{tab.title || tab.url}</div>
+        <div className="sz:truncate sz:text-xs sz:text-gray-500">
+          {tab.discarded ? t('chat.tabAsleep') : new URL(tab.url!).host}
+        </div>
+      </div>
+    </>
+  );
+};
+
+// Tabs, files and the capture share one row style, like items of one list.
+export const attachRowClass = (disabled: boolean, theme: string, active = false) =>
+  `sz:flex sz:items-center sz:gap-2 sz:w-full sz:px-2 sz:py-1.5 sz:rounded-md sz:text-left ${
+    disabled
+      ? 'sz:opacity-50 sz:cursor-not-allowed'
+      : `sz:cursor-pointer ${theme == 'dark' ? 'sz:hover:bg-white/10' : 'sz:hover:bg-black/5'}`
+  } ${active ? (theme == 'dark' ? 'sz:bg-white/10' : 'sz:bg-black/5') : ''}`;
+
+// The paperclip button: the web tabs open in this window to attach or take off, PDF and text
+// files from the computer, a capture of what the current tab shows, whole or a dragged part,
+// for models that read images, and web search for the questions that follow.
 const AttachMenu = ({
   attachedTabIds,
   full,
   imagesSupported,
   iconColor,
   onToggleTab,
-  onPickPdf,
+  onPickFiles,
   onCapture,
+  onCaptureRegion,
+  webSearch,
+  webSearchSupported,
+  onToggleWebSearch,
 }: {
   attachedTabIds: number[];
   // The next message already has MAX_ATTACHED_TABS tabs and files.
@@ -29,27 +66,25 @@ const AttachMenu = ({
   imagesSupported: boolean;
   iconColor: string;
   onToggleTab: (tab: chrome.tabs.Tab, attach: boolean) => void;
-  onPickPdf: (file: File) => void;
+  onPickFiles: (files: File[]) => void;
   onCapture: () => void;
+  onCaptureRegion: () => void;
+  webSearch: boolean;
+  webSearchSupported: boolean;
+  onToggleWebSearch: () => void;
 }) => {
   const { t } = useTranslation();
   const theme = useThemeValue();
   const [open, setOpen] = useState(false);
   const [tabs, setTabs] = useState<chrome.tabs.Tab[]>([]);
-  const pdfInput = useRef<HTMLInputElement>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
 
   const handleOpenChange = async (next: boolean) => {
     if (next) setTabs((await chrome.tabs.query({ currentWindow: true })).filter(isWebTab));
     setOpen(next);
   };
 
-  // Tabs, the PDF file and the capture share one row style, like items of one list.
-  const rowClass = (disabled: boolean) =>
-    `sz:flex sz:items-center sz:gap-2 sz:w-full sz:px-2 sz:py-1.5 sz:rounded-md sz:text-left ${
-      disabled
-        ? 'sz:opacity-50 sz:cursor-not-allowed'
-        : `sz:cursor-pointer ${theme == 'dark' ? 'sz:hover:bg-white/10' : 'sz:hover:bg-black/5'}`
-    }`;
+  const rowClass = (disabled: boolean) => attachRowClass(disabled, theme);
 
   const content = (
     // Narrow enough to stay centered over the paperclip, inside a side panel at its 320px minimum.
@@ -72,17 +107,7 @@ const AttachMenu = ({
                   onChange={(e) => onToggleTab(tab, e.target.checked)}
                   className="sz:w-4 sz:h-4 sz:shrink-0 sz:accent-sz-cyan sz:cursor-[inherit]"
                 />
-                {tab.favIconUrl ? (
-                  <img src={tab.favIconUrl} alt="" className="sz:w-4 sz:h-4 sz:shrink-0" />
-                ) : (
-                  <FileTextOutlined className="sz:shrink-0" />
-                )}
-                <div className="sz:min-w-0 sz:flex-1">
-                  <div className="sz:truncate sz:text-sm">{tab.title || tab.url}</div>
-                  <div className="sz:truncate sz:text-xs sz:text-gray-500">
-                    {tab.discarded ? t('chat.tabAsleep') : new URL(tab.url!).host}
-                  </div>
-                </div>
+                <TabSummary tab={tab} />
               </label>
             );
           })
@@ -99,26 +124,30 @@ const AttachMenu = ({
         }`}
       >
         <input
-          ref={pdfInput}
+          ref={fileInput}
           type="file"
-          accept="application/pdf,.pdf"
+          accept={`application/pdf,.pdf,text/*,${TEXT_FILE_ACCEPT}`}
+          multiple
           hidden
           onChange={(e) => {
-            const file = e.target.files?.[0];
+            const files = Array.from(e.target.files ?? []);
             e.target.value = '';
-            if (!file) return;
+            if (files.length === 0) return;
             setOpen(false);
-            onPickPdf(file);
+            onPickFiles(files);
           }}
         />
         <button
           type="button"
           disabled={full}
-          onClick={() => pdfInput.current?.click()}
+          onClick={() => fileInput.current?.click()}
           className={rowClass(full)}
         >
-          <FilePdfOutlined className="sz:shrink-0" />
-          <span className="sz:text-sm">{t('chat.attachPdf')}</span>
+          <FileAddOutlined className="sz:shrink-0" />
+          <div className="sz:min-w-0 sz:flex-1">
+            <div className="sz:text-sm">{t('chat.attachFile')}</div>
+            <div className="sz:text-xs sz:text-gray-500">{t('chat.attachFileTypes')}</div>
+          </div>
         </button>
         <button
           type="button"
@@ -137,6 +166,45 @@ const AttachMenu = ({
             )}
           </div>
         </button>
+        <button
+          type="button"
+          disabled={!imagesSupported}
+          onClick={() => {
+            setOpen(false);
+            onCaptureRegion();
+          }}
+          className={rowClass(!imagesSupported)}
+        >
+          <ExpandOutlined className="sz:shrink-0" />
+          <div className="sz:min-w-0 sz:flex-1">
+            <div className="sz:text-sm">{t('chat.captureRegion')}</div>
+            {imagesSupported ? null : (
+              <div className="sz:text-xs sz:text-gray-500">{t('chat.imageUploadNotSupported')}</div>
+            )}
+          </div>
+        </button>
+      </div>
+      <div
+        className={`sz:flex sz:flex-col sz:pt-1 sz:border-t ${
+          theme == 'dark' ? 'sz:border-white/10' : 'sz:border-black/10'
+        }`}
+      >
+        <label className={rowClass(!webSearchSupported)}>
+          <GlobalOutlined className="sz:shrink-0" />
+          <div className="sz:min-w-0 sz:flex-1">
+            <div className="sz:text-sm">{t('chat.webSearch')}</div>
+            <div className="sz:text-xs sz:text-gray-500">
+              {webSearchSupported ? t('chat.webSearchHint') : t('chat.webSearchNotSupported')}
+            </div>
+          </div>
+          <input
+            type="checkbox"
+            checked={webSearch}
+            disabled={!webSearchSupported}
+            onChange={onToggleWebSearch}
+            className="sz:w-4 sz:h-4 sz:shrink-0 sz:accent-sz-cyan sz:cursor-[inherit]"
+          />
+        </label>
       </div>
     </div>
   );

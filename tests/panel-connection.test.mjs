@@ -151,6 +151,7 @@ test('background routes summary opens and panel readiness through the same hando
     '@/entrypoints/background/sidepanel': 'export const openPanel = id => globalThis.openSummaryPanel(id); export const togglePanel = async () => {};',
     '@/lib/indexDB': 'export const db = {}; export const getLatestMessageForThread = async () => null; export const loadThread = async () => [];',
     '@/services/background/translationHandler': 'export const getTranslationHandler = () => ({});',
+    '@/services/background/chatModelHandler': 'export const getChatModelHandler = () => ({});',
   });
 });
 

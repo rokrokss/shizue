@@ -17,6 +17,41 @@ const MAX_PDF_BYTES = 50 * 1024 * 1024;
 
 const hasLittleText = (text: string) => text.replace(/\s/g, '').length < MIN_PAGE_TEXT_CHARS;
 
+// Past the text one message carries a file is cut anyway; this keeps huge logs out of memory.
+const MAX_TEXT_FILE_BYTES = 5 * 1024 * 1024;
+
+// Text, data and code files a model reads as they are. Browsers give many of these no MIME type.
+const TEXT_FILE_EXTENSIONS = [
+  'txt', 'md', 'markdown', 'csv', 'tsv', 'json', 'jsonl', 'xml', 'yaml', 'yml', 'toml', 'ini',
+  'log', 'html', 'htm', 'css', 'scss', 'js', 'jsx', 'mjs', 'ts', 'tsx', 'py', 'ipynb', 'java',
+  'kt', 'swift', 'go', 'rs', 'rb', 'php', 'c', 'h', 'cpp', 'hpp', 'cs', 'sh', 'sql', 'r', 'scala',
+  'dart', 'lua', 'vue', 'svelte', 'tex', 'srt', 'vtt',
+];
+
+export const TEXT_FILE_ACCEPT = TEXT_FILE_EXTENSIONS.map((extension) => `.${extension}`).join(',');
+
+export const isPdfFile = (file: File) =>
+  file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+
+export const isTextFile = (file: File) =>
+  file.type.startsWith('text/') ||
+  file.type === 'application/json' ||
+  TEXT_FILE_EXTENSIONS.includes(file.name.split('.').pop()?.toLowerCase() ?? '');
+
+// A short file is fine here, unlike a page: a few lines of code are worth asking about.
+export const readTextFile = async (file: File): Promise<PageRead> => {
+  if (file.size > MAX_TEXT_FILE_BYTES) return { error: 'unreadable' };
+  try {
+    const text = await file.text();
+    // A NUL character means a binary file under a text name.
+    if (text.includes('\u0000')) return { error: 'unreadable' };
+    if (!text.trim()) return { error: 'empty' };
+    return { page: { title: file.name, url: '', text, file: true } };
+  } catch {
+    return { error: 'unreadable' };
+  }
+};
+
 // A PDF's text, up to the most one message carries. A scanned PDF has no text to read.
 export const readPdfPage = async (data: ArrayBuffer, title: string, url: string): Promise<PageRead> => {
   if (data.byteLength > MAX_PDF_BYTES) return { error: 'unreadable' };

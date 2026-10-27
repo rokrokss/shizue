@@ -1,15 +1,25 @@
 import AttachMenu from '@/components/Chat/AttachMenu';
 import AttachmentChips, { AttachedItem } from '@/components/Chat/AttachmentChips';
+import TabMentionPicker, { TabMentionPickerHandle } from '@/components/Chat/TabMentionPicker';
 import Footer from '@/components/Footer';
-import { MAX_ATTACHED_TABS, SUMMARY_PAGE_TEXT_MAX_CHARS } from '@/config/constants';
+import { LONG_PASTE_CHARS, MAX_ATTACHED_TABS, SUMMARY_PAGE_TEXT_MAX_CHARS } from '@/config/constants';
 import { requestPageSummary } from '@/services/pageSummary';
 import { useActiveWebTab } from '@/hooks/activeTab';
 import { ChatStatus, isChatWaiting } from '@/hooks/chat';
 import { useThemeValue } from '@/hooks/layout';
 import { useChatModel, useLocalServerValue } from '@/hooks/models';
 import type { PageAttachment } from '@/lib/indexDB';
-import { modelSupportsImages } from '@/lib/modelRegistry';
-import { PageRead, readPdfPage, readTabPage, toPageAttachments } from '@/lib/tabText';
+import { modelSupportsImages, modelSupportsWebSearch } from '@/lib/modelRegistry';
+import { cropCapture, selectRegion } from '@/lib/regionCapture';
+import {
+  isPdfFile,
+  isTextFile,
+  PageRead,
+  readPdfPage,
+  readTabPage,
+  readTextFile,
+  toPageAttachments,
+} from '@/lib/tabText';
 import { debugLog } from '@/logs';
 import {
   EditOutlined,
@@ -21,13 +31,21 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons';
 import { Alert, Button, Input, Tooltip, Upload } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+
+// The "@word" the caret is at the end of: an @ at the start or after a space, with no space after
+// it, so e-mail addresses don't open the tab list.
+const mentionAt = (value: string, caret: number) => {
+  const match = /(^|\s)@(\S*)$/.exec(value.slice(0, caret));
+  return match ? { start: caret - match[2].length - 1, query: match[2] } : null;
+};
 
 const ChatInput = ({
   chatStatus,
   threadPageUrls,
+  previousPrompts,
   onSubmit,
   onCancel,
   onOpenHistory,
@@ -38,7 +56,14 @@ const ChatInput = ({
   chatStatus: ChatStatus;
   // Pages already in this chat (attached or summarized), not offered for attaching again.
   threadPageUrls: string[];
-  onSubmit: (text: string, images?: File[], attachments?: PageAttachment[]) => Promise<void>;
+  // This chat's questions, oldest first, for recalling with the arrow keys.
+  previousPrompts: string[];
+  onSubmit: (
+    text: string,
+    images?: File[],
+    attachments?: PageAttachment[],
+    webSearch?: boolean
+  ) => Promise<void>;
   onCancel: () => Promise<void>;
   onOpenHistory: () => void;
   onNewChat: () => Promise<void>;
@@ -53,6 +78,12 @@ const ChatInput = ({
   const [attached, setAttached] = useState<AttachedItem[]>([]);
   const [isReadingPages, setIsReadingPages] = useState(false);
   const [captureFailed, setCaptureFailed] = useState(false);
+  // Which of previousPrompts the chat box shows after ↑, until it is edited or sent.
+  const [recallIndex, setRecallIndex] = useState<number | null>(null);
+  const [mention, setMention] = useState<{ start: number; query: string } | null>(null);
+  // Stays on for the questions after it until it is turned off.
+  const [webSearch, setWebSearch] = useState(false);
+  const mentionPicker = useRef<TabMentionPickerHandle>(null);
   const activeTab = useActiveWebTab();
   const suggestedTab =
     activeTab &&
@@ -68,14 +99,19 @@ const ChatInput = ({
   const [chatModel] = useChatModel();
   const localServer = useLocalServerValue();
   const imagesSupported = modelSupportsImages(chatModel, localServer);
+  const webSearchSupported = modelSupportsWebSearch(chatModel);
 
   // Drop attached images when the chat model is switched to a text-only one.
   useEffect(() => {
     if (!imagesSupported) setUploadedImages([]);
   }, [imagesSupported]);
 
-  // Attached tabs are read as they are now; PDF files were read when picked. A question is
-  // required: a page alone is a summary.
+  useEffect(() => {
+    if (!webSearchSupported) setWebSearch(false);
+  }, [webSearchSupported]);
+
+  // Attached tabs are read as they are now; files and pasted text were read when added. A question
+  // is required: a page alone is a summary.
   const handleSubmitWithPages = async (text: string) => {
     if (text === '' || isReadingPages || attached.some((item) => item.loading)) return;
     const items = attached;
@@ -101,7 +137,7 @@ const ChatInput = ({
       );
       return;
     }
-    onSubmit(text, uploadedImages, toPageAttachments(pages, SUMMARY_PAGE_TEXT_MAX_CHARS));
+    onSubmit(text, uploadedImages, toPageAttachments(pages, SUMMARY_PAGE_TEXT_MAX_CHARS), webSearch);
     setChatInput('');
     setUploadedImages([]);
     setAttached([]);
@@ -113,15 +149,32 @@ const ChatInput = ({
       { key: `tab-${tab.id}`, tabId: tab.id!, title: tab.title ?? '', url: tab.url! },
     ]);
 
+  // Picking from the @ list attaches the tabs and takes the "@word" out of the chat box.
+  const handleMentionPick = (tabs: chrome.tabs.Tab[]) => {
+    if (mention) {
+      setChatInput(
+        (value) => value.slice(0, mention.start) + value.slice(mention.start + 1 + mention.query.length)
+      );
+    }
+    tabs.forEach(attachTab);
+    setMention(null);
+  };
+
   const handleToggleTab = (tab: chrome.tabs.Tab, attach: boolean) => {
     if (attach) attachTab(tab);
     else setAttached((current) => current.filter((item) => item.tabId !== tab.id));
   };
 
-  const handlePickPdf = async (file: File) => {
+  const attachFile = async (file: File) => {
     const key = crypto.randomUUID();
-    setAttached((current) => [...current, { key, title: file.name, url: '', pdf: true, loading: true }]);
-    const result = await readPdfPage(await file.arrayBuffer(), file.name, '');
+    const pdf = isPdfFile(file);
+    setAttached((current) => [
+      ...current,
+      { key, title: file.name, url: '', pdf, file: !pdf, loading: true },
+    ]);
+    const result = pdf
+      ? await readPdfPage(await file.arrayBuffer(), file.name, '')
+      : await readTextFile(file);
     setAttached((current) =>
       current.map((item) =>
         item.key === key
@@ -129,6 +182,12 @@ const ChatInput = ({
           : item
       )
     );
+  };
+
+  // PDF, text and code files, picked or dropped, until the message holds MAX_ATTACHED_TABS.
+  const handlePickFiles = (files: File[]) => {
+    const readable = files.filter((file) => isPdfFile(file) || isTextFile(file));
+    readable.slice(0, MAX_ATTACHED_TABS - attached.length).forEach((file) => void attachFile(file));
   };
 
   // What the side panel's window shows now, attached like any other image.
@@ -144,24 +203,77 @@ const ChatInput = ({
     }
   };
 
+  // A part of the current tab the user drags over on the page, cut from a capture of the view.
+  const handleCaptureRegion = async () => {
+    setCaptureFailed(false);
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const [injection] = await chrome.scripting.executeScript({
+        target: { tabId: tab.id! },
+        func: selectRegion,
+        args: [t('chat.captureRegionHint')],
+      });
+      const region = injection?.result;
+      if (!region) return;
+      const dataUrl = await chrome.tabs.captureVisibleTab({ format: 'png' });
+      const image = await cropCapture(dataUrl, region);
+      setUploadedImages((prev) => [...prev, image]);
+    } catch (error) {
+      debugLog('ChatInput: [handleCaptureRegion] error', error);
+      setCaptureFailed(true);
+    }
+  };
+
   const handleSubmit = async (text: string) => {
+    setRecallIndex(null);
+    setMention(null);
     if (attached.length > 0) return handleSubmitWithPages(text);
     if (text !== '' || uploadedImages.length > 0) {
-      onSubmit(text, uploadedImages);
+      onSubmit(text, uploadedImages, undefined, webSearch);
       setChatInput('');
       setUploadedImages([]);
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  // ↑ in an empty chat box brings back this chat's earlier questions, newest first; ↓ goes the
+  // other way and past the newest clears the box. Inside a recalled question of several lines
+  // the arrows move the caret until it reaches the first or last line.
+  const handleRecall = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const box = e.currentTarget;
+    if (e.key === 'ArrowUp') {
+      if (recallIndex === null ? chatInput !== '' : box.value.slice(0, box.selectionStart).includes('\n')) return;
+      const next = recallIndex === null ? previousPrompts.length - 1 : recallIndex - 1;
+      if (next < 0) return;
+      e.preventDefault();
+      setRecallIndex(next);
+      setChatInput(previousPrompts[next]);
+    } else {
+      if (recallIndex === null || box.value.slice(box.selectionEnd).includes('\n')) return;
+      e.preventDefault();
+      const next = recallIndex + 1;
+      setRecallIndex(next < previousPrompts.length ? next : null);
+      setChatInput(next < previousPrompts.length ? previousPrompts[next] : '');
+    }
+  };
+
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (!isComposing && mentionPicker.current?.handleKey(e)) return;
+    if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && !isComposing) {
+      handleRecall(e);
+      return;
+    }
     if (e.key === 'Enter') {
       if (e.shiftKey || isComposing) {
         return;
       }
 
       e.preventDefault();
-      if (isChatWaiting(chatStatus)) return;
       const currentValue = e.currentTarget.value.trim();
+      if (isChatWaiting(chatStatus)) {
+        // A new question while an answer is still coming stops that answer and goes out instead.
+        if (currentValue === '' && uploadedImages.length === 0) return;
+        await onCancel();
+      }
       handleSubmit(currentValue);
     }
   };
@@ -204,6 +316,18 @@ const ChatInput = ({
   };
 
   const handlePaste = async (e: React.ClipboardEvent) => {
+    // Long text goes in as an attachment, leaving the chat box for the question about it.
+    const text = e.clipboardData?.getData('text/plain') ?? '';
+    if (text.length > LONG_PASTE_CHARS && attached.length < MAX_ATTACHED_TABS) {
+      e.preventDefault();
+      const title = t('chat.pastedText');
+      setAttached((current) => [
+        ...current,
+        { key: crypto.randomUUID(), title, url: '', pasted: true, page: { title, url: '', text, pasted: true } },
+      ]);
+      return;
+    }
+
     const items = e.clipboardData?.items;
     if (!items || !imagesSupported) return;
 
@@ -233,6 +357,7 @@ const ChatInput = ({
     if (imageFiles.length > 0 && imagesSupported) {
       setUploadedImages((prev) => [...prev, ...imageFiles]);
     }
+    handlePickFiles(files.filter((file) => !file.type.startsWith('image/')));
   };
 
   return (
@@ -398,8 +523,12 @@ const ChatInput = ({
               imagesSupported={imagesSupported}
               iconColor={iconColor}
               onToggleTab={handleToggleTab}
-              onPickPdf={handlePickPdf}
+              onPickFiles={handlePickFiles}
               onCapture={handleCapture}
+              onCaptureRegion={handleCaptureRegion}
+              webSearch={webSearch}
+              webSearchSupported={webSearchSupported}
+              onToggleWebSearch={() => setWebSearch((on) => !on)}
             />
             <Tooltip
               placement="top"
@@ -462,6 +591,8 @@ const ChatInput = ({
         <AttachmentChips
           attached={attached}
           suggestion={suggestedTab}
+          webSearch={webSearch}
+          onWebSearchOff={() => setWebSearch(false)}
           onAttach={attachTab}
           onRemove={(key) => setAttached((current) => current.filter((item) => item.key !== key))}
         />
@@ -501,30 +632,48 @@ const ChatInput = ({
             ))}
           </div>
         )}
-        <Input.TextArea
-          value={chatInput}
-          onChange={(e) => setChatInput(e.target.value)}
-          onCompositionStart={() => setIsComposing(true)}
-          onCompositionEnd={() => setIsComposing(false)}
-          onKeyDown={handleKeyDown}
-          onPaste={handlePaste}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-          placeholder={attached.length > 0 ? t('chat.askAboutPages') : t('chat.askAnything')}
-          autoSize
-          className="
-            sz:w-full
-            sz:h-full
-            sz:font-ycom
-            sz:flex
-            sz:flex-col
-            sz:items-start
-            sz:justify-start
-            sz:pt-2
-            sz:placeholder:text-base
-            sz:placeholder:text-gray-400
-          "
-        />
+        <TabMentionPicker
+          ref={mentionPicker}
+          query={mention?.query ?? null}
+          attachedTabIds={attached.flatMap((item) => (item.tabId !== undefined ? [item.tabId] : []))}
+          attachedCount={attached.length}
+          onPick={handleMentionPick}
+          onClose={() => setMention(null)}
+        >
+          <Input.TextArea
+            value={chatInput}
+            onChange={(e) => {
+              setChatInput(e.target.value);
+              setRecallIndex(null);
+              setMention(mentionAt(e.target.value, e.target.selectionStart));
+            }}
+            // Chrome's permission prompt for tab groups takes focus from the whole panel; only a
+            // click elsewhere in the panel closes the @ list.
+            onBlur={() => {
+              if (document.hasFocus()) setMention(null);
+            }}
+            onCompositionStart={() => setIsComposing(true)}
+            onCompositionEnd={() => setIsComposing(false)}
+            onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+            placeholder={attached.length > 0 ? t('chat.askAboutPages') : t('chat.askAnything')}
+            autoSize
+            className="
+              sz:w-full
+              sz:h-full
+              sz:font-ycom
+              sz:flex
+              sz:flex-col
+              sz:items-start
+              sz:justify-start
+              sz:pt-2
+              sz:placeholder:text-base
+              sz:placeholder:text-gray-400
+            "
+          />
+        </TabMentionPicker>
       </div>
       {isChatWaiting(chatStatus) && (
         // A stop square inside a spinning cyan ring: the ring shows the answer is still coming.

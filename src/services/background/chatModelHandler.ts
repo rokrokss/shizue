@@ -1,5 +1,6 @@
 import {
   isSelectionActionType,
+  STORAGE_AUTO_MEMORY,
   STORAGE_USER_MEMORY,
   STREAM_FLUSH_THRESHOLD_0,
   STREAM_FLUSH_THRESHOLD_1,
@@ -17,15 +18,25 @@ import {
 } from '@/entrypoints/background/states/models';
 import { ActionType } from '@/hooks/global';
 import type { UserMemory } from '@/hooks/userMemory';
+import {
+  AutoMemory,
+  MEMORY_FACTS_JSON_SCHEMA,
+  mergeMemoryFacts,
+  parseMemoryFacts,
+  questionsToRemember,
+  questionText,
+} from '@/lib/autoMemory';
 import { formatImagesForMessage } from '@/lib/imageFormatHelper';
 import { db, loadThread, Message } from '@/lib/indexDB';
 import {
   ChatModel,
   ConnectionMode,
   getModelInstance,
+  getWebSearchModelInstance,
   isLocalModel,
   localContextLength,
   LocalServerConfig,
+  modelSupportsWebSearch,
   ModelPreset,
   providerFromName,
 } from '@/lib/models';
@@ -33,9 +44,11 @@ import {
   getAttachedPagesPrompt,
   getInitialAIMessage,
   getInitialSystemMessage,
+  getMemoryExtractionPrompt,
 } from '@/lib/prompts';
-import { readStorage } from '@/lib/storageBackend';
-import { trackStreamingTokenUsage } from '@/lib/tokenUsageTracker';
+import { readStorage, setStorage } from '@/lib/storageBackend';
+import { trackStreamingTokenUsage, trackTokenUsage } from '@/lib/tokenUsageTracker';
+import { collectWebSources, orderedWebSources, WebSource } from '@/lib/webSources';
 import { debugLog, errorLog } from '@/logs';
 import {
   AIMessage,
@@ -177,6 +190,16 @@ const initialMessagesFor = (modelName: ChatModel, systemMessage: string, aiMessa
 
 // A stored message as the model reads it. Attached pages go with their message on every turn, so
 // later questions in the chat can still refer to them.
+// The facts auto memory keeps, while it is on.
+const rememberedFacts = async () => {
+  const memory = await readStorage<AutoMemory>(STORAGE_AUTO_MEMORY);
+  return memory?.enabled ? memory.facts.map((fact) => fact.text) : [];
+};
+
+// Whether the question being answered asked for a web search.
+const asksForWebSearch = (history: Message[]) =>
+  Boolean([...history].reverse().find((m) => m.role === 'human')?.webSearch);
+
 const toModelMessage = (
   m: Message,
   modelName: ChatModel,
@@ -202,14 +225,17 @@ export class ChatModelHandler {
     messagesForModel: BaseMessage[],
     port: chrome.runtime.Port,
     abortController: AbortController,
-    actionType: ActionType
+    actionType: ActionType,
+    webSearchRequested = false
   ) {
     let fullResponseContent = '';
 
     try {
       const modelPreset = getChatModelPreset();
       const provider = providerFromName(modelPreset.modelName);
-      const llm = getModelInstance({
+      // The model may have been switched to a local one since the question was asked.
+      const webSearch = webSearchRequested && modelSupportsWebSearch(modelPreset.modelName);
+      const modelOptions = {
         streaming: true,
         temperature:
           actionType === 'askForSummary' ||
@@ -219,7 +245,10 @@ export class ChatModelHandler {
             ? 0.3
             : 0.7,
         modelPreset,
-      });
+      };
+      const llm = webSearch
+        ? getWebSearchModelInstance(modelOptions)
+        : getModelInstance(modelOptions);
       const local = modelPreset.localModel;
       const { messages: messagesToSend, truncated } =
         local?.kind === 'ollama'
@@ -242,6 +271,7 @@ export class ChatModelHandler {
 
       let buffer = '';
       let aggregatedChunk: AIMessageChunk | undefined;
+      const sources = new Map<string, WebSource & { cited: boolean }>();
       const visibleText =
         isLocalModel(modelPreset.modelName) ? leadingThinkBlockFilter() : (text: string) => text;
 
@@ -260,6 +290,11 @@ export class ChatModelHandler {
       };
 
       for await (const chunk of stream) {
+        if (webSearch) {
+          collectWebSources([chunk.content, chunk.response_metadata, chunk.additional_kwargs], sources);
+          // OpenRouter's raw chunks carry its citations; merged together they'd only be noise.
+          delete chunk.additional_kwargs.__raw_response;
+        }
         aggregatedChunk = aggregatedChunk ? aggregatedChunk.concat(chunk) : chunk;
         // `text` skips non-text blocks such as reasoning/thinking content.
         const delta = visibleText(chunk.text);
@@ -275,6 +310,12 @@ export class ChatModelHandler {
         fullResponseContent += buffer;
         await db.messages.update(messageId, { content: fullResponseContent, done: false });
         port.postMessage({ delta: buffer });
+      }
+
+      if (sources.size > 0) {
+        const found = orderedWebSources(sources);
+        await db.messages.update(messageId, { sources: found });
+        port.postMessage({ sources: found });
       }
 
       // Track token usage (after streaming is complete)
@@ -340,7 +381,11 @@ export class ChatModelHandler {
       const customInstructions = (await readStorage<UserMemory>(STORAGE_USER_MEMORY))?.text;
 
       const currentLang = getCurrentLanguage();
-      const initialSystemMessage = getInitialSystemMessage(currentLang, customInstructions);
+      const initialSystemMessage = getInitialSystemMessage(
+        currentLang,
+        customInstructions,
+        await rememberedFacts()
+      );
       const initialAIMessage = getInitialAIMessage(currentLang);
       const modelName = getCurrentChatModel();
       const connectionMode = getConnectionModeFor(modelName);
@@ -351,7 +396,14 @@ export class ChatModelHandler {
         ...threadHistory.map((m) => toModelMessage(m, modelName, connectionMode, localServer)),
       ];
 
-      await this._executeStreamAndUpdate(messageId, messages, port, abortController, actionType);
+      await this._executeStreamAndUpdate(
+        messageId,
+        messages,
+        port,
+        abortController,
+        actionType,
+        asksForWebSearch(threadHistory)
+      );
     } catch (err) {
       errorLog(`ChatModelHandler [streamChat] error on setup (messageId: ${messageId}):`, err);
       try {
@@ -362,6 +414,75 @@ export class ChatModelHandler {
           postError
         );
       }
+    }
+  }
+
+  // Auto memory: once the user moves on from a chat, the chat model reads the questions asked
+  // since the last read and adds the lasting facts about the user it finds.
+  private rememberingThreads = new Set<string>();
+
+  public async rememberThread(threadId: string) {
+    if (this.rememberingThreads.has(threadId)) return;
+    const memory = await readStorage<AutoMemory>(STORAGE_AUTO_MEMORY);
+    if (!memory?.enabled) return;
+    const thread = await db.threads.get(threadId);
+    if (!thread) return;
+    const questions = questionsToRemember(await loadThread(threadId), thread.memoryReadAt);
+    if (questions.length === 0) return;
+
+    this.rememberingThreads.add(threadId);
+    try {
+      const modelPreset = getChatModelPreset();
+      const local = isLocalModel(modelPreset.modelName);
+      const llm = getModelInstance({
+        temperature: 0,
+        maxTokens: 800,
+        // `streaming: false` would make stream() send a single request too.
+        streaming: local,
+        fast: true,
+        modelPreset,
+        jsonSchema: MEMORY_FACTS_JSON_SCHEMA,
+      });
+      const prompt = [
+        new HumanMessage(
+          getMemoryExtractionPrompt(
+            getCurrentLanguage(),
+            questions.map(questionText),
+            memory.facts.map((fact) => fact.text)
+          )
+        ),
+      ];
+      // A slow local model's single response can outlast the service worker's 30-second fetch
+      // limit; a streamed one arrives with its first token.
+      let response: AIMessage | AIMessageChunk | undefined;
+      if (local) {
+        for await (const chunk of await llm.stream(prompt)) {
+          response = response ? (response as AIMessageChunk).concat(chunk) : chunk;
+        }
+      } else {
+        response = await llm.invoke(prompt);
+      }
+      if (!response) return;
+      await trackTokenUsage(modelPreset, response);
+
+      const added = parseMemoryFacts(response.text);
+      debugLog('ChatModelHandler [rememberThread] facts:', added);
+      // Settings may have changed while the model was reading.
+      const latest = await readStorage<AutoMemory>(STORAGE_AUTO_MEMORY);
+      if (!latest?.enabled) return;
+      if (added?.length) {
+        await setStorage(STORAGE_AUTO_MEMORY, {
+          ...latest,
+          facts: mergeMemoryFacts(latest.facts, added, Date.now()),
+        });
+      }
+      // A reply that isn't the JSON asked for counts as read too, so the same questions aren't
+      // sent again every time the user leaves this chat.
+      await db.threads.update(threadId, { memoryReadAt: questions[questions.length - 1].createdAt });
+    } catch (err) {
+      errorLog('ChatModelHandler [rememberThread] failed:', err);
+    } finally {
+      this.rememberingThreads.delete(threadId);
     }
   }
 
@@ -401,12 +522,17 @@ export class ChatModelHandler {
         stopped: false,
         errorMessage: undefined,
         contextTruncated: undefined,
+        sources: undefined,
       });
 
       const customInstructions = (await readStorage<UserMemory>(STORAGE_USER_MEMORY))?.text;
 
       const currentLang = getCurrentLanguage();
-      const initialSystemMessage = getInitialSystemMessage(currentLang, customInstructions);
+      const initialSystemMessage = getInitialSystemMessage(
+        currentLang,
+        customInstructions,
+        await rememberedFacts()
+      );
       const initialAIMessage = getInitialAIMessage(currentLang);
       const modelName = getCurrentChatModel();
       const connectionMode = getConnectionModeFor(modelName);
@@ -426,7 +552,8 @@ export class ChatModelHandler {
         messagesForModel,
         port,
         abortController,
-        actionType
+        actionType,
+        asksForWebSearch(historyForModelInput)
       );
     } catch (err) {
       errorLog(

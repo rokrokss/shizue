@@ -10,6 +10,7 @@ export class ChatGPTPlanModel extends BaseChatModel {
     private readonly model: string,
     private readonly jsonOutput: boolean,
     private readonly reasoningEffort?: 'none' | 'low',
+    private readonly webSearch = false,
   ) { super({}); }
   _llmType() { return 'chatgpt-plan'; }
   override async *_streamResponseChunks(messages: BaseMessage[], options: BaseChatModelCallOptions) {
@@ -17,10 +18,16 @@ export class ChatGPTPlanModel extends BaseChatModel {
       model: this.model,
       ...chatGPTInput(messages, this.jsonOutput),
       ...(this.reasoningEffort ? { reasoning: { effort: this.reasoningEffort } } : {}),
+      ...(this.webSearch ? { webSearch: true } : {}),
     };
     for await (const event of chatGPTResponseStream(payload, options.signal)) {
       const delta = 'delta' in event ? event.delta : '';
-      const message = new AIMessageChunk({ content: delta, ...('usage' in event && event.usage ? { usage_metadata: event.usage } : {}) });
+      const message = new AIMessageChunk({
+        content: delta,
+        ...('usage' in event && event.usage ? { usage_metadata: event.usage } : {}),
+        // A web search citation; chatModelHandler collects these as the answer's sources.
+        ...('annotation' in event ? { additional_kwargs: { annotations: [event.annotation] } } : {}),
+      });
       yield new ChatGenerationChunk({ text: delta, message });
     }
   }
