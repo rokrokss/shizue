@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.15
+
+- Custom instructions: in Settings → General, tell Shizue about yourself and how you want answers (up to 1,500 characters). Every side panel answer follows them: chat, page summaries, selection actions and image descriptions. Page and caption translation don't use them
+- Attach pages to a chat: the tab you're viewing appears above the chat box; click it to send that page's text with your question. Switch tabs to attach up to 5 pages. Attached pages stay with the conversation for follow-up questions, and a page with almost no text or one Shizue can't read isn't sent, with the reason shown
+- GPT-6.1 Terra joins the OpenAI and OpenRouter model lists. With Sign in with ChatGPT, GPT-5.6 Terra and GPT-5.6 Terra Pro are no longer offered
+- The model list now updates from shizue.net about once a day, so new models can appear without an extension update, and a model you picked that is retired moves to its successor. The request carries no personal data; see the privacy policy
+
 ## v0.3.14
 
 - YouTube captions work again on videos YouTube dubbed automatically: Shizue uses the original language's captions instead of a dub's machine-translated ones, and Auto-activate sees the language the video is really spoken in
