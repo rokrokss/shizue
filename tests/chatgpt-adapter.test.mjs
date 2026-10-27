@@ -90,10 +90,11 @@ test('ChatGPT translations carry model-specific effort through the factory and r
     requests.push(body);
     return { events: [{ type: 'response.output_text.delta', delta: '{"translation":"안녕하세요"}' }, { type: 'response.completed', response: {} }] };
   };
-  const models = ['gpt-6.1-sol', 'gpt-6-luna', 'gpt-6-astra', 'unknown-account-model'];
+  const models = ['gpt-6.1-sol', 'gpt-6.1-terra', 'gpt-6-luna', 'gpt-6-astra', 'unknown-account-model'];
   await withChatGPT('../src/lib/models.ts', { models, respond }, async ({ getModelInstance }) => {
     for (const [modelName, effort] of [
       ['chatgpt:gpt-6.1-sol', 'low'],
+      ['chatgpt:gpt-6.1-terra', 'none'],
       ['chatgpt:gpt-6-luna', 'none'],
       ['chatgpt:gpt-6-astra', 'low'],
       ['chatgpt:unknown-account-model', undefined],

@@ -128,7 +128,7 @@ test('a temporarily empty ChatGPT catalog preserves saved choices without invent
 });
 
 test('excluded ChatGPT models cannot return through defaults or saved selections, even while offline', () => {
-  const excluded = ['gpt-6-sol', 'gpt-5.6-sol', 'gpt-5.6-luna'];
+  const excluded = ['gpt-6-sol', 'gpt-5.6-sol', 'gpt-5.6-luna', 'gpt-5.6-terra', 'gpt-5.6-terra-pro'];
   const accountCatalog = { ...catalogs, chatGPT: [...excluded.map(id => ({ id })), ...catalogs.chatGPT] };
   const defaults = { chat: 'chatgpt:gpt-6.1-sol', translation: 'chatgpt:gpt-6-luna' };
   assert.deepEqual(resolve('chatgpt', apiSelection, undefined, accountCatalog), defaults);
@@ -198,6 +198,10 @@ test('the saved GPT slot calls GPT-6.1 Sol with supported fast reasoning on both
       assert.equal(normal.reasoning, undefined);
       const luna = getModelInstance({ modelPreset: { ...modelPreset, modelName: 'gpt-mini' }, fast: true }).invocationParams();
       assert.equal(connectionMode === 'direct' ? luna.reasoning_effort : luna.reasoning.effort, 'none');
+      const terra = getModelInstance({ modelPreset: { ...modelPreset, modelName: 'gpt-terra' }, fast: true, temperature: 0.3 }).invocationParams();
+      assert.equal(terra.model, connectionMode === 'direct' ? 'gpt-6.1-terra' : 'openai/gpt-6.1-terra');
+      assert.equal(connectionMode === 'direct' ? terra.reasoning_effort : terra.reasoning.effort, 'none');
+      assert.equal(terra.temperature, undefined);
     }
   } finally { await rm(modelsFile, { force: true }); }
 });

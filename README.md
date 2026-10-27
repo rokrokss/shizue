@@ -82,7 +82,7 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   - Available in 23 languages including English, Spanish, French, German, Japanese, Chinese, Korean, Arabic, Hindi, and more.
 
 ### 🤖 Multiple AI Model Support:
-  - **OpenAI**: GPT-6.1 Sol, GPT-6 Luna
+  - **OpenAI**: GPT-6.1 Sol, GPT-6.1 Terra, GPT-6 Luna
   - **Google**: Gemini 3.8 Flash, Gemini 3.5 Flash-Lite, Gemma 4 31B
   - **Anthropic**: Claude Sonnet 5, Claude Haiku 4.5
   - **DeepSeek** (OpenRouter only): DeepSeek V4 Pro, DeepSeek V4.1 Flash

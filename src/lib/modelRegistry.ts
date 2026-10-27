@@ -15,6 +15,7 @@ export const isConnectionMode = (value: unknown): value is ConnectionMode =>
 // Stored in chrome.storage as stable slot names; the real model behind each slot is in MODELS.
 export type CloudModel =
   | 'gpt'
+  | 'gpt-terra'
   | 'gpt-mini'
   | 'gemini-flash'
   | 'gemini-flash-lite'
@@ -36,7 +37,7 @@ export const chatGPTModelId = (model: ChatGPTModelRef) => model.slice('chatgpt:'
 
 // App-level exclusions apply to both the account catalog and previously saved selections.
 export const isSelectableChatGPTModelId = (id: string): boolean =>
-  !['gpt-6-sol', 'gpt-5.6-sol', 'gpt-5.6-luna'].includes(id);
+  !['gpt-6-sol', 'gpt-5.6-sol', 'gpt-5.6-luna', 'gpt-5.6-terra', 'gpt-5.6-terra-pro'].includes(id);
 
 export type TranslateModel = ChatModel;
 
@@ -108,6 +109,15 @@ export const MODELS: Record<CloudModel, ModelSpec> = {
     supportsImages: true,
     openaiFastEffort: 'low',
     openrouter: { id: 'openai/gpt-6.1-sol', fastEffort: 'low' },
+  },
+  'gpt-terra': {
+    id: 'gpt-6.1-terra',
+    label: 'GPT-6.1 Terra',
+    provider: 'openai-api-key',
+    supportsTemperature: false,
+    supportsImages: true,
+    openaiFastEffort: 'none',
+    openrouter: { id: 'openai/gpt-6.1-terra', fastEffort: 'none' },
   },
   'gpt-mini': {
     id: 'gpt-6-luna',
