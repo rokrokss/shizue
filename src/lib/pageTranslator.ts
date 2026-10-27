@@ -367,6 +367,12 @@ export class PageTranslator {
     for (let i = 0; i < elements.length; i++) {
       const element = elements[i];
       const text = texts[i];
+      // The page removed it after it was queued (a route change, a replaced list): translating
+      // it would only hold up the text on screen now.
+      if (!element.isConnected) {
+        this.queuedElements.delete(element);
+        continue;
+      }
       if (this.cachedTranslations.get(this.targetLanguage as string)?.has(text)) {
         const translatedText = this.cachedTranslations
           .get(this.targetLanguage as string)
