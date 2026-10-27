@@ -10,7 +10,7 @@ import { ActionType, threadIdAtom } from '@/hooks/global';
 import { useThemeValue } from '@/hooks/layout';
 import { useChromePortStream } from '@/hooks/portStream';
 import { convertFilesToBase64Array } from '@/lib/imageUtils';
-import { addMessage, createThread, touchThread } from '@/lib/indexDB';
+import { addMessage, createThread, PageAttachment, touchThread } from '@/lib/indexDB';
 import { throttleTrailing } from '@/lib/throttleTrailing';
 import { createThreadLoader } from '@/lib/threadLoader';
 import { debugLog, errorLog } from '@/logs';
@@ -32,6 +32,7 @@ export interface Message {
   translateMode?: boolean;
   content: string;
   images?: string[];
+  attachments?: PageAttachment[];
   done: boolean;
   onInterrupt: boolean;
   stopped: boolean;
@@ -297,7 +298,12 @@ const Chat = () => {
     await touchThread(tId);
   };
 
-  const addHumanMessage = async (tId: string, text: string, images?: File[]) => {
+  const addHumanMessage = async (
+    tId: string,
+    text: string,
+    images?: File[],
+    attachments?: PageAttachment[]
+  ) => {
     const imageBase64Array =
       images && images.length > 0 ? await convertFilesToBase64Array(images) : undefined;
 
@@ -314,6 +320,7 @@ const Chat = () => {
           actionType: 'chat',
           content: text,
           images: imageBase64Array,
+          attachments,
           done: true,
           onInterrupt: false,
           stopped: false,
@@ -336,6 +343,7 @@ const Chat = () => {
       actionType: 'chat',
       content: text,
       images: imageBase64Array,
+      attachments,
       createdAt: Date.now(),
       done: true,
       onInterrupt: false,
@@ -366,13 +374,22 @@ const Chat = () => {
     prevMessageCountRef.current = messageCount;
   }, [messageCount, threadId]);
 
-  const handleSubmit = async (text: string, images?: File[]) => {
+  const threadPageUrls = useMemo(
+    () =>
+      messages.flatMap((m) => [
+        ...(m.attachments?.map((page) => page.url) ?? []),
+        ...(m.actionType === 'askForSummary' && m.summaryPageLink ? [m.summaryPageLink] : []),
+      ]),
+    [messages]
+  );
+
+  const handleSubmit = async (text: string, images?: File[], attachments?: PageAttachment[]) => {
     threadLoader.invalidate();
     setChatStatus('waiting');
 
     const tId = await checkIfThreadExists(text);
 
-    await addHumanMessage(tId, text, images);
+    await addHumanMessage(tId, text, images, attachments);
     scrollToBottomThrottled();
 
     startStream(
@@ -579,6 +596,7 @@ const Chat = () => {
       <div className="sz:w-full">
         <ChatInput
           chatStatus={chatStatus}
+          threadPageUrls={threadPageUrls}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           onOpenHistory={handleOpenHistory}

@@ -87,7 +87,12 @@
     "activateTranslateMode": "Amilisha Hali ya Tafsiri..📡 🤖 📡",
     "imageUpload": "Pakia picha",
     "imageUploadNotSupported": "Modeli ya sasa haitumii picha",
-    "contextTruncated": "Maandishi ni marefu kuliko modeli ya ndani inavyoweza kusoma kwa mara moja, kwa hiyo mwanzo wake pekee ndio ulitumika."
+    "contextTruncated": "Maandishi ni marefu kuliko modeli ya ndani inavyoweza kusoma kwa mara moja, kwa hiyo mwanzo wake pekee ndio ulitumika.",
+    "attachPage": "Ambatisha ukurasa huu",
+    "attachmentUnreadable": "Haisomeki",
+    "attachmentEmpty": "Hakuna maandishi ya kutosha",
+    "attachmentTruncated": "Kurasa zilizoambatishwa zilikuwa ndefu, kwa hivyo mwanzo wake tu ulitumwa.",
+    "askAboutPages": "Uliza kuhusu kurasa zilizoambatishwa"
   },
   "footer": {
     "joinDiscord": "Jiunge nami kwenye Discord!",

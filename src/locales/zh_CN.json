@@ -87,7 +87,12 @@
     "activateTranslateMode": "激活翻译模式..📡 🤖 📡",
     "imageUpload": "图片上传",
     "imageUploadNotSupported": "当前模型不支持图片",
-    "contextTruncated": "文本超出了本地模型一次能读取的长度，因此只使用了开头部分。"
+    "contextTruncated": "文本超出了本地模型一次能读取的长度，因此只使用了开头部分。",
+    "attachPage": "附加此页面",
+    "attachmentUnreadable": "无法读取",
+    "attachmentEmpty": "几乎没有文字",
+    "attachmentTruncated": "附加的页面太长，因此只发送了开头部分。",
+    "askAboutPages": "询问已附加的页面"
   },
   "footer": {
     "joinDiscord": "加入我的 Discord！",

@@ -87,7 +87,12 @@
     "activateTranslateMode": "เปิดใช้โหมดแปล..📡 🤖 📡",
     "imageUpload": "อัปโหลดรูปภาพ",
     "imageUploadNotSupported": "โมเดลปัจจุบันไม่รองรับรูปภาพ",
-    "contextTruncated": "ข้อความยาวเกินกว่าที่โมเดลในเครื่องอ่านได้ในครั้งเดียว จึงใช้เฉพาะส่วนต้นเท่านั้น"
+    "contextTruncated": "ข้อความยาวเกินกว่าที่โมเดลในเครื่องอ่านได้ในครั้งเดียว จึงใช้เฉพาะส่วนต้นเท่านั้น",
+    "attachPage": "แนบหน้านี้",
+    "attachmentUnreadable": "อ่านไม่ได้",
+    "attachmentEmpty": "แทบไม่มีข้อความ",
+    "attachmentTruncated": "หน้าที่แนบยาวเกินไป จึงส่งไปเฉพาะส่วนต้น",
+    "askAboutPages": "ถามเกี่ยวกับหน้าที่แนบ"
   },
   "footer": {
     "joinDiscord": "เข้าร่วมกับฉันบน Discord!",

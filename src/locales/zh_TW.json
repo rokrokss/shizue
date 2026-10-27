@@ -87,7 +87,12 @@
     "activateTranslateMode": "啟動翻譯模式..📡 🤖 📡",
     "imageUpload": "圖片上傳",
     "imageUploadNotSupported": "目前的模型不支援圖片",
-    "contextTruncated": "文字超出了本機模型一次能讀取的長度，因此只使用了開頭部分。"
+    "contextTruncated": "文字超出了本機模型一次能讀取的長度，因此只使用了開頭部分。",
+    "attachPage": "附加此頁面",
+    "attachmentUnreadable": "無法讀取",
+    "attachmentEmpty": "幾乎沒有文字",
+    "attachmentTruncated": "附加的頁面太長，因此只傳送了開頭部分。",
+    "askAboutPages": "詢問已附加的頁面"
   },
   "footer": {
     "joinDiscord": "加入我的 Discord！",

@@ -87,7 +87,12 @@
     "activateTranslateMode": "翻訳モードを有効にする..📡 🤖 📡",
     "imageUpload": "画像添付",
     "imageUploadNotSupported": "現在のモデルは画像に対応していません",
-    "contextTruncated": "ローカルモデルが一度に読める量を超えたため、長い文章の冒頭部分だけを使いました。"
+    "contextTruncated": "ローカルモデルが一度に読める量を超えたため、長い文章の冒頭部分だけを使いました。",
+    "attachPage": "このページを添付",
+    "attachmentUnreadable": "読み取れません",
+    "attachmentEmpty": "読める文章がほとんどありません",
+    "attachmentTruncated": "添付したページが長いため、冒頭部分だけを送りました。",
+    "askAboutPages": "添付したページについて聞いてください"
   },
   "footer": {
     "joinDiscord": "Discordに参加してください！",

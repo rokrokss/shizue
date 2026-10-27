@@ -87,7 +87,12 @@
     "activateTranslateMode": "Activate Translate Mode..📡 🤖 📡",
     "imageUpload": "Image Upload",
     "imageUploadNotSupported": "The current model doesn't support images",
-    "contextTruncated": "The text was longer than the local model can read at once, so only its beginning was used."
+    "contextTruncated": "The text was longer than the local model can read at once, so only its beginning was used.",
+    "attachPage": "Attach this page",
+    "attachmentUnreadable": "Can't be read",
+    "attachmentEmpty": "Little text to read",
+    "attachmentTruncated": "The attached pages were long, so only their beginning was sent.",
+    "askAboutPages": "Ask about the attached pages"
   },
   "footer": {
     "joinDiscord": "Join me on Discord!",

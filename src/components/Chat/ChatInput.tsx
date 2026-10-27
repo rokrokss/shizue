@@ -1,9 +1,14 @@
+import AttachmentChips, { AttachedTab } from '@/components/Chat/AttachmentChips';
 import Footer from '@/components/Footer';
+import { MAX_ATTACHED_TABS, SUMMARY_PAGE_TEXT_MAX_CHARS } from '@/config/constants';
 import { requestPageSummary } from '@/services/pageSummary';
+import { useActiveWebTab } from '@/hooks/activeTab';
 import { ChatStatus, isChatWaiting } from '@/hooks/chat';
 import { useThemeValue } from '@/hooks/layout';
 import { useChatModel, useLocalServerValue } from '@/hooks/models';
+import type { PageAttachment } from '@/lib/indexDB';
 import { modelSupportsImages } from '@/lib/modelRegistry';
+import { readTabPage, toPageAttachments } from '@/lib/tabText';
 import { debugLog } from '@/logs';
 import {
   EditOutlined,
@@ -22,6 +27,7 @@ import { useNavigate } from 'react-router-dom';
 
 const ChatInput = ({
   chatStatus,
+  threadPageUrls,
   onSubmit,
   onCancel,
   onOpenHistory,
@@ -30,7 +36,9 @@ const ChatInput = ({
   onTranslateMode,
 }: {
   chatStatus: ChatStatus;
-  onSubmit: (text: string, images?: File[]) => Promise<void>;
+  // Pages already in this chat (attached or summarized), not offered for attaching again.
+  threadPageUrls: string[];
+  onSubmit: (text: string, images?: File[], attachments?: PageAttachment[]) => Promise<void>;
   onCancel: () => Promise<void>;
   onOpenHistory: () => void;
   onNewChat: () => Promise<void>;
@@ -43,6 +51,16 @@ const ChatInput = ({
   const [isComposing, setIsComposing] = useState(false);
   const [isCancelHovered, setIsCancelHovered] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [attachedTabs, setAttachedTabs] = useState<AttachedTab[]>([]);
+  const [isReadingPages, setIsReadingPages] = useState(false);
+  const activeTab = useActiveWebTab();
+  const suggestedTab =
+    activeTab &&
+    attachedTabs.length < MAX_ATTACHED_TABS &&
+    !attachedTabs.some((tab) => tab.tabId === activeTab.id || tab.url === activeTab.url) &&
+    !threadPageUrls.includes(activeTab.url!)
+      ? activeTab
+      : undefined;
   const theme = useThemeValue();
   const iconColor = theme === 'dark' ? 'rgba(255,255,255,0.88)' : 'rgba(0,0,0,0.88)';
   const disabledIconColor = theme === 'dark' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)';
@@ -56,7 +74,32 @@ const ChatInput = ({
     if (!imagesSupported) setUploadedImages([]);
   }, [imagesSupported]);
 
+  // Attached tabs are read as they are now. A question is required: a page alone is a summary.
+  const handleSubmitWithPages = async (text: string) => {
+    if (text === '' || isReadingPages) return;
+    const tabs = attachedTabs;
+    setIsReadingPages(true);
+    const results = await Promise.all(tabs.map((tab) => readTabPage(tab.tabId)));
+    setIsReadingPages(false);
+
+    const pages = results.flatMap((result) => ('page' in result ? [result.page] : []));
+    if (pages.length < tabs.length) {
+      setAttachedTabs((current) =>
+        current.map((tab) => {
+          const result = results[tabs.findIndex((t) => t.tabId === tab.tabId)];
+          return { ...tab, error: result && 'error' in result ? result.error : undefined };
+        })
+      );
+      return;
+    }
+    onSubmit(text, uploadedImages, toPageAttachments(pages, SUMMARY_PAGE_TEXT_MAX_CHARS));
+    setChatInput('');
+    setUploadedImages([]);
+    setAttachedTabs([]);
+  };
+
   const handleSubmit = async (text: string) => {
+    if (attachedTabs.length > 0) return handleSubmitWithPages(text);
     if (text !== '' || uploadedImages.length > 0) {
       onSubmit(text, uploadedImages);
       setChatInput('');
@@ -359,6 +402,19 @@ const ChatInput = ({
             </Tooltip>
           </div>
         </div>
+        <AttachmentChips
+          attached={attachedTabs}
+          suggestion={suggestedTab}
+          onAttach={(tab) =>
+            setAttachedTabs((current) => [
+              ...current,
+              { tabId: tab.id!, title: tab.title ?? '', url: tab.url! },
+            ])
+          }
+          onRemove={(tabId) =>
+            setAttachedTabs((current) => current.filter((tab) => tab.tabId !== tabId))
+          }
+        />
         {uploadedImages.length > 0 && (
           <div className="sz:flex sz:flex-wrap sz:gap-2 sz:mb-2 sz:p-2">
             {uploadedImages.map((file, index) => (
@@ -404,7 +460,7 @@ const ChatInput = ({
           onPaste={handlePaste}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
-          placeholder={t('chat.askAnything')}
+          placeholder={attachedTabs.length > 0 ? t('chat.askAboutPages') : t('chat.askAnything')}
           autoSize
           className="
             sz:w-full

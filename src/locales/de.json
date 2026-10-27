@@ -87,7 +87,12 @@
     "activateTranslateMode": "Übersetzungsmodus aktivieren..📡 🤖 📡",
     "imageUpload": "Bild hochladen",
     "imageUploadNotSupported": "Das aktuelle Modell unterstützt keine Bilder",
-    "contextTruncated": "Der Text ist länger, als das lokale Modell auf einmal lesen kann, daher wurde nur der Anfang verwendet."
+    "contextTruncated": "Der Text ist länger, als das lokale Modell auf einmal lesen kann, daher wurde nur der Anfang verwendet.",
+    "attachPage": "Diese Seite anhängen",
+    "attachmentUnreadable": "Nicht lesbar",
+    "attachmentEmpty": "Kaum Text",
+    "attachmentTruncated": "Die angehängten Seiten waren lang, daher wurde nur ihr Anfang gesendet.",
+    "askAboutPages": "Frag etwas zu den angehängten Seiten"
   },
   "footer": {
     "joinDiscord": "Tritt mir auf Discord bei!",

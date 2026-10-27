@@ -87,7 +87,12 @@
     "activateTranslateMode": "Ativar modo tradução..📡 🤖 📡",
     "imageUpload": "Carregar imagem",
     "imageUploadNotSupported": "O modelo atual não suporta imagens",
-    "contextTruncated": "O texto é maior do que o modelo local consegue ler de uma vez, então só o início foi usado."
+    "contextTruncated": "O texto é maior do que o modelo local consegue ler de uma vez, então só o início foi usado.",
+    "attachPage": "Anexar esta página",
+    "attachmentUnreadable": "Não é possível ler",
+    "attachmentEmpty": "Quase sem texto",
+    "attachmentTruncated": "As páginas anexadas eram longas, então só o início foi enviado.",
+    "askAboutPages": "Pergunte sobre as páginas anexadas"
   },
   "footer": {
     "joinDiscord": "Junte-se a mim no Discord!",

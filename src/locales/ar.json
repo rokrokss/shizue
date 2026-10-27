@@ -87,7 +87,12 @@
     "activateTranslateMode": "تفعيل وضع الترجمة..📡 🤖 📡",
     "imageUpload": "رفع الصورة",
     "imageUploadNotSupported": "النموذج الحالي لا يدعم الصور",
-    "contextTruncated": "النص أطول مما يستطيع النموذج المحلي قراءته دفعة واحدة، لذا استُخدم جزؤه الأول فقط."
+    "contextTruncated": "النص أطول مما يستطيع النموذج المحلي قراءته دفعة واحدة، لذا استُخدم جزؤه الأول فقط.",
+    "attachPage": "إرفاق هذه الصفحة",
+    "attachmentUnreadable": "تتعذر قراءتها",
+    "attachmentEmpty": "لا يوجد نص يُذكر",
+    "attachmentTruncated": "كانت الصفحات المرفقة طويلة، لذا أُرسل جزؤها الأول فقط.",
+    "askAboutPages": "اسأل عن الصفحات المرفقة"
   },
   "footer": {
     "joinDiscord": "انضم إلي على Discord!",

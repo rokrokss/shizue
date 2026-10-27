@@ -87,7 +87,12 @@
     "activateTranslateMode": "I-activate ang Translation Mode..📡 🤖 📡",
     "imageUpload": "Mag-upload ng larawan",
     "imageUploadNotSupported": "Hindi sinusuportahan ng kasalukuyang modelo ang mga larawan",
-    "contextTruncated": "Mas mahaba ang teksto kaysa kayang basahin nang isang beses ng local model, kaya ang simula lang ang ginamit."
+    "contextTruncated": "Mas mahaba ang teksto kaysa kayang basahin nang isang beses ng local model, kaya ang simula lang ang ginamit.",
+    "attachPage": "Ilakip ang page na ito",
+    "attachmentUnreadable": "Hindi mabasa",
+    "attachmentEmpty": "Halos walang text",
+    "attachmentTruncated": "Mahaba ang mga nakalakip na page, kaya ang simula lang ang naipadala.",
+    "askAboutPages": "Magtanong tungkol sa mga nakalakip na page"
   },
   "footer": {
     "joinDiscord": "Sumali sa akin sa Discord!",

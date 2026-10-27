@@ -1,6 +1,15 @@
 import { ActionType } from '@/hooks/global';
 import Dexie, { Table } from 'dexie';
 
+// A tab attached to a chat message: what it showed when the message was sent.
+export interface PageAttachment {
+  title: string;
+  url: string;
+  text: string;
+  // The text was cut to fit the size limit for one message.
+  truncated?: boolean;
+}
+
 export interface Message {
   id: string;
   threadId: string;
@@ -12,6 +21,7 @@ export interface Message {
   translateMode?: boolean;
   content: string;
   images?: string[];
+  attachments?: PageAttachment[];
   createdAt: number;
   done: boolean;
   onInterrupt: boolean;

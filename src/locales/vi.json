@@ -87,7 +87,12 @@
     "activateTranslateMode": "Kích hoạt chế độ dịch..📡 🤖 📡",
     "imageUpload": "Tải ảnh lên",
     "imageUploadNotSupported": "Mô hình hiện tại không hỗ trợ hình ảnh",
-    "contextTruncated": "Văn bản dài hơn mức mô hình cục bộ đọc được một lần, nên chỉ phần đầu được sử dụng."
+    "contextTruncated": "Văn bản dài hơn mức mô hình cục bộ đọc được một lần, nên chỉ phần đầu được sử dụng.",
+    "attachPage": "Đính kèm trang này",
+    "attachmentUnreadable": "Không đọc được",
+    "attachmentEmpty": "Gần như không có chữ",
+    "attachmentTruncated": "Các trang đính kèm quá dài nên chỉ phần đầu được gửi đi.",
+    "askAboutPages": "Hỏi về các trang đã đính kèm"
   },
   "footer": {
     "joinDiscord": "Tham gia cùng tôi trên Discord!",

@@ -87,7 +87,12 @@
     "activateTranslateMode": "ترجمہ موڈ فعال کریں..📡 🤖 📡",
     "imageUpload": "تصویر اپ لوڈ",
     "imageUploadNotSupported": "موجودہ ماڈل تصاویر کو سپورٹ نہیں کرتا",
-    "contextTruncated": "متن لوکل ماڈل کی ایک بار میں پڑھنے کی حد سے لمبا ہے، اس لیے صرف ابتدائی حصہ استعمال ہوا۔"
+    "contextTruncated": "متن لوکل ماڈل کی ایک بار میں پڑھنے کی حد سے لمبا ہے، اس لیے صرف ابتدائی حصہ استعمال ہوا۔",
+    "attachPage": "یہ صفحہ منسلک کریں",
+    "attachmentUnreadable": "پڑھا نہیں جا سکتا",
+    "attachmentEmpty": "پڑھنے کو متن نہیں",
+    "attachmentTruncated": "منسلک صفحات لمبے تھے، اس لیے صرف ان کا ابتدائی حصہ بھیجا گیا۔",
+    "askAboutPages": "منسلک صفحات کے بارے میں پوچھیں"
   },
   "footer": {
     "joinDiscord": "Discord پر میرے ساتھ شامل ہوں!",

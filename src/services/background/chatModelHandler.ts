@@ -18,16 +18,22 @@ import {
 import { ActionType } from '@/hooks/global';
 import type { UserMemory } from '@/hooks/userMemory';
 import { formatImagesForMessage } from '@/lib/imageFormatHelper';
-import { db, loadThread } from '@/lib/indexDB';
+import { db, loadThread, Message } from '@/lib/indexDB';
 import {
   ChatModel,
+  ConnectionMode,
   getModelInstance,
   isLocalModel,
   localContextLength,
+  LocalServerConfig,
   ModelPreset,
   providerFromName,
 } from '@/lib/models';
-import { getInitialAIMessage, getInitialSystemMessage } from '@/lib/prompts';
+import {
+  getAttachedPagesPrompt,
+  getInitialAIMessage,
+  getInitialSystemMessage,
+} from '@/lib/prompts';
 import { readStorage } from '@/lib/storageBackend';
 import { trackStreamingTokenUsage } from '@/lib/tokenUsageTracker';
 import { debugLog, errorLog } from '@/logs';
@@ -168,6 +174,25 @@ const initialMessagesFor = (modelName: ChatModel, systemMessage: string, aiMessa
   isLocalModel(modelName)
     ? [new SystemMessage(systemMessage)]
     : [new SystemMessage(systemMessage), new AIMessage(aiMessage)];
+
+// A stored message as the model reads it. Attached pages go with their message on every turn, so
+// later questions in the chat can still refer to them.
+const toModelMessage = (
+  m: Message,
+  modelName: ChatModel,
+  connectionMode: ConnectionMode,
+  localServer?: LocalServerConfig
+) => {
+  if (m.role !== 'human') return new AIMessage(m.content);
+  const text = m.attachments?.length ? getAttachedPagesPrompt(m.content, m.attachments) : m.content;
+  if (!m.images?.length) return new HumanMessage(text);
+  return new HumanMessage({
+    content: [
+      ...(text ? [{ type: 'text', text }] : []),
+      ...formatImagesForMessage(m.images, modelName, connectionMode, localServer),
+    ],
+  });
+};
 
 export class ChatModelHandler {
   constructor() {}
@@ -323,21 +348,7 @@ export class ChatModelHandler {
 
       const messages = [
         ...initialMessagesFor(modelName, initialSystemMessage, initialAIMessage),
-        ...threadHistory.map((m) => {
-          if (m.role === 'human') {
-            if (m.images && m.images.length > 0) {
-              return new HumanMessage({
-                content: [
-                  ...(m.content ? [{ type: 'text', text: m.content }] : []),
-                  ...formatImagesForMessage(m.images, modelName, connectionMode, localServer),
-                ],
-              });
-            } else {
-              return new HumanMessage(m.content);
-            }
-          }
-          return new AIMessage(m.content);
-        }),
+        ...threadHistory.map((m) => toModelMessage(m, modelName, connectionMode, localServer)),
       ];
 
       await this._executeStreamAndUpdate(messageId, messages, port, abortController, actionType);
@@ -405,21 +416,9 @@ export class ChatModelHandler {
 
       const messagesForModel: BaseMessage[] = [
         ...initialMessagesFor(modelName, initialSystemMessage, initialAIMessage),
-        ...historyForModelInput.map((m) => {
-          if (m.role === 'human') {
-            if (m.images && m.images.length > 0) {
-              return new HumanMessage({
-                content: [
-                  ...(m.content ? [{ type: 'text', text: m.content }] : []),
-                  ...formatImagesForMessage(m.images, modelName, connectionMode, localServer),
-                ],
-              });
-            } else {
-              return new HumanMessage(m.content);
-            }
-          }
-          return new AIMessage(m.content);
-        }),
+        ...historyForModelInput.map((m) =>
+          toModelMessage(m, modelName, connectionMode, localServer)
+        ),
       ];
 
       await this._executeStreamAndUpdate(

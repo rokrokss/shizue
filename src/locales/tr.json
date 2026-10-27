@@ -87,7 +87,12 @@
     "activateTranslateMode": "Çeviri Modunu Etkinleştir..📡 🤖 📡",
     "imageUpload": "Resim yükle",
     "imageUploadNotSupported": "Mevcut model görselleri desteklemiyor",
-    "contextTruncated": "Metin, yerel modelin bir seferde okuyabileceğinden uzun olduğu için yalnızca başı kullanıldı."
+    "contextTruncated": "Metin, yerel modelin bir seferde okuyabileceğinden uzun olduğu için yalnızca başı kullanıldı.",
+    "attachPage": "Bu sayfayı ekle",
+    "attachmentUnreadable": "Okunamıyor",
+    "attachmentEmpty": "Neredeyse hiç metin yok",
+    "attachmentTruncated": "Eklenen sayfalar uzun olduğu için yalnızca başları gönderildi.",
+    "askAboutPages": "Eklenen sayfalar hakkında soru sor"
   },
   "footer": {
     "joinDiscord": "Discord'da bana katılın!",
