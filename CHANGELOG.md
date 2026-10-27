@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.3.17
+
+- Attach files to a chat: the paperclip button and drag-and-drop take text and code files as well as PDFs, and pasting more than 2,000 characters attaches the text as a "Pasted text" chip instead of filling the chat box. Pages, files and pasted text share the limit of 5
+- Type @ in the chat box to pick open tabs to attach, searched by title or site. With the tab group permission, the list can also show your tab groups and attach a whole group at once
+- Capture an area: from the paperclip button, drag over part of the current tab to send just that part as an image, for models that read images. Esc cancels
+- ↑ in an empty chat box brings back this chat's earlier questions, and ↓ goes forward again. Pressing Enter while an answer is still coming stops it and sends your new question instead
+- Math in answers is typeset, inline and as blocks, while prices like $5 stay plain text
+- Charts: when numbers suit one, answers can draw a bar, line or area chart, with a button to see the same numbers as a table
+- Web search: turn it on from the paperclip button and cloud models search the web while answering, with the sources listed under the answer. It stays on until you turn it off. Local models can't search the web
+- Auto memory: in Settings → General, turn on "Remember from chats" and Shizue picks out lasting facts about you (your work, how you like answers) from each chat you leave and uses them in later chats. Every fact is listed there to delete one by one or all at once. Off by default
+- Fix local model translations arriving all at once instead of streaming in
+
 ## v0.3.16
 
 - Attach more to a chat: the paperclip button lists the web pages open in this window to tick on or off, attaches a PDF file from your computer, and captures what the current tab shows as an image for models that read images. Pages and files share the limit of 5
