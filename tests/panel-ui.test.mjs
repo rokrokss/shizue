@@ -71,10 +71,16 @@ const stubs = {
   'react-i18next': `const t = key => key; export const useTranslation = () => ({ t });`,
   'react-router-dom': `const navigate = path => { fixture.navigation = path; }; export const useNavigate = () => navigate;`,
   '@/hooks/chat': `import { atom } from 'jotai';
+    import { threadIdAtom } from '@/hooks/global';
     export const chatStatusAtom = atom('idle');
     export const isChatIdle = status => status === 'idle';
     export const isChatWaiting = status => status === 'waiting';
-    export const createThreadMessageCountAtom = id => fixture.countAtom(id);`,
+    export const createThreadMessageCountAtom = id => fixture.countAtom(id);
+    export const switchThreadAtom = atom(null, (get, set, id) => {
+      if (id === get(threadIdAtom)) return;
+      set(chatStatusAtom, 'idle');
+      set(threadIdAtom, id);
+    });`,
   '@/hooks/portStream': 'export const useChromePortStream = () => fixture.stream;',
   '@/lib/indexDB': `export const createThread = async () => { fixture.created++; return 'created'; };
     export const addMessage = async message => {
@@ -101,7 +107,7 @@ import { Provider, atom, createStore } from 'jotai';
 import SidePanelProvider from './src/providers/SidePanelProvider';
 import Chat from './src/components/Chat';
 import { threadIdAtom } from './src/hooks/global';
-import { chatStatusAtom } from '@/hooks/chat';
+import { chatStatusAtom, switchThreadAtom } from '@/hooks/chat';
 
 const check = (condition, message) => { if (!condition) throw new Error(message); };
 const flush = async fn => { await act(async () => { await fn?.(); await new Promise(resolve => setTimeout(resolve, 0)); }); };
@@ -195,13 +201,33 @@ async function run() {
   await flush(() => resolveLoads('B'));
   check(host.textContent.includes('GREETING') && !host.textContent.includes('B CONTENT'), 'A cleared chat reappeared');
 
+  // Leaving a thread mid-answer stops that answer: the input is free again and the new choice shows.
+  await flush(() => fixture.store.set(threadIdAtom, 'B'));
+  await flush(() => resolveLoads('B'));
+  await flush(() => fixture.input.onSubmit('ASKED IN B'));
+  check(fixture.input.chatStatus === 'waiting', 'Sending did not start an answer');
+  await flush(() => fixture.input.onNewChat());
+  check(fixture.input.chatStatus === 'idle', 'A new chat mid-answer kept the input blocked');
+  check(host.textContent.includes('GREETING') && !host.textContent.includes('ASKED IN B'), 'A new chat mid-answer kept the old thread');
+  await flush(() => fixture.store.set(threadIdAtom, 'B'));
+  await flush(() => resolveLoads('B'));
+  await flush(() => fixture.input.onSubmit('ASKED AGAIN'));
+  check(fixture.input.chatStatus === 'waiting', 'Sending did not start an answer');
+  fixture.rows.set('C', [ai('C CONTENT')]);
+  await flush(() => fixture.store.set(switchThreadAtom, 'C'));
+  check(fixture.input.chatStatus === 'idle', 'Picking a thread mid-answer kept the input blocked');
+  await flush(() => resolveLoads('C'));
+  check(host.textContent.includes('C CONTENT') && !host.textContent.includes('ASKED AGAIN'), 'The picked thread did not replace the answering one');
+  await flush(() => fixture.input.onNewChat());
+  const streams = fixture.streams.length;
+
   await flush(() => fixture.store.set(threadIdAtom, 'A'));
   await flush(() => root.unmount());
   await flush(() => resolveLoads('A'));
-  check(fixture.streams.length === 1, 'An unmounted chat started a summary stream');
+  check(fixture.streams.length === streams, 'An unmounted chat started a summary stream');
   check(fixture.store.get(chatStatusAtom) === 'idle', 'Stale response changed chat status');
   document.body.dataset.result = 'passed';
-  document.getElementById('result').textContent = 'PASS: fresh panel selection, hydration, summary preparation, current-panel summary, StrictMode, stale replies, clearing, unmount';
+  document.getElementById('result').textContent = 'PASS: fresh panel selection, hydration, summary preparation, current-panel summary, StrictMode, stale replies, clearing, leaving mid-answer, unmount';
 }
 run().catch(error => {
   document.body.dataset.result = 'failed';

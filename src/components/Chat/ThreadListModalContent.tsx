@@ -1,5 +1,5 @@
 import { isSelectionActionType } from '@/config/constants';
-import { initialMessagesForAllThreadsAtom } from '@/hooks/chat';
+import { initialMessagesForAllThreadsAtom, switchThreadAtom } from '@/hooks/chat';
 import { threadIdAtom } from '@/hooks/global';
 import { getI8NLanguage, useLanguage } from '@/hooks/language';
 import { useThemeValue } from '@/hooks/layout';
@@ -9,7 +9,7 @@ import { Button } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -31,7 +31,8 @@ dayjs.extend(localizedFormat);
 const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
   const theme = useThemeValue();
   const [hoveredThreadId, setHoveredThreadId] = useState<string | null>(null);
-  const [threadId, setThreadId] = useAtom(threadIdAtom);
+  const threadId = useAtomValue(threadIdAtom);
+  const switchThread = useSetAtom(switchThreadAtom);
   const threadsWithMessages = useAtomValue(initialMessagesForAllThreadsAtom);
 
   const { t } = useTranslation();
@@ -57,7 +58,7 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
 
   const handleDeleteThread = (id: string) => {
     if (id === threadId) {
-      setThreadId(undefined);
+      switchThread(undefined);
       deleteThread(id);
       onClose();
       return;
@@ -66,7 +67,7 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
   };
 
   const handleClickThread = (id: string) => {
-    setThreadId(id);
+    switchThread(id);
     onClose();
   };
 

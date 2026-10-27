@@ -3,7 +3,7 @@ import Footer from '@/components/Footer';
 import MemoListModalContent from '@/components/Memo/MemoListModalContent';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import SettingsModal from '@/components/Setting/SettingsModal';
-import { threadIdAtom } from '@/hooks/global';
+import { switchThreadAtom } from '@/hooks/chat';
 import { getI8NLanguage, useLanguage } from '@/hooks/language';
 import { useThemeValue } from '@/hooks/layout';
 import { createMemo, listMemos, updateMemo, type Memo } from '@/lib/indexDB';
@@ -45,7 +45,7 @@ const Memo = () => {
   const [saveTimeout, setSaveTimeout] = useState<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const setThreadId = useSetAtom(threadIdAtom);
+  const switchThread = useSetAtom(switchThreadAtom);
   const { lang } = useLanguage();
 
   // Update dayjs locale when language changes
@@ -102,7 +102,7 @@ const Memo = () => {
 
   const handleNavigateToChat = async () => {
     debugLog('Memo: Navigate to chat triggered');
-    setThreadId(undefined);
+    switchThread(undefined);
     setTimeout(() => {
       navigate('/');
     }, 100);

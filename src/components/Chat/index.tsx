@@ -5,7 +5,7 @@ import TopMenu from '@/components/Chat/TopRightMenu';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import SettingsModal from '@/components/Setting/SettingsModal';
 import { isSelectionActionType, MESSAGE_LOAD_THREAD } from '@/config/constants';
-import { chatStatusAtom, createThreadMessageCountAtom, isChatIdle } from '@/hooks/chat';
+import { chatStatusAtom, createThreadMessageCountAtom, isChatIdle, switchThreadAtom } from '@/hooks/chat';
 import { ActionType, threadIdAtom } from '@/hooks/global';
 import { useThemeValue } from '@/hooks/layout';
 import { useChromePortStream } from '@/hooks/portStream';
@@ -15,7 +15,7 @@ import { throttleTrailing } from '@/lib/throttleTrailing';
 import { createThreadLoader } from '@/lib/threadLoader';
 import { debugLog, errorLog } from '@/logs';
 import { chatService } from '@/services/chatService';
-import { useAtom, useAtomValue, useStore } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom, useStore } from 'jotai';
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -50,6 +50,7 @@ const Chat = () => {
   const [isUsageOpen, setIsUsageOpen] = useState(false);
 
   const [threadId, setThreadId] = useAtom(threadIdAtom);
+  const switchThread = useSetAtom(switchThreadAtom);
   const store = useStore();
   const threadLoader = useMemo(() => createThreadLoader<Message[]>((id) =>
     chrome.runtime.sendMessage({ action: MESSAGE_LOAD_THREAD, threadId: id })
@@ -495,7 +496,7 @@ const Chat = () => {
   };
 
   const handleNewChat = async () => {
-    setThreadId(undefined);
+    switchThread(undefined);
   };
 
   const handleOpenUsage = () => {

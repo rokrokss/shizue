@@ -16,7 +16,7 @@
     "build": "wxt build",
     "zip": "wxt zip",
     "compile": "tsc --noEmit",
-    "test:chat": "node --experimental-strip-types --test tests/chat-context.test.mjs",
+    "test:chat": "node --experimental-strip-types --test tests/chat-*.test.mjs",
     "test:chatgpt": "node --experimental-strip-types --test tests/chatgpt*.test.mjs",
     "test:models": "node --experimental-strip-types --test tests/model-*.test.mjs",
     "test:panel": "node --experimental-strip-types --test tests/panel-*.test.mjs tests/content-recovery.test.mjs",
