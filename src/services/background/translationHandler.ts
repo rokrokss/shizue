@@ -123,7 +123,8 @@ const translationsSchemaFor = (modelPreset: ModelPreset, count: number) =>
     : TRANSLATIONS_JSON_SCHEMA;
 
 // MV3 stops the service worker when a fetch() response takes over 30 seconds to arrive, which one
-// batch on a slow local model can. A streamed response arrives with the first token.
+// batch on a slow local model can. A streamed response arrives with the first token. Local models
+// must be built with `streaming` on: with it off, ChatOpenAI's stream() sends an unstreamed request.
 async function invokeTranslation(
   llm: ReturnType<typeof getModelInstance>,
   prompt: string,
@@ -152,7 +153,7 @@ export class TranslationHandler {
 
       const llm = getModelInstance({
         temperature: 0.1,
-        streaming: false,
+        streaming: isLocalModel(modelPreset.modelName),
         fast: true,
         modelPreset: modelPreset,
         jsonSchema: translationsSchemaFor(modelPreset, captions.length),
@@ -304,7 +305,7 @@ export class TranslationHandler {
       const modelPreset = getTranslationModelPreset();
       const llm = getModelInstance({
         temperature: 0.1,
-        streaming: false,
+        streaming: isLocalModel(modelPreset.modelName),
         fast: true,
         modelPreset,
         jsonSchema: translationsSchemaFor(modelPreset, lines.length),
@@ -440,7 +441,7 @@ export class TranslationHandler {
     const llm = getModelInstance({
       temperature: 0.1,
       maxTokens: 5000,
-      streaming: false,
+      streaming: isLocalModel(modelPreset.modelName),
       fast: true,
       modelPreset: modelPreset,
       jsonSchema: translationsSchemaFor(modelPreset, textBatch.length),
