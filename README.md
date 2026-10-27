@@ -134,6 +134,7 @@ Requests to OpenRouter carry `HTTP-Referer: https://shizue.net` and `X-OpenRoute
 - `sidePanel`: the chat side panel
 - `activeTab`: work with the tab you're on when you open Shizue or use a right-click action
 - `contextMenus`: the right-click actions
+- `tabGroups` (optional, asked only when you click "Show tab groups" after typing @ in the chat box): list the names and colors of this window's tab groups so you can attach a whole group. They are only shown in that list, never stored or sent anywhere
 - Content scripts on all sites: the floating toggle button and page translation; on YouTube, Twitch, and Netflix, the caption button and bilingual captions
 - `declarativeNetRequestWithHostAccess` and access to `localhost`: reach a model server on your computer. Ollama rejects requests from browser extensions, so Shizue sets the `Origin` header of its own requests to Ollama to Ollama's address. During Sign in with ChatGPT, it also sends the browser's return to `127.0.0.1` to Shizue's own sign-in page. No other requests are changed.
 
