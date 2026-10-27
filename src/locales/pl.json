@@ -92,7 +92,16 @@
     "attachmentUnreadable": "Nie można odczytać",
     "attachmentEmpty": "Prawie brak tekstu",
     "attachmentTruncated": "Dołączone strony były długie, więc wysłano tylko ich początek.",
-    "askAboutPages": "Zapytaj o dołączone strony"
+    "askAboutPages": "Zapytaj o dołączone strony",
+    "attach": "Dołącz",
+    "openTabs": "Otwarte karty",
+    "noOpenTabs": "W tym oknie nie ma otwartych stron.",
+    "tabAsleep": "Uśpiona · najpierw ją otwórz",
+    "attachLimit": "Maksymalnie {{max}} kart i plików",
+    "attachPdf": "Plik PDF",
+    "captureScreen": "Zrzut ekranu",
+    "captureFailed": "Nie można przechwycić tego ekranu.",
+    "searchChats": "Szukaj w czatach"
   },
   "footer": {
     "joinDiscord": "Dołącz do mnie na Discordzie!",

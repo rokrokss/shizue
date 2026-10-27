@@ -92,7 +92,16 @@
     "attachmentUnreadable": "無法讀取",
     "attachmentEmpty": "幾乎沒有文字",
     "attachmentTruncated": "附加的頁面太長，因此只傳送了開頭部分。",
-    "askAboutPages": "詢問已附加的頁面"
+    "askAboutPages": "詢問已附加的頁面",
+    "attach": "附加",
+    "openTabs": "已開啟的分頁",
+    "noOpenTabs": "此視窗中沒有開啟的網頁。",
+    "tabAsleep": "已休眠 · 請先開啟",
+    "attachLimit": "最多可附加 {{max}} 個分頁和檔案",
+    "attachPdf": "PDF 檔案",
+    "captureScreen": "螢幕截圖",
+    "captureFailed": "無法擷取此畫面。",
+    "searchChats": "搜尋對話"
   },
   "footer": {
     "joinDiscord": "加入我的 Discord！",

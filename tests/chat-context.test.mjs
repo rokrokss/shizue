@@ -64,6 +64,17 @@ Price: 12 dollars
 ===end of attached page 2===`);
 });
 
+test('a PDF file from the computer has no url line', () => {
+  const prompt = getAttachedPagesPrompt('Summarize it', [
+    { title: 'report.pdf', url: '', text: 'Quarterly sales rose.', pdf: true },
+  ]);
+  assert.ok(prompt.endsWith(`===attached page 1===
+title: report.pdf
+
+Quarterly sales rose.
+===end of attached page 1===`));
+});
+
 test('pages share the budget equally; those over their share are cut and marked', () => {
   const short = { title: 'Short', url: 'https://short.example', text: 'a'.repeat(30) };
   const long = { title: 'Long', url: 'https://long.example', text: 'b'.repeat(100) };

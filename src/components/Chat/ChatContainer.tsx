@@ -5,7 +5,7 @@ import { isSelectionActionType } from '@/config/constants';
 import { useThemeValue } from '@/hooks/layout';
 import useStreamText from '@/hooks/useStreamText';
 import { hashStringToIndex } from '@/lib/hash';
-import { InfoCircleOutlined, LinkOutlined } from '@ant-design/icons';
+import { FilePdfOutlined, InfoCircleOutlined, LinkOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 import Markdown from 'react-markdown';
@@ -191,24 +191,34 @@ const ChatContainer = ({
                 !m.translateMode ? (
                   <div className="sz:flex sz:flex-col sz:whitespace-pre-wrap sz:break-keep sz:text-left">
                     {m.content}
-                    {m.attachments?.map((page, pageIdx) => (
-                      <a
-                        key={`${idx}-page-${pageIdx}`}
-                        href={page.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="sz:pt-1"
-                      >
+                    {m.attachments?.map((page, pageIdx) => {
+                      const row = (
                         <div className="sz:flex sz:flex-row sz:items-center sz:gap-1">
-                          <LinkOutlined />
+                          {page.pdf ? <FilePdfOutlined /> : <LinkOutlined />}
                           <div className="sz:text-sm sz:text-gray-500 sz:pb-[2px]">
                             {(page.title || page.url).length > 25
                               ? (page.title || page.url).slice(0, 25) + '...'
                               : page.title || page.url}
                           </div>
                         </div>
-                      </a>
-                    ))}
+                      );
+                      // A PDF file from the computer has no address to open.
+                      return page.url ? (
+                        <a
+                          key={`${idx}-page-${pageIdx}`}
+                          href={page.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="sz:pt-1"
+                        >
+                          {row}
+                        </a>
+                      ) : (
+                        <div key={`${idx}-page-${pageIdx}`} className="sz:pt-1">
+                          {row}
+                        </div>
+                      );
+                    })}
                     {m.attachments?.some((page) => page.truncated) ? (
                       <div className="sz:flex sz:flex-row sz:items-start sz:gap-1 sz:text-xs sz:text-gray-500 sz:pt-1">
                         <InfoCircleOutlined className="sz:pt-[2px]" />

@@ -1,11 +1,14 @@
+import { isSelectionActionType } from '@/config/constants';
 import { ActionType } from '@/hooks/global';
 import Dexie, { Table } from 'dexie';
 
-// A tab attached to a chat message: what it showed when the message was sent.
+// A tab or PDF file attached to a chat message: its text when the message was sent.
 export interface PageAttachment {
   title: string;
+  // Empty for a PDF file picked from the computer.
   url: string;
   text: string;
+  pdf?: boolean;
   // The text was cut to fit the size limit for one message.
   truncated?: boolean;
 }
@@ -152,6 +155,40 @@ export const getInitialMessagesForAllThreads = async (): Promise<ThreadWithIniti
   }
 
   return result;
+};
+
+// The text a message shows in the chat: a summary request shows its page's title and a selection
+// action the selected text, not the page text sent with them. The translate mode prompt is fixed.
+const shownText = (m: Message) =>
+  m.role !== 'human'
+    ? m.content
+    : m.translateMode
+    ? ''
+    : m.actionType === 'askForSummary'
+    ? m.summaryTitle ?? ''
+    : isSelectionActionType(m.actionType)
+    ? m.selectionText ?? ''
+    : m.content;
+
+export interface ThreadSearchHit {
+  // The first matching message's shown text, and where the match starts in it.
+  text: string;
+  index: number;
+}
+
+// Threads with a message whose shown text contains `query`, ignoring case.
+export const searchThreads = async (query: string) => {
+  const needle = query.toLowerCase();
+  const hits = new Map<string, ThreadSearchHit & { createdAt: number }>();
+  await db.messages.each((m) => {
+    const text = shownText(m);
+    const index = text.toLowerCase().indexOf(needle);
+    const hit = hits.get(m.threadId);
+    if (index >= 0 && (!hit || m.createdAt < hit.createdAt)) {
+      hits.set(m.threadId, { text, index, createdAt: m.createdAt });
+    }
+  });
+  return hits as Map<string, ThreadSearchHit>;
 };
 
 // Token usage related functions

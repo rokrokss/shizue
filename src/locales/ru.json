@@ -92,7 +92,16 @@
     "attachmentUnreadable": "Не удаётся прочитать",
     "attachmentEmpty": "Почти нет текста",
     "attachmentTruncated": "Прикреплённые страницы были длинными, поэтому отправлено только их начало.",
-    "askAboutPages": "Спросите о прикреплённых страницах"
+    "askAboutPages": "Спросите о прикреплённых страницах",
+    "attach": "Прикрепить",
+    "openTabs": "Открытые вкладки",
+    "noOpenTabs": "В этом окне нет открытых веб-страниц.",
+    "tabAsleep": "Выгружена · сначала откройте",
+    "attachLimit": "Не больше {{max}} вкладок и файлов",
+    "attachPdf": "Файл PDF",
+    "captureScreen": "Снимок экрана",
+    "captureFailed": "Этот экран нельзя снять.",
+    "searchChats": "Поиск по чатам"
   },
   "footer": {
     "joinDiscord": "Присоединяйтесь ко мне в Discord!",

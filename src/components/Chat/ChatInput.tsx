@@ -1,4 +1,5 @@
-import AttachmentChips, { AttachedTab } from '@/components/Chat/AttachmentChips';
+import AttachMenu from '@/components/Chat/AttachMenu';
+import AttachmentChips, { AttachedItem } from '@/components/Chat/AttachmentChips';
 import Footer from '@/components/Footer';
 import { MAX_ATTACHED_TABS, SUMMARY_PAGE_TEXT_MAX_CHARS } from '@/config/constants';
 import { requestPageSummary } from '@/services/pageSummary';
@@ -8,7 +9,7 @@ import { useThemeValue } from '@/hooks/layout';
 import { useChatModel, useLocalServerValue } from '@/hooks/models';
 import type { PageAttachment } from '@/lib/indexDB';
 import { modelSupportsImages } from '@/lib/modelRegistry';
-import { readTabPage, toPageAttachments } from '@/lib/tabText';
+import { PageRead, readPdfPage, readTabPage, toPageAttachments } from '@/lib/tabText';
 import { debugLog } from '@/logs';
 import {
   EditOutlined,
@@ -49,13 +50,14 @@ const ChatInput = ({
   const [summaryFailed, setSummaryFailed] = useState(false);
   const [isComposing, setIsComposing] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
-  const [attachedTabs, setAttachedTabs] = useState<AttachedTab[]>([]);
+  const [attached, setAttached] = useState<AttachedItem[]>([]);
   const [isReadingPages, setIsReadingPages] = useState(false);
+  const [captureFailed, setCaptureFailed] = useState(false);
   const activeTab = useActiveWebTab();
   const suggestedTab =
     activeTab &&
-    attachedTabs.length < MAX_ATTACHED_TABS &&
-    !attachedTabs.some((tab) => tab.tabId === activeTab.id || tab.url === activeTab.url) &&
+    attached.length < MAX_ATTACHED_TABS &&
+    !attached.some((item) => item.tabId === activeTab.id || item.url === activeTab.url) &&
     !threadPageUrls.includes(activeTab.url!)
       ? activeTab
       : undefined;
@@ -72,20 +74,29 @@ const ChatInput = ({
     if (!imagesSupported) setUploadedImages([]);
   }, [imagesSupported]);
 
-  // Attached tabs are read as they are now. A question is required: a page alone is a summary.
+  // Attached tabs are read as they are now; PDF files were read when picked. A question is
+  // required: a page alone is a summary.
   const handleSubmitWithPages = async (text: string) => {
-    if (text === '' || isReadingPages) return;
-    const tabs = attachedTabs;
+    if (text === '' || isReadingPages || attached.some((item) => item.loading)) return;
+    const items = attached;
     setIsReadingPages(true);
-    const results = await Promise.all(tabs.map((tab) => readTabPage(tab.tabId)));
+    const results = await Promise.all(
+      items.map((item): PageRead | Promise<PageRead> =>
+        item.tabId !== undefined
+          ? readTabPage(item.tabId)
+          : item.page
+          ? { page: item.page }
+          : { error: item.error ?? 'unreadable' }
+      )
+    );
     setIsReadingPages(false);
 
     const pages = results.flatMap((result) => ('page' in result ? [result.page] : []));
-    if (pages.length < tabs.length) {
-      setAttachedTabs((current) =>
-        current.map((tab) => {
-          const result = results[tabs.findIndex((t) => t.tabId === tab.tabId)];
-          return { ...tab, error: result && 'error' in result ? result.error : undefined };
+    if (pages.length < items.length) {
+      setAttached((current) =>
+        current.map((item) => {
+          const result = results[items.findIndex((i) => i.key === item.key)];
+          return { ...item, error: result && 'error' in result ? result.error : undefined };
         })
       );
       return;
@@ -93,11 +104,48 @@ const ChatInput = ({
     onSubmit(text, uploadedImages, toPageAttachments(pages, SUMMARY_PAGE_TEXT_MAX_CHARS));
     setChatInput('');
     setUploadedImages([]);
-    setAttachedTabs([]);
+    setAttached([]);
+  };
+
+  const attachTab = (tab: chrome.tabs.Tab) =>
+    setAttached((current) => [
+      ...current,
+      { key: `tab-${tab.id}`, tabId: tab.id!, title: tab.title ?? '', url: tab.url! },
+    ]);
+
+  const handleToggleTab = (tab: chrome.tabs.Tab, attach: boolean) => {
+    if (attach) attachTab(tab);
+    else setAttached((current) => current.filter((item) => item.tabId !== tab.id));
+  };
+
+  const handlePickPdf = async (file: File) => {
+    const key = crypto.randomUUID();
+    setAttached((current) => [...current, { key, title: file.name, url: '', pdf: true, loading: true }]);
+    const result = await readPdfPage(await file.arrayBuffer(), file.name, '');
+    setAttached((current) =>
+      current.map((item) =>
+        item.key === key
+          ? { ...item, loading: false, ...('page' in result ? { page: result.page } : { error: result.error }) }
+          : item
+      )
+    );
+  };
+
+  // What the side panel's window shows now, attached like any other image.
+  const handleCapture = async () => {
+    setCaptureFailed(false);
+    try {
+      const dataUrl = await chrome.tabs.captureVisibleTab({ format: 'jpeg', quality: 90 });
+      const blob = await (await fetch(dataUrl)).blob();
+      setUploadedImages((prev) => [...prev, new File([blob], 'screenshot.jpg', { type: blob.type })]);
+    } catch (error) {
+      debugLog('ChatInput: [handleCapture] error', error);
+      setCaptureFailed(true);
+    }
   };
 
   const handleSubmit = async (text: string) => {
-    if (attachedTabs.length > 0) return handleSubmitWithPages(text);
+    if (attached.length > 0) return handleSubmitWithPages(text);
     if (text !== '' || uploadedImages.length > 0) {
       onSubmit(text, uploadedImages);
       setChatInput('');
@@ -191,6 +239,8 @@ const ChatInput = ({
     <div className="sz-chat-input sz:w-full sz:px-2 sz:flex sz:flex-col sz:items-center sz:justify-center">
       {summaryFailed && <Alert type="warning" showIcon closable onClose={() => setSummaryFailed(false)}
         className="sz:w-full sz:mb-2 sz:font-ycom" message={t('chat.pageUnavailable')} />}
+      {captureFailed && <Alert type="warning" showIcon closable onClose={() => setCaptureFailed(false)}
+        className="sz:w-full sz:mb-2 sz:font-ycom" message={t('chat.captureFailed')} />}
       <div className="sz:flex sz:flex-col sz:w-full sz:h-45 sz:px-2">
         <div className="sz:flex sz:items-center sz:justify-center">
           <div className="sz:flex sz:w-full sz:items-center sz:justify-start">
@@ -342,6 +392,15 @@ const ChatInput = ({
                 ></Button>
               </Upload>
             </Tooltip>
+            <AttachMenu
+              attachedTabIds={attached.flatMap((item) => (item.tabId !== undefined ? [item.tabId] : []))}
+              full={attached.length >= MAX_ATTACHED_TABS}
+              imagesSupported={imagesSupported}
+              iconColor={iconColor}
+              onToggleTab={handleToggleTab}
+              onPickPdf={handlePickPdf}
+              onCapture={handleCapture}
+            />
             <Tooltip
               placement="top"
               title={
@@ -401,17 +460,10 @@ const ChatInput = ({
           </div>
         </div>
         <AttachmentChips
-          attached={attachedTabs}
+          attached={attached}
           suggestion={suggestedTab}
-          onAttach={(tab) =>
-            setAttachedTabs((current) => [
-              ...current,
-              { tabId: tab.id!, title: tab.title ?? '', url: tab.url! },
-            ])
-          }
-          onRemove={(tabId) =>
-            setAttachedTabs((current) => current.filter((tab) => tab.tabId !== tabId))
-          }
+          onAttach={attachTab}
+          onRemove={(key) => setAttached((current) => current.filter((item) => item.key !== key))}
         />
         {uploadedImages.length > 0 && (
           <div className="sz:flex sz:flex-wrap sz:gap-2 sz:mb-2 sz:p-2">
@@ -458,7 +510,7 @@ const ChatInput = ({
           onPaste={handlePaste}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
-          placeholder={attachedTabs.length > 0 ? t('chat.askAboutPages') : t('chat.askAnything')}
+          placeholder={attached.length > 0 ? t('chat.askAboutPages') : t('chat.askAnything')}
           autoSize
           className="
             sz:w-full

@@ -3,9 +3,14 @@ import { initialMessagesForAllThreadsAtom, switchThreadAtom } from '@/hooks/chat
 import { threadIdAtom } from '@/hooks/global';
 import { getI8NLanguage, useLanguage } from '@/hooks/language';
 import { useThemeValue } from '@/hooks/layout';
-import { deleteThread, ThreadWithInitialMessages } from '@/lib/indexDB';
+import {
+  deleteThread,
+  searchThreads,
+  ThreadSearchHit,
+  ThreadWithInitialMessages,
+} from '@/lib/indexDB';
 import { DeleteOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button, Input } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
@@ -28,12 +33,47 @@ import 'dayjs/locale/zh';
 dayjs.extend(relativeTime);
 dayjs.extend(localizedFormat);
 
+// A line of the matching message from a little before the match, with the match marked.
+const SearchSnippet = ({
+  hit,
+  length,
+  theme,
+}: {
+  hit: ThreadSearchHit;
+  length: number;
+  theme: string;
+}) => {
+  const start = Math.max(0, hit.index - 10);
+  const line = (text: string) => text.replace(/\s+/g, ' ');
+  return (
+    <>
+      {start > 0 ? '…' : ''}
+      {line(hit.text.slice(start, hit.index))}
+      <mark
+        className={`sz:rounded-sm sz:px-0.5 ${
+          theme == 'dark' ? 'sz:bg-sz-cyan/35 sz:text-white' : 'sz:bg-sz-cyan/30 sz:text-black'
+        }`}
+      >
+        {line(hit.text.slice(hit.index, hit.index + length))}
+      </mark>
+      {line(hit.text.slice(hit.index + length))}
+    </>
+  );
+};
+
 const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
   const theme = useThemeValue();
   const [hoveredThreadId, setHoveredThreadId] = useState<string | null>(null);
   const threadId = useAtomValue(threadIdAtom);
   const switchThread = useSetAtom(switchThreadAtom);
   const threadsWithMessages = useAtomValue(initialMessagesForAllThreadsAtom);
+  const [query, setQuery] = useState('');
+  // The threads matching the query, by id, once the search for it is done.
+  const [hits, setHits] = useState<Map<string, ThreadSearchHit> | null>(null);
+  const searched = query.trim();
+  const shownThreads = hits
+    ? threadsWithMessages?.filter((thread) => hits.has(thread.threadId))
+    : threadsWithMessages;
 
   const { t } = useTranslation();
   const { lang } = useLanguage();
@@ -55,6 +95,23 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
       }
     }
   }, [lang]);
+
+  // Searches every message once typing pauses; a later query's result replaces an earlier one's.
+  useEffect(() => {
+    if (!searched) {
+      setHits(null);
+      return;
+    }
+    let current = true;
+    const timer = setTimeout(async () => {
+      const result = await searchThreads(searched);
+      if (current) setHits(result);
+    }, 150);
+    return () => {
+      current = false;
+      clearTimeout(timer);
+    };
+  }, [searched, threadsWithMessages]);
 
   const handleDeleteThread = (id: string) => {
     if (id === threadId) {
@@ -93,9 +150,17 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
       >
         {t('chat.history')}
       </div>
+      <Input
+        placeholder={t('chat.searchChats')}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        className={`sz:font-ycom sz:mb-4 ${theme === 'dark' ? 'dark-input' : ''}`}
+        allowClear
+      />
       <div className="sz:flex sz:flex-col sz:gap-3 sz:overflow-y-auto sz:scrollbar-hidden sz:max-h-[70vh]">
-        {threadsWithMessages && threadsWithMessages.length > 0 ? (
-          threadsWithMessages.map((thread) => {
+        {shownThreads && shownThreads.length > 0 ? (
+          shownThreads.map((thread) => {
+            const hit = hits?.get(thread.threadId);
             const isSelected = thread.threadId === threadId;
             const isHovered = hoveredThreadId === thread.threadId;
             return (
@@ -159,7 +224,11 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
                       }}
                     >
                       <div className="sz:text-sm sz:overflow-hidden sz:text-ellipsis sz:whitespace-nowrap sz:pt-[3px]">
-                        {'> ' + thread.secondMessage?.content}
+                        {hit ? (
+                          <SearchSnippet hit={hit} length={searched.length} theme={theme} />
+                        ) : (
+                          '> ' + thread.secondMessage?.content
+                        )}
                       </div>
                       <div className="sz:text-xs sz:text-gray-500 sz:flex sz:flex-row sz:gap-1 sz:w-6">
                         <div
@@ -182,8 +251,10 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
               </div>
             );
           })
-        ) : threadsWithMessages ? (
-          <div className="sz:text-center sz:text-gray-500 sz:text-base">{t('chat.empty')}</div>
+        ) : shownThreads ? (
+          <div className="sz:text-center sz:text-gray-500 sz:text-base">
+            {hits ? t('memo.noSearchResults') : t('chat.empty')}
+          </div>
         ) : null}
       </div>
     </>

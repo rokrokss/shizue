@@ -92,7 +92,16 @@
     "attachmentUnreadable": "อ่านไม่ได้",
     "attachmentEmpty": "แทบไม่มีข้อความ",
     "attachmentTruncated": "หน้าที่แนบยาวเกินไป จึงส่งไปเฉพาะส่วนต้น",
-    "askAboutPages": "ถามเกี่ยวกับหน้าที่แนบ"
+    "askAboutPages": "ถามเกี่ยวกับหน้าที่แนบ",
+    "attach": "แนบ",
+    "openTabs": "แท็บที่เปิดอยู่",
+    "noOpenTabs": "ไม่มีหน้าเว็บเปิดอยู่ในหน้าต่างนี้",
+    "tabAsleep": "พักอยู่ · เปิดก่อน",
+    "attachLimit": "แนบได้สูงสุด {{max}} รายการ",
+    "attachPdf": "ไฟล์ PDF",
+    "captureScreen": "ภาพหน้าจอ",
+    "captureFailed": "ไม่สามารถจับภาพหน้าจอนี้ได้",
+    "searchChats": "ค้นหาแชท"
   },
   "footer": {
     "joinDiscord": "เข้าร่วมกับฉันบน Discord!",

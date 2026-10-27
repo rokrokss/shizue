@@ -1,4 +1,6 @@
 import tailwindcss from '@tailwindcss/vite';
+import { readdirSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import svgr from 'vite-plugin-svgr';
 import { defineConfig, type UserManifest } from 'wxt';
@@ -33,8 +35,9 @@ export default defineConfig({
         'declarativeNetRequestWithHostAccess',
       ],
       // Reconnect the same web pages our declarative content scripts already run on.
-      // This also covers the local model endpoints.
-      host_permissions: ['http://*/*', 'https://*/*'],
+      // This also covers the local model endpoints. chrome.tabs.captureVisibleTab needs <all_urls>
+      // itself rather than http and https; the content scripts' <all_urls> already warns of it.
+      host_permissions: ['<all_urls>'],
       default_locale: 'en',
       side_panel: {
         default_path: 'sidepanel.html',
@@ -76,6 +79,13 @@ export default defineConfig({
     'build:manifestGenerated': (wxt, manifest) => {
       if (wxt.config.mode === 'development') {
         manifest.action.default_title += ' [DEV]';
+      }
+    },
+    // The character maps pdf.js needs for CJK PDFs whose fonts don't embed them (src/lib/pdfText.ts).
+    'build:publicAssets': (wxt, files) => {
+      const cmaps = resolve(wxt.config.root, 'node_modules/pdfjs-dist/cmaps');
+      for (const name of readdirSync(cmaps)) {
+        files.push({ absoluteSrc: resolve(cmaps, name), relativeDest: `pdfjs/cmaps/${name}` });
       }
     },
   },

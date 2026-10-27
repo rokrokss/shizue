@@ -92,7 +92,16 @@
     "attachmentUnreadable": "Okunamıyor",
     "attachmentEmpty": "Neredeyse hiç metin yok",
     "attachmentTruncated": "Eklenen sayfalar uzun olduğu için yalnızca başları gönderildi.",
-    "askAboutPages": "Eklenen sayfalar hakkında soru sor"
+    "askAboutPages": "Eklenen sayfalar hakkında soru sor",
+    "attach": "Ekle",
+    "openTabs": "Açık sekmeler",
+    "noOpenTabs": "Bu pencerede açık web sayfası yok.",
+    "tabAsleep": "Uykuda · önce açın",
+    "attachLimit": "En fazla {{max}} sekme ve dosya",
+    "attachPdf": "PDF dosyası",
+    "captureScreen": "Ekran görüntüsü",
+    "captureFailed": "Bu ekranın görüntüsü alınamıyor.",
+    "searchChats": "Sohbetlerde ara"
   },
   "footer": {
     "joinDiscord": "Discord'da bana katılın!",

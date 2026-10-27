@@ -84,8 +84,7 @@ export const getAttachedPagesPrompt = (question: string, pages: PageAttachment[]
   const blocks = pages.map(
     (page, i) => `===attached page ${i + 1}===
 title: ${page.title}
-url: ${page.url}
-${page.truncated ? "(this page's text was cut to fit)\n" : ''}
+${page.url ? `url: ${page.url}\n` : ''}${page.truncated ? "(this page's text was cut to fit)\n" : ''}
 ${page.text}
 ===end of attached page ${i + 1}===`
   );

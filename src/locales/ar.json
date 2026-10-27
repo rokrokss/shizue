@@ -92,7 +92,16 @@
     "attachmentUnreadable": "تتعذر قراءتها",
     "attachmentEmpty": "لا يوجد نص يُذكر",
     "attachmentTruncated": "كانت الصفحات المرفقة طويلة، لذا أُرسل جزؤها الأول فقط.",
-    "askAboutPages": "اسأل عن الصفحات المرفقة"
+    "askAboutPages": "اسأل عن الصفحات المرفقة",
+    "attach": "إرفاق",
+    "openTabs": "علامات التبويب المفتوحة",
+    "noOpenTabs": "لا توجد صفحات ويب مفتوحة في هذه النافذة.",
+    "tabAsleep": "نائمة · افتحها أولًا",
+    "attachLimit": "يمكن إرفاق {{max}} علامات تبويب وملفات كحد أقصى",
+    "attachPdf": "ملف PDF",
+    "captureScreen": "لقطة شاشة",
+    "captureFailed": "لا يمكن التقاط هذه الشاشة.",
+    "searchChats": "البحث في المحادثات"
   },
   "footer": {
     "joinDiscord": "انضم إلي على Discord!",

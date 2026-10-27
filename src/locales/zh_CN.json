@@ -92,7 +92,16 @@
     "attachmentUnreadable": "无法读取",
     "attachmentEmpty": "几乎没有文字",
     "attachmentTruncated": "附加的页面太长，因此只发送了开头部分。",
-    "askAboutPages": "询问已附加的页面"
+    "askAboutPages": "询问已附加的页面",
+    "attach": "附加",
+    "openTabs": "已打开的标签页",
+    "noOpenTabs": "此窗口中没有打开的网页。",
+    "tabAsleep": "已休眠 · 请先打开",
+    "attachLimit": "最多可附加 {{max}} 个标签页和文件",
+    "attachPdf": "PDF 文件",
+    "captureScreen": "截图",
+    "captureFailed": "无法截取此屏幕。",
+    "searchChats": "搜索对话"
   },
   "footer": {
     "joinDiscord": "加入我的 Discord！",

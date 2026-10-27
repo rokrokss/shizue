@@ -92,7 +92,16 @@
     "attachmentUnreadable": "Haisomeki",
     "attachmentEmpty": "Hakuna maandishi ya kutosha",
     "attachmentTruncated": "Kurasa zilizoambatishwa zilikuwa ndefu, kwa hivyo mwanzo wake tu ulitumwa.",
-    "askAboutPages": "Uliza kuhusu kurasa zilizoambatishwa"
+    "askAboutPages": "Uliza kuhusu kurasa zilizoambatishwa",
+    "attach": "Ambatisha",
+    "openTabs": "Vichupo vilivyofunguliwa",
+    "noOpenTabs": "Hakuna ukurasa wa wavuti uliofunguliwa katika dirisha hili.",
+    "tabAsleep": "Kimelala · kifungue kwanza",
+    "attachLimit": "Hadi vichupo na faili {{max}}",
+    "attachPdf": "Faili ya PDF",
+    "captureScreen": "Picha ya skrini",
+    "captureFailed": "Skrini hii haiwezi kunaswa.",
+    "searchChats": "Tafuta mazungumzo"
   },
   "footer": {
     "joinDiscord": "Jiunge nami kwenye Discord!",

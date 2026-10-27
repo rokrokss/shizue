@@ -4,7 +4,7 @@ import { build } from 'esbuild';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
-test('opening a new chat does not eagerly load charts, secondary screens, Markdown or every locale', async () => {
+test('opening a new chat does not eagerly load charts, secondary screens, Markdown, pdf.js or every locale', async () => {
   const root = fileURLToPath(new URL('..', import.meta.url));
   const { metafile } = await build({
     absWorkingDir: root,
@@ -33,7 +33,7 @@ test('opening a new chat does not eagerly load charts, secondary screens, Markdo
   const eager = [...eagerInputs].join('\n');
   assert.match(eager, /components\/Chat\/ChatInput\.tsx/);
   assert.match(eager, /components\/Chat\/ChatGreeting\.tsx/);
-  assert.doesNotMatch(eager, /recharts|react-markdown|remark-gfm|src\/locales\//);
+  assert.doesNotMatch(eager, /recharts|react-markdown|remark-gfm|pdfjs-dist|src\/locales\//);
   for (const feature of ['TokenUsageModalContent', 'ThreadListModalContent', 'SettingsModalContent',
     'components/Memo/index.tsx', 'Onboarding/Onboarding.tsx']) {
     assert.ok(!eager.includes(feature), `${feature} is back in the initial chat bundle`);

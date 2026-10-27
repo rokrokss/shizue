@@ -92,7 +92,16 @@
     "attachmentUnreadable": "पढ़ा नहीं जा सकता",
     "attachmentEmpty": "पढ़ने लायक टेक्स्ट नहीं",
     "attachmentTruncated": "जोड़े गए पेज लंबे थे, इसलिए केवल उनका शुरुआती हिस्सा भेजा गया।",
-    "askAboutPages": "जोड़े गए पेजों के बारे में पूछें"
+    "askAboutPages": "जोड़े गए पेजों के बारे में पूछें",
+    "attach": "जोड़ें",
+    "openTabs": "खुले टैब",
+    "noOpenTabs": "इस विंडो में कोई वेब पेज खुला नहीं है।",
+    "tabAsleep": "निष्क्रिय · पहले खोलें",
+    "attachLimit": "अधिकतम {{max}} टैब और फ़ाइलें",
+    "attachPdf": "PDF फ़ाइल",
+    "captureScreen": "स्क्रीनशॉट",
+    "captureFailed": "इस स्क्रीन को कैप्चर नहीं किया जा सकता।",
+    "searchChats": "चैट खोजें"
   },
   "footer": {
     "joinDiscord": "Discord पर मुझसे जुड़ें!",

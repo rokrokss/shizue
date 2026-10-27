@@ -92,7 +92,16 @@
     "attachmentUnreadable": "Can't be read",
     "attachmentEmpty": "Little text to read",
     "attachmentTruncated": "The attached pages were long, so only their beginning was sent.",
-    "askAboutPages": "Ask about the attached pages"
+    "askAboutPages": "Ask about the attached pages",
+    "attach": "Attach",
+    "openTabs": "Open tabs",
+    "noOpenTabs": "No web pages are open in this window.",
+    "tabAsleep": "Asleep · open it first",
+    "attachLimit": "Up to {{max}} tabs and files",
+    "attachPdf": "PDF file",
+    "captureScreen": "Screenshot",
+    "captureFailed": "This screen can't be captured.",
+    "searchChats": "Search chats"
   },
   "footer": {
     "joinDiscord": "Join me on Discord!",

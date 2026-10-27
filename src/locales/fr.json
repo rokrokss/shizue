@@ -92,7 +92,16 @@
     "attachmentUnreadable": "Illisible",
     "attachmentEmpty": "Presque pas de texte",
     "attachmentTruncated": "Les pages jointes étaient longues, seul leur début a donc été envoyé.",
-    "askAboutPages": "Posez une question sur les pages jointes"
+    "askAboutPages": "Posez une question sur les pages jointes",
+    "attach": "Joindre",
+    "openTabs": "Onglets ouverts",
+    "noOpenTabs": "Aucune page web n'est ouverte dans cette fenêtre.",
+    "tabAsleep": "En veille · ouvrez-le d'abord",
+    "attachLimit": "Jusqu'à {{max}} onglets et fichiers",
+    "attachPdf": "Fichier PDF",
+    "captureScreen": "Capture d'écran",
+    "captureFailed": "Impossible de capturer cet écran.",
+    "searchChats": "Rechercher dans les discussions"
   },
   "footer": {
     "joinDiscord": "Rejoignez-moi sur Discord !",

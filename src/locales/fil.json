@@ -92,7 +92,16 @@
     "attachmentUnreadable": "Hindi mabasa",
     "attachmentEmpty": "Halos walang text",
     "attachmentTruncated": "Mahaba ang mga nakalakip na page, kaya ang simula lang ang naipadala.",
-    "askAboutPages": "Magtanong tungkol sa mga nakalakip na page"
+    "askAboutPages": "Magtanong tungkol sa mga nakalakip na page",
+    "attach": "Ilakip",
+    "openTabs": "Mga bukas na tab",
+    "noOpenTabs": "Walang bukas na web page sa window na ito.",
+    "tabAsleep": "Tulog · buksan muna",
+    "attachLimit": "Hanggang {{max}} tab at file",
+    "attachPdf": "PDF file",
+    "captureScreen": "Screenshot",
+    "captureFailed": "Hindi ma-capture ang screen na ito.",
+    "searchChats": "Maghanap sa mga chat"
   },
   "footer": {
     "joinDiscord": "Sumali sa akin sa Discord!",

@@ -92,7 +92,16 @@
     "attachmentUnreadable": "No se puede leer",
     "attachmentEmpty": "Casi no tiene texto",
     "attachmentTruncated": "Las páginas adjuntas eran largas, así que solo se envió su comienzo.",
-    "askAboutPages": "Pregunta sobre las páginas adjuntas"
+    "askAboutPages": "Pregunta sobre las páginas adjuntas",
+    "attach": "Adjuntar",
+    "openTabs": "Pestañas abiertas",
+    "noOpenTabs": "No hay páginas web abiertas en esta ventana.",
+    "tabAsleep": "Inactiva · ábrela primero",
+    "attachLimit": "Hasta {{max}} pestañas y archivos",
+    "attachPdf": "Archivo PDF",
+    "captureScreen": "Captura de pantalla",
+    "captureFailed": "No se puede capturar esta pantalla.",
+    "searchChats": "Buscar chats"
   },
   "footer": {
     "joinDiscord": "¡Únete a mí en Discord!",

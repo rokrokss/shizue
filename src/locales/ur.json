@@ -92,7 +92,16 @@
     "attachmentUnreadable": "پڑھا نہیں جا سکتا",
     "attachmentEmpty": "پڑھنے کو متن نہیں",
     "attachmentTruncated": "منسلک صفحات لمبے تھے، اس لیے صرف ان کا ابتدائی حصہ بھیجا گیا۔",
-    "askAboutPages": "منسلک صفحات کے بارے میں پوچھیں"
+    "askAboutPages": "منسلک صفحات کے بارے میں پوچھیں",
+    "attach": "منسلک کریں",
+    "openTabs": "کھلے ٹیب",
+    "noOpenTabs": "اس ونڈو میں کوئی ویب صفحہ کھلا نہیں ہے۔",
+    "tabAsleep": "غیر فعال · پہلے کھولیں",
+    "attachLimit": "زیادہ سے زیادہ {{max}} ٹیب اور فائلیں",
+    "attachPdf": "PDF فائل",
+    "captureScreen": "اسکرین شاٹ",
+    "captureFailed": "اس اسکرین کی تصویر نہیں لی جا سکتی۔",
+    "searchChats": "چیٹس تلاش کریں"
   },
   "footer": {
     "joinDiscord": "Discord پر میرے ساتھ شامل ہوں!",

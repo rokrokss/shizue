@@ -92,7 +92,16 @@
     "attachmentUnreadable": "Não é possível ler",
     "attachmentEmpty": "Quase sem texto",
     "attachmentTruncated": "As páginas anexadas eram longas, por isso só foi enviado o início.",
-    "askAboutPages": "Pergunte sobre as páginas anexadas"
+    "askAboutPages": "Pergunte sobre as páginas anexadas",
+    "attach": "Anexar",
+    "openTabs": "Separadores abertos",
+    "noOpenTabs": "Não há páginas web abertas nesta janela.",
+    "tabAsleep": "Inativo · abra-o primeiro",
+    "attachLimit": "Até {{max}} separadores e ficheiros",
+    "attachPdf": "Ficheiro PDF",
+    "captureScreen": "Captura de ecrã",
+    "captureFailed": "Não é possível capturar este ecrã.",
+    "searchChats": "Pesquisar conversas"
   },
   "footer": {
     "joinDiscord": "Junta-te a mim no Discord!",

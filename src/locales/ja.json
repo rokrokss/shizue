@@ -92,7 +92,16 @@
     "attachmentUnreadable": "読み取れません",
     "attachmentEmpty": "読める文章がほとんどありません",
     "attachmentTruncated": "添付したページが長いため、冒頭部分だけを送りました。",
-    "askAboutPages": "添付したページについて聞いてください"
+    "askAboutPages": "添付したページについて聞いてください",
+    "attach": "添付",
+    "openTabs": "開いているタブ",
+    "noOpenTabs": "このウィンドウで開いているウェブページはありません。",
+    "tabAsleep": "スリープ中 · 先に開いてください",
+    "attachLimit": "最大{{max}}件まで添付できます",
+    "attachPdf": "PDFファイル",
+    "captureScreen": "スクリーンショット",
+    "captureFailed": "この画面はキャプチャできません。",
+    "searchChats": "チャットを検索"
   },
   "footer": {
     "joinDiscord": "Discordに参加してください！",

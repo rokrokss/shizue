@@ -92,7 +92,16 @@
     "attachmentUnreadable": "Nicht lesbar",
     "attachmentEmpty": "Kaum Text",
     "attachmentTruncated": "Die angehängten Seiten waren lang, daher wurde nur ihr Anfang gesendet.",
-    "askAboutPages": "Frag etwas zu den angehängten Seiten"
+    "askAboutPages": "Frag etwas zu den angehängten Seiten",
+    "attach": "Anhängen",
+    "openTabs": "Offene Tabs",
+    "noOpenTabs": "In diesem Fenster ist keine Webseite geöffnet.",
+    "tabAsleep": "Inaktiv · zuerst öffnen",
+    "attachLimit": "Höchstens {{max}} Tabs und Dateien",
+    "attachPdf": "PDF-Datei",
+    "captureScreen": "Bildschirmfoto",
+    "captureFailed": "Dieser Bildschirm kann nicht aufgenommen werden.",
+    "searchChats": "Chats durchsuchen"
   },
   "footer": {
     "joinDiscord": "Tritt mir auf Discord bei!",

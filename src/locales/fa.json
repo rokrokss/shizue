@@ -92,7 +92,16 @@
     "attachmentUnreadable": "قابل خواندن نیست",
     "attachmentEmpty": "متن چندانی ندارد",
     "attachmentTruncated": "صفحه‌های پیوست‌شده طولانی بودند، بنابراین فقط ابتدای آن‌ها ارسال شد.",
-    "askAboutPages": "دربارهٔ صفحه‌های پیوست‌شده بپرسید"
+    "askAboutPages": "دربارهٔ صفحه‌های پیوست‌شده بپرسید",
+    "attach": "پیوست",
+    "openTabs": "زبانه‌های باز",
+    "noOpenTabs": "هیچ صفحهٔ وبی در این پنجره باز نیست.",
+    "tabAsleep": "خوابیده · اول بازش کنید",
+    "attachLimit": "حداکثر {{max}} زبانه و فایل",
+    "attachPdf": "فایل PDF",
+    "captureScreen": "نماگرفت",
+    "captureFailed": "از این صفحه نمی‌توان نماگرفت گرفت.",
+    "searchChats": "جستجوی گفتگوها"
   },
   "footer": {
     "joinDiscord": "به من در Discord بپیوندید!",

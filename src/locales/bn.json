@@ -92,7 +92,16 @@
     "attachmentUnreadable": "পড়া যাচ্ছে না",
     "attachmentEmpty": "পড়ার মতো লেখা নেই",
     "attachmentTruncated": "সংযুক্ত পৃষ্ঠাগুলো দীর্ঘ ছিল, তাই শুধু শুরুর অংশ পাঠানো হয়েছে।",
-    "askAboutPages": "সংযুক্ত পৃষ্ঠা নিয়ে প্রশ্ন করুন"
+    "askAboutPages": "সংযুক্ত পৃষ্ঠা নিয়ে প্রশ্ন করুন",
+    "attach": "সংযুক্ত করুন",
+    "openTabs": "খোলা ট্যাব",
+    "noOpenTabs": "এই উইন্ডোতে কোনো ওয়েব পেজ খোলা নেই।",
+    "tabAsleep": "ঘুমন্ত · আগে খুলুন",
+    "attachLimit": "সর্বোচ্চ {{max}}টি ট্যাব ও ফাইল সংযুক্ত করা যায়",
+    "attachPdf": "PDF ফাইল",
+    "captureScreen": "স্ক্রিনশট",
+    "captureFailed": "এই স্ক্রিনটি ক্যাপচার করা যাচ্ছে না।",
+    "searchChats": "কথোপকথন খুঁজুন"
   },
   "footer": {
     "joinDiscord": "Discord-এ আমার সাথে যোগ দিন!",

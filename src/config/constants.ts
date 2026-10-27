@@ -73,7 +73,7 @@ export const STREAM_FLUSH_THRESHOLD_1 = 10;
 export const SUMMARY_PAGE_TEXT_MAX_CHARS = 100_000;
 // Custom instructions go with every chat request, so bound them too (up to ~1,500 tokens).
 export const CUSTOM_INSTRUCTIONS_MAX_CHARS = 1_500;
-// Tabs attached to one chat message share SUMMARY_PAGE_TEXT_MAX_CHARS.
+// Tabs and PDF files attached to one chat message share SUMMARY_PAGE_TEXT_MAX_CHARS.
 export const MAX_ATTACHED_TABS = 5;
 
 /* selection actions: context menu item IDs, also used as ActionTypes */
