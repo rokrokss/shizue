@@ -8,6 +8,7 @@ import {
   LoadingOutlined,
   PlusOutlined,
   SnippetsOutlined,
+  YoutubeOutlined,
 } from '@ant-design/icons';
 import { Button, Tag, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +24,12 @@ export interface AttachedItem {
   pdf?: boolean;
   file?: boolean;
   pasted?: boolean;
-  // A picked file still being read.
+  // A YouTube video tab. Its captions are read when it is attached: `page` holds them, read from
+  // `videoId`, and `captions` says whether there were any once the reading is done.
+  video?: boolean;
+  captions?: boolean;
+  videoId?: string | null;
+  // A picked file, or a video's captions, still being read.
   loading?: boolean;
   // Why the tab or file couldn't be read.
   error?: PageReadError;
@@ -73,6 +79,8 @@ const AttachmentChips = ({
           icon={
             item.loading ? (
               <LoadingOutlined />
+            ) : item.video ? (
+              <YoutubeOutlined />
             ) : item.pdf ? (
               <FilePdfOutlined />
             ) : item.file ? (
@@ -98,6 +106,11 @@ const AttachmentChips = ({
           {item.pasted && item.page ? (
             <span className="sz:ml-1">
               · {t('chat.pastedChars', { count: item.page.text.length.toLocaleString() })}
+            </span>
+          ) : null}
+          {item.video && !item.loading && !item.error ? (
+            <span className="sz:ml-1">
+              · {item.captions ? t('chat.withCaptions') : t('chat.withoutCaptions')}
             </span>
           ) : null}
           {item.error ? (

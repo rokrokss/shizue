@@ -23,6 +23,11 @@ export const MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE = 'context_menu_summarize_page'
 export const MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE = 'context_menu_describe_image';
 export const MESSAGE_CONTEXT_MENU_EXTRACT_IMAGE_TEXT = 'context_menu_extract_image_text';
 export const MESSAGE_CONTEXT_MENU_SELECTION_ACTION = 'context_menu_selection_action';
+// Side panel → YouTube tab: the captions of the video it shows (lib/youtubeTranscript.ts).
+export const MESSAGE_READ_YOUTUBE_TRANSCRIPT = 'read_youtube_transcript';
+// Caption overlay → background: a clicked word's meaning, and saving it to the word list.
+export const MESSAGE_LOOKUP_WORD = 'lookup_word';
+export const MESSAGE_SAVE_WORD = 'save_word';
 
 /* port */
 export const PORT_STREAM_MESSAGE = 'stream_message_key';

@@ -6,6 +6,7 @@ import AntdProvider from '@/providers/AntdProvider';
 import LanguageProvider from '@/providers/LanguageProvider';
 import { registerPageSummaryListener } from '@/services/pageSummary';
 import { registerContentScriptConnection } from '@/lib/contentScriptConnection';
+import { watchPlayerCaptionRequests } from '@/lib/youtube';
 import { StyleProvider as AntdStyleProvider, createCache } from '@ant-design/cssinjs';
 import '@ant-design/v5-patch-for-react-19';
 import { ConfigProvider } from 'antd';
@@ -22,6 +23,11 @@ export default defineContentScript({
   main(ctx) {
     ctx.onInvalidated(registerContentScriptConnection('toggle'));
     ctx.onInvalidated(registerPageSummaryListener());
+    // A YouTube video's summary reads its captions with the player's own caption request
+    // (lib/youtubeTranscript.ts), so watch for it from the start, as the caption button does.
+    if (['youtube.com', 'www.youtube.com'].includes(location.hostname)) {
+      ctx.onInvalidated(watchPlayerCaptionRequests());
+    }
     // WXT invalidates the previous instance; also remove orphaned hosts left by older builds.
     document.querySelectorAll('shizue-toggle').forEach((host) => host.remove());
     const mountUi = async () => {

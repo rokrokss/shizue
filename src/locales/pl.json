@@ -117,7 +117,10 @@
     "webSearch": "Wyszukiwanie w sieci",
     "webSearchHint": "Szuka w sieci podczas odpowiedzi",
     "webSearchNotSupported": "Modele lokalne nie mogą szukać w sieci",
-    "sources": "Źródła"
+    "sources": "Źródła",
+    "withCaptions": "z napisami",
+    "withoutCaptions": "bez napisów",
+    "playFromTime": "Odtwórz od {{time}}"
   },
   "footer": {
     "joinDiscord": "Dołącz do mnie na Discordzie!",
@@ -286,5 +289,19 @@
     "forbidden": "Ollama odrzuciła żądanie. Ustaw tę zmienną środowiskową i uruchom Ollama ponownie:",
     "invalidUrl": "Sprawdź adres serwera.",
     "tag": "Lokalny"
+  },
+  "words": {
+    "title": "Lista słówek",
+    "search": "Szukaj słówek",
+    "exportCsv": "Pobierz jako CSV",
+    "empty": "Kliknij słowo w oryginalnych napisach filmu i zapisz je, aby zebrać je tutaj.",
+    "noResults": "Brak pasujących słów.",
+    "delete": "Usuń",
+    "close": "Zamknij",
+    "lookupFailed": "Nie udało się sprawdzić tego słowa.",
+    "save": "Zapisz na liście",
+    "saved": "Zapisano",
+    "openList": "Otwórz listę słówek",
+    "saveFailed": "Nie udało się zapisać."
   }
 }

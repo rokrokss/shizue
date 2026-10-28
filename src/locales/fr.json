@@ -117,7 +117,10 @@
     "webSearch": "Recherche web",
     "webSearchHint": "Cherche sur le web pour répondre",
     "webSearchNotSupported": "Les modèles locaux ne peuvent pas chercher sur le web",
-    "sources": "Sources"
+    "sources": "Sources",
+    "withCaptions": "avec sous-titres",
+    "withoutCaptions": "sans sous-titres",
+    "playFromTime": "Lire à partir de {{time}}"
   },
   "footer": {
     "joinDiscord": "Rejoignez-moi sur Discord !",
@@ -286,5 +289,19 @@
     "forbidden": "Ollama a refusé la requête. Définissez cette variable d’environnement et redémarrez Ollama :",
     "invalidUrl": "Vérifiez l’adresse du serveur.",
     "tag": "Local"
+  },
+  "words": {
+    "title": "Liste de mots",
+    "search": "Rechercher des mots",
+    "exportCsv": "Télécharger en CSV",
+    "empty": "Cliquez sur un mot des sous-titres originaux d'une vidéo et enregistrez-le pour le retrouver ici.",
+    "noResults": "Aucun mot correspondant.",
+    "delete": "Supprimer",
+    "close": "Fermer",
+    "lookupFailed": "Impossible de rechercher ce mot.",
+    "save": "Enregistrer dans la liste",
+    "saved": "Enregistré",
+    "openList": "Ouvrir la liste de mots",
+    "saveFailed": "Impossible de l'enregistrer."
   }
 }

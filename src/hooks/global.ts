@@ -11,6 +11,7 @@ export type ActionType =
   | 'describeImage'
   | 'extractImageText'
   | 'memo'
+  | 'words'
   | SelectionActionType;
 
 export type GlobalState = {
@@ -18,6 +19,9 @@ export type GlobalState = {
   summaryTitle?: string;
   summaryText?: string;
   summaryPageLink?: string;
+  // The summarized page is a YouTube video, and its text is the video's captions.
+  summaryVideo?: boolean;
+  summaryCaptions?: boolean;
   selectionText?: string;
   imageBase64?: string;
   imageUrl?: string;

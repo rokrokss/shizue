@@ -102,6 +102,8 @@ export type LiveCaptionPlatform<S extends string> = {
   // after them.
   captionSources: () => readonly S[];
   video: () => HTMLVideoElement | null;
+  // A live stream, rather than a recording: looking up a caption word doesn't pause it.
+  live: () => boolean;
   // The overlay lives in this element, which must stay visible in fullscreen.
   overlayParent: () => HTMLElement | null;
   // Puts the overlay's elements in `parent`; ours renders in a shadow root on `shadowHost`.
@@ -689,6 +691,12 @@ export class LiveCaptionController<S extends string> {
           originalLines={originalLines}
           bilingual={settings.bilingual}
           captionSizeRatio={settings.captionSizeRatio}
+          lookup={{
+            video: this.platform.video(),
+            live: this.platform.live(),
+            title: this.platform.metadata().title ?? document.title,
+            targetLanguage: settings.targetLanguage,
+          }}
         />
       </StrictMode>
     );

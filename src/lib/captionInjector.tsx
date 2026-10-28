@@ -2,7 +2,7 @@ import tailwindRaw from '@/assets/tailwind.css?inline';
 import { CaptionDisplay } from '@/components/Youtube/CaptionDisplay';
 import { Language } from '@/hooks/language';
 import { alignCues } from '@/lib/netflix/subtitles';
-import { Caption, getCaptionUrl, TranscriptMetadata, VideoMetadata } from '@/lib/youtube';
+import { Caption, fetchCaptionTrack, TranscriptMetadata, VideoMetadata } from '@/lib/youtube';
 import { debugLog, errorLog } from '@/logs';
 import AntdProvider from '@/providers/AntdProvider';
 import LanguageProvider from '@/providers/LanguageProvider';
@@ -227,6 +227,12 @@ export class CaptionInjector {
                     originalLines={originalLines}
                     bilingual={this.bilingual && isCurrentCaptionTranslated}
                     captionSizeRatio={this.captionSizeRatio}
+                    lookup={{
+                      video: this.videoElement,
+                      live: false,
+                      title: this.videoMetadata?.title ?? document.title,
+                      targetLanguage: this.targetLanguage,
+                    }}
                   />
                 </AntdProvider>
               </AntdStyleProvider>
@@ -245,36 +251,8 @@ export class CaptionInjector {
     return this.fetchCaptions(metadata);
   }
 
-  private async fetchCaptions(metadata: TranscriptMetadata): Promise<Caption[] | null> {
-    try {
-      const response = await fetch(await getCaptionUrl(metadata.baseUrl));
-      const data = await response.json();
-      const captions: Caption[] = data.events
-        .filter((event: any) => event.segs)
-        .map((event: any) => ({
-          startTime: event.tStartMs / 1000,
-          endTime: (event.tStartMs + event.dDurationMs) / 1000,
-          text: event.segs
-            .map((seg: any) => seg.utf8)
-            .join('')
-            .trim(),
-        }))
-        .filter((caption: Caption) => caption.text.length > 0);
-
-      const captionsSqueezed = captions.map((caption, i) => {
-        if (i === captions.length - 1) return caption;
-        const nextCaption = captions[i + 1];
-        return {
-          ...caption,
-          endTime: Math.min(caption.endTime, nextCaption.startTime),
-        };
-      });
-
-      return captionsSqueezed;
-    } catch (err) {
-      errorLog(`[YouTube] Failed to fetch captions for ${metadata.language}`, err);
-      return null;
-    }
+  private fetchCaptions(metadata: TranscriptMetadata): Promise<Caption[] | null> {
+    return fetchCaptionTrack(metadata);
   }
 
   private async startStreamingTranslation() {

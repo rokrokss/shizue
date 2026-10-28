@@ -117,7 +117,10 @@
     "webSearch": "Pesquisa na web",
     "webSearchHint": "Pesquisa na web ao responder",
     "webSearchNotSupported": "Os modelos locais não conseguem pesquisar na web",
-    "sources": "Fontes"
+    "sources": "Fontes",
+    "withCaptions": "com legendas",
+    "withoutCaptions": "sem legendas",
+    "playFromTime": "Reproduzir a partir de {{time}}"
   },
   "footer": {
     "joinDiscord": "Junta-te a mim no Discord!",
@@ -286,5 +289,19 @@
     "forbidden": "O Ollama recusou o pedido. Defina esta variável de ambiente e reinicie o Ollama:",
     "invalidUrl": "Verifique o endereço do servidor.",
     "tag": "Local"
+  },
+  "words": {
+    "title": "Lista de palavras",
+    "search": "Pesquisar palavras",
+    "exportCsv": "Transferir como CSV",
+    "empty": "Clique numa palavra das legendas originais de um vídeo e guarde-a para a reunir aqui.",
+    "noResults": "Nenhuma palavra encontrada.",
+    "delete": "Eliminar",
+    "close": "Fechar",
+    "lookupFailed": "Não foi possível consultar esta palavra.",
+    "save": "Guardar na lista",
+    "saved": "Guardada",
+    "openList": "Abrir lista de palavras",
+    "saveFailed": "Não foi possível guardar."
   }
 }

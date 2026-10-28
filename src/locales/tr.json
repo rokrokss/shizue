@@ -117,7 +117,10 @@
     "webSearch": "Web araması",
     "webSearchHint": "Yanıtlarken web'de arar",
     "webSearchNotSupported": "Yerel modeller web'de arama yapamaz",
-    "sources": "Kaynaklar"
+    "sources": "Kaynaklar",
+    "withCaptions": "altyazılı",
+    "withoutCaptions": "altyazısız",
+    "playFromTime": "{{time}} anından oynat"
   },
   "footer": {
     "joinDiscord": "Discord'da bana katılın!",
@@ -286,5 +289,19 @@
     "forbidden": "Ollama isteği reddetti. Bu ortam değişkenini ayarlayıp Ollama’yı yeniden başlatın:",
     "invalidUrl": "Sunucu adresini kontrol edin.",
     "tag": "Yerel"
+  },
+  "words": {
+    "title": "Kelime listesi",
+    "search": "Kelime ara",
+    "exportCsv": "CSV olarak indir",
+    "empty": "Bir videonun orijinal altyazısındaki bir kelimeye tıklayıp kaydedin, burada toplansın.",
+    "noResults": "Eşleşen kelime yok.",
+    "delete": "Sil",
+    "close": "Kapat",
+    "lookupFailed": "Bu kelimenin anlamı alınamadı.",
+    "save": "Kelime listesine kaydet",
+    "saved": "Kaydedildi",
+    "openList": "Kelime listesini aç",
+    "saveFailed": "Kaydedilemedi."
   }
 }

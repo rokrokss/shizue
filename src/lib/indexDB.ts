@@ -14,6 +14,9 @@ export interface PageAttachment {
   file?: boolean;
   // Long text pasted into the chat box.
   pasted?: boolean;
+  // A YouTube video, and its text is its captions (else the page's text).
+  video?: boolean;
+  captions?: boolean;
   // The text was cut to fit the size limit for one message.
   truncated?: boolean;
 }
@@ -25,6 +28,9 @@ export interface Message {
   actionType: ActionType;
   summaryTitle?: string;
   summaryPageLink?: string;
+  // A summary of a YouTube video, made from its captions when summaryCaptions.
+  summaryVideo?: boolean;
+  summaryCaptions?: boolean;
   selectionText?: string;
   translateMode?: boolean;
   content: string;
@@ -73,11 +79,30 @@ export interface Memo {
   updatedAt: number;
 }
 
+// A word looked up in a video's captions and saved to the word list (lib/wordLookup.ts).
+export interface SavedWord {
+  id: string;
+  // As it appeared in the caption.
+  word: string;
+  lemma: string;
+  reading: string;
+  partOfSpeech: string;
+  meaning: string;
+  note: string;
+  sentence: string;
+  sentenceTranslation: string;
+  sourceTitle: string;
+  // The video, from where the line was spoken when the site's links can say so.
+  sourceUrl: string;
+  createdAt: number;
+}
+
 class DB extends Dexie {
   messages!: Table<Message, string>;
   threads!: Table<ThreadMeta, string>;
   tokenUsage!: Table<TokenUsage, string>;
   memos!: Table<Memo, string>;
+  words!: Table<SavedWord, string>;
 
   constructor() {
     super('ShizueDB');
@@ -110,6 +135,14 @@ class DB extends Dexie {
       threads: 'id, updatedAt',
       tokenUsage: 'id, date, model, provider, createdAt',
       memos: 'id, folder, isPinned, createdAt, updatedAt',
+    });
+    this.version(6).stores({
+      // 'pk, ...indexes'
+      messages: 'id, threadId, createdAt',
+      threads: 'id, updatedAt',
+      tokenUsage: 'id, date, model, provider, createdAt',
+      memos: 'id, folder, isPinned, createdAt, updatedAt',
+      words: 'id, createdAt',
     });
   }
 }
@@ -295,3 +328,10 @@ export const createMemo = async (title: string, content: string = '', folder?: s
   });
   return id;
 };
+
+// Word list
+export const addWord = (word: SavedWord) => db.words.add(word);
+
+export const listWords = () => db.words.orderBy('createdAt').reverse().toArray();
+
+export const deleteWord = (id: string) => db.words.delete(id);

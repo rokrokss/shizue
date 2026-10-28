@@ -30,6 +30,8 @@ export interface Message {
   actionType: ActionType;
   summaryTitle?: string;
   summaryPageLink?: string;
+  summaryVideo?: boolean;
+  summaryCaptions?: boolean;
   selectionText?: string;
   translateMode?: boolean;
   content: string;

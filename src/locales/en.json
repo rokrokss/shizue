@@ -117,7 +117,10 @@
     "webSearch": "Web search",
     "webSearchHint": "Searches the web while answering",
     "webSearchNotSupported": "Local models can't search the web",
-    "sources": "Sources"
+    "sources": "Sources",
+    "withCaptions": "with captions",
+    "withoutCaptions": "without captions",
+    "playFromTime": "Play from {{time}}"
   },
   "footer": {
     "joinDiscord": "Join me on Discord!",
@@ -286,5 +289,19 @@
     "forbidden": "Ollama refused the request. Set this environment variable and restart Ollama:",
     "invalidUrl": "Check the server address.",
     "tag": "Local"
+  },
+  "words": {
+    "title": "Word list",
+    "search": "Search words",
+    "exportCsv": "Download as CSV",
+    "empty": "Click a word in a video's original captions and save it to collect it here.",
+    "noResults": "No matching words.",
+    "delete": "Delete",
+    "close": "Close",
+    "lookupFailed": "Couldn't look up this word.",
+    "save": "Save to word list",
+    "saved": "Saved",
+    "openList": "Open word list",
+    "saveFailed": "Couldn't save it."
   }
 }

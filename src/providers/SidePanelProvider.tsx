@@ -16,9 +16,12 @@ import { getSelectionActionPrompt, getSummarizePageTextPrompt } from '@/lib/prom
 import { readStorage } from '@/lib/storageBackend';
 import { debugLog, errorLog } from '@/logs';
 import { useAtomValue, useSetAtom, useStore } from 'jotai';
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { ReactNode, startTransition, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+
+// The memo and word list pages, which an action that starts a chat leaves.
+const isOutsideChat = () => ['#/shizue-memo', '#/shizue-words'].includes(window.location.hash);
 
 const SidePanelProvider = ({
   loadingComponent,
@@ -74,28 +77,33 @@ const SidePanelProvider = ({
       if (isChatWaiting(store.get(chatStatusAtom))) {
         debugLog('SidePanelProvider: [getInitData] skip initData while a chat is running');
         return;
-      } else if (initData?.actionType === 'chat' && window.location.hash === '#/shizue-memo') {
-        debugLog('SidePanelProvider: [getInitData] skip initData for actionType chat and memo url');
+      } else if (initData?.actionType === 'chat' && isOutsideChat()) {
+        debugLog('SidePanelProvider: [getInitData] skip initData for actionType chat outside the chat');
         return;
       } else if (initData?.actionType === 'askForSummary') {
         // Clear the action immediately to prevent duplicate processing
         await rollbackActionType();
-        const { summaryTitle, summaryText, summaryPageLink } = initData;
+        const { summaryTitle, summaryText, summaryPageLink, summaryVideo, summaryCaptions } =
+          initData;
 
         debugLog('SidePanelProvider: [getInitData] summaryTitle', summaryTitle);
         debugLog('SidePanelProvider: [getInitData] threadId', threadId);
 
         let isNewThread = false;
 
-        const isInMemoPage = window.location.hash === '#/shizue-memo';
+        const outsideChat = isOutsideChat();
 
         let tid = threadId;
-        if (!tid || isInMemoPage) {
+        if (!tid || outsideChat) {
           tid = await createThread(summaryTitle!.slice(0, 20));
           isNewThread = true;
         }
 
-        const summarizePageTextPrompt = getSummarizePageTextPrompt(summaryTitle!, summaryText!);
+        const summarizePageTextPrompt = getSummarizePageTextPrompt(
+          summaryTitle!,
+          summaryText!,
+          !!summaryCaptions
+        );
 
         await addMessage({
           id: crypto.randomUUID(),
@@ -104,6 +112,8 @@ const SidePanelProvider = ({
           actionType: 'askForSummary',
           summaryTitle: summaryTitle,
           summaryPageLink: summaryPageLink,
+          summaryVideo: summaryVideo,
+          summaryCaptions: summaryCaptions,
           translateMode: false,
           content: summarizePageTextPrompt,
           createdAt: Date.now(),
@@ -118,7 +128,7 @@ const SidePanelProvider = ({
           await setThreadId(tid);
         }
 
-        if (isInMemoPage) {
+        if (outsideChat) {
           debugLog('SidePanelProvider: [getInitData] navigate to /');
           navigate('/');
         }
@@ -132,10 +142,10 @@ const SidePanelProvider = ({
         debugLog('SidePanelProvider: [getInitData] threadId', threadId);
 
         let isNewThread = false;
-        const isInMemoPage = window.location.hash === '#/shizue-memo';
+        const outsideChat = isOutsideChat();
 
         let tid = threadId;
-        if (!tid || isInMemoPage) {
+        if (!tid || outsideChat) {
           tid = await createThread(selectionText!.slice(0, 20));
           isNewThread = true;
         }
@@ -166,7 +176,7 @@ const SidePanelProvider = ({
           await setThreadId(tid);
         }
 
-        if (isInMemoPage) {
+        if (outsideChat) {
           debugLog('SidePanelProvider: [getInitData] navigate to /');
           navigate('/');
         }
@@ -182,6 +192,9 @@ const SidePanelProvider = ({
           debugLog('SidePanelProvider: [getInitData] navigate to /shizue-memo');
           navigate('/shizue-memo');
         }
+      } else if (initData?.actionType === 'words') {
+        await rollbackActionType();
+        if (window.location.hash !== '#/shizue-words') navigate('/shizue-words');
       } else if (initData?.actionType === 'describeImage') {
         // Clear the action immediately to prevent duplicate processing
         await rollbackActionType();
@@ -196,10 +209,10 @@ const SidePanelProvider = ({
         }
 
         let isNewThread = false;
-        const isInMemoPage = window.location.hash === '#/shizue-memo';
+        const outsideChat = isOutsideChat();
 
         let tid = threadId;
-        if (!tid || isInMemoPage) {
+        if (!tid || outsideChat) {
           tid = await createThread(t('chat.describeImageRequest'));
           isNewThread = true;
         }
@@ -224,7 +237,7 @@ const SidePanelProvider = ({
           await setThreadId(tid);
         }
 
-        if (isInMemoPage) {
+        if (outsideChat) {
           debugLog('SidePanelProvider: [getInitData] navigate to /');
           navigate('/');
         }
@@ -242,10 +255,10 @@ const SidePanelProvider = ({
         }
 
         let isNewThread = false;
-        const isInMemoPage = window.location.hash === '#/shizue-memo';
+        const outsideChat = isOutsideChat();
 
         let tid = threadId;
-        if (!tid || isInMemoPage) {
+        if (!tid || outsideChat) {
           tid = await createThread(t('chat.extractImageTextRequest'));
           isNewThread = true;
         }
@@ -269,7 +282,7 @@ const SidePanelProvider = ({
           await setThreadId(tid);
         }
 
-        if (isInMemoPage) {
+        if (outsideChat) {
           debugLog('SidePanelProvider: [getInitData] navigate to /');
           navigate('/');
         }
@@ -282,7 +295,10 @@ const SidePanelProvider = ({
         actionRefreshPendingRef.current = false;
         void refreshActionRef.current();
       } else {
-        setPanelInitialized(true);
+        // HashRouter moves to a navigate() above in a transition. Shown sooner on its own, the routes
+        // of a panel just opened would render '/' first, whose redirect to /chat replaces the memo
+        // or word list page.
+        startTransition(() => setPanelInitialized(true));
       }
     }
   }, [sidePanelHydrated, setThreadId, rollbackActionType, chatStatus, navigate, t, targetLanguage, store]);

@@ -12,8 +12,10 @@ import {
   InfoCircleOutlined,
   LinkOutlined,
   SnippetsOutlined,
+  YoutubeOutlined,
 } from '@ant-design/icons';
 import MarkdownMessage from '@/components/Chat/MarkdownMessage';
+import { youtubeVideoId } from '@/lib/videoTranscript';
 import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 
@@ -37,8 +39,28 @@ const ChatContainer = ({
   const showRetryButton = (message: Message) =>
     (message.onInterrupt && !message.stopped) || message.stopped;
 
-  const getMarkdownText = (content: string, streaming = false) => {
-    return <MarkdownMessage content={content} streaming={streaming} />;
+  const getMarkdownText = (content: string, streaming = false, video?: string | null) => {
+    return <MarkdownMessage content={content} streaming={streaming} video={video} />;
+  };
+
+  // Whether a video's captions went with the question.
+  const captionsNote = (captions?: boolean) => (
+    <span> · {captions ? t('chat.withCaptions') : t('chat.withoutCaptions')}</span>
+  );
+
+  // The video an answer's [12:34] times point into: the one whose captions the conversation last
+  // attached or summarized, unless that was more than one.
+  const answerVideo = (idx: number) => {
+    for (let i = idx - 1; i >= 0; i--) {
+      const m = messages[i];
+      if (m.role !== 'human') continue;
+      if (m.actionType === 'askForSummary' && m.summaryCaptions) {
+        return youtubeVideoId(m.summaryPageLink);
+      }
+      const videos = (m.attachments ?? []).filter((page) => page.captions);
+      if (videos.length) return videos.length === 1 ? youtubeVideoId(videos[0].url) : null;
+    }
+    return null;
   };
 
   return (
@@ -95,14 +117,14 @@ const ChatContainer = ({
                       </>
                     ) : idx === messages.length - 1 && !m.done ? (
                       m.content.trim() ? (
-                        getMarkdownText(animatedText, true)
+                        getMarkdownText(animatedText, true, answerVideo(idx))
                       ) : isRetryButtonVisible ? null : (
                         <div className="sz:flex sz:flex-row sz:items-center sz:justify-start sz:pl-3 sz:text-xl">
                           <DotCycle />
                         </div>
                       )
                     ) : (
-                      getMarkdownText(m.content)
+                      getMarkdownText(m.content, false, answerVideo(idx))
                     )}
                   </div>
                   {m.sources?.length ? (
@@ -218,7 +240,9 @@ const ChatContainer = ({
                     {m.attachments?.map((page, pageIdx) => {
                       const row = (
                         <div className="sz:flex sz:flex-row sz:items-center sz:gap-1">
-                          {page.pdf ? (
+                          {page.video ? (
+                            <YoutubeOutlined />
+                          ) : page.pdf ? (
                             <FilePdfOutlined />
                           ) : page.file ? (
                             <FileOutlined />
@@ -231,6 +255,7 @@ const ChatContainer = ({
                             {(page.title || page.url).length > 25
                               ? (page.title || page.url).slice(0, 25) + '...'
                               : page.title || page.url}
+                            {page.video ? captionsNote(page.captions) : null}
                           </div>
                         </div>
                       );
@@ -263,11 +288,12 @@ const ChatContainer = ({
                     {getMarkdownText(t('chat.summaryRequestText'))}
                     <a href={m.summaryPageLink} target="_blank" rel="noopener noreferrer">
                       <div className="sz:flex sz:flex-row sz:items-center sz:gap-1">
-                        <LinkOutlined />
+                        {m.summaryVideo ? <YoutubeOutlined /> : <LinkOutlined />}
                         <div className="sz:text-sm sz:text-gray-500 sz:pb-[2px]">
                           {m.summaryTitle && m.summaryTitle.length > 25
                             ? m.summaryTitle?.slice(0, 25) + '...'
                             : m.summaryTitle}
+                          {m.summaryVideo ? captionsNote(m.summaryCaptions) : null}
                         </div>
                       </div>
                     </a>

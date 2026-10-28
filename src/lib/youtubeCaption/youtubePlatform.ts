@@ -91,6 +91,7 @@ export const createYoutubeLiveCaptions = (video: YoutubeVideo) => {
     name: 'YouTube',
     captionSources: () => (track ? ['track'] : []),
     video: youtubeVideoElement,
+    live: () => !!video.live?.isLive,
     overlayParent: () => document.querySelector<HTMLElement>(PLAYER),
     createOverlay: (parent) => {
       // The same boxes captionInjector uses, so YouTube's CSS moves the captions above the controls.

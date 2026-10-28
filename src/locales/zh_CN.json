@@ -117,7 +117,10 @@
     "webSearch": "联网搜索",
     "webSearchHint": "回答时搜索网络",
     "webSearchNotSupported": "本地模型无法联网搜索",
-    "sources": "来源"
+    "sources": "来源",
+    "withCaptions": "含字幕",
+    "withoutCaptions": "无字幕",
+    "playFromTime": "从 {{time}} 播放"
   },
   "footer": {
     "joinDiscord": "加入我的 Discord！",
@@ -286,5 +289,19 @@
     "forbidden": "Ollama 拒绝了请求。请设置以下环境变量并重启 Ollama：",
     "invalidUrl": "请检查服务器地址。",
     "tag": "本地"
+  },
+  "words": {
+    "title": "单词本",
+    "search": "搜索单词",
+    "exportCsv": "下载为 CSV",
+    "empty": "点击视频原文字幕中的单词并保存，就会收集到这里。",
+    "noResults": "没有匹配的单词。",
+    "delete": "删除",
+    "close": "关闭",
+    "lookupFailed": "无法查询这个单词。",
+    "save": "保存到单词本",
+    "saved": "已保存",
+    "openList": "打开单词本",
+    "saveFailed": "保存失败。"
   }
 }

@@ -79,6 +79,7 @@ const platform: LiveCaptionPlatform<TwitchCaptionSource> = {
   // sound and music.
   captionSources: () => ['cea608', 'scc'],
   video: playerVideo,
+  live: () => !isTwitchVod(),
   overlayParent: () => document.querySelector<HTMLElement>('.video-player__container'),
   createOverlay: (parent) => {
     // Inline styles: this element sits in Twitch's DOM, outside our stylesheet.

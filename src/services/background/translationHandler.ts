@@ -15,11 +15,13 @@ import {
   getHtmlTranslationPrompt,
   getLiveCaptionTranslationPrompt,
   getSubtitleTranslationPrompt,
+  getWordMeaningPrompt,
   getYoutubeCaptionTranslationPrompt,
   LiveCaptionMetadata,
   SubtitleMetadata,
 } from '@/lib/prompts';
 import { trackTokenUsage } from '@/lib/tokenUsageTracker';
+import { parseWordMeaning, WORD_MEANING_JSON_SCHEMA, WordMeaning } from '@/lib/wordLookup';
 import { Caption, VideoMetadata } from '@/lib/youtube';
 import { debugLog, errorLog } from '@/logs';
 import { AIMessage, AIMessageChunk, HumanMessage } from '@langchain/core/messages';
@@ -292,6 +294,37 @@ export class TranslationHandler {
       (part) => getSubtitleTranslationPrompt(part, context, following, targetLanguage, metadata),
       'translateSubtitles'
     );
+  }
+
+  // A word clicked in a caption line, explained by the translation model; null when it can't say.
+  public async lookupWord(
+    word: string,
+    sentence: string,
+    translation: string,
+    targetLanguage: Language
+  ): Promise<WordMeaning | null> {
+    try {
+      const modelPreset = getTranslationModelPreset();
+      const llm = getModelInstance({
+        temperature: 0.1,
+        streaming: isLocalModel(modelPreset.modelName),
+        fast: true,
+        modelPreset,
+        jsonSchema: WORD_MEANING_JSON_SCHEMA,
+      });
+      const response = await invokeTranslation(
+        llm,
+        getWordMeaningPrompt(word, sentence, translation, targetLanguage),
+        modelPreset
+      );
+      await trackTokenUsage(modelPreset, response);
+      const meaning = parseWordMeaning(response.text);
+      if (!meaning) errorLog('TranslationHandler [lookupWord] invalid response:', response.text);
+      return meaning;
+    } catch (err) {
+      errorLog('TranslationHandler [lookupWord] general error:', err);
+      return null;
+    }
   }
 
   // One translation per line, from a prompt that carries its own context.

@@ -117,7 +117,10 @@
     "webSearch": "البحث في الويب",
     "webSearchHint": "يبحث في الويب أثناء الإجابة",
     "webSearchNotSupported": "لا تستطيع النماذج المحلية البحث في الويب",
-    "sources": "المصادر"
+    "sources": "المصادر",
+    "withCaptions": "مع الترجمة",
+    "withoutCaptions": "بدون ترجمة",
+    "playFromTime": "تشغيل من {{time}}"
   },
   "footer": {
     "joinDiscord": "انضم إلي على Discord!",
@@ -286,5 +289,19 @@
     "forbidden": "رفض Ollama الطلب. اضبط متغير البيئة هذا ثم أعد تشغيل Ollama:",
     "invalidUrl": "تحقّق من عنوان الخادم.",
     "tag": "محلي"
+  },
+  "words": {
+    "title": "قائمة الكلمات",
+    "search": "ابحث عن كلمات",
+    "exportCsv": "تنزيل بصيغة CSV",
+    "empty": "انقر على كلمة في الترجمة الأصلية لفيديو واحفظها لتجتمع هنا.",
+    "noResults": "لا توجد كلمات مطابقة.",
+    "delete": "حذف",
+    "close": "إغلاق",
+    "lookupFailed": "تعذّر البحث عن معنى هذه الكلمة.",
+    "save": "حفظ في قائمة الكلمات",
+    "saved": "تم الحفظ",
+    "openList": "فتح قائمة الكلمات",
+    "saveFailed": "تعذّر الحفظ."
   }
 }

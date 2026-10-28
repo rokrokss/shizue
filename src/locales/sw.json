@@ -117,7 +117,10 @@
     "webSearch": "Utafutaji wa wavuti",
     "webSearchHint": "Hutafuta kwenye wavuti wakati wa kujibu",
     "webSearchNotSupported": "Miundo ya ndani haiwezi kutafuta kwenye wavuti",
-    "sources": "Vyanzo"
+    "sources": "Vyanzo",
+    "withCaptions": "pamoja na manukuu",
+    "withoutCaptions": "bila manukuu",
+    "playFromTime": "Cheza kuanzia {{time}}"
   },
   "footer": {
     "joinDiscord": "Jiunge nami kwenye Discord!",
@@ -286,5 +289,19 @@
     "forbidden": "Ollama imekataa ombi. Weka kigezo hiki cha mazingira kisha uwashe upya Ollama:",
     "invalidUrl": "Kagua anwani ya seva.",
     "tag": "Ndani"
+  },
+  "words": {
+    "title": "Orodha ya maneno",
+    "search": "Tafuta maneno",
+    "exportCsv": "Pakua kama CSV",
+    "empty": "Bofya neno katika manukuu asili ya video na ulihifadhi ili likusanywe hapa.",
+    "noResults": "Hakuna maneno yanayolingana.",
+    "delete": "Futa",
+    "close": "Funga",
+    "lookupFailed": "Imeshindwa kupata maana ya neno hili.",
+    "save": "Hifadhi kwenye orodha",
+    "saved": "Imehifadhiwa",
+    "openList": "Fungua orodha ya maneno",
+    "saveFailed": "Imeshindwa kuhifadhi."
   }
 }

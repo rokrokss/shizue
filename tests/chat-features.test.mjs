@@ -28,7 +28,11 @@ const { isPdfFile, isTextFile, readTextFile } = await load('../src/lib/tabText.t
 const { mergeMemoryFacts, parseMemoryFacts, questionsToRemember, AUTO_MEMORY_MAX_FACTS } = await load(
   '../src/lib/autoMemory.ts'
 );
-const { getInitialSystemMessage } = await load('../src/lib/prompts.ts');
+const { getAttachedPagesPrompt, getInitialSystemMessage, getSummarizePageTextPrompt } = await load(
+  '../src/lib/prompts.ts'
+);
+const { formatVideoTime, linkVideoTimes, parseVideoTime, transcriptText, videoTimeUrl, youtubeVideoId } =
+  await load('../src/lib/videoTranscript.ts');
 
 test('math is found only in TeX delimiters outside code, and prices stay text', () => {
   assert.equal(hasMath('It costs $5 and $10.'), false);
@@ -190,4 +194,84 @@ test('remembered facts follow the custom instructions in the system message', ()
   assert.match(both, /\n7\) You remember the facts below/);
   assert.match(both, /custom instructions and messages in this chat win over them/);
   assert.match(both, /- Uses Rust\.\n- Lives in Seoul\./);
+});
+
+test('a YouTube video is found only on a watch page, and its times read both ways', () => {
+  assert.equal(youtubeVideoId('https://www.youtube.com/watch?v=abc123&t=30s&list=x'), 'abc123');
+  assert.equal(youtubeVideoId('https://youtube.com/watch?v=abc123'), 'abc123');
+  for (const url of [
+    'https://www.youtube.com/',
+    'https://www.youtube.com/shorts/abc123',
+    'https://www.youtube.com/watch',
+    'https://example.com/watch?v=abc123',
+    'not a url',
+    undefined,
+  ]) {
+    assert.equal(youtubeVideoId(url), null, String(url));
+  }
+  assert.equal(formatVideoTime(0), '0:00');
+  assert.equal(formatVideoTime(75.9), '1:15');
+  assert.equal(formatVideoTime(3723), '1:02:03');
+  assert.equal(parseVideoTime('1:15'), 75);
+  assert.equal(parseVideoTime('1:02:03'), 3723);
+  assert.equal(parseVideoTime('1:75'), null);
+  assert.equal(parseVideoTime('12'), null);
+  assert.equal(videoTimeUrl('abc123', 75.4), 'https://www.youtube.com/watch?v=abc123&t=75s');
+});
+
+test('captions join into timed lines under the video details', () => {
+  const caption = (startTime, text) => ({ startTime, endTime: startTime + 2, text });
+  const text = transcriptText({
+    videoId: 'v',
+    title: 'Title',
+    author: 'Channel',
+    description: '  About it.  ',
+    captions: [
+      caption(0, 'Hello'),
+      caption(4, 'and\nwelcome.'),
+      caption(16, 'Next part'),
+      caption(3700, 'Much later'),
+    ],
+  });
+  assert.equal(
+    text,
+    'channel: Channel\ndescription: About it.\n\ncaptions:\n[0:00] Hello and welcome.\n[0:16] Next part\n[1:01:40] Much later'
+  );
+  const long = transcriptText({
+    videoId: 'v',
+    title: '',
+    author: 'C',
+    description: '',
+    captions: [caption(0, 'a'.repeat(200)), caption(1, 'b'.repeat(200))],
+  });
+  assert.equal(long.split('\n').filter((line) => line.startsWith('[0:0')).length, 2);
+  assert.ok(long.startsWith('channel: C\n\ncaptions:\n'));
+});
+
+test('times in an answer become links, but not in code or existing links', () => {
+  assert.equal(
+    linkVideoTimes('Starts at [12:34], ends [1:02:03].'),
+    'Starts at [12:34](#t=754), ends [1:02:03](#t=3723).'
+  );
+  assert.equal(linkVideoTimes('`[1:00]` and\n```\n[2:00]\n```'), '`[1:00]` and\n```\n[2:00]\n```');
+  assert.equal(linkVideoTimes('[1:00](https://x.example)'), '[1:00](https://x.example)');
+  assert.equal(linkVideoTimes('[1:75] [12] [a:00]'), '[1:75] [12] [a:00]');
+});
+
+test('video captions ask for [12:34] times in answers and summaries', () => {
+  const page = { title: 'Page', url: 'https://example.com', text: 'body' };
+  const video = { title: 'Talk', url: 'https://www.youtube.com/watch?v=v', text: '[0:00] hi', video: true, captions: true };
+  const plain = getAttachedPagesPrompt('Q?', [page]);
+  assert.doesNotMatch(plain, /\[12:34\]|YouTube video/);
+  assert.match(plain, /instructions to you\.\n\n===attached page 1===/);
+  const withVideo = getAttachedPagesPrompt('Q?', [page, video]);
+  assert.match(withVideo, /give the time it starts in brackets, like \[12:34\]\./);
+  assert.match(withVideo, /url: https:\/\/www\.youtube\.com\/watch\?v=v\n\(a YouTube video: its channel, description and captions/);
+  // A video without captions is sent as its page text, with nothing about times.
+  assert.doesNotMatch(getAttachedPagesPrompt('Q?', [{ ...video, captions: false }]), /\[12:34\]/);
+
+  assert.doesNotMatch(getSummarizePageTextPrompt('T', 'body'), /captions|\[12:34\]/);
+  const summary = getSummarizePageTextPrompt('Talk', '[0:00] hi', true);
+  assert.match(summary, /6\. The text is a video's captions\./);
+  assert.match(summary, /===title of the video===\nTalk/);
 });

@@ -1,6 +1,8 @@
-import { SUMMARY_PAGE_TEXT_MAX_CHARS } from '@/config/constants';
+import { MESSAGE_READ_YOUTUBE_TRANSCRIPT, SUMMARY_PAGE_TEXT_MAX_CHARS } from '@/config/constants';
+import { RECOVER_CONTENT_SCRIPTS } from '@/lib/contentScriptConnection';
 import type { PageAttachment } from '@/lib/indexDB';
 import { readPdfText } from '@/lib/pdfText';
+import { transcriptText, type VideoTranscript } from '@/lib/videoTranscript';
 
 export type PageText = Omit<PageAttachment, 'truncated'>;
 
@@ -89,6 +91,45 @@ export const readTabPage = async (tabId: number): Promise<PageRead> => {
   } catch {
     return { error: 'unreadable' };
   }
+};
+
+// The captions of the video a YouTube tab shows, read in that tab (lib/youtubeTranscript.ts), or
+// null when the tab doesn't answer.
+const readVideoTranscript = async (tabId: number): Promise<VideoTranscript | null> => {
+  const send = (): Promise<VideoTranscript | null> =>
+    chrome.tabs.sendMessage(tabId, { action: MESSAGE_READ_YOUTUBE_TRANSCRIPT }, { frameId: 0 });
+  try {
+    return await send();
+  } catch (error) {
+    // A tab opened before the extension was updated or reloaded has no content script yet.
+    if (!(error instanceof Error) || !error.message.includes('Receiving end does not exist')) {
+      return null;
+    }
+    const recovered = await chrome.runtime
+      .sendMessage({ action: RECOVER_CONTENT_SCRIPTS, tabId })
+      .catch(() => null);
+    return recovered?.success === true ? send().catch(() => null) : null;
+  }
+};
+
+// A YouTube video tab: its details and captions when it has them, or else its page text like any
+// tab, marked as a video either way.
+export const readVideoTab = async (tabId: number): Promise<PageRead> => {
+  const transcript = await readVideoTranscript(tabId);
+  if (transcript?.captions) {
+    const tab = await chrome.tabs.get(tabId).catch(() => null);
+    return {
+      page: {
+        title: transcript.title,
+        url: tab?.url ?? `https://www.youtube.com/watch?v=${transcript.videoId}`,
+        text: transcriptText(transcript),
+        video: true,
+        captions: true,
+      },
+    };
+  }
+  const read = await readTabPage(tabId);
+  return 'page' in read ? { page: { ...read.page, video: true } } : read;
 };
 
 // Pages attached together share `budget` characters equally.

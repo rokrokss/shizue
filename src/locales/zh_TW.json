@@ -117,7 +117,10 @@
     "webSearch": "網路搜尋",
     "webSearchHint": "回答時搜尋網路",
     "webSearchNotSupported": "本機模型無法搜尋網路",
-    "sources": "來源"
+    "sources": "來源",
+    "withCaptions": "含字幕",
+    "withoutCaptions": "無字幕",
+    "playFromTime": "從 {{time}} 播放"
   },
   "footer": {
     "joinDiscord": "加入我的 Discord！",
@@ -286,5 +289,19 @@
     "forbidden": "Ollama 拒絕了請求。請設定以下環境變數並重新啟動 Ollama：",
     "invalidUrl": "請檢查伺服器位址。",
     "tag": "本機"
+  },
+  "words": {
+    "title": "單字本",
+    "search": "搜尋單字",
+    "exportCsv": "下載為 CSV",
+    "empty": "點擊影片原文字幕中的單字並儲存，就會收集到這裡。",
+    "noResults": "沒有符合的單字。",
+    "delete": "刪除",
+    "close": "關閉",
+    "lookupFailed": "無法查詢這個單字。",
+    "save": "儲存到單字本",
+    "saved": "已儲存",
+    "openList": "開啟單字本",
+    "saveFailed": "儲存失敗。"
   }
 }

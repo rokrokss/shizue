@@ -117,7 +117,10 @@
     "webSearch": "ウェブ検索",
     "webSearchHint": "回答時にウェブを検索します",
     "webSearchNotSupported": "ローカルモデルはウェブ検索できません",
-    "sources": "出典"
+    "sources": "出典",
+    "withCaptions": "字幕あり",
+    "withoutCaptions": "字幕なし",
+    "playFromTime": "{{time}}から再生"
   },
   "footer": {
     "joinDiscord": "Discordに参加してください！",
@@ -286,5 +289,19 @@
     "forbidden": "Ollamaがリクエストを拒否しました。次の環境変数を設定してOllamaを再起動してください：",
     "invalidUrl": "サーバーのアドレスを確認してください。",
     "tag": "ローカル"
+  },
+  "words": {
+    "title": "単語帳",
+    "search": "単語を検索",
+    "exportCsv": "CSVでダウンロード",
+    "empty": "動画の原文字幕の単語をクリックして保存すると、ここに集まります。",
+    "noResults": "一致する単語がありません。",
+    "delete": "削除",
+    "close": "閉じる",
+    "lookupFailed": "意味を取得できませんでした。",
+    "save": "単語帳に保存",
+    "saved": "保存しました",
+    "openList": "単語帳を開く",
+    "saveFailed": "保存できませんでした。"
   }
 }

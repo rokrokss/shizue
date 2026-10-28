@@ -146,6 +146,37 @@ export const getCaptionUrl = async (trackBaseUrl: string) => {
   return buildCaptionUrl(trackBaseUrl, await getPlayerCaptionUrl(videoId));
 };
 
+// A caption track's lines, each ending where the next starts, or null when it can't be read.
+export const fetchCaptionTrack = async (metadata: TranscriptMetadata): Promise<Caption[] | null> => {
+  try {
+    const response = await fetch(await getCaptionUrl(metadata.baseUrl));
+    const data = await response.json();
+    const captions: Caption[] = data.events
+      .filter((event: any) => event.segs)
+      .map((event: any) => ({
+        startTime: event.tStartMs / 1000,
+        endTime: (event.tStartMs + event.dDurationMs) / 1000,
+        text: event.segs
+          .map((seg: any) => seg.utf8)
+          .join('')
+          .trim(),
+      }))
+      .filter((caption: Caption) => caption.text.length > 0);
+
+    return captions.map((caption, i) => {
+      if (i === captions.length - 1) return caption;
+      const nextCaption = captions[i + 1];
+      return {
+        ...caption,
+        endTime: Math.min(caption.endTime, nextCaption.startTime),
+      };
+    });
+  } catch (err) {
+    errorLog(`[YouTube] Failed to fetch captions for ${metadata.language}`, err);
+    return null;
+  }
+};
+
 const getPlayerData = async (videoId: string) => {
   const pageData = await fetch(`https://www.youtube.com/watch?v=${videoId}`);
   const body = await pageData.text();

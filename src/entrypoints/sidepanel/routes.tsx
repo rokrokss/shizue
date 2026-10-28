@@ -4,6 +4,7 @@ import { lazy } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
 
 const Memo = lazy(() => import('@/components/Memo'));
+const WordList = lazy(() => import('@/components/WordList'));
 const Onboarding = lazy(() => import('@/components/Onboarding/Onboarding'));
 
 export const SidePanelRoutes = () => {
@@ -20,6 +21,10 @@ export const SidePanelRoutes = () => {
     {
       path: '/shizue-memo',
       element: <Memo />,
+    },
+    {
+      path: '/shizue-words',
+      element: <WordList />,
     },
     {
       path: '/onboarding',

@@ -117,7 +117,10 @@
     "webSearch": "Tìm kiếm web",
     "webSearchHint": "Tìm trên web khi trả lời",
     "webSearchNotSupported": "Mô hình cục bộ không thể tìm kiếm web",
-    "sources": "Nguồn"
+    "sources": "Nguồn",
+    "withCaptions": "có phụ đề",
+    "withoutCaptions": "không có phụ đề",
+    "playFromTime": "Phát từ {{time}}"
   },
   "footer": {
     "joinDiscord": "Tham gia cùng tôi trên Discord!",
@@ -286,5 +289,19 @@
     "forbidden": "Ollama đã từ chối yêu cầu. Hãy đặt biến môi trường này rồi khởi động lại Ollama:",
     "invalidUrl": "Hãy kiểm tra địa chỉ máy chủ.",
     "tag": "Cục bộ"
+  },
+  "words": {
+    "title": "Sổ từ vựng",
+    "search": "Tìm từ",
+    "exportCsv": "Tải xuống CSV",
+    "empty": "Nhấp vào một từ trong phụ đề gốc của video và lưu lại để gom vào đây.",
+    "noResults": "Không có từ phù hợp.",
+    "delete": "Xóa",
+    "close": "Đóng",
+    "lookupFailed": "Không tra được từ này.",
+    "save": "Lưu vào sổ từ vựng",
+    "saved": "Đã lưu",
+    "openList": "Mở sổ từ vựng",
+    "saveFailed": "Không lưu được."
   }
 }

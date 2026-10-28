@@ -18,14 +18,17 @@ import {
   readPdfPage,
   readTabPage,
   readTextFile,
+  readVideoTab,
   toPageAttachments,
 } from '@/lib/tabText';
+import { youtubeVideoId } from '@/lib/videoTranscript';
 import { debugLog } from '@/logs';
 import {
   EditOutlined,
   FolderOutlined,
   LineChartOutlined,
   PictureOutlined,
+  ReadOutlined,
   SmileOutlined,
   TranslationOutlined,
   UnorderedListOutlined,
@@ -119,7 +122,9 @@ const ChatInput = ({
     const results = await Promise.all(
       items.map((item): PageRead | Promise<PageRead> =>
         item.tabId !== undefined
-          ? readTabPage(item.tabId)
+          ? item.video
+            ? readAttachedVideo(item)
+            : readTabPage(item.tabId)
           : item.page
           ? { page: item.page }
           : { error: item.error ?? 'unreadable' }
@@ -143,11 +148,43 @@ const ChatInput = ({
     setAttached([]);
   };
 
-  const attachTab = (tab: chrome.tabs.Tab) =>
+  // A YouTube video's captions are read as soon as it is attached (pressing the player's CC button
+  // and putting it back if the player hasn't fetched them yet), not when the question is sent.
+  const attachTab = (tab: chrome.tabs.Tab) => {
+    const key = `tab-${tab.id}`;
+    const video = youtubeVideoId(tab.url) !== null;
     setAttached((current) => [
       ...current,
-      { key: `tab-${tab.id}`, tabId: tab.id!, title: tab.title ?? '', url: tab.url! },
+      {
+        key,
+        tabId: tab.id!,
+        title: tab.title ?? '',
+        url: tab.url!,
+        ...(video ? { video: true, loading: true } : {}),
+      },
     ]);
+    if (!video) return;
+    void readVideoTab(tab.id!).then((result) => {
+      const page = 'page' in result && result.page.captions ? result.page : undefined;
+      setAttached((current) =>
+        current.map((item) =>
+          item.key === key
+            ? { ...item, loading: false, page, captions: !!page, videoId: youtubeVideoId(page?.url) }
+            : item
+        )
+      );
+    });
+  };
+
+  // Captions read when the video was attached, while its tab still shows that video. Otherwise
+  // (another video now, or none read) the tab is read again.
+  const readAttachedVideo = async (item: AttachedItem): Promise<PageRead> => {
+    const tab = await chrome.tabs.get(item.tabId!).catch(() => null);
+    if (item.page && item.videoId && youtubeVideoId(tab?.url) === item.videoId) {
+      return { page: item.page };
+    }
+    return readVideoTab(item.tabId!);
+  };
 
   // Picking from the @ list attaches the tabs and takes the "@word" out of the chat box.
   const handleMentionPick = (tabs: chrome.tabs.Tab[]) => {
@@ -281,6 +318,10 @@ const ChatInput = ({
   const handleMemoClick = () => {
     debugLog('ChatInput: [handleMemoClick] navigate to /shizue-memo');
     navigate('/shizue-memo');
+  };
+
+  const handleWordListClick = () => {
+    navigate('/shizue-words');
   };
 
   const handleSummaryClick = async () => {
@@ -549,6 +590,34 @@ const ChatInput = ({
                 type="text"
                 icon={
                   <EditOutlined
+                    style={{
+                      fontSize: '20px',
+                      color: iconColor,
+                    }}
+                  />
+                }
+                size="middle"
+              ></Button>
+            </Tooltip>
+            <Tooltip
+              placement="top"
+              title={
+                <div
+                  className={`sz:font-ycom sz:z-2147483647 ${
+                    theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
+                  }`}
+                >
+                  {t('words.title')}
+                </div>
+              }
+              color={theme == 'dark' ? '#505362' : 'white'}
+              className="sz:font-ycom"
+            >
+              <Button
+                onClick={() => handleWordListClick()}
+                type="text"
+                icon={
+                  <ReadOutlined
                     style={{
                       fontSize: '20px',
                       color: iconColor,

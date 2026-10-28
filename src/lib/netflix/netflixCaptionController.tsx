@@ -484,6 +484,12 @@ class NetflixCaptions {
           originalLines={originalLines}
           bilingual={settings.bilingual}
           captionSizeRatio={settings.captionSizeRatio}
+          lookup={{
+            video: playerVideo(),
+            live: false,
+            title: this.title ?? document.title,
+            targetLanguage: settings.targetLanguage,
+          }}
         />
       </StrictMode>
     );

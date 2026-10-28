@@ -6,18 +6,20 @@ import {
   MESSAGE_SCC_CAPTION_SNAPSHOT,
   MESSAGE_SCC_SET_HIDDEN,
   MESSAGE_LOAD_THREAD,
+  MESSAGE_LOOKUP_WORD,
   MESSAGE_OPEN_PANEL,
   MESSAGE_WAIT_PANEL_SUMMARY,
   MESSAGE_SET_PANEL_OPEN_OR_NOT,
   MESSAGE_TRANSLATE_FRAMES,
   MESSAGE_REMEMBER_THREAD,
+  MESSAGE_SAVE_WORD,
   MESSAGE_TRANSLATE_HTML_TEXT_BATCH,
   MESSAGE_TRANSLATE_LIVE_CAPTION,
   MESSAGE_TRANSLATE_SUBTITLES,
   MESSAGE_TRANSLATE_YOUTUBE_CAPTION,
 } from '@/config/constants';
 import { openPanel, togglePanel } from '@/entrypoints/background/sidepanel';
-import { db, getLatestMessageForThread, loadThread } from '@/lib/indexDB';
+import { addWord, db, getLatestMessageForThread, loadThread } from '@/lib/indexDB';
 import { getChatModelHandler } from '@/services/background/chatModelHandler';
 import { getTranslationHandler } from '@/services/background/translationHandler';
 import { openPanelForSummary, waitForPanelSummary } from '@/services/background/panelSummary';
@@ -42,6 +44,8 @@ async function handleLoadThread(msg: any, sendResponse: (response?: any) => void
         actionType: m.actionType,
         summaryTitle: m.summaryTitle,
         summaryPageLink: m.summaryPageLink,
+        summaryVideo: m.summaryVideo,
+        summaryCaptions: m.summaryCaptions,
         selectionText: m.selectionText,
         translateMode: m.translateMode ?? false,
         done: m.done,
@@ -210,6 +214,18 @@ async function handleRememberThread(msg: any, sendResponse: (response?: any) => 
   if (typeof msg.threadId === 'string') await getChatModelHandler().rememberThread(msg.threadId);
 }
 
+// A word clicked in the captions (components/Youtube/WordPopup.tsx).
+async function handleLookupWord(msg: any, sendResponse: (response?: any) => void) {
+  const { word, sentence, translation, targetLanguage } = msg;
+  sendResponse(await getTranslationHandler().lookupWord(word, sentence, translation, targetLanguage));
+}
+
+// Content scripts can't reach the extension's IndexedDB, so the background saves the word.
+async function handleSaveWord(msg: any, sendResponse: (response?: any) => void) {
+  await addWord({ ...msg.word, id: crypto.randomUUID(), createdAt: Date.now() });
+  sendResponse({ status: 'success' });
+}
+
 export const messageHandlers = {
   [MESSAGE_LOAD_THREAD]: handleLoadThread,
   [MESSAGE_CANCEL_NOT_STARTED_MESSAGE]: handleLatestMessageForThread,
@@ -226,4 +242,6 @@ export const messageHandlers = {
   [MESSAGE_SCC_SET_HIDDEN]: handleSccSetHidden,
   [MESSAGE_TRANSLATE_FRAMES]: handleTranslateFrames,
   [MESSAGE_REMEMBER_THREAD]: handleRememberThread,
+  [MESSAGE_LOOKUP_WORD]: handleLookupWord,
+  [MESSAGE_SAVE_WORD]: handleSaveWord,
 };

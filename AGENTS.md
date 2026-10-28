@@ -36,7 +36,7 @@ site/build.sh            # shizue.net landing page into _site/
 
 - `src/entrypoints/background/`: the service worker. It routes messages, owns context menus, opens and closes the side panel, and caches settings in `states/`.
 - `src/services/background/`: what the router calls. `messageHandlers.ts` is the registry, `chatModelHandler.ts` streams chat, `translationHandler.ts` translates in batches, and `chatgpt.ts` runs ChatGPT sign-in.
-- `src/entrypoints/sidepanel/`: the React app, with routes `/chat`, `/shizue-memo` and `/onboarding`.
+- `src/entrypoints/sidepanel/`: the React app, with routes `/chat`, `/shizue-memo`, `/shizue-words` and `/onboarding`.
 - `src/entrypoints/*.content*`: in-page toggle, YouTube captions, Twitch captions, the Twitch player bridge and player worker hook (MAIN world), the Stream Closed Captioner frame reader, and Netflix captions with their player bridge (MAIN world).
 - `src/lib/`: shared logic. `src/hooks/`: Jotai atoms and hooks. `src/config/constants.ts`: every `MESSAGE_*`, `PORT_*` and `STORAGE_*` name.
 - To add a message, add a `MESSAGE_*` constant, a handler, and its entry in the `messageHandlers.ts` registry. A `chrome.runtime.onMessage` listener that answers asynchronously returns `true`; otherwise the channel closes before `sendResponse` runs.

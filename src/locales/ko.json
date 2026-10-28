@@ -117,7 +117,10 @@
     "webSearch": "웹 검색",
     "webSearchHint": "답할 때 웹에서 찾아봅니다",
     "webSearchNotSupported": "로컬 모델은 웹 검색을 할 수 없습니다",
-    "sources": "출처"
+    "sources": "출처",
+    "withCaptions": "자막",
+    "withoutCaptions": "자막 없이",
+    "playFromTime": "{{time}}부터 재생"
   },
   "footer": {
     "joinDiscord": "디스코드로 놀러 오세요!",
@@ -286,5 +289,19 @@
     "forbidden": "Ollama가 요청을 거부했습니다. 아래 환경 변수를 설정하고 Ollama를 다시 시작하세요:",
     "invalidUrl": "서버 주소를 확인하세요.",
     "tag": "로컬"
+  },
+  "words": {
+    "title": "단어장",
+    "search": "단어 검색",
+    "exportCsv": "CSV로 내보내기",
+    "empty": "영상 원문 자막의 단어를 눌러 저장하면 여기에 모입니다.",
+    "noResults": "찾는 단어가 없습니다.",
+    "delete": "삭제",
+    "close": "닫기",
+    "lookupFailed": "뜻을 가져오지 못했습니다.",
+    "save": "단어장에 저장",
+    "saved": "저장됨",
+    "openList": "단어장 열기",
+    "saveFailed": "저장하지 못했습니다."
   }
 }

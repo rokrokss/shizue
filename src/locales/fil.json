@@ -117,7 +117,10 @@
     "webSearch": "Paghahanap sa web",
     "webSearchHint": "Naghahanap sa web habang sumasagot",
     "webSearchNotSupported": "Hindi makakapaghanap sa web ang mga lokal na model",
-    "sources": "Mga pinagmulan"
+    "sources": "Mga pinagmulan",
+    "withCaptions": "may caption",
+    "withoutCaptions": "walang caption",
+    "playFromTime": "I-play mula {{time}}"
   },
   "footer": {
     "joinDiscord": "Sumali sa akin sa Discord!",
@@ -286,5 +289,19 @@
     "forbidden": "Tinanggihan ng Ollama ang request. Itakda ang environment variable na ito at i-restart ang Ollama:",
     "invalidUrl": "Suriin ang address ng server.",
     "tag": "Local"
+  },
+  "words": {
+    "title": "Listahan ng salita",
+    "search": "Maghanap ng salita",
+    "exportCsv": "I-download bilang CSV",
+    "empty": "I-click ang isang salita sa orihinal na caption ng video at i-save ito para maipon dito.",
+    "noResults": "Walang tugmang salita.",
+    "delete": "Burahin",
+    "close": "Isara",
+    "lookupFailed": "Hindi ma-lookup ang salitang ito.",
+    "save": "I-save sa listahan",
+    "saved": "Na-save",
+    "openList": "Buksan ang listahan ng salita",
+    "saveFailed": "Hindi ma-save."
   }
 }

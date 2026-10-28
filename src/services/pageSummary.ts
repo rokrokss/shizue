@@ -1,12 +1,21 @@
 import { MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE, MESSAGE_UPDATE_PANEL_INIT_DATA, SUMMARY_PAGE_TEXT_MAX_CHARS } from '@/config/constants';
 import { initSummarizePageContent } from '@/lib/initPanelData';
+import { transcriptText, youtubeVideoId } from '@/lib/videoTranscript';
+import { readYoutubeTranscript } from '@/lib/youtubeTranscript';
 import { debugLog } from '@/logs';
 import { panelService } from '@/services/panelService';
 import { RECOVER_CONTENT_SCRIPTS } from '@/lib/contentScriptConnection';
 
 export async function summarizeCurrentPage() {
-  const text = document.body?.innerText.slice(0, SUMMARY_PAGE_TEXT_MAX_CHARS) ?? '';
-  await initSummarizePageContent(document.title, text, window.location.href);
+  // A YouTube video is summarized from its captions when it has them.
+  const video = youtubeVideoId(window.location.href) ? await readYoutubeTranscript() : null;
+  const text = (
+    video?.captions ? transcriptText(video) : document.body?.innerText ?? ''
+  ).slice(0, SUMMARY_PAGE_TEXT_MAX_CHARS);
+  await initSummarizePageContent(document.title, text, window.location.href, {
+    video: !!video,
+    captions: !!video?.captions,
+  });
   // Storage is the durable handoff. A panel that is still loading reads it on mount.
   // An already mounted panel also observes the storage change.
   await chrome.runtime.sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA }).catch((error) => {

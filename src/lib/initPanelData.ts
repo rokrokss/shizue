@@ -1,7 +1,12 @@
 import { SelectionActionType, STORAGE_GLOBAL_STATE } from '@/config/constants';
 import { readStorage, setStorage } from '@/lib/storageBackend';
 
-export async function initSummarizePageContent(title: string, text: string, pageLink: string) {
+export async function initSummarizePageContent(
+  title: string,
+  text: string,
+  pageLink: string,
+  { video, captions }: { video: boolean; captions: boolean }
+) {
   const prevGlobalState = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
   const saved = await setStorage(STORAGE_GLOBAL_STATE, {
     ...(prevGlobalState ?? {}),
@@ -9,6 +14,8 @@ export async function initSummarizePageContent(title: string, text: string, page
     summaryTitle: title,
     summaryPageLink: pageLink,
     summaryText: text,
+    summaryVideo: video,
+    summaryCaptions: captions,
   });
   if (!saved) throw new Error('Unable to save page summary.');
 }
@@ -35,6 +42,15 @@ export async function initMemoPageContent() {
   await setStorage(STORAGE_GLOBAL_STATE, {
     ...(prevGlobalState ?? {}),
     actionType: 'memo',
+  });
+}
+
+// The word list, from the caption word popup's link.
+export async function initWordsPageContent() {
+  const prevGlobalState = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
+  await setStorage(STORAGE_GLOBAL_STATE, {
+    ...(prevGlobalState ?? {}),
+    actionType: 'words',
   });
 }
 

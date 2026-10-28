@@ -27,6 +27,8 @@ const { createCaptionPrefetch, chunkKey } = await load('twitch/captionPrefetch')
 const { joinCaptionLines } = await load('youtubeCaption/domCaptionSource');
 const { cuesFromSegment, createUmpCaptionReader } = await load('youtubeCaption/sabr');
 const { createLiveCaptionReadAhead } = await load('youtubeCaption/captionReadAhead');
+const { captionPieces, parseWordMeaning, sourceLink, wordListCsv } = await load('wordLookup');
+const { getWordMeaningPrompt } = await load('prompts');
 const fixture = async (name, site = 'twitch') =>
   JSON.parse(await readFile(new URL(`./fixtures/${site}/${name}`, import.meta.url), 'utf8'));
 
@@ -654,4 +656,82 @@ test('clearing the queue ignores answers that arrive afterwards', async () => {
   pending.resolve(['late']);
   await new Promise((r) => setTimeout(r, 0));
   assert.deepEqual(results, []);
+});
+
+test('a caption line splits into words to look up, Japanese without spaces included', () => {
+  const words = (line) => captionPieces(line).filter((piece) => piece.word).map((piece) => piece.text);
+  assert.deepEqual(words("I don't know, right?"), ['I', "don't", 'know', 'right']);
+  assert.equal(captionPieces("I don't know, right?").map((piece) => piece.text).join(''), "I don't know, right?");
+  const japanese = words('今日はいい天気ですね');
+  assert.ok(japanese.length > 2, japanese.join('|'));
+  assert.equal(japanese.join(''), '今日はいい天気ですね');
+});
+
+test("a word's meaning is read from the model's JSON, fenced or not", () => {
+  const meaning = {
+    lemma: '食べる',
+    reading: 'たべる',
+    partOfSpeech: '동사',
+    meaning: '먹다',
+    note: '과거형',
+  };
+  assert.deepEqual(parseWordMeaning(JSON.stringify(meaning)), meaning);
+  assert.deepEqual(parseWordMeaning('```json\n' + JSON.stringify(meaning) + '\n```'), meaning);
+  assert.deepEqual(parseWordMeaning(JSON.stringify({ meaning: ' run ', lemma: 1 })), {
+    lemma: '',
+    reading: '',
+    partOfSpeech: '',
+    meaning: 'run',
+    note: '',
+  });
+  assert.equal(parseWordMeaning(JSON.stringify({ ...meaning, meaning: '' })), null);
+  assert.equal(parseWordMeaning('not json'), null);
+  assert.equal(parseWordMeaning('[]'), null);
+});
+
+test('a saved word links back to the video at its time where the site allows', () => {
+  assert.equal(
+    sourceLink('https://www.youtube.com/watch?v=abc123&list=x', 75.9),
+    'https://www.youtube.com/watch?v=abc123&t=75s'
+  );
+  assert.equal(sourceLink('https://www.youtube.com/watch?v=abc123', null), 'https://www.youtube.com/watch?v=abc123');
+  assert.equal(sourceLink('https://www.youtube.com/watch?v=abc123', -1), 'https://www.youtube.com/watch?v=abc123&t=0s');
+  assert.equal(sourceLink('https://www.netflix.com/watch/8019?trackId=1', 61), 'https://www.netflix.com/watch/8019?t=61');
+  assert.equal(sourceLink('https://www.twitch.tv/videos/42', 3725), 'https://www.twitch.tv/videos/42?t=1h2m5s');
+  assert.equal(sourceLink('https://www.twitch.tv/somechannel', null), 'https://www.twitch.tv/somechannel');
+  assert.equal(sourceLink('https://www.twitch.tv/somechannel', 30), 'https://www.twitch.tv/somechannel');
+});
+
+test('the word list exports as CSV with quoting and a UTF-8 mark', () => {
+  const csv = wordListCsv([
+    {
+      id: '1',
+      word: 'ran',
+      lemma: 'run',
+      reading: '',
+      partOfSpeech: 'verb',
+      meaning: '달리다, 뛰다',
+      note: 'Past of "run"',
+      sentence: 'He ran\naway',
+      sentenceTranslation: '그는 달아났다',
+      sourceTitle: 'Video',
+      sourceUrl: 'https://www.youtube.com/watch?v=a&t=1s',
+      createdAt: Date.UTC(2026, 9, 27, 12),
+    },
+  ]);
+  assert.ok(csv.startsWith('﻿word,reading,meaning,'));
+  assert.ok(csv.endsWith('\r\n'));
+  const row = csv.slice(csv.indexOf('\r\n') + 2, -2);
+  assert.equal(
+    row,
+    'run,,"달리다, 뛰다",verb,"Past of ""run""","He ran\naway",그는 달아났다,Video,https://www.youtube.com/watch?v=a&t=1s,2026-10-27'
+  );
+});
+
+test('the word prompt asks for JSON in the target language, with the translation when known', () => {
+  const prompt = getWordMeaningPrompt('ran', 'He ran away', '그는 달아났다', 'Korean');
+  assert.match(prompt, /"meaning": what the word means in this line, in Korean/);
+  assert.match(prompt, /===Word===\nran\n/);
+  assert.match(prompt, /===The line's translation into Korean===\n그는 달아났다/);
+  assert.doesNotMatch(getWordMeaningPrompt('ran', 'He ran away', '', 'Korean'), /translation into/);
 });

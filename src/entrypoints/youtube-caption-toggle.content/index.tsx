@@ -2,6 +2,7 @@ import '@/assets/global.css';
 import '@/assets/tailwind.css';
 import YoutubeSubtitleToggle from '@/components/Youtube/YoutubeCaptionToggle';
 import { watchPlayerCaptionRequests } from '@/lib/youtube';
+import { registerYoutubeTranscriptListener } from '@/lib/youtubeTranscript';
 import { contentScriptLog, errorLog } from '@/logs';
 import { registerContentScriptConnection } from '@/lib/contentScriptConnection';
 import AntdProvider from '@/providers/AntdProvider';
@@ -24,6 +25,7 @@ export default defineContentScript({
   async main(ctx) {
     ctx.onInvalidated(registerContentScriptConnection('youtube-caption-toggle'));
     ctx.onInvalidated(watchPlayerCaptionRequests());
+    ctx.onInvalidated(registerYoutubeTranscriptListener());
     document.getElementById(YOUTUBE_TOGGLE_SHADOW_HOST_ID)?.remove();
     document.querySelectorAll(YOUTUBE_POPUP_HOST_TAG).forEach((host) => host.remove());
     let mounting = false;
