@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.3.18
+
+- Chat with a video: attach a YouTube tab and Shizue reads its captions, so answers can say what was said and when. Times like [12:34] in an answer are buttons that play the video from there. The chip shows "with captions", or "without captions" when a video's captions can't be read and its page text is sent instead
+- Summaries of a YouTube page are made from its captions, with the times of each part
+- Look up caption words: with bilingual captions on YouTube, Netflix or Twitch, click a word in the original line to see its part of speech, base form, reading (Japanese and Chinese) and meaning in that line, from your translation model. The video pauses while it's open (not on live streams) and plays again when you close it
+- Word list: save a word from that popup with its line, the line's translation and a link to that moment in the video. The book icon in the side panel opens the list, where you can search, delete and export a CSV for Anki
+- Smaller download: math fonts ship only as woff2
+
 ## v0.3.17
 
 - Attach files to a chat: the paperclip button and drag-and-drop take text and code files as well as PDFs, and pasting more than 2,000 characters attaches the text as a "Pasted text" chip instead of filling the chat box. Pages, files and pasted text share the limit of 5
