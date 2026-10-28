@@ -279,7 +279,11 @@ const ChatContainer = ({
                     {m.attachments?.some((page) => page.truncated) ? (
                       <div className="sz:flex sz:flex-row sz:items-start sz:gap-1 sz:text-xs sz:text-gray-500 sz:pt-1">
                         <InfoCircleOutlined className="sz:pt-[2px]" />
-                        <span>{t('chat.attachmentTruncated')}</span>
+                        <span>
+                          {m.attachments.every((page) => !page.truncated || page.captions)
+                            ? t('chat.attachmentTruncatedVideo')
+                            : t('chat.attachmentTruncated')}
+                        </span>
                       </div>
                     ) : null}
                   </div>

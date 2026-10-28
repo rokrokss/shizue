@@ -1,5 +1,6 @@
 import { useThemeValue } from '@/hooks/layout';
 import type { PageReadError, PageText } from '@/lib/tabText';
+import { youtubeVideoId } from '@/lib/videoTranscript';
 import {
   FileOutlined,
   FilePdfOutlined,
@@ -56,6 +57,7 @@ const AttachmentChips = ({
   const theme = useThemeValue();
 
   if (attached.length === 0 && !suggestion && !webSearch) return null;
+  const attachLabel = t(youtubeVideoId(suggestion?.url) ? 'chat.attachVideo' : 'chat.attachPage');
 
   return (
     <div className="sz:flex sz:flex-wrap sz:shrink-0 sz:gap-1 sz:pt-1 sz:pb-1">
@@ -130,7 +132,7 @@ const AttachmentChips = ({
                 theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
               }`}
             >
-              {t('chat.attachPage')}
+              {attachLabel}
             </div>
           }
           color={theme == 'dark' ? '#505362' : 'white'}
@@ -139,7 +141,7 @@ const AttachmentChips = ({
             type="dashed"
             size="small"
             icon={<PlusOutlined />}
-            aria-label={`${t('chat.attachPage')}: ${suggestion.title || suggestion.url}`}
+            aria-label={`${attachLabel}: ${suggestion.title || suggestion.url}`}
             onClick={() => onAttach(suggestion)}
             className="sz:font-ycom"
           >

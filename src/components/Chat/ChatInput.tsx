@@ -727,7 +727,13 @@ const ChatInput = ({
             onPaste={handlePaste}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
-            placeholder={attached.length > 0 ? t('chat.askAboutPages') : t('chat.askAnything')}
+            placeholder={
+              attached.length === 0
+                ? t('chat.askAnything')
+                : attached.every((item) => item.video)
+                  ? t('chat.askAboutVideos')
+                  : t('chat.askAboutPages')
+            }
             autoSize
             className="
               sz:w-full
