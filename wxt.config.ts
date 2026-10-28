@@ -76,6 +76,23 @@ export default defineConfig({
         { resources: ['chatgpt-callback.html'], matches: ['<all_urls>'] },
       ],
     };
+    if (browser === 'firefox') {
+      // addons.mozilla.org keeps the extension under this ID for good. Firefox asks for the data
+      // permissions at install, from 140 on desktop and 142 on Android, hence the minimum versions:
+      // page text, its address and the chat go to the AI provider the user picks.
+      manifest.browser_specific_settings = {
+        gecko: {
+          id: 'shizue@shizue.net',
+          strict_min_version: '140.0',
+          data_collection_permissions: {
+            required: ['websiteContent', 'browsingActivity', 'personalCommunications'],
+          },
+        },
+        gecko_android: { strict_min_version: '142.0' },
+      } as UserManifest['browser_specific_settings'];
+      // Firefox takes only a name here, and addons.mozilla.org shows the account's instead.
+      delete manifest.author;
+    }
     return manifest;
   },
   hooks: {
