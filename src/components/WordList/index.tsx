@@ -5,9 +5,9 @@ import { youtubeVideoId } from '@/lib/videoTranscript';
 import { localDate, wordListCsv } from '@/lib/wordLookup';
 import { debugLog } from '@/logs';
 import {
+  ArrowLeftOutlined,
   DeleteOutlined,
   DownloadOutlined,
-  HomeOutlined,
   LinkOutlined,
   YoutubeOutlined,
 } from '@ant-design/icons';
@@ -84,14 +84,19 @@ const WordList = () => {
       }`}
     >
       <div className="sz:flex sz:flex-row sz:items-center sz:gap-2 sz:px-4 sz:pt-3">
+        {/* Back to the chat this panel had open, if any: the word list leaves its thread as it was. */}
         <Tooltip
-          title={tooltip(t('home.title'))}
+          title={tooltip(t('onboarding.back'))}
           color={dark ? '#505362' : 'white'}
           placement="bottomLeft"
           arrow={false}
         >
-          <button className="sz:p-[3px] sz:rounded sz:cursor-pointer sz:flex" onClick={() => navigate('/')}>
-            <HomeOutlined style={{ fontSize: 22, color: iconColor }} />
+          <button
+            aria-label={t('onboarding.back')}
+            className="sz:p-[3px] sz:rounded sz:cursor-pointer sz:flex"
+            onClick={() => navigate('/')}
+          >
+            <ArrowLeftOutlined style={{ fontSize: 20, color: iconColor }} />
           </button>
         </Tooltip>
         <div className={`sz:flex-1 sz:text-base sz:font-semibold ${dark ? 'sz:text-white' : 'sz:text-black'}`}>
