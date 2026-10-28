@@ -123,7 +123,8 @@
     "sources": "Fontes",
     "withCaptions": "com legendas",
     "withoutCaptions": "sem legendas",
-    "playFromTime": "Reproduzir a partir de {{time}}"
+    "playFromTime": "Reproduzir a partir de {{time}}",
+    "backToPage": "Voltar para a página"
   },
   "footer": {
     "joinDiscord": "Junte-se a mim no Discord!",

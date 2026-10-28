@@ -1,10 +1,11 @@
 import tailwindcss from '@tailwindcss/vite';
-import { readdirSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import svgr from 'vite-plugin-svgr';
 import { defineConfig, type UserManifest } from 'wxt';
 import katexWoff2Only from './scripts/vite-plugin-katex-woff2';
+import resizeObserverGlobalThis from './scripts/vite-plugin-resize-observer-global';
 import toUtf8 from './scripts/vite-plugin-to-utf8';
 
 export default defineConfig({
@@ -27,10 +28,11 @@ export default defineConfig({
       // sign-in callback on 127.0.0.1, and plot-signin-rules.json pass Shizue Plot's callback on to
       // its site; such rules need host access to those addresses. The <all_urls> content scripts
       // already put every site under the install warning, so these add none.
+      // WXT adds side_panel and the sidePanel permission for Chromium builds, and sidebar_action for
+      // Firefox, from the sidepanel entrypoint.
       permissions: [
         'storage',
         'scripting',
-        'sidePanel',
         'activeTab',
         'contextMenus',
         'declarativeNetRequestWithHostAccess',
@@ -43,9 +45,6 @@ export default defineConfig({
       // itself rather than http and https; the content scripts' <all_urls> already warns of it.
       host_permissions: ['<all_urls>'],
       default_locale: 'en',
-      side_panel: {
-        default_path: 'sidepanel.html',
-      },
       commands: {
         'toggle-sidepanel': {
           suggested_key: {
@@ -84,12 +83,28 @@ export default defineConfig({
       if (wxt.config.mode === 'development') {
         manifest.action.default_title += ' [DEV]';
       }
+      // WXT treats Safari like Chromium here, but Safari has no side panel: the panel opens in a tab.
+      if (wxt.config.browser === 'safari') {
+        delete manifest.side_panel;
+        manifest.permissions = manifest.permissions?.filter((permission) => permission !== 'sidePanel');
+      }
     },
     // The character maps pdf.js needs for CJK PDFs whose fonts don't embed them (src/lib/pdfText.ts).
     'build:publicAssets': (wxt, files) => {
       const cmaps = resolve(wxt.config.root, 'node_modules/pdfjs-dist/cmaps');
       for (const name of readdirSync(cmaps)) {
         files.push({ absoluteSrc: resolve(cmaps, name), relativeDest: `pdfjs/cmaps/${name}` });
+      }
+      // fonts.css names its font by the extension's URL, whose scheme is Chrome's in the source.
+      const scheme = ({ firefox: 'moz-extension', safari: 'safari-web-extension' } as Record<string, string>)[
+        wxt.config.browser
+      ];
+      const fonts = files.find((file) => file.relativeDest === 'fonts/fonts.css');
+      if (scheme && fonts && 'absoluteSrc' in fonts) {
+        files[files.indexOf(fonts)] = {
+          relativeDest: fonts.relativeDest,
+          contents: readFileSync(fonts.absoluteSrc, 'utf8').replace(/url\('chrome-extension:\/\//g, `url('${scheme}://`),
+        };
       }
     },
   },
@@ -98,6 +113,7 @@ export default defineConfig({
       svgr(),
       tailwindcss(),
       katexWoff2Only(),
+      resizeObserverGlobalThis(),
       visualizer({
         filename: './dist/stats.html',
         open: false,

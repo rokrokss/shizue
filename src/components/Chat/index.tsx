@@ -2,6 +2,7 @@ import ChatGreeting from '@/components/Chat/ChatGreeting';
 import ChatInput from '@/components/Chat/ChatInput';
 import { DotCycle } from '@/components/Loader/DotCycle';
 import TopMenu from '@/components/Chat/TopRightMenu';
+import BackToPageButton from '@/components/Chat/BackToPageButton';
 import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import SettingsModal from '@/components/Setting/SettingsModal';
 import { isSelectionActionType, MESSAGE_LOAD_THREAD, MESSAGE_REMEMBER_THREAD } from '@/config/constants';
@@ -620,6 +621,7 @@ const Chat = () => {
         theme == 'dark' ? 'sz:bg-[#1C1D26]' : 'sz:bg-white'
       }`}
     >
+      <BackToPageButton />
       <TopMenu onSettingsClick={handleTopMenuSettingsClick} />
       <div
         className="

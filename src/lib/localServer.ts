@@ -25,12 +25,15 @@ const OLLAMA_ORIGIN_RULE_ID = 1;
 // writing once per page.
 let allowedOllamaOrigin: string | undefined;
 
-// Ollama answers POST requests from extension origins with 403 unless OLLAMA_ORIGINS lists them,
-// so the extension's own requests to that server carry the server's origin instead. The rule
+// Ollama answers requests from extension origins with 403 unless OLLAMA_ORIGINS lists them (Chrome
+// and Firefox send the origin only with POST requests, Safari with GET requests too), so the
+// extension's own requests to that server carry the server's origin instead. The rule
 // covers that exact origin and only requests this extension sends, so web pages and other local
 // apps are untouched. It takes effect only where the manifest grants host access (localhost,
 // 127.0.0.1); a remote Ollama still needs OLLAMA_ORIGINS. Dynamic rules persist, so the
-// background's later requests are covered too.
+// background's later requests are covered too. Safari's POST requests still came with the
+// extension's origin (WebKit leaves an extension's own fetches alone), so there Ollama needs
+// OLLAMA_ORIGINS too, which the settings show.
 const allowOllamaOrigin = async (origin: string) => {
   if (allowedOllamaOrigin === origin) return;
   await chrome.declarativeNetRequest.updateDynamicRules({
@@ -39,13 +42,19 @@ const allowOllamaOrigin = async (origin: string) => {
       {
         id: OLLAMA_ORIGIN_RULE_ID,
         priority: 1,
-        condition: { urlFilter: `|${origin}/`, initiatorDomains: [chrome.runtime.id] },
+        // The extension URL's host: the ID in Chrome, a per-install UUID in Firefox and Safari.
+        // Lowercased: Safari's UUID is uppercase, and domains in rules are matched in lowercase.
+        condition: {
+          urlFilter: `|${origin}/`,
+          initiatorDomains: [new URL(chrome.runtime.getURL('/')).host.toLowerCase()],
+        },
+        // String values: browsers other than Chrome may not expose the enum objects.
         action: {
-          type: chrome.declarativeNetRequest.RuleActionType.MODIFY_HEADERS,
+          type: 'modifyHeaders' as chrome.declarativeNetRequest.RuleActionType,
           requestHeaders: [
             {
               header: 'Origin',
-              operation: chrome.declarativeNetRequest.HeaderOperation.SET,
+              operation: 'set' as chrome.declarativeNetRequest.HeaderOperation,
               value: origin,
             },
           ],
@@ -143,14 +152,23 @@ const listOpenAICompatibleModels = async (
   };
 };
 
-// Ollama is told apart by /api/version, which the OpenAI-compatible servers don't have.
+// Ollama is told apart by /api/version, which the OpenAI-compatible servers don't have. Safari's
+// check carries the extension's origin, and only Ollama refuses it, so the origin rule goes in for
+// that server and the check runs again. Writing the rule before every check would race:
+// detectLocalServer probes several addresses at once, and there is one rule.
 export const probeLocalServer = async (
   baseUrl: string,
   apiKey?: string
 ): Promise<LocalServerConfig> => {
-  const isOllama = await fetch(`${baseUrl}/api/version`)
-    .then(async (res) => res.ok && typeof (await res.json()).version === 'string')
-    .catch(() => false);
+  const checkVersion = () => fetch(`${baseUrl}/api/version`).catch(() => undefined);
+  let version = await checkVersion();
+  if (version?.status === 403) {
+    await allowOllamaOrigin(new URL(baseUrl).origin);
+    version = await checkVersion();
+  }
+  const isOllama =
+    version?.ok === true &&
+    (await version.json().then((body) => typeof body.version === 'string', () => false));
   if (isOllama) {
     return {
       kind: 'ollama',

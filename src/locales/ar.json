@@ -123,7 +123,8 @@
     "sources": "المصادر",
     "withCaptions": "مع الترجمة",
     "withoutCaptions": "بدون ترجمة",
-    "playFromTime": "تشغيل من {{time}}"
+    "playFromTime": "تشغيل من {{time}}",
+    "backToPage": "العودة إلى الصفحة"
   },
   "footer": {
     "joinDiscord": "انضم إلي على Discord!",

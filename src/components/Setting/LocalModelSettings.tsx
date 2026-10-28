@@ -251,7 +251,12 @@ export default function LocalModelSettings({
             <span>{t(`local.${formError}`)}</span>
             {formError === 'forbidden' && (
               <code className={codeClass}>
-                OLLAMA_ORIGINS=chrome-extension://{chrome.runtime.id}
+                {/* chrome-extension:// or moz-extension:// plus the host. Ollama won't start with a
+                    safari-web-extension:// origin that has no wildcard ("bad origin"). */}
+                OLLAMA_ORIGINS=
+                {chrome.runtime.getURL('/').startsWith('safari-web-extension:')
+                  ? 'safari-web-extension://*'
+                  : chrome.runtime.getURL('/').slice(0, -1)}
               </code>
             )}
           </div>

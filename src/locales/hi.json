@@ -123,7 +123,8 @@
     "sources": "स्रोत",
     "withCaptions": "कैप्शन सहित",
     "withoutCaptions": "कैप्शन के बिना",
-    "playFromTime": "{{time}} से चलाएँ"
+    "playFromTime": "{{time}} से चलाएँ",
+    "backToPage": "पेज पर वापस जाएँ"
   },
   "footer": {
     "joinDiscord": "Discord पर मुझसे जुड़ें!",

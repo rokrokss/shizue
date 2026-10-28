@@ -123,7 +123,8 @@
     "sources": "Mga pinagmulan",
     "withCaptions": "may caption",
     "withoutCaptions": "walang caption",
-    "playFromTime": "I-play mula {{time}}"
+    "playFromTime": "I-play mula {{time}}",
+    "backToPage": "Bumalik sa page"
   },
   "footer": {
     "joinDiscord": "Sumali sa akin sa Discord!",

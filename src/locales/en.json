@@ -123,7 +123,8 @@
     "sources": "Sources",
     "withCaptions": "with captions",
     "withoutCaptions": "without captions",
-    "playFromTime": "Play from {{time}}"
+    "playFromTime": "Play from {{time}}",
+    "backToPage": "Back to page"
   },
   "footer": {
     "joinDiscord": "Join me on Discord!",

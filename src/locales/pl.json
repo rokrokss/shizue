@@ -123,7 +123,8 @@
     "sources": "Źródła",
     "withCaptions": "z napisami",
     "withoutCaptions": "bez napisów",
-    "playFromTime": "Odtwórz od {{time}}"
+    "playFromTime": "Odtwórz od {{time}}",
+    "backToPage": "Wróć do strony"
   },
   "footer": {
     "joinDiscord": "Dołącz do mnie na Discordzie!",

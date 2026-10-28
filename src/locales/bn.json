@@ -123,7 +123,8 @@
     "sources": "সূত্র",
     "withCaptions": "ক্যাপশনসহ",
     "withoutCaptions": "ক্যাপশন ছাড়া",
-    "playFromTime": "{{time}} থেকে চালান"
+    "playFromTime": "{{time}} থেকে চালান",
+    "backToPage": "পৃষ্ঠায় ফিরে যান"
   },
   "footer": {
     "joinDiscord": "Discord-এ আমার সাথে যোগ দিন!",

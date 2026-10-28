@@ -1,7 +1,4 @@
-import {
-  ShizueTranslationOverlay,
-  registerShizueTranslationOverlay,
-} from '@/components/Translation/ShizueTranslationOverlay';
+import { ShizueTranslationOverlay } from '@/components/Translation/ShizueTranslationOverlay';
 import { MESSAGE_TRANSLATE_FRAMES } from '@/config/constants';
 import { Language } from '@/hooks/language';
 import { TEXT_ELEMENTS } from '@/lib/html';
@@ -36,11 +33,6 @@ export class PageTranslator {
   private cachedTranslations: Map<string, Map<string, string>> = new Map();
 
   private targetLanguage: Language | null = null;
-
-  constructor() {
-    // Check if web component is registered
-    registerShizueTranslationOverlay();
-  }
 
   // Activate translation
   public activate(targetLanguage: Language) {
@@ -158,9 +150,7 @@ export class PageTranslator {
   // that follows translates it again.
   private forgetChangedTranslations() {
     for (const element of this.changedElements) {
-      const overlay = Array.from(element.children).find(
-        (child) => child.tagName === 'SHIZUE-TRANSLATION-OVERLAY'
-      ) as ShizueTranslationOverlay | undefined;
+      const overlay = ShizueTranslationOverlay.find(element);
       // One still in the queue or on its way is checked again when its translation arrives.
       const waiting =
         this.queuedElements.has(element) &&
@@ -261,8 +251,8 @@ export class PageTranslator {
     overlay: ShizueTranslationOverlay,
     removeTranslatedElement: boolean = true
   ) {
-    if (element.contains(overlay)) {
-      element.removeChild(overlay);
+    if (element.contains(overlay.element)) {
+      element.removeChild(overlay.element);
       if (removeTranslatedElement) {
         if (this.queuedElements.has(element)) {
           this.queuedElements.delete(element);
@@ -425,7 +415,7 @@ export class PageTranslator {
           `Translation batch processing was deactivated for batch with ${elements.length} elements.`
         );
         overlaysInBatch.forEach(({ element: el, overlay: ov }) => {
-          if (el.contains(ov)) {
+          if (el.contains(ov.element)) {
             this.removeOverlayFromElement(el, ov, true);
           } else if (this.queuedElements.has(el)) {
             this.queuedElements.delete(el);
@@ -673,19 +663,12 @@ export class PageTranslator {
   }
 
   private attachTranslationOverlay(element: Element): ShizueTranslationOverlay {
-    const overlay = document.createElement(
-      'shizue-translation-overlay'
-    ) as ShizueTranslationOverlay;
-    element.appendChild(overlay);
-    return overlay;
+    return ShizueTranslationOverlay.attach(element);
   }
 
   // Reuse an existing overlay, or attach one when the element is processed.
   private overlayFor(element: Element): ShizueTranslationOverlay {
-    const existing = Array.from(element.children).find(
-      (child) => child.tagName === 'SHIZUE-TRANSLATION-OVERLAY'
-    );
-    return (existing as ShizueTranslationOverlay) ?? this.attachTranslationOverlay(element);
+    return ShizueTranslationOverlay.find(element) ?? this.attachTranslationOverlay(element);
   }
 
   // Return current active state

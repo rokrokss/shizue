@@ -10,6 +10,7 @@ import { useThemeValue } from '@/hooks/layout';
 import { useChatModel, useLocalServerValue } from '@/hooks/models';
 import type { PageAttachment } from '@/lib/indexDB';
 import { modelSupportsImages, modelSupportsWebSearch } from '@/lib/modelRegistry';
+import { panelPageTabId, withPageShown } from '@/lib/panelHost';
 import { cropCapture, selectRegion } from '@/lib/regionCapture';
 import {
   isPdfFile,
@@ -227,11 +228,13 @@ const ChatInput = ({
     readable.slice(0, MAX_ATTACHED_TABS - attached.length).forEach((file) => void attachFile(file));
   };
 
-  // What the side panel's window shows now, attached like any other image.
+  // What the page the panel works on shows now, attached like any other image.
   const handleCapture = async () => {
     setCaptureFailed(false);
     try {
-      const dataUrl = await chrome.tabs.captureVisibleTab({ format: 'jpeg', quality: 90 });
+      const dataUrl = await withPageShown((tab) =>
+        chrome.tabs.captureVisibleTab(tab.windowId, { format: 'jpeg', quality: 90 })
+      );
       const blob = await (await fetch(dataUrl)).blob();
       setUploadedImages((prev) => [...prev, new File([blob], 'screenshot.jpg', { type: blob.type })]);
     } catch (error) {
@@ -240,21 +243,22 @@ const ChatInput = ({
     }
   };
 
-  // A part of the current tab the user drags over on the page, cut from a capture of the view.
+  // A part of the page the user drags over, cut from a capture of the view.
   const handleCaptureRegion = async () => {
     setCaptureFailed(false);
     try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      const [injection] = await chrome.scripting.executeScript({
-        target: { tabId: tab.id! },
-        func: selectRegion,
-        args: [t('chat.captureRegionHint')],
+      const image = await withPageShown(async (tab) => {
+        const [injection] = await chrome.scripting.executeScript({
+          target: { tabId: tab.id! },
+          func: selectRegion,
+          args: [t('chat.captureRegionHint')],
+        });
+        const region = injection?.result;
+        if (!region) return undefined;
+        const dataUrl = await chrome.tabs.captureVisibleTab(tab.windowId, { format: 'png' });
+        return cropCapture(dataUrl, region);
       });
-      const region = injection?.result;
-      if (!region) return;
-      const dataUrl = await chrome.tabs.captureVisibleTab({ format: 'png' });
-      const image = await cropCapture(dataUrl, region);
-      setUploadedImages((prev) => [...prev, image]);
+      if (image) setUploadedImages((prev) => [...prev, image]);
     } catch (error) {
       debugLog('ChatInput: [handleCaptureRegion] error', error);
       setCaptureFailed(true);
@@ -329,13 +333,13 @@ const ChatInput = ({
 
     setSummaryFailed(false);
     try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const tabId = await panelPageTabId();
 
-      if (tab?.id === undefined) {
+      if (tabId === undefined) {
         throw new Error('No active page available.');
       }
 
-      await requestPageSummary(tab.id);
+      await requestPageSummary(tabId);
     } catch (error) {
       debugLog('ChatInput: [handleSummaryClick] error', error);
       setSummaryFailed(true);

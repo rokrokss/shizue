@@ -29,7 +29,7 @@ async function handleSetPanelOpenOrNot(
   sendResponse: (response?: any) => void,
   sender: chrome.runtime.MessageSender
 ) {
-  await togglePanel(sender.tab?.windowId);
+  await togglePanel(sender.tab?.windowId, sender.tab?.id);
   sendResponse({ status: 'success' });
 }
 
@@ -83,7 +83,7 @@ async function handleOpenPanel(
   if (msg.summarizePage === true && sender.tab?.id !== undefined) {
     await openPanelForSummary(sender.tab.id, sender.tab.windowId);
   } else {
-    await openPanel(sender.tab?.windowId);
+    await openPanel(sender.tab?.windowId, sender.tab?.id);
   }
   sendResponse({ status: 'success' });
 }

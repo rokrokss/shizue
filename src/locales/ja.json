@@ -123,7 +123,8 @@
     "sources": "出典",
     "withCaptions": "字幕あり",
     "withoutCaptions": "字幕なし",
-    "playFromTime": "{{time}}から再生"
+    "playFromTime": "{{time}}から再生",
+    "backToPage": "ページに戻る"
   },
   "footer": {
     "joinDiscord": "Discordに参加してください！",

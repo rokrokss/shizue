@@ -1,0 +1,1005 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 110;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		90B29DD23078FB5100783D11 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B29DD13078FB5100783D11 /* AppDelegate.swift */; };
+		90B29DD43078FB5100783D11 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B29DD33078FB5100783D11 /* SceneDelegate.swift */; };
+		90B29DD73078FB5100783D11 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 90B29DD53078FB5100783D11 /* LaunchScreen.storyboard */; };
+		90B29DDA3078FB5100783D11 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 90B29DD83078FB5100783D11 /* Main.storyboard */; };
+		90B29DE33078FB5100783D11 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B29DE23078FB5100783D11 /* AppDelegate.swift */; };
+		90B29DE63078FB5100783D11 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 90B29DE43078FB5100783D11 /* Main.storyboard */; };
+		90B29DED3078FB5100783D11 /* Shizue Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 90B29DEC3078FB5100783D11 /* Shizue Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		90B29DF73078FB5100783D11 /* Shizue Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 90B29DF63078FB5100783D11 /* Shizue Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		90B29DFC3078FB5100783D11 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 90B29DC13078FB5000783D11 /* Main.html */; };
+		90B29DFD3078FB5100783D11 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 90B29DC13078FB5000783D11 /* Main.html */; };
+		90B29DFE3078FB5100783D11 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 90B29DC33078FB5000783D11 /* Icon.png */; };
+		90B29DFF3078FB5100783D11 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 90B29DC33078FB5000783D11 /* Icon.png */; };
+		90B29E003078FB5100783D11 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 90B29DC43078FB5000783D11 /* Style.css */; };
+		90B29E013078FB5100783D11 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 90B29DC43078FB5000783D11 /* Style.css */; };
+		90B29E023078FB5100783D11 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 90B29DC53078FB5000783D11 /* Script.js */; };
+		90B29E033078FB5100783D11 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 90B29DC53078FB5000783D11 /* Script.js */; };
+		90B29E043078FB5100783D11 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B29DC63078FB5000783D11 /* ViewController.swift */; };
+		90B29E053078FB5100783D11 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B29DC63078FB5000783D11 /* ViewController.swift */; };
+		90B29E063078FB5100783D11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90B29DC73078FB5100783D11 /* Assets.xcassets */; };
+		90B29E073078FB5100783D11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90B29DC73078FB5100783D11 /* Assets.xcassets */; };
+		90B29E083078FB5100783D11 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B29DC93078FB5100783D11 /* SafariWebExtensionHandler.swift */; };
+		90B29E093078FB5100783D11 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B29DC93078FB5100783D11 /* SafariWebExtensionHandler.swift */; };
+		90B29E273078FB5200783D11 /* panel-theme.js in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E1B3078FB5200783D11 /* panel-theme.js */; };
+		B7C1A0E33078FB5200783D11 /* plot-signin-rules.json in Resources */ = {isa = PBXBuildFile; fileRef = B7C1A0E13078FB5200783D11 /* plot-signin-rules.json */; };
+		B7C1A0E43078FB5200783D11 /* pdfjs in Resources */ = {isa = PBXBuildFile; fileRef = B7C1A0E23078FB5200783D11 /* pdfjs */; };
+		90B29E283078FB5200783D11 /* chatgpt-callback.html in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E1C3078FB5200783D11 /* chatgpt-callback.html */; };
+		90B29E293078FB5200783D11 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E1D3078FB5200783D11 /* background.js */; };
+		90B29E2A3078FB5200783D11 /* icon.svg in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E1E3078FB5200783D11 /* icon.svg */; };
+		90B29E2B3078FB5200783D11 /* chunks in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E1F3078FB5200783D11 /* chunks */; };
+		90B29E2C3078FB5200783D11 /* content-scripts in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E203078FB5200783D11 /* content-scripts */; };
+		90B29E2D3078FB5200783D11 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E213078FB5200783D11 /* manifest.json */; };
+		90B29E2E3078FB5200783D11 /* _locales in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E223078FB5200783D11 /* _locales */; };
+		90B29E2F3078FB5200783D11 /* sidepanel.html in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E233078FB5200783D11 /* sidepanel.html */; };
+		90B29E303078FB5200783D11 /* icon in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E243078FB5200783D11 /* icon */; };
+		90B29E313078FB5200783D11 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E253078FB5200783D11 /* fonts */; };
+		90B29E323078FB5200783D11 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E263078FB5200783D11 /* assets */; };
+		90B29E333078FB5200783D11 /* panel-theme.js in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E1B3078FB5200783D11 /* panel-theme.js */; };
+		B7C1A0E53078FB5200783D11 /* plot-signin-rules.json in Resources */ = {isa = PBXBuildFile; fileRef = B7C1A0E13078FB5200783D11 /* plot-signin-rules.json */; };
+		B7C1A0E63078FB5200783D11 /* pdfjs in Resources */ = {isa = PBXBuildFile; fileRef = B7C1A0E23078FB5200783D11 /* pdfjs */; };
+		90B29E343078FB5200783D11 /* chatgpt-callback.html in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E1C3078FB5200783D11 /* chatgpt-callback.html */; };
+		90B29E353078FB5200783D11 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E1D3078FB5200783D11 /* background.js */; };
+		90B29E363078FB5200783D11 /* icon.svg in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E1E3078FB5200783D11 /* icon.svg */; };
+		90B29E373078FB5200783D11 /* chunks in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E1F3078FB5200783D11 /* chunks */; };
+		90B29E383078FB5200783D11 /* content-scripts in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E203078FB5200783D11 /* content-scripts */; };
+		90B29E393078FB5200783D11 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E213078FB5200783D11 /* manifest.json */; };
+		90B29E3A3078FB5200783D11 /* _locales in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E223078FB5200783D11 /* _locales */; };
+		90B29E3B3078FB5200783D11 /* sidepanel.html in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E233078FB5200783D11 /* sidepanel.html */; };
+		90B29E3C3078FB5200783D11 /* icon in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E243078FB5200783D11 /* icon */; };
+		90B29E3D3078FB5200783D11 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E253078FB5200783D11 /* fonts */; };
+		90B29E3E3078FB5200783D11 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 90B29E263078FB5200783D11 /* assets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		90B29DEE3078FB5100783D11 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 90B29DBB3078FB4F00783D11 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 90B29DEB3078FB5100783D11;
+			remoteInfo = "Shizue Extension (iOS)";
+		};
+		90B29DF83078FB5100783D11 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 90B29DBB3078FB4F00783D11 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 90B29DF53078FB5100783D11;
+			remoteInfo = "Shizue Extension (macOS)";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		90B29E0F3078FB5100783D11 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = PlugIns;
+			files = (
+				90B29DED3078FB5100783D11 /* Shizue Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+		};
+		90B29E163078FB5100783D11 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = PlugIns;
+			files = (
+				90B29DF73078FB5100783D11 /* Shizue Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		90B29DC23078FB5000783D11 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		90B29DC33078FB5000783D11 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		90B29DC43078FB5000783D11 /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		90B29DC53078FB5000783D11 /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
+		90B29DC63078FB5000783D11 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		90B29DC73078FB5100783D11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		90B29DC93078FB5100783D11 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		90B29DCE3078FB5100783D11 /* Shizue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Shizue.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		90B29DD13078FB5100783D11 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		90B29DD33078FB5100783D11 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		90B29DD63078FB5100783D11 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		90B29DD93078FB5100783D11 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		90B29DDB3078FB5100783D11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		90B29DE03078FB5100783D11 /* Shizue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Shizue.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		90B29DE23078FB5100783D11 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		90B29DE53078FB5100783D11 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		90B29DE73078FB5100783D11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		90B29DEC3078FB5100783D11 /* Shizue Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Shizue Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		90B29DF13078FB5100783D11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		90B29DF63078FB5100783D11 /* Shizue Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Shizue Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		90B29DFB3078FB5100783D11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		90B29E1B3078FB5200783D11 /* panel-theme.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "panel-theme.js"; path = "../../../dist/safari-mv3/panel-theme.js"; sourceTree = "<group>"; };
+		B7C1A0E13078FB5200783D11 /* plot-signin-rules.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "plot-signin-rules.json"; path = "../../../dist/safari-mv3/plot-signin-rules.json"; sourceTree = "<group>"; };
+		B7C1A0E23078FB5200783D11 /* pdfjs */ = {isa = PBXFileReference; lastKnownFileType = folder; name = pdfjs; path = "../../../dist/safari-mv3/pdfjs"; sourceTree = "<group>"; };
+		90B29E1C3078FB5200783D11 /* chatgpt-callback.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "chatgpt-callback.html"; path = "../../../dist/safari-mv3/chatgpt-callback.html"; sourceTree = "<group>"; };
+		90B29E1D3078FB5200783D11 /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = "../../../dist/safari-mv3/background.js"; sourceTree = "<group>"; };
+		90B29E1E3078FB5200783D11 /* icon.svg */ = {isa = PBXFileReference; lastKnownFileType = text; name = icon.svg; path = "../../../dist/safari-mv3/icon.svg"; sourceTree = "<group>"; };
+		90B29E1F3078FB5200783D11 /* chunks */ = {isa = PBXFileReference; lastKnownFileType = folder; name = chunks; path = "../../../dist/safari-mv3/chunks"; sourceTree = "<group>"; };
+		90B29E203078FB5200783D11 /* content-scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "content-scripts"; path = "../../../dist/safari-mv3/content-scripts"; sourceTree = "<group>"; };
+		90B29E213078FB5200783D11 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = "../../../dist/safari-mv3/manifest.json"; sourceTree = "<group>"; };
+		90B29E223078FB5200783D11 /* _locales */ = {isa = PBXFileReference; lastKnownFileType = folder; name = _locales; path = "../../../dist/safari-mv3/_locales"; sourceTree = "<group>"; };
+		90B29E233078FB5200783D11 /* sidepanel.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = sidepanel.html; path = "../../../dist/safari-mv3/sidepanel.html"; sourceTree = "<group>"; };
+		90B29E243078FB5200783D11 /* icon */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icon; path = "../../../dist/safari-mv3/icon"; sourceTree = "<group>"; };
+		90B29E253078FB5200783D11 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fonts; path = "../../../dist/safari-mv3/fonts"; sourceTree = "<group>"; };
+		90B29E263078FB5200783D11 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = "../../../dist/safari-mv3/assets"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		90B29DCB3078FB5100783D11 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		90B29DDD3078FB5100783D11 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		90B29DE93078FB5100783D11 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		90B29DF33078FB5100783D11 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		90B29DBA3078FB4F00783D11 = {
+			isa = PBXGroup;
+			children = (
+				90B29DBF3078FB5000783D11 /* Shared (App) */,
+				90B29DC83078FB5100783D11 /* Shared (Extension) */,
+				90B29DD03078FB5100783D11 /* iOS (App) */,
+				90B29DE13078FB5100783D11 /* macOS (App) */,
+				90B29DF03078FB5100783D11 /* iOS (Extension) */,
+				90B29DFA3078FB5100783D11 /* macOS (Extension) */,
+				90B29DCF3078FB5100783D11 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		90B29DBF3078FB5000783D11 /* Shared (App) */ = {
+			isa = PBXGroup;
+			children = (
+				90B29DC63078FB5000783D11 /* ViewController.swift */,
+				90B29DC73078FB5100783D11 /* Assets.xcassets */,
+				90B29DC03078FB5000783D11 /* Resources */,
+			);
+			path = "Shared (App)";
+			sourceTree = "<group>";
+		};
+		90B29DC03078FB5000783D11 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				90B29DC13078FB5000783D11 /* Main.html */,
+				90B29DC33078FB5000783D11 /* Icon.png */,
+				90B29DC43078FB5000783D11 /* Style.css */,
+				90B29DC53078FB5000783D11 /* Script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		90B29DC83078FB5100783D11 /* Shared (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				90B29E1A3078FB5200783D11 /* Resources */,
+				90B29DC93078FB5100783D11 /* SafariWebExtensionHandler.swift */,
+			);
+			path = "Shared (Extension)";
+			sourceTree = "<group>";
+		};
+		90B29DCF3078FB5100783D11 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				90B29DCE3078FB5100783D11 /* Shizue.app */,
+				90B29DE03078FB5100783D11 /* Shizue.app */,
+				90B29DEC3078FB5100783D11 /* Shizue Extension.appex */,
+				90B29DF63078FB5100783D11 /* Shizue Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		90B29DD03078FB5100783D11 /* iOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				90B29DD13078FB5100783D11 /* AppDelegate.swift */,
+				90B29DD33078FB5100783D11 /* SceneDelegate.swift */,
+				90B29DD53078FB5100783D11 /* LaunchScreen.storyboard */,
+				90B29DD83078FB5100783D11 /* Main.storyboard */,
+				90B29DDB3078FB5100783D11 /* Info.plist */,
+			);
+			path = "iOS (App)";
+			sourceTree = "<group>";
+		};
+		90B29DE13078FB5100783D11 /* macOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				90B29DE23078FB5100783D11 /* AppDelegate.swift */,
+				90B29DE43078FB5100783D11 /* Main.storyboard */,
+				90B29DE73078FB5100783D11 /* Info.plist */,
+			);
+			path = "macOS (App)";
+			sourceTree = "<group>";
+		};
+		90B29DF03078FB5100783D11 /* iOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				90B29DF13078FB5100783D11 /* Info.plist */,
+			);
+			path = "iOS (Extension)";
+			sourceTree = "<group>";
+		};
+		90B29DFA3078FB5100783D11 /* macOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				90B29DFB3078FB5100783D11 /* Info.plist */,
+			);
+			path = "macOS (Extension)";
+			sourceTree = "<group>";
+		};
+		90B29E1A3078FB5200783D11 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				90B29E1B3078FB5200783D11 /* panel-theme.js */,
+				B7C1A0E13078FB5200783D11 /* plot-signin-rules.json */,
+				B7C1A0E23078FB5200783D11 /* pdfjs */,
+				90B29E1C3078FB5200783D11 /* chatgpt-callback.html */,
+				90B29E1D3078FB5200783D11 /* background.js */,
+				90B29E1E3078FB5200783D11 /* icon.svg */,
+				90B29E1F3078FB5200783D11 /* chunks */,
+				90B29E203078FB5200783D11 /* content-scripts */,
+				90B29E213078FB5200783D11 /* manifest.json */,
+				90B29E223078FB5200783D11 /* _locales */,
+				90B29E233078FB5200783D11 /* sidepanel.html */,
+				90B29E243078FB5200783D11 /* icon */,
+				90B29E253078FB5200783D11 /* fonts */,
+				90B29E263078FB5200783D11 /* assets */,
+			);
+			name = Resources;
+			path = "Shared (Extension)";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		90B29DCD3078FB5100783D11 /* Shizue (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 90B29E103078FB5100783D11 /* Build configuration list for PBXNativeTarget "Shizue (iOS)" */;
+			buildPhases = (
+				90B29DCA3078FB5100783D11 /* Sources */,
+				90B29DCB3078FB5100783D11 /* Frameworks */,
+				90B29DCC3078FB5100783D11 /* Resources */,
+				90B29E0F3078FB5100783D11 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				90B29DEF3078FB5100783D11 /* PBXTargetDependency */,
+			);
+			name = "Shizue (iOS)";
+			productName = "Shizue (iOS)";
+			productReference = 90B29DCE3078FB5100783D11 /* Shizue.app */;
+			productType = "com.apple.product-type.application";
+		};
+		90B29DDF3078FB5100783D11 /* Shizue (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 90B29E173078FB5100783D11 /* Build configuration list for PBXNativeTarget "Shizue (macOS)" */;
+			buildPhases = (
+				90B29DDC3078FB5100783D11 /* Sources */,
+				90B29DDD3078FB5100783D11 /* Frameworks */,
+				90B29DDE3078FB5100783D11 /* Resources */,
+				90B29E163078FB5100783D11 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				90B29DF93078FB5100783D11 /* PBXTargetDependency */,
+			);
+			name = "Shizue (macOS)";
+			productName = "Shizue (macOS)";
+			productReference = 90B29DE03078FB5100783D11 /* Shizue.app */;
+			productType = "com.apple.product-type.application";
+		};
+		90B29DEB3078FB5100783D11 /* Shizue Extension (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 90B29E0C3078FB5100783D11 /* Build configuration list for PBXNativeTarget "Shizue Extension (iOS)" */;
+			buildPhases = (
+				90B29DE83078FB5100783D11 /* Sources */,
+				90B29DE93078FB5100783D11 /* Frameworks */,
+				90B29DEA3078FB5100783D11 /* Resources */,
+			);
+			buildRules = (
+			);
+			name = "Shizue Extension (iOS)";
+			productName = "Shizue Extension (iOS)";
+			productReference = 90B29DEC3078FB5100783D11 /* Shizue Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		90B29DF53078FB5100783D11 /* Shizue Extension (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 90B29E133078FB5100783D11 /* Build configuration list for PBXNativeTarget "Shizue Extension (macOS)" */;
+			buildPhases = (
+				90B29DF23078FB5100783D11 /* Sources */,
+				90B29DF33078FB5100783D11 /* Frameworks */,
+				90B29DF43078FB5100783D11 /* Resources */,
+			);
+			buildRules = (
+			);
+			name = "Shizue Extension (macOS)";
+			productName = "Shizue Extension (macOS)";
+			productReference = 90B29DF63078FB5100783D11 /* Shizue Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		90B29DBB3078FB4F00783D11 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					90B29DCD3078FB5100783D11 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					90B29DDF3078FB5100783D11 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					90B29DEB3078FB5100783D11 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					90B29DF53078FB5100783D11 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+				};
+			};
+			buildConfigurationList = 90B29DBE3078FB4F00783D11 /* Build configuration list for PBXProject "Shizue" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 90B29DBA3078FB4F00783D11;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 90B29DCF3078FB5100783D11 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				90B29DCD3078FB5100783D11 /* Shizue (iOS) */,
+				90B29DDF3078FB5100783D11 /* Shizue (macOS) */,
+				90B29DEB3078FB5100783D11 /* Shizue Extension (iOS) */,
+				90B29DF53078FB5100783D11 /* Shizue Extension (macOS) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		90B29DCC3078FB5100783D11 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				90B29DFE3078FB5100783D11 /* Icon.png in Resources */,
+				90B29DD73078FB5100783D11 /* LaunchScreen.storyboard in Resources */,
+				90B29DFC3078FB5100783D11 /* Main.html in Resources */,
+				90B29E023078FB5100783D11 /* Script.js in Resources */,
+				90B29E063078FB5100783D11 /* Assets.xcassets in Resources */,
+				90B29DDA3078FB5100783D11 /* Main.storyboard in Resources */,
+				90B29E003078FB5100783D11 /* Style.css in Resources */,
+			);
+		};
+		90B29DDE3078FB5100783D11 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				90B29DFF3078FB5100783D11 /* Icon.png in Resources */,
+				90B29E013078FB5100783D11 /* Style.css in Resources */,
+				90B29DE63078FB5100783D11 /* Main.storyboard in Resources */,
+				90B29E033078FB5100783D11 /* Script.js in Resources */,
+				90B29E073078FB5100783D11 /* Assets.xcassets in Resources */,
+				90B29DFD3078FB5100783D11 /* Main.html in Resources */,
+			);
+		};
+		90B29DEA3078FB5100783D11 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				90B29E3D3078FB5200783D11 /* fonts in Resources */,
+				90B29E373078FB5200783D11 /* chunks in Resources */,
+				90B29E3C3078FB5200783D11 /* icon in Resources */,
+				90B29E393078FB5200783D11 /* manifest.json in Resources */,
+				90B29E3A3078FB5200783D11 /* _locales in Resources */,
+				90B29E383078FB5200783D11 /* content-scripts in Resources */,
+				90B29E333078FB5200783D11 /* panel-theme.js in Resources */,
+				B7C1A0E53078FB5200783D11 /* plot-signin-rules.json in Resources */,
+				B7C1A0E63078FB5200783D11 /* pdfjs in Resources */,
+				90B29E353078FB5200783D11 /* background.js in Resources */,
+				90B29E343078FB5200783D11 /* chatgpt-callback.html in Resources */,
+				90B29E3E3078FB5200783D11 /* assets in Resources */,
+				90B29E3B3078FB5200783D11 /* sidepanel.html in Resources */,
+				90B29E363078FB5200783D11 /* icon.svg in Resources */,
+			);
+		};
+		90B29DF43078FB5100783D11 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				90B29E313078FB5200783D11 /* fonts in Resources */,
+				90B29E2B3078FB5200783D11 /* chunks in Resources */,
+				90B29E303078FB5200783D11 /* icon in Resources */,
+				90B29E2D3078FB5200783D11 /* manifest.json in Resources */,
+				90B29E2E3078FB5200783D11 /* _locales in Resources */,
+				90B29E2C3078FB5200783D11 /* content-scripts in Resources */,
+				90B29E273078FB5200783D11 /* panel-theme.js in Resources */,
+				B7C1A0E33078FB5200783D11 /* plot-signin-rules.json in Resources */,
+				B7C1A0E43078FB5200783D11 /* pdfjs in Resources */,
+				90B29E293078FB5200783D11 /* background.js in Resources */,
+				90B29E283078FB5200783D11 /* chatgpt-callback.html in Resources */,
+				90B29E323078FB5200783D11 /* assets in Resources */,
+				90B29E2F3078FB5200783D11 /* sidepanel.html in Resources */,
+				90B29E2A3078FB5200783D11 /* icon.svg in Resources */,
+			);
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		90B29DCA3078FB5100783D11 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				90B29E043078FB5100783D11 /* ViewController.swift in Sources */,
+				90B29DD23078FB5100783D11 /* AppDelegate.swift in Sources */,
+				90B29DD43078FB5100783D11 /* SceneDelegate.swift in Sources */,
+			);
+		};
+		90B29DDC3078FB5100783D11 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				90B29E053078FB5100783D11 /* ViewController.swift in Sources */,
+				90B29DE33078FB5100783D11 /* AppDelegate.swift in Sources */,
+			);
+		};
+		90B29DE83078FB5100783D11 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				90B29E083078FB5100783D11 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+		};
+		90B29DF23078FB5100783D11 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				90B29E093078FB5100783D11 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		90B29DEF3078FB5100783D11 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 90B29DEB3078FB5100783D11 /* Shizue Extension (iOS) */;
+			targetProxy = 90B29DEE3078FB5100783D11 /* PBXContainerItemProxy */;
+		};
+		90B29DF93078FB5100783D11 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 90B29DF53078FB5100783D11 /* Shizue Extension (macOS) */;
+			targetProxy = 90B29DF83078FB5100783D11 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		90B29DC13078FB5000783D11 /* Main.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				90B29DC23078FB5000783D11 /* Base */,
+			);
+			name = Main.html;
+			sourceTree = "<group>";
+		};
+		90B29DD53078FB5100783D11 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				90B29DD63078FB5100783D11 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		90B29DD83078FB5100783D11 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				90B29DD93078FB5100783D11 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		90B29DE43078FB5100783D11 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				90B29DE53078FB5100783D11 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		90B29E0A3078FB5100783D11 /* Debug configuration for PBXProject "Shizue" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		90B29E0B3078FB5100783D11 /* Release configuration for PBXProject "Shizue" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		90B29E0D3078FB5100783D11 /* Debug configuration for PBXNativeTarget "Shizue Extension (iOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 87G5R48C73;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Shizue Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.shizue.Shizue.Extension;
+				PRODUCT_NAME = "Shizue Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		90B29E0E3078FB5100783D11 /* Release configuration for PBXNativeTarget "Shizue Extension (iOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 87G5R48C73;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Shizue Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.shizue.Shizue.Extension;
+				PRODUCT_NAME = "Shizue Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		90B29E113078FB5100783D11 /* Debug configuration for PBXNativeTarget "Shizue (iOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 87G5R48C73;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Shizue;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.shizue.Shizue;
+				PRODUCT_NAME = Shizue;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		90B29E123078FB5100783D11 /* Release configuration for PBXNativeTarget "Shizue (iOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 87G5R48C73;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Shizue;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.shizue.Shizue;
+				PRODUCT_NAME = Shizue;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		90B29E143078FB5100783D11 /* Debug configuration for PBXNativeTarget "Shizue Extension (macOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 87G5R48C73;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Shizue Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.shizue.Shizue.Extension;
+				PRODUCT_NAME = "Shizue Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		90B29E153078FB5100783D11 /* Release configuration for PBXNativeTarget "Shizue Extension (macOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 87G5R48C73;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Shizue Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.shizue.Shizue.Extension;
+				PRODUCT_NAME = "Shizue Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		90B29E183078FB5100783D11 /* Debug configuration for PBXNativeTarget "Shizue (macOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 87G5R48C73;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Shizue;
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.shizue.Shizue;
+				PRODUCT_NAME = Shizue;
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		90B29E193078FB5100783D11 /* Release configuration for PBXNativeTarget "Shizue (macOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 87G5R48C73;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Shizue;
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.shizue.Shizue;
+				PRODUCT_NAME = Shizue;
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		90B29DBE3078FB4F00783D11 /* Build configuration list for PBXProject "Shizue" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90B29E0A3078FB5100783D11 /* Debug configuration for PBXProject "Shizue" */,
+				90B29E0B3078FB5100783D11 /* Release configuration for PBXProject "Shizue" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		90B29E0C3078FB5100783D11 /* Build configuration list for PBXNativeTarget "Shizue Extension (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90B29E0D3078FB5100783D11 /* Debug configuration for PBXNativeTarget "Shizue Extension (iOS)" */,
+				90B29E0E3078FB5100783D11 /* Release configuration for PBXNativeTarget "Shizue Extension (iOS)" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		90B29E103078FB5100783D11 /* Build configuration list for PBXNativeTarget "Shizue (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90B29E113078FB5100783D11 /* Debug configuration for PBXNativeTarget "Shizue (iOS)" */,
+				90B29E123078FB5100783D11 /* Release configuration for PBXNativeTarget "Shizue (iOS)" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		90B29E133078FB5100783D11 /* Build configuration list for PBXNativeTarget "Shizue Extension (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90B29E143078FB5100783D11 /* Debug configuration for PBXNativeTarget "Shizue Extension (macOS)" */,
+				90B29E153078FB5100783D11 /* Release configuration for PBXNativeTarget "Shizue Extension (macOS)" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		90B29E173078FB5100783D11 /* Build configuration list for PBXNativeTarget "Shizue (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90B29E183078FB5100783D11 /* Debug configuration for PBXNativeTarget "Shizue (macOS)" */,
+				90B29E193078FB5100783D11 /* Release configuration for PBXNativeTarget "Shizue (macOS)" */,
+			);
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 90B29DBB3078FB4F00783D11 /* Project object */;
+	validationLevel = 1;
+}

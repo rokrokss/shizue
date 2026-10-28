@@ -23,24 +23,41 @@ const toChatGPTError = (error: unknown) => error instanceof ProviderError ? new 
 const CALLBACK_RULE_ID = 2;
 let callbackReceiver: { redirectUri: string; receive: (url: URL) => boolean } | undefined;
 
-const browserLoopback: Loopback = {
+export const browserLoopback: Loopback = {
   async open(receive) {
     const port = 49152 + (crypto.getRandomValues(new Uint16Array(1))[0] % 16384);
     const redirectUri = `http://127.0.0.1:${port}/auth/callback`;
+    // The substitution writes the whole callback page URL and appends the query (the authorization
+    // code). extensionPath would drop the query, and a transform can't change the scheme in Safari:
+    // the URL standard forbids switching http to safari-web-extension, so it lands on
+    // http://<extension UUID>/ instead. The query group isn't optional because Safari would
+    // substitute an unmatched group as "undefined".
     await chrome.declarativeNetRequest.updateSessionRules({
       removeRuleIds: [CALLBACK_RULE_ID],
       addRules: [{
         id: CALLBACK_RULE_ID,
         priority: 1,
-        condition: { urlFilter: `|${redirectUri}`, resourceTypes: [chrome.declarativeNetRequest.ResourceType.MAIN_FRAME] },
+        // String values: browsers other than Chrome may not expose the enum objects.
+        condition: {
+          regexFilter: `^${redirectUri.replaceAll('.', '\\.')}(\\?.*)$`,
+          resourceTypes: ['main_frame' as chrome.declarativeNetRequest.ResourceType],
+        },
         action: {
-          type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
-          redirect: { transform: { scheme: 'chrome-extension', host: chrome.runtime.id, port: '', path: '/chatgpt-callback.html' } },
+          type: 'redirect' as chrome.declarativeNetRequest.RuleActionType,
+          redirect: { regexSubstitution: `${chrome.runtime.getURL('/chatgpt-callback.html')}\\1` },
         },
       }],
     });
     const receiver = { redirectUri, receive };
     callbackReceiver = receiver;
+    // Fallback where the redirect does not happen: the tab still navigates to the callback URL (and
+    // fails to connect), so read the query from the tab and close it. Host access to http://*/*
+    // makes the URL visible.
+    const onTabUpdated = (tabId: number, change: chrome.tabs.TabChangeInfo) => {
+      if (!change.url?.startsWith(`${redirectUri}?`) || callbackReceiver !== receiver) return;
+      if (receive(new URL(change.url))) void chrome.tabs.remove(tabId).catch(() => {});
+    };
+    chrome.tabs.onUpdated.addListener(onTabUpdated);
     // Chrome may stop a worker after 30 s without events, and the user may take minutes to sign
     // in. Extension API calls reset that timer.
     const keepAlive = setInterval(() => { void chrome.runtime.getPlatformInfo(); }, 20_000);
@@ -51,6 +68,7 @@ const browserLoopback: Loopback = {
         if (closed) return;
         closed = true;
         clearInterval(keepAlive);
+        chrome.tabs.onUpdated.removeListener(onTabUpdated);
         if (callbackReceiver === receiver) callbackReceiver = undefined;
         await chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: [CALLBACK_RULE_ID] });
       },

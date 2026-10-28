@@ -2,6 +2,7 @@ import { Button, Alert } from 'antd';
 import { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { LoadingLabel } from '@/components/Loader/LoadingLabel';
 import { useThemeValue } from '@/hooks/layout';
 import { useChatGPTConnectionValue, useChatModel, useTranslateModel } from '@/hooks/models';
 import { chatGPTModelRef, isChatGPTModel, isSelectableChatGPTModelId, chatGPTModelId, type ChatGPTModelRef } from '@/lib/modelRegistry';
@@ -142,12 +143,13 @@ export default function ChatGPTSettings({ className, onConnected, onReadyChange,
         <Button
           type="primary"
           className="sz:font-ycom sz:min-w-0 sz:font-semibold sz:text-base sz:h-8 sz:w-full"
-          loading={pendingOperation === 'signIn' || (needsConnectionCheck && pendingOperation === 'status')}
           disabled={busy}
           style={busy ? undefined : { color: theme === 'dark' ? '#000' : 'white' }}
           onClick={() => void run(needsConnectionCheck ? 'status' : 'signIn', savedAccount?.id)}
         >
-          {t(primaryLabel)}
+          <LoadingLabel loading={pendingOperation === 'signIn' || (needsConnectionCheck && pendingOperation === 'status')}>
+            {t(primaryLabel)}
+          </LoadingLabel>
         </Button>
       )}
       {feedback}

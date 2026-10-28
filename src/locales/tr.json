@@ -123,7 +123,8 @@
     "sources": "Kaynaklar",
     "withCaptions": "altyazılı",
     "withoutCaptions": "altyazısız",
-    "playFromTime": "{{time}} anından oynat"
+    "playFromTime": "{{time}} anından oynat",
+    "backToPage": "Sayfaya dön"
   },
   "footer": {
     "joinDiscord": "Discord'da bana katılın!",

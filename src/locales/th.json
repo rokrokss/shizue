@@ -123,7 +123,8 @@
     "sources": "แหล่งที่มา",
     "withCaptions": "มีคำบรรยาย",
     "withoutCaptions": "ไม่มีคำบรรยาย",
-    "playFromTime": "เล่นจาก {{time}}"
+    "playFromTime": "เล่นจาก {{time}}",
+    "backToPage": "กลับไปที่หน้าเว็บ"
   },
   "footer": {
     "joinDiscord": "เข้าร่วมกับฉันบน Discord!",

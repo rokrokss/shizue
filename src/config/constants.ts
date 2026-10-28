@@ -74,6 +74,10 @@ export const STORAGE_YOUTUBE_CHANNEL_LANGUAGE = 'YOUTUBE_CHANNEL_LANGUAGE';
 export const STORAGE_SHOW_NETFLIX_CAPTION_TOGGLE = 'SHOW_NETFLIX_CAPTION_TOGGLE';
 export const STORAGE_NETFLIX_BILINGUAL_CAPTION = 'NETFLIX_BILINGUAL_CAPTION';
 export const STORAGE_TOGGLE_HIDDEN_SITE_LIST = 'TOGGLE_HIDDEN_SITE_LIST';
+// chrome.storage.session: the tab showing the panel page where there is no side panel, and the page
+// tab it was last opened from.
+export const STORAGE_PANEL_TAB = 'PANEL_TAB';
+export const STORAGE_PANEL_SOURCE_TAB = 'PANEL_SOURCE_TAB';
 
 /* parameters */
 export const STREAM_FLUSH_THRESHOLD_0 = 5;

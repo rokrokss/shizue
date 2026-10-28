@@ -1,6 +1,4 @@
 import { TEXT_ELEMENTS } from '@/lib/html';
-import { debugLog, errorLog } from '@/logs';
-import '@webcomponents/custom-elements';
 import DOMPurify from 'dompurify';
 
 // Translations are LLM output derived from page content, so a prompt injection on the page could
@@ -18,55 +16,62 @@ const sanitizeTranslation = (html: string) =>
     ALLOWED_ATTR: TRANSLATION_ALLOWED_ATTR,
   });
 
-// Shizue Translation Overlay Web Component
-class ShizueTranslationOverlay extends HTMLElement {
-  private translatedText: string;
-  private isLoading: boolean;
-  private hasError: boolean;
+const TAG_NAME = 'shizue-translation-overlay';
+const overlays = new WeakMap<Element, ShizueTranslationOverlay>();
 
-  constructor() {
-    super();
-    this.translatedText = '';
-    this.isLoading = true;
-    this.hasError = false;
+// The translation shown under a page element: a plain element with this object holding its state,
+// not a custom element. Content scripts have no customElements, and in Firefox the polyfill left
+// the elements without their methods, so page translation stopped at the first one.
+export class ShizueTranslationOverlay {
+  private translatedText = '';
+  private isLoading = true;
+  private hasError = false;
+
+  private constructor(readonly element: HTMLElement) {}
+
+  static attach(parent: Element): ShizueTranslationOverlay {
+    const overlay = new ShizueTranslationOverlay(document.createElement(TAG_NAME));
+    overlays.set(overlay.element, overlay);
+    parent.appendChild(overlay.element);
+    overlay.render();
+    return overlay;
   }
 
-  static get observedAttributes() {
-    return ['original-text', 'translated-text', 'loading', 'error'];
+  // The overlay attached directly under the element, if any.
+  static find(parent: Element): ShizueTranslationOverlay | undefined {
+    const element = Array.from(parent.children).find((child) => overlays.has(child));
+    return element && overlays.get(element);
   }
 
-  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-    this.render();
-  }
-
-  connectedCallback() {
-    this.render();
+  remove() {
+    this.element.remove();
   }
 
   private render() {
-    this.style.visibility = 'visible';
-    const parentElement = this.parentElement;
+    const el = this.element;
+    el.style.visibility = 'visible';
+    const parentElement = el.parentElement;
     if (!parentElement) return;
     if (
       TEXT_ELEMENTS.includes(parentElement.tagName) &&
       window.getComputedStyle(parentElement).display === 'inline'
     ) {
-      this.style.display = 'inline-block';
+      el.style.display = 'inline-block';
     } else {
-      this.style.display = 'block';
+      el.style.display = 'block';
     }
-    this.style.transition = 'max-height 0.3s ease-in-out, opacity 0.3s ease-in-out';
-    this.style.boxSizing = 'border-box';
+    el.style.transition = 'max-height 0.3s ease-in-out, opacity 0.3s ease-in-out';
+    el.style.boxSizing = 'border-box';
 
-    this.style.overflow = 'hidden'; // for max-height transition
-    this.style.maxHeight = '0px';
+    el.style.overflow = 'hidden'; // for max-height transition
+    el.style.maxHeight = '0px';
 
     if (this.isLoading) {
-      this.style.maxHeight = '0px';
+      el.style.maxHeight = '0px';
       setTimeout(() => {
-        this.style.opacity = '1';
+        el.style.opacity = '1';
       }, 0);
-      this.innerHTML = `
+      el.innerHTML = `
         <style>
           .shizue-spinner-wrapper {
             display: flex;
@@ -93,31 +98,31 @@ class ShizueTranslationOverlay extends HTMLElement {
         </style>
         <div class="shizue-spinner-wrapper"><div class="shizue-spinner"></div></div>
       `;
-      this.style.lineHeight = 'normal';
+      el.style.lineHeight = 'normal';
       // Under an inherited `white-space: pre-wrap` the template's line breaks render as a blank
       // line that pushes the spinner out of the 20px box (e.g. cerebras.ai blog paragraphs).
-      this.style.whiteSpace = 'normal';
+      el.style.whiteSpace = 'normal';
       setTimeout(() => {
-        this.style.maxHeight = '20px';
+        el.style.maxHeight = '20px';
       }, 0);
     } else {
-      this.style.maxHeight = '20px';
-      this.innerHTML = sanitizeTranslation(this.translatedText);
-      this.style.lineHeight = '';
-      this.style.whiteSpace = '';
-      this.style.opacity = '0.5';
+      el.style.maxHeight = '20px';
+      el.innerHTML = sanitizeTranslation(this.translatedText);
+      el.style.lineHeight = '';
+      el.style.whiteSpace = '';
+      el.style.opacity = '0.5';
 
-      const targetHeight = this.scrollHeight + 'px';
-      if (this.style.maxHeight !== targetHeight) {
+      const targetHeight = el.scrollHeight + 'px';
+      if (el.style.maxHeight !== targetHeight) {
         setTimeout(() => {
-          this.style.maxHeight = targetHeight;
+          el.style.maxHeight = targetHeight;
         }, 0);
         setTimeout(() => {
-          this.style.opacity = '0.5';
+          el.style.opacity = '0.5';
         }, 0);
         setTimeout(() => {
-          this.style.overflow = 'visible';
-          this.style.maxHeight = 'none';
+          el.style.overflow = 'visible';
+          el.style.maxHeight = 'none';
         }, 400);
       }
     }
@@ -155,47 +160,3 @@ class ShizueTranslationOverlay extends HTMLElement {
     return this.hasError;
   }
 }
-
-// Function to register the web component
-export const registerShizueTranslationOverlay = (): boolean => {
-  try {
-    // Check if we're in a browser environment
-    if (typeof window === 'undefined' || typeof document === 'undefined') {
-      debugLog('Skipping web component registration: Not in browser environment');
-      return false;
-    }
-
-    // Check if customElements is available
-    if (typeof customElements === 'undefined' || !customElements) {
-      errorLog('customElements API is not available');
-      return false;
-    }
-
-    // Check if already registered
-    if (customElements.get('shizue-translation-overlay')) {
-      debugLog('ShizueTranslationOverlay web component is already registered');
-      return true;
-    }
-
-    // Register the component
-    customElements.define('shizue-translation-overlay', ShizueTranslationOverlay);
-    debugLog('ShizueTranslationOverlay web component is successfully registered');
-    return true;
-  } catch (error) {
-    errorLog('Error registering ShizueTranslationOverlay web component:', error);
-    return false;
-  }
-};
-
-// Auto-register when module loads in browser environment
-if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-  // Use setTimeout to ensure DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', registerShizueTranslationOverlay);
-  } else {
-    registerShizueTranslationOverlay();
-  }
-}
-
-export { ShizueTranslationOverlay };
-export default ShizueTranslationOverlay;

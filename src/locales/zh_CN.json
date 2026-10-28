@@ -123,7 +123,8 @@
     "sources": "来源",
     "withCaptions": "含字幕",
     "withoutCaptions": "无字幕",
-    "playFromTime": "从 {{time}} 播放"
+    "playFromTime": "从 {{time}} 播放",
+    "backToPage": "返回页面"
   },
   "footer": {
     "joinDiscord": "加入我的 Discord！",

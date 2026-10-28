@@ -179,3 +179,60 @@ test('logout awaiting saved providers cannot overwrite a newer login', async () 
     assert.equal(fixture.data.PROVIDER_MODEL_PREFERENCES, undefined);
   });
 });
+
+for (const [browser, base] of [
+  ['Chrome', 'chrome-extension://abcdefghijklmnop/'],
+  ['Firefox', 'moz-extension://8a1f2c3d-0000-4e5f-9a8b-1234567890ab/'],
+  ['Safari', 'safari-web-extension://98DC6D42-82C3-4CB5-9307-B3A58DBD02E4/'],
+]) {
+  test(`the sign-in callback is redirected to the ${browser} extension URL with its query kept`, async () => {
+    const updates = [];
+    const chrome = {
+      runtime: { id: 'shizue@example.com', getURL: (path) => new URL(path, base).href, getPlatformInfo: async () => ({}) },
+      declarativeNetRequest: { updateSessionRules: async (update) => { updates.push(update); } },
+      tabs: { onUpdated: { addListener() {}, removeListener() {} } },
+    };
+    await withModule('../src/services/background/chatgpt.ts', chrome, async ({ browserLoopback }) => {
+      const listener = await browserLoopback.open(() => false);
+      const rule = updates[0].addRules[0];
+      assert.deepEqual(rule.condition.resourceTypes, ['main_frame']);
+      assert.equal(rule.action.type, 'redirect');
+      // Applied the way Firefox and Safari do: JavaScript regex, \1 for the first group.
+      const redirect = (url) => {
+        const match = url.match(new RegExp(rule.condition.regexFilter));
+        return match && rule.action.redirect.regexSubstitution.replace('\\1', match[1]);
+      };
+      assert.equal(redirect(`${listener.redirectUri}?code=c&state=s`), `${base}chatgpt-callback.html?code=c&state=s`);
+      assert.equal(redirect(`${listener.redirectUri.replace('127.0.0.1', '127a0b0c1')}?code=c`), null);
+      assert.equal(redirect(`${listener.redirectUri}/other?code=c`), null);
+      await listener.close();
+      assert.deepEqual(updates.at(-1), { removeRuleIds: [rule.id] });
+    });
+  });
+}
+
+test('without the redirect, the callback is read from the tab that navigated to it', async () => {
+  const listeners = new Set(), removed = [], received = [];
+  const chrome = {
+    runtime: { getURL: (path) => new URL(path, 'safari-web-extension://uuid/').href, getPlatformInfo: async () => ({}) },
+    declarativeNetRequest: { updateSessionRules: async () => {} },
+    tabs: {
+      onUpdated: { addListener: (fn) => listeners.add(fn), removeListener: (fn) => listeners.delete(fn) },
+      remove: async (id) => { removed.push(id); },
+    },
+  };
+  await withModule('../src/services/background/chatgpt.ts', chrome, async ({ browserLoopback }) => {
+    const listener = await browserLoopback.open((url) => { received.push(url.href); return url.searchParams.get('state') === 'right'; });
+    const notify = (tabId, change) => { for (const fn of listeners) fn(tabId, change, {}); };
+    notify(3, { url: 'https://auth.openai.com/api/accounts/authorize?state=right' });
+    notify(4, { status: 'loading' });
+    notify(5, { url: `${listener.redirectUri}?code=c&state=wrong` });
+    notify(6, { url: `${listener.redirectUri}?code=c&state=right` });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    assert.deepEqual(received, [`${listener.redirectUri}?code=c&state=wrong`, `${listener.redirectUri}?code=c&state=right`]);
+    // Only the accepted callback's tab is closed; a rejected one stays for the user to see.
+    assert.deepEqual(removed, [6]);
+    await listener.close();
+    assert.equal(listeners.size, 0);
+  });
+});

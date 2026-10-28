@@ -23,7 +23,8 @@ function fixture(url = 'https://example.test/article') {
   const tab = { id: 7, url, discarded: false, frozen: false };
   const alive = new Set(), calls = [], session = {};
   const chrome = {
-    runtime: { id: 'fixture-extension', onInstalled: event(), onStartup: event(), onMessage: event() },
+    runtime: { id: 'fixture-extension', getURL: (path) => `chrome-extension://fixture-extension${path}`,
+      onInstalled: event(), onStartup: event(), onMessage: event() },
     permissions: { onAdded: event() },
     storage: { session: {
       get: async () => ({ ...session }), set: async updates => Object.assign(session, updates),
@@ -120,6 +121,8 @@ test('a declarative script starting during the probe is not injected twice', asy
   await withModule(f.chrome, async ({ recoverTabContentScripts }) => {
     assert.equal(await recoverTabContentScripts(7), true);
     assert.deepEqual(f.injected(), []);
+    // Nor are its fonts: Firefox refuses the manifest's stylesheet a second time.
+    assert.equal(f.calls.some(([kind]) => kind === 'css'), false);
   });
 });
 
@@ -178,6 +181,19 @@ test('lifecycle listeners register before startup scanning and restore resumed t
     f.chrome.tabs.onUpdated.emit(7, { frozen: false });
     assert.equal(await recoverTabContentScripts(7), true);
     assert.equal(f.injected().length, 2);
+  });
+});
+
+test('Firefox checks open pages at startup but not as tabs come back or finish loading', async () => {
+  const f = fixture();
+  f.chrome.runtime.getURL = (path) => `moz-extension://8a1f2c3d-0000-4e5f-9a8b-1234567890ab${path}`;
+  await withModule(f.chrome, async ({ contentScriptRecoveryListeners }) => {
+    contentScriptRecoveryListeners();
+    assert.equal(f.chrome.runtime.onInstalled.listeners.size, 1);
+    assert.equal(f.chrome.runtime.onStartup.listeners.size, 1);
+    assert.equal(f.chrome.permissions.onAdded.listeners.size, 1);
+    assert.equal(f.chrome.tabs.onActivated.listeners.size, 0);
+    assert.equal(f.chrome.tabs.onUpdated.listeners.size, 0);
   });
 });
 

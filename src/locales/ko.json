@@ -123,7 +123,8 @@
     "sources": "출처",
     "withCaptions": "자막",
     "withoutCaptions": "자막 없이",
-    "playFromTime": "{{time}}부터 재생"
+    "playFromTime": "{{time}}부터 재생",
+    "backToPage": "페이지로 돌아가기"
   },
   "footer": {
     "joinDiscord": "디스코드로 놀러 오세요!",

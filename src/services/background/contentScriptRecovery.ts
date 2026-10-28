@@ -56,10 +56,13 @@ async function recoverTab(tabId: number): Promise<boolean> {
     });
     if (!document?.documentId || document.result !== tab.url) return false;
     const target = { tabId, documentIds: [document.documentId] };
-    await chrome.scripting.insertCSS({ target, files: ['fonts/fonts.css'] });
-    for (const script of missing) {
-      // A declarative script may have started while the recovery probe was running.
-      if (await isConnected(tabId, script, document.documentId)) continue;
+    // A declarative script may have started while the recovery probe was running. Only what is
+    // still missing is injected, and the fonts go in only with it: Firefox refuses a stylesheet the
+    // page already has.
+    const started = await Promise.all(missing.map((script) => isConnected(tabId, script, document.documentId)));
+    const stillMissing = missing.filter((_, index) => !started[index]);
+    if (stillMissing.length) await chrome.scripting.insertCSS({ target, files: ['fonts/fonts.css'] });
+    for (const script of stillMissing) {
       await chrome.scripting.executeScript({ target, files: [`content-scripts/${script}.js`] });
     }
     const restored = await Promise.all(scripts.map((script) => isConnected(tabId, script, document.documentId)));
@@ -111,10 +114,15 @@ export function contentScriptRecoveryListeners() {
   const initialize = () => { void recoverInitialTabs().catch((error) => debugLog('Initial content recovery failed', error)); };
   chrome.runtime.onInstalled.addListener(initialize);
   chrome.runtime.onStartup.addListener(initialize);
-  chrome.tabs.onActivated.addListener(({ tabId }) => recover(tabId));
-  chrome.tabs.onUpdated.addListener((tabId, change) => {
-    if (change.status === 'complete' || change.discarded === false || change.frozen === false) recover(tabId);
-  });
+  // Firefox injects the declared scripts into pages that were already open, so it needs no check
+  // as tabs come back or finish loading; there a check on load only races its own injection, and
+  // the failed ping is logged.
+  if (!chrome.runtime.getURL('/').startsWith('moz-extension:')) {
+    chrome.tabs.onActivated.addListener(({ tabId }) => recover(tabId));
+    chrome.tabs.onUpdated.addListener((tabId, change) => {
+      if (change.status === 'complete' || change.discarded === false || change.frozen === false) recover(tabId);
+    });
+  }
   chrome.permissions.onAdded.addListener(() => {
     void recoverOpenTabs().catch((error) => debugLog('Site access recovery failed', error));
   });

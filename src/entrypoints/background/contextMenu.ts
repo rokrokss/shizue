@@ -5,6 +5,7 @@ import {
   MESSAGE_CONTEXT_MENU_SELECTION_ACTION,
   MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
 } from '@/config/constants';
+import { openPanel, panelHost } from '@/entrypoints/background/sidepanel';
 import { getCurrentChatModel, getCurrentLocalServer } from '@/entrypoints/background/states/models';
 import { whenBackgroundStateReady } from '@/entrypoints/background/states/ready';
 import {
@@ -31,9 +32,22 @@ const updateImageMenuItems = (model: ChatModel, localServer?: LocalServerConfig 
 };
 
 export const createContextMenu = async () => {
+  // Firefox for Android and Edge for Android have no context menus.
+  if (!chrome.contextMenus) return;
+
   // Service-worker event listeners must be registered before the first await.
   chrome.contextMenus.onClicked.addListener((info, tab) => {
     if (tab?.id !== undefined) {
+      // These open the panel from the page, after the menu click: too late for Firefox's sidebar,
+      // which opens only within a user action, so the click opens it here.
+      if (
+        panelHost === 'sidebar' &&
+        (info.menuItemId === 'describeImage' ||
+          info.menuItemId === 'extractImageText' ||
+          isSelectionActionType(info.menuItemId))
+      ) {
+        void openPanel(tab.windowId, tab.id).catch((error) => errorLog('open panel', error));
+      }
       if (info.menuItemId === 'translatePage') {
         void chrome.tabs.sendMessage(tab.id, {
           action: MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
@@ -62,10 +76,8 @@ export const createContextMenu = async () => {
     }
   });
 
-  if (chrome.contextMenus) {
-    // Menus persist across service worker restarts; clear them before re-creating the same IDs.
-    await chrome.contextMenus.removeAll();
-  }
+  // Menus persist across service worker restarts; clear them before re-creating the same IDs.
+  await chrome.contextMenus.removeAll();
 
   // Create parent menu with custom title "Shizue"
   chrome.contextMenus.create({

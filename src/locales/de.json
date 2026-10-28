@@ -123,7 +123,8 @@
     "sources": "Quellen",
     "withCaptions": "mit Untertiteln",
     "withoutCaptions": "ohne Untertitel",
-    "playFromTime": "Ab {{time}} abspielen"
+    "playFromTime": "Ab {{time}} abspielen",
+    "backToPage": "Zurück zur Seite"
   },
   "footer": {
     "joinDiscord": "Tritt mir auf Discord bei!",

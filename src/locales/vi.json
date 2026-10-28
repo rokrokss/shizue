@@ -123,7 +123,8 @@
     "sources": "Nguồn",
     "withCaptions": "có phụ đề",
     "withoutCaptions": "không có phụ đề",
-    "playFromTime": "Phát từ {{time}}"
+    "playFromTime": "Phát từ {{time}}",
+    "backToPage": "Quay lại trang"
   },
   "footer": {
     "joinDiscord": "Tham gia cùng tôi trên Discord!",

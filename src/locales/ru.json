@@ -123,7 +123,8 @@
     "sources": "Источники",
     "withCaptions": "с субтитрами",
     "withoutCaptions": "без субтитров",
-    "playFromTime": "Воспроизвести с {{time}}"
+    "playFromTime": "Воспроизвести с {{time}}",
+    "backToPage": "Вернуться на страницу"
   },
   "footer": {
     "joinDiscord": "Присоединяйтесь ко мне в Discord!",

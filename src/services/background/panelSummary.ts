@@ -7,7 +7,7 @@ const pendingSummaries = new Set<Promise<void>>();
 export function openPanelForSummary(tabId: number, windowId: number | undefined) {
   // Keep open() in the user gesture. The new panel waits for the summary handoff
   // before displaying its saved conversation, including during receiver recovery.
-  const opened = openPanel(windowId);
+  const opened = openPanel(windowId, tabId);
   const summary = requestPageSummary(tabId, recoverTabContentScripts);
   pendingSummaries.add(summary);
   void summary.then(
