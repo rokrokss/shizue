@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import svgr from 'vite-plugin-svgr';
 import { defineConfig, type UserManifest } from 'wxt';
+import katexWoff2Only from './scripts/vite-plugin-katex-woff2';
 import toUtf8 from './scripts/vite-plugin-to-utf8';
 
 export default defineConfig({
@@ -96,6 +97,7 @@ export default defineConfig({
     plugins: [
       svgr(),
       tailwindcss(),
+      katexWoff2Only(),
       visualizer({
         filename: './dist/stats.html',
         open: false,
