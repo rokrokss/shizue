@@ -26,6 +26,7 @@ const read = async (videoId: string): Promise<VideoTranscript> => {
     author: data.metadata?.author ?? '',
     description: data.metadata?.shortDescription ?? '',
     captions: null,
+    storyboard: data.storyboard,
   };
   // The original language's captions, as bilingual captions show them. A live stream has none to
   // download.

@@ -126,6 +126,12 @@
     "withCaptions": "may caption",
     "withoutCaptions": "walang caption",
     "playFromTime": "I-play mula {{time}}",
+    "detailedSummary": "Detalyadong buod",
+    "detailedSummaryWithResearch": "Detalyadong buod + pananaliksik sa web",
+    "detailedSummaryRequestText": "Ibuod ito nang detalyado! Shizue!",
+    "externalResearch": "Pananaliksik sa labas",
+    "externalResearchNote": "Nakita sa web, wala sa orihinal",
+    "inPage": "Orihinal",
     "backToPage": "Bumalik sa page"
   },
   "footer": {

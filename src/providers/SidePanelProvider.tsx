@@ -83,8 +83,14 @@ const SidePanelProvider = ({
       } else if (initData?.actionType === 'askForSummary') {
         // Clear the action immediately to prevent duplicate processing
         await rollbackActionType();
-        const { summaryTitle, summaryText, summaryPageLink, summaryVideo, summaryCaptions } =
-          initData;
+        const {
+          summaryTitle,
+          summaryText,
+          summaryPageLink,
+          summaryVideo,
+          summaryCaptions,
+          summaryStoryboard,
+        } = initData;
 
         debugLog('SidePanelProvider: [getInitData] summaryTitle', summaryTitle);
         debugLog('SidePanelProvider: [getInitData] threadId', threadId);
@@ -114,6 +120,7 @@ const SidePanelProvider = ({
           summaryPageLink: summaryPageLink,
           summaryVideo: summaryVideo,
           summaryCaptions: summaryCaptions,
+          ...(summaryStoryboard ? { summaryStoryboard } : {}),
           translateMode: false,
           content: summarizePageTextPrompt,
           createdAt: Date.now(),

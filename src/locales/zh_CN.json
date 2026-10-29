@@ -126,6 +126,12 @@
     "withCaptions": "含字幕",
     "withoutCaptions": "无字幕",
     "playFromTime": "从 {{time}} 播放",
+    "detailedSummary": "详细总结",
+    "detailedSummaryWithResearch": "详细总结 + 联网调研",
+    "detailedSummaryRequestText": "详细总结一下！Shizue！",
+    "externalResearch": "外部调研",
+    "externalResearchNote": "来自网络，并非原文内容",
+    "inPage": "原文",
     "backToPage": "返回页面"
   },
   "footer": {

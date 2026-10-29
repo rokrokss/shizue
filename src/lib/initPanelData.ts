@@ -5,7 +5,7 @@ export async function initSummarizePageContent(
   title: string,
   text: string,
   pageLink: string,
-  { video, captions }: { video: boolean; captions: boolean }
+  { video, captions, storyboard }: { video: boolean; captions: boolean; storyboard?: string }
 ) {
   const prevGlobalState = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
   const saved = await setStorage(STORAGE_GLOBAL_STATE, {
@@ -16,6 +16,7 @@ export async function initSummarizePageContent(
     summaryText: text,
     summaryVideo: video,
     summaryCaptions: captions,
+    summaryStoryboard: storyboard,
   });
   if (!saved) throw new Error('Unable to save page summary.');
 }

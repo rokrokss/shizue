@@ -126,6 +126,12 @@
     "withCaptions": "con subtítulos",
     "withoutCaptions": "sin subtítulos",
     "playFromTime": "Reproducir desde {{time}}",
+    "detailedSummary": "Resumen detallado",
+    "detailedSummaryWithResearch": "Resumen detallado + investigación web",
+    "detailedSummaryRequestText": "¡Resúmelo en detalle! ¡Shizue!",
+    "externalResearch": "Investigación externa",
+    "externalResearchNote": "Encontrado en la web, no en el original",
+    "inPage": "Original",
     "backToPage": "Volver a la página"
   },
   "footer": {

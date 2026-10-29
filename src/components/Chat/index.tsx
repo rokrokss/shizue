@@ -13,6 +13,8 @@ import { useThemeValue } from '@/hooks/layout';
 import { useChromePortStream } from '@/hooks/portStream';
 import { convertFilesToBase64Array } from '@/lib/imageUtils';
 import { addMessage, createThread, PageAttachment, touchThread } from '@/lib/indexDB';
+import { hasPageLines } from '@/lib/pageLines';
+import { getDetailedSummaryPrompt } from '@/lib/prompts';
 import { throttleTrailing } from '@/lib/throttleTrailing';
 import { createThreadLoader } from '@/lib/threadLoader';
 import type { WebSource } from '@/lib/webSources';
@@ -33,6 +35,8 @@ export interface Message {
   summaryPageLink?: string;
   summaryVideo?: boolean;
   summaryCaptions?: boolean;
+  summaryStoryboard?: string;
+  summaryMode?: 'detailed';
   selectionText?: string;
   translateMode?: boolean;
   content: string;
@@ -163,6 +167,7 @@ const Chat = () => {
         { threadId: tId, actionType: actionType.current },
         {
           onContextTruncated: markContextTruncated,
+          onSources: showSources,
           onDelta: (delta) => {
             setMessages((cur) => {
               const updatedMessages = updateAIMessage(cur, {
@@ -545,6 +550,35 @@ const Chat = () => {
       );
   };
 
+  // Asks for the detailed summary of what the summary before `answerIdx` read, with web research
+  // when `research`. The chat already holds the text, so the request carries only the prompt; once
+  // stored, the summary request it is starts its answer like one from the page (loadThreadBackground).
+  const handleDetailedSummary = async (answerIdx: number, research: boolean) => {
+    const request = messages[answerIdx - 1];
+    if (!threadId || !request) return;
+    const refs = request.summaryCaptions ? 'time' : hasPageLines(request.content) ? 'line' : null;
+    await addMessage({
+      id: crypto.randomUUID(),
+      threadId,
+      role: 'human',
+      actionType: 'askForSummary',
+      summaryTitle: request.summaryTitle,
+      summaryPageLink: request.summaryPageLink,
+      summaryVideo: request.summaryVideo,
+      summaryCaptions: request.summaryCaptions,
+      ...(request.summaryStoryboard ? { summaryStoryboard: request.summaryStoryboard } : {}),
+      summaryMode: 'detailed',
+      ...(research ? { webSearch: true } : {}),
+      translateMode: false,
+      content: getDetailedSummaryPrompt(!!request.summaryCaptions, refs, research),
+      createdAt: Date.now(),
+      done: true,
+      onInterrupt: false,
+      stopped: false,
+    });
+    await touchThread(threadId);
+  };
+
   const handleOpenHistory = () => {
     setIsHistoryOpen(true);
   };
@@ -645,6 +679,7 @@ const Chat = () => {
               key={threadId}
               messages={messages}
               onRetry={handleRetry}
+              onDetailedSummary={handleDetailedSummary}
               scrollToBottom={scrollToBottomThrottled}
             />
           </Suspense>

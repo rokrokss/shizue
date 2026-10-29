@@ -126,6 +126,12 @@
     "withCaptions": "com legendas",
     "withoutCaptions": "sem legendas",
     "playFromTime": "Reproduzir a partir de {{time}}",
+    "detailedSummary": "Resumo detalhado",
+    "detailedSummaryWithResearch": "Resumo detalhado + pesquisa na web",
+    "detailedSummaryRequestText": "Resume em detalhe! Shizue!",
+    "externalResearch": "Pesquisa externa",
+    "externalResearchNote": "Encontrado na web, não no original",
+    "inPage": "Original",
     "backToPage": "Voltar à página"
   },
   "footer": {

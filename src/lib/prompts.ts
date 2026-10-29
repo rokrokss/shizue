@@ -2,6 +2,8 @@ import { SelectionActionType } from '@/config/constants';
 import { Language } from '@/hooks/language';
 import type { PageAttachment } from '@/lib/indexDB';
 import type { TranslationContext } from '@/lib/liveCaption/types';
+import { numberPageLines } from '@/lib/pageLines';
+import { RESEARCH_MARKER } from '@/lib/research';
 import { netflixVideoId } from '@/lib/videoTranscript';
 import { Caption, VideoMetadata } from '@/lib/youtube';
 import { debugLog } from '@/logs';
@@ -133,36 +135,94 @@ ${videoTimes}
 ${blocks.join('\n\n')}`;
 };
 
-const getSummaryPrompt = (content: string, video = false) => {
-  return `I want you to act as a text summarizer to help me create a concise summary of the text I provide.
+// What a summary's sections point back to: video times ([12:34]) or page line numbers ([¶12]).
+export type SummaryRefs = 'time' | 'line' | null;
+
+const summaryRefRule = (refs: SummaryRefs) =>
+  refs === 'time'
+    ? "After each section's bold title, give the time its part of the video starts in brackets, like [12:34]."
+    : refs === 'line'
+      ? "After each section's bold title, give the number of the line where its part of the text starts, like [¶12]."
+      : '';
+
+// The shapes a summary takes for the kinds of text it is given.
+const SUMMARY_KINDS = `- A research paper: the problem, the method, the main results with their numbers, and the limitations.
+- News: what happened, who is involved, when and where, why it matters, and what comes next.
+- An opinion piece, essay or blog post: the main claim, the reasons and evidence for it, and the conclusion.
+- A tutorial or how-to: what is needed beforehand, the steps in order, and common mistakes.
+- A product review or comparison: each product's key specs and price, its strengths and weaknesses, and the verdict, in a table when there are several products.
+- Investing or market analysis: each company or asset mentioned with the view on it (buy, hold, sell, or the outlook) and why, in a table when there are several, then the risks.
+- A lecture or explainer: what it sets out to teach, the key concepts with a short definition of each, and how they connect.
+- An interview, podcast or panel: who speaks, and each speaker's main points and claims.
+- A meeting or call: the decisions, the action items with their owners and dates, and the open questions.
+- A recipe: the ingredients with amounts, then the steps.
+- Anything else: the key points in the order the text gives them.`;
+
+const getSummaryPrompt = (content: string, refs: SummaryRefs) => {
+  const refRule =
+    refs === 'time'
+      ? `6. The text is a video's captions. ${summaryRefRule(refs)}\n`
+      : refs === 'line'
+        ? `6. The text's longer lines are numbered like [¶12]. ${summaryRefRule(refs)}\n`
+        : '';
+  return `I want you to summarize the text I provide so that I can grasp it quickly.
+
+First work out what kind of text it is, and shape the summary to fit it without naming the kind:
+${SUMMARY_KINDS}
+
 Please strictly follow the guidelines below to create your summary.
 
-1. The summary expressing the key points and concepts written in the original text without adding your interpretations.
+1. Write only the key points and concepts the original text gives, without adding your interpretations.
 2. The very first line of your output must be a **single, short, concise sentence that encapsulates the core message or essence of the entire provided text.**
-3. Ensure the output is well-organized in paragraphs, coherent, and presented in clear, natural-sounding text. The goal is a polished and professional-quality summary.
-4. Ensure paragraphs are clearly separated, preferably by a blank line, and added with a bold title for each paragraph for readability.
+3. Then write sections separated by blank lines, each starting with a bold title. Inside a section, use short paragraphs, bullet points or a table, whichever suits it.
+4. Use plain words that someone new to the subject understands, and explain a technical term briefly where it first appears.
 5. The summary should be clearly shorter than half of the original text.
-${video ? '6. The text is a video\'s captions. After each paragraph\'s bold title, give the time its part of the video starts in brackets, like [12:34].\n' : ''}
+${refRule}
 ${content}
 `;
 };
 
-// A YouTube video with captions is summarized from them (`captions`).
+// A YouTube video with captions is summarized from them (`captions`). A page's longer lines are
+// numbered, so its summary can point back to them (lib/pageLines.ts).
 export const getSummarizePageTextPrompt = (title: string, text: string, captions = false) => {
-  const content = captions
-    ? `
+  if (captions) {
+    return getSummaryPrompt(
+      `
 ===title of the video===
 ${title}
 
 ===the video's channel, description and captions, each caption line starting with its time===
-${text}`
-    : `
+${text}`,
+      'time'
+    );
+  }
+  const numbered = numberPageLines(text);
+  return getSummaryPrompt(
+    `
 ===title of the page===
 ${title}
 
 ===innerText got from the page===
-${text}`;
-  return getSummaryPrompt(content, captions);
+${numbered}`,
+    numbered === text ? null : 'line'
+  );
+};
+
+// The detailed summary asked for after a short one, from the text the conversation already holds.
+// With `research`, the model also searches the web and writes what it found after RESEARCH_MARKER.
+export const getDetailedSummaryPrompt = (video: boolean, refs: SummaryRefs, research: boolean) => {
+  const refRule = summaryRefRule(refs);
+  return `Now write a detailed summary of the same ${video ? 'video' : 'text'} I gave you above.
+
+1. Keep everything important: the numbers, names, dates, steps, examples and caveats. Leave out only repetition and filler.
+2. Shape it to fit the kind of text as before: the one-sentence first line, then sections with bold titles.${refRule ? ` ${refRule}` : ''}
+3. Write only what the ${video ? 'video' : 'text'} says, without adding your interpretations.
+${
+  research
+    ? `4. After the summary, write a line holding only ${RESEARCH_MARKER}. Below it, search the web and write 3 to 6 short bullet points about what helps me judge and understand the ${video ? 'video' : 'text'}: who the author or speakers are and their record, whether the key claims and numbers hold up, figures that have changed since (prices, versions, results), opposing views, and caveats it leaves out. For a tutorial, also check what changed in newer versions and fixes for common errors. Say where each point comes from, and say so when you could not confirm something. Add no heading after that line, and keep everything from the web out of the summary above it.
+`
+    : ''
+}`;
 };
 
 export const getSelectionActionPrompt = (

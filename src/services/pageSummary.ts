@@ -15,6 +15,7 @@ export async function summarizeCurrentPage() {
   await initSummarizePageContent(document.title, text, window.location.href, {
     video: !!video,
     captions: !!video?.captions,
+    storyboard: video?.captions ? video.storyboard : undefined,
   });
   // Storage is the durable handoff. A panel that is still loading reads it on mount.
   // An already mounted panel also observes the storage change.

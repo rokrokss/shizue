@@ -22,6 +22,8 @@ export type GlobalState = {
   // The summarized page is a YouTube video, and its text is the video's captions.
   summaryVideo?: boolean;
   summaryCaptions?: boolean;
+  // The video's preview frames, for the scenes its summary shows (lib/storyboard.ts).
+  summaryStoryboard?: string;
   selectionText?: string;
   imageBase64?: string;
   imageUrl?: string;

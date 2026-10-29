@@ -126,6 +126,12 @@
     "withCaptions": "字幕あり",
     "withoutCaptions": "字幕なし",
     "playFromTime": "{{time}}から再生",
+    "detailedSummary": "詳しく要約",
+    "detailedSummaryWithResearch": "詳しく + ウェブリサーチ",
+    "detailedSummaryRequestText": "詳しく要約して！しずえ！",
+    "externalResearch": "外部リサーチ",
+    "externalResearchNote": "原文ではなくウェブで見つけた内容です",
+    "inPage": "原文",
     "backToPage": "ページに戻る"
   },
   "footer": {

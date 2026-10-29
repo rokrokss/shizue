@@ -126,6 +126,12 @@
     "withCaptions": "کیپشن کے ساتھ",
     "withoutCaptions": "کیپشن کے بغیر",
     "playFromTime": "{{time}} سے چلائیں",
+    "detailedSummary": "تفصیلی خلاصہ",
+    "detailedSummaryWithResearch": "تفصیلی خلاصہ + ویب تحقیق",
+    "detailedSummaryRequestText": "تفصیل سے خلاصہ کریں! Shizue!",
+    "externalResearch": "بیرونی تحقیق",
+    "externalResearchNote": "ویب سے ملا، اصل متن میں نہیں",
+    "inPage": "اصل متن",
     "backToPage": "صفحے پر واپس جائیں"
   },
   "footer": {

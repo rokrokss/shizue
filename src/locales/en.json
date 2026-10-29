@@ -126,6 +126,12 @@
     "withCaptions": "with captions",
     "withoutCaptions": "without captions",
     "playFromTime": "Play from {{time}}",
+    "detailedSummary": "Detailed summary",
+    "detailedSummaryWithResearch": "Detailed summary + web research",
+    "detailedSummaryRequestText": "Summarize it in detail! Shizue!",
+    "externalResearch": "External research",
+    "externalResearchNote": "Found on the web, not in the original",
+    "inPage": "Original",
     "backToPage": "Back to page"
   },
   "footer": {

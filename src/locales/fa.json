@@ -126,6 +126,12 @@
     "withCaptions": "با زیرنویس",
     "withoutCaptions": "بدون زیرنویس",
     "playFromTime": "پخش از {{time}}",
+    "detailedSummary": "خلاصه مفصل",
+    "detailedSummaryWithResearch": "خلاصه مفصل + جستجو در وب",
+    "detailedSummaryRequestText": "مفصل خلاصه کن! Shizue!",
+    "externalResearch": "پژوهش بیرونی",
+    "externalResearchNote": "از وب پیدا شده، نه از متن اصلی",
+    "inPage": "متن اصلی",
     "backToPage": "بازگشت به صفحه"
   },
   "footer": {

@@ -126,6 +126,12 @@
     "withCaptions": "ক্যাপশনসহ",
     "withoutCaptions": "ক্যাপশন ছাড়া",
     "playFromTime": "{{time}} থেকে চালান",
+    "detailedSummary": "বিস্তারিত সারাংশ",
+    "detailedSummaryWithResearch": "বিস্তারিত সারাংশ + ওয়েব গবেষণা",
+    "detailedSummaryRequestText": "বিস্তারিত সংক্ষেপ করুন! Shizue!",
+    "externalResearch": "বাইরের গবেষণা",
+    "externalResearchNote": "ওয়েবে পাওয়া, মূল লেখায় নেই",
+    "inPage": "মূল লেখা",
     "backToPage": "পৃষ্ঠায় ফিরে যান"
   },
   "footer": {

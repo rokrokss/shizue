@@ -3,11 +3,15 @@ import { Message } from '@/components/Chat';
 import { DotCycle } from '@/components/Loader/DotCycle';
 import { isSelectionActionType } from '@/config/constants';
 import { useThemeValue } from '@/hooks/layout';
+import { useChatModel } from '@/hooks/models';
 import useStreamText from '@/hooks/useStreamText';
 import { hashStringToIndex } from '@/lib/hash';
+import { modelSupportsWebSearch } from '@/lib/modelRegistry';
+import { hasPageLines } from '@/lib/pageLines';
 import {
   FileOutlined,
   FilePdfOutlined,
+  FileTextOutlined,
   GlobalOutlined,
   InfoCircleOutlined,
   LinkOutlined,
@@ -18,20 +22,34 @@ import {
 import MarkdownMessage from '@/components/Chat/MarkdownMessage';
 import { videoKey, youtubeVideoId } from '@/lib/videoTranscript';
 import { Button } from 'antd';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+// What an answer's [12:34] times and [¶12] line numbers point into (components/Chat/MarkdownMessage).
+type AnswerContext = {
+  video?: string | null;
+  storyboard?: string;
+  page?: { url: string; prompt: string } | null;
+};
 
 const ChatContainer = ({
   messages,
   onRetry,
+  onDetailedSummary,
   scrollToBottom,
 }: {
   messages: Message[];
   onRetry: (messageIdxToRetry: number) => Promise<void>;
+  onDetailedSummary: (answerIdx: number, research: boolean) => Promise<void>;
   scrollToBottom: () => void;
 }) => {
   const { t } = useTranslation();
   const characterIndexes: number[] = [];
   const theme = useThemeValue();
+  const [chatModel] = useChatModel();
+  const researchSupported = modelSupportsWebSearch(chatModel);
+  // The answer whose detailed summary was just asked for, so its button goes at once.
+  const [detailedAskedFor, setDetailedAskedFor] = useState<number | null>(null);
 
   const animatedText = useStreamText(messages[messages.length - 1].content.trim(), {
     handleOnComplete: scrollToBottom,
@@ -40,8 +58,8 @@ const ChatContainer = ({
   const showRetryButton = (message: Message) =>
     (message.onInterrupt && !message.stopped) || message.stopped;
 
-  const getMarkdownText = (content: string, streaming = false, video?: string | null) => {
-    return <MarkdownMessage content={content} streaming={streaming} video={video} />;
+  const getMarkdownText = (content: string, streaming = false, context: AnswerContext = {}) => {
+    return <MarkdownMessage content={content} streaming={streaming} {...context} />;
   };
 
   // Whether a video's captions went with the question.
@@ -49,20 +67,47 @@ const ChatContainer = ({
     <span> · {captions ? t('chat.withCaptions') : t('chat.withoutCaptions')}</span>
   );
 
-  // The video an answer's [12:34] times point into: the one whose captions the conversation last
-  // attached or summarized, unless that was more than one.
-  const answerVideo = (idx: number) => {
-    for (let i = idx - 1; i >= 0; i--) {
+  // The summary prompt of `url` with numbered lines, at or before `from`: a detailed summary's own
+  // prompt has none and refers to the earlier one.
+  const numberedPrompt = (from: number, url: string) => {
+    for (let i = from; i >= 0; i--) {
       const m = messages[i];
-      if (m.role !== 'human') continue;
-      if (m.actionType === 'askForSummary' && m.summaryCaptions) {
-        return videoKey(m.summaryPageLink);
+      if (m.role === 'human' && m.actionType === 'askForSummary' && m.summaryPageLink === url) {
+        if (hasPageLines(m.content)) return m.content;
       }
-      const videos = (m.attachments ?? []).filter((page) => page.captions);
-      if (videos.length) return videos.length === 1 ? videoKey(videos[0].url) : null;
     }
     return null;
   };
+
+  // What an answer's references point into: the video whose captions the conversation last
+  // attached or summarized (unless that was more than one), with its storyboard when summarized,
+  // or the page it last summarized, for its [¶12] line numbers.
+  const answerContext = (idx: number): AnswerContext => {
+    for (let i = idx - 1; i >= 0; i--) {
+      const m = messages[i];
+      if (m.role !== 'human') continue;
+      if (m.actionType === 'askForSummary') {
+        if (m.summaryCaptions) {
+          return { video: videoKey(m.summaryPageLink), storyboard: m.summaryStoryboard };
+        }
+        const prompt = m.summaryPageLink ? numberedPrompt(i, m.summaryPageLink) : null;
+        return prompt ? { page: { url: m.summaryPageLink!, prompt } } : {};
+      }
+      const videos = (m.attachments ?? []).filter((page) => page.captions);
+      if (videos.length) return { video: videos.length === 1 ? videoKey(videos[0].url) : null };
+    }
+    return {};
+  };
+
+  // A short summary that is the chat's last answer offers the detailed one.
+  const offersDetailedSummary = (idx: number) =>
+    idx === messages.length - 1 &&
+    idx !== detailedAskedFor &&
+    messages[idx].done &&
+    !messages[idx].onInterrupt &&
+    messages[idx - 1]?.role === 'human' &&
+    messages[idx - 1].actionType === 'askForSummary' &&
+    messages[idx - 1].summaryMode !== 'detailed';
 
   return (
     <div
@@ -118,14 +163,14 @@ const ChatContainer = ({
                       </>
                     ) : idx === messages.length - 1 && !m.done ? (
                       m.content.trim() ? (
-                        getMarkdownText(animatedText, true, answerVideo(idx))
+                        getMarkdownText(animatedText, true, answerContext(idx))
                       ) : isRetryButtonVisible ? null : (
                         <div className="sz:flex sz:flex-row sz:items-center sz:justify-start sz:pl-3 sz:text-xl">
                           <DotCycle />
                         </div>
                       )
                     ) : (
-                      getMarkdownText(m.content, false, answerVideo(idx))
+                      getMarkdownText(m.content, false, answerContext(idx))
                     )}
                   </div>
                   {m.sources?.length ? (
@@ -168,6 +213,24 @@ const ChatContainer = ({
                         onClick={() => onRetry(idx)}
                       >
                         {t('chat.retry')}
+                      </Button>
+                    </div>
+                  ) : null}
+                  {offersDetailedSummary(idx) ? (
+                    <div className="sz:pt-2">
+                      <Button
+                        color="cyan"
+                        variant="outlined"
+                        size="small"
+                        icon={researchSupported ? <GlobalOutlined /> : <FileTextOutlined />}
+                        onClick={() => {
+                          setDetailedAskedFor(idx);
+                          void onDetailedSummary(idx, researchSupported);
+                        }}
+                      >
+                        {researchSupported
+                          ? t('chat.detailedSummaryWithResearch')
+                          : t('chat.detailedSummary')}
                       </Button>
                     </div>
                   ) : null}
@@ -291,8 +354,18 @@ const ChatContainer = ({
                 ) : m.actionType === 'askForSummary' ? (
                   <div className="sz:flex sz:flex-col">
                     {getMarkdownText(
-                      m.summaryVideo ? t('chat.summaryVideoRequestText') : t('chat.summaryRequestText')
+                      m.summaryMode === 'detailed'
+                        ? t('chat.detailedSummaryRequestText')
+                        : m.summaryVideo
+                          ? t('chat.summaryVideoRequestText')
+                          : t('chat.summaryRequestText')
                     )}
+                    {m.webSearch ? (
+                      <div className="sz:flex sz:flex-row sz:items-center sz:gap-1">
+                        <GlobalOutlined />
+                        <div className="sz:text-sm sz:text-gray-500 sz:pb-[2px]">{t('chat.webSearch')}</div>
+                      </div>
+                    ) : null}
                     <a href={m.summaryPageLink} target="_blank" rel="noopener noreferrer">
                       <div className="sz:flex sz:flex-row sz:items-center sz:gap-1">
                         {m.summaryVideo ? <YoutubeOutlined /> : <LinkOutlined />}

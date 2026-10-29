@@ -126,6 +126,12 @@
     "withCaptions": "pamoja na manukuu",
     "withoutCaptions": "bila manukuu",
     "playFromTime": "Cheza kuanzia {{time}}",
+    "detailedSummary": "Muhtasari wa kina",
+    "detailedSummaryWithResearch": "Muhtasari wa kina + utafiti wa wavuti",
+    "detailedSummaryRequestText": "Toa muhtasari wa kina! Shizue!",
+    "externalResearch": "Utafiti wa nje",
+    "externalResearchNote": "Imepatikana kwenye wavuti, si kwenye asili",
+    "inPage": "Asili",
     "backToPage": "Rudi kwenye ukurasa"
   },
   "footer": {

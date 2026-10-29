@@ -28,9 +28,15 @@ const { isPdfFile, isTextFile, readTextFile } = await load('../src/lib/tabText.t
 const { mergeMemoryFacts, parseMemoryFacts, questionsToRemember, AUTO_MEMORY_MAX_FACTS } = await load(
   '../src/lib/autoMemory.ts'
 );
-const { getAttachedPagesPrompt, getInitialSystemMessage, getSummarizePageTextPrompt } = await load(
-  '../src/lib/prompts.ts'
-);
+const {
+  getAttachedPagesPrompt,
+  getDetailedSummaryPrompt,
+  getInitialSystemMessage,
+  getSummarizePageTextPrompt,
+} = await load('../src/lib/prompts.ts');
+const { hasPageLines, linkPageLines, numberPageLines, pageLines } = await load('../src/lib/pageLines.ts');
+const { splitResearch } = await load('../src/lib/research.ts');
+const { storyboardFrame } = await load('../src/lib/storyboard.ts');
 const {
   formatVideoTime,
   linkVideoTimes,
@@ -314,4 +320,85 @@ test('video captions ask for [12:34] times in answers and summaries', () => {
   const summary = getSummarizePageTextPrompt('Talk', '[0:00] hi', true);
   assert.match(summary, /6\. The text is a video's captions\./);
   assert.match(summary, /===title of the video===\nTalk/);
+});
+
+test('a time right after a section title links to its scene', () => {
+  assert.equal(
+    linkVideoTimes('**Setup** [0:05]\nThen at [1:00] it runs.\n## Results [2:00]\n**Why**: [3:00]'),
+    '**Setup** [0:05](#s=5)\nThen at [1:00](#t=60) it runs.\n## Results [2:00](#s=120)\n**Why**: [3:00](#s=180)'
+  );
+  assert.equal(linkVideoTimes('**Bold** words [0:10]'), '**Bold** words [0:10](#t=10)');
+  assert.equal(linkVideoTimes('[0:05] first'), '[0:05](#t=5) first');
+});
+
+test('a scene comes from the sharpest storyboard level that takes frames at an interval', () => {
+  const spec =
+    'https://i.ytimg.com/sb/abc/storyboard3_L$L/$N.jpg?sqp=q|48#27#100#10#10#0#default#rs$A|' +
+    '80#45#50#10#10#5000#M$M#rs$B|160#90#50#5#5#5000#M$M#rs$C';
+  const sheet = (n) => `https://i.ytimg.com/sb/abc/storyboard3_L2/M${n}.jpg?sqp=q&sigh=rs$C`;
+  assert.deepEqual(storyboardFrame(spec, 0), {
+    url: sheet(0), width: 160, height: 90, columns: 5, column: 0, row: 0,
+  });
+  // Frame 7 of 25 per sheet: second row, third column.
+  assert.deepEqual(storyboardFrame(spec, 37), {
+    url: sheet(0), width: 160, height: 90, columns: 5, column: 2, row: 1,
+  });
+  // Frame 26 is the second sheet's second; past the end is the last frame.
+  assert.deepEqual(storyboardFrame(spec, 130), { ...storyboardFrame(spec, 0), url: sheet(1), column: 1 });
+  assert.deepEqual(storyboardFrame(spec, 9999), { ...storyboardFrame(spec, 0), url: sheet(1), column: 4, row: 4 });
+  assert.equal(storyboardFrame('https://i.ytimg.com/sb/abc/L$L/$N.jpg|48#27#100#10#10#0#default#rs$A', 5), null);
+  assert.equal(storyboardFrame('http://x.example/$L/$N.jpg|80#45#50#10#10#5000#M$M#s', 5), null);
+  assert.equal(storyboardFrame('', 5), null);
+});
+
+test('a page summary numbers long lines and links the numbers its answer gives', () => {
+  const long = 'A line long enough to be where a section of the page starts.';
+  const numbered = numberPageLines(`Menu\n${long}\n\nShort one\n${long} Again.`);
+  assert.equal(numbered, `Menu\n[¶1] ${long}\n\nShort one\n[¶2] ${long} Again.`);
+  assert.equal(hasPageLines(numbered), true);
+  assert.equal(hasPageLines('Menu\nShort'), false);
+  assert.deepEqual([...pageLines(numbered)], [[1, long], [2, `${long} Again.`]]);
+
+  assert.equal(
+    linkPageLines('**Intro** [¶3]\nSee [¶12-15] and [¶ 4].'),
+    '**Intro** [¶3](#p=3)\nSee [¶12](#p=12) and [¶4](#p=4).'
+  );
+  assert.equal(linkPageLines('`[¶3]` and\n```\n[¶4]\n```'), '`[¶3]` and\n```\n[¶4]\n```');
+  assert.equal(linkPageLines('[¶3](https://x.example)'), '[¶3](https://x.example)');
+
+  const prompt = getSummarizePageTextPrompt('T', `Menu\n${long}`);
+  assert.match(prompt, /6\. The text's longer lines are numbered like \[¶12\]\./);
+  assert.match(prompt, /===innerText got from the page===\nMenu\n\[¶1\] A line/);
+});
+
+test('a summary takes the shape of its kind of text', () => {
+  const prompt = getSummarizePageTextPrompt('T', 'body');
+  assert.match(prompt, /First work out what kind of text it is/);
+  for (const kind of [/A research paper:/, /News:/, /A tutorial or how-to:/, /Investing or market analysis:/]) {
+    assert.match(prompt, kind);
+  }
+  assert.match(prompt, /each starting with a bold title/);
+});
+
+test('a detailed summary keeps the references and puts web research after its marker', () => {
+  const video = getDetailedSummaryPrompt(true, 'time', true);
+  assert.match(video, /detailed summary of the same video I gave you above/);
+  assert.match(video, /like \[12:34\]\./);
+  assert.match(video, /write a line holding only :::research\. Below it, search the web/);
+  const page = getDetailedSummaryPrompt(false, 'line', false);
+  assert.match(page, /same text I gave you above/);
+  assert.match(page, /like \[¶12\]\./);
+  assert.doesNotMatch(page, /:::research|search the web/);
+  assert.doesNotMatch(getDetailedSummaryPrompt(false, null, false), /\[12:34\]|\[¶12\]/);
+});
+
+test('web research is split from the summary, and a half-written marker is held back', () => {
+  assert.deepEqual(splitResearch('Summary.\n\n:::research\n- Found it [a](https://x.example)'), {
+    body: 'Summary.',
+    research: '- Found it [a](https://x.example)',
+  });
+  assert.deepEqual(splitResearch('Summary.\n:::research\n', true), { body: 'Summary.', research: '' });
+  assert.deepEqual(splitResearch('Summary.\n:::res', true), { body: 'Summary.', research: null });
+  assert.deepEqual(splitResearch('Summary.\n:::res'), { body: 'Summary.\n:::res', research: null });
+  assert.deepEqual(splitResearch('Summary with ::: inline'), { body: 'Summary with ::: inline', research: null });
 });

@@ -13,6 +13,8 @@ export interface VideoTranscript {
   description: string;
   // Null for a video without captions, a live stream, or captions that couldn't be read.
   captions: Caption[] | null;
+  // YouTube's preview frames (lib/storyboard.ts), for the scenes a summary shows.
+  storyboard?: string;
 }
 
 // The video a YouTube watch page shows, or null for any other page.
@@ -108,10 +110,15 @@ export const videoTimeUrl = (videoId: string, seconds: number) =>
   `https://www.youtube.com/watch?v=${videoId}&t=${Math.floor(seconds)}s`;
 
 const CODE_OR_TIME = /```[\s\S]*?(?:```|$)|`[^`\n]*`|\[((?:\d{1,2}:)?\d{1,2}:\d{2})\](?!\()/g;
+// A line that so far is a heading or a bold title ("**Setup**", "**Setup**:", "## Setup").
+const SECTION_TITLE = /^\s*(?:#{1,6}\s.*|\*\*[^*\n]+\*\*[\s:：\-–—]*)$/;
 
-// Turns the [12:34] times an answer gives into links to #t=<seconds>, outside code.
+// Turns the [12:34] times an answer gives into links to #t=<seconds>, outside code. A time right
+// after a section's title links to #s=<seconds>: the start of a part, which gets its scene.
 export const linkVideoTimes = (markdown: string) =>
-  markdown.replace(CODE_OR_TIME, (match, time: string | undefined) => {
+  markdown.replace(CODE_OR_TIME, (match, time: string | undefined, offset: number) => {
     const seconds = time === undefined ? null : parseVideoTime(time);
-    return seconds === null ? match : `[${time}](#t=${seconds})`;
+    if (seconds === null) return match;
+    const line = markdown.slice(markdown.lastIndexOf('\n', offset - 1) + 1, offset);
+    return `[${time}](#${SECTION_TITLE.test(line) ? 's' : 't'}=${seconds})`;
   });

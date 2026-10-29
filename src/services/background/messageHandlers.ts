@@ -46,6 +46,8 @@ async function handleLoadThread(msg: any, sendResponse: (response?: any) => void
         summaryPageLink: m.summaryPageLink,
         summaryVideo: m.summaryVideo,
         summaryCaptions: m.summaryCaptions,
+        summaryStoryboard: m.summaryStoryboard,
+        summaryMode: m.summaryMode,
         selectionText: m.selectionText,
         translateMode: m.translateMode ?? false,
         done: m.done,

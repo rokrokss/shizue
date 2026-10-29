@@ -126,6 +126,12 @@
     "withCaptions": "z napisami",
     "withoutCaptions": "bez napisów",
     "playFromTime": "Odtwórz od {{time}}",
+    "detailedSummary": "Szczegółowe podsumowanie",
+    "detailedSummaryWithResearch": "Szczegółowo + research w sieci",
+    "detailedSummaryRequestText": "Podsumuj to szczegółowo! Shizue!",
+    "externalResearch": "Research zewnętrzny",
+    "externalResearchNote": "Znalezione w sieci, nie w oryginale",
+    "inPage": "Oryginał",
     "backToPage": "Wróć do strony"
   },
   "footer": {

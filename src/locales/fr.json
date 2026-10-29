@@ -126,6 +126,12 @@
     "withCaptions": "avec sous-titres",
     "withoutCaptions": "sans sous-titres",
     "playFromTime": "Lire à partir de {{time}}",
+    "detailedSummary": "Résumé détaillé",
+    "detailedSummaryWithResearch": "Résumé détaillé + recherche web",
+    "detailedSummaryRequestText": "Résume-le en détail ! Shizue !",
+    "externalResearch": "Recherche externe",
+    "externalResearchNote": "Trouvé sur le web, pas dans l'original",
+    "inPage": "Original",
     "backToPage": "Retour à la page"
   },
   "footer": {

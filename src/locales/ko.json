@@ -126,6 +126,12 @@
     "withCaptions": "자막",
     "withoutCaptions": "자막 없이",
     "playFromTime": "{{time}}부터 재생",
+    "detailedSummary": "자세히 요약",
+    "detailedSummaryWithResearch": "자세히 + 외부 리서치",
+    "detailedSummaryRequestText": "자세한 요약을 부탁해! 시즈에!",
+    "externalResearch": "외부 리서치",
+    "externalResearchNote": "원문이 아니라 웹에서 찾은 내용이에요",
+    "inPage": "원문",
     "backToPage": "페이지로 돌아가기"
   },
   "footer": {

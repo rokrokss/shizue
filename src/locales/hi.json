@@ -126,6 +126,12 @@
     "withCaptions": "कैप्शन सहित",
     "withoutCaptions": "कैप्शन के बिना",
     "playFromTime": "{{time}} से चलाएँ",
+    "detailedSummary": "विस्तृत सारांश",
+    "detailedSummaryWithResearch": "विस्तृत सारांश + वेब रिसर्च",
+    "detailedSummaryRequestText": "विस्तार से सारांश करो! Shizue!",
+    "externalResearch": "बाहरी रिसर्च",
+    "externalResearchNote": "वेब पर मिला, मूल में नहीं",
+    "inPage": "मूल",
     "backToPage": "पेज पर वापस जाएँ"
   },
   "footer": {

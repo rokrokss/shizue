@@ -286,15 +286,26 @@ export const getVideoData = async (videoId: string) => {
     channelId: player.videoDetails.channelId,
   };
 
+  // The seek bar's preview frames (lib/storyboard.ts). Short videos have none.
+  const storyboard: string | undefined = player.storyboards?.playerStoryboardSpecRenderer?.spec;
+
   debugLog('[Youtube] getVideoData: player', player);
   // Read before getTranscriptMetadata sorts the tracks English first.
   const originalLanguageCode = getOriginalLanguageCode(player);
   const transcriptMetadata = await getTranscriptMetadata(player, originalLanguageCode);
   if (!transcriptMetadata) {
     debugLog('[Youtube] getVideoData: No transcript data found');
-    return { videoId, metadata, live };
+    return { videoId, metadata, live, storyboard };
   }
 
   const originalTrack = getOriginalTrack(player, originalLanguageCode);
-  return { videoId, metadata, transcriptMetadata, live, originalLanguageCode, originalTrack };
+  return {
+    videoId,
+    metadata,
+    transcriptMetadata,
+    live,
+    originalLanguageCode,
+    originalTrack,
+    storyboard,
+  };
 };

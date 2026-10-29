@@ -126,6 +126,12 @@
     "withCaptions": "có phụ đề",
     "withoutCaptions": "không có phụ đề",
     "playFromTime": "Phát từ {{time}}",
+    "detailedSummary": "Tóm tắt chi tiết",
+    "detailedSummaryWithResearch": "Chi tiết + tìm hiểu trên web",
+    "detailedSummaryRequestText": "Tóm tắt chi tiết giúp mình! Shizue!",
+    "externalResearch": "Tìm hiểu bên ngoài",
+    "externalResearchNote": "Tìm thấy trên web, không có trong bản gốc",
+    "inPage": "Bản gốc",
     "backToPage": "Quay lại trang"
   },
   "footer": {
