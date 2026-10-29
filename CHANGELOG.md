@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.19
+
+- Firefox: Shizue now runs in Firefox, in the sidebar beside the page. The toolbar button and Ctrl+Shift+E (Cmd+Shift+E on Mac) open and close it. On Firefox for Android, it opens in a tab
+- Attaching a YouTube tab to a chat now says "Attach this video" instead of "page", and the chat box asks about the attached videos
+- The word list's home button is now a back arrow
+
 ## v0.3.18
 
 - Chat with a video: attach a YouTube tab and Shizue reads its captions, so answers can say what was said and when. Times like [12:34] in an answer are buttons that play the video from there. The chip shows "with captions", or "without captions" when a video's captions can't be read and its page text is sent instead
