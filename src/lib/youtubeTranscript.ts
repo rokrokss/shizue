@@ -1,4 +1,4 @@
-import { MESSAGE_READ_YOUTUBE_TRANSCRIPT } from '@/config/constants';
+import { MESSAGE_READ_VIDEO_TRANSCRIPT } from '@/config/constants';
 import type { VideoTranscript } from '@/lib/videoTranscript';
 import { fetchCaptionTrack, getVideoData, getVideoId, isYoutubeAdPlaying } from '@/lib/youtube';
 
@@ -21,6 +21,7 @@ const read = async (videoId: string): Promise<VideoTranscript> => {
   const data = await getVideoData(videoId);
   const transcript: VideoTranscript = {
     videoId,
+    url: `https://www.youtube.com/watch?v=${videoId}`,
     title: data.metadata?.title ?? document.title,
     author: data.metadata?.author ?? '',
     description: data.metadata?.shortDescription ?? '',
@@ -55,7 +56,7 @@ export const registerYoutubeTranscriptListener = () => {
     _sender: chrome.runtime.MessageSender,
     sendResponse: (response: VideoTranscript | null) => void
   ) => {
-    if (message?.action !== MESSAGE_READ_YOUTUBE_TRANSCRIPT) return false;
+    if (message?.action !== MESSAGE_READ_VIDEO_TRANSCRIPT) return false;
     void readYoutubeTranscript().then(sendResponse, () => sendResponse(null));
     return true;
   };

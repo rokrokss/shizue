@@ -2,6 +2,7 @@ import { SelectionActionType } from '@/config/constants';
 import { Language } from '@/hooks/language';
 import type { PageAttachment } from '@/lib/indexDB';
 import type { TranslationContext } from '@/lib/liveCaption/types';
+import { netflixVideoId } from '@/lib/videoTranscript';
 import { Caption, VideoMetadata } from '@/lib/youtube';
 import { debugLog } from '@/logs';
 
@@ -106,13 +107,19 @@ export const getInitialAIMessage = (lang: Language): string => {
   }
 };
 
+// What an attached video's text holds (lib/videoTranscript.ts).
+const videoNote = (page: PageAttachment) =>
+  netflixVideoId(page.url)
+    ? '(a Netflix title: its subtitles, each line starting with its time)\n'
+    : '(a YouTube video: its channel, description and captions, each caption line starting with its time)\n';
+
 // The question comes first: when a request doesn't fit a local model, the end of its longest
 // message is cut, which should cost page text rather than the question.
 export const getAttachedPagesPrompt = (question: string, pages: PageAttachment[]) => {
   const blocks = pages.map(
     (page, i) => `===attached page ${i + 1}===
 title: ${page.title}
-${page.url ? `url: ${page.url}\n` : ''}${page.captions ? "(a YouTube video: its channel, description and captions, each caption line starting with its time)\n" : ''}${page.truncated ? "(this page's text was cut to fit)\n" : ''}
+${page.url ? `url: ${page.url}\n` : ''}${page.captions ? videoNote(page) : ''}${page.truncated ? "(this page's text was cut to fit)\n" : ''}
 ${page.text}
 ===end of attached page ${i + 1}===`
   );

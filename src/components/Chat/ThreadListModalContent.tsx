@@ -130,7 +130,10 @@ const ThreadListModal = ({ onClose }: { onClose: () => void }) => {
 
   const getThreadTitle = (thread: ThreadWithInitialMessages) => {
     if (thread.firstMessage?.actionType === 'askForSummary') {
-      return t('overlayMenu.summarizePage') + ': ' + thread.firstMessage?.summaryTitle;
+      const label = thread.firstMessage.summaryVideo
+        ? t('overlayMenu.summarizeVideo')
+        : t('overlayMenu.summarizePage');
+      return label + ': ' + thread.firstMessage.summaryTitle;
     } else if (thread.firstMessage && isSelectionActionType(thread.firstMessage.actionType)) {
       return (
         t(`overlayMenu.${thread.firstMessage.actionType}`) + ': ' + thread.firstMessage.selectionText

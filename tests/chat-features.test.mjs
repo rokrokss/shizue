@@ -31,8 +31,16 @@ const { mergeMemoryFacts, parseMemoryFacts, questionsToRemember, AUTO_MEMORY_MAX
 const { getAttachedPagesPrompt, getInitialSystemMessage, getSummarizePageTextPrompt } = await load(
   '../src/lib/prompts.ts'
 );
-const { formatVideoTime, linkVideoTimes, parseVideoTime, transcriptText, videoTimeUrl, youtubeVideoId } =
-  await load('../src/lib/videoTranscript.ts');
+const {
+  formatVideoTime,
+  linkVideoTimes,
+  netflixVideoId,
+  parseVideoTime,
+  transcriptText,
+  videoKey,
+  videoTimeUrl,
+  youtubeVideoId,
+} = await load('../src/lib/videoTranscript.ts');
 
 test('math is found only in TeX delimiters outside code, and prices stay text', () => {
   assert.equal(hasMath('It costs $5 and $10.'), false);
@@ -219,6 +227,23 @@ test('a YouTube video is found only on a watch page, and its times read both way
   assert.equal(videoTimeUrl('abc123', 75.4), 'https://www.youtube.com/watch?v=abc123&t=75s');
 });
 
+test('a Netflix title is found only on a watch page, and a video key names its site', () => {
+  assert.equal(netflixVideoId('https://www.netflix.com/watch/81234567?trackId=1&tctx=x'), '81234567');
+  for (const url of [
+    'https://www.netflix.com/browse',
+    'https://www.netflix.com/title/81234567',
+    'https://www.netflix.com/watch/',
+    'https://example.com/watch/81234567',
+    'not a url',
+    undefined,
+  ]) {
+    assert.equal(netflixVideoId(url), null, String(url));
+  }
+  assert.equal(videoKey('https://www.youtube.com/watch?v=abc123'), 'youtube:abc123');
+  assert.equal(videoKey('https://www.netflix.com/watch/81234567'), 'netflix:81234567');
+  assert.equal(videoKey('https://example.com/'), null);
+});
+
 test('captions join into timed lines under the video details', () => {
   const caption = (startTime, text) => ({ startTime, endTime: startTime + 2, text });
   const text = transcriptText({
@@ -246,6 +271,16 @@ test('captions join into timed lines under the video details', () => {
   });
   assert.equal(long.split('\n').filter((line) => line.startsWith('[0:0')).length, 2);
   assert.ok(long.startsWith('channel: C\n\ncaptions:\n'));
+  // A Netflix title has no channel or description.
+  const netflix = transcriptText({
+    videoId: '81234567',
+    url: 'https://www.netflix.com/watch/81234567',
+    title: 'Show S1E2',
+    author: '',
+    description: '',
+    captions: [caption(5, 'Hi')],
+  });
+  assert.equal(netflix, 'captions:\n[0:05] Hi');
 });
 
 test('times in an answer become links, but not in code or existing links', () => {
@@ -269,6 +304,11 @@ test('video captions ask for [12:34] times in answers and summaries', () => {
   assert.match(withVideo, /url: https:\/\/www\.youtube\.com\/watch\?v=v\n\(a YouTube video: its channel, description and captions/);
   // A video without captions is sent as its page text, with nothing about times.
   assert.doesNotMatch(getAttachedPagesPrompt('Q?', [{ ...video, captions: false }]), /\[12:34\]/);
+  const netflix = { ...video, url: 'https://www.netflix.com/watch/81234567' };
+  const withNetflix = getAttachedPagesPrompt('Q?', [netflix]);
+  assert.match(withNetflix, /watch\/81234567\n\(a Netflix title: its subtitles, each line starting with its time\)/);
+  assert.doesNotMatch(withNetflix, /YouTube video/);
+  assert.match(withNetflix, /like \[12:34\]\./);
 
   assert.doesNotMatch(getSummarizePageTextPrompt('T', 'body'), /captions|\[12:34\]/);
   const summary = getSummarizePageTextPrompt('Talk', '[0:00] hi', true);

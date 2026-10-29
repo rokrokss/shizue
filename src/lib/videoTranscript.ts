@@ -1,11 +1,14 @@
 import type { Caption } from '@/lib/youtube';
 
-// A YouTube video's details and captions, read in its tab for the side panel's chat and page
-// summaries, and the times in answers that point back into the video.
+// A YouTube video's or Netflix title's details and captions, read in its tab for the side panel's
+// chat (and, on YouTube, page summaries), and the times in answers that point back into the video.
 
 export interface VideoTranscript {
   videoId: string;
+  // The watch page's address.
+  url: string;
   title: string;
+  // The channel and description; empty on Netflix.
   author: string;
   description: string;
   // Null for a video without captions, a live stream, or captions that couldn't be read.
@@ -23,6 +26,27 @@ export const youtubeVideoId = (url: string | undefined) => {
   } catch {
     return null;
   }
+};
+
+// The title a Netflix watch page plays (/watch/<movie ID>), or null for any other page.
+export const netflixVideoId = (url: string | undefined) => {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname !== 'www.netflix.com') return null;
+    return parsed.pathname.match(/^\/watch\/(\d+)/)?.[1] ?? null;
+  } catch {
+    return null;
+  }
+};
+
+// Which video a watch page shows, as "youtube:<id>" or "netflix:<id>", or null for any other page.
+// Answers' [12:34] times play it from there (lib/videoSeek.ts).
+export const videoKey = (url: string | undefined) => {
+  const youtube = youtubeVideoId(url);
+  if (youtube) return `youtube:${youtube}`;
+  const netflix = netflixVideoId(url);
+  return netflix ? `netflix:${netflix}` : null;
 };
 
 // 75 → "1:15", 3723 → "1:02:03".
@@ -72,9 +96,10 @@ export const transcriptText = (transcript: VideoTranscript) => {
   }
   flush();
   const description = transcript.description.trim().slice(0, MAX_DESCRIPTION_CHARS);
-  return `channel: ${transcript.author}
-${description ? `description: ${description}\n` : ''}
-captions:
+  const details = `${transcript.author ? `channel: ${transcript.author}\n` : ''}${
+    description ? `description: ${description}\n` : ''
+  }`;
+  return `${details ? `${details}\n` : ''}captions:
 ${lines.join('\n')}`;
 };
 

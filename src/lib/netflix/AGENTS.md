@@ -26,3 +26,8 @@ Netflix has full subtitle files for every title, so this works like YouTube: the
 - The overlay sits in `.watch-video--player-view` and moves above the control row while it shows. Native subtitles are hidden with a `<style>` (`.player-timedtext` and the image subtitle classes).
 - During an ad (`[data-uia="ads-info-container"]`, unverified) captions clear and the button hides. Whether the ad plan shifts `<video>.currentTime` is unknown.
 - The next episode plays in the same page: a new `movieId` reloads the captions with the same settings.
+
+## Chat
+
+- Attaching a Netflix watch tab in the side panel's chat sends the original subtitles with their times, as YouTube's captions are sent (`netflixTranscript.ts` answers `MESSAGE_READ_VIDEO_TRANSCRIPT`). `readTranscript()` reuses the lines on screen while captions are on, and otherwise downloads the original track the same way, hiding Netflix's own subtitles while the bridge may switch tracks.
+- An answer's [12:34] times seek the tab through the player API in the page's world (`seek(ms)` and `play()` on the watch session, `lib/videoSeek.ts`), never through `<video>.currentTime`. `seek` hasn't been checked on a real account; when no player answers, the tab opens `/watch/<id>?t=<seconds>` instead.

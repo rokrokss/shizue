@@ -1,4 +1,4 @@
-import { MESSAGE_READ_YOUTUBE_TRANSCRIPT, SUMMARY_PAGE_TEXT_MAX_CHARS } from '@/config/constants';
+import { MESSAGE_READ_VIDEO_TRANSCRIPT, SUMMARY_PAGE_TEXT_MAX_CHARS } from '@/config/constants';
 import { RECOVER_CONTENT_SCRIPTS } from '@/lib/contentScriptConnection';
 import type { PageAttachment } from '@/lib/indexDB';
 import { readPdfText } from '@/lib/pdfText';
@@ -93,11 +93,11 @@ export const readTabPage = async (tabId: number): Promise<PageRead> => {
   }
 };
 
-// The captions of the video a YouTube tab shows, read in that tab (lib/youtubeTranscript.ts), or
-// null when the tab doesn't answer.
+// The captions of the video a YouTube or Netflix tab shows, read in that tab
+// (lib/youtubeTranscript.ts, lib/netflix/netflixTranscript.ts), or null when the tab doesn't answer.
 const readVideoTranscript = async (tabId: number): Promise<VideoTranscript | null> => {
   const send = (): Promise<VideoTranscript | null> =>
-    chrome.tabs.sendMessage(tabId, { action: MESSAGE_READ_YOUTUBE_TRANSCRIPT }, { frameId: 0 });
+    chrome.tabs.sendMessage(tabId, { action: MESSAGE_READ_VIDEO_TRANSCRIPT }, { frameId: 0 });
   try {
     return await send();
   } catch (error) {
@@ -112,8 +112,8 @@ const readVideoTranscript = async (tabId: number): Promise<VideoTranscript | nul
   }
 };
 
-// A YouTube video tab: its details and captions when it has them, or else its page text like any
-// tab, marked as a video either way.
+// A YouTube or Netflix video tab: its details and captions when it has them, or else its page text
+// like any tab, marked as a video either way.
 export const readVideoTab = async (tabId: number): Promise<PageRead> => {
   const transcript = await readVideoTranscript(tabId);
   if (transcript?.captions) {
@@ -121,7 +121,7 @@ export const readVideoTab = async (tabId: number): Promise<PageRead> => {
     return {
       page: {
         title: transcript.title,
-        url: tab?.url ?? `https://www.youtube.com/watch?v=${transcript.videoId}`,
+        url: tab?.url ?? transcript.url,
         text: transcriptText(transcript),
         video: true,
         captions: true,

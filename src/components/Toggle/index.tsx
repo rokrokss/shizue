@@ -33,6 +33,7 @@ import {
   useTranslateModel,
 } from '@/hooks/models';
 import { hashStringToIndex } from '@/lib/hash';
+import { youtubeVideoId } from '@/lib/videoTranscript';
 import {
   initDescribeImageContent,
   initExtractImageTextContent,
@@ -112,7 +113,10 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
   const tooltipMessages = [
     t('overlayMenu.translateSettings'),
     t('overlayMenu.translatePage'),
-    t('overlayMenu.summarizePage'),
+    // A YouTube video is summarized from its captions (services/pageSummary.ts).
+    youtubeVideoId(window.location.href)
+      ? t('overlayMenu.summarizeVideo')
+      : t('overlayMenu.summarizePage'),
     t('overlayMenu.removeTranslation'),
     t('memo.memo'),
   ];

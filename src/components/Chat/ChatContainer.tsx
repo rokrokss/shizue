@@ -11,11 +11,12 @@ import {
   GlobalOutlined,
   InfoCircleOutlined,
   LinkOutlined,
+  PlaySquareOutlined,
   SnippetsOutlined,
   YoutubeOutlined,
 } from '@ant-design/icons';
 import MarkdownMessage from '@/components/Chat/MarkdownMessage';
-import { youtubeVideoId } from '@/lib/videoTranscript';
+import { videoKey, youtubeVideoId } from '@/lib/videoTranscript';
 import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 
@@ -55,10 +56,10 @@ const ChatContainer = ({
       const m = messages[i];
       if (m.role !== 'human') continue;
       if (m.actionType === 'askForSummary' && m.summaryCaptions) {
-        return youtubeVideoId(m.summaryPageLink);
+        return videoKey(m.summaryPageLink);
       }
       const videos = (m.attachments ?? []).filter((page) => page.captions);
-      if (videos.length) return videos.length === 1 ? youtubeVideoId(videos[0].url) : null;
+      if (videos.length) return videos.length === 1 ? videoKey(videos[0].url) : null;
     }
     return null;
   };
@@ -241,7 +242,7 @@ const ChatContainer = ({
                       const row = (
                         <div className="sz:flex sz:flex-row sz:items-center sz:gap-1">
                           {page.video ? (
-                            <YoutubeOutlined />
+                            youtubeVideoId(page.url) ? <YoutubeOutlined /> : <PlaySquareOutlined />
                           ) : page.pdf ? (
                             <FilePdfOutlined />
                           ) : page.file ? (
@@ -289,7 +290,9 @@ const ChatContainer = ({
                   </div>
                 ) : m.actionType === 'askForSummary' ? (
                   <div className="sz:flex sz:flex-col">
-                    {getMarkdownText(t('chat.summaryRequestText'))}
+                    {getMarkdownText(
+                      m.summaryVideo ? t('chat.summaryVideoRequestText') : t('chat.summaryRequestText')
+                    )}
                     <a href={m.summaryPageLink} target="_blank" rel="noopener noreferrer">
                       <div className="sz:flex sz:flex-row sz:items-center sz:gap-1">
                         {m.summaryVideo ? <YoutubeOutlined /> : <LinkOutlined />}

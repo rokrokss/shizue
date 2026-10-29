@@ -4,6 +4,7 @@ import NetflixCaptionToggle from '@/components/Netflix/NetflixCaptionToggle';
 import { MESSAGE_INJECT_NETFLIX_BRIDGE } from '@/config/constants';
 import { registerContentScriptConnection } from '@/lib/contentScriptConnection';
 import { getNetflixCaptions } from '@/lib/netflix/netflixCaptionController';
+import { registerNetflixTranscriptListener } from '@/lib/netflix/netflixTranscript';
 import { NETFLIX_POPUP_HOST_TAG } from '@/lib/netflix/playerControls';
 import { contentScriptLog, errorLog } from '@/logs';
 import AntdProvider from '@/providers/AntdProvider';
@@ -88,6 +89,7 @@ export default defineContentScript({
       if (!alive && !ctx.isInvalid) void chrome.runtime.sendMessage({ action: MESSAGE_INJECT_NETFLIX_BRIDGE });
     });
     ctx.onInvalidated(() => controller.deactivate());
+    ctx.onInvalidated(registerNetflixTranscriptListener(() => controller.readTranscript()));
 
     // One button for the page's life: it is moved into the control row each time Netflix shows its
     // controls, so the menu and its state survive the controls hiding.

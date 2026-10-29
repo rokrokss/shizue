@@ -22,7 +22,7 @@ import {
   readVideoTab,
   toPageAttachments,
 } from '@/lib/tabText';
-import { youtubeVideoId } from '@/lib/videoTranscript';
+import { videoKey, youtubeVideoId } from '@/lib/videoTranscript';
 import { debugLog } from '@/logs';
 import {
   EditOutlined,
@@ -149,11 +149,12 @@ const ChatInput = ({
     setAttached([]);
   };
 
-  // A YouTube video's captions are read as soon as it is attached (pressing the player's CC button
-  // and putting it back if the player hasn't fetched them yet), not when the question is sent.
+  // A YouTube video's or Netflix title's captions are read as soon as it is attached (on YouTube,
+  // pressing the player's CC button and putting it back if the player hasn't fetched them yet), not
+  // when the question is sent.
   const attachTab = (tab: chrome.tabs.Tab) => {
     const key = `tab-${tab.id}`;
-    const video = youtubeVideoId(tab.url) !== null;
+    const video = videoKey(tab.url) !== null;
     setAttached((current) => [
       ...current,
       {
@@ -170,7 +171,7 @@ const ChatInput = ({
       setAttached((current) =>
         current.map((item) =>
           item.key === key
-            ? { ...item, loading: false, page, captions: !!page, videoId: youtubeVideoId(page?.url) }
+            ? { ...item, loading: false, page, captions: !!page, videoId: videoKey(page?.url) }
             : item
         )
       );
@@ -181,7 +182,7 @@ const ChatInput = ({
   // (another video now, or none read) the tab is read again.
   const readAttachedVideo = async (item: AttachedItem): Promise<PageRead> => {
     const tab = await chrome.tabs.get(item.tabId!).catch(() => null);
-    if (item.page && item.videoId && youtubeVideoId(tab?.url) === item.videoId) {
+    if (item.page && item.videoId && videoKey(tab?.url) === item.videoId) {
       return { page: item.page };
     }
     return readVideoTab(item.tabId!);
@@ -639,7 +640,9 @@ const ChatInput = ({
                     theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
                   }`}
                 >
-                  {t('overlayMenu.summarizePage')}
+                  {youtubeVideoId(activeTab?.url)
+                    ? t('overlayMenu.summarizeVideo')
+                    : t('overlayMenu.summarizePage')}
                 </div>
               }
               color={theme == 'dark' ? '#505362' : 'white'}

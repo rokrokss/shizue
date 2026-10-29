@@ -45,7 +45,7 @@ const codeText = (node: ExtraProps['node']) => {
 };
 
 const StreamingContext = createContext(false);
-// The YouTube video an answer's #t=<seconds> links play.
+// The video an answer's #t=<seconds> links play, as a videoKey (lib/videoTranscript.ts).
 const VideoContext = createContext<string | null>(null);
 
 // Defined once, so a re-render keeps a drawn chart (and its table toggle) instead of mounting a
@@ -97,7 +97,7 @@ const components: Components = {
 
 // An answer's Markdown, with TeX math and ```chart blocks drawn. While the answer is still
 // coming, an unfinished chart block shows as a loader instead of half-written JSON. In an answer
-// about a YouTube `video`, [12:34] times play it from there.
+// about a YouTube or Netflix `video`, [12:34] times play it from there.
 const MarkdownMessage = ({
   content,
   streaming = false,

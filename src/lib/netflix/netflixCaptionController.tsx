@@ -10,6 +10,7 @@ import {
 import { createCueTranslator, CueTranslator } from '@/lib/netflix/cueTranslator';
 import { alignCues, findCueIndex, parseSubtitles } from '@/lib/netflix/subtitles';
 import { isTrackIn, pickOriginalTrack, pickTargetTrack } from '@/lib/netflix/tracks';
+import type { VideoTranscript } from '@/lib/videoTranscript';
 import type { Caption } from '@/lib/youtube';
 import { debugLog, errorLog } from '@/logs';
 import { translationService } from '@/services/translationService';
@@ -44,6 +45,8 @@ const NATIVE_CAPTIONS = '.player-timedtext, .image-based-timed-text, .image-base
 const AD_SELECTOR =
   '[data-uia="ads-info-container"], [data-uia="ads-info-text"], .watch-video--adsInfo-container';
 const BRIDGE_ANSWER_TIMEOUT_MS = 20_000;
+// How long the chat's read waits for the player to list a title's tracks.
+const TRACKS_WAIT_MS = 10_000;
 // The translator learns the playback position this often (and at once after a seek).
 const POSITION_INTERVAL_MS = 500;
 // Lines sent with each LLM request as context: translated ones before it, upcoming ones after.
@@ -182,6 +185,38 @@ class NetflixCaptions {
     const original = this.originalTrack();
     if (original && isTrackIn(original, target)) return false;
     return !pickTargetTrack(this.tracks, target);
+  }
+
+  // The title's original subtitles for the side panel's chat (lib/netflix/netflixTranscript.ts):
+  // the lines on screen while captions are on, else downloaded the way load() does.
+  async readTranscript(): Promise<VideoTranscript | null> {
+    if (!isWatchPage()) return null;
+    // The bridge lists the tracks every 500 ms once the player has a session.
+    for (let waited = 0; !this.tracks.length && waited < TRACKS_WAIT_MS; waited += 250) {
+      await new Promise((resolve) => setTimeout(resolve, 250));
+    }
+    const movieId = this.movieId ?? location.pathname.match(/^\/watch\/(\d+)/)?.[1];
+    const transcript: VideoTranscript = {
+      videoId: String(movieId),
+      url: `https://www.netflix.com/watch/${movieId}`,
+      title: this.title ?? document.title,
+      author: '',
+      description: '',
+      captions: null,
+    };
+    const original = this.originalTrack();
+    if (!original) return transcript;
+    if (this.active && this.cues.length && this.loadedKey === this.wantedKey()) {
+      return { ...transcript, captions: this.cues };
+    }
+    // The bridge may switch the player to the track for a moment to get its link: Netflix's own
+    // subtitles stay hidden meanwhile, as activate() hides them.
+    this.setNativeCaptionsHidden(true);
+    try {
+      return { ...transcript, captions: await this.fetchCues(original.trackId) };
+    } finally {
+      if (!this.active) this.setNativeCaptionsHidden(false);
+    }
   }
 
   private handleState(movieId: number | null, title: string | null, audioLanguage: string | null, tracks: NetflixTrack[]) {

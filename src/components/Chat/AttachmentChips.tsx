@@ -1,12 +1,13 @@
 import { useThemeValue } from '@/hooks/layout';
 import type { PageReadError, PageText } from '@/lib/tabText';
-import { youtubeVideoId } from '@/lib/videoTranscript';
+import { videoKey, youtubeVideoId } from '@/lib/videoTranscript';
 import {
   FileOutlined,
   FilePdfOutlined,
   FileTextOutlined,
   GlobalOutlined,
   LoadingOutlined,
+  PlaySquareOutlined,
   PlusOutlined,
   SnippetsOutlined,
   YoutubeOutlined,
@@ -25,8 +26,9 @@ export interface AttachedItem {
   pdf?: boolean;
   file?: boolean;
   pasted?: boolean;
-  // A YouTube video tab. Its captions are read when it is attached: `page` holds them, read from
-  // `videoId`, and `captions` says whether there were any once the reading is done.
+  // A YouTube or Netflix video tab. Its captions are read when it is attached: `page` holds them,
+  // read from `videoId` (a videoKey), and `captions` says whether there were any once the reading
+  // is done.
   video?: boolean;
   captions?: boolean;
   videoId?: string | null;
@@ -57,7 +59,7 @@ const AttachmentChips = ({
   const theme = useThemeValue();
 
   if (attached.length === 0 && !suggestion && !webSearch) return null;
-  const attachLabel = t(youtubeVideoId(suggestion?.url) ? 'chat.attachVideo' : 'chat.attachPage');
+  const attachLabel = t(videoKey(suggestion?.url) ? 'chat.attachVideo' : 'chat.attachPage');
 
   return (
     <div className="sz:flex sz:flex-wrap sz:shrink-0 sz:gap-1 sz:pt-1 sz:pb-1">
@@ -82,7 +84,7 @@ const AttachmentChips = ({
             item.loading ? (
               <LoadingOutlined />
             ) : item.video ? (
-              <YoutubeOutlined />
+              youtubeVideoId(item.url) ? <YoutubeOutlined /> : <PlaySquareOutlined />
             ) : item.pdf ? (
               <FilePdfOutlined />
             ) : item.file ? (
