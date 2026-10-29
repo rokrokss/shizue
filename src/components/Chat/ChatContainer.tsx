@@ -30,6 +30,7 @@ type AnswerContext = {
   video?: string | null;
   storyboard?: string;
   page?: { url: string; prompt: string } | null;
+  citations?: boolean;
 };
 
 const ChatContainer = ({
@@ -82,7 +83,7 @@ const ChatContainer = ({
   // What an answer's references point into: the video whose captions the conversation last
   // attached or summarized (unless that was more than one), with its storyboard when summarized,
   // or the page it last summarized, for its [¶12] line numbers.
-  const answerContext = (idx: number): AnswerContext => {
+  const referenceContext = (idx: number): AnswerContext => {
     for (let i = idx - 1; i >= 0; i--) {
       const m = messages[i];
       if (m.role !== 'human') continue;
@@ -98,6 +99,13 @@ const ChatContainer = ({
     }
     return {};
   };
+
+  // An answer's references, and whether it is a detailed analysis with web search, whose web links
+  // cite what it found there.
+  const answerContext = (idx: number): AnswerContext => ({
+    ...referenceContext(idx),
+    citations: messages[idx - 1]?.summaryMode === 'detailed' && Boolean(messages[idx - 1].webSearch),
+  });
 
   // A summary that is the chat's last answer offers its detailed analysis.
   const offersDetailedAnalysis = (idx: number) =>

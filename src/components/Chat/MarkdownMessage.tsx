@@ -54,6 +54,8 @@ const VideoContext = createContext<{ key: string; storyboard?: string } | null>(
 // The summarized page an answer's #p=<line> links point into, and the prompt whose numbered lines
 // they refer to (lib/pageLines.ts).
 const PageContext = createContext<{ url: string; prompt: string } | null>(null);
+// Whether the answer's web links cite what it found on the web (a detailed analysis with web search).
+const CitationContext = createContext(false);
 
 const chipClass = (theme: string) =>
   `sz:inline-flex sz:items-center sz:gap-0.5 sz:px-1.5 sz:rounded-full sz:text-xs sz:align-[1px] sz:cursor-pointer sz:border-0 ${
@@ -63,9 +65,10 @@ const chipClass = (theme: string) =>
 // Defined once, so a re-render keeps a drawn chart (and its table toggle) instead of mounting a
 // new one; whether the answer is still coming arrives through StreamingContext.
 const components: Components = {
-  a: function Link({ node: _node, href, children, ...props }) {
+  a: function Link({ node, href, children, ...props }) {
     const video = useContext(VideoContext);
     const page = useContext(PageContext);
+    const citations = useContext(CitationContext);
     const theme = useThemeValue();
     const { t } = useTranslation();
     const [, kind, value] = href?.match(/^#([tsp])=(\d+)$/) ?? [];
@@ -81,6 +84,20 @@ const components: Components = {
         >
           {t('chat.inPage')}
         </button>
+      );
+    }
+    if (citations && /^https?:\/\//.test(href ?? '')) {
+      const site = node?.children.map((child) => (child.type === 'text' ? child.value : '')).join('');
+      return (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={site ? `${site} · ${href}` : href}
+          className={chipClass(theme)}
+        >
+          {t('chat.webSource')}
+        </a>
       );
     }
     if ((kind !== 't' && kind !== 's') || !video) {
@@ -130,19 +147,21 @@ const components: Components = {
 // coming, an unfinished chart block shows as a loader instead of half-written JSON. In an answer
 // about a YouTube or Netflix `video`, [12:34] times play it from there, and a section's time shows
 // its scene when the video has a `storyboard`. In an answer about a summarized `page`, [¶12] line
-// numbers select that line in the page.
+// numbers select that line in the page. With `citations`, its web links are source chips.
 const MarkdownMessage = ({
   content,
   streaming = false,
   video = null,
   storyboard,
   page = null,
+  citations = false,
 }: {
   content: string;
   streaming?: boolean;
   video?: string | null;
   storyboard?: string;
   page?: { url: string; prompt: string } | null;
+  citations?: boolean;
 }) => {
   const math = hasMath(content);
   const [, setMathLoaded] = useState(Boolean(mathPlugins));
@@ -158,13 +177,15 @@ const MarkdownMessage = ({
     <StreamingContext.Provider value={streaming}>
       <VideoContext.Provider value={video ? { key: video, storyboard } : null}>
         <PageContext.Provider value={page}>
-          <Markdown
-            remarkPlugins={[remarkGfm, remarkNoStrikethrough, ...(withMath ? mathPlugins!.remark : [])]}
-            rehypePlugins={withMath ? mathPlugins!.rehype : []}
-            components={components}
-          >
-            {withMath ? prepareMath(text) : text}
-          </Markdown>
+          <CitationContext.Provider value={citations}>
+            <Markdown
+              remarkPlugins={[remarkGfm, remarkNoStrikethrough, ...(withMath ? mathPlugins!.remark : [])]}
+              rehypePlugins={withMath ? mathPlugins!.rehype : []}
+              components={components}
+            >
+              {withMath ? prepareMath(text) : text}
+            </Markdown>
+          </CitationContext.Provider>
         </PageContext.Provider>
       </VideoContext.Provider>
     </StreamingContext.Provider>

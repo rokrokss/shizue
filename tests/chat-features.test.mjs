@@ -385,7 +385,7 @@ test('a detailed analysis keeps the references and works web research into its s
   assert.match(video, /like \[12:34\]\./);
   assert.match(video, /Search the web for what helps me judge and understand the video/);
   assert.match(video, /into the sections it bears on, not into a section of its own/);
-  assert.match(video, /which points come from the web rather than the video, naming the source/);
+  assert.match(video, /Right after each sentence that draws on the web, link the page it came from as \[site name\]\(URL\), so I can tell it from what the video says\./);
   assert.doesNotMatch(video, /without adding your interpretations|:::/);
   const page = getDetailedAnalysisPrompt(false, 'line', false);
   assert.match(page, /same text I gave you above/);

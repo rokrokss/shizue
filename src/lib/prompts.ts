@@ -218,7 +218,7 @@ export const getDetailedAnalysisPrompt = (video: boolean, refs: SummaryRefs, res
 2. Shape it to fit the kind of text as before: the one-sentence first line, then sections with bold titles.${refRule ? ` ${refRule}` : ''}
 3. ${
     research
-      ? `Search the web for what helps me judge and understand the ${source}: who the author or speakers are and their record, whether its key claims and numbers hold up, figures that have changed since (prices, versions, results), opposing views, and caveats it leaves out. For a tutorial, also check what changed in newer versions and fixes for common errors. Work what you find into the sections it bears on, not into a section of its own, and make clear in the sentence which points come from the web rather than the ${source}, naming the source (for example, "According to Reuters, ..."). Say so when you could not confirm something.`
+      ? `Search the web for what helps me judge and understand the ${source}: who the author or speakers are and their record, whether its key claims and numbers hold up, figures that have changed since (prices, versions, results), opposing views, and caveats it leaves out. For a tutorial, also check what changed in newer versions and fixes for common errors. Work what you find into the sections it bears on, not into a section of its own. Right after each sentence that draws on the web, link the page it came from as [site name](URL), so I can tell it from what the ${source} says. Say so when you could not confirm something.`
       : `Write only what the ${source} says, without adding your interpretations.`
   }
 `;

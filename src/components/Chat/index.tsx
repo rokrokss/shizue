@@ -78,9 +78,21 @@ const Chat = () => {
 
   const { t } = useTranslation();
 
+  // An answer keeps the chat's end in view while the reader is there. Scrolling up to read stops
+  // that, and scrolling back down to the end, a new question or another chat starts it again.
+  const followRef = useRef(true);
+  const lastScrollTopRef = useRef(0);
   const scrollToBottom = useCallback(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (followRef.current) bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
+  // Only the reader scrolls up: following scrolls down, and a chat that gets shorter while at its
+  // end stays at its end.
+  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    const box = event.currentTarget;
+    if (box.scrollHeight - box.scrollTop - box.clientHeight < 8) followRef.current = true;
+    else if (box.scrollTop < lastScrollTopRef.current) followRef.current = false;
+    lastScrollTopRef.current = box.scrollTop;
+  };
 
   const scrollToBottomThrottled = useMemo(
     () =>
@@ -161,6 +173,7 @@ const Chat = () => {
       debugLog('handleRequestFromContextMenu addAIMessage');
       addAIMessage();
 
+      followRef.current = true;
       scrollToBottomThrottled();
 
       startStream(
@@ -398,6 +411,7 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
+    followRef.current = true;
     if (isChatIdle(chatStatus) && threadId) {
       cancelStream();
       loadThreadBackground(threadId);
@@ -451,6 +465,7 @@ const Chat = () => {
     const tId = await checkIfThreadExists(text);
 
     await addHumanMessage(tId, text, images, attachments, webSearch);
+    followRef.current = true;
     scrollToBottomThrottled();
 
     startStream(
@@ -610,6 +625,7 @@ const Chat = () => {
     }
 
     await addTranslateModeMessage(tId);
+    followRef.current = true;
     scrollToBottomThrottled();
 
     startStream(
@@ -669,6 +685,7 @@ const Chat = () => {
         sz:overflow-y-auto
         sz:scrollbar-hidden
       "
+        onScroll={handleScroll}
       >
         {/* **** aiIndexRef: {aiIndexRef.current} **** */}
         {threadId && messagesThreadId !== threadId ? (
