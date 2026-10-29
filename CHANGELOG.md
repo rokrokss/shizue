@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.3.20
+
+- Summaries fit what you're reading: a paper gets its method, results and limits, news what happened and what comes next, a tutorial its steps in order, a review or investing piece the verdict or outlook for each product or company, a meeting its decisions and action items, and so on for lectures, interviews, essays and recipes
+- Scenes in video summaries: each part of a YouTube video's summary shows the frame where that part starts. Click it to play from there
+- Page summaries point back to the page: each part has an "Original" button that selects where it starts in the page and scrolls there, or opens the page again if its tab is closed
+- Detailed summary: a button under a summary asks for a longer one that keeps the numbers, names, steps and caveats. With cloud models it also searches the web for what the page doesn't say (who wrote it, whether its key claims hold up, newer figures, opposing views) and shows that in its own "External research" box, apart from the summary
+- Chat with a Netflix title: attach a Netflix tab and Shizue reads its subtitles, so times like [12:34] in an answer play it from there
+- On YouTube, the summary button and request now say "Summarize this video"
+
 ## v0.3.19
 
 - Firefox: Shizue now runs in Firefox, in the sidebar beside the page. The toolbar button and Ctrl+Shift+E (Cmd+Shift+E on Mac) open and close it. On Firefox for Android, it opens in a tab
