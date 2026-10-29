@@ -3,7 +3,6 @@ import { Language } from '@/hooks/language';
 import type { PageAttachment } from '@/lib/indexDB';
 import type { TranslationContext } from '@/lib/liveCaption/types';
 import { numberPageLines } from '@/lib/pageLines';
-import { RESEARCH_MARKER } from '@/lib/research';
 import { netflixVideoId } from '@/lib/videoTranscript';
 import { Caption, VideoMetadata } from '@/lib/youtube';
 import { debugLog } from '@/logs';
@@ -208,21 +207,21 @@ ${numbered}`,
   );
 };
 
-// The detailed summary asked for after a short one, from the text the conversation already holds.
-// With `research`, the model also searches the web and writes what it found after RESEARCH_MARKER.
-export const getDetailedSummaryPrompt = (video: boolean, refs: SummaryRefs, research: boolean) => {
+// The detailed analysis asked for after a summary, from the text the conversation already holds.
+// With `research`, the model also searches the web and works what it finds into the report.
+export const getDetailedAnalysisPrompt = (video: boolean, refs: SummaryRefs, research: boolean) => {
+  const source = video ? 'video' : 'text';
   const refRule = summaryRefRule(refs);
-  return `Now write a detailed summary of the same ${video ? 'video' : 'text'} I gave you above.
+  return `Now write a detailed analysis of the same ${source} I gave you above, as a report.
 
-1. Keep everything important: the numbers, names, dates, steps, examples and caveats. Leave out only repetition and filler.
+1. Cover everything important it says: the numbers, names, dates, steps, examples and caveats. Leave out only repetition and filler.
 2. Shape it to fit the kind of text as before: the one-sentence first line, then sections with bold titles.${refRule ? ` ${refRule}` : ''}
-3. Write only what the ${video ? 'video' : 'text'} says, without adding your interpretations.
-${
-  research
-    ? `4. After the summary, write a line holding only ${RESEARCH_MARKER}. Below it, search the web and write 3 to 6 short bullet points about what helps me judge and understand the ${video ? 'video' : 'text'}: who the author or speakers are and their record, whether the key claims and numbers hold up, figures that have changed since (prices, versions, results), opposing views, and caveats it leaves out. For a tutorial, also check what changed in newer versions and fixes for common errors. Say where each point comes from, and say so when you could not confirm something. Add no heading after that line, and keep everything from the web out of the summary above it.
-`
-    : ''
-}`;
+3. ${
+    research
+      ? `Search the web for what helps me judge and understand the ${source}: who the author or speakers are and their record, whether its key claims and numbers hold up, figures that have changed since (prices, versions, results), opposing views, and caveats it leaves out. For a tutorial, also check what changed in newer versions and fixes for common errors. Work what you find into the sections it bears on, not into a section of its own, and make clear in the sentence which points come from the web rather than the ${source}, naming the source (for example, "According to Reuters, ..."). Say so when you could not confirm something.`
+      : `Write only what the ${source} says, without adding your interpretations.`
+  }
+`;
 };
 
 export const getSelectionActionPrompt = (

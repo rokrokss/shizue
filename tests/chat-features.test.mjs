@@ -30,12 +30,11 @@ const { mergeMemoryFacts, parseMemoryFacts, questionsToRemember, AUTO_MEMORY_MAX
 );
 const {
   getAttachedPagesPrompt,
-  getDetailedSummaryPrompt,
+  getDetailedAnalysisPrompt,
   getInitialSystemMessage,
   getSummarizePageTextPrompt,
 } = await load('../src/lib/prompts.ts');
 const { hasPageLines, linkPageLines, numberPageLines, pageLines } = await load('../src/lib/pageLines.ts');
-const { splitResearch } = await load('../src/lib/research.ts');
 const { storyboardFrame } = await load('../src/lib/storyboard.ts');
 const {
   formatVideoTime,
@@ -380,25 +379,18 @@ test('a summary takes the shape of its kind of text', () => {
   assert.match(prompt, /each starting with a bold title/);
 });
 
-test('a detailed summary keeps the references and puts web research after its marker', () => {
-  const video = getDetailedSummaryPrompt(true, 'time', true);
-  assert.match(video, /detailed summary of the same video I gave you above/);
+test('a detailed analysis keeps the references and works web research into its sections', () => {
+  const video = getDetailedAnalysisPrompt(true, 'time', true);
+  assert.match(video, /detailed analysis of the same video I gave you above, as a report/);
   assert.match(video, /like \[12:34\]\./);
-  assert.match(video, /write a line holding only :::research\. Below it, search the web/);
-  const page = getDetailedSummaryPrompt(false, 'line', false);
+  assert.match(video, /Search the web for what helps me judge and understand the video/);
+  assert.match(video, /into the sections it bears on, not into a section of its own/);
+  assert.match(video, /which points come from the web rather than the video, naming the source/);
+  assert.doesNotMatch(video, /without adding your interpretations|:::/);
+  const page = getDetailedAnalysisPrompt(false, 'line', false);
   assert.match(page, /same text I gave you above/);
   assert.match(page, /like \[¶12\]\./);
-  assert.doesNotMatch(page, /:::research|search the web/);
-  assert.doesNotMatch(getDetailedSummaryPrompt(false, null, false), /\[12:34\]|\[¶12\]/);
-});
-
-test('web research is split from the summary, and a half-written marker is held back', () => {
-  assert.deepEqual(splitResearch('Summary.\n\n:::research\n- Found it [a](https://x.example)'), {
-    body: 'Summary.',
-    research: '- Found it [a](https://x.example)',
-  });
-  assert.deepEqual(splitResearch('Summary.\n:::research\n', true), { body: 'Summary.', research: '' });
-  assert.deepEqual(splitResearch('Summary.\n:::res', true), { body: 'Summary.', research: null });
-  assert.deepEqual(splitResearch('Summary.\n:::res'), { body: 'Summary.\n:::res', research: null });
-  assert.deepEqual(splitResearch('Summary with ::: inline'), { body: 'Summary with ::: inline', research: null });
+  assert.match(page, /3\. Write only what the text says, without adding your interpretations\./);
+  assert.doesNotMatch(page, /search the web/i);
+  assert.doesNotMatch(getDetailedAnalysisPrompt(false, null, false), /\[12:34\]|\[¶12\]/);
 });

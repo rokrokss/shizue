@@ -14,7 +14,7 @@ import { useChromePortStream } from '@/hooks/portStream';
 import { convertFilesToBase64Array } from '@/lib/imageUtils';
 import { addMessage, createThread, PageAttachment, touchThread } from '@/lib/indexDB';
 import { hasPageLines } from '@/lib/pageLines';
-import { getDetailedSummaryPrompt } from '@/lib/prompts';
+import { getDetailedAnalysisPrompt } from '@/lib/prompts';
 import { throttleTrailing } from '@/lib/throttleTrailing';
 import { createThreadLoader } from '@/lib/threadLoader';
 import type { WebSource } from '@/lib/webSources';
@@ -550,10 +550,10 @@ const Chat = () => {
       );
   };
 
-  // Asks for the detailed summary of what the summary before `answerIdx` read, with web research
+  // Asks for the detailed analysis of what the summary before `answerIdx` read, with web research
   // when `research`. The chat already holds the text, so the request carries only the prompt; once
   // stored, the summary request it is starts its answer like one from the page (loadThreadBackground).
-  const handleDetailedSummary = async (answerIdx: number, research: boolean) => {
+  const handleDetailedAnalysis = async (answerIdx: number, research: boolean) => {
     const request = messages[answerIdx - 1];
     if (!threadId || !request) return;
     const refs = request.summaryCaptions ? 'time' : hasPageLines(request.content) ? 'line' : null;
@@ -570,7 +570,7 @@ const Chat = () => {
       summaryMode: 'detailed',
       ...(research ? { webSearch: true } : {}),
       translateMode: false,
-      content: getDetailedSummaryPrompt(!!request.summaryCaptions, refs, research),
+      content: getDetailedAnalysisPrompt(!!request.summaryCaptions, refs, research),
       createdAt: Date.now(),
       done: true,
       onInterrupt: false,
@@ -679,7 +679,7 @@ const Chat = () => {
               key={threadId}
               messages={messages}
               onRetry={handleRetry}
-              onDetailedSummary={handleDetailedSummary}
+              onDetailedAnalysis={handleDetailedAnalysis}
               scrollToBottom={scrollToBottomThrottled}
             />
           </Suspense>

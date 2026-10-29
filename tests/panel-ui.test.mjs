@@ -95,7 +95,7 @@ const stubs = {
   '@/lib/imageUtils': 'export const convertFilesToBase64Array = async () => [];',
   '@/lib/prompts': `export const getSummarizePageTextPrompt = title => 'SUMMARY ' + title;
     export const getSelectionActionPrompt = () => 'SELECTION';
-    export const getDetailedSummaryPrompt = () => 'DETAILED';`,
+    export const getDetailedAnalysisPrompt = () => 'DETAILED';`,
   '@/services/chatService': 'export const chatService = { cancelNotStartedMessage: async () => {} };',
 };
 for (const path of ['@/components/Chat/ThreadListModalContent', '@/components/Chat/TokenUsageModalContent',
@@ -199,16 +199,16 @@ async function run() {
   check(host.textContent.includes('B CONTENT') && host.textContent.includes('SUMMARY Warm panel'), 'Summary was not appended to the selected conversation');
   await flush(() => fixture.streamOptions.onDone());
 
-  // A detailed summary asked for under the answer is stored as a summary request of its own, which
+  // A detailed analysis asked for under the answer is stored as a summary request of its own, which
   // starts its answer like the first, web sources included.
   check(typeof fixture.streamOptions.onSources === 'function', 'A summary answer drops its web sources');
-  await flush(() => fixture.container.onDetailedSummary(fixture.container.messages.length - 1, true));
+  await flush(() => fixture.container.onDetailedAnalysis(fixture.container.messages.length - 1, true));
   const detailed = fixture.rows.get('B').at(-1);
   check(detailed.actionType === 'askForSummary' && detailed.summaryMode === 'detailed' && detailed.webSearch &&
-    detailed.summaryTitle === 'Warm panel' && detailed.content === 'DETAILED', 'Detailed summary request was not stored');
+    detailed.summaryTitle === 'Warm panel' && detailed.content === 'DETAILED', 'Detailed analysis request was not stored');
   await flush(() => resolveLoads('B'));
   check(fixture.streams.length === 2 && fixture.streams[1].threadId === 'B' &&
-    fixture.streams[1].actionType === 'askForSummary', 'Detailed summary did not start its answer');
+    fixture.streams[1].actionType === 'askForSummary', 'Detailed analysis did not start its answer');
   await flush(() => fixture.streamOptions.onDone());
   fixture.rows.get('B').push(ai('DETAILED ANSWER'));
 
@@ -243,7 +243,7 @@ async function run() {
   check(fixture.streams.length === streams, 'An unmounted chat started a summary stream');
   check(fixture.store.get(chatStatusAtom) === 'idle', 'Stale response changed chat status');
   document.body.dataset.result = 'passed';
-  document.getElementById('result').textContent = 'PASS: fresh panel selection, hydration, summary preparation, current-panel summary, detailed summary, StrictMode, stale replies, clearing, leaving mid-answer, unmount';
+  document.getElementById('result').textContent = 'PASS: fresh panel selection, hydration, summary preparation, current-panel summary, detailed analysis, StrictMode, stale replies, clearing, leaving mid-answer, unmount';
 }
 run().catch(error => {
   document.body.dataset.result = 'failed';

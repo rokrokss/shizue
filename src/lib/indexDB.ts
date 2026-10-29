@@ -33,7 +33,7 @@ export interface Message {
   summaryCaptions?: boolean;
   // The video's preview frames, for the scenes its summary shows (lib/storyboard.ts).
   summaryStoryboard?: string;
-  // The detailed summary asked for after a short one, from the text the chat already holds.
+  // The detailed analysis asked for after a summary, from the text the chat already holds.
   summaryMode?: 'detailed';
   selectionText?: string;
   translateMode?: boolean;

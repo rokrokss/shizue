@@ -5,10 +5,9 @@ import { parseChartSpec } from '@/lib/chartSpec';
 import { hasMath, prepareMath } from '@/lib/mathText';
 import { linkPageLines, pageLines } from '@/lib/pageLines';
 import { seekPageLine } from '@/lib/pageSeek';
-import { splitResearch } from '@/lib/research';
 import { seekVideo } from '@/lib/videoSeek';
 import { formatVideoTime, linkVideoTimes } from '@/lib/videoTranscript';
-import { AimOutlined, CaretRightOutlined, GlobalOutlined } from '@ant-design/icons';
+import { CaretRightOutlined } from '@ant-design/icons';
 import { createContext, lazy, Suspense, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Markdown, { type Components, type ExtraProps, type Options } from 'react-markdown';
@@ -80,7 +79,6 @@ const components: Components = {
           onClick={() => void seekPageLine(page.url, line).catch(() => {})}
           className={chipClass(theme)}
         >
-          <AimOutlined />
           {t('chat.inPage')}
         </button>
       );
@@ -132,7 +130,7 @@ const components: Components = {
 // coming, an unfinished chart block shows as a loader instead of half-written JSON. In an answer
 // about a YouTube or Netflix `video`, [12:34] times play it from there, and a section's time shows
 // its scene when the video has a `storyboard`. In an answer about a summarized `page`, [¶12] line
-// numbers select that line in the page. A detailed summary's external research goes in its own box.
+// numbers select that line in the page.
 const MarkdownMessage = ({
   content,
   streaming = false,
@@ -148,8 +146,6 @@ const MarkdownMessage = ({
 }) => {
   const math = hasMath(content);
   const [, setMathLoaded] = useState(Boolean(mathPlugins));
-  const theme = useThemeValue();
-  const { t } = useTranslation();
 
   useEffect(() => {
     if (math && !mathPlugins) void loadMath().then(() => setMathLoaded(true));
@@ -157,37 +153,18 @@ const MarkdownMessage = ({
 
   const withMath = math && mathPlugins;
   const linked = page ? linkPageLines(content) : content;
-  const { body, research } = splitResearch(video ? linkVideoTimes(linked) : linked, streaming);
-  const markdown = (text: string) => (
-    <Markdown
-      remarkPlugins={[remarkGfm, remarkNoStrikethrough, ...(withMath ? mathPlugins!.remark : [])]}
-      rehypePlugins={withMath ? mathPlugins!.rehype : []}
-      components={components}
-    >
-      {withMath ? prepareMath(text) : text}
-    </Markdown>
-  );
+  const text = video ? linkVideoTimes(linked) : linked;
   return (
     <StreamingContext.Provider value={streaming}>
       <VideoContext.Provider value={video ? { key: video, storyboard } : null}>
         <PageContext.Provider value={page}>
-          {markdown(body)}
-          {research !== null ? (
-            <div
-              className={`sz-research sz:mt-3 sz:rounded-lg sz:border sz:px-3 sz:pt-2 sz:pb-1 ${
-                theme == 'dark'
-                  ? 'sz:border-[#32CCBC]/40 sz:bg-[#32CCBC]/10'
-                  : 'sz:border-[#32CCBC]/50 sz:bg-[#32CCBC]/5'
-              }`}
-            >
-              <div className="sz:flex sz:flex-row sz:items-center sz:gap-1 sz:font-bold">
-                <GlobalOutlined />
-                {t('chat.externalResearch')}
-              </div>
-              <div className="sz:text-xs sz:text-gray-500">{t('chat.externalResearchNote')}</div>
-              {research ? markdown(research) : streaming ? <DotCycle /> : null}
-            </div>
-          ) : null}
+          <Markdown
+            remarkPlugins={[remarkGfm, remarkNoStrikethrough, ...(withMath ? mathPlugins!.remark : [])]}
+            rehypePlugins={withMath ? mathPlugins!.rehype : []}
+            components={components}
+          >
+            {withMath ? prepareMath(text) : text}
+          </Markdown>
         </PageContext.Provider>
       </VideoContext.Provider>
     </StreamingContext.Provider>

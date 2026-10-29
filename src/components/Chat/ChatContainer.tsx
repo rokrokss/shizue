@@ -35,12 +35,12 @@ type AnswerContext = {
 const ChatContainer = ({
   messages,
   onRetry,
-  onDetailedSummary,
+  onDetailedAnalysis,
   scrollToBottom,
 }: {
   messages: Message[];
   onRetry: (messageIdxToRetry: number) => Promise<void>;
-  onDetailedSummary: (answerIdx: number, research: boolean) => Promise<void>;
+  onDetailedAnalysis: (answerIdx: number, research: boolean) => Promise<void>;
   scrollToBottom: () => void;
 }) => {
   const { t } = useTranslation();
@@ -48,7 +48,7 @@ const ChatContainer = ({
   const theme = useThemeValue();
   const [chatModel] = useChatModel();
   const researchSupported = modelSupportsWebSearch(chatModel);
-  // The answer whose detailed summary was just asked for, so its button goes at once.
+  // The answer whose detailed analysis was just asked for, so its button goes at once.
   const [detailedAskedFor, setDetailedAskedFor] = useState<number | null>(null);
 
   const animatedText = useStreamText(messages[messages.length - 1].content.trim(), {
@@ -99,8 +99,8 @@ const ChatContainer = ({
     return {};
   };
 
-  // A short summary that is the chat's last answer offers the detailed one.
-  const offersDetailedSummary = (idx: number) =>
+  // A summary that is the chat's last answer offers its detailed analysis.
+  const offersDetailedAnalysis = (idx: number) =>
     idx === messages.length - 1 &&
     idx !== detailedAskedFor &&
     messages[idx].done &&
@@ -216,7 +216,7 @@ const ChatContainer = ({
                       </Button>
                     </div>
                   ) : null}
-                  {offersDetailedSummary(idx) ? (
+                  {offersDetailedAnalysis(idx) ? (
                     <div className="sz:pt-2">
                       <Button
                         color="cyan"
@@ -225,12 +225,12 @@ const ChatContainer = ({
                         icon={researchSupported ? <GlobalOutlined /> : <FileTextOutlined />}
                         onClick={() => {
                           setDetailedAskedFor(idx);
-                          void onDetailedSummary(idx, researchSupported);
+                          void onDetailedAnalysis(idx, researchSupported);
                         }}
                       >
                         {researchSupported
-                          ? t('chat.detailedSummaryWithResearch')
-                          : t('chat.detailedSummary')}
+                          ? t('chat.detailedAnalysisWithWebSearch')
+                          : t('chat.detailedAnalysis')}
                       </Button>
                     </div>
                   ) : null}
@@ -355,7 +355,7 @@ const ChatContainer = ({
                   <div className="sz:flex sz:flex-col">
                     {getMarkdownText(
                       m.summaryMode === 'detailed'
-                        ? t('chat.detailedSummaryRequestText')
+                        ? t('chat.detailedAnalysisRequestText')
                         : m.summaryVideo
                           ? t('chat.summaryVideoRequestText')
                           : t('chat.summaryRequestText')
