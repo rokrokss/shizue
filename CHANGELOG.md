@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.21
+
+- Sources in detailed analysis: with web search on, each finding from the web gets a "Source" chip that opens the page it came from
+- Scrolling up while an answer is still coming lets you read: the chat stops following the answer until you scroll back to the bottom
+- Summarize a Netflix title: on a watch page, the summary is made from its subtitles, with the times of each part, and the button says "Summarize this video"
+- Fix lists in answers showing no bullets or numbers
+
 ## v0.3.20
 
 - Summaries fit what you're reading: a paper gets its method, results and limits, news what happened and what comes next, a tutorial its steps in order, a review or investing piece the verdict or outlook for each product or company, a meeting its decisions and action items, and so on for lectures, interviews, essays and recipes
