@@ -157,4 +157,11 @@ export default defineConfig({
   i18n: {
     localesDir: 'src/locales',
   },
+  // The sources zip that addons.mozilla.org asks for, whose build must match ours file for file.
+  // Tailwind scans every file .gitignore leaves in, so without it a rebuild took classes from dist/.
+  // doc/ holds only the README's GIFs (~97 MB).
+  zip: {
+    includeSources: ['**/*', '.gitignore'],
+    excludeSources: ['doc/**'],
+  },
 });
