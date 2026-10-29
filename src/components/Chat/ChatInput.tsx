@@ -22,7 +22,7 @@ import {
   readVideoTab,
   toPageAttachments,
 } from '@/lib/tabText';
-import { videoKey, youtubeVideoId } from '@/lib/videoTranscript';
+import { videoKey } from '@/lib/videoTranscript';
 import { debugLog } from '@/logs';
 import {
   EditOutlined,
@@ -640,7 +640,7 @@ const ChatInput = ({
                     theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
                   }`}
                 >
-                  {youtubeVideoId(activeTab?.url)
+                  {videoKey(activeTab?.url)
                     ? t('overlayMenu.summarizeVideo')
                     : t('overlayMenu.summarizePage')}
                 </div>

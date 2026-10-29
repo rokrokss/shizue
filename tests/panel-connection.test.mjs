@@ -214,6 +214,82 @@ test('failed summary storage cannot be acknowledged as success', async () => {
   });
 });
 
+test('a Netflix title is summarized from the subtitles its caption script reads, under the player title', async () => {
+  const fixture = summaryFixture();
+  fixture.globals.window.location.href = 'https://www.netflix.com/watch/81234567?trackId=1';
+  fixture.globals.document.title = 'Netflix';
+  fixture.chrome.runtime.sendMessage = async (message) => {
+    fixture.sent.push(message);
+    if (message.action !== 'read_tab_video_transcript') throw new Error('Receiving end does not exist.');
+    return {
+      videoId: '81234567', url: 'https://www.netflix.com/watch/81234567', title: 'Some Show: Episode 1',
+      author: '', description: '',
+      captions: [{ startTime: 5, endTime: 7, text: 'Where were you?' }, { startTime: 30, endTime: 32, text: 'Out.' }],
+    };
+  };
+  await withModule('../src/services/pageSummary.ts', fixture.globals, async ({ summarizeCurrentPage }) => {
+    await summarizeCurrentPage();
+    const state = fixture.data.GLOBAL_STATE;
+    assert.equal(state.summaryText, 'captions:\n[0:05] Where were you?\n[0:30] Out.');
+    assert.equal(state.summaryTitle, 'Some Show: Episode 1');
+    assert.equal(state.summaryVideo, true);
+    assert.equal(state.summaryCaptions, true);
+    assert.equal(state.summaryStoryboard, undefined);
+  });
+});
+
+test('a Netflix title whose subtitles cannot be read is summarized from its page text, still as a video', async () => {
+  const fixture = summaryFixture();
+  fixture.globals.window.location.href = 'https://www.netflix.com/watch/81234567';
+  fixture.chrome.runtime.sendMessage = async (message) => {
+    fixture.sent.push(message);
+    if (message.action === 'read_tab_video_transcript') return null;
+    throw new Error('Receiving end does not exist.');
+  };
+  await withModule('../src/services/pageSummary.ts', fixture.globals, async ({ summarizeCurrentPage }) => {
+    await summarizeCurrentPage();
+    const state = fixture.data.GLOBAL_STATE;
+    assert.equal(state.summaryText.startsWith('Page content'), true);
+    assert.equal(state.summaryTitle, 'Fixture page');
+    assert.equal(state.summaryVideo, true);
+    assert.equal(state.summaryCaptions, false);
+  });
+});
+
+test('an ordinary page summary asks no tab for video captions', async () => {
+  const fixture = summaryFixture();
+  await withModule('../src/services/pageSummary.ts', fixture.globals, async ({ summarizeCurrentPage }) => {
+    await summarizeCurrentPage();
+    assert.equal(fixture.sent.some((message) => message.action === 'read_tab_video_transcript'), false);
+    assert.equal(fixture.data.GLOBAL_STATE.summaryVideo, false);
+  });
+});
+
+test('background relays a tab\'s own transcript request to that tab\'s top frame', async () => {
+  const sent = [];
+  const transcript = { videoId: '81234567', captions: [] };
+  const chrome = { tabs: { async sendMessage(tabId, message, target) {
+    sent.push({ tabId, message, target });
+    return transcript;
+  } } };
+  await withModule('../src/services/background/messageHandlers.ts', { chrome }, async ({ messageHandlers }) => {
+    const replies = [];
+    await messageHandlers.read_tab_video_transcript({}, (reply) => replies.push(reply), { tab: { id: 7 } });
+    assert.deepEqual(sent, [{ tabId: 7, message: { action: 'read_video_transcript' }, target: { frameId: 0 } }]);
+    assert.deepEqual(replies, [transcript]);
+    chrome.tabs.sendMessage = async () => { throw new Error('Receiving end does not exist.'); };
+    await messageHandlers.read_tab_video_transcript({}, (reply) => replies.push(reply), { tab: { id: 7 } });
+    await messageHandlers.read_tab_video_transcript({}, (reply) => replies.push(reply), {});
+    assert.deepEqual(replies.slice(1), [null, null]);
+  }, {
+    ...panelSummaryStubs,
+    '@/entrypoints/background/sidepanel': 'export const openPanel = async () => {}; export const togglePanel = async () => {};',
+    '@/lib/indexDB': 'export const db = {}; export const addWord = async () => {}; export const getLatestMessageForThread = async () => null; export const loadThread = async () => [];',
+    '@/services/background/translationHandler': 'export const getTranslationHandler = () => ({});',
+    '@/services/background/chatModelHandler': 'export const getChatModelHandler = () => ({});',
+  });
+});
+
 test('summary receiver leaves translation and other background messages unanswered', async () => {
   const fixture = summaryFixture();
   await withModule('../src/services/pageSummary.ts', fixture.globals, async ({ registerPageSummaryListener }) => {

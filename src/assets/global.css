@@ -2,3 +2,19 @@
   margin-bottom: 0.3rem;
   margin-top: 0.3rem;
 }
+
+/* Tailwind's preflight removes list markers and indents (list-style: none, padding: 0). */
+.sz-message ul,
+.sz-message ol {
+  padding-left: 1.25rem;
+  margin-bottom: 0.3rem;
+  margin-top: 0.3rem;
+}
+
+.sz-message ul {
+  list-style: disc;
+}
+
+.sz-message ol {
+  list-style: decimal;
+}

@@ -1,7 +1,7 @@
 import type { Caption } from '@/lib/youtube';
 
 // A YouTube video's or Netflix title's details and captions, read in its tab for the side panel's
-// chat (and, on YouTube, page summaries), and the times in answers that point back into the video.
+// chat and page summaries, and the times in answers that point back into the video.
 
 export interface VideoTranscript {
   videoId: string;

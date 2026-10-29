@@ -30,4 +30,5 @@ Netflix has full subtitle files for every title, so this works like YouTube: the
 ## Chat
 
 - Attaching a Netflix watch tab in the side panel's chat sends the original subtitles with their times, as YouTube's captions are sent (`netflixTranscript.ts` answers `MESSAGE_READ_VIDEO_TRANSCRIPT`). `readTranscript()` reuses the lines on screen while captions are on, and otherwise downloads the original track the same way, hiding Netflix's own subtitles while the bridge may switch tracks.
+- A page summary on a watch page reads the same subtitles. It runs in the toggle script, which can't message this one, so it asks the background (`MESSAGE_READ_TAB_VIDEO_TRANSCRIPT`) to send this tab `MESSAGE_READ_VIDEO_TRANSCRIPT`. Its title is the player's, since the page title is just "Netflix".
 - An answer's [12:34] times seek the tab through the player API in the page's world (`seek(ms)` and `play()` on the watch session, `lib/videoSeek.ts`), never through `<video>.currentTime`. `seek` hasn't been checked on a real account; when no player answers, the tab opens `/watch/<id>?t=<seconds>` instead.

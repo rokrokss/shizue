@@ -8,6 +8,8 @@ import {
   MESSAGE_LOAD_THREAD,
   MESSAGE_LOOKUP_WORD,
   MESSAGE_OPEN_PANEL,
+  MESSAGE_READ_TAB_VIDEO_TRANSCRIPT,
+  MESSAGE_READ_VIDEO_TRANSCRIPT,
   MESSAGE_WAIT_PANEL_SUMMARY,
   MESSAGE_SET_PANEL_OPEN_OR_NOT,
   MESSAGE_TRANSLATE_FRAMES,
@@ -171,6 +173,21 @@ async function handleSccCaptionSnapshot(
   sendResponse({ status: 'success' });
 }
 
+// A page summary runs in the toggle script, while a Netflix title's subtitles are read by the
+// caption script in the same tab (lib/netflix/netflixTranscript.ts).
+async function handleReadTabVideoTranscript(
+  msg: any,
+  sendResponse: (response?: any) => void,
+  sender: chrome.runtime.MessageSender
+) {
+  if (sender.tab?.id === undefined) return sendResponse(null);
+  sendResponse(
+    await chrome.tabs
+      .sendMessage(sender.tab.id, { action: MESSAGE_READ_VIDEO_TRANSCRIPT }, { frameId: 0 })
+      .catch(() => null)
+  );
+}
+
 // From the top frame to every frame of the tab; only the SCC frame acts on it.
 async function handleSccSetHidden(
   msg: any,
@@ -240,6 +257,7 @@ export const messageHandlers = {
   [MESSAGE_TRANSLATE_SUBTITLES]: handleTranslateSubtitles,
   [MESSAGE_INJECT_TWITCH_BRIDGE]: handleInjectTwitchBridge,
   [MESSAGE_INJECT_NETFLIX_BRIDGE]: handleInjectNetflixBridge,
+  [MESSAGE_READ_TAB_VIDEO_TRANSCRIPT]: handleReadTabVideoTranscript,
   [MESSAGE_SCC_CAPTION_SNAPSHOT]: handleSccCaptionSnapshot,
   [MESSAGE_SCC_SET_HIDDEN]: handleSccSetHidden,
   [MESSAGE_TRANSLATE_FRAMES]: handleTranslateFrames,

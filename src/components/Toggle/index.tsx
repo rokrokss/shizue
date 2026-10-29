@@ -33,7 +33,7 @@ import {
   useTranslateModel,
 } from '@/hooks/models';
 import { hashStringToIndex } from '@/lib/hash';
-import { youtubeVideoId } from '@/lib/videoTranscript';
+import { videoKey } from '@/lib/videoTranscript';
 import {
   initDescribeImageContent,
   initExtractImageTextContent,
@@ -108,13 +108,14 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
   const width = 43;
   const height = 43;
   const widthFull = 55;
-  const menuIconSize = 23;
+  // Spelled out in full: Tailwind only generates classes it finds whole in the source.
+  const menuIconClass = 'sz:w-[23px] sz:h-[23px]';
 
   const tooltipMessages = [
     t('overlayMenu.translateSettings'),
     t('overlayMenu.translatePage'),
-    // A YouTube video is summarized from its captions (services/pageSummary.ts).
-    youtubeVideoId(window.location.href)
+    // A YouTube video or Netflix title is summarized from its captions (services/pageSummary.ts).
+    videoKey(window.location.href)
       ? t('overlayMenu.summarizeVideo')
       : t('overlayMenu.summarizePage'),
     t('overlayMenu.removeTranslation'),
@@ -418,16 +419,14 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
             <OverlayMenu>
               <OverlayMenuItem
                 theme={theme}
-                icon={<MemoIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
+                icon={<MemoIcon className={menuIconClass} />}
                 tooltipMessage={tooltipMessages[4]}
                 onClick={handleMemoClick}
                 hideTooltip={translateSettingsModalOpen || closeIconModalOpen}
               />
               <OverlayMenuItem
                 theme={theme}
-                icon={
-                  <SettingIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />
-                }
+                icon={<SettingIcon className={menuIconClass} />}
                 tooltipMessage={tooltipMessages[0]}
                 onClick={() => handleTranslateSettingsOpenChange(!translateSettingsModalOpen)}
                 ref={translateSettingsPopoverTriggerRef}
@@ -531,13 +530,9 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
                 theme={theme}
                 icon={
                   isTranslationActive ? (
-                    <TranslateCheckIcon
-                      className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`}
-                    />
+                    <TranslateCheckIcon className={menuIconClass} />
                   ) : (
-                    <TranslateIcon
-                      className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`}
-                    />
+                    <TranslateIcon className={menuIconClass} />
                   )
                 }
                 tooltipMessage={isTranslationActive ? tooltipMessages[3] : tooltipMessages[1]}
@@ -547,7 +542,7 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
 
               <OverlayMenuItem
                 theme={theme}
-                icon={<BookIcon className={`sz:w-[${menuIconSize}px] sz:h-[${menuIconSize}px]`} />}
+                icon={<BookIcon className={menuIconClass} />}
                 tooltipMessage={tooltipMessages[2]}
                 onClick={handleSummarizePage}
                 hideTooltip={translateSettingsModalOpen || closeIconModalOpen}

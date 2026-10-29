@@ -376,7 +376,13 @@ const ChatContainer = ({
                     ) : null}
                     <a href={m.summaryPageLink} target="_blank" rel="noopener noreferrer">
                       <div className="sz:flex sz:flex-row sz:items-center sz:gap-1">
-                        {m.summaryVideo ? <YoutubeOutlined /> : <LinkOutlined />}
+                        {!m.summaryVideo ? (
+                          <LinkOutlined />
+                        ) : youtubeVideoId(m.summaryPageLink) ? (
+                          <YoutubeOutlined />
+                        ) : (
+                          <PlaySquareOutlined />
+                        )}
                         <div className="sz:text-sm sz:text-gray-500 sz:pb-[2px]">
                           {m.summaryTitle && m.summaryTitle.length > 25
                             ? m.summaryTitle?.slice(0, 25) + '...'

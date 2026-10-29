@@ -26,6 +26,9 @@ export const MESSAGE_CONTEXT_MENU_SELECTION_ACTION = 'context_menu_selection_act
 // Side panel → YouTube or Netflix tab: the captions of the video it shows (lib/youtubeTranscript.ts,
 // lib/netflix/netflixTranscript.ts).
 export const MESSAGE_READ_VIDEO_TRANSCRIPT = 'read_video_transcript';
+// Toggle → background → the same tab's Netflix caption script, since content scripts can't message
+// each other: the subtitles a page summary reads (services/pageSummary.ts).
+export const MESSAGE_READ_TAB_VIDEO_TRANSCRIPT = 'read_tab_video_transcript';
 // Caption overlay → background: a clicked word's meaning, and saving it to the word list.
 export const MESSAGE_LOOKUP_WORD = 'lookup_word';
 export const MESSAGE_SAVE_WORD = 'save_word';

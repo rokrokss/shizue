@@ -1,19 +1,30 @@
-import { MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE, MESSAGE_UPDATE_PANEL_INIT_DATA, SUMMARY_PAGE_TEXT_MAX_CHARS } from '@/config/constants';
+import { MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE, MESSAGE_READ_TAB_VIDEO_TRANSCRIPT, MESSAGE_UPDATE_PANEL_INIT_DATA, SUMMARY_PAGE_TEXT_MAX_CHARS } from '@/config/constants';
 import { initSummarizePageContent } from '@/lib/initPanelData';
-import { transcriptText, youtubeVideoId } from '@/lib/videoTranscript';
+import { netflixVideoId, transcriptText, videoKey, youtubeVideoId, type VideoTranscript } from '@/lib/videoTranscript';
 import { readYoutubeTranscript } from '@/lib/youtubeTranscript';
 import { debugLog } from '@/logs';
 import { panelService } from '@/services/panelService';
 import { RECOVER_CONTENT_SCRIPTS } from '@/lib/contentScriptConnection';
 
+// Netflix subtitles are read by the caption script in this tab (lib/netflix/netflixTranscript.ts),
+// which only the background can reach from here.
+const readVideoTranscript = (url: string): Promise<VideoTranscript | null> =>
+  youtubeVideoId(url)
+    ? readYoutubeTranscript()
+    : chrome.runtime.sendMessage({ action: MESSAGE_READ_TAB_VIDEO_TRANSCRIPT }).catch(() => null);
+
 export async function summarizeCurrentPage() {
-  // A YouTube video is summarized from its captions when it has them.
-  const video = youtubeVideoId(window.location.href) ? await readYoutubeTranscript() : null;
+  const url = window.location.href;
+  // A YouTube video or Netflix title is summarized from its captions when it has them.
+  const isVideo = videoKey(url) !== null;
+  const video = isVideo ? await readVideoTranscript(url) : null;
   const text = (
     video?.captions ? transcriptText(video) : document.body?.innerText ?? ''
   ).slice(0, SUMMARY_PAGE_TEXT_MAX_CHARS);
-  await initSummarizePageContent(document.title, text, window.location.href, {
-    video: !!video,
+  // Netflix's page title is just "Netflix"; the player names the title.
+  const title = netflixVideoId(url) && video ? video.title : document.title;
+  await initSummarizePageContent(title, text, url, {
+    video: isVideo,
     captions: !!video?.captions,
     storyboard: video?.captions ? video.storyboard : undefined,
   });
