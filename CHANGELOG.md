@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.22
+
+- Delete a message you sent: hover it and click the trash icon, and the rest of the conversation after it goes too, since every later answer read it
+- Fix bold text not showing in Korean, Japanese and Chinese answers when it ends with a quote or bracket right before the next word
+
 ## v0.3.21
 
 - Sources in detailed analysis: with web search on, each finding from the web gets a "Source" chip that opens the page it came from
