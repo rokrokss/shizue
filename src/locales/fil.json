@@ -131,7 +131,8 @@
     "detailedAnalysisRequestText": "Suriin ito nang detalyado! Shizue!",
     "inPage": "Orihinal",
     "webSource": "Pinagmulan",
-    "backToPage": "Bumalik sa page"
+    "backToPage": "Bumalik sa page",
+    "deleteMessage": "Tanggalin ang mensahe"
   },
   "footer": {
     "joinDiscord": "Sumali sa akin sa Discord!",

@@ -2,6 +2,7 @@ import CharacterPickChat, { characterCount } from '@/components/Character/Charac
 import { Message } from '@/components/Chat';
 import { DotCycle } from '@/components/Loader/DotCycle';
 import { isSelectionActionType } from '@/config/constants';
+import { chatStatusAtom, isChatIdle } from '@/hooks/chat';
 import { useThemeValue } from '@/hooks/layout';
 import { useChatModel } from '@/hooks/models';
 import useStreamText from '@/hooks/useStreamText';
@@ -9,6 +10,7 @@ import { hashStringToIndex } from '@/lib/hash';
 import { modelSupportsWebSearch } from '@/lib/modelRegistry';
 import { hasPageLines } from '@/lib/pageLines';
 import {
+  DeleteOutlined,
   FileOutlined,
   FilePdfOutlined,
   FileTextOutlined,
@@ -22,6 +24,7 @@ import {
 import MarkdownMessage from '@/components/Chat/MarkdownMessage';
 import { videoKey, youtubeVideoId } from '@/lib/videoTranscript';
 import { Button } from 'antd';
+import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -36,11 +39,13 @@ type AnswerContext = {
 const ChatContainer = ({
   messages,
   onRetry,
+  onDelete,
   onDetailedAnalysis,
   scrollToBottom,
 }: {
   messages: Message[];
   onRetry: (messageIdxToRetry: number) => Promise<void>;
+  onDelete: (messageIdx: number) => Promise<void>;
   onDetailedAnalysis: (answerIdx: number, research: boolean) => Promise<void>;
   scrollToBottom: () => void;
 }) => {
@@ -49,6 +54,8 @@ const ChatContainer = ({
   const theme = useThemeValue();
   const [chatModel] = useChatModel();
   const researchSupported = modelSupportsWebSearch(chatModel);
+  // Sent messages can be deleted only while nothing is answering.
+  const idle = isChatIdle(useAtomValue(chatStatusAtom));
   // The answer whose detailed analysis was just asked for, so its button goes at once.
   const [detailedAskedFor, setDetailedAskedFor] = useState<number | null>(null);
 
@@ -254,7 +261,7 @@ const ChatContainer = ({
           return (
             <div
               key={`${idx}-container`}
-              className="sz:flex sz:flex-row sz:items-start sz:justify-center"
+              className="sz:group sz:flex sz:flex-row sz:items-start sz:justify-center"
               style={{
                 filter: theme == 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none',
               }}
@@ -265,6 +272,16 @@ const ChatContainer = ({
                 marginLeft="0.25rem"
                 dark={theme == 'dark'}
               />
+              <button
+                aria-label={t('chat.deleteMessage')}
+                disabled={!idle}
+                onClick={() => void onDelete(idx)}
+                className={`sz:ml-auto sz:mr-1 sz:mt-[9px] sz:p-0.5 sz:cursor-pointer sz:text-gray-400 sz:hover:text-red-400 sz:invisible ${
+                  idle ? 'sz:group-hover:visible sz:focus:visible' : ''
+                }`}
+              >
+                <DeleteOutlined />
+              </button>
               <div
                 key={idx}
                 className="
@@ -274,7 +291,6 @@ const ChatContainer = ({
                 sz:text-right 
                 sz:text-gray-600 
                 sz:max-w-[70%] 
-                sz:ml-auto 
                 sz:bg-gray-100 
                 sz:rounded-lg 
                 sz:px-[14px]

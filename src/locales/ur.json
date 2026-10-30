@@ -131,7 +131,8 @@
     "detailedAnalysisRequestText": "تفصیل سے تجزیہ کریں! Shizue!",
     "inPage": "اصل متن",
     "webSource": "ماخذ",
-    "backToPage": "صفحے پر واپس جائیں"
+    "backToPage": "صفحے پر واپس جائیں",
+    "deleteMessage": "پیغام حذف کریں"
   },
   "footer": {
     "joinDiscord": "Discord پر میرے ساتھ شامل ہوں!",

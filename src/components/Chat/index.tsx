@@ -12,7 +12,14 @@ import { ActionType, threadIdAtom } from '@/hooks/global';
 import { useThemeValue } from '@/hooks/layout';
 import { useChromePortStream } from '@/hooks/portStream';
 import { convertFilesToBase64Array } from '@/lib/imageUtils';
-import { addMessage, createThread, PageAttachment, touchThread } from '@/lib/indexDB';
+import {
+  addMessage,
+  createThread,
+  deleteMessagesFrom,
+  deleteThread,
+  PageAttachment,
+  touchThread,
+} from '@/lib/indexDB';
 import { hasPageLines } from '@/lib/pageLines';
 import { getDetailedAnalysisPrompt } from '@/lib/prompts';
 import { throttleTrailing } from '@/lib/throttleTrailing';
@@ -29,6 +36,8 @@ const ThreadListModalContent = lazy(() => import('@/components/Chat/ThreadListMo
 const TokenUsageModalContent = lazy(() => import('@/components/Chat/TokenUsageModalContent'));
 
 export interface Message {
+  // The stored message's id. An answer the panel is still showing as it streams has none.
+  id?: string;
   role: 'human' | 'system' | 'ai';
   actionType: ActionType;
   summaryTitle?: string;
@@ -284,6 +293,7 @@ const Chat = () => {
 
   const addTranslateModeMessage = async (tId: string) => {
     const text = t('chat.translateModeDescription');
+    const id = crypto.randomUUID();
 
     setMessagesThreadId(tId);
     setMessages((prev) => {
@@ -294,6 +304,7 @@ const Chat = () => {
       return [
         ...prev,
         {
+          id,
           role: 'human',
           actionType: 'chat',
           content: text,
@@ -314,7 +325,7 @@ const Chat = () => {
     });
 
     await addMessage({
-      id: crypto.randomUUID(),
+      id,
       threadId: tId,
       role: 'human',
       actionType: 'chat',
@@ -337,6 +348,7 @@ const Chat = () => {
   ) => {
     const imageBase64Array =
       images && images.length > 0 ? await convertFilesToBase64Array(images) : undefined;
+    const id = crypto.randomUUID();
 
     setMessagesThreadId(tId);
     setMessages((prev) => {
@@ -347,6 +359,7 @@ const Chat = () => {
       return [
         ...prev,
         {
+          id,
           role: 'human',
           actionType: 'chat',
           content: text,
@@ -369,7 +382,7 @@ const Chat = () => {
     });
 
     await addMessage({
-      id: crypto.randomUUID(),
+      id,
       threadId: tId,
       role: 'human',
       actionType: 'chat',
@@ -594,6 +607,21 @@ const Chat = () => {
     await touchThread(threadId);
   };
 
+  // Deletes a sent message and everything after it, since each later answer read it. Deleting the
+  // first message deletes the chat, before leaving it so auto memory doesn't read what was deleted.
+  const handleDeleteFrom = async (idx: number) => {
+    const id = messages[idx]?.id;
+    if (!threadId || !id || !isChatIdle(chatStatus)) return;
+    threadLoader.invalidate();
+    if (idx === 0) {
+      await deleteThread(threadId);
+      switchThread(undefined);
+      return;
+    }
+    await deleteMessagesFrom(threadId, id);
+    setMessages((cur) => cur.slice(0, idx));
+  };
+
   const handleOpenHistory = () => {
     setIsHistoryOpen(true);
   };
@@ -696,6 +724,7 @@ const Chat = () => {
               key={threadId}
               messages={messages}
               onRetry={handleRetry}
+              onDelete={handleDeleteFrom}
               onDetailedAnalysis={handleDetailedAnalysis}
               scrollToBottom={scrollToBottomThrottled}
             />

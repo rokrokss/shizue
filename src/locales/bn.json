@@ -131,7 +131,8 @@
     "detailedAnalysisRequestText": "বিস্তারিত বিশ্লেষণ করুন! Shizue!",
     "inPage": "মূল লেখা",
     "webSource": "সূত্র",
-    "backToPage": "পৃষ্ঠায় ফিরে যান"
+    "backToPage": "পৃষ্ঠায় ফিরে যান",
+    "deleteMessage": "বার্তা মুছুন"
   },
   "footer": {
     "joinDiscord": "Discord-এ আমার সাথে যোগ দিন!",

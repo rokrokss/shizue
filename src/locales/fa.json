@@ -131,7 +131,8 @@
     "detailedAnalysisRequestText": "مفصل تحلیل کن! Shizue!",
     "inPage": "متن اصلی",
     "webSource": "منبع",
-    "backToPage": "بازگشت به صفحه"
+    "backToPage": "بازگشت به صفحه",
+    "deleteMessage": "حذف پیام"
   },
   "footer": {
     "joinDiscord": "به من در Discord بپیوندید!",

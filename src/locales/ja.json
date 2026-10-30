@@ -131,7 +131,8 @@
     "detailedAnalysisRequestText": "詳しく分析して！しずえ！",
     "inPage": "原文",
     "webSource": "出典",
-    "backToPage": "ページに戻る"
+    "backToPage": "ページに戻る",
+    "deleteMessage": "メッセージを削除"
   },
   "footer": {
     "joinDiscord": "Discordに参加してください！",

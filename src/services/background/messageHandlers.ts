@@ -41,6 +41,7 @@ async function handleLoadThread(msg: any, sendResponse: (response?: any) => void
     data
       .filter((m) => m.role !== 'system')
       .map((m) => ({
+        id: m.id,
         role: m.role,
         content: m.content,
         actionType: m.actionType,

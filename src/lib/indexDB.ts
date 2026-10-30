@@ -177,6 +177,16 @@ export const deleteThread = async (id: string) => {
   await db.messages.where('threadId').equals(id).delete();
   await db.threads.delete(id);
 };
+// Deletes a message and every later one in its thread, since each answer read what came before it.
+export const deleteMessagesFrom = async (threadId: string, id: string) => {
+  const from = await db.messages.get(id);
+  if (!from) return;
+  await db.messages
+    .where('threadId')
+    .equals(threadId)
+    .filter((m) => m.createdAt >= from.createdAt)
+    .delete();
+};
 export const getLatestMessageForThread = async (threadId: string) => {
   const messageList = await db.messages.where('threadId').equals(threadId).sortBy('createdAt');
   return messageList.pop();

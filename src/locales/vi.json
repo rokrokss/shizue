@@ -131,7 +131,8 @@
     "detailedAnalysisRequestText": "Phân tích chi tiết giúp mình! Shizue!",
     "inPage": "Bản gốc",
     "webSource": "Nguồn",
-    "backToPage": "Quay lại trang"
+    "backToPage": "Quay lại trang",
+    "deleteMessage": "Xóa tin nhắn"
   },
   "footer": {
     "joinDiscord": "Tham gia cùng tôi trên Discord!",

@@ -131,7 +131,8 @@
     "detailedAnalysisRequestText": "حلله بالتفصيل! Shizue!",
     "inPage": "الأصل",
     "webSource": "المصدر",
-    "backToPage": "العودة إلى الصفحة"
+    "backToPage": "العودة إلى الصفحة",
+    "deleteMessage": "حذف الرسالة"
   },
   "footer": {
     "joinDiscord": "انضم إلي على Discord!",

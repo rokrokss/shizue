@@ -131,7 +131,8 @@
     "detailedAnalysisRequestText": "详细分析一下！Shizue！",
     "inPage": "原文",
     "webSource": "来源",
-    "backToPage": "返回页面"
+    "backToPage": "返回页面",
+    "deleteMessage": "删除消息"
   },
   "footer": {
     "joinDiscord": "加入我的 Discord！",

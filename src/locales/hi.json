@@ -131,7 +131,8 @@
     "detailedAnalysisRequestText": "विस्तार से विश्लेषण करो! Shizue!",
     "inPage": "मूल",
     "webSource": "स्रोत",
-    "backToPage": "पेज पर वापस जाएँ"
+    "backToPage": "पेज पर वापस जाएँ",
+    "deleteMessage": "संदेश हटाएं"
   },
   "footer": {
     "joinDiscord": "Discord पर मुझसे जुड़ें!",

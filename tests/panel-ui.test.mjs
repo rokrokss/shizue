@@ -91,6 +91,13 @@ const stubs = {
       fixture.rows.set(message.threadId, rows);
       fixture.store.set(fixture.countAtom(message.threadId), rows.length);
     };
+    export const deleteMessagesFrom = async (threadId, id) => {
+      const rows = fixture.rows.get(threadId) ?? [];
+      const from = rows.findIndex(m => m.id === id);
+      if (from >= 0) fixture.rows.set(threadId, rows.slice(0, from));
+      fixture.store.set(fixture.countAtom(threadId), fixture.rows.get(threadId).length);
+    };
+    export const deleteThread = async id => { fixture.rows.delete(id); };
     export const touchThread = async () => {};`,
   '@/lib/imageUtils': 'export const convertFilesToBase64Array = async () => [];',
   '@/lib/prompts': `export const getSummarizePageTextPrompt = title => 'SUMMARY ' + title;
@@ -115,6 +122,7 @@ import { chatStatusAtom, switchThreadAtom } from '@/hooks/chat';
 const check = (condition, message) => { if (!condition) throw new Error(message); };
 const flush = async fn => { await act(async () => { await fn?.(); await new Promise(resolve => setTimeout(resolve, 0)); }); };
 const ai = content => ({ role: 'ai', actionType: 'chat', content, done: true });
+const human = (id, content) => ({ id, role: 'human', actionType: 'chat', content, done: true });
 const humanSummary = { role: 'human', actionType: 'askForSummary', content: 'STALE SUMMARY', done: true };
 const host = document.getElementById('root');
 const counts = new Map();
@@ -235,6 +243,24 @@ async function run() {
   await flush(() => resolveLoads('C'));
   check(host.textContent.includes('C CONTENT') && !host.textContent.includes('ASKED AGAIN'), 'The picked thread did not replace the answering one');
   await flush(() => fixture.input.onNewChat());
+
+  // Deleting a sent message deletes it and everything after it, but not while an answer streams.
+  // Deleting the first one deletes the chat.
+  fixture.rows.set('D', [human('d1', 'FIRST Q'), ai('FIRST A'), human('d2', 'SECOND Q'), ai('SECOND A')]);
+  await flush(() => fixture.store.set(threadIdAtom, 'D'));
+  await flush(() => resolveLoads('D'));
+  await flush(() => fixture.input.onSubmit('ASKED IN D'));
+  await flush(() => fixture.container.onDelete(2));
+  check(fixture.rows.get('D').length === 5, 'A message was deleted while an answer streamed');
+  await flush(() => fixture.streamOptions.onDone());
+  await flush(() => fixture.container.onDelete(2));
+  check(fixture.rows.get('D').map(m => m.content).join('|') === 'FIRST Q|FIRST A', 'Later messages were not deleted');
+  check(host.textContent.includes('FIRST A') && !host.textContent.includes('SECOND Q') &&
+    !host.textContent.includes('ASKED IN D'), 'Deleted messages stayed on screen');
+  check(fixture.loads.length === 0, 'Deleting reloaded the chat');
+  await flush(() => fixture.container.onDelete(0));
+  check(!fixture.rows.has('D') && fixture.store.get(threadIdAtom) === undefined &&
+    host.textContent.includes('GREETING'), 'Deleting the first message kept the chat');
   const streams = fixture.streams.length;
 
   await flush(() => fixture.store.set(threadIdAtom, 'A'));
@@ -243,7 +269,7 @@ async function run() {
   check(fixture.streams.length === streams, 'An unmounted chat started a summary stream');
   check(fixture.store.get(chatStatusAtom) === 'idle', 'Stale response changed chat status');
   document.body.dataset.result = 'passed';
-  document.getElementById('result').textContent = 'PASS: fresh panel selection, hydration, summary preparation, current-panel summary, detailed analysis, StrictMode, stale replies, clearing, leaving mid-answer, unmount';
+  document.getElementById('result').textContent = 'PASS: fresh panel selection, hydration, summary preparation, current-panel summary, detailed analysis, deleting from a message, StrictMode, stale replies, clearing, leaving mid-answer, unmount';
 }
 run().catch(error => {
   document.body.dataset.result = 'failed';

@@ -131,7 +131,8 @@
     "detailedAnalysisRequestText": "Analisa em detalhe! Shizue!",
     "inPage": "Original",
     "webSource": "Fonte",
-    "backToPage": "Voltar à página"
+    "backToPage": "Voltar à página",
+    "deleteMessage": "Eliminar mensagem"
   },
   "footer": {
     "joinDiscord": "Junta-te a mim no Discord!",

@@ -131,7 +131,8 @@
     "detailedAnalysisRequestText": "Разбери подробно! Shizue!",
     "inPage": "Оригинал",
     "webSource": "Источник",
-    "backToPage": "Вернуться на страницу"
+    "backToPage": "Вернуться на страницу",
+    "deleteMessage": "Удалить сообщение"
   },
   "footer": {
     "joinDiscord": "Присоединяйтесь ко мне в Discord!",

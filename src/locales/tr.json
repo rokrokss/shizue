@@ -131,7 +131,8 @@
     "detailedAnalysisRequestText": "Ayrıntılı analiz et! Shizue!",
     "inPage": "Orijinal",
     "webSource": "Kaynak",
-    "backToPage": "Sayfaya dön"
+    "backToPage": "Sayfaya dön",
+    "deleteMessage": "Mesajı sil"
   },
   "footer": {
     "joinDiscord": "Discord'da bana katılın!",
