@@ -11,6 +11,7 @@ import { CaretRightOutlined } from '@ant-design/icons';
 import { createContext, lazy, Suspense, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Markdown, { type Components, type ExtraProps, type Options } from 'react-markdown';
+import remarkCjkFriendly from 'remark-cjk-friendly';
 import remarkGfm from 'remark-gfm';
 
 const ChartBlock = lazy(() => import('@/components/Chat/ChartBlock'));
@@ -179,7 +180,13 @@ const MarkdownMessage = ({
         <PageContext.Provider value={page}>
           <CitationContext.Provider value={citations}>
             <Markdown
-              remarkPlugins={[remarkGfm, remarkNoStrikethrough, ...(withMath ? mathPlugins!.remark : [])]}
+              // remarkCjkFriendly lets **‘불가’**입니다 close its bold next to Korean text.
+              remarkPlugins={[
+                remarkGfm,
+                remarkCjkFriendly,
+                remarkNoStrikethrough,
+                ...(withMath ? mathPlugins!.remark : []),
+              ]}
               rehypePlugins={withMath ? mathPlugins!.rehype : []}
               components={components}
             >
