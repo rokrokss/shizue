@@ -37,6 +37,13 @@ export default defineContentScript({
     const mountUi = async () => {
       if (ctx.isInvalid || mounting) return;
       if (document.getElementById(YOUTUBE_TOGGLE_SHADOW_HOST_ID)) return;
+      // Vertical embeds (Shorts and the like) are left as they are. An embed's video has a size
+      // only once it loads.
+      if (isYoutubeEmbed()) {
+        const video = document.querySelector('video');
+        if (!video?.videoWidth) return;
+        if (video.videoHeight > video.videoWidth || window.innerHeight > window.innerWidth) return;
+      }
 
       // An embed may have the newer controls, whose buttons sit at the top right.
       const anchor =
@@ -140,7 +147,7 @@ export default defineContentScript({
     ctx.addEventListener(window, 'yt-navigate-finish', mount, {
       passive: true,
     });
-    // An embed's newer controls show up only once the video first plays.
+    // An embed's newer controls and its video's size show up only once the video first plays.
     if (isYoutubeEmbed()) ctx.setInterval(mount, 1000);
   },
 });
