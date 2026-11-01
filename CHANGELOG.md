@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.23
+
+- YouTube videos embedded on other sites get Shizue's caption translation too: the toggle sits with the player's own buttons, and the captions and menu fit the player's size
+
 ## v0.3.22
 
 - Delete a message you sent: hover it and click the trash icon, and the rest of the conversation after it goes too, since every later answer read it
