@@ -189,6 +189,7 @@ const YoutubeCaptionToggle = () => {
           author: data.metadata.author ?? '',
           description: data.metadata.shortDescription ?? '',
           live: data.live,
+          spokenLanguageCode: data.spokenLanguageCode,
         });
       }
       // Encrypted (DRM) media can't be captured for speech recognition.
@@ -639,8 +640,8 @@ const YoutubeCaptionToggle = () => {
           ),
         },
         // The spoken language is what speech recognition listens for and what Chrome translates
-        // from.
-        ...(realtime && (usesSpeech || chromeTranslation)
+        // from. When YouTube settles it, there is nothing to pick.
+        ...(realtime && (usesSpeech || chromeTranslation) && !liveStatus?.speechLanguageConfirmed
           ? [
               {
                 key: 'speechLanguage',

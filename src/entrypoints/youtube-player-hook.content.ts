@@ -26,10 +26,25 @@ export default defineContentScript({
     window.addEventListener(CONTENT_TO_HOOK_EVENT, (event) => {
       const request = parseHookDetail<HookRequest>((event as CustomEvent).detail);
       if (request?.type === 'captions') reading = request.on;
+      if (request?.type === 'audioTrack') post({ type: 'audioTrack', id: playingAudioTrack() });
     });
 
     const post = (message: HookMessage) => {
       window.dispatchEvent(new CustomEvent(HOOK_TO_CONTENT_EVENT, { detail: JSON.stringify(message) }));
+    };
+
+    // The player's track object keeps its fields under minified names; the one naming the track
+    // ('ko.4': its language, then 4 for the original, 3 or 10 for a dub) is found by its shape.
+    const playingAudioTrack = () => {
+      try {
+        const track = (document.getElementById('movie_player') as any)?.getAudioTrack?.();
+        const named = Object.values(track ?? {}).find(
+          (value: any) => typeof value?.id === 'string' && /^[\w-]+\.\d+$/.test(value.id)
+        ) as { id: string } | undefined;
+        return named?.id ?? null;
+      } catch {
+        return null;
+      }
     };
 
     const readCaptions = async (response: Response) => {

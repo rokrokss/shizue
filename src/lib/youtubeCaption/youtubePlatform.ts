@@ -30,6 +30,8 @@ export type YoutubeVideo = {
   author: string;
   description: string;
   live?: LiveInfo;
+  // The language the viewer hears, when the page data settles it (lib/youtube.ts).
+  spokenLanguageCode?: string;
 };
 
 const OVERLAY_ID = 'shizue-live-caption';
@@ -41,6 +43,23 @@ const subtitlesButton = () => document.querySelector<HTMLElement>(SUBTITLES_BUTT
 const requestHook = (request: HookRequest) => {
   window.dispatchEvent(new CustomEvent(CONTENT_TO_HOOK_EVENT, { detail: JSON.stringify(request) }));
 };
+
+// The audio track playing ('ko.4'), from the hook. It answers at once; embeds have no hook.
+const playingAudioTrack = () =>
+  new Promise<string | null>((resolve) => {
+    const finish = (id: string | null) => {
+      clearTimeout(timer);
+      window.removeEventListener(HOOK_TO_CONTENT_EVENT, onMessage);
+      resolve(id);
+    };
+    const onMessage = (event: Event) => {
+      const message = parseHookDetail<HookMessage>((event as CustomEvent).detail);
+      if (message?.type === 'audioTrack') finish(message.id);
+    };
+    const timer = setTimeout(() => finish(null), 500);
+    window.addEventListener(HOOK_TO_CONTENT_EVENT, onMessage);
+    requestHook({ type: 'audioTrack' });
+  });
 
 export const youtubeVideoElement = () =>
   document.querySelector<HTMLVideoElement>(VIDEO) ?? document.querySelector('video');
@@ -177,6 +196,17 @@ export const createYoutubeLiveCaptions = (video: YoutubeVideo) => {
     });
   }
 
+  // What YouTube says the viewer hears settles it, and the menu stops offering a choice: the audio
+  // track playing (a dub is in its own language; switching tracks reloads the media), else the
+  // language its speech recognition heard.
+  const confirmSpeechLanguage = async () => {
+    const playing = speechLanguageForCode((await playingAudioTrack())?.split('.')[0]);
+    void controller.setConfirmedSpeechLanguage(playing ?? speechLanguageForCode(video.spokenLanguageCode));
+  };
+  const onLoadedMetadata = () => void confirmSpeechLanguage();
+  element?.addEventListener('loadedmetadata', onLoadedMetadata);
+  onLoadedMetadata();
+
   return {
     controller,
     dispose: () => {
@@ -186,6 +216,7 @@ export const createYoutubeLiveCaptions = (video: YoutubeVideo) => {
       element?.removeEventListener('pause', onPlayState);
       element?.removeEventListener('play', onPlayState);
       element?.removeEventListener('seeked', onSeeked);
+      element?.removeEventListener('loadedmetadata', onLoadedMetadata);
     },
   };
 };

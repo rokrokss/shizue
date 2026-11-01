@@ -268,6 +268,16 @@ const getOriginalLanguageCode = (player: any): string | undefined => {
   return asr?.languageCode ?? (tracks.length === 1 ? tracks[0].languageCode : undefined);
 };
 
+// The language the viewer hears, when the page settles it: with one audio track, the language
+// YouTube's speech recognition heard. A dubbed video has a recognition track per audio language,
+// and which one plays only the player knows (youtubeCaption/youtubePlatform.ts asks it).
+const getSpokenLanguageCode = (player: any): string | undefined => {
+  const renderer = player?.captions?.playerCaptionsTracklistRenderer;
+  if ((renderer?.audioTracks?.length ?? 0) > 1) return;
+  const asr: any[] = (renderer?.captionTracks ?? []).filter((track: any) => track.kind === 'asr');
+  return asr.length === 1 ? asr[0].languageCode : undefined;
+};
+
 // The captions bilingual mode shows over a target language's own track: the original language's
 // captions people wrote, else its speech recognition track (never a dub's).
 const getOriginalTrack = (player: any, originalLanguageCode: string | undefined) => {
@@ -314,10 +324,11 @@ export const getVideoData = async (videoId: string) => {
   debugLog('[Youtube] getVideoData: player', player);
   // Read before getTranscriptMetadata sorts the tracks English first.
   const originalLanguageCode = getOriginalLanguageCode(player);
+  const spokenLanguageCode = getSpokenLanguageCode(player);
   const transcriptMetadata = await getTranscriptMetadata(player, originalLanguageCode);
   if (!transcriptMetadata) {
     debugLog('[Youtube] getVideoData: No transcript data found');
-    return { videoId, metadata, live, storyboard };
+    return { videoId, metadata, live, storyboard, spokenLanguageCode };
   }
 
   const originalTrack = getOriginalTrack(player, originalLanguageCode);
@@ -329,5 +340,6 @@ export const getVideoData = async (videoId: string) => {
     originalLanguageCode,
     originalTrack,
     storyboard,
+    spokenLanguageCode,
   };
 };

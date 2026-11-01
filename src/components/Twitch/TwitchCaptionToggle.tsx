@@ -49,6 +49,7 @@ const initialStatus: CaptionStatus = {
   activeSource: null,
   loading: false,
   speechLanguage: 'en-US',
+  speechLanguageConfirmed: false,
   speechError: null,
   onDeviceSpeech: 'unavailable',
   adPlaying: false,

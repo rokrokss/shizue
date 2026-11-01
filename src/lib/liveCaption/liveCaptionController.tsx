@@ -55,8 +55,10 @@ export type CaptionStatus<S extends string> = {
   active: boolean;
   activeSource: S | 'stt' | null;
   loading: boolean;
-  // The language speech recognition listens for on this page.
+  // The language speech recognition listens for on this page, and whether the site settled it (no
+  // choice is offered then).
   speechLanguage: string;
+  speechLanguageConfirmed: boolean;
   speechError: string | null;
   // Whether that language can be recognized on this device (no audio leaves it).
   onDeviceSpeech: SpeechAvailability;
@@ -172,6 +174,7 @@ export class LiveCaptionController<S extends string> {
   private page: string;
   private channelId: string | null;
   private detectedSpeechLanguage: string | null = null;
+  private confirmedSpeechLanguage: string | null = null;
   private speechLanguage = DEFAULT_SPEECH_LANGUAGE;
   private speechError: string | null = null;
   private onDeviceSpeech: SpeechAvailability = 'unavailable';
@@ -219,6 +222,7 @@ export class LiveCaptionController<S extends string> {
           this.chromeTranslation &&
           isChromeTranslatorPending(this.speechLanguage, this.settings.targetLanguage)),
       speechLanguage: this.speechLanguage,
+      speechLanguageConfirmed: !!this.confirmedSpeechLanguage,
       speechError: this.speechError,
       onDeviceSpeech: this.onDeviceSpeech,
       adPlaying: this.adPlaying,
@@ -407,6 +411,7 @@ export class LiveCaptionController<S extends string> {
     this.channelId = this.platform.channelKey();
     this.seen.clear();
     this.detectedSpeechLanguage = null;
+    this.confirmedSpeechLanguage = null;
     this.restart('navigation');
     this.metadata = this.platform.metadata();
     this.platform.onPageChange?.();
@@ -422,7 +427,14 @@ export class LiveCaptionController<S extends string> {
     await this.refreshSpeechLanguage();
   }
 
-  // A language the viewer picked for this channel wins over the detected one.
+  // The language the site says the viewer hears, beyond a guess (YouTube's audio track or speech
+  // recognition); null when it doesn't.
+  async setConfirmedSpeechLanguage(language: string | null) {
+    this.confirmedSpeechLanguage = language;
+    await this.refreshSpeechLanguage();
+  }
+
+  // A confirmed language wins, then one the viewer picked for this channel, then the detected one.
   private async refreshSpeechLanguage() {
     let picked: string | undefined;
     const key = this.platform.channelLanguageStorageKey;
@@ -432,7 +444,8 @@ export class LiveCaptionController<S extends string> {
     } catch {
       // Extension context gone (update); keep the current language.
     }
-    const language = picked ?? this.detectedSpeechLanguage ?? DEFAULT_SPEECH_LANGUAGE;
+    const language =
+      this.confirmedSpeechLanguage ?? picked ?? this.detectedSpeechLanguage ?? DEFAULT_SPEECH_LANGUAGE;
     if (language === this.speechLanguage) return this.emit();
     this.speechLanguage = language;
     if (this.activeSource === 'stt') this.startSpeech();
