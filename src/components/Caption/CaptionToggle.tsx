@@ -54,7 +54,9 @@ export const CaptionMenuRow = ({ label, children }: { label: string; children: R
   </div>
 );
 
-// A row whose value opens a language list beside the menu, to the right unless `side` says left.
+// A row whose value opens a language list beside the menu, to the right unless `side` says left, or
+// below the row where there's no room beside the menu. There it covers the menu, so it opens on a
+// click rather than on hover, and stays inside the page.
 export const CaptionMenuLanguageRow = ({
   label,
   valueLabel,
@@ -70,15 +72,20 @@ export const CaptionMenuLanguageRow = ({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSelect: (value: string) => void;
-  side?: 'left' | 'right';
+  side?: 'left' | 'right' | 'below';
 }) => (
   <Popover
-    placement={side === 'left' ? 'leftBottom' : 'rightBottom'}
+    placement={side === 'left' ? 'leftBottom' : side === 'below' ? 'bottom' : 'rightBottom'}
+    trigger={side === 'below' ? 'click' : 'hover'}
     styles={{
       body: {
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        transform: 'translateY(7px)',
-        ...(side === 'left' ? { marginRight: '7px' } : { marginLeft: '7px' }),
+        ...(side === 'below'
+          ? {}
+          : {
+              transform: 'translateY(7px)',
+              ...(side === 'left' ? { marginRight: '7px' } : { marginLeft: '7px' }),
+            }),
         padding: 0,
       },
     }}
@@ -95,7 +102,8 @@ export const CaptionMenuLanguageRow = ({
           sz:scrollbar-visible
         "
         style={{
-          maxHeight: '170px',
+          // No taller than a small frame (an embedded YouTube player) shows.
+          maxHeight: 'min(170px, calc(100vh - 16px))',
           overflowY: 'auto',
         }}
       >
@@ -138,6 +146,8 @@ type CaptionToggleProps = {
   isActivated: boolean;
   // Netflix sizes the icon like its own controls; YouTube and Twitch keep 24px.
   iconSize?: string;
+  // Where the page around the controls would clip the menu, its rows scroll within this height.
+  menuMaxHeight?: number;
   // Where the bar under an activated icon starts, from the top of the icon's own box (whose middle
   // is the icon's); by default 10% above the bottom of the controls.
   underlineTop?: string;
@@ -159,6 +169,7 @@ export const CaptionToggle = ({
   isActivated,
   iconSize = '24px',
   underlineTop,
+  menuMaxHeight,
 }: CaptionToggleProps) => (
   <ConfigProvider
     prefixCls="sz-ant-"
@@ -213,7 +224,11 @@ export const CaptionToggle = ({
                   style: React.CSSProperties;
                 }>,
                 {
-                  style: { padding: 0, backgroundColor: 'transparent' },
+                  style: {
+                    padding: 0,
+                    backgroundColor: 'transparent',
+                    ...(menuMaxHeight ? { maxHeight: menuMaxHeight, overflowY: 'auto' } : {}),
+                  },
                 }
               )}
               <Divider style={{ margin: 0 }} />

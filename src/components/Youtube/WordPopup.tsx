@@ -6,6 +6,7 @@ import {
 import type { Language } from '@/hooks/language';
 import { initWordsPageContent } from '@/lib/initPanelData';
 import { sourceLink, type WordMeaning } from '@/lib/wordLookup';
+import { getVideoId, isYoutubeEmbed } from '@/lib/youtube';
 import { panelService } from '@/services/panelService';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -131,7 +132,11 @@ export const WordPopup = ({
           sentence: open.sentence,
           sentenceTranslation: open.translation,
           sourceTitle: lookup.title,
-          sourceUrl: sourceLink(location.href, time),
+          // An embed's own address doesn't play outside the site that embeds it.
+          sourceUrl: sourceLink(
+            isYoutubeEmbed() ? `https://www.youtube.com/watch?v=${getVideoId()}` : location.href,
+            time
+          ),
         },
       })
       .catch(() => null);

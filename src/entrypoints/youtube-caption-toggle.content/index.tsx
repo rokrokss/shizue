@@ -1,7 +1,7 @@
 import '@/assets/global.css';
 import '@/assets/tailwind.css';
 import YoutubeSubtitleToggle from '@/components/Youtube/YoutubeCaptionToggle';
-import { watchPlayerCaptionRequests } from '@/lib/youtube';
+import { isYoutubeEmbed, watchPlayerCaptionRequests } from '@/lib/youtube';
 import { registerYoutubeTranscriptListener } from '@/lib/youtubeTranscript';
 import { contentScriptLog, errorLog } from '@/logs';
 import { registerContentScriptConnection } from '@/lib/contentScriptConnection';
@@ -19,10 +19,14 @@ export const YOUTUBE_TOGGLE_SHADOW_HOST_ID = 'shizue-youtube-caption-toggle-shad
 const YOUTUBE_POPUP_HOST_TAG = 'shizue-youtube-caption-popups';
 
 export default defineContentScript({
-  matches: ['https://youtube.com/*', 'https://www.youtube.com/*'],
+  // Frames too, for videos other sites embed.
+  matches: ['https://youtube.com/*', 'https://www.youtube.com/*', 'https://www.youtube-nocookie.com/embed/*'],
+  allFrames: true,
   runAt: 'document_idle',
   cssInjectionMode: 'ui',
   async main(ctx) {
+    // youtube.com's own frames (live chat and the like) have no player.
+    if (window !== window.top && !isYoutubeEmbed()) return;
     ctx.onInvalidated(registerContentScriptConnection('youtube-caption-toggle'));
     ctx.onInvalidated(watchPlayerCaptionRequests());
     ctx.onInvalidated(registerYoutubeTranscriptListener());
@@ -34,7 +38,9 @@ export default defineContentScript({
       if (ctx.isInvalid || mounting) return;
       if (document.getElementById(YOUTUBE_TOGGLE_SHADOW_HOST_ID)) return;
 
-      const anchor = document.querySelector('.ytp-right-controls');
+      // An embed may have the newer controls, whose buttons sit at the top right.
+      const anchor =
+        document.querySelector('.ytp-right-controls') ?? document.querySelector('.player-controls-top-right');
       if (!anchor) return;
       mounting = true;
 
@@ -78,6 +84,8 @@ export default defineContentScript({
                 height: 100% !important;
                 line-height: 0 !important;
                 vertical-align: middle !important;
+                /* An embed's newer controls hide with visibility, which the host's reset drops. */
+                visibility: inherit !important;
               }
               :host > * {
                 height: 100% !important;
@@ -132,5 +140,7 @@ export default defineContentScript({
     ctx.addEventListener(window, 'yt-navigate-finish', mount, {
       passive: true,
     });
+    // An embed's newer controls show up only once the video first plays.
+    if (isYoutubeEmbed()) ctx.setInterval(mount, 1000);
   },
 });

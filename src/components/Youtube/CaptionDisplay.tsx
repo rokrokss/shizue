@@ -6,6 +6,7 @@ import {
   WordPopup,
 } from '@/components/Youtube/WordPopup';
 import { captionPieces } from '@/lib/wordLookup';
+import { isYoutubeEmbed } from '@/lib/youtube';
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 type CaptionDisplayProps = {
@@ -38,7 +39,10 @@ export const CaptionDisplay = ({
   useEffect(() => {
     const updateFontSize = () => {
       const width = window.innerWidth;
-      if (width >= 1935) {
+      if (isYoutubeEmbed()) {
+        // An embed's window is its player: YouTube's own captions are 1/22.5 of a 16:9 video's height.
+        setFontSize(`${(Math.min((width * 9) / 16, window.innerHeight) / 22.5) * captionSizeRatio}px`);
+      } else if (width >= 1935) {
         setFontSize(`${28 * captionSizeRatio}px`);
       } else if (width >= 1015) {
         setFontSize(`${1.6 * captionSizeRatio}vw`);

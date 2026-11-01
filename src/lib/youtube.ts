@@ -1,5 +1,7 @@
+import { MESSAGE_FETCH_YOUTUBE_PLAYER } from '@/config/constants';
 import { Language } from '@/hooks/language';
 import { languageCodeToLanguage } from '@/lib/language';
+import { SUBTITLES_BUTTON } from '@/lib/youtubeCaption/selectors';
 import { debugLog, errorLog } from '@/logs';
 
 export type TranscriptMetadata = {
@@ -57,8 +59,20 @@ function compareTracks(track1: any, track2: any) {
   return 0;
 }
 
+// A player another site embeds (youtube.com/embed/<id>, or youtube-nocookie.com/embed/<id>), in
+// that site's frame.
+export const isYoutubeEmbed = () =>
+  /(^|\.)youtube(-nocookie)?\.com$/.test(location.hostname) && location.pathname.startsWith('/embed/');
+
+// The title links to the video playing, in the embed's older controls and in its newer ones.
+const EMBED_TITLE_LINK = 'a.ytp-title-link, a.ytmVideoInfoVideoTitle';
+
 export const getVideoId = () => {
-  return new URLSearchParams(window.location.search).get('v');
+  if (!isYoutubeEmbed()) return new URLSearchParams(window.location.search).get('v');
+  // An embed's playlist (/embed/videoseries?list=…) moves on without changing the address.
+  const link = document.querySelector<HTMLAnchorElement>(EMBED_TITLE_LINK)?.href;
+  const linked = link ? new URL(link).searchParams.get('v') : null;
+  return linked ?? location.pathname.match(/^\/embed\/([\w-]{11})$/)?.[1] ?? null;
 };
 
 // YouTube fills its ad module while an ad plays.
@@ -94,7 +108,7 @@ const getPlayerCaptionUrl = async (videoId: string): Promise<string | null> => {
 
   // No request for this video yet: toggle captions on and off so the player makes one.
   debugLog('[Youtube] getPlayerCaptionUrl: toggling captions for', videoId);
-  const subtitlesButton = document.querySelector('.ytp-subtitles-button');
+  const subtitlesButton = document.querySelector(SUBTITLES_BUTTON);
   if (subtitlesButton instanceof HTMLElement) {
     setTimeout(() => {
       subtitlesButton.click();
@@ -177,11 +191,19 @@ export const fetchCaptionTrack = async (metadata: TranscriptMetadata): Promise<C
   }
 };
 
-const getPlayerData = async (videoId: string) => {
-  const pageData = await fetch(`https://www.youtube.com/watch?v=${videoId}`);
-  const body = await pageData.text();
+// The player data in a watch page.
+export const parsePlayerResponse = (body: string) => {
   const playerResponseMatch = body.match(YT_INITIAL_PLAYER_RESPONSE_RE);
   return playerResponseMatch ? JSON.parse(playerResponseMatch[1]) : null;
+};
+
+const getPlayerData = async (videoId: string) => {
+  // youtube-nocookie.com has no watch pages, and its frames may not read youtube.com's.
+  if (location.hostname.endsWith('youtube-nocookie.com')) {
+    return chrome.runtime.sendMessage({ action: MESSAGE_FETCH_YOUTUBE_PLAYER, videoId });
+  }
+  const pageData = await fetch(`https://www.youtube.com/watch?v=${videoId}`);
+  return parsePlayerResponse(await pageData.text());
 };
 
 const toTranscriptMetadata = (track: any) =>

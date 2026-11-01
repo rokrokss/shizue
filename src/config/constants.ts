@@ -32,6 +32,8 @@ export const MESSAGE_READ_TAB_VIDEO_TRANSCRIPT = 'read_tab_video_transcript';
 // Caption overlay → background: a clicked word's meaning, and saving it to the word list.
 export const MESSAGE_LOOKUP_WORD = 'lookup_word';
 export const MESSAGE_SAVE_WORD = 'save_word';
+// A youtube-nocookie.com embed → background: the video's player data from its youtube.com watch page.
+export const MESSAGE_FETCH_YOUTUBE_PLAYER = 'fetch_youtube_player';
 
 /* port */
 export const PORT_STREAM_MESSAGE = 'stream_message_key';

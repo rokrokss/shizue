@@ -23,7 +23,7 @@ import type { CaptionStatus } from '@/lib/liveCaption/liveCaptionController';
 import { SPEECH_LANGUAGES, speechLanguageLabel } from '@/lib/liveCaption/speechLanguage';
 import { isSpeechRecognitionSupported } from '@/lib/liveCaption/webSpeechSource';
 import useAdObserver from '@/lib/useAdObserver';
-import { getVideoData, getVideoId, isYoutubeAdPlaying } from '@/lib/youtube';
+import { getVideoData, getVideoId, isYoutubeAdPlaying, isYoutubeEmbed } from '@/lib/youtube';
 import {
   createYoutubeLiveCaptions,
   liveCaptionTrack,
@@ -53,6 +53,11 @@ console.error = (...args) => {
 // (lib/youtubeCaption), whose controller exists only while that path is in use.
 type SourceMode = 'auto' | YoutubeCaptionSource | 'stt';
 
+// Around the menu's rows: its buttons, the popup's 24px padding and a margin.
+const MENU_FRAME = 72;
+// An embed narrower than this has no room for a language list beside the menu.
+const LIST_BESIDE_MIN_WIDTH = 640;
+
 const sourceLabelKey: Record<YoutubeCaptionSource | 'stt', string> = {
   track: 'youtube.sourceTrack',
   stt: 'twitch.sourceSpeech',
@@ -75,6 +80,8 @@ const YoutubeCaptionToggle = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [targetLanguage, setTargetLanguage] = useState<Language>('English');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [menuMaxHeight, setMenuMaxHeight] = useState<number>();
+  const listSide = isYoutubeEmbed() && window.innerWidth < LIST_BESIDE_MIN_WIDTH ? 'below' : 'right';
   const dropdownTriggerRef = useRef<HTMLDivElement>(null);
   const [openPopover, setOpenPopover] = useState<
     'target' | 'source' | 'speech' | 'autoActivate' | null
@@ -131,7 +138,7 @@ const YoutubeCaptionToggle = () => {
   const refreshCaptionStatus = useCallback(async () => {
     if (!showToggleRef.current) return;
     if (inFlightRef.current) return;
-    if (!window.location.pathname.includes('watch') || isYoutubeAdPlaying()) {
+    if (!(window.location.pathname.includes('watch') || isYoutubeEmbed()) || isYoutubeAdPlaying()) {
       debugLog('[YouTube] refreshCaptionStatus: not watch page or ad is playing');
       setIsCaptionAvailable(false);
       setIsDropdownOpen(false);
@@ -220,9 +227,14 @@ const YoutubeCaptionToggle = () => {
     refreshCaptionStatus();
 
     window.addEventListener('yt-navigate-finish', refreshCaptionStatus, { passive: true });
+    // An embed has no navigation events; its playlist moves on to the next video in the same page.
+    if (isYoutubeEmbed()) {
+      document.addEventListener('loadeddata', refreshCaptionStatus, { capture: true, passive: true });
+    }
 
     return () => {
       window.removeEventListener('yt-navigate-finish', refreshCaptionStatus);
+      document.removeEventListener('loadeddata', refreshCaptionStatus, { capture: true });
       getCaptionInjector().clear();
       disposeLive();
       if (animationFrameRef.current) {
@@ -244,6 +256,11 @@ const YoutubeCaptionToggle = () => {
       return;
     }
 
+    // An embed's frame clips the menu, so a small one scrolls the menu's rows on the side with room.
+    const trigger = dropdownTriggerRef.current?.getBoundingClientRect();
+    if (open && trigger && isYoutubeEmbed()) {
+      setMenuMaxHeight(Math.max(48, Math.max(trigger.top, window.innerHeight - trigger.bottom) - MENU_FRAME));
+    }
     setIsDropdownOpen(open);
     if (!open) setOpenPopover(null);
     if (open && realtime) ensureLive();
@@ -597,6 +614,7 @@ const YoutubeCaptionToggle = () => {
           key: 'selectLanguage',
           label: (
             <CaptionMenuLanguageRow
+              side={listSide}
               label={t('settings.targetLanguage')}
               valueLabel={t(`language.${targetLanguage.split('_')[0]}`)}
               options={languageOptions(t)}
@@ -610,6 +628,7 @@ const YoutubeCaptionToggle = () => {
           key: 'source',
           label: (
             <CaptionMenuLanguageRow
+              side={listSide}
               label={t('twitch.source')}
               valueLabel={sourceValueLabel}
               options={sourceOptions}
@@ -627,6 +646,7 @@ const YoutubeCaptionToggle = () => {
                 key: 'speechLanguage',
                 label: (
                   <CaptionMenuLanguageRow
+                    side={listSide}
                     label={t('youtube.spokenLanguage')}
                     valueLabel={speechLanguageLabel(liveStatus?.speechLanguage)}
                     options={SPEECH_LANGUAGES}
@@ -727,6 +747,7 @@ const YoutubeCaptionToggle = () => {
                 key: 'autoActivate',
                 label: (
                   <CaptionMenuLanguageRow
+                    side={listSide}
                     label={t('youtube.autoActivate')}
                     valueLabel={autoActivateLabel}
                     options={autoActivateOptions}
@@ -743,6 +764,7 @@ const YoutubeCaptionToggle = () => {
       deactivateLabel={t('youtube.deactivate')}
       onActivate={handleGenerateCaption}
       onDeactivate={handleDeactivateCaption}
+      menuMaxHeight={menuMaxHeight}
       isLoading={realtime ? !!liveStatus?.loading : isLoading}
       isActivated={realtime ? !!liveStatus?.active : isActivated}
     />

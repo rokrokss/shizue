@@ -1,5 +1,6 @@
 import {
   MESSAGE_CANCEL_NOT_STARTED_MESSAGE,
+  MESSAGE_FETCH_YOUTUBE_PLAYER,
   MESSAGE_FRAME_TRANSLATION_STATE,
   MESSAGE_INJECT_NETFLIX_BRIDGE,
   MESSAGE_INJECT_TWITCH_BRIDGE,
@@ -22,6 +23,7 @@ import {
 } from '@/config/constants';
 import { openPanel, togglePanel } from '@/entrypoints/background/sidepanel';
 import { addWord, db, getLatestMessageForThread, loadThread } from '@/lib/indexDB';
+import { parsePlayerResponse } from '@/lib/youtube';
 import { getChatModelHandler } from '@/services/background/chatModelHandler';
 import { getTranslationHandler } from '@/services/background/translationHandler';
 import { openPanelForSummary, waitForPanelSummary } from '@/services/background/panelSummary';
@@ -246,6 +248,17 @@ async function handleSaveWord(msg: any, sendResponse: (response?: any) => void) 
   sendResponse({ status: 'success' });
 }
 
+// A youtube-nocookie.com embed's captions (lib/youtube.ts): that site has no watch page, and its frames
+// may not read youtube.com's.
+async function handleFetchYoutubePlayer(msg: any, sendResponse: (response?: any) => void) {
+  try {
+    const response = await fetch(`https://www.youtube.com/watch?v=${encodeURIComponent(msg.videoId)}`);
+    sendResponse(response.ok ? parsePlayerResponse(await response.text()) : null);
+  } catch {
+    sendResponse(null);
+  }
+}
+
 export const messageHandlers = {
   [MESSAGE_LOAD_THREAD]: handleLoadThread,
   [MESSAGE_CANCEL_NOT_STARTED_MESSAGE]: handleLatestMessageForThread,
@@ -265,4 +278,5 @@ export const messageHandlers = {
   [MESSAGE_REMEMBER_THREAD]: handleRememberThread,
   [MESSAGE_LOOKUP_WORD]: handleLookupWord,
   [MESSAGE_SAVE_WORD]: handleSaveWord,
+  [MESSAGE_FETCH_YOUTUBE_PLAYER]: handleFetchYoutubePlayer,
 };

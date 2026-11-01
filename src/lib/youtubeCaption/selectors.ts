@@ -5,5 +5,6 @@ export const VIDEO = '#movie_player video.html5-main-video';
 // controls, as captionInjector does).
 export const NATIVE_CAPTIONS = '#ytp-caption-window-container';
 export const CAPTION_LINE = '.caption-visual-line';
-// The CC button, the same in every UI language. aria-pressed says whether captions are on.
-export const SUBTITLES_BUTTON = '.ytp-subtitles-button';
+// The CC button, the same in every UI language, and the one in the newer controls some embeds have.
+// aria-pressed says whether captions are on.
+export const SUBTITLES_BUTTON = '.ytp-subtitles-button, .ytmClosedCaptioningButtonButton';
