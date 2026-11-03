@@ -706,6 +706,7 @@ export class LiveCaptionController<S extends string> {
           lines={lines}
           originalLines={originalLines}
           display={settings.display}
+          targetLanguage={settings.targetLanguage}
           captionStyle={settings.captionStyle}
           captionSizeRatio={settings.captionSizeRatio}
           lookup={{

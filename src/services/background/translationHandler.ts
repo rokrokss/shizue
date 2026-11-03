@@ -20,6 +20,7 @@ import {
   LiveCaptionMetadata,
   SubtitleMetadata,
 } from '@/lib/prompts';
+import { rateLimitWaitMs } from '@/lib/rateLimit';
 import { trackTokenUsage } from '@/lib/tokenUsageTracker';
 import { parseWordMeaning, WORD_MEANING_JSON_SCHEMA, WordMeaning } from '@/lib/wordLookup';
 import { Caption, VideoMetadata } from '@/lib/youtube';
@@ -127,7 +128,7 @@ const translationsSchemaFor = (modelPreset: ModelPreset, count: number) =>
 // MV3 stops the service worker when a fetch() response takes over 30 seconds to arrive, which one
 // batch on a slow local model can. A streamed response arrives with the first token. Local models
 // must be built with `streaming` on: with it off, ChatOpenAI's stream() sends an unstreamed request.
-async function invokeTranslation(
+async function requestTranslation(
   llm: ReturnType<typeof getModelInstance>,
   prompt: string,
   modelPreset: ModelPreset
@@ -139,6 +140,36 @@ async function invokeTranslation(
     aggregated = aggregated ? aggregated.concat(chunk) : chunk;
   }
   return aggregated ?? new AIMessageChunk('');
+}
+
+// After a 429 every translation request waits, since they all count against the same limit
+// (lib/rateLimit.ts). Chrome stops a service worker after 30 s without an event or an extension
+// API call, so a longer wait makes a call every 20 s.
+let rateLimitedUntil = 0;
+
+async function waitForRateLimit() {
+  for (let left = rateLimitedUntil - Date.now(); left > 0; left = rateLimitedUntil - Date.now()) {
+    await new Promise((resolve) => setTimeout(resolve, Math.min(left, 20_000)));
+    await chrome.runtime.getPlatformInfo();
+  }
+}
+
+async function invokeTranslation(
+  llm: ReturnType<typeof getModelInstance>,
+  prompt: string,
+  modelPreset: ModelPreset
+): Promise<AIMessage | AIMessageChunk> {
+  for (let retry = 0; ; retry++) {
+    await waitForRateLimit();
+    try {
+      return await requestTranslation(llm, prompt, modelPreset);
+    } catch (error) {
+      const wait = rateLimitWaitMs(error, retry);
+      if (wait === undefined) throw error;
+      debugLog(`TranslationHandler rate limited, retrying in ${wait} ms`);
+      rateLimitedUntil = Math.max(rateLimitedUntil, Date.now() + wait);
+    }
+  }
 }
 
 export class TranslationHandler {

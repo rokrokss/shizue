@@ -246,6 +246,7 @@ export class CaptionInjector {
                     // Untranslated, the lines are the originals.
                     originalLines={isCurrentCaptionTranslated ? originalLines : []}
                     display={this.display}
+                    targetLanguage={this.targetLanguage}
                     captionStyle={this.captionStyle}
                     captionSizeRatio={this.captionSizeRatio}
                     lookup={{
@@ -486,6 +487,7 @@ export class CaptionInjector {
                   lines={[]}
                   originalLines={[]}
                   display={this.display}
+                  targetLanguage={this.targetLanguage}
                   captionStyle={this.captionStyle}
                   captionSizeRatio={1.0}
                 />

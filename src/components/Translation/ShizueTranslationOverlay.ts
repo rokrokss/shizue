@@ -1,13 +1,16 @@
 import { STORAGE_PAGE_TRANSLATION_MODE } from '@/config/constants';
+import type { Language } from '@/hooks/language';
 import { restorePlaceholders, TEXT_ELEMENTS } from '@/lib/html';
+import { translationAttributes } from '@/lib/language';
 import DOMPurify from 'dompurify';
 
 // Translations are LLM output derived from page content, so a prompt injection on the page could
-// return active HTML. Keep only inline formatting before inserting it into the page.
+// return active HTML. Keep only inline formatting, and the paragraphs of an element a site rule
+// translates whole (lib/siteRules.ts), before inserting it into the page.
 const TRANSLATION_ALLOWED_TAGS = [
   'a', 'abbr', 'b', 'bdi', 'bdo', 'br', 'cite', 'code', 'del', 'dfn', 'em', 'i', 'ins', 'kbd',
-  'mark', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup', 'time',
-  'u', 'var', 'wbr',
+  'mark', 'p', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup',
+  'time', 'u', 'var', 'wbr',
 ];
 const TRANSLATION_ALLOWED_ATTR = ['href', 'title', 'lang', 'dir'];
 
@@ -80,9 +83,10 @@ export class ShizueTranslationOverlay {
     host.removeAttribute(TRANSLATION_ONLY_ATTR);
   }
 
-  static attach(parent: Element): ShizueTranslationOverlay {
+  static attach(parent: Element, language: Language | null): ShizueTranslationOverlay {
     watchMode();
     const overlay = new ShizueTranslationOverlay(document.createElement(TAG_NAME));
+    if (language) Object.assign(overlay.element, translationAttributes(language));
     overlays.set(overlay.element, overlay);
     parent.appendChild(overlay.element);
     overlay.render();

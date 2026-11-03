@@ -5,7 +5,9 @@ import {
   WordLookup,
   WordPopup,
 } from '@/components/Youtube/WordPopup';
+import type { Language } from '@/hooks/language';
 import type { CaptionDisplayMode, CaptionStyle } from '@/hooks/layout';
+import { translationAttributes } from '@/lib/language';
 import { captionPieces } from '@/lib/wordLookup';
 import { isYoutubeEmbed } from '@/lib/youtube';
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
@@ -15,6 +17,8 @@ type CaptionDisplayProps = {
   // A line's original, or '' when the line is the only text (its translation hasn't come yet).
   originalLines: string[];
   display: CaptionDisplayMode;
+  // The translations' language, for their lang and dir.
+  targetLanguage: Language;
   captionStyle: CaptionStyle;
   captionSizeRatio: number;
   // In place of the size the window gives, e.g. one from the player's own height.
@@ -43,6 +47,7 @@ export const CaptionDisplay = ({
   lines,
   originalLines,
   display,
+  targetLanguage,
   captionStyle,
   captionSizeRatio,
   fontSize: fixedFontSize,
@@ -161,16 +166,21 @@ export const CaptionDisplay = ({
     <div ref={rootRef} className="sz:w-fit sz:relative" style={{ fontSize: fixedFontSize ?? fontSize }}>
       {lines.map((line, index) => {
         const look = CAPTION_STYLES[captionStyle] ?? CAPTION_STYLES.default;
+        // The original's language isn't known, so the browser reads its direction from the text.
         const original = originalLines[index] ? (
           <div>
-            <span className={BOX_CLASS} style={look.box}>
+            <span className={BOX_CLASS} style={look.box} dir="auto">
               {originalLine(index)}
             </span>
           </div>
         ) : null;
         const translation = (
           <div>
-            <span className={BOX_CLASS} style={original ? { ...look.box, ...look.translation } : look.box}>
+            <span
+              className={BOX_CLASS}
+              style={original ? { ...look.box, ...look.translation } : look.box}
+              {...(original ? translationAttributes(targetLanguage) : { dir: 'auto' })}
+            >
               {line}
             </span>
           </div>

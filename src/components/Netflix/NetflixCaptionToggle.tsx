@@ -1,4 +1,7 @@
 import {
+  autoActivateLabel,
+  autoActivateOptions,
+  autoActivates,
   captionDisplayOptions,
   CaptionMenuLanguageRow,
   CaptionMenuRow,
@@ -8,9 +11,11 @@ import {
 } from '@/components/Caption/CaptionToggle';
 import { useTranslateTargetLanguage } from '@/hooks/language';
 import {
+  CaptionAutoActivate,
   CaptionDisplayMode,
   CaptionStyle,
   useCaptionStyle,
+  useNetflixAutoActivate,
   useNetflixCaptionDisplay,
   useShowNetflixCaptionToggleValue,
   useYoutubeCaptionSizeRatio,
@@ -32,6 +37,7 @@ import { useTranslation } from 'react-i18next';
 
 const initialStatus: NetflixCaptionStatus = {
   available: false,
+  movieId: null,
   tracks: [],
   originalTrackId: null,
   active: false,
@@ -63,7 +69,9 @@ const NetflixCaptionToggle = () => {
   const controller = getNetflixCaptions();
   const [status, setStatus] = useState<NetflixCaptionStatus>(initialStatus);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [openPopover, setOpenPopover] = useState<'target' | 'original' | 'display' | 'style' | null>(null);
+  const [openPopover, setOpenPopover] = useState<
+    'target' | 'original' | 'display' | 'style' | 'autoActivate' | null
+  >(null);
   const [numLines, setNumLines] = useState(1);
   const dropdownTriggerRef = useRef<HTMLDivElement>(null);
   const [targetLanguage, setTargetLanguage] = useTranslateTargetLanguage();
@@ -72,6 +80,10 @@ const NetflixCaptionToggle = () => {
   const [captionSizeRatio, setCaptionSizeRatio] = useYoutubeCaptionSizeRatio();
   const showToggle = useShowNetflixCaptionToggleValue();
   const anyModelAvailable = useAnyModelAvailable();
+  const [autoActivate, setAutoActivate] = useNetflixAutoActivate();
+  // The title whose captions were turned on, by a click or by auto-activate. Auto-activate starts a
+  // title once, so Deactivate keeps it off; the next episode starts again.
+  const startedMovieRef = useRef<number | null>(null);
 
   useEffect(() => controller.subscribe(setStatus), [controller]);
 
@@ -101,6 +113,40 @@ const NetflixCaptionToggle = () => {
 
   // The LLM is needed only when Netflix has no subtitles in the target language.
   const needsModel = !anyModelAvailable && controller.needsModel(targetLanguage);
+  // The spoken language, as the original subtitles tell it.
+  const originalLanguage =
+    status.tracks.find((track) => track.trackId === status.originalTrackId)?.language ?? null;
+
+  // As on YouTube, a title starts once it plays, so a tab opened in the background waits until it's
+  // watched.
+  useEffect(() => {
+    const movieId = status.movieId;
+    const video = playerVideo();
+    if (!movieId || !video || !showToggle || !status.available || status.active || needsModel) return;
+    if (!autoActivates(autoActivate, originalLanguage, targetLanguage)) return;
+    const start = () => {
+      if (startedMovieRef.current === movieId || video.paused) return;
+      startedMovieRef.current = movieId;
+      controller.activate(settings);
+    };
+    start();
+    video.addEventListener('playing', start);
+    return () => video.removeEventListener('playing', start);
+  }, [
+    controller,
+    status.movieId,
+    status.available,
+    status.active,
+    showToggle,
+    needsModel,
+    autoActivate,
+    originalLanguage,
+    targetLanguage,
+    numLines,
+    captionDisplay,
+    captionStyle,
+    captionSizeRatio,
+  ]);
 
   const handleDropdownOpenChange = (open: boolean) => {
     if (open && needsModel) {
@@ -114,17 +160,29 @@ const NetflixCaptionToggle = () => {
     if (open && video && !video.paused) video.pause();
   };
 
-  const handleActivate = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
+  const activate = () => {
     setIsDropdownOpen(false);
     setOpenPopover(null);
     if (needsModel) {
       panelService.openPanel();
       return;
     }
+    startedMovieRef.current = status.movieId;
     controller.activate(settings);
     const video = playerVideo();
     if (video?.paused) void video.play();
+  };
+
+  const handleActivate = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    activate();
+  };
+
+  // Picking a choice this title falls under turns its captions on now, as Activate does.
+  const handleSelectAutoActivate = (value: string) => {
+    const rule = value as CaptionAutoActivate;
+    void setAutoActivate(rule);
+    if (!status.active && autoActivates(rule, originalLanguage, targetLanguage)) activate();
   };
 
   const handleDeactivate = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -264,6 +322,20 @@ const NetflixCaptionToggle = () => {
                 }}
               />
             </CaptionMenuRow>
+          ),
+        },
+        {
+          key: 'autoActivate',
+          label: (
+            <CaptionMenuLanguageRow
+              side="left"
+              label={t('youtube.autoActivate')}
+              valueLabel={autoActivateLabel(t, autoActivate)}
+              options={autoActivateOptions(t, targetLanguage)}
+              open={isDropdownOpen && openPopover === 'autoActivate'}
+              onOpenChange={(open) => setOpenPopover(open ? 'autoActivate' : null)}
+              onSelect={handleSelectAutoActivate}
+            />
           ),
         },
       ]}

@@ -1,6 +1,7 @@
 import {
   STORAGE_CAPTION_DISPLAY,
   STORAGE_CAPTION_STYLE,
+  STORAGE_NETFLIX_AUTO_ACTIVATE,
   STORAGE_NETFLIX_CAPTION_DISPLAY,
   STORAGE_PAGE_TRANSLATION_MODE,
   STORAGE_SHOW_NETFLIX_CAPTION_TOGGLE,
@@ -124,11 +125,16 @@ export const youtubeCaptionSizeRatioAtom = atomWithChromeStorage<number>(
 );
 
 // Turns captions on by itself on videos spoken in this language, or in any language but the target
-// language ('other').
-export type YoutubeAutoActivate = 'off' | 'other' | Language;
+// language ('other'). YouTube and Netflix each have their own.
+export type CaptionAutoActivate = 'off' | 'other' | Language;
 
-export const youtubeAutoActivateAtom = atomWithChromeStorage<YoutubeAutoActivate>(
+export const youtubeAutoActivateAtom = atomWithChromeStorage<CaptionAutoActivate>(
   STORAGE_YOUTUBE_AUTO_ACTIVATE,
+  'off'
+);
+
+export const netflixAutoActivateAtom = atomWithChromeStorage<CaptionAutoActivate>(
+  STORAGE_NETFLIX_AUTO_ACTIVATE,
   'off'
 );
 
@@ -168,5 +174,6 @@ export const useYoutubeChannelLanguage = () => useAtom(youtubeChannelLanguageAto
 export const useUseYoutubeKeyboardNavigate = () => useAtom(useYoutubeKeyboardNavigateAtom);
 export const useYoutubeCaptionSizeRatio = () => useAtom(youtubeCaptionSizeRatioAtom);
 export const useYoutubeAutoActivate = () => useAtom(youtubeAutoActivateAtom);
+export const useNetflixAutoActivate = () => useAtom(netflixAutoActivateAtom);
 export const useToggleHiddenSiteList = () => useAtom(toggleHiddenSiteListAtom);
 export const usePageTranslationMode = () => useAtom(pageTranslationModeAtom);

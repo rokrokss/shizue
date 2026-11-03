@@ -45,13 +45,13 @@ const DROPPED_SELECTOR = 'script, style, noscript, template';
 export const PLACEHOLDER_RE = /\{\{\s*(\d+)\s*\}\}/;
 
 // The element's text that would be translated: everything but preserved and dropped elements.
-export const translatableText = (element: Element): string => {
+export const translatableText = (element: Element, preserved = PRESERVED_SELECTOR): string => {
   let text = '';
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, {
     acceptNode: (node) =>
       node.nodeType === Node.TEXT_NODE
         ? NodeFilter.FILTER_ACCEPT
-        : (node as Element).matches(`${PRESERVED_SELECTOR}, ${DROPPED_SELECTOR}`)
+        : (node as Element).matches(`${preserved}, ${DROPPED_SELECTOR}`)
           ? NodeFilter.FILTER_REJECT
           : NodeFilter.FILTER_SKIP,
   });
@@ -61,11 +61,14 @@ export const translatableText = (element: Element): string => {
 
 // The element's HTML to translate, with each preserved element replaced by {{n}}, and those
 // elements (detached copies) in placeholder order.
-export const translationSource = (element: Element): { html: string; atoms: Element[] } => {
+export const translationSource = (
+  element: Element,
+  preserved = PRESERVED_SELECTOR
+): { html: string; atoms: Element[] } => {
   const clone = element.cloneNode(true) as Element;
   clone.querySelectorAll(DROPPED_SELECTOR).forEach((node) => node.remove());
   const atoms: Element[] = [];
-  for (const node of Array.from(clone.querySelectorAll(PRESERVED_SELECTOR))) {
+  for (const node of Array.from(clone.querySelectorAll(preserved))) {
     // Inside one already replaced.
     if (!clone.contains(node)) continue;
     node.replaceWith(`{{${atoms.length}}}`);

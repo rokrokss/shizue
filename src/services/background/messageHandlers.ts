@@ -207,6 +207,9 @@ async function handleSccSetHidden(
   sendResponse({ status: 'success' });
 }
 
+const PAGE_TRANSLATED_BADGE = '✓';
+const PAGE_TRANSLATED_BADGE_COLOR = '#1FA595';
+
 // Page translation in a tab's frames (translate-frame.content.ts): while it is on, the frame
 // translator goes into every frame Shizue may read (it skips the top frame and frames that already
 // have it), then each frame hears whether translation is on.
@@ -217,6 +220,12 @@ async function handleTranslateFrames(
 ) {
   const tabId = sender.tab?.id;
   if (tabId === undefined) return sendResponse({ status: 'error' });
+  // The toolbar button marks a translated tab. The browser clears a tab's badge when the tab
+  // loads another page, where translation is off again. Firefox for Android may have no badges.
+  void Promise.all([
+    chrome.action.setBadgeBackgroundColor?.({ tabId, color: PAGE_TRANSLATED_BADGE_COLOR }),
+    chrome.action.setBadgeText?.({ tabId, text: msg.active ? PAGE_TRANSLATED_BADGE : '' }),
+  ]).catch(() => {});
   if (msg.active) {
     await chrome.scripting
       .executeScript({ target: { tabId, allFrames: true }, files: ['content-scripts/translate-frame.js'] })

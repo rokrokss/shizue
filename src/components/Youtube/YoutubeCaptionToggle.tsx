@@ -1,4 +1,7 @@
 import {
+  autoActivateLabel,
+  autoActivateOptions,
+  autoActivates,
   captionDisplayOptions,
   CaptionMenuLanguageRow,
   CaptionMenuRow,
@@ -8,6 +11,7 @@ import {
 } from '@/components/Caption/CaptionToggle';
 import { Language, useTranslateTargetLanguage } from '@/hooks/language';
 import {
+  CaptionAutoActivate,
   CaptionDisplayMode,
   CaptionStyle,
   useCaptionDisplay,
@@ -18,11 +22,10 @@ import {
   useYoutubeAutoActivate,
   useYoutubeCaptionSizeRatio,
   useYoutubeChannelLanguage,
-  YoutubeAutoActivate,
 } from '@/hooks/layout';
 import { useAnyModelAvailable } from '@/hooks/models';
 import { getCaptionInjector, SubtitleKind } from '@/lib/captionInjector';
-import { languageCodeToLanguage, languageOptions } from '@/lib/language';
+import { languageOptions } from '@/lib/language';
 import { isChromeTranslatorSupported } from '@/lib/liveCaption/chromeTranslator';
 import type { CaptionStatus } from '@/lib/liveCaption/liveCaptionController';
 import { SPEECH_LANGUAGES, speechLanguageLabel } from '@/lib/liveCaption/speechLanguage';
@@ -66,15 +69,6 @@ const LIST_BESIDE_MIN_WIDTH = 640;
 const sourceLabelKey: Record<YoutubeCaptionSource | 'stt', string> = {
   track: 'youtube.sourceTrack',
   stt: 'twitch.sourceSpeech',
-};
-
-// Whether auto-activate turns captions on for a video spoken in this language (YouTube's code). A
-// language the app doesn't list still counts as one other than the target language.
-const autoActivates = (rule: YoutubeAutoActivate, languageCode: string | null, target: Language) => {
-  if (rule === 'off' || !languageCode) return false;
-  const language = languageCodeToLanguage(languageCode);
-  if (language === target) return false;
-  return rule === 'other' || rule === language;
 };
 
 const YoutubeCaptionToggle = () => {
@@ -464,7 +458,7 @@ const YoutubeCaptionToggle = () => {
 
   // Picking a choice this video falls under turns its captions on now, as Activate does.
   const handleSelectAutoActivate = (value: string) => {
-    const rule = value as YoutubeAutoActivate;
+    const rule = value as CaptionAutoActivate;
     void setAutoActivate(rule);
     if (!isActivated && autoActivates(rule, originalLanguageCode, targetLanguage)) activateCaptions();
   };
@@ -583,22 +577,6 @@ const YoutubeCaptionToggle = () => {
     const current = !realtime ? 'track' : liveStatus?.active ? liveStatus.activeSource : null;
     return current ? `${t('twitch.sourceAuto')} · ${t(sourceLabelKey[current])}` : t('twitch.sourceAuto');
   })();
-
-  const autoActivateOptions = [
-    { value: 'off', label: t('youtube.autoActivateOff'), desc: t('youtube.autoActivateOff') },
-    {
-      value: 'other',
-      label: t('youtube.autoActivateOtherLanguages'),
-      desc: t('youtube.autoActivateOtherLanguages'),
-    },
-    ...languageOptions(t).filter((option) => option.value !== targetLanguage),
-  ];
-  const autoActivateLabel =
-    autoActivate === 'off'
-      ? t('youtube.autoActivateOff')
-      : autoActivate === 'other'
-        ? t('youtube.autoActivateOtherLanguages')
-        : t(`language.${autoActivate.split('_')[0]}`);
 
   // Only on-device recognition is used here: a language the device can't recognize can't start.
   const needsSpeech = realtime && (sourceMode === 'stt' || (sourceMode === 'auto' && !liveTrack));
@@ -821,8 +799,8 @@ const YoutubeCaptionToggle = () => {
                   <CaptionMenuLanguageRow
                     side={listSide}
                     label={t('youtube.autoActivate')}
-                    valueLabel={autoActivateLabel}
-                    options={autoActivateOptions}
+                    valueLabel={autoActivateLabel(t, autoActivate)}
+                    options={autoActivateOptions(t, targetLanguage)}
                     open={isDropdownOpen && openPopover === 'autoActivate'}
                     onOpenChange={(open) => setOpenPopover(open ? 'autoActivate' : null)}
                     onSelect={handleSelectAutoActivate}

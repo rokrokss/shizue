@@ -16,6 +16,7 @@ Netflix has full subtitle files for every title, so this works like YouTube: the
 - The original shows as soon as it is loaded; the target track's link can take seconds more (the player switches to it), and its lines fill in when it arrives.
 - Otherwise `cueTranslator.ts` translates 10 cues at a time through `MESSAGE_TRANSLATE_SUBTITLES`, starting at the playback position, following seeks, and at most 10 minutes ahead. Each request carries the 5 lines before it (with their translations) and the 3 after it as context. The handler shares Twitch's line translation (`translateLines`: JSON contract, halves retry).
 - Target language and caption size are shared with YouTube and Twitch. The bilingual switch is Netflix's own (`STORAGE_NETFLIX_BILINGUAL_CAPTION`) and on by default: with official subtitles and bilingual off, the overlay would look just like Netflix's own subtitles.
+- Auto-activate is Netflix's own too (`STORAGE_NETFLIX_AUTO_ACTIVATE`), with YouTube's choices, judged by the original track's language. A title starts once it plays; Deactivate keeps that title off, and the next episode starts again.
 - Cues are timed by `<video>.currentTime`. Never write it: seeking through the element makes Netflix stop with error M7375. That is why there is no A/D line navigation here.
 
 ## Page

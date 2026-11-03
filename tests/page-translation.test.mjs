@@ -103,6 +103,15 @@ async function run() {
   translator.deactivate();
   check(!document.querySelector('[' + ONLY + ']'), 'Turning translation off kept an original hidden');
   check(!document.querySelector('shizue-translation-overlay'), 'Turning translation off left a translation');
+
+  // An Arabic translation reads from the right on this left-to-right page.
+  fixture.setMode('bilingual');
+  translator.activate('Arabic_العربية');
+  await wait(800);
+  const arabic = document.querySelector('#code > shizue-translation-overlay');
+  check(arabic?.dir === 'rtl' && arabic.lang === 'ar', 'Arabic translation not right-to-left: ' + arabic?.outerHTML);
+  check(getComputedStyle(arabic).direction === 'rtl', 'Arabic translation laid out left-to-right');
+  translator.deactivate();
   document.body.dataset.result = 'passed';
 }
 run().catch((error) => {
@@ -111,21 +120,93 @@ run().catch((error) => {
 });
 `;
 
-test('Page translation keeps code and formulas, and shows the translation alone when asked',
-  { skip: !chrome && 'Chrome unavailable; set CHROME_BIN', timeout: 60000 }, async () => {
-    const directory = await mkdtemp(join(tmpdir(), 'shizue-page-translation-'));
-    try {
-      const result = await build({ stdin: { contents: browserTest, resolveDir: fileURLToPath(new URL('..', import.meta.url)), loader: 'ts' },
-        bundle: true, platform: 'browser', format: 'iife', write: false, logLevel: 'silent',
-        banner: { js: prelude }, define: { 'process.env.NODE_ENV': '"development"' } });
-      await writeFile(join(directory, 'test.js'), result.outputFiles[0].text);
-      const html = join(directory, 'test.html');
-      await writeFile(html, '<!doctype html><html><body><div id="page"></div><pre id="result">RUNNING</pre><script src="test.js"></script></body></html>');
-      const { stdout } = await promisify(execFile)(chrome, ['--headless=new', '--disable-gpu', '--no-first-run',
-        '--no-default-browser-check', '--disable-background-networking', '--user-data-dir=' + join(directory, 'profile'),
-        '--dump-dom', '--virtual-time-budget=10000', pathToFileURL(html).href], { timeout: 45000, maxBuffer: 1024 * 1024 });
-      assert.match(stdout, /data-result="passed"/, stdout);
-    } finally {
-      await rm(directory, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
-    }
-  });
+// The real rules of two sites, on markup shaped like theirs (measured 2026-11).
+const rulesTest = `
+import { PageTranslator } from './src/lib/pageTranslator';
+import { siteRule } from './src/lib/siteRules';
+
+const check = (ok, message) => { if (!ok) throw new Error(message); };
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Translates the page as it would be on this host. Returns the texts sent.
+async function translate(host, html) {
+  document.getElementById('page').innerHTML = html;
+  fixture.batches = [];
+  const translator = new PageTranslator(siteRule(host));
+  translator.activate('Korean');
+  await wait(800);
+  translator.deactivate();
+  return fixture.batches.flat();
+}
+
+async function run() {
+  // Hacker News: the menu, a story's line and "reply" stay; a comment's bare first line goes
+  // with its paragraphs.
+  let sent = await translate('news.ycombinator.com', \`
+    <table><tr><td><span class="pagetop"><b class="hnname"><a href="news">Hacker News</a></b><a href="newest">new</a> | <a href="ask">ask</a></span></td></tr></table>
+    <table><tr><td class="subtext"><span class="subline"><span class="score">2843 points</span> by <a class="hnuser">dbreunig</a> <span class="age"><a>19 hours ago</a></span> | <a>hide</a></span></td></tr></table>
+    <div class="comment"><div class="commtext c00">Please read the paper first.<p>Part of my research is in weight space learning.</p><p>Some experiments here use very small models.</p></div><div class="reply"><p><font size="1"><u><a href="reply">reply</a></u></font></p></div></div>
+  \`);
+  check(sent.length === 1 && sent[0].startsWith('Please read the paper first.<p>Part of my research'),
+    'Hacker News comment not sent whole, or its menus sent: ' + JSON.stringify(sent));
+
+  // The comment's translation keeps its paragraphs.
+  document.getElementById('page').innerHTML = '<div class="commtext">First line.<p>Second paragraph here.</p></div>';
+  const translator = new PageTranslator(siteRule('news.ycombinator.com'));
+  translator.activate('Korean');
+  await wait(800);
+  const comment = document.querySelector('.commtext > shizue-translation-overlay');
+  check(comment?.querySelectorAll('p').length === 1, 'Comment translation lost its paragraph: ' + comment?.innerHTML);
+  translator.deactivate();
+
+  // GitHub: only the title and the body, while the page has them.
+  sent = await translate('github.com', \`
+    <header><nav><a href="/pulls">Pull requests</a> <a href="/issues">Issues</a></nav></header>
+    <h1><bdi class="markdown-title">Hooks and multiple instances of React</bdi></h1>
+    <div><h3>Assignees</h3><div>No one assigned</div></div>
+    <div class="markdown-body"><p>I had multiple instances of React by mistake.</p></div>
+  \`);
+  check(JSON.stringify(sent.sort()) === JSON.stringify(['Hooks and multiple instances of React', 'I had multiple instances of React by mistake.']),
+    'GitHub sent more than its content: ' + JSON.stringify(sent));
+  sent = await translate('github.com', '<h2>Build and ship software on a single platform</h2>');
+  check(sent.includes('Build and ship software on a single platform'), 'A GitHub page without content was not translated');
+
+  // Stack Overflow: posts and comments, which are spans; not tags.
+  sent = await translate('stackoverflow.com', \`
+    <div class="s-prose"><p>Use git reset to undo the commit.</p></div>
+    <div class="post-taglist"><a class="post-tag">version-control</a></div>
+    <div class="comment-body"><span class="comment-copy">See this guide for undoing commits.</span> – <a class="comment-user">Luzan Baral</a></div>
+  \`);
+  check(JSON.stringify(sent.sort()) === JSON.stringify(['See this guide for undoing commits.', 'Use git reset to undo the commit.']),
+    'Stack Overflow sent more or less than its posts and comments: ' + JSON.stringify(sent));
+}
+run().then(() => { document.body.dataset.result = 'passed'; }, (error) => {
+  document.body.dataset.result = 'failed';
+  document.getElementById('result').textContent = error.stack;
+});
+`;
+
+// Bundles a test script with the stubbed extension APIs and runs it on a page in headless Chrome.
+async function runInChrome(script) {
+  const directory = await mkdtemp(join(tmpdir(), 'shizue-page-translation-'));
+  try {
+    const result = await build({ stdin: { contents: script, resolveDir: fileURLToPath(new URL('..', import.meta.url)), loader: 'ts' },
+      bundle: true, platform: 'browser', format: 'iife', write: false, logLevel: 'silent',
+      banner: { js: prelude }, define: { 'process.env.NODE_ENV': '"development"' } });
+    await writeFile(join(directory, 'test.js'), result.outputFiles[0].text);
+    const html = join(directory, 'test.html');
+    await writeFile(html, '<!doctype html><html><body><div id="page"></div><pre id="result">RUNNING</pre><script src="test.js"></script></body></html>');
+    const { stdout } = await promisify(execFile)(chrome, ['--headless=new', '--disable-gpu', '--no-first-run',
+      '--no-default-browser-check', '--disable-background-networking', '--user-data-dir=' + join(directory, 'profile'),
+      '--dump-dom', '--virtual-time-budget=10000', pathToFileURL(html).href], { timeout: 45000, maxBuffer: 1024 * 1024 });
+    assert.match(stdout, /data-result="passed"/, stdout);
+  } finally {
+    await rm(directory, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+  }
+}
+
+test('Page translation keeps code and formulas, shows the translation alone when asked, and sets its direction',
+  { skip: !chrome && 'Chrome unavailable; set CHROME_BIN', timeout: 60000 }, () => runInChrome(browserTest));
+
+test('Site rules leave out menus and dates, keep to the content, and translate a comment whole',
+  { skip: !chrome && 'Chrome unavailable; set CHROME_BIN', timeout: 60000 }, () => runInChrome(rulesTest));

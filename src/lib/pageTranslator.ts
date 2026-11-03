@@ -2,6 +2,7 @@ import { ShizueTranslationOverlay } from '@/components/Translation/ShizueTransla
 import { MESSAGE_TRANSLATE_FRAMES } from '@/config/constants';
 import { Language } from '@/hooks/language';
 import { PRESERVED_SELECTOR, TEXT_ELEMENTS, translatableText, translationSource } from '@/lib/html';
+import { SiteRule, siteRule } from '@/lib/siteRules';
 import { debugLog, errorLog } from '@/logs';
 import { translationService } from '@/services/translationService';
 
@@ -35,6 +36,15 @@ export class PageTranslator {
   private atoms: WeakMap<Element, Element[]> = new WeakMap();
 
   private targetLanguage: Language | null = null;
+
+  // This site's own rule (lib/siteRules.ts). What it leaves out is preserved like code.
+  private readonly rule: SiteRule | null;
+  private readonly preserved: string;
+
+  constructor(rule: SiteRule | null = siteRule(location.hostname)) {
+    this.rule = rule;
+    this.preserved = rule?.exclude ? `${PRESERVED_SELECTOR}, ${rule.exclude}` : PRESERVED_SELECTOR;
+  }
 
   // Activate translation
   public activate(targetLanguage: Language) {
@@ -511,7 +521,7 @@ export class PageTranslator {
 
       for (let i = 0; i < elements.length; i++) {
         const element = elements[i];
-        const { html: text, atoms } = translationSource(element);
+        const { html: text, atoms } = translationSource(element, this.preserved);
         this.atoms.set(element, atoms);
         this.sourceTexts.set(element, this.ownText(element));
         if (this.cachedTranslations.get(this.targetLanguage as string)?.has(text)) {
@@ -555,12 +565,19 @@ export class PageTranslator {
   // Find translatable elements
   private findTranslatableElements(): Element[] {
     const elements: Element[] = [];
+    // On a page with the site's content, nothing else is translated.
+    const content =
+      this.rule?.content && document.querySelector(this.rule.content) ? this.rule.content : null;
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT, {
       acceptNode: (node) => {
         const element = node as Element;
 
-        if (element.matches(PRESERVED_SELECTOR)) {
+        if (element.matches(this.preserved)) {
           return NodeFilter.FILTER_REJECT;
+        }
+
+        if (content && !element.closest(content)) {
+          return element.querySelector(content) ? NodeFilter.FILTER_SKIP : NodeFilter.FILTER_REJECT;
         }
 
         if (this.isElementHidden(element)) {
@@ -631,11 +648,17 @@ export class PageTranslator {
     }
 
     // Code and formulas aren't translated, and don't count as text to translate.
-    if (element.closest(PRESERVED_SELECTOR)) {
+    if (element.closest(this.preserved)) {
       return false;
     }
 
-    const text = translatableText(element).trim();
+    // A unit is translated whole, and nothing inside it on its own.
+    const units = this.rule?.units;
+    if (units && element.parentElement?.closest(units)) {
+      return false;
+    }
+
+    const text = translatableText(element, this.preserved).trim();
 
     if (!text || text.length === 0 || text.length > 5000) {
       return false;
@@ -657,10 +680,12 @@ export class PageTranslator {
       return false;
     }
 
-    // Check for TEXT_ELEMENTS that are inline
+    // Check for TEXT_ELEMENTS that are inline, unless the site's rule names it as content
+    // (Stack Overflow's comments are spans)
     if (
       TEXT_ELEMENTS.includes(element.tagName) &&
-      window.getComputedStyle(element).display === 'inline'
+      window.getComputedStyle(element).display === 'inline' &&
+      !(this.rule?.content && element.matches(this.rule.content))
     ) {
       return false;
     }
@@ -672,6 +697,7 @@ export class PageTranslator {
     }
 
     if (
+      !(units && element.matches(units)) &&
       Array.from(element.getElementsByTagName('*')).some(
         (child) => child !== element && this.isTranslatableElement(child)
       )
@@ -683,7 +709,7 @@ export class PageTranslator {
   }
 
   private attachTranslationOverlay(element: Element): ShizueTranslationOverlay {
-    return ShizueTranslationOverlay.attach(element);
+    return ShizueTranslationOverlay.attach(element, this.targetLanguage);
   }
 
   // Reuse an existing overlay, or attach one when the element is processed.

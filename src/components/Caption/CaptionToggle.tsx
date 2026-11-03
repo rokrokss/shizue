@@ -1,5 +1,7 @@
 import LanguageOptionItem from '@/components/Youtube/LanguageOptionItem';
-import type { CaptionDisplayMode, CaptionStyle } from '@/hooks/layout';
+import type { Language } from '@/hooks/language';
+import type { CaptionAutoActivate, CaptionDisplayMode, CaptionStyle } from '@/hooks/layout';
+import { languageCodeToLanguage, languageOptions } from '@/lib/language';
 import { LoadingOutlined, ReadFilled } from '@ant-design/icons';
 import {
   Button,
@@ -71,6 +73,28 @@ export const captionStyleOptions = (t: TFunction) =>
   (['default', 'translucent', 'outline', 'yellow'] satisfies CaptionStyle[]).map((value) =>
     option(value, t(`caption.style.${value}`))
   );
+
+// Whether auto-activate turns captions on for a video spoken in this language (YouTube's or
+// Netflix's code). A language the app doesn't list still counts as one other than the target.
+export const autoActivates = (rule: CaptionAutoActivate, languageCode: string | null, target: Language) => {
+  if (rule === 'off' || !languageCode) return false;
+  const language = languageCodeToLanguage(languageCode);
+  if (language === target) return false;
+  return rule === 'other' || rule === language;
+};
+
+export const autoActivateOptions = (t: TFunction, target: Language) => [
+  option('off', t('youtube.autoActivateOff')),
+  option('other', t('youtube.autoActivateOtherLanguages')),
+  ...languageOptions(t).filter((language) => language.value !== target),
+];
+
+export const autoActivateLabel = (t: TFunction, rule: CaptionAutoActivate) =>
+  rule === 'off'
+    ? t('youtube.autoActivateOff')
+    : rule === 'other'
+      ? t('youtube.autoActivateOtherLanguages')
+      : t(`language.${rule.split('_')[0]}`);
 
 export const CaptionMenuLanguageRow = ({
   label,

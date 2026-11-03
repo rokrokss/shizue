@@ -29,6 +29,7 @@ export type CaptionSettings = {
 export type NetflixCaptionStatus = {
   // A title is playing and has text subtitles.
   available: boolean;
+  movieId: number | null;
   tracks: NetflixTrack[];
   // The track shown as the original: the viewer's pick, else the one in the spoken language.
   originalTrackId: string | null;
@@ -127,6 +128,7 @@ class NetflixCaptions {
   status(): NetflixCaptionStatus {
     return {
       available: isWatchPage() && this.tracks.length > 0,
+      movieId: this.movieId,
       tracks: this.tracks,
       originalTrackId: this.originalTrack()?.trackId ?? null,
       active: this.active,
@@ -520,6 +522,7 @@ class NetflixCaptions {
           lines={lines}
           originalLines={originalLines}
           display={settings.display}
+          targetLanguage={settings.targetLanguage}
           captionStyle={settings.captionStyle}
           captionSizeRatio={settings.captionSizeRatio}
           lookup={{
