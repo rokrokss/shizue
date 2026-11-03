@@ -10,7 +10,13 @@
 - Save YouTube subtitles as an SRT file: "Save subtitles" in the caption menu downloads the original, the translation, or both. The translation can be saved once it's done, with its progress shown until then
 - X videos: hover a video that has captions and click the button at its top right to read them translated
 - On a YouTube watch page, speech recognition listens in the language of the audio track playing, following a switch to a dubbed track, or else in the language of the video's auto-generated captions
+- Page translation keeps to the content: menus, tabs, buttons, dates, breadcrumbs, tables of contents and text hidden for screen readers stay as they are on every site. On Wikipedia, GitHub, Stack Overflow, Reddit, Hacker News, X, YouTube, LinkedIn, dev.to, Medium and Substack (on publications' own domains too), user cards, counts and sidebars are left out as well, so the article, post and comments are what gets translated. A Hacker News comment is translated whole, its first line included
+- Netflix captions can start on their own: Auto-activate in the caption menu has YouTube's choices, judged by the language of the title's original subtitles. A title you turn off stays off, and the next episode starts again
+- The toolbar button shows a ✓ on a tab whose page is being translated
+- Translations into Arabic, Persian and Urdu read right to left, on pages and in captions, and each translation is marked with its language, so Japanese and Chinese show in their own glyphs on a page in another language
+- When a provider turns translation requests away for coming too fast, Shizue waits as long as it asks (or a few seconds) and tries again, up to 3 times, instead of failing. A daily quota or used-up credits still show an error
 - Fix the caption toggle showing on vertical YouTube embeds
+- Fix page translation skipping the body of some pages, such as MDN's and Substack's
 - Fix YouTube captions going blank on a line the model left untranslated (it shows the original now), and a line showing twice in bilingual captions when it has no translation yet
 
 ## v0.3.23
