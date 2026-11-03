@@ -2,7 +2,7 @@ import { ShizueTranslationOverlay } from '@/components/Translation/ShizueTransla
 import { MESSAGE_TRANSLATE_FRAMES } from '@/config/constants';
 import { Language } from '@/hooks/language';
 import { PRESERVED_SELECTOR, TEXT_ELEMENTS, translatableText, translationSource } from '@/lib/html';
-import { SiteRule, siteRule } from '@/lib/siteRules';
+import { SiteRule, siteRule, UI_SELECTOR } from '@/lib/siteRules';
 import { debugLog, errorLog } from '@/logs';
 import { translationService } from '@/services/translationService';
 
@@ -37,13 +37,13 @@ export class PageTranslator {
 
   private targetLanguage: Language | null = null;
 
-  // This site's own rule (lib/siteRules.ts). What it leaves out is preserved like code.
+  // This site's own rule (lib/siteRules.ts). What it and every site leave out is preserved like code.
   private readonly rule: SiteRule | null;
   private readonly preserved: string;
 
   constructor(rule: SiteRule | null = siteRule(location.hostname)) {
     this.rule = rule;
-    this.preserved = rule?.exclude ? `${PRESERVED_SELECTOR}, ${rule.exclude}` : PRESERVED_SELECTOR;
+    this.preserved = [PRESERVED_SELECTOR, UI_SELECTOR, rule?.exclude].filter(Boolean).join(', ');
   }
 
   // Activate translation
@@ -611,9 +611,13 @@ export class PageTranslator {
       style.display === 'none' ||
       style.visibility === 'hidden' ||
       rect.width === 0 ||
-      rect.height === 0;
+      rect.height === 0 ||
+      // Text only screen readers see: `.sr-only` and the like make it 1px square.
+      (rect.width <= 1 && rect.height <= 1);
     const isAstroIsland = element.tagName == 'ASTRO-ISLAND';
-    return hidden && !isAstroIsland;
+    // `display: contents` leaves an element no box of its own, but its children have theirs
+    // (MDN's <main>).
+    return hidden && !isAstroIsland && style.display !== 'contents';
   }
 
   // Check if element is visible

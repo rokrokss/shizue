@@ -120,7 +120,7 @@ run().catch((error) => {
 });
 `;
 
-// The real rules of two sites, on markup shaped like theirs (measured 2026-11).
+// The rules for every site, and the real rules of some, on markup shaped like theirs (measured 2026-11).
 const rulesTest = `
 import { PageTranslator } from './src/lib/pageTranslator';
 import { siteRule } from './src/lib/siteRules';
@@ -140,9 +140,24 @@ async function translate(host, html) {
 }
 
 async function run() {
+  // Any site: menus, tabs, buttons, dates, breadcrumbs and text for screen readers stay; an
+  // accordion's question (a button in a heading) and text in a box-less wrapper are translated.
+  let sent = await translate('example.com', \`
+    <nav><a href="/">Home</a> <a href="/about">About us</a></nav>
+    <ol class="breadcrumbs"><li><a href="/docs">Documentation</a></li><li><a href="/docs/api">Reference</a></li></ol>
+    <div style="display: contents"><p>Inside a wrapper without a box.</p></div>
+    <div role="tablist"><div role="tab">Overview</div><div role="tab">Pricing</div></div>
+    <p>Published <time datetime="2026-11-01">3 days ago</time> by the team.</p>
+    <h3><button>What is page translation?</button></h3>
+    <div><button>Subscribe now</button></div>
+    <h2 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0)">Repository navigation</h2>
+  \`);
+  check(JSON.stringify(sent.sort()) === JSON.stringify(['Inside a wrapper without a box.', 'Published {{0}} by the team.', 'What is page translation?']),
+    'Menus, tabs, buttons, dates, breadcrumbs or hidden text sent, or content missed: ' + JSON.stringify(sent));
+
   // Hacker News: the menu, a story's line and "reply" stay; a comment's bare first line goes
   // with its paragraphs.
-  let sent = await translate('news.ycombinator.com', \`
+  sent = await translate('news.ycombinator.com', \`
     <table><tr><td><span class="pagetop"><b class="hnname"><a href="news">Hacker News</a></b><a href="newest">new</a> | <a href="ask">ask</a></span></td></tr></table>
     <table><tr><td class="subtext"><span class="subline"><span class="score">2843 points</span> by <a class="hnuser">dbreunig</a> <span class="age"><a>19 hours ago</a></span> | <a>hide</a></span></td></tr></table>
     <div class="comment"><div class="commtext c00">Please read the paper first.<p>Part of my research is in weight space learning.</p><p>Some experiments here use very small models.</p></div><div class="reply"><p><font size="1"><u><a href="reply">reply</a></u></font></p></div></div>
@@ -170,6 +185,16 @@ async function run() {
     'GitHub sent more than its content: ' + JSON.stringify(sent));
   sent = await translate('github.com', '<h2>Build and ship software on a single platform</h2>');
   check(sent.includes('Build and ship software on a single platform'), 'A GitHub page without content was not translated');
+
+  // Medium on its own domain, known by its markup: only what it marks as the post's paragraphs.
+  sent = await translate('blog.example.com', \`
+    <meta property="al:android:package" content="com.medium.reader">
+    <h1 data-selectable-paragraph>On data structures: lists</h1>
+    <div><div>Radu Zaharia</div><p>10 min read</p></div>
+    <p data-selectable-paragraph>Last time we started talking about arrays.</p>
+  \`);
+  check(JSON.stringify(sent.sort()) === JSON.stringify(['Last time we started talking about arrays.', 'On data structures: lists']),
+    'Medium sent more than its post: ' + JSON.stringify(sent));
 
   // Stack Overflow: posts and comments, which are spans; not tags.
   sent = await translate('stackoverflow.com', \`
@@ -208,5 +233,5 @@ async function runInChrome(script) {
 test('Page translation keeps code and formulas, shows the translation alone when asked, and sets its direction',
   { skip: !chrome && 'Chrome unavailable; set CHROME_BIN', timeout: 60000 }, () => runInChrome(browserTest));
 
-test('Site rules leave out menus and dates, keep to the content, and translate a comment whole',
+test('Menus, buttons and dates stay on every site; site rules keep to the content and translate a comment whole',
   { skip: !chrome && 'Chrome unavailable; set CHROME_BIN', timeout: 60000 }, () => runInChrome(rulesTest));
