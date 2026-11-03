@@ -205,7 +205,7 @@ export class CaptionInjector {
 
     let isCurrentCaptionTranslated = true;
 
-    if (currentIndex && this.isTranslating) {
+    if (currentIndex !== null && this.isTranslating) {
       const chunkStartIndex = Math.floor(currentIndex / CAPTION_CHUNK_SIZE) * CAPTION_CHUNK_SIZE;
       if (!this.translatedChunks.has(chunkStartIndex)) {
         isCurrentCaptionTranslated = false;
@@ -224,6 +224,10 @@ export class CaptionInjector {
               .get(this.baseLanguage)!
               .slice(startIndex, currentIndex + 1)
               .map((c) => c.text);
+      // A line the model left empty shows its original, as on Netflix, and a line that is its
+      // original (its chunk failed) shows it once.
+      newLines = newLines.map((line, i) => (line.trim() ? line : (originalLines[i] ?? line)));
+      originalLines = originalLines.map((original, i) => (original === newLines[i] ? '' : original));
     }
 
     if (JSON.stringify(newLines) !== JSON.stringify(this.currentCaptionLines)) {
@@ -517,12 +521,14 @@ export class CaptionInjector {
     const base = this.captionCache.get(this.baseLanguage);
     const captions = lines.map((caption, index) => {
       const original = (native ? this.nativeOriginalLines[index] : base?.[index]?.text) || caption.text;
+      // A line the model left empty keeps its original, as on screen.
+      const translation = caption.text.trim() ? caption.text : original;
       const text =
         kind === 'original'
           ? original
-          : kind === 'translation' || original === caption.text
-            ? caption.text
-            : `${original}\n${caption.text}`;
+          : kind === 'translation' || original === translation
+            ? translation
+            : `${original}\n${translation}`;
       return { ...caption, text };
     });
     const name = (language: Language) => language.split('_')[0];
