@@ -293,6 +293,7 @@ Translate an array of HTML text snippets into **${targetLanguage}**.
    - The value of "translations" must be a JSON array of strings. Each string in this array should be the translated HTML content corresponding to the HTML snippet at the same index in the input array.
    - Do NOT include any explanatory text, markdown formatting (like \`\`\`json), or anything else outside of the JSON object itself.
 4.  **Maintain Order:** The order of translated snippets in the output "translations" array MUST exactly match the order of the input snippets.
+5.  **Placeholders:** Tokens like {{0}} and {{1}} stand for code, formulas or icons that must not change. Copy every token exactly as written, once each, to where it belongs in the translated sentence.
 
 ===Input HTML Snippets (JSON array)===
 ${serializedTextBatch}

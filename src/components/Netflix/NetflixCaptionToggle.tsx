@@ -1,12 +1,17 @@
 import {
+  captionDisplayOptions,
   CaptionMenuLanguageRow,
   CaptionMenuRow,
   CaptionMenuTitle,
+  captionStyleOptions,
   CaptionToggle,
 } from '@/components/Caption/CaptionToggle';
 import { useTranslateTargetLanguage } from '@/hooks/language';
 import {
-  useNetflixBilingualCaption,
+  CaptionDisplayMode,
+  CaptionStyle,
+  useCaptionStyle,
+  useNetflixCaptionDisplay,
   useShowNetflixCaptionToggleValue,
   useYoutubeCaptionSizeRatio,
 } from '@/hooks/layout';
@@ -21,7 +26,7 @@ import {
 } from '@/lib/netflix/netflixCaptionController';
 import { keepNetflixControlsShown } from '@/lib/netflix/playerControls';
 import { panelService } from '@/services/panelService';
-import { InputNumber, Switch } from 'antd';
+import { InputNumber } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -58,21 +63,28 @@ const NetflixCaptionToggle = () => {
   const controller = getNetflixCaptions();
   const [status, setStatus] = useState<NetflixCaptionStatus>(initialStatus);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [openPopover, setOpenPopover] = useState<'target' | 'original' | null>(null);
+  const [openPopover, setOpenPopover] = useState<'target' | 'original' | 'display' | 'style' | null>(null);
   const [numLines, setNumLines] = useState(1);
   const dropdownTriggerRef = useRef<HTMLDivElement>(null);
   const [targetLanguage, setTargetLanguage] = useTranslateTargetLanguage();
-  const [bilingual, setBilingual] = useNetflixBilingualCaption();
+  const [captionDisplay, setCaptionDisplay] = useNetflixCaptionDisplay();
+  const [captionStyle, setCaptionStyle] = useCaptionStyle();
   const [captionSizeRatio, setCaptionSizeRatio] = useYoutubeCaptionSizeRatio();
   const showToggle = useShowNetflixCaptionToggleValue();
   const anyModelAvailable = useAnyModelAvailable();
 
   useEffect(() => controller.subscribe(setStatus), [controller]);
 
-  const settings: CaptionSettings = { targetLanguage, numLines, bilingual, captionSizeRatio };
+  const settings: CaptionSettings = {
+    targetLanguage,
+    numLines,
+    display: captionDisplay,
+    captionStyle,
+    captionSizeRatio,
+  };
   useEffect(() => {
     controller.updateSettings(settings);
-  }, [controller, targetLanguage, numLines, bilingual, captionSizeRatio]);
+  }, [controller, targetLanguage, numLines, captionDisplay, captionStyle, captionSizeRatio]);
 
   useEffect(() => {
     if (!showToggle) {
@@ -190,11 +202,31 @@ const NetflixCaptionToggle = () => {
           ),
         },
         {
-          key: 'seeOriginal',
+          key: 'display',
           label: (
-            <CaptionMenuRow label={t('youtube.bilingual')}>
-              <Switch size="small" checked={bilingual} onChange={setBilingual} />
-            </CaptionMenuRow>
+            <CaptionMenuLanguageRow
+              side="left"
+              label={t('caption.displayLabel')}
+              valueLabel={t(`caption.display.${captionDisplay}`)}
+              options={captionDisplayOptions(t)}
+              open={isDropdownOpen && openPopover === 'display'}
+              onOpenChange={(open) => setOpenPopover(open ? 'display' : null)}
+              onSelect={(value) => void setCaptionDisplay(value as CaptionDisplayMode)}
+            />
+          ),
+        },
+        {
+          key: 'captionStyle',
+          label: (
+            <CaptionMenuLanguageRow
+              side="left"
+              label={t('caption.styleLabel')}
+              valueLabel={t(`caption.style.${captionStyle}`)}
+              options={captionStyleOptions(t)}
+              open={isDropdownOpen && openPopover === 'style'}
+              onOpenChange={(open) => setOpenPopover(open ? 'style' : null)}
+              onSelect={(value) => void setCaptionStyle(value as CaptionStyle)}
+            />
           ),
         },
         {

@@ -1,14 +1,19 @@
 import {
+  captionDisplayOptions,
   CaptionMenuLanguageRow,
   CaptionMenuRow,
   CaptionMenuTitle,
+  captionStyleOptions,
   CaptionToggle,
 } from '@/components/Caption/CaptionToggle';
 import { useTranslateTargetLanguage } from '@/hooks/language';
 import {
+  CaptionDisplayMode,
+  CaptionStyle,
   TwitchCaptionSourceMode,
+  useCaptionDisplay,
+  useCaptionStyle,
   useShowTwitchCaptionToggleValue,
-  useShowYoutubeBilingualCaption,
   useSpeechRecognitionConsent,
   useTwitchCaptionSource,
   useTwitchChromeTranslation,
@@ -62,11 +67,12 @@ const TwitchCaptionToggle = () => {
   const controller = getTwitchLiveCaptions();
   const [status, setStatus] = useState<CaptionStatus>(initialStatus);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [openPopover, setOpenPopover] = useState<'target' | 'source' | 'speech' | null>(null);
+  const [openPopover, setOpenPopover] = useState<'target' | 'source' | 'speech' | 'display' | 'style' | null>(null);
   const [numLines, setNumLines] = useState(1);
   const dropdownTriggerRef = useRef<HTMLDivElement>(null);
   const [targetLanguage, setTargetLanguage] = useTranslateTargetLanguage();
-  const [bilingual, setBilingual] = useShowYoutubeBilingualCaption();
+  const [captionDisplay, setCaptionDisplay] = useCaptionDisplay();
+  const [captionStyle, setCaptionStyle] = useCaptionStyle();
   const [captionSizeRatio, setCaptionSizeRatio] = useYoutubeCaptionSizeRatio();
   const [sourceMode, setSourceMode] = useTwitchCaptionSource();
   const [consent, setConsent] = useSpeechRecognitionConsent();
@@ -80,10 +86,16 @@ const TwitchCaptionToggle = () => {
 
   useEffect(() => controller.subscribe(setStatus), [controller]);
 
-  const settings: CaptionSettings = { targetLanguage, numLines, bilingual, captionSizeRatio };
+  const settings: CaptionSettings = {
+    targetLanguage,
+    numLines,
+    display: captionDisplay,
+    captionStyle,
+    captionSizeRatio,
+  };
   useEffect(() => {
     controller.updateSettings(settings);
-  }, [controller, targetLanguage, numLines, bilingual, captionSizeRatio]);
+  }, [controller, targetLanguage, numLines, captionDisplay, captionStyle, captionSizeRatio]);
 
   useEffect(() => {
     if (!showToggle) {
@@ -350,11 +362,31 @@ const TwitchCaptionToggle = () => {
             ]
           : []),
         {
-          key: 'seeOriginal',
+          key: 'display',
           label: (
-            <CaptionMenuRow label={t('youtube.bilingual')}>
-              <Switch size="small" checked={bilingual} onChange={setBilingual} />
-            </CaptionMenuRow>
+            <CaptionMenuLanguageRow
+              side="left"
+              label={t('caption.displayLabel')}
+              valueLabel={t(`caption.display.${captionDisplay}`)}
+              options={captionDisplayOptions(t)}
+              open={isDropdownOpen && openPopover === 'display'}
+              onOpenChange={(open) => setOpenPopover(open ? 'display' : null)}
+              onSelect={(value) => void setCaptionDisplay(value as CaptionDisplayMode)}
+            />
+          ),
+        },
+        {
+          key: 'captionStyle',
+          label: (
+            <CaptionMenuLanguageRow
+              side="left"
+              label={t('caption.styleLabel')}
+              valueLabel={t(`caption.style.${captionStyle}`)}
+              options={captionStyleOptions(t)}
+              open={isDropdownOpen && openPopover === 'style'}
+              onOpenChange={(open) => setOpenPopover(open ? 'style' : null)}
+              onSelect={(value) => void setCaptionStyle(value as CaptionStyle)}
+            />
           ),
         },
         {

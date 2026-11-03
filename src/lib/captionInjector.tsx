@@ -2,6 +2,8 @@ import tailwindRaw from '@/assets/tailwind.css?inline';
 import { CaptionDisplay } from '@/components/Youtube/CaptionDisplay';
 import { Language } from '@/hooks/language';
 import { alignCues } from '@/lib/netflix/subtitles';
+import type { CaptionDisplayMode, CaptionStyle } from '@/hooks/layout';
+import { srtFileName, toSrt } from '@/lib/srt';
 import { Caption, fetchCaptionTrack, TranscriptMetadata, VideoMetadata } from '@/lib/youtube';
 import { debugLog, errorLog } from '@/logs';
 import AntdProvider from '@/providers/AntdProvider';
@@ -15,6 +17,16 @@ import { createRoot, Root } from 'react-dom/client';
 const CUSTOM_CAPTION_ID = 'shizue-custom-caption';
 const CAPTION_CHUNK_SIZE = 10;
 
+// A subtitle file holds the originals, the translations, or each original over its translation.
+export type SubtitleKind = 'original' | 'translation' | 'bilingual';
+
+export type CaptionLook = {
+  numLines: number;
+  display: CaptionDisplayMode;
+  captionStyle: CaptionStyle;
+  captionSizeRatio: number;
+};
+
 export class CaptionInjector {
   private customCaptionRoot: Root | null = null;
   private videoElement: HTMLVideoElement | null = null;
@@ -23,7 +35,8 @@ export class CaptionInjector {
   private captionCache: Map<Language, Caption[]> = new Map();
   private currentTime: number = 0;
   private numLines = 1;
-  private bilingual = false;
+  private display: CaptionDisplayMode = 'translation';
+  private captionStyle: CaptionStyle = 'default';
   private captionSizeRatio = 1.0;
   private currentCaptionLines: string[] = [];
   private lastFoundCaptionIndex: number | null = null;
@@ -224,8 +237,10 @@ export class CaptionInjector {
                 <AntdProvider>
                   <CaptionDisplay
                     lines={this.currentCaptionLines}
-                    originalLines={originalLines}
-                    bilingual={this.bilingual && isCurrentCaptionTranslated}
+                    // Untranslated, the lines are the originals.
+                    originalLines={isCurrentCaptionTranslated ? originalLines : []}
+                    display={this.display}
+                    captionStyle={this.captionStyle}
                     captionSizeRatio={this.captionSizeRatio}
                     lookup={{
                       video: this.videoElement,
@@ -389,19 +404,21 @@ export class CaptionInjector {
     }
   }
 
-  public activate = async (
-    targetLanguage: Language,
-    numLines: number,
-    bilingual: boolean,
-    captionSizeRatio: number
-  ) => {
+  // How the captions show, applied from the next frame on.
+  public updateSettings = (settings: CaptionLook) => {
+    this.numLines = settings.numLines;
+    this.display = settings.display;
+    this.captionStyle = settings.captionStyle;
+    this.captionSizeRatio = settings.captionSizeRatio;
+    this.currentCaptionLines = [];
+  };
+
+  public activate = async (targetLanguage: Language, settings: CaptionLook) => {
     if (document.getElementById(CUSTOM_CAPTION_ID)) {
       this.deactivate();
     }
 
-    this.numLines = numLines;
-    this.bilingual = bilingual;
-    this.captionSizeRatio = captionSizeRatio;
+    this.updateSettings(settings);
     this.targetLanguage = targetLanguage;
 
     this.videoElement = document.querySelector('video');
@@ -448,7 +465,8 @@ export class CaptionInjector {
                 <CaptionDisplay
                   lines={[]}
                   originalLines={[]}
-                  bilingual={false}
+                  display={this.display}
+                  captionStyle={this.captionStyle}
                   captionSizeRatio={1.0}
                 />
               </AntdProvider>
@@ -481,6 +499,41 @@ export class CaptionInjector {
     document
       .querySelectorAll<HTMLDivElement>('.ytp-caption-window-container')
       .forEach((el) => (el.style.display = 'block'));
+  };
+
+  // How much of the video is translated, from 0 to 1. The target language's own track is all there.
+  public translationProgress = () => {
+    const lines = this.captionCache.get(this.targetLanguage);
+    if (!lines?.length) return 0;
+    if (this.baseLanguage === this.targetLanguage) return 1;
+    return Math.min(1, this.translatedChunks.size / Math.ceil(lines.length / CAPTION_CHUNK_SIZE));
+  };
+
+  // The captions shown, as a subtitle file, named after the video and its languages.
+  public subtitleFile = (kind: SubtitleKind) => {
+    const lines = this.captionCache.get(this.targetLanguage);
+    if (!lines?.length) return null;
+    const native = this.baseLanguage === this.targetLanguage;
+    const base = this.captionCache.get(this.baseLanguage);
+    const captions = lines.map((caption, index) => {
+      const original = (native ? this.nativeOriginalLines[index] : base?.[index]?.text) || caption.text;
+      const text =
+        kind === 'original'
+          ? original
+          : kind === 'translation' || original === caption.text
+            ? caption.text
+            : `${original}\n${caption.text}`;
+      return { ...caption, text };
+    });
+    const name = (language: Language) => language.split('_')[0];
+    const originalLanguage = name(this.originalTrack?.language ?? this.baseLanguage);
+    const label =
+      kind === 'original'
+        ? originalLanguage
+        : kind === 'translation'
+          ? name(this.targetLanguage)
+          : `${originalLanguage}-${name(this.targetLanguage)}`;
+    return { name: srtFileName(this.videoMetadata?.title ?? document.title, label), text: toSrt(captions) };
   };
 
   public clear = () => {

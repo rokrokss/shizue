@@ -1,12 +1,17 @@
 import {
+  captionDisplayOptions,
   CaptionMenuLanguageRow,
   CaptionMenuRow,
   CaptionMenuTitle,
+  captionStyleOptions,
   CaptionToggle,
 } from '@/components/Caption/CaptionToggle';
 import { Language, useTranslateTargetLanguage } from '@/hooks/language';
 import {
-  useShowYoutubeBilingualCaption,
+  CaptionDisplayMode,
+  CaptionStyle,
+  useCaptionDisplay,
+  useCaptionStyle,
   useShowYoutubeCaptionToggleValue,
   useTwitchChromeTranslation,
   useUseYoutubeKeyboardNavigate,
@@ -16,7 +21,7 @@ import {
   YoutubeAutoActivate,
 } from '@/hooks/layout';
 import { useAnyModelAvailable } from '@/hooks/models';
-import { getCaptionInjector } from '@/lib/captionInjector';
+import { getCaptionInjector, SubtitleKind } from '@/lib/captionInjector';
 import { languageCodeToLanguage, languageOptions } from '@/lib/language';
 import { isChromeTranslatorSupported } from '@/lib/liveCaption/chromeTranslator';
 import type { CaptionStatus } from '@/lib/liveCaption/liveCaptionController';
@@ -84,16 +89,18 @@ const YoutubeCaptionToggle = () => {
   const listSide = isYoutubeEmbed() && window.innerWidth < LIST_BESIDE_MIN_WIDTH ? 'below' : 'right';
   const dropdownTriggerRef = useRef<HTMLDivElement>(null);
   const [openPopover, setOpenPopover] = useState<
-    'target' | 'source' | 'speech' | 'autoActivate' | null
+    'target' | 'source' | 'speech' | 'display' | 'style' | 'download' | 'autoActivate' | null
   >(null);
   const [isActivated, setIsActivated] = useState(false);
+  // How much of the video is translated, in percent, for the subtitle file.
+  const [translatedPercent, setTranslatedPercent] = useState(0);
   const animationFrameRef = useRef<number | null>(null);
   const [numLines, setNumLines] = useState(1);
   const [storedTargetLanguage, setStoredTargetLanguage] = useTranslateTargetLanguage();
   const showToggleRef = useRef<boolean>(false);
   const showYoutubeCaptionToggle = useShowYoutubeCaptionToggleValue();
-  const [showYoutubeBilingualCaption, setShowYoutubeBilingualCaption] =
-    useShowYoutubeBilingualCaption();
+  const [captionDisplay, setCaptionDisplay] = useCaptionDisplay();
+  const [captionStyle, setCaptionStyle] = useCaptionStyle();
   const [useYoutubeKeyboardNavigate, setUseYoutubeKeyboardNavigate] =
     useUseYoutubeKeyboardNavigate();
   const [captionSizeRatio, setCaptionSizeRatio] = useYoutubeCaptionSizeRatio();
@@ -313,15 +320,20 @@ const YoutubeCaptionToggle = () => {
     }
   }, [showYoutubeCaptionToggle]);
 
-  // Live captions follow the menu while they run.
+  // Captions follow the menu while they run.
   useEffect(() => {
     liveRef.current?.controller.updateSettings({
       targetLanguage,
       numLines,
-      bilingual: showYoutubeBilingualCaption,
+      display: captionDisplay,
+      captionStyle,
       captionSizeRatio,
     });
-  }, [targetLanguage, numLines, showYoutubeBilingualCaption, captionSizeRatio, liveStatus?.active]);
+  }, [targetLanguage, numLines, captionDisplay, captionStyle, captionSizeRatio, liveStatus?.active]);
+
+  useEffect(() => {
+    getCaptionInjector().updateSettings({ numLines, display: captionDisplay, captionStyle, captionSizeRatio });
+  }, [numLines, captionDisplay, captionStyle, captionSizeRatio]);
 
   // Speech recognition is running, or is how this mode would get captions once it can run.
   const usesSpeech =
@@ -341,6 +353,7 @@ const YoutubeCaptionToggle = () => {
     if (currentIsActivated && !isCurrentCaptionTranslated != currentIsLoading) {
       setIsLoading(!isCurrentCaptionTranslated);
     }
+    setTranslatedPercent(Math.floor(getCaptionInjector().translationProgress() * 100));
     animationFrameRef.current = requestAnimationFrame(updateLoop);
   };
 
@@ -349,12 +362,12 @@ const YoutubeCaptionToggle = () => {
     setIsLoading(true);
 
     // starting translation in the background
-    getCaptionInjector().activate(
-      targetLanguage,
+    getCaptionInjector().activate(targetLanguage, {
       numLines,
-      showYoutubeBilingualCaption,
-      captionSizeRatio
-    );
+      display: captionDisplay,
+      captionStyle,
+      captionSizeRatio,
+    });
 
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
@@ -363,6 +376,17 @@ const YoutubeCaptionToggle = () => {
     animationFrameRef.current = requestAnimationFrame(updateLoop);
 
     setIsActivated(true);
+  };
+
+  const downloadSubtitles = (kind: SubtitleKind) => {
+    const file = getCaptionInjector().subtitleFile(kind);
+    if (!file) return;
+    const url = URL.createObjectURL(new Blob([file.text], { type: 'application/x-subrip;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = file.name;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   const stopTrackCaptions = () => {
@@ -380,7 +404,8 @@ const YoutubeCaptionToggle = () => {
     ensureLive()?.controller.activate({
       targetLanguage,
       numLines,
-      bilingual: showYoutubeBilingualCaption,
+      display: captionDisplay,
+      captionStyle,
       captionSizeRatio,
       mode,
       speechAllowed: false,
@@ -413,7 +438,8 @@ const YoutubeCaptionToggle = () => {
     originalLanguageCode,
     targetLanguage,
     numLines,
-    showYoutubeBilingualCaption,
+    captionDisplay,
+    captionStyle,
     captionSizeRatio,
   ]);
 
@@ -672,15 +698,31 @@ const YoutubeCaptionToggle = () => {
             ]
           : []),
         {
-          key: 'seeOriginal',
+          key: 'display',
           label: (
-            <CaptionMenuRow label={t('youtube.bilingual')}>
-              <Switch
-                size="small"
-                checked={showYoutubeBilingualCaption}
-                onChange={setShowYoutubeBilingualCaption}
-              />
-            </CaptionMenuRow>
+            <CaptionMenuLanguageRow
+              side={listSide}
+              label={t('caption.displayLabel')}
+              valueLabel={t(`caption.display.${captionDisplay}`)}
+              options={captionDisplayOptions(t)}
+              open={isDropdownOpen && openPopover === 'display'}
+              onOpenChange={(open) => setOpenPopover(open ? 'display' : null)}
+              onSelect={(value) => void setCaptionDisplay(value as CaptionDisplayMode)}
+            />
+          ),
+        },
+        {
+          key: 'captionStyle',
+          label: (
+            <CaptionMenuLanguageRow
+              side={listSide}
+              label={t('caption.styleLabel')}
+              valueLabel={t(`caption.style.${captionStyle}`)}
+              options={captionStyleOptions(t)}
+              open={isDropdownOpen && openPopover === 'style'}
+              onOpenChange={(open) => setOpenPopover(open ? 'style' : null)}
+              onSelect={(value) => void setCaptionStyle(value as CaptionStyle)}
+            />
           ),
         },
         // Live captions have no list of upcoming lines to move between.
@@ -741,6 +783,35 @@ const YoutubeCaptionToggle = () => {
             </CaptionMenuRow>
           ),
         },
+        // Captions from a track can be saved, the translations once all are there.
+        ...(!realtime && isActivated
+          ? [
+              {
+                key: 'download',
+                label: (
+                  <CaptionMenuLanguageRow
+                    side={listSide}
+                    label={t('caption.download')}
+                    valueLabel={
+                      translatedPercent < 100
+                        ? t('caption.translating', { percent: translatedPercent })
+                        : 'SRT'
+                    }
+                    options={(['original', 'translation', 'bilingual'] satisfies SubtitleKind[])
+                      .filter((kind) => kind === 'original' || translatedPercent >= 100)
+                      .map((kind) => ({
+                        value: kind,
+                        label: t(`caption.file.${kind}`),
+                        desc: t(`caption.file.${kind}`),
+                      }))}
+                    open={isDropdownOpen && openPopover === 'download'}
+                    onOpenChange={(open) => setOpenPopover(open ? 'download' : null)}
+                    onSelect={(value) => downloadSubtitles(value as SubtitleKind)}
+                  />
+                ),
+              },
+            ]
+          : []),
         // Live captions don't start by themselves.
         ...(!realtime
           ? [

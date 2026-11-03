@@ -1,7 +1,7 @@
 import { ShizueTranslationOverlay } from '@/components/Translation/ShizueTranslationOverlay';
 import { MESSAGE_TRANSLATE_FRAMES } from '@/config/constants';
 import { Language } from '@/hooks/language';
-import { TEXT_ELEMENTS } from '@/lib/html';
+import { PRESERVED_SELECTOR, TEXT_ELEMENTS, translatableText, translationSource } from '@/lib/html';
 import { debugLog, errorLog } from '@/logs';
 import { translationService } from '@/services/translationService';
 
@@ -31,6 +31,8 @@ export class PageTranslator {
   private framesTimeout: ReturnType<typeof setTimeout> | null = null;
 
   private cachedTranslations: Map<string, Map<string, string>> = new Map();
+  // The code and formulas each element's {{n}} placeholders stand for.
+  private atoms: WeakMap<Element, Element[]> = new WeakMap();
 
   private targetLanguage: Language | null = null;
 
@@ -100,6 +102,13 @@ export class PageTranslator {
     if (!this.isActive) return;
     let pageChanged = false;
     for (const mutation of mutations) {
+      // A translation the page took away (a re-render) leaves its original showing.
+      if (
+        Array.from(mutation.removedNodes).some((node) => node.nodeName === 'SHIZUE-TRANSLATION-OVERLAY') &&
+        !ShizueTranslationOverlay.find(mutation.target as Element)
+      ) {
+        ShizueTranslationOverlay.showOriginal(mutation.target as Element);
+      }
       if (this.isOwnMutation(mutation)) continue;
       pageChanged = true;
       const translated = this.translatedAncestor(mutation.target);
@@ -238,10 +247,8 @@ export class PageTranslator {
   // Remove all translations
   private removeAllTranslations() {
     this.visitedElements.forEach((element) => {
-      const overlay = element.querySelector('shizue-translation-overlay') as Element;
-      if (overlay && overlay.parentNode) {
-        overlay.parentNode.removeChild(overlay);
-      }
+      ShizueTranslationOverlay.find(element)?.remove();
+      ShizueTranslationOverlay.showOriginal(element);
     });
     this.visitedElements.clear();
   }
@@ -252,7 +259,7 @@ export class PageTranslator {
     removeTranslatedElement: boolean = true
   ) {
     if (element.contains(overlay.element)) {
-      element.removeChild(overlay.element);
+      overlay.remove();
       if (removeTranslatedElement) {
         if (this.queuedElements.has(element)) {
           this.queuedElements.delete(element);
@@ -373,7 +380,7 @@ export class PageTranslator {
         const overlay = this.overlayFor(element);
         this.visitedElements.add(element);
         if (translatedText.trim() !== '') {
-          overlay.setTexts(translatedText);
+          overlay.setTexts(translatedText, this.atoms.get(element));
         } else {
           overlay.setLoading(false);
           setTimeout(() => {
@@ -458,7 +465,10 @@ export class PageTranslator {
             );
           }, 3000);
         } else {
-          overlaysInBatch[i].overlay.setTexts(translatedTextResult.translatedTexts[i]);
+          overlaysInBatch[i].overlay.setTexts(
+            translatedTextResult.translatedTexts[i],
+            this.atoms.get(overlaysInBatch[i].element)
+          );
           if (this.queuedElements.has(overlaysInBatch[i].element)) {
             this.queuedElements.delete(overlaysInBatch[i].element);
           }
@@ -501,7 +511,8 @@ export class PageTranslator {
 
       for (let i = 0; i < elements.length; i++) {
         const element = elements[i];
-        const text = element.innerHTML?.trim();
+        const { html: text, atoms } = translationSource(element);
+        this.atoms.set(element, atoms);
         this.sourceTexts.set(element, this.ownText(element));
         if (this.cachedTranslations.get(this.targetLanguage as string)?.has(text)) {
           const translatedText = this.cachedTranslations
@@ -513,7 +524,7 @@ export class PageTranslator {
           const overlay = this.attachTranslationOverlay(element);
           this.visitedElements.add(element);
           if (translatedText.trim() !== '') {
-            overlay.setTexts(translatedText);
+            overlay.setTexts(translatedText, atoms);
           } else {
             overlay.setLoading(false);
             setTimeout(() => {
@@ -547,6 +558,10 @@ export class PageTranslator {
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT, {
       acceptNode: (node) => {
         const element = node as Element;
+
+        if (element.matches(PRESERVED_SELECTOR)) {
+          return NodeFilter.FILTER_REJECT;
+        }
 
         if (this.isElementHidden(element)) {
           return NodeFilter.FILTER_REJECT;
@@ -615,7 +630,12 @@ export class PageTranslator {
       return false;
     }
 
-    const text = element.textContent?.trim();
+    // Code and formulas aren't translated, and don't count as text to translate.
+    if (element.closest(PRESERVED_SELECTOR)) {
+      return false;
+    }
+
+    const text = translatableText(element).trim();
 
     if (!text || text.length === 0 || text.length > 5000) {
       return false;

@@ -1,5 +1,8 @@
 import {
-  STORAGE_NETFLIX_BILINGUAL_CAPTION,
+  STORAGE_CAPTION_DISPLAY,
+  STORAGE_CAPTION_STYLE,
+  STORAGE_NETFLIX_CAPTION_DISPLAY,
+  STORAGE_PAGE_TRANSLATION_MODE,
   STORAGE_SHOW_NETFLIX_CAPTION_TOGGLE,
   STORAGE_SHOW_TOGGLE,
   STORAGE_SHOW_TWITCH_CAPTION_TOGGLE,
@@ -7,7 +10,6 @@ import {
   STORAGE_TWITCH_CAPTION_SOURCE,
   STORAGE_TWITCH_CHROME_TRANSLATION,
   STORAGE_TWITCH_CHANNEL_LANGUAGE,
-  STORAGE_SHOW_YOUTUBE_BILINGUAL_CAPTION,
   STORAGE_SHOW_YOUTUBE_CAPTION_TOGGLE,
   STORAGE_THEME,
   STORAGE_TOGGLE_HIDDEN_SITE_LIST,
@@ -29,7 +31,6 @@ export const defaultToggleYPosition = -18;
 export const defaultShowYoutubeCaptionToggle = true;
 export const defaultShowTwitchCaptionToggle = true;
 export const defaultShowNetflixCaptionToggle = true;
-export const defaultShowYoutubeBilingualCaption = false;
 export const defaultUseYoutubeKeyboardNavigate = true;
 export const defaultCaptionSizeRatio = 1.0;
 export const defaultToggleHiddenSiteList: string[] = [];
@@ -64,8 +65,23 @@ export const netflixShowCaptionToggleAtom = atomWithChromeStorage<boolean>(
   defaultShowNetflixCaptionToggle
 );
 
-// Netflix's own, and on by default: Netflix already shows one language, so the point there is two.
-export const netflixBilingualCaptionAtom = atomWithChromeStorage<boolean>(STORAGE_NETFLIX_BILINGUAL_CAPTION, true);
+// How caption lines show: the translation alone, with the original over or under it, or the
+// original alone (the translation still comes, for word lookups and the subtitle file).
+export type CaptionDisplayMode = 'translation' | 'bilingual' | 'translationFirst' | 'original';
+
+// YouTube's and Twitch's.
+export const captionDisplayAtom = atomWithChromeStorage<CaptionDisplayMode>(STORAGE_CAPTION_DISPLAY, 'translation');
+
+// Netflix's own, and both by default: Netflix already shows one language, so the point there is two.
+export const netflixCaptionDisplayAtom = atomWithChromeStorage<CaptionDisplayMode>(
+  STORAGE_NETFLIX_CAPTION_DISPLAY,
+  'bilingual'
+);
+
+// How captions look on every site (components/Youtube/CaptionDisplay.tsx).
+export type CaptionStyle = 'default' | 'translucent' | 'outline' | 'yellow';
+
+export const captionStyleAtom = atomWithChromeStorage<CaptionStyle>(STORAGE_CAPTION_STYLE, 'default');
 
 // 'auto' picks the streamer's captions, then Stream Closed Captioner, then speech recognition.
 export type TwitchCaptionSourceMode = 'auto' | 'cea608' | 'scc' | 'stt';
@@ -97,11 +113,6 @@ export const speechRecognitionConsentAtom = atomWithChromeStorage<boolean>(
   false
 );
 
-export const youtubeShowBilingualCaptionAtom = atomWithChromeStorage<boolean>(
-  STORAGE_SHOW_YOUTUBE_BILINGUAL_CAPTION,
-  defaultShowYoutubeBilingualCaption
-);
-
 export const useYoutubeKeyboardNavigateAtom = atomWithChromeStorage<boolean>(
   STORAGE_USE_YOUTUBE_KEYBOARD_NAVIGATE,
   defaultUseYoutubeKeyboardNavigate
@@ -126,6 +137,15 @@ export const toggleHiddenSiteListAtom = atomWithChromeStorage<string[]>(
   defaultToggleHiddenSiteList
 );
 
+// Page translation shows each translation under its original, or in its place. Every frame's
+// translations read it themselves (components/Translation/ShizueTranslationOverlay.ts).
+export type PageTranslationMode = 'bilingual' | 'translationOnly';
+
+export const pageTranslationModeAtom = atomWithChromeStorage<PageTranslationMode>(
+  STORAGE_PAGE_TRANSLATION_MODE,
+  'bilingual'
+);
+
 export const useTheme = () => useAtom(themeAtom);
 export const useThemeValue = () => useAtomValue(themeAtom);
 export const useShowToggle = () => useAtom(showToggleAtom);
@@ -137,14 +157,16 @@ export const useShowTwitchCaptionToggle = () => useAtom(twitchShowCaptionToggleA
 export const useShowTwitchCaptionToggleValue = () => useAtomValue(twitchShowCaptionToggleAtom);
 export const useShowNetflixCaptionToggle = () => useAtom(netflixShowCaptionToggleAtom);
 export const useShowNetflixCaptionToggleValue = () => useAtomValue(netflixShowCaptionToggleAtom);
-export const useNetflixBilingualCaption = () => useAtom(netflixBilingualCaptionAtom);
+export const useCaptionDisplay = () => useAtom(captionDisplayAtom);
+export const useNetflixCaptionDisplay = () => useAtom(netflixCaptionDisplayAtom);
+export const useCaptionStyle = () => useAtom(captionStyleAtom);
 export const useTwitchCaptionSource = () => useAtom(twitchCaptionSourceAtom);
 export const useTwitchChannelLanguage = () => useAtom(twitchChannelLanguageAtom);
 export const useSpeechRecognitionConsent = () => useAtom(speechRecognitionConsentAtom);
 export const useTwitchChromeTranslation = () => useAtom(twitchChromeTranslationAtom);
 export const useYoutubeChannelLanguage = () => useAtom(youtubeChannelLanguageAtom);
-export const useShowYoutubeBilingualCaption = () => useAtom(youtubeShowBilingualCaptionAtom);
 export const useUseYoutubeKeyboardNavigate = () => useAtom(useYoutubeKeyboardNavigateAtom);
 export const useYoutubeCaptionSizeRatio = () => useAtom(youtubeCaptionSizeRatioAtom);
 export const useYoutubeAutoActivate = () => useAtom(youtubeAutoActivateAtom);
 export const useToggleHiddenSiteList = () => useAtom(toggleHiddenSiteListAtom);
+export const usePageTranslationMode = () => useAtom(pageTranslationModeAtom);

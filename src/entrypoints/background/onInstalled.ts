@@ -53,6 +53,17 @@ export const onInstalled = () => {
         await chrome.storage.local.remove('LOCAL_MODEL');
       }
 
+      // Captions had a bilingual switch before they had display modes.
+      const { SHOW_YOUTUBE_BILINGUAL_CAPTION, NETFLIX_BILINGUAL_CAPTION } = await chrome.storage.local.get([
+        'SHOW_YOUTUBE_BILINGUAL_CAPTION',
+        'NETFLIX_BILINGUAL_CAPTION',
+      ]);
+      await chrome.storage.local.set({
+        ...(SHOW_YOUTUBE_BILINGUAL_CAPTION === true ? { CAPTION_DISPLAY: 'bilingual' } : {}),
+        ...(NETFLIX_BILINGUAL_CAPTION === false ? { NETFLIX_CAPTION_DISPLAY: 'translation' } : {}),
+      });
+      await chrome.storage.local.remove(['SHOW_YOUTUBE_BILINGUAL_CAPTION', 'NETFLIX_BILINGUAL_CAPTION']);
+
       // The PDF translation feature was removed; drop its leftover settings.
       await chrome.storage.local.remove(['PDF_TRANSLATE_TASK_INFO', 'PDF_TRANSLATE_NO_DUAL']);
 

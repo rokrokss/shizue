@@ -6,7 +6,7 @@ The controller is shared with YouTube's live captions: `lib/liveCaption/liveCapt
 
 ## UI
 
-- It looks and works like the YouTube feature. The button and menu are `components/Caption/CaptionToggle.tsx`, shared with `YoutubeCaptionToggle`. Target language, bilingual and caption size are shared with YouTube; `STORAGE_SHOW_TWITCH_CAPTION_TOGGLE` is Twitch's own.
+- It looks and works like the YouTube feature. The button and menu are `components/Caption/CaptionToggle.tsx`, shared with `YoutubeCaptionToggle`. Target language, caption display, style and size are shared with YouTube; `STORAGE_SHOW_TWITCH_CAPTION_TOGGLE` is Twitch's own.
 - `twitch-caption.content` puts the button at the front of the `.player-controls__right-control-group` next to the `<video>` (Twitch also renders a second, hidden set of controls). It re-attaches every second, because navigation and theatre mode rebuild the controls.
 - The menu's lists open to the left (`side="left"`), over the video, because the button sits at the player's right edge next to the chat. The menu popups live in their own shadow host, which moves into `document.fullscreenElement` on `fullscreenchange`, because fullscreen draws only that element.
 - Live streams keep playing while the menu is open, since pausing would put them behind live. VODs pause, as on YouTube.

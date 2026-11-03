@@ -161,6 +161,9 @@
     "translateModel": "翻訳モデル",
     "sourceLanguage": "翻訳元の言語",
     "targetLanguage": "翻訳先の言語",
+    "translationDisplay": "表示方法",
+    "translationDisplayBilingual": "原文と翻訳",
+    "translationDisplayTranslationOnly": "翻訳のみ",
     "translateTargetLanguage": "翻訳対象言語",
     "auto": "自動",
     "general": "一般",
@@ -217,7 +220,6 @@
     "activate": "有効",
     "deactivate": "無効",
     "youtubeCaptionButton": "YouTube 字幕ボタン",
-    "bilingual": "バイリンガル",
     "captionSizeRatio": "字幕サイズ",
     "useKeyboardNavigate": "A/D キーで字幕ナビゲーション",
     "sourceTrack": "YouTube 字幕",
@@ -246,6 +248,29 @@
     "netflixCaptionButton": "Netflix 字幕ボタン",
     "originalSubtitles": "原文の字幕",
     "loadFailed": "字幕を読み込めませんでした"
+  },
+  "caption": {
+    "displayLabel": "表示方法",
+    "display": {
+      "translation": "翻訳のみ",
+      "bilingual": "原文 + 翻訳",
+      "translationFirst": "翻訳 + 原文",
+      "original": "原文のみ"
+    },
+    "styleLabel": "スタイル",
+    "style": {
+      "default": "標準",
+      "translucent": "半透明",
+      "outline": "縁取り",
+      "yellow": "黄色の翻訳"
+    },
+    "download": "字幕を保存",
+    "translating": "翻訳中 {{percent}}%",
+    "file": {
+      "original": "原文",
+      "translation": "翻訳",
+      "bilingual": "原文 + 翻訳"
+    }
   },
   "usage": {
     "title": "トークン使用量",

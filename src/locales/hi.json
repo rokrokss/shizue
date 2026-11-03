@@ -161,6 +161,9 @@
     "translateModel": "अनुवाद मॉडल",
     "sourceLanguage": "स्रोत भाषा",
     "targetLanguage": "लक्ष्य भाषा",
+    "translationDisplay": "दिखाने का तरीका",
+    "translationDisplayBilingual": "मूल + अनुवाद",
+    "translationDisplayTranslationOnly": "केवल अनुवाद",
     "translateTargetLanguage": "अनुवाद लक्ष्य भाषा",
     "auto": "ऑटो",
     "general": "सामान्य",
@@ -217,7 +220,6 @@
     "activate": "सक्रिय करें",
     "deactivate": "असक्रिय करें",
     "youtubeCaptionButton": "यूट्यूब कैप्शन बटन",
-    "bilingual": "द्विभाषी",
     "captionSizeRatio": "कैप्शन आकार",
     "useKeyboardNavigate": "A/D के साथ उपशीर्षक नेविगेट करें",
     "sourceTrack": "यूट्यूब कैप्शन",
@@ -246,6 +248,29 @@
     "netflixCaptionButton": "नेटफ्लिक्स कैप्शन बटन",
     "originalSubtitles": "मूल सबटाइटल",
     "loadFailed": "सबटाइटल लोड नहीं हो सके"
+  },
+  "caption": {
+    "displayLabel": "दिखाने का तरीका",
+    "display": {
+      "translation": "केवल अनुवाद",
+      "bilingual": "मूल + अनुवाद",
+      "translationFirst": "अनुवाद + मूल",
+      "original": "केवल मूल"
+    },
+    "styleLabel": "शैली",
+    "style": {
+      "default": "डिफ़ॉल्ट",
+      "translucent": "पारभासी",
+      "outline": "आउटलाइन",
+      "yellow": "पीला अनुवाद"
+    },
+    "download": "सबटाइटल सहेजें",
+    "translating": "अनुवाद हो रहा है {{percent}}%",
+    "file": {
+      "original": "मूल",
+      "translation": "अनुवाद",
+      "bilingual": "मूल + अनुवाद"
+    }
   },
   "usage": {
     "title": "टोकन उपयोग",

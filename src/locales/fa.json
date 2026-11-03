@@ -161,6 +161,9 @@
     "translateModel": "مدل ترجمه",
     "sourceLanguage": "زبان مبدأ",
     "targetLanguage": "زبان هدف",
+    "translationDisplay": "نحوه نمایش",
+    "translationDisplayBilingual": "اصل + ترجمه",
+    "translationDisplayTranslationOnly": "فقط ترجمه",
     "translateTargetLanguage": "زبان هدف ترجمه",
     "auto": "خودکار",
     "general": "عمومی",
@@ -217,7 +220,6 @@
     "activate": "فعال کنید",
     "deactivate": "غیرفعال کنید",
     "youtubeCaptionButton": "دکمه زیرنویس یوتیوب",
-    "bilingual": "دو زبانه",
     "captionSizeRatio": "اندازه زیرنویس",
     "useKeyboardNavigate": "پیمایش زیرنویس با A/D",
     "sourceTrack": "زیرنویس یوتیوب",
@@ -246,6 +248,29 @@
     "netflixCaptionButton": "دکمه زیرنویس نتفلیکس",
     "originalSubtitles": "زیرنویس اصلی",
     "loadFailed": "زیرنویس بارگیری نشد"
+  },
+  "caption": {
+    "displayLabel": "نحوه نمایش",
+    "display": {
+      "translation": "فقط ترجمه",
+      "bilingual": "اصل + ترجمه",
+      "translationFirst": "ترجمه + اصل",
+      "original": "فقط اصل"
+    },
+    "styleLabel": "سبک",
+    "style": {
+      "default": "پیش‌فرض",
+      "translucent": "نیمه‌شفاف",
+      "outline": "دورخط",
+      "yellow": "ترجمه زرد"
+    },
+    "download": "ذخیره زیرنویس",
+    "translating": "در حال ترجمه {{percent}}٪",
+    "file": {
+      "original": "اصل",
+      "translation": "ترجمه",
+      "bilingual": "اصل + ترجمه"
+    }
   },
   "usage": {
     "title": "استفاده از توکن",

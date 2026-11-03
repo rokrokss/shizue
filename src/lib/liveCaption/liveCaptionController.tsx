@@ -1,6 +1,7 @@
 import tailwindRaw from '@/assets/tailwind.css?inline';
 import { CaptionDisplay } from '@/components/Youtube/CaptionDisplay';
 import { Language } from '@/hooks/language';
+import type { CaptionDisplayMode, CaptionStyle } from '@/hooks/layout';
 import {
   isChromeTranslatorPending,
   prepareChromeTranslator,
@@ -34,7 +35,8 @@ import { createRoot, Root } from 'react-dom/client';
 export type CaptionSettings = {
   targetLanguage: Language;
   numLines: number;
-  bilingual: boolean;
+  display: CaptionDisplayMode;
+  captionStyle: CaptionStyle;
   captionSizeRatio: number;
 };
 
@@ -683,18 +685,19 @@ export class LiveCaptionController<S extends string> {
     const lines = shown.map((line) => line.translation || line.original);
     // A line still waiting for its translation shows its original once, as YouTube does.
     const originalLines = shown.map((line) => (line.translation ? line.original : ''));
-    // The words still being spoken: Chrome's live translation over them, or (bilingual) the words.
+    // The words still being spoken: Chrome's live translation over them, or the words where originals
+    // show.
     if (this.interim && now - this.interimChangedAt <= LINE_LINGER_MS) {
       if (this.interimTranslation) {
         lines.push(this.interimTranslation);
         originalLines.push(this.interim);
-      } else if (settings.bilingual) {
+      } else if (settings.display !== 'translation') {
         lines.push(this.interim);
         originalLines.push('');
       }
     }
 
-    const key = JSON.stringify([lines, originalLines, settings.bilingual, settings.captionSizeRatio]);
+    const key = JSON.stringify([lines, originalLines, settings.display, settings.captionStyle, settings.captionSizeRatio]);
     if (key === this.lastRendered) return;
     this.lastRendered = key;
     root.render(
@@ -702,7 +705,8 @@ export class LiveCaptionController<S extends string> {
         <CaptionDisplay
           lines={lines}
           originalLines={originalLines}
-          bilingual={settings.bilingual}
+          display={settings.display}
+          captionStyle={settings.captionStyle}
           captionSizeRatio={settings.captionSizeRatio}
           lookup={{
             video: this.platform.video(),

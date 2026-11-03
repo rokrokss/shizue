@@ -161,6 +161,9 @@
     "translateModel": "نموذج الترجمة",
     "sourceLanguage": "اللغة المصدر",
     "targetLanguage": "اللغة الهدف",
+    "translationDisplay": "طريقة العرض",
+    "translationDisplayBilingual": "الأصل + الترجمة",
+    "translationDisplayTranslationOnly": "الترجمة فقط",
     "translateTargetLanguage": "لغة الهدف للترجمة",
     "auto": "تلقائي",
     "general": "عام",
@@ -217,7 +220,6 @@
     "activate": "تنشيط",
     "deactivate": "تعطيل",
     "youtubeCaptionButton": "زر التعليقات التوضيحية لليوتيوب",
-    "bilingual": "ثنائي اللغة",
     "captionSizeRatio": "حجم التعليقات التوضيحية",
     "useKeyboardNavigate": "التنقل في الترجمة بـ A/D",
     "sourceTrack": "تعليقات يوتيوب التوضيحية",
@@ -246,6 +248,29 @@
     "netflixCaptionButton": "زر التعليقات التوضيحية لنتفليكس",
     "originalSubtitles": "الترجمة الأصلية",
     "loadFailed": "تعذّر تحميل الترجمة"
+  },
+  "caption": {
+    "displayLabel": "طريقة العرض",
+    "display": {
+      "translation": "الترجمة فقط",
+      "bilingual": "الأصل + الترجمة",
+      "translationFirst": "الترجمة + الأصل",
+      "original": "الأصل فقط"
+    },
+    "styleLabel": "النمط",
+    "style": {
+      "default": "افتراضي",
+      "translucent": "شفاف جزئيًا",
+      "outline": "محدد",
+      "yellow": "ترجمة صفراء"
+    },
+    "download": "حفظ الترجمة",
+    "translating": "جارٍ الترجمة {{percent}}٪",
+    "file": {
+      "original": "الأصل",
+      "translation": "الترجمة",
+      "bilingual": "الأصل + الترجمة"
+    }
   },
   "usage": {
     "title": "استخدام الرموز",

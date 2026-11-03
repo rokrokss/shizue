@@ -59,6 +59,7 @@ test('only supported web pages receive their matching scripts', async () => {
     assert.deepEqual(scriptsForPage('https://www.youtube.com/watch?v=example'), ['toggle', 'youtube-caption-toggle']);
     assert.deepEqual(scriptsForPage('http://www.youtube.com/'), ['toggle']);
     assert.deepEqual(scriptsForPage('https://www.netflix.com/watch/81234567'), ['toggle', 'netflix-caption']);
+    assert.deepEqual(scriptsForPage('https://x.com/NASA/status/1'), ['toggle', 'x-caption']);
     for (const url of [undefined, '', 'invalid', 'chrome://settings', 'chrome-extension://id/page.html', 'file:///tmp/page.html', 'https://chromewebstore.google.com/detail/example', 'https://chrome.google.com/webstore/detail/example']) assert.deepEqual(scriptsForPage(url), []);
   });
 });

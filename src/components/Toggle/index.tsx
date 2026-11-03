@@ -22,6 +22,8 @@ import {
 } from '@/config/constants';
 import { Language, useTranslateTargetLanguage } from '@/hooks/language';
 import {
+  PageTranslationMode,
+  usePageTranslationMode,
   useShowToggle,
   useThemeValue,
   useToggleHiddenSiteList,
@@ -73,6 +75,7 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
   const [targetLanguage, setTargetLanguage] = useTranslateTargetLanguage();
   const theme = useThemeValue();
   const [translateModel, setTranslateModel] = useTranslateModel();
+  const [pageTranslationMode, setPageTranslationMode] = usePageTranslationMode();
   const [motionDivId, setMotionDivId] = useState(0);
   const modelOptions = useModelOptions();
   const anyModelAvailable = useAnyModelAvailable();
@@ -516,6 +519,36 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
                                 </div>
                               );
                             }}
+                          />
+                        </div>
+                        <div className="sz:flex sz:flex-row sz:items-center sz:gap-[10px] sz:w-full sz:justify-between">
+                          <div
+                            className={`sz:text-[14px] sz:font-ycom ${
+                              theme == 'dark' ? 'sz:text-white' : 'sz:text-gray-700'
+                            }`}
+                          >
+                            {t('settings.translationDisplay')}
+                          </div>
+                          <Select
+                            value={pageTranslationMode}
+                            onChange={(mode: PageTranslationMode) => setPageTranslationMode(mode)}
+                            className="sz:font-ycom sz:w-[180px]"
+                            getPopupContainer={(trigger) =>
+                              trigger.closest('.sz-toggle-translate-settings-modal') as HTMLElement
+                            }
+                            size="small"
+                            options={[
+                              {
+                                value: 'bilingual',
+                                label: t('settings.translationDisplayBilingual'),
+                                className: 'sz:font-ycom',
+                              },
+                              {
+                                value: 'translationOnly',
+                                label: t('settings.translationDisplayTranslationOnly'),
+                                className: 'sz:font-ycom',
+                              },
+                            ]}
                           />
                         </div>
                       </div>

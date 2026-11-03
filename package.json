@@ -23,6 +23,8 @@
     "test:plot-signin": "node --experimental-strip-types --test tests/plot-signin.test.mjs",
     "test:live-caption": "node --experimental-strip-types --test tests/live-caption.test.mjs",
     "test:netflix": "node --experimental-strip-types --test tests/netflix.test.mjs",
+    "test:youtube-captions": "node --experimental-strip-types --test tests/youtube-captions.test.mjs",
+    "test:page-translation": "node --experimental-strip-types --test tests/page-translation.test.mjs",
     "postinstall": "wxt prepare"
   },
   "dependencies": {

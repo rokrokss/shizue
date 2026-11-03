@@ -5,15 +5,20 @@ import {
   WordLookup,
   WordPopup,
 } from '@/components/Youtube/WordPopup';
+import type { CaptionDisplayMode, CaptionStyle } from '@/hooks/layout';
 import { captionPieces } from '@/lib/wordLookup';
 import { isYoutubeEmbed } from '@/lib/youtube';
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 type CaptionDisplayProps = {
   lines: string[];
+  // A line's original, or '' when the line is the only text (its translation hasn't come yet).
   originalLines: string[];
-  bilingual: boolean;
+  display: CaptionDisplayMode;
+  captionStyle: CaptionStyle;
   captionSizeRatio: number;
+  // In place of the size the window gives, e.g. one from the player's own height.
+  fontSize?: string;
   // With it, the words of the original lines open their meaning.
   lookup?: WordLookup;
 };
@@ -22,11 +27,25 @@ const POPUP_WIDTH = 300;
 // The popup's distance from the video's sides.
 const POPUP_EDGE = 8;
 
+const BOX_CLASS = 'sz:px-2 sz:py-1 sz:inline-block sz:fill-white';
+const BOX = { backgroundColor: 'rgba(8, 8, 8, 0.75)', color: '#fff' };
+// The box of each line, and the translation's own look on top of it.
+const CAPTION_STYLES: Record<CaptionStyle, { box: React.CSSProperties; translation?: React.CSSProperties }> = {
+  default: { box: BOX },
+  translucent: { box: { ...BOX, backgroundColor: 'rgba(8, 8, 8, 0.4)' } },
+  outline: {
+    box: { color: '#fff', textShadow: '0 0 0.08em #000, 0 0 0.08em #000, 0 0 0.12em #000, 0 0 0.12em #000' },
+  },
+  yellow: { box: BOX, translation: { color: '#ffe14d' } },
+};
+
 export const CaptionDisplay = ({
   lines,
   originalLines,
-  bilingual,
+  display,
+  captionStyle,
   captionSizeRatio,
+  fontSize: fixedFontSize,
   lookup,
 }: CaptionDisplayProps) => {
   const [fontSize, setFontSize] = useState(`${2.4 * captionSizeRatio}vw`);
@@ -139,23 +158,35 @@ export const CaptionDisplay = ({
   };
 
   return (
-    <div ref={rootRef} className="sz:w-fit sz:relative" style={{ fontSize }}>
-      {lines.map((line, index) => (
-        <Fragment key={index}>
-          {bilingual && originalLines[index] && (
-            <div>
-              <span className="sz:px-2 sz:py-1 sz:inline-block sz:bg-[rgba(8,8,8,0.75)] sz:text-white sz:fill-white">
-                {originalLine(index)}
-              </span>
-            </div>
-          )}
+    <div ref={rootRef} className="sz:w-fit sz:relative" style={{ fontSize: fixedFontSize ?? fontSize }}>
+      {lines.map((line, index) => {
+        const look = CAPTION_STYLES[captionStyle] ?? CAPTION_STYLES.default;
+        const original = originalLines[index] ? (
           <div>
-            <span className="sz:px-2 sz:py-1 sz:inline-block sz:bg-[rgba(8,8,8,0.75)] sz:text-white sz:fill-white">
+            <span className={BOX_CLASS} style={look.box}>
+              {originalLine(index)}
+            </span>
+          </div>
+        ) : null;
+        const translation = (
+          <div>
+            <span className={BOX_CLASS} style={original ? { ...look.box, ...look.translation } : look.box}>
               {line}
             </span>
           </div>
-        </Fragment>
-      ))}
+        );
+        return (
+          <Fragment key={index}>
+            {display === 'original'
+              ? original ?? translation
+              : display === 'translation'
+                ? translation
+                : display === 'translationFirst'
+                  ? <>{translation}{original}</>
+                  : <>{original}{translation}</>}
+          </Fragment>
+        );
+      })}
       {open && lookup ? (
         <WordPopup
           key={`${open.sentence}\n${open.line}\n${open.piece}`}

@@ -9,14 +9,15 @@ pnpm dev                 # dev build with hot reload
 pnpm build               # production build into dist/chrome-mv3/
 pnpm compile             # type check (tsc --noEmit)
 pnpm zip                 # store ZIP
-pnpm test:models         # also test:chat, test:panel, test:chatgpt, test:plot-signin, test:live-caption, test:netflix
+pnpm test:models         # also test:chat, test:panel, test:chatgpt, test:plot-signin, test:live-caption, test:netflix,
+                         # test:youtube-captions, test:page-translation
 store/render.sh          # Chrome Web Store images, store/src → store/out
 site/build.sh            # shizue.net landing page into _site/
 ```
 
 - Tests are `node --test` files in `tests/`. Run the script for the area you changed, plus `pnpm compile`. There is no lint script.
-- `pnpm test:panel` and `node scripts/check-panel-settings.mjs` (run after `pnpm build`) start a headless Chrome, so the memory rules below apply to them.
-- `pnpm test:live-caption` replays recorded Twitch and YouTube live captions from `tests/fixtures/twitch/` and `tests/fixtures/youtube/`.
+- `pnpm test:panel`, `pnpm test:page-translation` and `node scripts/check-panel-settings.mjs` (run after `pnpm build`) start a headless Chrome, so the memory rules below apply to them.
+- `pnpm test:live-caption` replays recorded Twitch and YouTube live captions from `tests/fixtures/twitch/` and `tests/fixtures/youtube/`. `pnpm test:youtube-captions` regroups a recorded YouTube speech recognition track (`tests/fixtures/youtube/asr-*.json`) into sentences.
 
 ## Trying changes in a browser
 
@@ -81,7 +82,7 @@ site/build.sh            # shizue.net landing page into _site/
 
 ## Content script UI
 
-- In-page UI renders inside shadow roots (`cssInjectionMode: 'ui'` + `createShadowRootUi`). CSS injected into pages once reordered a page's cascade layers, and page CSS restyled the toggle. The only CSS injected into pages is `public/fonts/fonts.css`, because shadow roots ignore `@font-face`.
+- In-page UI renders inside shadow roots (`cssInjectionMode: 'ui'` + `createShadowRootUi`). CSS injected into pages once reordered a page's cascade layers, and page CSS restyled the toggle. The only CSS injected into pages is `public/fonts/fonts.css`, because shadow roots ignore `@font-face`, and the one unlayered rule set that hides originals in page translation's "translation only" mode (`components/Translation/ShizueTranslationOverlay.ts`).
 - antd in a shadow root needs `StyleProvider container={shadowRoot} cache={createCache()}`, plus `getPopupContainer` and `createPortal` targets inside the root. `@ant-design/cssinjs` must resolve to the version antd itself uses, or `StyleProvider` silently does nothing.
 - Listeners on `document` see the shadow host as the target. Read `e.composedPath()[0]` and hit-test with `shadowRoot.elementFromPoint`.
 - Elements placed in the page's own DOM (such as the YouTube player-bar holder) can't use `sz:` classes; style them inline. Use px rather than rem, because rem follows the page's root font size (YouTube's is 10px).

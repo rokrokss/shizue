@@ -1,4 +1,5 @@
 import LanguageOptionItem from '@/components/Youtube/LanguageOptionItem';
+import type { CaptionDisplayMode, CaptionStyle } from '@/hooks/layout';
 import { LoadingOutlined, ReadFilled } from '@ant-design/icons';
 import {
   Button,
@@ -11,6 +12,7 @@ import {
   theme,
   Tooltip,
 } from 'antd';
+import { TFunction } from 'i18next';
 import { cloneElement, ReactNode, RefObject } from 'react';
 
 // The caption button and menu shared by the YouTube and Twitch player controls, so both sites
@@ -57,6 +59,19 @@ export const CaptionMenuRow = ({ label, children }: { label: string; children: R
 // A row whose value opens a language list beside the menu, to the right unless `side` says left, or
 // below the row where there's no room beside the menu. There it covers the menu, so it opens on a
 // click rather than on hover, and stays inside the page.
+const option = (value: string, label: string) => ({ value, label, desc: label });
+
+// The choices of how captions show and look, the same in every site's menu.
+export const captionDisplayOptions = (t: TFunction) =>
+  (['translation', 'bilingual', 'translationFirst', 'original'] satisfies CaptionDisplayMode[]).map((value) =>
+    option(value, t(`caption.display.${value}`))
+  );
+
+export const captionStyleOptions = (t: TFunction) =>
+  (['default', 'translucent', 'outline', 'yellow'] satisfies CaptionStyle[]).map((value) =>
+    option(value, t(`caption.style.${value}`))
+  );
+
 export const CaptionMenuLanguageRow = ({
   label,
   valueLabel,

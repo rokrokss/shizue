@@ -161,6 +161,9 @@
     "translateModel": "Translation Model",
     "sourceLanguage": "Source Language",
     "targetLanguage": "Target Language",
+    "translationDisplay": "Pagpapakita",
+    "translationDisplayBilingual": "Orihinal + salin",
+    "translationDisplayTranslationOnly": "Salin lang",
     "translateTargetLanguage": "Target Language ng Pagsasalin",
     "auto": "Auto",
     "general": "Pangkalahatan",
@@ -217,7 +220,6 @@
     "activate": "I-activate",
     "deactivate": "I-deactivate",
     "youtubeCaptionButton": "Youtube Caption Button",
-    "bilingual": "Bilingual",
     "captionSizeRatio": "Caption Size",
     "useKeyboardNavigate": "I-navigate ang Subtitles gamit ang A/D",
     "sourceTrack": "Mga caption ng YouTube",
@@ -246,6 +248,29 @@
     "netflixCaptionButton": "Netflix Caption Button",
     "originalSubtitles": "Orihinal na subtitle",
     "loadFailed": "Hindi ma-load ang subtitle"
+  },
+  "caption": {
+    "displayLabel": "Pagpapakita",
+    "display": {
+      "translation": "Salin lang",
+      "bilingual": "Orihinal + salin",
+      "translationFirst": "Salin + orihinal",
+      "original": "Orihinal lang"
+    },
+    "styleLabel": "Estilo",
+    "style": {
+      "default": "Default",
+      "translucent": "Translucent",
+      "outline": "Outline",
+      "yellow": "Dilaw na salin"
+    },
+    "download": "I-save ang subtitle",
+    "translating": "Isinasalin {{percent}}%",
+    "file": {
+      "original": "Orihinal",
+      "translation": "Salin",
+      "bilingual": "Orihinal + salin"
+    }
   },
   "usage": {
     "title": "Paggamit ng Token",

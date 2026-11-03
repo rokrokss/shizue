@@ -1,6 +1,7 @@
 import tailwindRaw from '@/assets/tailwind.css?inline';
 import { CaptionDisplay } from '@/components/Youtube/CaptionDisplay';
 import type { Language } from '@/hooks/language';
+import type { CaptionDisplayMode, CaptionStyle } from '@/hooks/layout';
 import {
   BRIDGE_TO_CONTENT_EVENT,
   CONTENT_TO_BRIDGE_EVENT,
@@ -20,7 +21,8 @@ import { createRoot, Root } from 'react-dom/client';
 export type CaptionSettings = {
   targetLanguage: Language;
   numLines: number;
-  bilingual: boolean;
+  display: CaptionDisplayMode;
+  captionStyle: CaptionStyle;
   captionSizeRatio: number;
 };
 
@@ -509,7 +511,7 @@ class NetflixCaptions {
       this.emit();
     }
 
-    const key = JSON.stringify([lines, originalLines, settings.bilingual, settings.captionSizeRatio]);
+    const key = JSON.stringify([lines, originalLines, settings.display, settings.captionStyle, settings.captionSizeRatio]);
     if (key === this.lastRendered) return;
     this.lastRendered = key;
     root.render(
@@ -517,7 +519,8 @@ class NetflixCaptions {
         <CaptionDisplay
           lines={lines}
           originalLines={originalLines}
-          bilingual={settings.bilingual}
+          display={settings.display}
+          captionStyle={settings.captionStyle}
           captionSizeRatio={settings.captionSizeRatio}
           lookup={{
             video: playerVideo(),

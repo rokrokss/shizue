@@ -161,6 +161,9 @@
     "translateModel": "โมเดลการแปล",
     "sourceLanguage": "ภาษาต้นทาง",
     "targetLanguage": "ภาษาเป้าหมาย",
+    "translationDisplay": "การแสดงผล",
+    "translationDisplayBilingual": "ต้นฉบับ + คำแปล",
+    "translationDisplayTranslationOnly": "คำแปลเท่านั้น",
     "translateTargetLanguage": "ภาษาเป้าหมายในการแปล",
     "auto": "อัตโนมัติ",
     "general": "ทั่วไป",
@@ -217,7 +220,6 @@
     "activate": "เปิดใช้งาน",
     "deactivate": "ปิดใช้งาน",
     "youtubeCaptionButton": "ปุ่มคำบรรยาย Youtube",
-    "bilingual": "สองภาษา",
     "captionSizeRatio": "ขนาดคำบรรยาย",
     "useKeyboardNavigate": "นำทางคำบรรยายด้วย A/D",
     "sourceTrack": "คำบรรยาย YouTube",
@@ -246,6 +248,29 @@
     "netflixCaptionButton": "ปุ่มคำบรรยาย Netflix",
     "originalSubtitles": "คำบรรยายต้นฉบับ",
     "loadFailed": "โหลดคำบรรยายไม่ได้"
+  },
+  "caption": {
+    "displayLabel": "การแสดงผล",
+    "display": {
+      "translation": "คำแปลเท่านั้น",
+      "bilingual": "ต้นฉบับ + คำแปล",
+      "translationFirst": "คำแปล + ต้นฉบับ",
+      "original": "ต้นฉบับเท่านั้น"
+    },
+    "styleLabel": "สไตล์",
+    "style": {
+      "default": "ค่าเริ่มต้น",
+      "translucent": "โปร่งแสง",
+      "outline": "ขอบตัวอักษร",
+      "yellow": "คำแปลสีเหลือง"
+    },
+    "download": "บันทึกคำบรรยาย",
+    "translating": "กำลังแปล {{percent}}%",
+    "file": {
+      "original": "ต้นฉบับ",
+      "translation": "คำแปล",
+      "bilingual": "ต้นฉบับ + คำแปล"
+    }
   },
   "usage": {
     "title": "การใช้โทเค็น",

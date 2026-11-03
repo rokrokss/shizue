@@ -161,6 +161,9 @@
     "translateModel": "번역 모델",
     "sourceLanguage": "원본 언어",
     "targetLanguage": "대상 언어",
+    "translationDisplay": "표시 방식",
+    "translationDisplayBilingual": "원문과 번역",
+    "translationDisplayTranslationOnly": "번역만",
     "translateTargetLanguage": "번역 대상 언어",
     "auto": "자동",
     "general": "일반",
@@ -225,7 +228,6 @@
     "activate": "생성",
     "deactivate": "해제",
     "youtubeCaptionButton": "유튜브 자막 버튼",
-    "bilingual": "이중 언어",
     "captionSizeRatio": "자막 크기",
     "useKeyboardNavigate": "A/D 자막 이동",
     "sourceTrack": "유튜브 자막",
@@ -254,6 +256,29 @@
     "netflixCaptionButton": "넷플릭스 자막 버튼",
     "originalSubtitles": "원문 자막",
     "loadFailed": "자막을 불러오지 못했어요"
+  },
+  "caption": {
+    "displayLabel": "표시 방식",
+    "display": {
+      "translation": "번역만",
+      "bilingual": "원문 + 번역",
+      "translationFirst": "번역 + 원문",
+      "original": "원문만"
+    },
+    "styleLabel": "스타일",
+    "style": {
+      "default": "기본",
+      "translucent": "반투명",
+      "outline": "외곽선",
+      "yellow": "노란색 번역"
+    },
+    "download": "자막 저장",
+    "translating": "번역 중 {{percent}}%",
+    "file": {
+      "original": "원문",
+      "translation": "번역",
+      "bilingual": "원문 + 번역"
+    }
   },
   "home": {
     "title": "홈으로 이동"

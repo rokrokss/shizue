@@ -161,6 +161,9 @@
     "translateModel": "Modello di traduzione",
     "sourceLanguage": "Lingua di partenza",
     "targetLanguage": "Lingua di destinazione",
+    "translationDisplay": "Visualizzazione",
+    "translationDisplayBilingual": "Originale + traduzione",
+    "translationDisplayTranslationOnly": "Solo traduzione",
     "translateTargetLanguage": "Lingua di Destinazione della Traduzione",
     "auto": "Automatico",
     "general": "Generale",
@@ -217,7 +220,6 @@
     "activate": "Attiva",
     "deactivate": "Disattiva",
     "youtubeCaptionButton": "Pulsante sottotitoli YouTube",
-    "bilingual": "Bilingue",
     "captionSizeRatio": "Dimensione sottotitoli",
     "useKeyboardNavigate": "Naviga sottotitoli con A/D",
     "sourceTrack": "Sottotitoli di YouTube",
@@ -246,6 +248,29 @@
     "netflixCaptionButton": "Pulsante sottotitoli Netflix",
     "originalSubtitles": "Sottotitoli originali",
     "loadFailed": "Impossibile caricare i sottotitoli"
+  },
+  "caption": {
+    "displayLabel": "Visualizzazione",
+    "display": {
+      "translation": "Solo traduzione",
+      "bilingual": "Originale + traduzione",
+      "translationFirst": "Traduzione + originale",
+      "original": "Solo originale"
+    },
+    "styleLabel": "Stile",
+    "style": {
+      "default": "Predefinito",
+      "translucent": "Traslucido",
+      "outline": "Contorno",
+      "yellow": "Traduzione in giallo"
+    },
+    "download": "Salva sottotitoli",
+    "translating": "Traduzione {{percent}}%",
+    "file": {
+      "original": "Originale",
+      "translation": "Traduzione",
+      "bilingual": "Originale + traduzione"
+    }
   },
   "usage": {
     "title": "Utilizzo Token",

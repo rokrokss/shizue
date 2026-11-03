@@ -161,6 +161,9 @@
     "translateModel": "ترجمہ ماڈل",
     "sourceLanguage": "ماخذ زبان",
     "targetLanguage": "ہدف زبان",
+    "translationDisplay": "ڈسپلے",
+    "translationDisplayBilingual": "اصل + ترجمہ",
+    "translationDisplayTranslationOnly": "صرف ترجمہ",
     "translateTargetLanguage": "ترجمہ ہدف زبان",
     "auto": "خودکار",
     "general": "عام",
@@ -217,7 +220,6 @@
     "activate": "فعال کریں",
     "deactivate": "غیر فعال کریں",
     "youtubeCaptionButton": "یوٹیوب کیپشن بٹن",
-    "bilingual": "دو لسانی",
     "captionSizeRatio": "کیپشن سائز",
     "useKeyboardNavigate": "A/D کے ساتھ سب ٹائٹل نیویگیٹ کریں",
     "sourceTrack": "یوٹیوب کیپشنز",
@@ -246,6 +248,29 @@
     "netflixCaptionButton": "نیٹ فلکس کیپشن بٹن",
     "originalSubtitles": "اصل سب ٹائٹلز",
     "loadFailed": "سب ٹائٹلز لوڈ نہیں ہو سکے"
+  },
+  "caption": {
+    "displayLabel": "ڈسپلے",
+    "display": {
+      "translation": "صرف ترجمہ",
+      "bilingual": "اصل + ترجمہ",
+      "translationFirst": "ترجمہ + اصل",
+      "original": "صرف اصل"
+    },
+    "styleLabel": "انداز",
+    "style": {
+      "default": "پہلے سے طے شدہ",
+      "translucent": "نیم شفاف",
+      "outline": "خاکہ",
+      "yellow": "پیلا ترجمہ"
+    },
+    "download": "سب ٹائٹلز محفوظ کریں",
+    "translating": "ترجمہ ہو رہا ہے {{percent}}%",
+    "file": {
+      "original": "اصل",
+      "translation": "ترجمہ",
+      "bilingual": "اصل + ترجمہ"
+    }
   },
   "usage": {
     "title": "ٹوکن کا استعمال",

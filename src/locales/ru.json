@@ -161,6 +161,9 @@
     "translateModel": "Модель перевода",
     "sourceLanguage": "Исходный язык",
     "targetLanguage": "Целевой язык",
+    "translationDisplay": "Показ",
+    "translationDisplayBilingual": "Оригинал + перевод",
+    "translationDisplayTranslationOnly": "Только перевод",
     "translateTargetLanguage": "Целевой Язык Перевода",
     "auto": "Авто",
     "general": "Общие",
@@ -217,7 +220,6 @@
     "activate": "Активировать",
     "deactivate": "Деактивировать",
     "youtubeCaptionButton": "Кнопка субтитров YouTube",
-    "bilingual": "Двуязычный",
     "captionSizeRatio": "Размер субтитров",
     "useKeyboardNavigate": "Навигация по субтитрам с A/D",
     "sourceTrack": "Субтитры YouTube",
@@ -246,6 +248,29 @@
     "netflixCaptionButton": "Кнопка субтитров Netflix",
     "originalSubtitles": "Исходные субтитры",
     "loadFailed": "Не удалось загрузить субтитры"
+  },
+  "caption": {
+    "displayLabel": "Показ",
+    "display": {
+      "translation": "Только перевод",
+      "bilingual": "Оригинал + перевод",
+      "translationFirst": "Перевод + оригинал",
+      "original": "Только оригинал"
+    },
+    "styleLabel": "Стиль",
+    "style": {
+      "default": "Обычный",
+      "translucent": "Полупрозрачный",
+      "outline": "Контур",
+      "yellow": "Жёлтый перевод"
+    },
+    "download": "Сохранить субтитры",
+    "translating": "Перевод {{percent}}%",
+    "file": {
+      "original": "Оригинал",
+      "translation": "Перевод",
+      "bilingual": "Оригинал + перевод"
+    }
   },
   "usage": {
     "title": "Использование токенов",

@@ -161,6 +161,9 @@
     "translateModel": "Model tłumaczenia",
     "sourceLanguage": "Język źródłowy",
     "targetLanguage": "Język docelowy",
+    "translationDisplay": "Wyświetlanie",
+    "translationDisplayBilingual": "Oryginał + tłumaczenie",
+    "translationDisplayTranslationOnly": "Tylko tłumaczenie",
     "translateTargetLanguage": "Język Docelowy Tłumaczenia",
     "auto": "Automatycznie",
     "general": "Ogólne",
@@ -217,7 +220,6 @@
     "activate": "Aktywuj",
     "deactivate": "Dezaktywuj",
     "youtubeCaptionButton": "Przycisk napisy YouTube",
-    "bilingual": "Dwujęzyczny",
     "captionSizeRatio": "Rozmiar napisy",
     "useKeyboardNavigate": "Nawiguj napisy z A/D",
     "sourceTrack": "Napisy YouTube",
@@ -246,6 +248,29 @@
     "netflixCaptionButton": "Przycisk napisy Netflix",
     "originalSubtitles": "Napisy oryginalne",
     "loadFailed": "Nie udało się wczytać napisów"
+  },
+  "caption": {
+    "displayLabel": "Wyświetlanie",
+    "display": {
+      "translation": "Tylko tłumaczenie",
+      "bilingual": "Oryginał + tłumaczenie",
+      "translationFirst": "Tłumaczenie + oryginał",
+      "original": "Tylko oryginał"
+    },
+    "styleLabel": "Styl",
+    "style": {
+      "default": "Domyślny",
+      "translucent": "Półprzezroczysty",
+      "outline": "Obrys",
+      "yellow": "Żółte tłumaczenie"
+    },
+    "download": "Zapisz napisy",
+    "translating": "Tłumaczenie {{percent}}%",
+    "file": {
+      "original": "Oryginał",
+      "translation": "Tłumaczenie",
+      "bilingual": "Oryginał + tłumaczenie"
+    }
   },
   "usage": {
     "title": "Wykorzystanie Tokenów",

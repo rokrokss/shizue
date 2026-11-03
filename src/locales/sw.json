@@ -161,6 +161,9 @@
     "translateModel": "Mfano wa Kutafsiri",
     "sourceLanguage": "Lugha ya Chanzo",
     "targetLanguage": "Lugha ya Lengwa",
+    "translationDisplay": "Onyesho",
+    "translationDisplayBilingual": "Asili + tafsiri",
+    "translationDisplayTranslationOnly": "Tafsiri pekee",
     "translateTargetLanguage": "Lugha ya Lengwa ya Kutafsiri",
     "auto": "Moja kwa moja",
     "general": "Jumla",
@@ -217,7 +220,6 @@
     "activate": "Amilisha",
     "deactivate": "Ondoa",
     "youtubeCaptionButton": "Kitufe cha Caption ya Youtube",
-    "bilingual": "Lugha mbili",
     "captionSizeRatio": "Kichwa cha Caption",
     "useKeyboardNavigate": "Abiri Manukuu kwa A/D",
     "sourceTrack": "Manukuu ya YouTube",
@@ -246,6 +248,29 @@
     "netflixCaptionButton": "Kitufe cha Caption ya Netflix",
     "originalSubtitles": "Manukuu asili",
     "loadFailed": "Imeshindwa kupakia manukuu"
+  },
+  "caption": {
+    "displayLabel": "Onyesho",
+    "display": {
+      "translation": "Tafsiri pekee",
+      "bilingual": "Asili + tafsiri",
+      "translationFirst": "Tafsiri + asili",
+      "original": "Asili pekee"
+    },
+    "styleLabel": "Mtindo",
+    "style": {
+      "default": "Chaguomsingi",
+      "translucent": "Angavu kiasi",
+      "outline": "Mstari wa nje",
+      "yellow": "Tafsiri ya manjano"
+    },
+    "download": "Hifadhi manukuu",
+    "translating": "Inatafsiri {{percent}}%",
+    "file": {
+      "original": "Asili",
+      "translation": "Tafsiri",
+      "bilingual": "Asili + tafsiri"
+    }
   },
   "usage": {
     "title": "Matumizi ya Token",

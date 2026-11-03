@@ -161,6 +161,9 @@
     "translateModel": "翻译模型",
     "sourceLanguage": "源语言",
     "targetLanguage": "目标语言",
+    "translationDisplay": "显示方式",
+    "translationDisplayBilingual": "原文和译文",
+    "translationDisplayTranslationOnly": "仅译文",
     "translateTargetLanguage": "翻译目标语言",
     "auto": "自动",
     "general": "通用",
@@ -217,7 +220,6 @@
     "activate": "激活",
     "deactivate": "禁用",
     "youtubeCaptionButton": "YouTube 字幕按钮",
-    "bilingual": "双语",
     "captionSizeRatio": "字幕大小",
     "useKeyboardNavigate": "使用A/D键导航字幕",
     "sourceTrack": "YouTube 字幕",
@@ -246,6 +248,29 @@
     "netflixCaptionButton": "Netflix 字幕按钮",
     "originalSubtitles": "原文字幕",
     "loadFailed": "无法加载字幕"
+  },
+  "caption": {
+    "displayLabel": "显示方式",
+    "display": {
+      "translation": "仅译文",
+      "bilingual": "原文 + 译文",
+      "translationFirst": "译文 + 原文",
+      "original": "仅原文"
+    },
+    "styleLabel": "样式",
+    "style": {
+      "default": "默认",
+      "translucent": "半透明",
+      "outline": "描边",
+      "yellow": "黄色译文"
+    },
+    "download": "保存字幕",
+    "translating": "翻译中 {{percent}}%",
+    "file": {
+      "original": "原文",
+      "translation": "译文",
+      "bilingual": "原文 + 译文"
+    }
   },
   "usage": {
     "title": "令牌使用量",

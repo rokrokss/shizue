@@ -161,6 +161,9 @@
     "translateModel": "Mô hình Dịch thuật",
     "sourceLanguage": "Ngôn ngữ Nguồn",
     "targetLanguage": "Ngôn ngữ Đích",
+    "translationDisplay": "Hiển thị",
+    "translationDisplayBilingual": "Bản gốc + bản dịch",
+    "translationDisplayTranslationOnly": "Chỉ bản dịch",
     "translateTargetLanguage": "Ngôn Ngữ Đích Dịch Thuật",
     "auto": "Tự động",
     "general": "Chung",
@@ -217,7 +220,6 @@
     "activate": "Kích hoạt",
     "deactivate": "Vô hiệu hóa",
     "youtubeCaptionButton": "Nút Chú thích Youtube",
-    "bilingual": "Song ngữ",
     "captionSizeRatio": "Kích thước chú thích",
     "useKeyboardNavigate": "Điều hướng phụ đề bằng A/D",
     "sourceTrack": "Phụ đề YouTube",
@@ -246,6 +248,29 @@
     "netflixCaptionButton": "Nút Chú thích Netflix",
     "originalSubtitles": "Phụ đề gốc",
     "loadFailed": "Không tải được phụ đề"
+  },
+  "caption": {
+    "displayLabel": "Hiển thị",
+    "display": {
+      "translation": "Chỉ bản dịch",
+      "bilingual": "Bản gốc + bản dịch",
+      "translationFirst": "Bản dịch + bản gốc",
+      "original": "Chỉ bản gốc"
+    },
+    "styleLabel": "Kiểu",
+    "style": {
+      "default": "Mặc định",
+      "translucent": "Trong mờ",
+      "outline": "Viền chữ",
+      "yellow": "Bản dịch màu vàng"
+    },
+    "download": "Lưu phụ đề",
+    "translating": "Đang dịch {{percent}}%",
+    "file": {
+      "original": "Bản gốc",
+      "translation": "Bản dịch",
+      "bilingual": "Bản gốc + bản dịch"
+    }
   },
   "usage": {
     "title": "Sử dụng Token",

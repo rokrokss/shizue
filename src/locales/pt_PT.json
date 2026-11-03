@@ -161,6 +161,9 @@
     "translateModel": "Modelo de tradução",
     "sourceLanguage": "Idioma de origem",
     "targetLanguage": "Idioma de destino",
+    "translationDisplay": "Apresentação",
+    "translationDisplayBilingual": "Original + tradução",
+    "translationDisplayTranslationOnly": "Apenas a tradução",
     "translateTargetLanguage": "Idioma de Destino da Tradução",
     "auto": "Automático",
     "general": "Geral",
@@ -217,7 +220,6 @@
     "activate": "Ativar",
     "deactivate": "Desativar",
     "youtubeCaptionButton": "Botão de legenda do YouTube",
-    "bilingual": "Bilingue",
     "captionSizeRatio": "Tamanho da legenda",
     "useKeyboardNavigate": "Navegar legendas com A/D",
     "sourceTrack": "Legendas do YouTube",
@@ -246,6 +248,29 @@
     "netflixCaptionButton": "Botão de legenda da Netflix",
     "originalSubtitles": "Legendas originais",
     "loadFailed": "Não foi possível carregar as legendas"
+  },
+  "caption": {
+    "displayLabel": "Apresentação",
+    "display": {
+      "translation": "Apenas a tradução",
+      "bilingual": "Original + tradução",
+      "translationFirst": "Tradução + original",
+      "original": "Apenas o original"
+    },
+    "styleLabel": "Estilo",
+    "style": {
+      "default": "Predefinido",
+      "translucent": "Translúcido",
+      "outline": "Contorno",
+      "yellow": "Tradução a amarelo"
+    },
+    "download": "Guardar legendas",
+    "translating": "A traduzir {{percent}}%",
+    "file": {
+      "original": "Original",
+      "translation": "Tradução",
+      "bilingual": "Original + tradução"
+    }
   },
   "usage": {
     "title": "Utilização de Tokens",

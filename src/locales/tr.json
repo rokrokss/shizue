@@ -161,6 +161,9 @@
     "translateModel": "Çeviri Modeli",
     "sourceLanguage": "Kaynak Dil",
     "targetLanguage": "Hedef Dil",
+    "translationDisplay": "Görünüm",
+    "translationDisplayBilingual": "Orijinal + çeviri",
+    "translationDisplayTranslationOnly": "Yalnızca çeviri",
     "translateTargetLanguage": "Çeviri Hedef Dili",
     "auto": "Otomatik",
     "general": "Genel",
@@ -217,7 +220,6 @@
     "activate": "Aktif Et",
     "deactivate": "Pasif Et",
     "youtubeCaptionButton": "YouTube Altyazı Düğmesi",
-    "bilingual": "İki Dilli",
     "captionSizeRatio": "Altyazı Boyutu",
     "useKeyboardNavigate": "A/D ile Altyazı Gezinme",
     "sourceTrack": "YouTube altyazıları",
@@ -246,6 +248,29 @@
     "netflixCaptionButton": "Netflix Altyazı Düğmesi",
     "originalSubtitles": "Orijinal altyazı",
     "loadFailed": "Altyazı yüklenemedi"
+  },
+  "caption": {
+    "displayLabel": "Görünüm",
+    "display": {
+      "translation": "Yalnızca çeviri",
+      "bilingual": "Orijinal + çeviri",
+      "translationFirst": "Çeviri + orijinal",
+      "original": "Yalnızca orijinal"
+    },
+    "styleLabel": "Stil",
+    "style": {
+      "default": "Varsayılan",
+      "translucent": "Yarı saydam",
+      "outline": "Dış çizgi",
+      "yellow": "Sarı çeviri"
+    },
+    "download": "Altyazıyı kaydet",
+    "translating": "Çevriliyor %{{percent}}",
+    "file": {
+      "original": "Orijinal",
+      "translation": "Çeviri",
+      "bilingual": "Orijinal + çeviri"
+    }
   },
   "usage": {
     "title": "Token Kullanımı",

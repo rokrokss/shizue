@@ -161,6 +161,9 @@
     "translateModel": "翻譯模型",
     "sourceLanguage": "來源語言",
     "targetLanguage": "目標語言",
+    "translationDisplay": "顯示方式",
+    "translationDisplayBilingual": "原文和譯文",
+    "translationDisplayTranslationOnly": "僅譯文",
     "translateTargetLanguage": "翻譯目標語言",
     "auto": "自動",
     "general": "一般",
@@ -217,7 +220,6 @@
     "activate": "啟用",
     "deactivate": "停用",
     "youtubeCaptionButton": "YouTube 字幕按鈕",
-    "bilingual": "雙語",
     "captionSizeRatio": "字幕大小",
     "useKeyboardNavigate": "使用A/D鍵導航字幕",
     "sourceTrack": "YouTube 字幕",
@@ -246,6 +248,29 @@
     "netflixCaptionButton": "Netflix 字幕按鈕",
     "originalSubtitles": "原文字幕",
     "loadFailed": "無法載入字幕"
+  },
+  "caption": {
+    "displayLabel": "顯示方式",
+    "display": {
+      "translation": "僅譯文",
+      "bilingual": "原文 + 譯文",
+      "translationFirst": "譯文 + 原文",
+      "original": "僅原文"
+    },
+    "styleLabel": "樣式",
+    "style": {
+      "default": "預設",
+      "translucent": "半透明",
+      "outline": "描邊",
+      "yellow": "黃色譯文"
+    },
+    "download": "儲存字幕",
+    "translating": "翻譯中 {{percent}}%",
+    "file": {
+      "original": "原文",
+      "translation": "譯文",
+      "bilingual": "原文 + 譯文"
+    }
   },
   "usage": {
     "title": "權杖使用量",
