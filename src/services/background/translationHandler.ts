@@ -146,11 +146,13 @@ export class TranslationHandler {
 
   public async translateYoutubeCaption(
     captions: Caption[],
+    context: TranslationContext[],
+    following: string[],
     targetLanguage: Language,
     metadata: VideoMetadata
   ): Promise<YoutubeCaptionTranslationResult> {
     try {
-      const prompt = getYoutubeCaptionTranslationPrompt(captions, targetLanguage, metadata);
+      const prompt = getYoutubeCaptionTranslationPrompt(captions, context, following, targetLanguage, metadata);
       const modelPreset = getTranslationModelPreset();
 
       const llm = getModelInstance({
@@ -222,7 +224,7 @@ export class TranslationHandler {
         );
         if (captions.length > 1) {
           debugLog('TranslationHandler [translateYoutubeCaption] retrying in halves:', captions.length);
-          return this.translateYoutubeCaptionInHalves(captions, targetLanguage, metadata);
+          return this.translateYoutubeCaptionInHalves(captions, context, following, targetLanguage, metadata);
         }
         return {
           success: false,
@@ -252,13 +254,15 @@ export class TranslationHandler {
   // count comes back wrong is retried in halves. Parts that still fail keep their original text.
   private async translateYoutubeCaptionInHalves(
     captions: Caption[],
+    context: TranslationContext[],
+    following: string[],
     targetLanguage: Language,
     metadata: VideoMetadata
   ): Promise<YoutubeCaptionTranslationResult> {
     const middle = Math.ceil(captions.length / 2);
     const parts = [captions.slice(0, middle), captions.slice(middle)];
     const results = await Promise.all(
-      parts.map((part) => this.translateYoutubeCaption(part, targetLanguage, metadata))
+      parts.map((part) => this.translateYoutubeCaption(part, context, following, targetLanguage, metadata))
     );
     return {
       success: true,

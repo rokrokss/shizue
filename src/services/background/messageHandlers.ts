@@ -107,9 +107,11 @@ async function handleTranslateHtmlTextBatch(msg: any, sendResponse: (response?: 
 }
 
 async function handleTranslateYoutubeCaption(msg: any, sendResponse: (response?: any) => void) {
-  const { captions, targetLanguage, metadata } = msg;
+  const { captions, context, following, targetLanguage, metadata } = msg;
   const translatedCaptions = await getTranslationHandler().translateYoutubeCaption(
     captions,
+    context,
+    following,
     targetLanguage,
     metadata
   );

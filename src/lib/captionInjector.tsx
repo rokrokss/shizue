@@ -16,6 +16,8 @@ import { createRoot, Root } from 'react-dom/client';
 
 const CUSTOM_CAPTION_ID = 'shizue-custom-caption';
 const CAPTION_CHUNK_SIZE = 10;
+const CONTEXT_BEFORE = 3;
+const CONTEXT_AFTER = 2;
 
 // A subtitle file holds the originals, the translations, or each original over its translation.
 export type SubtitleKind = 'original' | 'translation' | 'bilingual';
@@ -377,9 +379,23 @@ export class CaptionInjector {
         }
 
         const chunk = baseCaptions.slice(chunkStartIndex, chunkStartIndex + CAPTION_CHUNK_SIZE);
+        // The lines around the chunk, as on Netflix. A line before it still holding its original
+        // isn't translated yet (after a seek) or its chunk failed: it goes without a translation.
+        const translated = this.captionCache.get(this.targetLanguage);
+        const context = baseCaptions
+          .slice(Math.max(0, chunkStartIndex - CONTEXT_BEFORE), chunkStartIndex)
+          .map((caption, i, before) => {
+            const translation = translated?.[chunkStartIndex! - before.length + i]?.text ?? '';
+            return { source: caption.text, translation: translation === caption.text ? '' : translation };
+          });
+        const following = baseCaptions
+          .slice(chunkStartIndex + CAPTION_CHUNK_SIZE, chunkStartIndex + CAPTION_CHUNK_SIZE + CONTEXT_AFTER)
+          .map((caption) => caption.text);
 
         const result = await translationService.translateYoutubeCaption(
           chunk,
+          context,
+          following,
           this.targetLanguage,
           this.videoMetadata!
         );

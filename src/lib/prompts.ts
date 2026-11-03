@@ -306,8 +306,12 @@ ${serializedTextBatch}
 Ensure your output can be directly parsed by a JSON parser.`;
 };
 
+// YouTube captions go in chunks, each with the lines before it (with their translations, when
+// known) and after it, as on Netflix, so a chunk doesn't start or end without the sentences around it.
 export const getYoutubeCaptionTranslationPrompt = (
   captions: Caption[],
+  context: TranslationContext[],
+  following: string[],
   targetLanguage: Language,
   metadata: VideoMetadata
 ) => {
@@ -324,6 +328,8 @@ Translate each line from the input array into **${targetLanguage}**.
 2.  **Preserve Fragmentation:** Input lines are often grammatical fragments. Your translation for that line MUST also be a fragment.
     - **DO NOT try to create complete, natural-sounding sentences by combining lines.** Your task is technical translation, not creative writing. It is OKAY and EXPECTED for your translated lines to be incomplete sentences.
 
+3.  **Use the surrounding lines only for context:** The earlier lines were already shown (with their translations, when known) and the following lines come next. Use them to understand a sentence that runs into or out of the input and to keep names, terms and tone consistent, but translate ONLY the input lines.
+
 **--- Output Format ---**
 
 -   You MUST return your response as a single, valid JSON object.
@@ -333,6 +339,12 @@ Translate each line from the input array into **${targetLanguage}**.
 
 ===Video Metadata (for Tonal Context Only)===
 ${JSON.stringify(metadata)}
+
+===Earlier Lines (already shown, context only)===
+${JSON.stringify(context)}
+
+===Following Lines (context only)===
+${JSON.stringify(following)}
 
 ===Input Lines to Translate (Line Count: ${captions.length})===
 ${JSON.stringify(captions.map((c) => c.text))}

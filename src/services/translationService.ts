@@ -23,12 +23,16 @@ async function translateHtmlTextBatch(texts: string[]) {
 
 async function translateYoutubeCaption(
   captions: Caption[],
+  context: TranslationContext[],
+  following: string[],
   targetLanguage: Language,
   metadata: VideoMetadata
 ) {
   const result: YoutubeCaptionTranslationResult = await chrome.runtime.sendMessage({
     action: MESSAGE_TRANSLATE_YOUTUBE_CAPTION,
     captions,
+    context,
+    following,
     targetLanguage,
     metadata,
   });
