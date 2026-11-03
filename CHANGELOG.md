@@ -5,11 +5,13 @@
 - Translation only: in page translation's settings, set Display to "Translation only" to hide the original text and read just the translation. Switching back shows the original again without translating anew
 - Code and math stay as they are: code, keyboard keys and formulas inside a translated paragraph keep their original form
 - YouTube's auto-generated captions are translated sentence by sentence: the recognizer's broken lines are joined into whole sentences, and long ones split where the speaker pauses
+- YouTube captions are translated with the lines around them, as on Netflix: each batch goes with the few lines before it and their translations, and the lines that follow. A sentence split between batches reads as one, and names and terms are more consistent from one batch to the next
 - Caption display and style: show the translation only, the original and translation in either order, or the original only, in a default, translucent, outline or yellow-translation style. The choice applies on YouTube, Twitch, Netflix and X
 - Save YouTube subtitles as an SRT file: "Save subtitles" in the caption menu downloads the original, the translation, or both. The translation can be saved once it's done, with its progress shown until then
 - X videos: hover a video that has captions and click the button at its top right to read them translated
 - On a YouTube watch page, speech recognition listens in the language of the audio track playing, following a switch to a dubbed track, or else in the language of the video's auto-generated captions
 - Fix the caption toggle showing on vertical YouTube embeds
+- Fix YouTube captions going blank on a line the model left untranslated (it shows the original now), and a line showing twice in bilingual captions when it has no translation yet
 
 ## v0.3.23
 
