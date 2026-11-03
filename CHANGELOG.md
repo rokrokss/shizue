@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.3.24
+
+- Translation only: in page translation's settings, set Display to "Translation only" to hide the original text and read just the translation. Switching back shows the original again without translating anew
+- Code and math stay as they are: code, keyboard keys and formulas inside a translated paragraph keep their original form
+- YouTube's auto-generated captions are translated sentence by sentence: the recognizer's broken lines are joined into whole sentences, and long ones split where the speaker pauses
+- Caption display and style: show the translation only, the original and translation in either order, or the original only, in a default, translucent, outline or yellow-translation style. The choice applies on YouTube, Twitch, Netflix and X
+- Save YouTube subtitles as an SRT file: "Save subtitles" in the caption menu downloads the original, the translation, or both. The translation can be saved once it's done, with its progress shown until then
+- X videos: hover a video that has captions and click the button at its top right to read them translated
+- On a YouTube watch page, speech recognition listens in the language of the audio track playing, following a switch to a dubbed track, or else in the language of the video's auto-generated captions
+- Fix the caption toggle showing on vertical YouTube embeds
+
 ## v0.3.23
 
 - YouTube videos embedded on other sites get Shizue's caption translation too: the toggle sits with the player's own buttons, and the captions and menu fit the player's size
