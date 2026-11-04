@@ -89,7 +89,7 @@
     "fixGrammarSelectionRequest": "Per favore, correggi la grammatica di questo testo.",
     "translateModeDescription": "D'ora in poi, per ogni messaggio che invio, fornisci traduzione e spiegazione nel seguente formato:\n\n1. ✅ Traduzione: Fornisci una traduzione naturale e contestualmente appropriata.\n2. 📚 Parole/Espressioni chiave\n    – Parola: Parte del discorso / Significato\n    – Esempio dal testo originale\n3. 🧠 Spiegazione grammaticale o espressiva: Quando necessario, fornisci una breve spiegazione di espressioni o frasi chiave.\n\n- Presenta l'output in un formato organizzato simile a un dizionario.\n- Applica la formattazione in grassetto al contenuto importante.\n- Ometti spiegazioni inutili e scrivi in modo pulito e conciso per un apprendimento focalizzato.\n- Mantieni questo formato a meno che non fornisca istruzioni aggiuntive.",
     "activateTranslateMode": "Attiva modalità traduzione..📡 🤖 📡",
-    "imageUpload": "Carica immagine",
+    "imageUpload": "Immagine",
     "imageUploadNotSupported": "Il modello attuale non supporta le immagini",
     "contextTruncated": "Il testo supera quanto il modello locale può leggere in una volta, quindi è stato usato solo l'inizio.",
     "attachPage": "Allega questa pagina",
@@ -160,8 +160,9 @@
     "selectAllTabs": "Seleziona tutto",
     "deselectAllTabs": "Deseleziona tutto",
     "browserControlHintTitle": "Shizue può farlo nella tua scheda",
-    "browserControlHintBody": "Attiva «Controllo del browser» nel menu Allega e Shizue farà clic e scriverà in questa pagina. Chiede prima di inviare o pagare.",
-    "browserControlHintAction": "Attiva e riprova"
+    "browserControlHintBody": "Attiva «Controllo del browser» nel menu Strumenti e Shizue farà clic e scriverà in questa pagina. Chiede prima di inviare o pagare.",
+    "browserControlHintAction": "Attiva e riprova",
+    "tools": "Strumenti"
   },
   "footer": {
     "joinDiscord": "Unisciti a me su Discord!",

@@ -1,16 +1,12 @@
 import { MAX_ATTACHED_TABS } from '@/config/constants';
 import { useThemeValue } from '@/hooks/layout';
-import { REASONING_EFFORTS, type ReasoningEffort } from '@/lib/reasoning';
 import { TEXT_FILE_ACCEPT } from '@/lib/tabText';
 import {
-  BulbOutlined,
   CameraOutlined,
-  ExpandOutlined,
   FileAddOutlined,
   FileTextOutlined,
-  GlobalOutlined,
   PaperClipOutlined,
-  SelectOutlined,
+  PictureOutlined,
 } from '@ant-design/icons';
 import { Button, Popover, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
@@ -39,6 +35,10 @@ export const TabSummary = ({ tab }: { tab: chrome.tabs.Tab }) => {
   );
 };
 
+// The chat box's toolbar buttons, a little narrower than antd's 32px so all ten fit a side panel
+// at its 320px minimum.
+export const toolbarButtonStyle = { width: 28 };
+
 // Tabs, files and the capture share one row style, like items of one list.
 export const attachRowClass = (disabled: boolean, theme: string, active = false) =>
   `sz:flex sz:items-center sz:gap-2 sz:w-full sz:px-2 sz:py-1.5 sz:rounded-md sz:text-left ${
@@ -47,10 +47,9 @@ export const attachRowClass = (disabled: boolean, theme: string, active = false)
       : `sz:cursor-pointer ${theme == 'dark' ? 'sz:hover:bg-white/10' : 'sz:hover:bg-black/5'}`
   } ${active ? (theme == 'dark' ? 'sz:bg-white/10' : 'sz:bg-black/5') : ''}`;
 
-// The paperclip button: the web tabs open in this window to attach or take off, PDF and text
-// files from the computer, a capture of what the current tab shows, whole or a dragged part,
-// for models that read images, web search or the browser agent for the questions that follow,
-// and how hard the model thinks.
+// The paperclip button: what goes with the next question. The web tabs open in this window to
+// attach or take off, PDF and text files and images from the computer, and, for models that read
+// images, a capture of what the current tab shows (a dragged part has its own button).
 const AttachMenu = ({
   attachedTabIds,
   full,
@@ -59,16 +58,8 @@ const AttachMenu = ({
   onToggleTab,
   onToggleAllTabs,
   onPickFiles,
+  onPickImages,
   onCapture,
-  onCaptureRegion,
-  webSearch,
-  webSearchSupported,
-  onToggleWebSearch,
-  browserAgent,
-  onToggleBrowserAgent,
-  reasoningEffort,
-  reasoningSupported,
-  onReasoningEffort,
 }: {
   attachedTabIds: number[];
   // The next message already has MAX_ATTACHED_TABS tabs and files.
@@ -78,22 +69,15 @@ const AttachMenu = ({
   onToggleTab: (tab: chrome.tabs.Tab, attach: boolean) => void;
   onToggleAllTabs: (tabs: chrome.tabs.Tab[], attach: boolean) => void;
   onPickFiles: (files: File[]) => void;
+  onPickImages: (files: File[]) => void;
   onCapture: () => void;
-  onCaptureRegion: () => void;
-  webSearch: boolean;
-  webSearchSupported: boolean;
-  onToggleWebSearch: () => void;
-  browserAgent: boolean;
-  onToggleBrowserAgent: () => void;
-  reasoningEffort: ReasoningEffort;
-  reasoningSupported: boolean;
-  onReasoningEffort: (effort: ReasoningEffort) => void;
 }) => {
   const { t } = useTranslation();
   const theme = useThemeValue();
   const [open, setOpen] = useState(false);
   const [tabs, setTabs] = useState<chrome.tabs.Tab[]>([]);
   const fileInput = useRef<HTMLInputElement>(null);
+  const imageInput = useRef<HTMLInputElement>(null);
 
   const handleOpenChange = async (next: boolean) => {
     if (next) setTabs((await chrome.tabs.query({ currentWindow: true })).filter(isWebTab));
@@ -182,6 +166,34 @@ const AttachMenu = ({
             <div className="sz:text-xs sz:text-gray-500">{t('chat.attachFileTypes')}</div>
           </div>
         </button>
+        <input
+          ref={imageInput}
+          type="file"
+          accept="image/*"
+          multiple
+          hidden
+          onChange={(e) => {
+            const files = Array.from(e.target.files ?? []);
+            e.target.value = '';
+            if (files.length === 0) return;
+            setOpen(false);
+            onPickImages(files);
+          }}
+        />
+        <button
+          type="button"
+          disabled={!imagesSupported}
+          onClick={() => imageInput.current?.click()}
+          className={rowClass(!imagesSupported)}
+        >
+          <PictureOutlined className="sz:shrink-0" />
+          <div className="sz:min-w-0 sz:flex-1">
+            <div className="sz:text-sm">{t('chat.imageUpload')}</div>
+            {imagesSupported ? null : (
+              <div className="sz:text-xs sz:text-gray-500">{t('chat.imageUploadNotSupported')}</div>
+            )}
+          </div>
+        </button>
         <button
           type="button"
           disabled={!imagesSupported}
@@ -199,105 +211,6 @@ const AttachMenu = ({
             )}
           </div>
         </button>
-        <button
-          type="button"
-          disabled={!imagesSupported}
-          onClick={() => {
-            setOpen(false);
-            onCaptureRegion();
-          }}
-          className={rowClass(!imagesSupported)}
-        >
-          <ExpandOutlined className="sz:shrink-0" />
-          <div className="sz:min-w-0 sz:flex-1">
-            <div className="sz:text-sm">{t('chat.captureRegion')}</div>
-            {imagesSupported ? null : (
-              <div className="sz:text-xs sz:text-gray-500">{t('chat.imageUploadNotSupported')}</div>
-            )}
-          </div>
-        </button>
-      </div>
-      <div
-        className={`sz:flex sz:flex-col sz:pt-1 sz:border-t ${
-          theme == 'dark' ? 'sz:border-white/10' : 'sz:border-black/10'
-        }`}
-      >
-        <label className={rowClass(!webSearchSupported)}>
-          <GlobalOutlined className="sz:shrink-0" />
-          <div className="sz:min-w-0 sz:flex-1">
-            <div className="sz:text-sm">{t('chat.webSearch')}</div>
-            <div className="sz:text-xs sz:text-gray-500">
-              {webSearchSupported ? t('chat.webSearchHint') : t('chat.webSearchNotSupported')}
-            </div>
-          </div>
-          <input
-            type="checkbox"
-            checked={webSearch}
-            disabled={!webSearchSupported}
-            onChange={onToggleWebSearch}
-            className="sz:w-4 sz:h-4 sz:shrink-0 sz:accent-sz-cyan sz:cursor-[inherit]"
-          />
-        </label>
-        <label className={rowClass(false)}>
-          <SelectOutlined className="sz:shrink-0" />
-          <div className="sz:min-w-0 sz:flex-1">
-            <div className="sz:text-sm">{t('chat.browserAgent')}</div>
-            <div className="sz:text-xs sz:text-gray-500">{t('chat.browserAgentHint')}</div>
-          </div>
-          <input
-            type="checkbox"
-            checked={browserAgent}
-            onChange={onToggleBrowserAgent}
-            className="sz:w-4 sz:h-4 sz:shrink-0 sz:accent-sz-cyan sz:cursor-[inherit]"
-          />
-        </label>
-        <div
-          className={`sz:flex sz:flex-col sz:gap-1.5 sz:px-2 sz:py-1.5 ${
-            reasoningSupported ? '' : 'sz:opacity-50'
-          }`}
-        >
-          <div className="sz:flex sz:items-center sz:gap-2">
-            <BulbOutlined className="sz:shrink-0" />
-            <div className="sz:min-w-0 sz:flex-1">
-              <div className="sz:text-sm">{t('chat.reasoningEffort')}</div>
-              <div className="sz:text-xs sz:text-gray-500">
-                {reasoningSupported
-                  ? t(`chat.reasoningEffortHint_${reasoningEffort}`)
-                  : t('chat.reasoningEffortNotSupported')}
-              </div>
-            </div>
-          </div>
-          <div
-            role="radiogroup"
-            aria-label={t('chat.reasoningEffort')}
-            className={`sz:flex sz:p-0.5 sz:rounded-md ${theme == 'dark' ? 'sz:bg-white/10' : 'sz:bg-black/5'}`}
-          >
-            {REASONING_EFFORTS.map((effort) => {
-              const selected = effort === reasoningEffort;
-              return (
-                <button
-                  key={effort}
-                  type="button"
-                  role="radio"
-                  aria-checked={selected}
-                  disabled={!reasoningSupported}
-                  onClick={() => onReasoningEffort(effort)}
-                  className={`sz:flex-1 sz:py-0.5 sz:rounded sz:text-xs sz:transition-colors sz:duration-150 sz:focus-visible:outline-2 sz:focus-visible:outline-sz-cyan ${
-                    reasoningSupported ? 'sz:cursor-pointer' : 'sz:cursor-not-allowed'
-                  } ${
-                    selected
-                      ? theme == 'dark'
-                        ? 'sz:bg-white/20 sz:text-white'
-                        : 'sz:bg-white sz:text-black sz:shadow-sm'
-                      : 'sz:text-gray-500'
-                  }`}
-                >
-                  {t(`chat.reasoningEffort_${effort}`)}
-                </button>
-              );
-            })}
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -331,6 +244,7 @@ const AttachMenu = ({
             aria-label={t('chat.attach')}
             icon={<PaperClipOutlined style={{ fontSize: '20px', color: iconColor }} />}
             size="middle"
+            style={toolbarButtonStyle}
           ></Button>
         </Tooltip>
       </span>

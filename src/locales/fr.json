@@ -89,7 +89,7 @@
     "fixGrammarSelectionRequest": "Veuillez corriger la grammaire de ce texte.",
     "translateModeDescription": "Désormais, pour chaque message que j'envoie, veuillez fournir une traduction et une explication dans le format suivant :\n\n1. ✅ Traduction : Fournissez une traduction naturelle et appropriée au contexte.\n2. 📚 Mots/Expressions clés\n    – Mot : Nature / Signification\n    – Exemple du texte original\n3. 🧠 Explication grammaticale ou d'expression : Si nécessaire, fournissez une brève explication des expressions ou phrases clés.\n\n- Présentez la sortie dans un format organisé comme un dictionnaire.\n- Appliquez le formatage en gras au contenu important.\n- Omettez les explications inutiles et rédigez de manière claire et concise pour un apprentissage ciblé.\n- Maintenez ce format sauf si je donne des instructions supplémentaires.",
     "activateTranslateMode": "Activer le mode traduction..📡 🤖 📡",
-    "imageUpload": "Joindre une image",
+    "imageUpload": "Image",
     "imageUploadNotSupported": "Le modèle actuel ne prend pas en charge les images",
     "contextTruncated": "Le texte dépasse ce que le modèle local peut lire en une fois ; seul le début a été utilisé.",
     "attachPage": "Joindre cette page",
@@ -160,8 +160,9 @@
     "selectAllTabs": "Tout sélectionner",
     "deselectAllTabs": "Tout retirer",
     "browserControlHintTitle": "Shizue peut le faire dans votre onglet",
-    "browserControlHintBody": "Activez « Contrôle du navigateur » dans le menu Joindre et Shizue clique et tape sur cette page. Il demande avant d’envoyer ou de payer.",
-    "browserControlHintAction": "Activer et réessayer"
+    "browserControlHintBody": "Activez « Contrôle du navigateur » dans le menu Outils et Shizue clique et tape sur cette page. Il demande avant d’envoyer ou de payer.",
+    "browserControlHintAction": "Activer et réessayer",
+    "tools": "Outils"
   },
   "footer": {
     "joinDiscord": "Rejoignez-moi sur Discord !",

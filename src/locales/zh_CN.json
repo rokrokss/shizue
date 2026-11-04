@@ -89,7 +89,7 @@
     "fixGrammarSelectionRequest": "请修正这段文字的语法。",
     "translateModeDescription": "从现在开始，对于我发送的每一条消息，请按以下格式提供翻译和解释：\n\n1. ✅ 翻译文：提供自然且符合语境的翻译。\n2. 📚 核心词汇/表达整理\n    – 单词：词性 / 含义\n    – 原文中的例句\n3. 🧠 语法或表达解释：必要时，对核心表达或句型提供简单说明。\n\n- 输出要像词典一样条理清晰。\n- 重要内容要加粗处理。\n- 省略不必要的解释，简洁明了地编写，以便专注学习。\n- 除非我另行指示，否则请保持此格式。",
     "activateTranslateMode": "激活翻译模式..📡 🤖 📡",
-    "imageUpload": "图片上传",
+    "imageUpload": "图片",
     "imageUploadNotSupported": "当前模型不支持图片",
     "contextTruncated": "文本超出了本地模型一次能读取的长度，因此只使用了开头部分。",
     "attachPage": "附加此页面",
@@ -160,8 +160,9 @@
     "selectAllTabs": "全选",
     "deselectAllTabs": "全部取消",
     "browserControlHintTitle": "Shizue 可以直接在你的标签页里完成",
-    "browserControlHintBody": "在附加菜单中打开“浏览器操作”，Shizue 就会在此页面上点击和输入。发送或付款前会先询问。",
-    "browserControlHintAction": "打开并重试"
+    "browserControlHintBody": "在工具菜单中打开“浏览器操作”，Shizue 就会在此页面上点击和输入。发送或付款前会先询问。",
+    "browserControlHintAction": "打开并重试",
+    "tools": "工具"
   },
   "footer": {
     "joinDiscord": "加入我的 Discord！",

@@ -89,7 +89,7 @@
     "fixGrammarSelectionRequest": "Tafadhali rekebisha sarufi ya maandishi haya.",
     "translateModeDescription": "Kuanzia sasa, kwa kila ujumbe nitakaoutuma, tafadhali toa tafsiri na maelezo katika umbizo lifuatalo:\n\n1. ✅ Tafsiri: Toa tafsiri ya asili na inayofaa kwa muktadha.\n2. 📚 Maneno/Misemo ya Msingi\n    – Neno: Aina ya neno / Maana\n    – Mfano kutoka kwa nakala halisi\n3. 🧠 Maelezo ya Sarufi au Msemo: Inapohitajika, toa maelezo mafupi ya misemo au vifungu vya muhimu.\n\n- Onyesha matokeo katika umbizo lililoanzana kama kamusi.\n- Tumia uandishi wa ujasiri kwa maudhui muhimu.\n- Epuka maelezo yasiyohitajika na andika kwa uwazi na ufupi kwa kujifunza kileng'enevu.\n- Dumisha umbizo hili isipokuwa nipe maelekezo ya ziada.",
     "activateTranslateMode": "Amilisha Hali ya Tafsiri..📡 🤖 📡",
-    "imageUpload": "Pakia picha",
+    "imageUpload": "Picha",
     "imageUploadNotSupported": "Modeli ya sasa haitumii picha",
     "contextTruncated": "Maandishi ni marefu kuliko modeli ya ndani inavyoweza kusoma kwa mara moja, kwa hiyo mwanzo wake pekee ndio ulitumika.",
     "attachPage": "Ambatisha ukurasa huu",
@@ -160,8 +160,9 @@
     "selectAllTabs": "Chagua zote",
     "deselectAllTabs": "Ondoa zote",
     "browserControlHintTitle": "Shizue inaweza kufanya hivi kwenye kichupo chako",
-    "browserControlHintBody": "Washa Udhibiti wa kivinjari kwenye menyu ya Ambatisha na Shizue itabofya na kuandika kwenye ukurasa huu. Huuliza kabla ya kutuma au kulipa.",
-    "browserControlHintAction": "Washa na ujaribu tena"
+    "browserControlHintBody": "Washa Udhibiti wa kivinjari kwenye menyu ya Zana na Shizue itabofya na kuandika kwenye ukurasa huu. Huuliza kabla ya kutuma au kulipa.",
+    "browserControlHintAction": "Washa na ujaribu tena",
+    "tools": "Zana"
   },
   "footer": {
     "joinDiscord": "Jiunge nami kwenye Discord!",

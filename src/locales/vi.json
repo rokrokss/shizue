@@ -89,7 +89,7 @@
     "fixGrammarSelectionRequest": "Vui lòng sửa ngữ pháp của văn bản này.",
     "translateModeDescription": "Từ bây giờ, với mỗi tin nhắn tôi gửi, vui lòng cung cấp bản dịch và giải thích theo định dạng sau:\n\n1. ✅ Bản dịch: Cung cấp bản dịch tự nhiên và phù hợp với ngữ cảnh.\n2. 📚 Từ/Cụm từ chính\n    – Từ: Loại từ / Nghĩa\n    – Ví dụ từ văn bản gốc\n3. 🧠 Giải thích ngữ pháp hoặc cách diễn đạt: Khi cần thiết, cung cấp giải thích ngắn gọn về các cách diễn đạt hoặc cụm từ chính.\n\n- Trình bày kết quả theo định dạng có tổ chức giống từ điển.\n- Áp dụng định dạng in đậm cho nội dung quan trọng.\n- Bỏ qua các giải thích không cần thiết và viết rõ ràng, súc tích để tập trung học tập.\n- Duy trì định dạng này trừ khi tôi đưa ra hướng dẫn bổ sung.",
     "activateTranslateMode": "Kích hoạt chế độ dịch..📡 🤖 📡",
-    "imageUpload": "Tải ảnh lên",
+    "imageUpload": "Hình ảnh",
     "imageUploadNotSupported": "Mô hình hiện tại không hỗ trợ hình ảnh",
     "contextTruncated": "Văn bản dài hơn mức mô hình cục bộ đọc được một lần, nên chỉ phần đầu được sử dụng.",
     "attachPage": "Đính kèm trang này",
@@ -160,8 +160,9 @@
     "selectAllTabs": "Chọn tất cả",
     "deselectAllTabs": "Bỏ chọn tất cả",
     "browserControlHintTitle": "Shizue có thể làm việc này trong thẻ của bạn",
-    "browserControlHintBody": "Bật “Điều khiển trình duyệt” trong menu Đính kèm để Shizue nhấp và nhập trên trang này. Hỏi trước khi gửi hoặc thanh toán.",
-    "browserControlHintAction": "Bật và thử lại"
+    "browserControlHintBody": "Bật “Điều khiển trình duyệt” trong menu Công cụ để Shizue nhấp và nhập trên trang này. Hỏi trước khi gửi hoặc thanh toán.",
+    "browserControlHintAction": "Bật và thử lại",
+    "tools": "Công cụ"
   },
   "footer": {
     "joinDiscord": "Tham gia cùng tôi trên Discord!",

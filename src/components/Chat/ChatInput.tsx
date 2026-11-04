@@ -1,6 +1,7 @@
-import AttachMenu from '@/components/Chat/AttachMenu';
+import AttachMenu, { toolbarButtonStyle } from '@/components/Chat/AttachMenu';
 import AttachmentChips, { AttachedItem } from '@/components/Chat/AttachmentChips';
 import TabMentionPicker, { TabMentionPickerHandle } from '@/components/Chat/TabMentionPicker';
+import ToolsMenu from '@/components/Chat/ToolsMenu';
 import Footer from '@/components/Footer';
 import { LONG_PASTE_CHARS, MAX_ATTACHED_TABS, SUMMARY_PAGE_TEXT_MAX_CHARS } from '@/config/constants';
 import { requestPageSummary } from '@/services/pageSummary';
@@ -34,13 +35,13 @@ import {
   EditOutlined,
   FolderOutlined,
   LineChartOutlined,
-  PictureOutlined,
   ReadOutlined,
+  ScissorOutlined,
   SmileOutlined,
   TranslationOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import { Alert, Button, Input, Tooltip, Upload } from 'antd';
+import { Alert, Button, Input, Tooltip } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -429,9 +430,8 @@ const ChatInput = ({
     onTranslateMode();
   };
 
-  const handleImageUpload = (file: File) => {
-    setUploadedImages((prev) => [...prev, file]);
-    return false;
+  const handlePickImages = (files: File[]) => {
+    setUploadedImages((prev) => [...prev, ...files]);
   };
 
   const handleRemoveImage = (index: number) => {
@@ -518,6 +518,7 @@ const ChatInput = ({
                   />
                 }
                 size="middle"
+                style={toolbarButtonStyle}
               ></Button>
             </Tooltip>
             <Tooltip
@@ -546,6 +547,7 @@ const ChatInput = ({
                   />
                 }
                 size="middle"
+                style={toolbarButtonStyle}
               ></Button>
             </Tooltip>
             <Tooltip
@@ -574,6 +576,7 @@ const ChatInput = ({
                   />
                 }
                 size="middle"
+                style={toolbarButtonStyle}
               ></Button>
             </Tooltip>
             <Tooltip
@@ -602,6 +605,7 @@ const ChatInput = ({
                   />
                 }
                 size="middle"
+                style={toolbarButtonStyle}
               ></Button>
             </Tooltip>
             <Tooltip
@@ -612,33 +616,28 @@ const ChatInput = ({
                     theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
                   }`}
                 >
-                  {imagesSupported ? t('chat.imageUpload') : t('chat.imageUploadNotSupported')}
+                  {imagesSupported ? t('chat.captureRegion') : t('chat.imageUploadNotSupported')}
                 </div>
               }
               color={theme == 'dark' ? '#505362' : 'white'}
               className="sz:font-ycom"
             >
-              <Upload
-                beforeUpload={handleImageUpload}
-                accept="image/*"
-                showUploadList={false}
-                multiple
+              <Button
+                onClick={() => handleCaptureRegion()}
+                type="text"
+                aria-label={t('chat.captureRegion')}
                 disabled={!imagesSupported}
-              >
-                <Button
-                  type="text"
-                  disabled={!imagesSupported}
-                  icon={
-                    <PictureOutlined
-                      style={{
-                        fontSize: '20px',
-                        color: imagesSupported ? iconColor : disabledIconColor,
-                      }}
-                    />
-                  }
-                  size="middle"
-                ></Button>
-              </Upload>
+                icon={
+                  <ScissorOutlined
+                    style={{
+                      fontSize: '20px',
+                      color: imagesSupported ? iconColor : disabledIconColor,
+                    }}
+                  />
+                }
+                size="middle"
+                style={toolbarButtonStyle}
+              ></Button>
             </Tooltip>
             <AttachMenu
               attachedTabIds={attached.flatMap((item) => (item.tabId !== undefined ? [item.tabId] : []))}
@@ -648,8 +647,11 @@ const ChatInput = ({
               onToggleTab={handleToggleTab}
               onToggleAllTabs={handleToggleAllTabs}
               onPickFiles={handlePickFiles}
+              onPickImages={handlePickImages}
               onCapture={handleCapture}
-              onCaptureRegion={handleCaptureRegion}
+            />
+            <ToolsMenu
+              iconColor={iconColor}
               webSearch={webSearch}
               webSearchSupported={webSearchSupported}
               onToggleWebSearch={() => {
@@ -691,6 +693,7 @@ const ChatInput = ({
                   />
                 }
                 size="middle"
+                style={toolbarButtonStyle}
               ></Button>
             </Tooltip>
             <Tooltip
@@ -719,6 +722,7 @@ const ChatInput = ({
                   />
                 }
                 size="middle"
+                style={toolbarButtonStyle}
               ></Button>
             </Tooltip>
             <Tooltip
@@ -749,6 +753,7 @@ const ChatInput = ({
                   />
                 }
                 size="middle"
+                style={toolbarButtonStyle}
               ></Button>
             </Tooltip>
           </div>

@@ -89,7 +89,7 @@
     "fixGrammarSelectionRequest": "このテキストの文法を修正してください。",
     "translateModeDescription": "これからは、私が送るすべてのメッセージに対して、次のような形式で翻訳と説明を提供してください：\n\n1. ✅ 翻訳文：自然で文脈に適した翻訳を提示してください。\n2. 📚 核心単語・表現整理\n    – 単語：品詞 / 意味\n    – 原文での例文\n3. 🧠 文法または表現説明：必要に応じて、核心表現や構文について簡単な説明を提供してください。\n\n- 出力は辞書のような整理された形で提供してください。\n- 重要な内容は太字処理をしてください。\n- 不要な解説は省略し、学習に集中できるよう簡潔で明確に作成してください。\n- 私が追加で指示しない限り、この形式を維持してください。",
     "activateTranslateMode": "翻訳モードを有効にする..📡 🤖 📡",
-    "imageUpload": "画像添付",
+    "imageUpload": "画像",
     "imageUploadNotSupported": "現在のモデルは画像に対応していません",
     "contextTruncated": "ローカルモデルが一度に読める量を超えたため、長い文章の冒頭部分だけを使いました。",
     "attachPage": "このページを添付",
@@ -160,8 +160,9 @@
     "selectAllTabs": "すべて選択",
     "deselectAllTabs": "すべて解除",
     "browserControlHintTitle": "シズエがこのタブで直接できます",
-    "browserControlHintBody": "添付メニューの「ブラウザ操作」をオンにすると、このページで直接クリック・入力します。送信・支払いの前には確認します。",
-    "browserControlHintAction": "オンにしてやり直す"
+    "browserControlHintBody": "ツールメニューの「ブラウザ操作」をオンにすると、このページで直接クリック・入力します。送信・支払いの前には確認します。",
+    "browserControlHintAction": "オンにしてやり直す",
+    "tools": "ツール"
   },
   "footer": {
     "joinDiscord": "Discordに参加してください！",

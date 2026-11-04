@@ -89,7 +89,7 @@
     "fixGrammarSelectionRequest": "Lütfen bu metnin dilbilgisini düzeltin.",
     "translateModeDescription": "Bundan böyle gönderdiğim her mesaj için, lütfen aşağıdaki formatta çeviri ve açıklama sağlayın:\n\n1. ✅ Çeviri: Doğal ve bağlama uygun bir çeviri sağlayın.\n2. 📚 Anahtar Kelimeler/İfadeler\n    – Kelime: Kelime türü / Anlam\n    – Orijinal metinden örnek\n3. 🧠 Dilbilgisi veya İfade Açıklaması: Gerektiğinde, anahtar ifadeler veya cümleler için kısa bir açıklama sağlayın.\n\n- Çıktıyı sözlük benzeri düzenli bir formatta sunun.\n- Önemli içeriğe kalın biçimlendirme uygulayın.\n- Gereksiz açıklamaları atlayın ve odaklı öğrenme için temiz ve özlü yazın.\n- Ek talimatlar vermediğim sürece bu formatı koruyun.",
     "activateTranslateMode": "Çeviri Modunu Etkinleştir..📡 🤖 📡",
-    "imageUpload": "Resim yükle",
+    "imageUpload": "Resim",
     "imageUploadNotSupported": "Mevcut model görselleri desteklemiyor",
     "contextTruncated": "Metin, yerel modelin bir seferde okuyabileceğinden uzun olduğu için yalnızca başı kullanıldı.",
     "attachPage": "Bu sayfayı ekle",
@@ -160,8 +160,9 @@
     "selectAllTabs": "Tümünü seç",
     "deselectAllTabs": "Tümünü kaldır",
     "browserControlHintTitle": "Shizue bunu sekmende yapabilir",
-    "browserControlHintBody": "Ekle menüsünde Tarayıcı kontrolünü aç, Shizue bu sayfada tıklayıp yazsın. Göndermeden veya ödemeden önce sorar.",
-    "browserControlHintAction": "Aç ve yeniden dene"
+    "browserControlHintBody": "Araçlar menüsünde Tarayıcı kontrolünü aç, Shizue bu sayfada tıklayıp yazsın. Göndermeden veya ödemeden önce sorar.",
+    "browserControlHintAction": "Aç ve yeniden dene",
+    "tools": "Araçlar"
   },
   "footer": {
     "joinDiscord": "Discord'da bana katılın!",

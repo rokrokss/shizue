@@ -89,7 +89,7 @@
     "fixGrammarSelectionRequest": "Please fix the grammar in this text.",
     "translateModeDescription": "From now on, for every message I send, please provide translation and explanation in the following format:\n\n1. ✅ Translation: Provide a natural and contextually appropriate translation.\n2. 📚 Key Words/Expressions\n    – Word: Part of speech / Meaning\n    – Example from the original text\n3. 🧠 Grammar or Expression Explanation: When necessary, provide a brief explanation of key expressions or phrases.\n\n- Present the output in a dictionary-like organized format.\n- Apply bold formatting to important content.\n- Omit unnecessary explanations and write cleanly and concisely for focused learning.\n- Maintain this format unless I give additional instructions.",
     "activateTranslateMode": "Activate Translate Mode..📡 🤖 📡",
-    "imageUpload": "Image Upload",
+    "imageUpload": "Image",
     "imageUploadNotSupported": "The current model doesn't support images",
     "contextTruncated": "The text was longer than the local model can read at once, so only its beginning was used.",
     "attachPage": "Attach this page",
@@ -160,8 +160,9 @@
     "selectAllTabs": "Select all",
     "deselectAllTabs": "Clear all",
     "browserControlHintTitle": "Shizue can do this in your tab",
-    "browserControlHintBody": "Turn on Browser control in the Attach menu and Shizue clicks and types on this page. It asks before sending or paying.",
-    "browserControlHintAction": "Turn on and try again"
+    "browserControlHintBody": "Turn on Browser control in the Tools menu and Shizue clicks and types on this page. It asks before sending or paying.",
+    "browserControlHintAction": "Turn on and try again",
+    "tools": "Tools"
   },
   "footer": {
     "joinDiscord": "Join me on Discord!",

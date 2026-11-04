@@ -89,7 +89,7 @@
     "fixGrammarSelectionRequest": "Por favor, corrija a gramática deste texto.",
     "translateModeDescription": "De agora em diante, para cada mensagem que eu enviar, fornece tradução e explicação no seguinte formato:\n\n1. ✅ Tradução: Fornece uma tradução natural e contextualmente apropriada.\n2. 📚 Palavras/Expressões-chave\n    – Palavra: Tipo de palavra / Significado\n    – Exemplo do texto original\n3. 🧠 Explicação gramatical ou expressiva: Quando necessário, fornece uma breve explicação de expressões ou frases-chave.\n\n- Apresenta a saída num formato organizado como um dicionário.\n- Aplica formatação em negrito ao conteúdo importante.\n- Omite explicações desnecessárias e escreve de forma limpa e concisa para aprendizagem focada.\n- Mantém este formato a menos que eu forneça instruções adicionais.",
     "activateTranslateMode": "Ativar modo de tradução..📡 🤖 📡",
-    "imageUpload": "Carregar imagem",
+    "imageUpload": "Imagem",
     "imageUploadNotSupported": "O modelo atual não suporta imagens",
     "contextTruncated": "O texto é maior do que o modelo local consegue ler de uma vez, por isso só foi usado o início.",
     "attachPage": "Anexar esta página",
@@ -160,8 +160,9 @@
     "selectAllTabs": "Selecionar tudo",
     "deselectAllTabs": "Desmarcar tudo",
     "browserControlHintTitle": "O Shizue pode fazer isto no seu separador",
-    "browserControlHintBody": "Ative “Controlo do navegador” no menu Anexar e o Shizue clica e escreve nesta página. Pergunta antes de enviar ou pagar.",
-    "browserControlHintAction": "Ativar e tentar novamente"
+    "browserControlHintBody": "Ative “Controlo do navegador” no menu Ferramentas e o Shizue clica e escreve nesta página. Pergunta antes de enviar ou pagar.",
+    "browserControlHintAction": "Ativar e tentar novamente",
+    "tools": "Ferramentas"
   },
   "footer": {
     "joinDiscord": "Junta-te a mim no Discord!",

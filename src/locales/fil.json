@@ -89,7 +89,7 @@
     "fixGrammarSelectionRequest": "Pakiayos ang grammar ng tekstong ito.",
     "translateModeDescription": "Mula ngayon, para sa bawat mensaheng ipapadala ko, magbigay ng salin at paliwanag sa sumusunod na format:\n\n1. ✅ Salin: Magbigay ng natural at angkop sa kontekstong salin.\n2. 📚 Mga Pangunahing Salita/Ekspresyon\n    – Salita: Uri ng salita / Kahulugan\n    – Halimbawa mula sa orihinal na teksto\n3. 🧠 Paliwanag sa Gramatika o Ekspresyon: Kapag kinakailangan, magbigay ng maikling paliwanag sa mga pangunahing ekspresyon o parirala.\n\n- Ipakita ang output sa organisadong format na parang diksyunaryo.\n- Gamitin ang bold formatting sa mahahalagang nilalaman.\n- Alisin ang mga hindi kinakailangang paliwanag at sumulat nang malinis at maikli para sa focused na pag-aaral.\n- Panatilihin ang format na ito maliban kung magbibigay ako ng karagdagang tagubilin.",
     "activateTranslateMode": "I-activate ang Translation Mode..📡 🤖 📡",
-    "imageUpload": "Mag-upload ng larawan",
+    "imageUpload": "Larawan",
     "imageUploadNotSupported": "Hindi sinusuportahan ng kasalukuyang modelo ang mga larawan",
     "contextTruncated": "Mas mahaba ang teksto kaysa kayang basahin nang isang beses ng local model, kaya ang simula lang ang ginamit.",
     "attachPage": "Ilakip ang page na ito",
@@ -160,8 +160,9 @@
     "selectAllTabs": "Piliin lahat",
     "deselectAllTabs": "Alisin lahat",
     "browserControlHintTitle": "Kaya itong gawin ni Shizue sa tab mo",
-    "browserControlHintBody": "I-on ang Kontrol ng browser sa menu na Ilakip at magki-click at magta-type si Shizue sa page na ito. Nagtatanong muna bago magpadala o magbayad.",
-    "browserControlHintAction": "I-on at subukan ulit"
+    "browserControlHintBody": "I-on ang Kontrol ng browser sa menu na Mga tool at magki-click at magta-type si Shizue sa page na ito. Nagtatanong muna bago magpadala o magbayad.",
+    "browserControlHintAction": "I-on at subukan ulit",
+    "tools": "Mga tool"
   },
   "footer": {
     "joinDiscord": "Sumali sa akin sa Discord!",
