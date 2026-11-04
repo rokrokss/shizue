@@ -105,9 +105,10 @@ test('Models the list sets to think by default think at the medium effort, with 
     ['medium', { type: 'adaptive', display: 'summarized' }, 32_000]);
   assert.deepEqual(params('gemini-argon', { reasoningEffort: 'medium' }).generationConfig.thinkingConfig, { includeThoughts: true, thinkingLevel: 'MEDIUM' });
 
-  // Argon has no 'minimal': its fast calls think at low, with no thoughts mixed into the text.
+  // Argon and 3.8 Flash have no 'minimal': their fast calls think at low, with no thoughts mixed into the text.
   assert.deepEqual(params('gemini-argon', { fast: true, streaming: false }).generationConfig.thinkingConfig, { includeThoughts: false, thinkingLevel: 'LOW' });
-  assert.deepEqual(params('gemini-flash', { fast: true, streaming: false }).generationConfig.thinkingConfig, { includeThoughts: false, thinkingLevel: 'MINIMAL' });
+  assert.deepEqual(params('gemini-flash', { fast: true, streaming: false }).generationConfig.thinkingConfig, { includeThoughts: false, thinkingLevel: 'LOW' });
+  assert.deepEqual(params('gemini-flash-lite', { fast: true, streaming: false }).generationConfig.thinkingConfig, { includeThoughts: false, thinkingLevel: 'MINIMAL' });
   assert.deepEqual(params('gemma', { streaming: false }).generationConfig.thinkingConfig, { includeThoughts: false, thinkingLevel: 'MINIMAL' });
 });
 

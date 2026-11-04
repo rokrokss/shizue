@@ -65,6 +65,7 @@
       "provider": "gemini-api-key",
       "supportsTemperature": false,
       "supportsImages": true,
+      "geminiFastEffort": "low",
       "openrouter": { "id": "google/gemini-3.8-flash", "fastEffort": "low" }
     },
     {
