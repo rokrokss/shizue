@@ -143,14 +143,14 @@ test('Responses requests validate effort and retain the supported-field allowlis
   const input = [{ role: 'user', content: 'Translate Hello into Korean.' }];
   const base = { model: 'gpt-6.1-sol', input, instructions: 'Only return the translation.' };
   assert.deepEqual(responseRequestBody(base), { ...base, store: false, stream: true });
-  // 'high' is the chat's highest thinking effort (lib/reasoning.ts).
-  for (const effort of ['low', 'none', 'high']) {
+  // 'xhigh' and 'max' only reach the models that take them (lib/reasoning.ts).
+  for (const effort of ['low', 'none', 'medium', 'high', 'xhigh', 'max']) {
     assert.deepEqual(responseRequestBody({
       ...base, reasoning: { effort, mode: 'pro', summary: 'detailed' },
       temperature: 0.3, max_output_tokens: 2000, store: true, stream: false,
     }), { ...base, reasoning: { effort }, store: false, stream: true });
   }
-  for (const reasoning of [null, false, 'low', [], {}, { effort: null }, { effort: 'xhigh' }, { effort: 'invalid' }]) {
+  for (const reasoning of [null, false, 'low', [], {}, { effort: null }, { effort: 'minimal' }, { effort: 'invalid' }]) {
     assert.throws(() => responseRequestBody({ ...base, reasoning }), /Invalid ChatGPT reasoning effort/);
   }
   assert.deepEqual(responseRequestBody({ ...base, webSearch: true }), { ...base, tools: [{ type: 'web_search' }], store: false, stream: true });

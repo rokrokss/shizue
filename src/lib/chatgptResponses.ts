@@ -1,4 +1,6 @@
 // Responses API helpers for ChatGPT plan usage. Pure: shared by the background and its tests.
+import { REASONING_EFFORTS, type ReasoningEffort } from '@/lib/reasoning';
+
 export class ProviderError extends Error {
   code: string;
   constructor(code: string, message: string) { super(message); this.code = code; }
@@ -32,14 +34,14 @@ export function responseRequestBody({ model, input, instructions, reasoning, web
   const effort = (reasoning as { effort?: unknown } | undefined)?.effort;
   if (reasoning !== undefined && (
     !reasoning || typeof reasoning !== 'object' || Array.isArray(reasoning) ||
-    typeof effort !== 'string' || !['low', 'none', 'high'].includes(effort)
+    typeof effort !== 'string' || !['none', ...REASONING_EFFORTS].includes(effort)
   )) throw new Error('Invalid ChatGPT reasoning effort.');
   const summary: { summary?: 'auto' } = thinking === true ? { summary: 'auto' } : {};
   // Construct only supported fields; never forward arbitrary options.
   return {
     model, input,
     ...(instructions ? { instructions } : {}),
-    ...(reasoning ? { reasoning: { effort: effort as 'low' | 'none' | 'high', ...summary } } : thinking === true ? { reasoning: summary } : {}),
+    ...(reasoning ? { reasoning: { effort: effort as 'none' | ReasoningEffort, ...summary } } : thinking === true ? { reasoning: summary } : {}),
     ...(webSearch === true ? { tools: [{ type: 'web_search' }] } : {}),
     store: false, stream: true,
   };

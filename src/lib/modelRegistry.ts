@@ -1,5 +1,6 @@
 // Pure data, safe to import from UI/content scripts (no LangChain imports).
 import { getModelList } from '@/lib/modelList';
+import { BASE_REASONING_EFFORTS, REASONING_EFFORTS, type HigherEffort, type ReasoningEffort } from '@/lib/reasoning';
 
 export type ModelProvider = 'openai-api-key' | 'gemini-api-key' | 'anthropic-api-key';
 
@@ -79,6 +80,13 @@ export interface ModelSpec {
   supportsImages: boolean;
   // Lowest supported reasoning effort for latency-sensitive OpenAI API calls.
   openaiFastEffort?: 'none' | 'low';
+  // The Gemini thinking level for fast calls, for models without 'minimal' (Pro-class models).
+  geminiFastEffort?: 'low';
+  // The effort the chat's default ('medium' in the menu) runs at, with the thinking turned on and
+  // shown. Unset leaves the default to the model, which may not think or show it.
+  defaultThinking?: 'medium' | 'high';
+  // The efforts above 'high' the model takes, both on its provider's API and on OpenRouter.
+  higherEfforts?: HigherEffort[];
   openrouter: {
     // OpenRouter IDs don't follow the provider's (claude-haiku-4-5 is anthropic/claude-haiku-4.5).
     id: string;
@@ -103,6 +111,19 @@ export function chatGPTFastEffort(model: string): 'none' | 'low' | undefined {
   if (Object.hasOwn(chatgpt.fastEffort, model)) return chatgpt.fastEffort[model];
   return models.find((spec) => spec.provider === 'openai-api-key' && spec.id === model)?.openaiFastEffort;
 }
+
+// The list's entry for a cloud model, or for a ChatGPT account model the OpenAI slot with the same
+// model; local and unlisted account models have none.
+const listedSpec = (model: ChatModel) => {
+  if (isLocalModel(model)) return undefined;
+  if (!isChatGPTModel(model)) return getModelSpec(model);
+  const id = chatGPTModelId(model);
+  return getModelList().models.find((spec) => spec.provider === 'openai-api-key' && spec.id === id);
+};
+
+// The effort the chat's default ('medium' in the menu) runs at when the model list sets one; a
+// ChatGPT account model takes the one of the OpenAI slot with the same model.
+export const defaultThinkingFor = (model: ChatModel) => listedSpec(model)?.defaultThinking;
 
 const LOCAL_PREFIX = 'local:';
 
@@ -154,6 +175,13 @@ export const modelSupportsReasoningEffort = (model: ChatModel, localServer?: Loc
       })()
     : getModelSpec(model)?.supportsTemperature === false;
 
+// The efforts the chat offers for the model, none for a model that takes none.
+export const reasoningEffortsFor = (model: ChatModel, localServer?: LocalServerConfig | null): ReasoningEffort[] => {
+  if (!modelSupportsReasoningEffort(model, localServer)) return [];
+  const higher: ReasoningEffort[] = listedSpec(model)?.higherEfforts ?? [];
+  return REASONING_EFFORTS.filter((effort) => BASE_REASONING_EFFORTS.includes(effort) || higher.includes(effort));
+};
+
 // Web search uses each provider's own search tool (OpenAI's and ChatGPT's web_search, Anthropic's
 // web search, Gemini's Google Search, OpenRouter's web plugin). Local servers have none.
 export const modelSupportsWebSearch = (model: ChatModel) => !isLocalModel(model);
@@ -161,6 +189,9 @@ export const modelSupportsWebSearch = (model: ChatModel) => !isLocalModel(model)
 // Usage records written before model IDs were stored hold slot names or retired model IDs.
 const legacyModelLabels: Record<string, string> = {
   'gpt-6-sol': 'GPT-6 Sol',
+  'claude-sonnet-5': 'Claude Sonnet 5',
+  'claude-haiku-4-5': 'Claude Haiku 4.5',
+  'deepseek-v4.1-flash': 'DeepSeek V4.1 Flash',
   gpt: 'GPT 4.1',
   'gpt-4.1': 'GPT 4.1',
   'gpt-mini': 'GPT 4.1 Mini',

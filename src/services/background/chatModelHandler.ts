@@ -32,15 +32,16 @@ import { db, loadThread, Message } from '@/lib/indexDB';
 import {
   ChatModel,
   ConnectionMode,
+  defaultThinkingFor,
   getModelInstance,
   getWebSearchModelInstance,
   isLocalModel,
   localContextLength,
   LocalServerConfig,
-  modelSupportsReasoningEffort,
   modelSupportsWebSearch,
   ModelPreset,
   providerFromName,
+  reasoningEffortsFor,
 } from '@/lib/models';
 import {
   FOLLOW_UP_QUESTIONS_JSON_SCHEMA,
@@ -54,7 +55,7 @@ import {
   withConversationSummary,
 } from '@/lib/prompts';
 import { formatVideoTime } from '@/lib/videoTranscript';
-import { chunkParts, isReasoningEffort, ReasoningEffort, thinkTagSplitter } from '@/lib/reasoning';
+import { chunkParts, effortWithin, isReasoningEffort, ReasoningEffort, thinkTagSplitter } from '@/lib/reasoning';
 import { CLOUD_CONTEXT_TOKENS, planCompaction } from '@/lib/chatCompaction';
 import { readStorage, setStorage } from '@/lib/storageBackend';
 import { trackStreamingTokenUsage, trackTokenUsage } from '@/lib/tokenUsageTracker';
@@ -89,11 +90,15 @@ export function getChatModelPreset(): ModelPreset {
   };
 }
 
-// The chat's thinking effort, for a model that takes one; undefined is the model's default.
+// The chat's thinking effort, for a model that takes one, lowered to the highest the model has.
+// 'medium' is the effort the model list sets the model to think at by default, else undefined: the
+// model's own default.
 const reasoningEffortFor = async (modelName: ChatModel) => {
+  const efforts = reasoningEffortsFor(modelName, getCurrentLocalServer());
+  if (!efforts.length) return undefined;
   const stored = await readStorage<ReasoningEffort>(STORAGE_REASONING_EFFORT);
-  if (!isReasoningEffort(stored) || stored === 'medium') return undefined;
-  return modelSupportsReasoningEffort(modelName, getCurrentLocalServer()) ? stored : undefined;
+  const effort = isReasoningEffort(stored) ? effortWithin(stored, efforts) : 'medium';
+  return effort !== 'medium' ? effort : defaultThinkingFor(modelName);
 };
 
 // The model's suggested questions: at most three, each short, none twice.

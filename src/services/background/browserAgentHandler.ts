@@ -16,6 +16,7 @@ import {
 } from '@/lib/browserAgent';
 import { performAction, showAgentOverlay, snapshotPage } from '@/lib/browserAgentPage';
 import { db } from '@/lib/indexDB';
+import { chunkParts } from '@/lib/reasoning';
 import { getModelInstance, isLocalModel, ModelOptions, ModelPreset } from '@/lib/models';
 import { BROWSER_AGENT_JSON_SCHEMA, getBrowserAgentPrompt } from '@/lib/prompts';
 import { trackTokenUsage } from '@/lib/tokenUsageTracker';
@@ -165,7 +166,9 @@ const askModel = async (
   }
   if (!response) return '';
   await trackTokenUsage(modelPreset, response);
-  return response.text;
+  // Without the thinking a model may send along (Gemini's thoughts are text too), whose braces
+  // would spoil the JSON.
+  return chunkParts(response).text;
 };
 
 export async function runBrowserAgent({

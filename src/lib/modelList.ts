@@ -64,13 +64,17 @@ function readMap<T>(raw: unknown, isKey: (key: string) => boolean, isValue: (val
 // Builds a fresh entry from the known fields only, so nothing else in the file reaches the code.
 function readModel(raw: unknown): ModelListEntry {
   check(isRecord(raw) && isRecord(raw.openrouter));
-  const { slot, id, label, provider, supportsTemperature, supportsImages, openaiFastEffort } = raw;
+  const { slot, id, label, provider, supportsTemperature, supportsImages, openaiFastEffort, geminiFastEffort, defaultThinking, higherEfforts } = raw;
   const { id: openrouterId, fastEffort, defaultEffort } = raw.openrouter;
   check(isSlot(slot) && isId(id));
   check(typeof label === 'string' && label.length > 0 && label.length <= 40 && !/[\u0000-\u001f\u007f]/.test(label));
   check(provider === undefined || oneOf(PROVIDERS, provider));
   check(typeof supportsTemperature === 'boolean' && typeof supportsImages === 'boolean');
   check(openaiFastEffort === undefined || (provider === 'openai-api-key' && isFastEffort(openaiFastEffort)));
+  check(geminiFastEffort === undefined || (provider === 'gemini-api-key' && geminiFastEffort === 'low'));
+  check(defaultThinking === undefined || oneOf(['medium', 'high'], defaultThinking));
+  check(higherEfforts === undefined || (Array.isArray(higherEfforts) && higherEfforts.length > 0 &&
+    new Set(higherEfforts).size === higherEfforts.length && higherEfforts.every((effort) => oneOf(['xhigh', 'max'], effort))));
   check(typeof openrouterId === 'string' && OPENROUTER_ID.test(openrouterId));
   check(fastEffort === undefined || oneOf(['none', 'minimal', 'low', 'off'], fastEffort));
   check(defaultEffort === undefined || defaultEffort === 'high');
@@ -82,6 +86,9 @@ function readModel(raw: unknown): ModelListEntry {
     supportsTemperature,
     supportsImages,
     ...(openaiFastEffort ? { openaiFastEffort } : {}),
+    ...(geminiFastEffort ? { geminiFastEffort } : {}),
+    ...(defaultThinking ? { defaultThinking } : {}),
+    ...(higherEfforts ? { higherEfforts: [...higherEfforts] } : {}),
     openrouter: {
       id: openrouterId,
       ...(fastEffort ? { fastEffort } : {}),

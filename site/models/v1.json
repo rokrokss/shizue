@@ -9,7 +9,21 @@
       "supportsTemperature": false,
       "supportsImages": true,
       "openaiFastEffort": "low",
+      "defaultThinking": "medium",
+      "higherEfforts": ["xhigh", "max"],
       "openrouter": { "id": "openai/gpt-6.1-sol", "fastEffort": "low" }
+    },
+    {
+      "slot": "gpt-astra",
+      "id": "gpt-6-astra",
+      "label": "GPT-6 Astra",
+      "provider": "openai-api-key",
+      "supportsTemperature": false,
+      "supportsImages": true,
+      "openaiFastEffort": "low",
+      "defaultThinking": "medium",
+      "higherEfforts": ["xhigh", "max"],
+      "openrouter": { "id": "openai/gpt-6-astra", "fastEffort": "low" }
     },
     {
       "slot": "gpt-terra",
@@ -19,6 +33,7 @@
       "supportsTemperature": false,
       "supportsImages": true,
       "openaiFastEffort": "none",
+      "higherEfforts": ["xhigh", "max"],
       "openrouter": { "id": "openai/gpt-6.1-terra", "fastEffort": "none" }
     },
     {
@@ -29,7 +44,19 @@
       "supportsTemperature": false,
       "supportsImages": true,
       "openaiFastEffort": "none",
+      "higherEfforts": ["xhigh", "max"],
       "openrouter": { "id": "openai/gpt-6-luna", "fastEffort": "none" }
+    },
+    {
+      "slot": "gemini-argon",
+      "id": "gemini-4-argon",
+      "label": "Gemini 4 Argon",
+      "provider": "gemini-api-key",
+      "supportsTemperature": false,
+      "supportsImages": true,
+      "geminiFastEffort": "low",
+      "defaultThinking": "medium",
+      "openrouter": { "id": "google/gemini-4-argon", "fastEffort": "low" }
     },
     {
       "slot": "gemini-flash",
@@ -59,22 +86,46 @@
       "openrouter": { "id": "google/gemma-4-31b-it" }
     },
     {
-      "slot": "claude-sonnet",
-      "id": "claude-sonnet-5",
-      "label": "Claude Sonnet 5",
+      "slot": "claude-fable",
+      "id": "claude-fable-5-1",
+      "label": "Claude Fable 5.1",
       "provider": "anthropic-api-key",
       "supportsTemperature": false,
       "supportsImages": true,
-      "openrouter": { "id": "anthropic/claude-sonnet-5", "fastEffort": "low" }
+      "defaultThinking": "high",
+      "higherEfforts": ["xhigh", "max"],
+      "openrouter": { "id": "anthropic/claude-fable-5.1", "fastEffort": "low" }
+    },
+    {
+      "slot": "claude-opus",
+      "id": "claude-opus-5-5",
+      "label": "Claude Opus 5.5",
+      "provider": "anthropic-api-key",
+      "supportsTemperature": false,
+      "supportsImages": true,
+      "defaultThinking": "medium",
+      "higherEfforts": ["xhigh", "max"],
+      "openrouter": { "id": "anthropic/claude-opus-5.5", "fastEffort": "low" }
+    },
+    {
+      "slot": "claude-sonnet",
+      "id": "claude-sonnet-5-5",
+      "label": "Claude Sonnet 5.5",
+      "provider": "anthropic-api-key",
+      "supportsTemperature": false,
+      "supportsImages": true,
+      "higherEfforts": ["xhigh", "max"],
+      "openrouter": { "id": "anthropic/claude-sonnet-5.5", "fastEffort": "low" }
     },
     {
       "slot": "claude-haiku",
-      "id": "claude-haiku-4-5",
-      "label": "Claude Haiku 4.5",
+      "id": "claude-haiku-5-5",
+      "label": "Claude Haiku 5.5",
       "provider": "anthropic-api-key",
-      "supportsTemperature": true,
+      "supportsTemperature": false,
       "supportsImages": true,
-      "openrouter": { "id": "anthropic/claude-haiku-4.5" }
+      "higherEfforts": ["xhigh", "max"],
+      "openrouter": { "id": "anthropic/claude-haiku-5.5", "fastEffort": "none" }
     },
     {
       "slot": "deepseek-pro",
@@ -82,15 +133,18 @@
       "label": "DeepSeek V4 Pro",
       "supportsTemperature": false,
       "supportsImages": false,
+      "defaultThinking": "high",
+      "higherEfforts": ["max"],
       "openrouter": { "id": "deepseek/deepseek-v4-pro-0813", "fastEffort": "off", "defaultEffort": "high" }
     },
     {
       "slot": "deepseek-flash",
-      "id": "deepseek-v4.1-flash",
+      "id": "deepseek-v4.1-flash-1017",
       "label": "DeepSeek V4.1 Flash",
       "supportsTemperature": false,
       "supportsImages": true,
-      "openrouter": { "id": "deepseek/deepseek-v4.1-flash", "fastEffort": "off" }
+      "higherEfforts": ["max"],
+      "openrouter": { "id": "deepseek/deepseek-v4.1-flash-1017", "fastEffort": "off" }
     }
   ],
   "defaults": {

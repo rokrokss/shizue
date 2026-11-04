@@ -38,12 +38,18 @@ const MODEL_COLORS = {
   'claude-haiku': '#1FFFFC',
   'gpt-6-sol': '#32CCBC',
   'gpt-6.1-sol': '#32CCBC',
+  'gpt-6-astra': '#2E8B7A',
   'gpt-6.1-terra': '#90F7EC',
   'gpt-6-luna': '#ABDCFF',
+  'gemini-4-argon': '#F6C744',
   'gemini-3.8-flash': '#FFF6B7',
   'gemini-3.5-flash-lite': '#CE9FFC',
+  'claude-fable-5-1': '#B08968',
+  'claude-opus-5-5': '#C4A484',
   'claude-sonnet-5': '#DCC6B7',
+  'claude-sonnet-5-5': '#DCC6B7',
   'claude-haiku-4-5': '#1FFFFC',
+  'claude-haiku-5-5': '#1FFFFC',
   default: '#32CCBC',
 };
 

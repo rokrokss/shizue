@@ -2,6 +2,7 @@ import { BaseChatModel, type BaseChatModelCallOptions } from '@langchain/core/la
 import { AIMessageChunk, type BaseMessage } from '@langchain/core/messages';
 import { ChatGenerationChunk, type ChatResult } from '@langchain/core/outputs';
 import { chatGPTInput } from './chatgptInput';
+import type { ReasoningEffort } from '@/lib/reasoning';
 import { chatGPTResponseStream } from '@/services/background/chatgpt';
 
 // Adapts the official Responses stream to the same interface used by chat and translation.
@@ -9,7 +10,7 @@ export class ChatGPTPlanModel extends BaseChatModel {
   constructor(
     private readonly model: string,
     private readonly jsonOutput: boolean,
-    private readonly reasoningEffort?: 'none' | 'low' | 'high',
+    private readonly reasoningEffort?: 'none' | ReasoningEffort,
     private readonly webSearch = false,
     // Bring a summary of the model's thinking, for the chat (lib/reasoning.ts chunkParts).
     private readonly thinking = false,

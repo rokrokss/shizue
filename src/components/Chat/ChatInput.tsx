@@ -13,9 +13,10 @@ import { useChatModel, useLocalServerValue } from '@/hooks/models';
 import type { PageAttachment } from '@/lib/indexDB';
 import {
   modelSupportsImages,
-  modelSupportsReasoningEffort,
   modelSupportsWebSearch,
+  reasoningEffortsFor,
 } from '@/lib/modelRegistry';
+import { BASE_REASONING_EFFORTS, effortWithin } from '@/lib/reasoning';
 import { panelPageTabId, withPageShown } from '@/lib/panelHost';
 import { cropCapture, selectRegion } from '@/lib/regionCapture';
 import {
@@ -146,8 +147,11 @@ const ChatInput = ({
   const localServer = useLocalServerValue();
   const imagesSupported = modelSupportsImages(chatModel, localServer);
   const webSearchSupported = modelSupportsWebSearch(chatModel);
-  const reasoningSupported = modelSupportsReasoningEffort(chatModel, localServer);
-  const [reasoningEffort, setReasoningEffort] = useReasoningEffort();
+  const reasoningEfforts = reasoningEffortsFor(chatModel, localServer);
+  const reasoningSupported = reasoningEfforts.length > 0;
+  // The chosen effort, lowered to the highest the model has; the choice stays for other models.
+  const [chosenEffort, setReasoningEffort] = useReasoningEffort();
+  const reasoningEffort = effortWithin(chosenEffort, reasoningSupported ? reasoningEfforts : BASE_REASONING_EFFORTS);
 
   // Drop attached images when the chat model is switched to a text-only one.
   useEffect(() => {
@@ -685,7 +689,7 @@ const ChatInput = ({
               autoApprove={autoApprove}
               onToggleAutoApprove={() => setAutoApprove((on) => !on)}
               reasoningEffort={reasoningEffort}
-              reasoningSupported={reasoningSupported}
+              reasoningEfforts={reasoningEfforts}
               onReasoningEffort={(effort) => void setReasoningEffort(effort)}
             />
             <Tooltip

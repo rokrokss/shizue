@@ -5,6 +5,7 @@ import AutoMemorySettings from '@/components/Setting/AutoMemorySettings';
 import CustomInstructionsSettings from '@/components/Setting/CustomInstructionsSettings';
 import ShortcutSettings from '@/components/Setting/ShortcutSettings';
 import TranslationSettings from '@/components/Setting/TranslationSettings';
+import { useReasoningEffort } from '@/hooks/chat';
 import { Language, useLanguage, useTranslateTargetLanguage } from '@/hooks/language';
 import {
   Theme,
@@ -41,7 +42,9 @@ import {
   ChatModel,
   TranslateModel,
   isChatGPTModel,
+  reasoningEffortsFor,
 } from '@/lib/modelRegistry';
+import { BASE_REASONING_EFFORTS, effortWithin, type ReasoningEffort } from '@/lib/reasoning';
 import { AIProvider, isProviderModel, rememberProviderModels, resolveProviderModels } from '@/lib/modelPreferences';
 import { validateApiKey } from '@/lib/validateApiKey';
 import { debugLog } from '@/logs';
@@ -83,6 +86,12 @@ const SettingsModalContent = () => {
     isChatGPTModel(chatModel) && isChatGPTModel(translateModel) ? 'chatgpt' : 'openrouter-api-key'
   );
   const localServer = useLocalServerValue();
+  // The same setting as the chat box's tools menu, lowered to the highest the model has.
+  const reasoningEfforts = reasoningEffortsFor(chatModel, localServer);
+  const reasoningSupported = reasoningEfforts.length > 0;
+  const [chosenEffort, setReasoningEffort] = useReasoningEffort();
+  const effortOptions = reasoningSupported ? reasoningEfforts : BASE_REASONING_EFFORTS;
+  const reasoningEffort = effortWithin(chosenEffort, effortOptions);
   const chatGPT = useChatGPTConnectionValue();
   const [toggleHiddenSiteList, setToggleHiddenSiteList] = useToggleHiddenSiteList();
 
@@ -474,6 +483,29 @@ const SettingsModalContent = () => {
                     className="sz:font-ycom sz:w-50"
                     options={modelOptions}
                   />
+                  <div
+                    className={`sz:text-base ${
+                      theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'
+                    }`}
+                  >
+                    {t('chat.reasoningEffort')}
+                  </div>
+                  <Select
+                    value={reasoningEffort}
+                    disabled={!reasoningSupported}
+                    onChange={(value: ReasoningEffort) => setReasoningEffort(value)}
+                    className="sz:font-ycom sz:w-50"
+                    options={effortOptions.map((effort) => ({
+                      value: effort,
+                      label: t(`chat.reasoningEffort_${effort}`),
+                      className: 'sz:font-ycom',
+                    }))}
+                  />
+                  <div className="sz:w-50 sz:text-center sz:text-xs sz:text-gray-500">
+                    {reasoningSupported
+                      ? t(`chat.reasoningEffortHint_${reasoningEffort}`)
+                      : t('chat.reasoningEffortNotSupported')}
+                  </div>
                   <div
                     className={`sz:text-base ${
                       theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'

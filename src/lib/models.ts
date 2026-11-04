@@ -4,6 +4,7 @@ import { ChatGoogle } from '@langchain/google';
 import { ChatOllama } from '@langchain/ollama';
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatGPTPlanModel } from '@/lib/chatgptModel';
+import type { ReasoningEffort } from '@/lib/reasoning';
 import {
   isLocalModel,
   isChatGPTModel,
@@ -38,9 +39,10 @@ export interface ModelOptions {
   streaming?: boolean;
   // Minimize reasoning for latency-sensitive calls such as translation.
   fast?: boolean;
-  // The chat's thinking effort when it isn't the model's default (lib/reasoning.ts). Only for
-  // models where modelSupportsReasoningEffort; `fast` wins over it.
-  reasoningEffort?: 'low' | 'high';
+  // The chat's thinking effort when it isn't the model's default (lib/reasoning.ts), or the
+  // default the model list sets for the model (defaultThinkingFor). Only for models where
+  // modelSupportsReasoningEffort; `fast` wins over it.
+  reasoningEffort?: ReasoningEffort;
   // JSON object output. Gemini enforces the schema; OpenAI and OpenRouter use JSON mode;
   // Anthropic relies on the prompt.
   jsonSchema?: Record<string, unknown>;
@@ -91,8 +93,11 @@ function createOpenAI(spec: ModelSpec, opts: ModelOptions) {
 
 function createGemini(spec: ModelSpec, opts: ModelOptions) {
   const { maxTokens, temperature, fast, reasoningEffort, jsonSchema, modelPreset } = opts;
-  // A thinking level other than minimal also brings the model's thought summaries.
-  const thinkingLevel = fast || spec.supportsTemperature ? 'minimal' : reasoningEffort;
+  // A thinking level other than minimal also brings the model's thought summaries. A model without
+  // 'minimal' thinks at its lowest level on fast calls, with the thoughts left out: a zero budget
+  // turns them off, and Gemini 3 and later are sent only the level.
+  const fastLevel = fast ? spec.geminiFastEffort : undefined;
+  const thinkingLevel = fast || spec.supportsTemperature ? fastLevel ?? 'minimal' : reasoningEffort;
   throwIfMissing(modelPreset.geminiKey, 'gemini-api-key');
 
   const instance = new ChatGoogle({
@@ -103,6 +108,7 @@ function createGemini(spec: ModelSpec, opts: ModelOptions) {
     // Gemma (the only Gemini-key model with temperature support) doesn't think by default, but the
     // Gemini API turns thinking on for it, which once streamed a chat reply with no text. Keep it off.
     ...(thinkingLevel ? { thinkingLevel } : {}),
+    ...(fastLevel ? { thinkingBudget: 0 } : {}),
     ...(jsonSchema ? { responseSchema: jsonSchema } : {}),
   });
 
@@ -113,18 +119,20 @@ function createGemini(spec: ModelSpec, opts: ModelOptions) {
 function createAnthropic(spec: ModelSpec, opts: ModelOptions) {
   const { maxTokens, temperature, streaming, fast, reasoningEffort, modelPreset } = opts;
   throwIfMissing(modelPreset.anthropicKey, 'anthropic-api-key');
-  // Effort only applies to adaptive-thinking models (those without temperature support). The
-  // highest effort also turns thinking on, with its summary shown, and leaves room for it.
+  // Effort only applies to adaptive-thinking models (those without temperature support). Any set
+  // effort above low also turns thinking on, with its summary shown, and leaves room for it: more
+  // above 'high', where Anthropic advises a large limit.
   const adaptive = !spec.supportsTemperature;
   const effort = !adaptive ? undefined : fast ? 'low' : reasoningEffort;
-  const thinking = adaptive && !fast && reasoningEffort === 'high';
+  const thinking = adaptive && !fast && reasoningEffort !== undefined && reasoningEffort !== 'low';
+  const thinkingRoom = reasoningEffort === 'xhigh' || reasoningEffort === 'max' ? 64_000 : 32_000;
 
   const instance = new ChatAnthropic({
     model: spec.id,
     apiKey: modelPreset.anthropicKey!,
     streaming: Boolean(streaming),
     ...temperatureFor(spec, temperature),
-    ...(maxTokens ? { maxTokens } : thinking ? { maxTokens: 32_000 } : {}),
+    ...(maxTokens ? { maxTokens } : thinking ? { maxTokens: thinkingRoom } : {}),
     ...(effort ? { outputConfig: { effort } } : {}),
     ...(thinking ? { thinking: { type: 'adaptive' as const, display: 'summarized' as const } } : {}),
   });

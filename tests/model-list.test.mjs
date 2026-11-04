@@ -65,6 +65,12 @@ test('the deployed file passes as is, keeping every value it holds', () => {
   assert.deepEqual(bundledModelList, parseModelList(file));
   assert.deepEqual(parseModelList(bundledModelList), bundledModelList);
   assert.equal(getModelSpec('gpt-terra').id, 'gpt-6.1-terra');
+  assert.equal(getModelSpec('claude-sonnet').id, 'claude-sonnet-5-5');
+  assert.equal(getModelSpec('gemini-argon').geminiFastEffort, 'low');
+  assert.equal(getModelSpec('claude-opus').defaultThinking, 'medium');
+  assert.deepEqual(getModelSpec('claude-opus').higherEfforts, ['xhigh', 'max']);
+  assert.deepEqual(getModelSpec('deepseek-pro').higherEfforts, ['max']);
+  assert.equal(getModelSpec('gemini-argon').higherEfforts, undefined);
   assert.equal(isSelectableChatGPTModelId('gpt-5.6-terra'), false);
   assert.equal(chatGPTFastEffort('gpt-6-astra'), 'low');
   assert.equal(chatGPTFastEffort('gpt-6.1-terra'), 'none');
@@ -90,6 +96,14 @@ test('a file with any missing, unknown or out-of-range value is rejected whole',
     'a successor for a slot still listed': (copy) => { copy.successors = { gpt: 'gpt-mini' }; },
     'a ChatGPT successor that is hidden': (copy) => { copy.chatgpt.successors['gpt-6-sol'] = 'gpt-5.6-sol'; },
     'a ChatGPT effort the code cannot send': (copy) => { copy.chatgpt.fastEffort['gpt-6-astra'] = 'max'; },
+    'a default thinking the code cannot send': (copy) => { model(copy, 'claude-opus').defaultThinking = 'low'; },
+    'a Gemini fast effort on another provider': (copy) => { model(copy, 'gpt').geminiFastEffort = 'low'; },
+    'a Gemini fast effort the code cannot send': (copy) => { model(copy, 'gemini-argon').geminiFastEffort = 'minimal'; },
+    'a higher effort the code cannot send': (copy) => { model(copy, 'gpt').higherEfforts = ['xhigh', 'ultra']; },
+    'a base effort listed as a higher one': (copy) => { model(copy, 'gpt').higherEfforts = ['high']; },
+    'a repeated higher effort': (copy) => { model(copy, 'gpt').higherEfforts = ['max', 'max']; },
+    'no higher efforts listed': (copy) => { model(copy, 'gpt').higherEfforts = []; },
+    'higher efforts that are not a list': (copy) => { model(copy, 'gpt').higherEfforts = 'max'; },
   };
   for (const [name, change] of Object.entries(bad)) assert.equal(parseModelList(variant(change)), undefined, name);
   for (const value of [null, [], 'text', 1, { ...file, models: 'gpt' }]) assert.equal(parseModelList(value), undefined);

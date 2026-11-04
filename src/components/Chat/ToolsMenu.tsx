@@ -1,6 +1,6 @@
 import { attachRowClass, toolbarButtonStyle } from '@/components/Chat/AttachMenu';
 import { useThemeValue } from '@/hooks/layout';
-import { REASONING_EFFORTS, type ReasoningEffort } from '@/lib/reasoning';
+import { BASE_REASONING_EFFORTS, type ReasoningEffort } from '@/lib/reasoning';
 import { BulbOutlined, ControlOutlined, GlobalOutlined, SelectOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { Button, Popover, Tooltip } from 'antd';
 import { useState } from 'react';
@@ -19,7 +19,7 @@ const ToolsMenu = ({
   autoApprove,
   onToggleAutoApprove,
   reasoningEffort,
-  reasoningSupported,
+  reasoningEfforts,
   onReasoningEffort,
 }: {
   iconColor: string;
@@ -31,13 +31,15 @@ const ToolsMenu = ({
   autoApprove: boolean;
   onToggleAutoApprove: () => void;
   reasoningEffort: ReasoningEffort;
-  reasoningSupported: boolean;
+  // The chat model's efforts; none when it takes none, and the base ones are shown disabled.
+  reasoningEfforts: ReasoningEffort[];
   onReasoningEffort: (effort: ReasoningEffort) => void;
 }) => {
   const { t } = useTranslation();
   const theme = useThemeValue();
   const [open, setOpen] = useState(false);
   const rowClass = (disabled: boolean) => attachRowClass(disabled, theme);
+  const reasoningSupported = reasoningEfforts.length > 0;
 
   const content = (
     <div className="sz-tools-menu sz:font-ycom sz:w-52 sz:flex sz:flex-col">
@@ -108,7 +110,7 @@ const ToolsMenu = ({
           aria-label={t('chat.reasoningEffort')}
           className={`sz:flex sz:p-0.5 sz:rounded-md ${theme == 'dark' ? 'sz:bg-white/10' : 'sz:bg-black/5'}`}
         >
-          {REASONING_EFFORTS.map((effort) => {
+          {(reasoningSupported ? reasoningEfforts : BASE_REASONING_EFFORTS).map((effort) => {
             const selected = effort === reasoningEffort;
             return (
               <button

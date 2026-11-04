@@ -1,11 +1,18 @@
 // How hard the chat model thinks before it answers, and the thinking it shows while it does.
 // Pure: shared by the background, the side panel and their tests.
 
-// 'medium' is each model's own default; 'low' its lowest setting and 'high' its highest common one.
-export type ReasoningEffort = 'low' | 'medium' | 'high';
-export const REASONING_EFFORTS: ReasoningEffort[] = ['low', 'medium', 'high'];
+// 'medium' is each model's own default; 'low' its lowest setting and 'high' the highest every
+// reasoning model has. 'xhigh' and 'max' are only for the models the model list says take them.
+export type ReasoningEffort = 'low' | 'medium' | 'high' | 'xhigh' | 'max';
+export type HigherEffort = 'xhigh' | 'max';
+export const REASONING_EFFORTS: ReasoningEffort[] = ['low', 'medium', 'high', 'xhigh', 'max'];
+export const BASE_REASONING_EFFORTS: ReasoningEffort[] = ['low', 'medium', 'high'];
 export const isReasoningEffort = (value: unknown): value is ReasoningEffort =>
   REASONING_EFFORTS.includes(value as ReasoningEffort);
+
+// The effort a model runs at: the chosen one, or the highest of the model's below it.
+export const effortWithin = (effort: ReasoningEffort, efforts: readonly ReasoningEffort[]) =>
+  REASONING_EFFORTS.slice(0, REASONING_EFFORTS.indexOf(effort) + 1).filter((e) => efforts.includes(e)).at(-1) ?? effort;
 
 type Block = { type?: unknown; text?: unknown; thinking?: unknown; reasoning?: unknown; thought?: unknown };
 type Chunk = { content: unknown; text: string; additional_kwargs?: Record<string, unknown> };
