@@ -1,14 +1,23 @@
 import { attachRowClass, toolbarButtonStyle } from '@/components/Chat/AttachMenu';
 import { useThemeValue } from '@/hooks/layout';
+import type { ModelOption } from '@/hooks/models';
+import type { ChatModel } from '@/lib/modelRegistry';
 import { BASE_REASONING_EFFORTS, type ReasoningEffort } from '@/lib/reasoning';
-import { BulbOutlined, ControlOutlined, GlobalOutlined, SelectOutlined, ThunderboltOutlined } from '@ant-design/icons';
-import { Button, Popover, Tooltip } from 'antd';
+import {
+  BulbOutlined,
+  ControlOutlined,
+  GlobalOutlined,
+  RobotOutlined,
+  SelectOutlined,
+  ThunderboltOutlined,
+} from '@ant-design/icons';
+import { Button, Popover, Select, Tooltip } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // The tools button: how Shizue answers the questions that follow, with web search or the browser
-// agent (asking before it sends, deletes or pays, or not), and how hard the model thinks. What goes
-// with a question is the paperclip's (AttachMenu).
+// agent (asking before it sends, deletes or pays, or not), with which chat model, and how hard it
+// thinks. What goes with a question is the paperclip's (AttachMenu).
 const ToolsMenu = ({
   iconColor,
   webSearch,
@@ -18,6 +27,9 @@ const ToolsMenu = ({
   onToggleBrowserAgent,
   autoApprove,
   onToggleAutoApprove,
+  chatModel,
+  chatModelOptions,
+  onChatModel,
   reasoningEffort,
   reasoningEfforts,
   onReasoningEffort,
@@ -30,6 +42,10 @@ const ToolsMenu = ({
   onToggleBrowserAgent: () => void;
   autoApprove: boolean;
   onToggleAutoApprove: () => void;
+  chatModel: ChatModel;
+  // The models usable now without changing the AI provider.
+  chatModelOptions: ModelOption[];
+  onChatModel: (model: ChatModel) => void;
   reasoningEffort: ReasoningEffort;
   // The chat model's efforts; none when it takes none, and the base ones are shown disabled.
   reasoningEfforts: ReasoningEffort[];
@@ -98,6 +114,21 @@ const ToolsMenu = ({
           </label>
         </div>
       ) : null}
+      <div className="sz:flex sz:flex-col sz:gap-2 sz:px-2 sz:py-1.5">
+        <div className="sz:flex sz:items-center sz:gap-2">
+          <RobotOutlined className="sz:shrink-0" />
+          <span className="sz:text-sm">{t('settings.chatModel')}</span>
+        </div>
+        <Select
+          size="small"
+          aria-label={t('settings.chatModel')}
+          value={chatModelOptions.some(({ value }) => value === chatModel) ? chatModel : undefined}
+          placeholder={t('settings.chatModel')}
+          options={chatModelOptions.map(({ value, label }) => ({ value, label, className: 'sz:font-ycom' }))}
+          onChange={onChatModel}
+          className="sz:w-full sz:font-ycom"
+        />
+      </div>
       <div
         className={`sz:flex sz:flex-col sz:gap-2 sz:px-2 sz:py-1.5 ${
           reasoningSupported ? '' : 'sz:opacity-50'

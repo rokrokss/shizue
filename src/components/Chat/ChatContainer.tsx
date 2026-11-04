@@ -302,11 +302,23 @@ const ChatContainer = ({
                       </Button>
                     </div>
                   ) : null}
-                  {/* What to ask next under a summary: the detailed analysis first, since it shows
-                      at once and the questions arrive after it, then the questions, alike. */}
+                  {/* What to ask next under a summary, alike: the questions, then its detailed analysis. */}
                   {showDetailedAnalysis || showSuggestions ? (
                     <div className="sz-suggestions sz:flex sz:flex-col sz:items-start sz:gap-1.5 sz:pt-3 sz:animate-[sz-fade-in_0.3s_ease-out] sz:motion-reduce:animate-none">
                       <div className="sz:text-xs sz:text-gray-500">{t('chat.suggestedQuestions')}</div>
+                      {showSuggestions
+                        ? m.suggestions!.map((question) => (
+                            <button
+                              key={question}
+                              type="button"
+                              onClick={() => onAsk(question)}
+                              className={`${nextStepClass} sz:animate-[sz-fade-in_0.3s_ease-out] sz:motion-reduce:animate-none`}
+                            >
+                              <span className="sz:min-w-0">{question}</span>
+                              <ArrowRightOutlined className={nextStepArrowClass} />
+                            </button>
+                          ))
+                        : null}
                       {showDetailedAnalysis ? (
                         <button
                           type="button"
@@ -329,19 +341,6 @@ const ChatContainer = ({
                           <ArrowRightOutlined className={nextStepArrowClass} />
                         </button>
                       ) : null}
-                      {showSuggestions
-                        ? m.suggestions!.map((question) => (
-                            <button
-                              key={question}
-                              type="button"
-                              onClick={() => onAsk(question)}
-                              className={`${nextStepClass} sz:animate-[sz-fade-in_0.3s_ease-out] sz:motion-reduce:animate-none`}
-                            >
-                              <span className="sz:min-w-0">{question}</span>
-                              <ArrowRightOutlined className={nextStepArrowClass} />
-                            </button>
-                          ))
-                        : null}
                     </div>
                   ) : null}
                 </div>

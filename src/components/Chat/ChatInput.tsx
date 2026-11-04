@@ -9,9 +9,10 @@ import { useActiveWebTab } from '@/hooks/activeTab';
 import { ChatStatus, isChatWaiting, useReasoningEffort } from '@/hooks/chat';
 import { useThemeValue } from '@/hooks/layout';
 import { threadIdAtom } from '@/hooks/global';
-import { useChatModel, useLocalServerValue } from '@/hooks/models';
+import { useChatModel, useLocalServerValue, useModelOptions } from '@/hooks/models';
 import type { PageAttachment } from '@/lib/indexDB';
 import {
+  isChatGPTModel,
   modelSupportsImages,
   modelSupportsWebSearch,
   reasoningEffortsFor,
@@ -143,7 +144,12 @@ const ChatInput = ({
   const iconColor = theme === 'dark' ? 'rgba(255,255,255,0.88)' : 'rgba(0,0,0,0.88)';
   const disabledIconColor = theme === 'dark' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)';
   const navigate = useNavigate();
-  const [chatModel] = useChatModel();
+  const [chatModel, setChatModel] = useChatModel();
+  // The tools menu's models: the usable ones on the current model's side, the ChatGPT plan's or the
+  // keys' and local server's. Changing side is the AI provider in settings.
+  const chatModelOptions = useModelOptions().filter(
+    ({ value, available }) => available && isChatGPTModel(value) === isChatGPTModel(chatModel)
+  );
   const localServer = useLocalServerValue();
   const imagesSupported = modelSupportsImages(chatModel, localServer);
   const webSearchSupported = modelSupportsWebSearch(chatModel);
@@ -779,6 +785,9 @@ const ChatInput = ({
                 }}
                 autoApprove={autoApprove}
                 onToggleAutoApprove={() => setAutoApprove((on) => !on)}
+                chatModel={chatModel}
+                chatModelOptions={chatModelOptions}
+                onChatModel={(model) => void setChatModel(model)}
                 reasoningEffort={reasoningEffort}
                 reasoningEfforts={reasoningEfforts}
                 onReasoningEffort={(effort) => void setReasoningEffort(effort)}
