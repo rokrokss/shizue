@@ -38,11 +38,12 @@ export async function initSelectionActionContent(
   });
 }
 
-export async function initMemoPageContent() {
+// A new chat with browser control on, from the page's overlay menu.
+export async function initBrowserControlContent() {
   const prevGlobalState = await readStorage<GlobalState>(STORAGE_GLOBAL_STATE);
   await setStorage(STORAGE_GLOBAL_STATE, {
     ...(prevGlobalState ?? {}),
-    actionType: 'memo',
+    actionType: 'browserControl',
   });
 }
 

@@ -8,7 +8,7 @@ import SettingsModal from '@/components/Setting/SettingsModal';
 import { isSelectionActionType, MESSAGE_LOAD_THREAD, MESSAGE_REMEMBER_THREAD } from '@/config/constants';
 import { useAutoMemoryValue } from '@/hooks/autoMemory';
 import { chatStatusAtom, createThreadMessageCountAtom, isChatIdle, switchThreadAtom } from '@/hooks/chat';
-import { ActionType, threadIdAtom } from '@/hooks/global';
+import { ActionType, browserControlRequestedAtom, threadIdAtom } from '@/hooks/global';
 import { useThemeValue } from '@/hooks/layout';
 import { useChromePortStream } from '@/hooks/portStream';
 import { convertFilesToBase64Array } from '@/lib/imageUtils';
@@ -691,6 +691,15 @@ const Chat = () => {
 
   // Bumped when the hint under an answer turns browser control on, for the chat box's toggle.
   const [browserAgentTurnedOn, setBrowserAgentTurnedOn] = useState(0);
+
+  // The page's overlay menu: a new chat with browser control on.
+  const [browserControlRequested, setBrowserControlRequested] = useAtom(browserControlRequestedAtom);
+  useEffect(() => {
+    if (!browserControlRequested) return;
+    setBrowserControlRequested(false);
+    switchThread(undefined);
+    setBrowserAgentTurnedOn((count) => count + 1);
+  }, [browserControlRequested, setBrowserControlRequested, switchThread]);
 
   // The hint under an answer that was asked to act in the tab with browser control off: turns it on
   // and asks the question again with the browser agent, which the background reads off the question.

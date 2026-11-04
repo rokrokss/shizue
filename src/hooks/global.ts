@@ -10,7 +10,7 @@ export type ActionType =
   | 'askForSummary'
   | 'describeImage'
   | 'extractImageText'
-  | 'memo'
+  | 'browserControl'
   | 'words'
   | SelectionActionType;
 
@@ -51,6 +51,10 @@ export const updateGlobalStateAtom = atom(null, (_get, set, changes: Partial<Glo
 // Selection belongs to this panel's store. A reopened panel starts a new chat;
 // saved conversations remain available through the IndexedDB history.
 export const threadIdAtom = atom<string | undefined>(undefined);
+
+// Set when the page's overlay menu asks for a new chat with browser control on; the chat turns it
+// on and clears it.
+export const browserControlRequestedAtom = atom(false);
 
 export const actionTypeAtom = atom(
   (get) => get(resolvedGlobalStateAtom)?.actionType ?? 'chat',

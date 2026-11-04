@@ -6,6 +6,7 @@ import {
 } from '@/config/constants';
 import { chatStatusAtom, isChatWaiting } from '@/hooks/chat';
 import {
+  browserControlRequestedAtom,
   sidePanelHydratedAtom,
   threadIdAtom,
   updateGlobalStateAtom,
@@ -187,18 +188,12 @@ const SidePanelProvider = ({
           debugLog('SidePanelProvider: [getInitData] navigate to /');
           navigate('/');
         }
-      } else if (initData?.actionType === 'memo') {
-        debugLog('SidePanelProvider: [getInitData] memo');
+      } else if (initData?.actionType === 'browserControl') {
+        debugLog('SidePanelProvider: [getInitData] browserControl');
         await rollbackActionType();
-
-        const isInMemoPage = window.location.hash === '#/shizue-memo';
-
-        debugLog('SidePanelProvider: [getInitData] isInMemoPage', isInMemoPage);
-
-        if (!isInMemoPage) {
-          debugLog('SidePanelProvider: [getInitData] navigate to /shizue-memo');
-          navigate('/shizue-memo');
-        }
+        // The chat starts a new chat with browser control on (Chat/index.tsx).
+        store.set(browserControlRequestedAtom, true);
+        if (isOutsideChat()) navigate('/');
       } else if (initData?.actionType === 'words') {
         await rollbackActionType();
         if (window.location.hash !== '#/shizue-words') navigate('/shizue-words');

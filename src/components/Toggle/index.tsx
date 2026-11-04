@@ -1,6 +1,6 @@
 import BookIcon from '@/assets/icons/book.svg?react';
+import BrowserControlIcon from '@/assets/icons/browser_control.svg?react';
 import CloseIcon from '@/assets/icons/close.svg?react';
-import MemoIcon from '@/assets/icons/note.svg?react';
 import SettingIcon from '@/assets/icons/setting.svg?react';
 import TranslateIcon from '@/assets/icons/translate.svg?react';
 import TranslateCheckIcon from '@/assets/icons/translate_check.svg?react';
@@ -41,8 +41,8 @@ import { getImageTranslator, ImageTranslationLabels } from '@/lib/imageTranslato
 import { videoKey } from '@/lib/videoTranscript';
 import {
   initDescribeImageContent,
+  initBrowserControlContent,
   initExtractImageTextContent,
-  initMemoPageContent,
   initSelectionActionContent,
 } from '@/lib/initPanelData';
 import { languageOptions } from '@/lib/language';
@@ -125,7 +125,7 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
       ? t('overlayMenu.summarizeVideo')
       : t('overlayMenu.summarizePage'),
     t('overlayMenu.removeTranslation'),
-    t('memo.memo'),
+    t('chat.browserAgent'),
   ];
 
   const getCurrentDomain = useCallback(() => {
@@ -325,13 +325,14 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
     setMotionDivId(motionDivId + 1);
   }, [toggleYPosition]);
 
-  const handleMemoClick = async () => {
-    debugLog('handleMemoClick');
+  // Opens the panel on a new chat with browser control on, for this tab.
+  const handleBrowserControlClick = async () => {
+    debugLog('handleBrowserControlClick');
     if (isDragging) return;
     setPanelOpen();
-    await initMemoPageContent();
+    await initBrowserControlContent();
     void chrome.runtime.sendMessage({ action: MESSAGE_UPDATE_PANEL_INIT_DATA }).catch((err) => {
-      debugLog('handleMemoClick: Panel not opened yet', err);
+      debugLog('handleBrowserControlClick: Panel not opened yet', err);
     });
   };
 
@@ -462,9 +463,9 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
             <OverlayMenu>
               <OverlayMenuItem
                 theme={theme}
-                icon={<MemoIcon className={menuIconClass} />}
+                icon={<BrowserControlIcon className={menuIconClass} />}
                 tooltipMessage={tooltipMessages[4]}
-                onClick={handleMemoClick}
+                onClick={handleBrowserControlClick}
                 hideTooltip={translateSettingsModalOpen || closeIconModalOpen}
               />
               <OverlayMenuItem
