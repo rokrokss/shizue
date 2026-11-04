@@ -235,12 +235,17 @@ function createLocal(model: LocalModelRef, opts: ModelOptions) {
 // The lowest effort is the one translation uses, known per model; a model without one gets 'low'.
 const chatGPTEffort = (model: string, { fast, reasoningEffort }: ModelOptions) =>
   fast ? chatGPTFastEffort(model) : reasoningEffort === 'low' ? chatGPTFastEffort(model) ?? 'low' : reasoningEffort;
+// Only the chat streams its answer, and it shows the model's thinking as it comes. A model told
+// not to think has none to show.
+const chatGPTThinking = (effort: string | undefined, { streaming }: ModelOptions) =>
+  Boolean(streaming) && effort !== 'none';
 
 export function getModelInstance(opts: ModelOptions) {
   const { modelName } = opts.modelPreset;
   if (isChatGPTModel(modelName)) {
     const model = chatGPTModelId(modelName);
-    return new ChatGPTPlanModel(model, Boolean(opts.jsonSchema), chatGPTEffort(model, opts));
+    const effort = chatGPTEffort(model, opts);
+    return new ChatGPTPlanModel(model, Boolean(opts.jsonSchema), effort, false, chatGPTThinking(effort, opts));
   }
   if (isLocalModel(modelName)) return createLocal(modelName, opts);
   const spec = getModelSpec(modelName);
@@ -261,7 +266,8 @@ export function getWebSearchModelInstance(opts: ModelOptions) {
   const { modelName, connectionMode } = opts.modelPreset;
   if (isChatGPTModel(modelName)) {
     const model = chatGPTModelId(modelName);
-    return new ChatGPTPlanModel(model, false, chatGPTEffort(model, opts), true);
+    const effort = chatGPTEffort(model, opts);
+    return new ChatGPTPlanModel(model, false, effort, true, chatGPTThinking(effort, opts));
   }
   const spec = isLocalModel(modelName) ? undefined : getModelSpec(modelName);
   if (!spec) throw new Error(`Web search is not available for ${modelName}.`);

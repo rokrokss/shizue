@@ -27,7 +27,8 @@ async function withChatGPT(entry, { models, respond }, run) {
       return Response.json({ models: models.map((slug) => ({ slug, display_name: slug, visibility: 'list' })) });
     }
     assert.equal(String(url), 'https://api.openai.com/v1/responses');
-    const { events, close = true } = respond(JSON.parse(options.body), options.signal);
+    const { events, close = true, refuse } = respond(JSON.parse(options.body), options.signal);
+    if (refuse) return Response.json({ error: refuse }, { status: 400 });
     const text = events.map((event) => `data: ${JSON.stringify(event)}\n\n`).join('');
     return new Response(new ReadableStream({ start(controller) {
       controller.enqueue(new TextEncoder().encode(text));
@@ -120,5 +121,58 @@ test('ChatGPT translations carry model-specific effort through the factory and r
         }
       }
     }
+  });
+});
+
+test('the chat streams the thinking summary, and still answers when the account may not have it', async () => {
+  const requests = [];
+  let refuse;
+  const respond = (body) => {
+    requests.push(body);
+    if (refuse && body.reasoning?.summary) return { events: [], refuse };
+    return { events: [
+      { type: 'response.reasoning_summary_text.delta', item_id: 'rs', summary_index: 0, delta: '**Planning**' },
+      { type: 'response.reasoning_summary_text.delta', item_id: 'rs', summary_index: 1, delta: 'Reply briefly' },
+      { type: 'response.output_text.delta', delta: 'Hi!' },
+      { type: 'response.completed', response: { usage: { input_tokens: 5, output_tokens: 3, total_tokens: 8 } } },
+    ] };
+  };
+  await withChatGPT('../src/lib/models.ts', { models: ['gpt-6.1-sol', 'gpt-6.1-terra'], respond }, async ({ getModelInstance, getWebSearchModelInstance }) => {
+    const chat = (modelName, reasoningEffort, factory = getModelInstance) =>
+      factory({ modelPreset: { modelName, connectionMode: 'direct' }, streaming: true, reasoningEffort, temperature: 0.7 });
+    const collect = async (model) => {
+      let text = '';
+      let thinking = '';
+      for await (const chunk of await model.stream([new HumanMessage('Hi')])) {
+        text += chunk.text;
+        thinking += chunk.additional_kwargs.reasoning_content ?? '';
+      }
+      return { text, thinking };
+    };
+    assert.deepEqual(await collect(chat('chatgpt:gpt-6.1-sol')), { text: 'Hi!', thinking: '**Planning**\n\nReply briefly' });
+    assert.deepEqual(requests.at(-1).reasoning, { summary: 'auto' });
+    await collect(chat('chatgpt:gpt-6.1-sol', 'high'));
+    assert.deepEqual(requests.at(-1).reasoning, { effort: 'high', summary: 'auto' });
+    await collect(chat('chatgpt:gpt-6.1-sol', undefined, getWebSearchModelInstance));
+    assert.deepEqual([requests.at(-1).reasoning, requests.at(-1).tools], [{ summary: 'auto' }, [{ type: 'web_search' }]]);
+    // Low effort is no thinking for this model, so there is nothing to summarize.
+    await collect(chat('chatgpt:gpt-6.1-terra', 'low'));
+    assert.deepEqual(requests.at(-1).reasoning, { effort: 'none' });
+    // Calls that wait for the whole reply don't ask for the summary.
+    await getModelInstance({ modelPreset: { modelName: 'chatgpt:gpt-6.1-sol', connectionMode: 'direct' }, streaming: false }).invoke([new HumanMessage('Hi')]);
+    assert.equal(Object.hasOwn(requests.at(-1), 'reasoning'), false);
+
+    refuse = { message: 'Your organization must be verified to generate reasoning summaries.', type: 'invalid_request_error', param: 'reasoning.summary', code: 'unsupported_value' };
+    const before = requests.length;
+    assert.equal((await collect(chat('chatgpt:gpt-6.1-sol', 'high'))).text, 'Hi!');
+    assert.deepEqual(requests.slice(before).map((r) => r.reasoning), [{ effort: 'high', summary: 'auto' }, { effort: 'high' }]);
+    const afterHigh = requests.length;
+    assert.equal((await collect(chat('chatgpt:gpt-6.1-sol'))).text, 'Hi!');
+    assert.deepEqual(requests.slice(afterHigh).map((r) => Object.hasOwn(r, 'reasoning')), [true, false]);
+    // Any other refusal is the request's error, not retried.
+    refuse = { message: 'Bad input.', type: 'invalid_request_error', param: 'input', code: 'invalid_value' };
+    const afterDefault = requests.length;
+    await assert.rejects(collect(chat('chatgpt:gpt-6.1-sol')));
+    assert.equal(requests.length, afterDefault + 1);
   });
 });

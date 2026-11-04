@@ -23,20 +23,23 @@ export interface ResponseRequest {
   instructions?: unknown;
   reasoning?: unknown;
   webSearch?: unknown;
+  // Ask for a summary of the model's thinking, for the chat to show as it comes.
+  thinking?: unknown;
 }
 
-export function responseRequestBody({ model, input, instructions, reasoning, webSearch }: ResponseRequest) {
+export function responseRequestBody({ model, input, instructions, reasoning, webSearch, thinking }: ResponseRequest) {
   if (typeof model !== 'string' || !Array.isArray(input) || (instructions !== undefined && typeof instructions !== 'string')) throw new Error('Invalid ChatGPT request.');
   const effort = (reasoning as { effort?: unknown } | undefined)?.effort;
   if (reasoning !== undefined && (
     !reasoning || typeof reasoning !== 'object' || Array.isArray(reasoning) ||
     typeof effort !== 'string' || !['low', 'none', 'high'].includes(effort)
   )) throw new Error('Invalid ChatGPT reasoning effort.');
+  const summary: { summary?: 'auto' } = thinking === true ? { summary: 'auto' } : {};
   // Construct only supported fields; never forward arbitrary options.
   return {
     model, input,
     ...(instructions ? { instructions } : {}),
-    ...(reasoning ? { reasoning: { effort: effort as 'low' | 'none' | 'high' } } : {}),
+    ...(reasoning ? { reasoning: { effort: effort as 'low' | 'none' | 'high', ...summary } } : thinking === true ? { reasoning: summary } : {}),
     ...(webSearch === true ? { tools: [{ type: 'web_search' }] } : {}),
     store: false, stream: true,
   };
@@ -50,6 +53,7 @@ export function visibleModels(body: { models?: unknown }) {
 
 export type ResponseEvent =
   | { delta: string }
+  | { reasoning: string }
   | { annotation: unknown }
   | { usage: { input_tokens: number; output_tokens: number; total_tokens: number } };
 
@@ -59,6 +63,8 @@ export async function* responseEvents(body: ReadableStream<Uint8Array> | null): 
   const decoder = new TextDecoder();
   let pending = '';
   let completed = false;
+  // The summary part the thinking came from last; each part is a paragraph of its own.
+  let summaryPart: string | undefined;
   const parseEvent = (block: string) => {
     const data = block.split('\n').filter((line) => line.startsWith('data:')).map((line) => line.slice(5).trimStart()).join('\n');
     if (!data || data === '[DONE]') return null;
@@ -77,6 +83,11 @@ export async function* responseEvents(body: ReadableStream<Uint8Array> | null): 
         pending = pending.slice(boundary + 2);
         if (!event) continue;
         if (event.type === 'response.output_text.delta') yield { delta: event.delta };
+        if (event.type === 'response.reasoning_summary_text.delta' && typeof event.delta === 'string') {
+          const part = `${event.item_id}:${event.summary_index}`;
+          yield { reasoning: summaryPart !== undefined && summaryPart !== part ? `\n\n${event.delta}` : event.delta };
+          summaryPart = part;
+        }
         if (event.type === 'response.output_text.annotation.added') yield { annotation: event.annotation };
         if (event.type === 'response.failed' || event.type === 'error') {
           throw new ProviderError(event.response?.error?.code || event.code || 'response_failed', 'ChatGPT could not complete this response.');

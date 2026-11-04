@@ -11,6 +11,8 @@ export class ChatGPTPlanModel extends BaseChatModel {
     private readonly jsonOutput: boolean,
     private readonly reasoningEffort?: 'none' | 'low' | 'high',
     private readonly webSearch = false,
+    // Bring a summary of the model's thinking, for the chat (lib/reasoning.ts chunkParts).
+    private readonly thinking = false,
   ) { super({}); }
   _llmType() { return 'chatgpt-plan'; }
   override async *_streamResponseChunks(messages: BaseMessage[], options: BaseChatModelCallOptions) {
@@ -19,6 +21,7 @@ export class ChatGPTPlanModel extends BaseChatModel {
       ...chatGPTInput(messages, this.jsonOutput),
       ...(this.reasoningEffort ? { reasoning: { effort: this.reasoningEffort } } : {}),
       ...(this.webSearch ? { webSearch: true } : {}),
+      ...(this.thinking ? { thinking: true } : {}),
     };
     for await (const event of chatGPTResponseStream(payload, options.signal)) {
       const delta = 'delta' in event ? event.delta : '';
@@ -27,6 +30,7 @@ export class ChatGPTPlanModel extends BaseChatModel {
         ...('usage' in event && event.usage ? { usage_metadata: event.usage } : {}),
         // A web search citation; chatModelHandler collects these as the answer's sources.
         ...('annotation' in event ? { additional_kwargs: { annotations: [event.annotation] } } : {}),
+        ...('reasoning' in event ? { additional_kwargs: { reasoning_content: event.reasoning } } : {}),
       });
       yield new ChatGenerationChunk({ text: delta, message });
     }

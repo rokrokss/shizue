@@ -118,6 +118,17 @@ test('Responses stream preserves deltas and terminal usage; late quota errors an
   const cited = [];
   for await (const event of responseEvents(streamOf([{ type: 'response.output_text.delta', delta: 'A' }, { type: 'response.output_text.annotation.added', annotation }, { type: 'response.completed', response: { usage } }]))) cited.push(event);
   assert.deepEqual(cited, [{ delta: 'A' }, { annotation }, { usage }]);
+  // The thinking summary comes before the answer; each of its parts starts a new paragraph.
+  const summary = (item_id, summary_index, delta) => ({ type: 'response.reasoning_summary_text.delta', item_id, output_index: 0, summary_index, delta });
+  const thought = [];
+  for await (const event of responseEvents(streamOf([
+    { type: 'response.reasoning_summary_part.added', item_id: 'rs_1', summary_index: 0 },
+    summary('rs_1', 0, '**Reading**'), summary('rs_1', 0, ' the page'),
+    summary('rs_1', 1, '**Answering**'), summary('rs_2', 0, 'Done'),
+    { type: 'response.reasoning_summary_text.done', item_id: 'rs_1', summary_index: 1, text: '**Answering**' },
+    { type: 'response.output_text.delta', delta: 'A' }, { type: 'response.completed', response: { usage } },
+  ]))) thought.push(event);
+  assert.deepEqual(thought, [{ reasoning: '**Reading**' }, { reasoning: ' the page' }, { reasoning: '\n\n**Answering**' }, { reasoning: '\n\nDone' }, { delta: 'A' }, { usage }]);
   const collect = async (input) => { for await (const _event of responseEvents(input)) {} };
   await assert.rejects(collect(streamOf([{ type: 'response.output_text.delta', delta: 'partial' }, { type: 'response.failed', response: { error: { code: 'subscription_sharing_usage_limit_exceeded' } } }])), { code: 'subscription_sharing_usage_limit_exceeded' });
   await assert.rejects(collect(streamOf([{ type: 'response.output_text.delta', delta: 'partial' }])), { code: 'stream_interrupted' });
@@ -143,6 +154,10 @@ test('Responses requests validate effort and retain the supported-field allowlis
     assert.throws(() => responseRequestBody({ ...base, reasoning }), /Invalid ChatGPT reasoning effort/);
   }
   assert.deepEqual(responseRequestBody({ ...base, webSearch: true }), { ...base, tools: [{ type: 'web_search' }], store: false, stream: true });
+  // The chat asks for the thinking summarized, with or without an effort.
+  assert.deepEqual(responseRequestBody({ ...base, thinking: true }), { ...base, reasoning: { summary: 'auto' }, store: false, stream: true });
+  assert.deepEqual(responseRequestBody({ ...base, thinking: true, reasoning: { effort: 'high' } }), { ...base, reasoning: { effort: 'high', summary: 'auto' }, store: false, stream: true });
+  assert.deepEqual(responseRequestBody({ ...base, thinking: 'detailed' }), { ...base, store: false, stream: true });
   assert.deepEqual(responseRequestBody({ ...base, webSearch: 'yes', tools: [{ type: 'code_interpreter' }] }), { ...base, store: false, stream: true });
   assert.throws(() => responseRequestBody({ ...base, input: 'plain string' }), /Invalid ChatGPT request/);
   assert.throws(() => responseRequestBody({ ...base, instructions: [] }), /Invalid ChatGPT request/);

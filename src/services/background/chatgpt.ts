@@ -142,11 +142,22 @@ export async function* chatGPTResponseStream(payload: ResponseRequest, signal?: 
     if (!models.some((m) => m.id === body.model)) throw new ProviderError('model_unavailable', 'This model is unavailable for the selected ChatGPT account.');
     signal?.throwIfAborted();
     const timeout = AbortSignal.timeout(600_000);
-    const response = await fetch('https://api.openai.com/v1/responses', {
+    const post = (request: object) => fetch('https://api.openai.com/v1/responses', {
       method: 'POST', headers: { Authorization: `Bearer ${session.accessToken}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+      body: JSON.stringify(request),
       signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
     });
+    let response = await post(body);
+    // An account that may not have the thinking summarized (as unverified API organizations may
+    // not) still gets the answer.
+    const asked = 'reasoning' in body ? body.reasoning : undefined;
+    if (response.status === 400 && asked?.summary) {
+      const refused = await response.clone().json().catch(() => ({}));
+      if (refused?.error?.param === 'reasoning.summary') {
+        const { summary: _summary, ...reasoning } = asked;
+        response = await post({ ...body, reasoning: 'effort' in reasoning ? reasoning : undefined });
+      }
+    }
     yield* responseEvents((await requireOK(response)).body);
   } catch (error) {
     throw toChatGPTError(error);
