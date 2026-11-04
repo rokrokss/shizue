@@ -156,7 +156,12 @@
     "contextUsageHint": "This chat fills {{percent}}% of what the model can read at once. Past 70%, the earlier part goes as a summary and only the latest turns as they are.",
     "browserAgent": "Browser control",
     "browserAgentHint": "Shizue clicks and types in the current tab. It asks before sending, deleting or paying",
-    "browserAgentPlaceholder": "What should I do in this tab?"
+    "browserAgentPlaceholder": "What should I do in this tab?",
+    "selectAllTabs": "Select all",
+    "deselectAllTabs": "Clear all",
+    "browserControlHintTitle": "Shizue can do this in your tab",
+    "browserControlHintBody": "Turn on Browser control in the Attach menu and Shizue clicks and types on this page. It asks before sending or paying.",
+    "browserControlHintAction": "Turn on and try again"
   },
   "footer": {
     "joinDiscord": "Join me on Discord!",

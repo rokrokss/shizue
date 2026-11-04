@@ -98,6 +98,7 @@ const stubs = {
       fixture.store.set(fixture.countAtom(threadId), fixture.rows.get(threadId).length);
     };
     export const deleteThread = async id => { fixture.rows.delete(id); };
+    export const updateMessage = async () => {};
     export const touchThread = async () => {};`,
   '@/lib/imageUtils': 'export const convertFilesToBase64Array = async () => [];',
   '@/lib/prompts': `export const getSummarizePageTextPrompt = title => 'SUMMARY ' + title;

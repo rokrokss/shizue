@@ -156,7 +156,12 @@
     "contextUsageHint": "Esta conversa ocupa {{percent}}% do que o modelo consegue ler de uma vez. Acima de 70%, a parte anterior vai como resumo e só as últimas trocas vão como estão.",
     "browserAgent": "Controle do navegador",
     "browserAgentHint": "O Shizue clica e digita na aba atual. Pergunta antes de enviar, excluir ou pagar",
-    "browserAgentPlaceholder": "O que devo fazer nesta aba?"
+    "browserAgentPlaceholder": "O que devo fazer nesta aba?",
+    "selectAllTabs": "Selecionar tudo",
+    "deselectAllTabs": "Desmarcar tudo",
+    "browserControlHintTitle": "O Shizue pode fazer isso na sua aba",
+    "browserControlHintBody": "Ative “Controle do navegador” no menu Anexar e o Shizue clica e digita nesta página. Pergunta antes de enviar ou pagar.",
+    "browserControlHintAction": "Ativar e tentar de novo"
   },
   "footer": {
     "joinDiscord": "Junte-se a mim no Discord!",

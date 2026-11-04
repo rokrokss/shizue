@@ -156,7 +156,12 @@
     "contextUsageHint": "Ta rozmowa zajmuje {{percent}}% tego, co model może przeczytać naraz. Powyżej 70% wcześniejsza część idzie jako podsumowanie, a tylko ostatnie wymiany bez zmian.",
     "browserAgent": "Sterowanie przeglądarką",
     "browserAgentHint": "Shizue klika i pisze w bieżącej karcie. Pyta przed wysłaniem, usunięciem lub płatnością",
-    "browserAgentPlaceholder": "Co mam zrobić w tej karcie?"
+    "browserAgentPlaceholder": "Co mam zrobić w tej karcie?",
+    "selectAllTabs": "Zaznacz wszystkie",
+    "deselectAllTabs": "Odznacz wszystkie",
+    "browserControlHintTitle": "Shizue może zrobić to w Twojej karcie",
+    "browserControlHintBody": "Włącz „Sterowanie przeglądarką” w menu Dołącz, a Shizue będzie klikać i pisać na tej stronie. Pyta przed wysłaniem lub płatnością.",
+    "browserControlHintAction": "Włącz i spróbuj ponownie"
   },
   "footer": {
     "joinDiscord": "Dołącz do mnie na Discordzie!",

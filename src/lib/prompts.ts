@@ -1,5 +1,6 @@
 import { SelectionActionType } from '@/config/constants';
 import { Language } from '@/hooks/language';
+import { BROWSER_CONTROL_MARK } from '@/lib/browserAgent';
 import type { PageAttachment } from '@/lib/indexDB';
 import type { TranslationContext } from '@/lib/liveCaption/types';
 import { numberPageLines } from '@/lib/pageLines';
@@ -18,14 +19,16 @@ export const getInitialSystemMessage = (
 2) Avoid heart emoticons, and overly cute expressions.
 3) Do not repeat the user's question.
 4) Reply in ${lang} by default, even when the page or text you are given is in another language. When the user explicitly asks for another language (a translation, or an email or message written in English), write that part in the language they asked for.
-5) When a chart makes numbers clearer (the user asks for one, or you compare several values across categories or over time), you may add one fenced code block with the language \`chart\` holding only JSON, which the app draws: {"type":"bar"|"line"|"area","title":"...","x":"<label key>","series":[{"key":"<value key>","name":"<series name>"}],"data":[{"<label key>":"...","<value key>":0}]}. Use at most 6 series and only numbers you actually have.`;
+5) When a chart makes numbers clearer (the user asks for one, or you compare several values across categories or over time), you may add one fenced code block with the language \`chart\` holding only JSON, which the app draws: {"type":"bar"|"line"|"area","title":"...","x":"<label key>","series":[{"key":"<value key>","name":"<series name>"}],"data":[{"<label key>":"...","<value key>":0}]}. Use at most 6 series and only numbers you actually have.
+6) You can't act in the user's browser tab in this chat. When the user asks you to do something there for them (click, type, fill in or submit a form, order, book, sign up, or go through a site), start your reply with the line ${BROWSER_CONTROL_MARK}, then say in one or two sentences that you can do it in their tab once browser control is on. Don't ask for links or screenshots. A question about how they can do it themselves gets a normal answer without that line.`;
 
   const instructions = customInstructions?.trim();
   // The user's own instructions override the defaults above, but a request's own format or
-  // language (a selection translation's "Output only the translation") still wins.
+  // language (a selection translation's "Output only the translation") still wins. Rule 6 is the
+  // app's, so they don't override it.
   const withInstructions = instructions
     ? `${systemMessage}
-6) The user wrote the custom instructions below about themselves and how they want replies. Follow them in every reply. They take precedence over rules 1-5, but not over the instructions of the current request (e.g. "Output only the translation").
+7) The user wrote the custom instructions below about themselves and how they want replies. Follow them in every reply. They take precedence over rules 1-5, but not over the instructions of the current request (e.g. "Output only the translation").
 
 ===custom instructions===
 ${instructions}
@@ -35,7 +38,7 @@ ${instructions}
 
   // Auto memory: what earlier chats said about the user, weaker than anything the user says now.
   return `${withInstructions}
-${instructions ? 7 : 6}) You remember the facts below about the user from earlier chats. Use them when they help with the request, without bringing them up otherwise. The user's ${instructions ? 'custom instructions and ' : ''}messages in this chat win over them.
+${instructions ? 8 : 7}) You remember the facts below about the user from earlier chats. Use them when they help with the request, without bringing them up otherwise. The user's ${instructions ? 'custom instructions and ' : ''}messages in this chat win over them.
 
 ===remembered facts===
 ${rememberedFacts.map((fact) => `- ${fact}`).join('\n')}

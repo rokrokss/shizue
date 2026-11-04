@@ -19,6 +19,7 @@ import {
   deleteThread,
   PageAttachment,
   touchThread,
+  updateMessage,
 } from '@/lib/indexDB';
 import { hasPageLines } from '@/lib/pageLines';
 import { getDetailedAnalysisPrompt } from '@/lib/prompts';
@@ -68,6 +69,7 @@ export interface Message {
   contextCompacted?: boolean;
   browserAgent?: boolean;
   agentRun?: AgentRun;
+  browserControlHint?: boolean;
 }
 
 // The asking moment of a video, kept with a question (see ChatInput).
@@ -181,6 +183,9 @@ const Chat = () => {
 
   const markContextTruncated = () =>
     setMessages((cur) => updateAIMessage(cur, { contextTruncated: true }));
+
+  const markBrowserControlHint = () =>
+    setMessages((cur) => updateAIMessage(cur, { browserControlHint: true }));
 
   const showSources = (sources: WebSource[]) =>
     setMessages((cur) => updateAIMessage(cur, { sources }));
@@ -568,6 +573,7 @@ const Chat = () => {
       { threadId: tId, actionType: actionType.current, ...(browserAgent ? { agentLabels: agentLabels() } : {}) },
       {
         onAgent: showAgentRun,
+        onBrowserControlHint: markBrowserControlHint,
         onContextTruncated: markContextTruncated,
         onReasoning: appendReasoning,
         onThinkingMs: markThinkingMs,
@@ -606,7 +612,8 @@ const Chat = () => {
     );
   };
 
-  const handleRetry = async (messageIdxToRetry: number) => {
+  // browserAgent: run the question with the browser agent this time (the hint's button).
+  const handleRetry = async (messageIdxToRetry: number, browserAgent?: boolean) => {
     if (!threadId) return;
 
     threadLoader.invalidate();
@@ -629,16 +636,18 @@ const Chat = () => {
       contextUsage: undefined,
       contextCompacted: undefined,
       agentRun: undefined,
+      browserControlHint: undefined,
     })),
       startRetryStream(
         {
           threadId,
           messageIdxToRetry: messageIdxToRetry,
           actionType: actionType.current,
-          ...(messages[messageIdxToRetry - 1]?.browserAgent ? { agentLabels: agentLabels() } : {}),
+          ...((browserAgent ?? messages[messageIdxToRetry - 1]?.browserAgent) ? { agentLabels: agentLabels() } : {}),
         },
         {
           onAgent: showAgentRun,
+          onBrowserControlHint: markBrowserControlHint,
           onContextTruncated: markContextTruncated,
           onReasoning: appendReasoning,
           onThinkingMs: markThinkingMs,
@@ -673,6 +682,20 @@ const Chat = () => {
           },
         }
       );
+  };
+
+  // Bumped when the hint under an answer turns browser control on, for the chat box's toggle.
+  const [browserAgentTurnedOn, setBrowserAgentTurnedOn] = useState(0);
+
+  // The hint under an answer that was asked to act in the tab with browser control off: turns it on
+  // and asks the question again with the browser agent, which the background reads off the question.
+  const handleBrowserControlRetry = async (answerIdx: number) => {
+    const question = messages[answerIdx - 1];
+    if (!question?.id) return;
+    await updateMessage(question.id, { browserAgent: true });
+    setMessages((cur) => cur.map((m, i) => (i === answerIdx - 1 ? { ...m, browserAgent: true } : m)));
+    setBrowserAgentTurnedOn((count) => count + 1);
+    await handleRetry(answerIdx, true);
   };
 
   // Asks for the detailed analysis of what the summary before `answerIdx` read, with web research
@@ -828,6 +851,7 @@ const Chat = () => {
               onDetailedAnalysis={handleDetailedAnalysis}
               onAsk={(question) => void handleSubmit(question)}
               onAgentApproval={answerAgentApproval}
+              onBrowserControl={(answerIdx) => void handleBrowserControlRetry(answerIdx)}
               scrollToBottom={scrollToBottomThrottled}
             />
           </Suspense>
@@ -843,6 +867,7 @@ const Chat = () => {
           threadVideo={threadVideo}
           contextUsage={contextUsage}
           previousPrompts={previousPrompts}
+          browserAgentTurnedOn={browserAgentTurnedOn}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           onOpenHistory={handleOpenHistory}

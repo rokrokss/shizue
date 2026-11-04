@@ -156,7 +156,12 @@
     "contextUsageHint": "Cette conversation occupe {{percent}} % de ce que le modèle peut lire d’un coup. Au-delà de 70 %, le début est envoyé en résumé et seuls les derniers échanges tels quels.",
     "browserAgent": "Contrôle du navigateur",
     "browserAgentHint": "Shizue clique et tape dans l’onglet actuel. Il demande avant d’envoyer, de supprimer ou de payer",
-    "browserAgentPlaceholder": "Que dois-je faire dans cet onglet ?"
+    "browserAgentPlaceholder": "Que dois-je faire dans cet onglet ?",
+    "selectAllTabs": "Tout sélectionner",
+    "deselectAllTabs": "Tout retirer",
+    "browserControlHintTitle": "Shizue peut le faire dans votre onglet",
+    "browserControlHintBody": "Activez « Contrôle du navigateur » dans le menu Joindre et Shizue clique et tape sur cette page. Il demande avant d’envoyer ou de payer.",
+    "browserControlHintAction": "Activer et réessayer"
   },
   "footer": {
     "joinDiscord": "Rejoignez-moi sur Discord !",

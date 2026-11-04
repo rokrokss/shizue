@@ -156,7 +156,12 @@
     "contextUsageHint": "Questa chat occupa il {{percent}}% di ciò che il modello può leggere in una volta. Oltre il 70%, la parte iniziale va come riassunto e solo gli ultimi scambi così come sono.",
     "browserAgent": "Controllo del browser",
     "browserAgentHint": "Shizue fa clic e scrive nella scheda attuale. Chiede prima di inviare, eliminare o pagare",
-    "browserAgentPlaceholder": "Cosa devo fare in questa scheda?"
+    "browserAgentPlaceholder": "Cosa devo fare in questa scheda?",
+    "selectAllTabs": "Seleziona tutto",
+    "deselectAllTabs": "Deseleziona tutto",
+    "browserControlHintTitle": "Shizue può farlo nella tua scheda",
+    "browserControlHintBody": "Attiva «Controllo del browser» nel menu Allega e Shizue farà clic e scriverà in questa pagina. Chiede prima di inviare o pagare.",
+    "browserControlHintAction": "Attiva e riprova"
   },
   "footer": {
     "joinDiscord": "Unisciti a me su Discord!",

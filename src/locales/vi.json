@@ -156,7 +156,12 @@
     "contextUsageHint": "Cuộc trò chuyện này chiếm {{percent}}% lượng mà mô hình đọc được một lần. Quá 70%, phần trước được gửi dưới dạng tóm tắt và chỉ các lượt gần nhất được giữ nguyên.",
     "browserAgent": "Điều khiển trình duyệt",
     "browserAgentHint": "Shizue tự nhấp và nhập trong thẻ hiện tại. Hỏi trước khi gửi, xóa hoặc thanh toán",
-    "browserAgentPlaceholder": "Tôi nên làm gì trong thẻ này?"
+    "browserAgentPlaceholder": "Tôi nên làm gì trong thẻ này?",
+    "selectAllTabs": "Chọn tất cả",
+    "deselectAllTabs": "Bỏ chọn tất cả",
+    "browserControlHintTitle": "Shizue có thể làm việc này trong thẻ của bạn",
+    "browserControlHintBody": "Bật “Điều khiển trình duyệt” trong menu Đính kèm để Shizue nhấp và nhập trên trang này. Hỏi trước khi gửi hoặc thanh toán.",
+    "browserControlHintAction": "Bật và thử lại"
   },
   "footer": {
     "joinDiscord": "Tham gia cùng tôi trên Discord!",

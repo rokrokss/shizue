@@ -28,7 +28,7 @@ test('without custom instructions the system message is unchanged', () => {
 
 test('custom instructions follow the default rules, trimmed and delimited', () => {
   const message = getInitialSystemMessage(lang, '\n  Always answer in English.\nKeep it under three lines.  \n');
-  assert.ok(message.startsWith(`${base}\n6) `));
+  assert.ok(message.startsWith(`${base}\n7) `));
   assert.ok(message.endsWith(
     '===custom instructions===\nAlways answer in English.\nKeep it under three lines.\n===end of custom instructions==='
   ));

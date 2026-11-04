@@ -156,7 +156,12 @@
     "contextUsageHint": "此對話占用了模型一次可讀取量的 {{percent}}%。超過 70% 後，前面的部分會改為摘要，只原樣傳送最近的對話。",
     "browserAgent": "瀏覽器操作",
     "browserAgentHint": "Shizue 會直接在目前分頁點擊和輸入。傳送、刪除或付款前會先詢問",
-    "browserAgentPlaceholder": "要在這個分頁裡做什麼？"
+    "browserAgentPlaceholder": "要在這個分頁裡做什麼？",
+    "selectAllTabs": "全選",
+    "deselectAllTabs": "全部取消",
+    "browserControlHintTitle": "Shizue 可以直接在你的分頁裡完成",
+    "browserControlHintBody": "在附加選單中開啟「瀏覽器操作」，Shizue 就會在此頁面上點擊和輸入。傳送或付款前會先詢問。",
+    "browserControlHintAction": "開啟並重試"
   },
   "footer": {
     "joinDiscord": "加入我的 Discord！",

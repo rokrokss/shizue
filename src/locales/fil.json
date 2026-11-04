@@ -156,7 +156,12 @@
     "contextUsageHint": "Napupuno ng usapang ito ang {{percent}}% ng kayang basahin ng model nang minsanan. Lampas 70%, ipinapadala bilang buod ang naunang bahagi at ang pinakabagong palitan lang ang buo.",
     "browserAgent": "Kontrol ng browser",
     "browserAgentHint": "Nagki-click at nagta-type si Shizue sa kasalukuyang tab. Nagtatanong muna bago magpadala, magbura o magbayad",
-    "browserAgentPlaceholder": "Ano ang gagawin ko sa tab na ito?"
+    "browserAgentPlaceholder": "Ano ang gagawin ko sa tab na ito?",
+    "selectAllTabs": "Piliin lahat",
+    "deselectAllTabs": "Alisin lahat",
+    "browserControlHintTitle": "Kaya itong gawin ni Shizue sa tab mo",
+    "browserControlHintBody": "I-on ang Kontrol ng browser sa menu na Ilakip at magki-click at magta-type si Shizue sa page na ito. Nagtatanong muna bago magpadala o magbayad.",
+    "browserControlHintAction": "I-on at subukan ulit"
   },
   "footer": {
     "joinDiscord": "Sumali sa akin sa Discord!",

@@ -156,7 +156,12 @@
     "contextUsageHint": "این گفتگو {{percent}}٪ از مقداری را که مدل یک‌جا می‌خواند پر کرده است. بعد از ۷۰٪، بخش ابتدایی به‌صورت خلاصه و فقط پیام‌های اخیر همان‌طور که هستند فرستاده می‌شوند.",
     "browserAgent": "کنترل مرورگر",
     "browserAgentHint": "Shizue در زبانهٔ فعلی کلیک و تایپ می‌کند و پیش از ارسال، حذف یا پرداخت می‌پرسد",
-    "browserAgentPlaceholder": "در این زبانه چه کنم؟"
+    "browserAgentPlaceholder": "در این زبانه چه کنم؟",
+    "selectAllTabs": "انتخاب همه",
+    "deselectAllTabs": "لغو انتخاب همه",
+    "browserControlHintTitle": "Shizue می‌تواند این کار را در زبانهٔ شما انجام دهد",
+    "browserControlHintBody": "«کنترل مرورگر» را در منوی پیوست روشن کنید تا Shizue در این صفحه کلیک و تایپ کند. پیش از ارسال یا پرداخت می‌پرسد.",
+    "browserControlHintAction": "روشن کن و دوباره امتحان کن"
   },
   "footer": {
     "joinDiscord": "به من در Discord بپیوندید!",

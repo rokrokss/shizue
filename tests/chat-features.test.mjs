@@ -198,13 +198,13 @@ test('remembered facts follow the custom instructions in the system message', ()
   assert.equal(getInitialSystemMessage(lang, undefined, []), base);
 
   const onlyFacts = getInitialSystemMessage(lang, '', ['Uses Rust.']);
-  assert.ok(onlyFacts.startsWith(`${base}\n6) You remember the facts below`));
+  assert.ok(onlyFacts.startsWith(`${base}\n7) You remember the facts below`));
   assert.match(onlyFacts, /The user's messages in this chat win over them\./);
   assert.match(onlyFacts, /===remembered facts===\n- Uses Rust\.\n===end of remembered facts===$/);
 
   const both = getInitialSystemMessage(lang, 'Answer briefly.', ['Uses Rust.', 'Lives in Seoul.']);
   assert.ok(both.startsWith(getInitialSystemMessage(lang, 'Answer briefly.')));
-  assert.match(both, /\n7\) You remember the facts below/);
+  assert.match(both, /\n8\) You remember the facts below/);
   assert.match(both, /custom instructions and messages in this chat win over them/);
   assert.match(both, /- Uses Rust\.\n- Lives in Seoul\./);
 });

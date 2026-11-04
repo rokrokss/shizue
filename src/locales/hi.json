@@ -156,7 +156,12 @@
     "contextUsageHint": "यह बातचीत मॉडल द्वारा एक बार में पढ़ी जा सकने वाली मात्रा का {{percent}}% भर रही है। 70% के बाद पहले का हिस्सा सारांश के रूप में और केवल हाल की बातचीत जैसी है वैसी भेजी जाती है।",
     "browserAgent": "ब्राउज़र नियंत्रण",
     "browserAgentHint": "Shizue मौजूदा टैब में खुद क्लिक और टाइप करता है। भेजने, हटाने या भुगतान से पहले पूछता है",
-    "browserAgentPlaceholder": "इस टैब में क्या करूँ?"
+    "browserAgentPlaceholder": "इस टैब में क्या करूँ?",
+    "selectAllTabs": "सभी चुनें",
+    "deselectAllTabs": "सभी हटाएँ",
+    "browserControlHintTitle": "Shizue यह आपके टैब में खुद कर सकता है",
+    "browserControlHintBody": "जोड़ें मेनू में ‘ब्राउज़र नियंत्रण’ चालू करें, तो Shizue इस पेज पर क्लिक और टाइप करेगा। भेजने या भुगतान से पहले पूछता है।",
+    "browserControlHintAction": "चालू करें और फिर से करें"
   },
   "footer": {
     "joinDiscord": "Discord पर मुझसे जुड़ें!",

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   actionResult,
   agentUrl,
+  browserControlMarkSplitter,
   elementLabel,
   formatSnapshot,
   looksCommitting,
@@ -91,4 +92,36 @@ test('The model hears what happened, and a declined action is not to be tried ag
   assert.equal(actionResult({ id: 'a', action: { kind: 'click', ref: 1 }, status: 'done' }), 'Result: done.');
   assert.match(actionResult({ id: 'a', action: { kind: 'click', ref: 1 }, status: 'denied' }), /declined.*Do not try it again/);
   assert.match(actionResult({ id: 'a', action: { kind: 'type', ref: 1, text: 'x' }, status: 'failed', error: 'secret_field' }), /Never type/);
+});
+
+// The answer as the panel gets it, and how many times the mark was seen.
+const splitStream = (chunks) => {
+  const splitter = browserControlMarkSplitter();
+  let text = '';
+  let marks = 0;
+  for (const chunk of chunks) {
+    const part = splitter.push(chunk);
+    text += part.text;
+    if (part.marked) marks += 1;
+  }
+  return { text: text + splitter.flush(), marks };
+};
+
+test('The browser control mark comes off an answer, even split across chunks', () => {
+  assert.deepEqual(splitStream(['[[brow', 'ser-con', 'trol]]', '\n', '브라우저 조작을 켜면 할 수 있어요.']), {
+    text: '브라우저 조작을 켜면 할 수 있어요.',
+    marks: 1,
+  });
+  assert.deepEqual(splitStream(['', '  [[browser-control]]\nI can do it.', ' Turn it on.']), {
+    text: 'I can do it. Turn it on.',
+    marks: 1,
+  });
+});
+
+test('An answer without the mark streams as it is, held back only while it could be one', () => {
+  const splitter = browserControlMarkSplitter();
+  assert.deepEqual(splitter.push('Hello'), { text: 'Hello', marked: false });
+  assert.deepEqual(splitter.push(' [[browser-control]]'), { text: ' [[browser-control]]', marked: false });
+  assert.deepEqual(splitStream(['[', 'link](https://a.test)']), { text: '[link](https://a.test)', marks: 0 });
+  assert.deepEqual(splitStream(['[[bro']), { text: '[[bro', marks: 0 });
 });

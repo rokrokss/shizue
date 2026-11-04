@@ -156,7 +156,12 @@
     "contextUsageHint": "Esta conversación ocupa el {{percent}} % de lo que el modelo puede leer a la vez. Pasado el 70 %, la parte anterior se envía como resumen y solo los últimos turnos tal cual.",
     "browserAgent": "Control del navegador",
     "browserAgentHint": "Shizue hace clic y escribe en la pestaña actual. Pregunta antes de enviar, eliminar o pagar",
-    "browserAgentPlaceholder": "¿Qué hago en esta pestaña?"
+    "browserAgentPlaceholder": "¿Qué hago en esta pestaña?",
+    "selectAllTabs": "Seleccionar todo",
+    "deselectAllTabs": "Quitar todo",
+    "browserControlHintTitle": "Shizue puede hacerlo en tu pestaña",
+    "browserControlHintBody": "Activa «Control del navegador» en el menú Adjuntar y Shizue hará clic y escribirá en esta página. Pregunta antes de enviar o pagar.",
+    "browserControlHintAction": "Activar y reintentar"
   },
   "footer": {
     "joinDiscord": "¡Únete a mí en Discord!",

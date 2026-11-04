@@ -156,7 +156,12 @@
     "contextUsageHint": "Dieser Chat füllt {{percent}} % dessen, was das Modell auf einmal lesen kann. Ab 70 % geht der frühere Teil als Zusammenfassung mit, nur die letzten Runden unverändert.",
     "browserAgent": "Browsersteuerung",
     "browserAgentHint": "Shizue klickt und tippt im aktuellen Tab. Vor Senden, Löschen oder Bezahlen fragt es nach",
-    "browserAgentPlaceholder": "Was soll ich in diesem Tab tun?"
+    "browserAgentPlaceholder": "Was soll ich in diesem Tab tun?",
+    "selectAllTabs": "Alle auswählen",
+    "deselectAllTabs": "Alle abwählen",
+    "browserControlHintTitle": "Shizue kann das in deinem Tab erledigen",
+    "browserControlHintBody": "Schalte im Anhängen-Menü „Browsersteuerung“ ein, dann klickt und tippt Shizue auf dieser Seite. Vor Senden oder Bezahlen fragt es nach.",
+    "browserControlHintAction": "Einschalten und erneut versuchen"
   },
   "footer": {
     "joinDiscord": "Tritt mir auf Discord bei!",

@@ -156,7 +156,12 @@
     "contextUsageHint": "تشغل هذه المحادثة {{percent}}٪ مما يستطيع النموذج قراءته دفعة واحدة. بعد 70٪ يُرسل الجزء الأول كملخص، وتُرسل آخر الرسائل فقط كما هي.",
     "browserAgent": "التحكم في المتصفح",
     "browserAgentHint": "ينقر Shizue ويكتب في علامة التبويب الحالية، ويسأل قبل الإرسال أو الحذف أو الدفع",
-    "browserAgentPlaceholder": "ماذا أفعل في علامة التبويب هذه؟"
+    "browserAgentPlaceholder": "ماذا أفعل في علامة التبويب هذه؟",
+    "selectAllTabs": "تحديد الكل",
+    "deselectAllTabs": "إلغاء تحديد الكل",
+    "browserControlHintTitle": "يستطيع Shizue فعل ذلك في علامة التبويب",
+    "browserControlHintBody": "شغّل «التحكم في المتصفح» من قائمة الإرفاق لينقر Shizue ويكتب في هذه الصفحة. يسأل قبل الإرسال أو الدفع.",
+    "browserControlHintAction": "تشغيل وإعادة المحاولة"
   },
   "footer": {
     "joinDiscord": "انضم إلي على Discord!",

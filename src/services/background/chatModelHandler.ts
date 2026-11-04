@@ -59,7 +59,7 @@ import { CLOUD_CONTEXT_TOKENS, planCompaction } from '@/lib/chatCompaction';
 import { readStorage, setStorage } from '@/lib/storageBackend';
 import { trackStreamingTokenUsage, trackTokenUsage } from '@/lib/tokenUsageTracker';
 import { collectWebSources, orderedWebSources, WebSource } from '@/lib/webSources';
-import type { AgentLabels } from '@/lib/browserAgent';
+import { type AgentLabels, browserControlMarkSplitter } from '@/lib/browserAgent';
 import { runBrowserAgent } from '@/services/background/browserAgentHandler';
 import { debugLog, errorLog } from '@/logs';
 import {
@@ -343,6 +343,9 @@ export class ChatModelHandler {
       let aggregatedChunk: AIMessageChunk | undefined;
       const sources = new Map<string, WebSource & { cited: boolean }>();
       const splitThinkTag = isLocalModel(modelPreset.modelName) ? thinkTagSplitter() : null;
+      // An answer that starts with the browser control mark (prompts.ts) shows the panel's offer
+      // to turn browser control on, without the mark.
+      const markSplitter = browserControlMarkSplitter();
       // The thinking the model shows before it answers goes to the panel as it comes, and how
       // long it thought once the answer starts.
       let reasoning = '';
@@ -399,9 +402,16 @@ export class ChatModelHandler {
           port.postMessage({ thinkingMs });
           await db.messages.update(messageId, { reasoning, thinkingMs });
         }
-        buffer += delta;
+        const split = markSplitter.push(delta);
+        if (split.marked) {
+          port.postMessage({ browserControlHint: true });
+          await db.messages.update(messageId, { browserControlHint: true });
+        }
+        if (!split.text) continue;
+        buffer += split.text;
         sendBufferToPort();
       }
+      buffer += markSplitter.flush();
       sendReasoning(true);
 
       if (buffer) {
@@ -782,6 +792,7 @@ export class ChatModelHandler {
         contextUsage: undefined,
         contextCompacted: undefined,
         agentRun: undefined,
+        browserControlHint: undefined,
       });
 
       const historyForModelInput = fullThreadHistory.slice(0, messageIdxToRetry);

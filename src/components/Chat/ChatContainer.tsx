@@ -20,6 +20,7 @@ import {
   InfoCircleOutlined,
   LinkOutlined,
   PlaySquareOutlined,
+  SelectOutlined,
   SnippetsOutlined,
   YoutubeOutlined,
 } from '@ant-design/icons';
@@ -48,6 +49,7 @@ const ChatContainer = ({
   onDetailedAnalysis,
   onAsk,
   onAgentApproval,
+  onBrowserControl,
   scrollToBottom,
 }: {
   messages: Message[];
@@ -58,6 +60,8 @@ const ChatContainer = ({
   onAsk: (question: string) => void;
   // The user's answer to a browser agent approval card of the answer streaming now.
   onAgentApproval: (stepId: string, approved: boolean) => void;
+  // Turns browser control on and asks the question before this answer again with it.
+  onBrowserControl: (answerIdx: number) => void;
   scrollToBottom: () => void;
 }) => {
   const { t } = useTranslation();
@@ -266,6 +270,24 @@ const ChatContainer = ({
                         onClick={() => onRetry(idx)}
                       >
                         {t('chat.retry')}
+                      </Button>
+                    </div>
+                  ) : null}
+                  {idle && idx === messages.length - 1 && m.done && m.browserControlHint ? (
+                    <div
+                      className={`sz:flex sz:flex-col sz:items-start sz:gap-2 sz:mt-3 sz:px-3 sz:py-2.5 sz:rounded-lg sz:border sz:animate-[sz-fade-in_0.3s_ease-out] sz:motion-reduce:animate-none ${
+                        theme == 'dark' ? 'sz:border-white/15' : 'sz:border-black/10'
+                      }`}
+                    >
+                      <div className="sz:flex sz:flex-row sz:items-start sz:gap-2">
+                        <SelectOutlined className="sz:pt-[3px] sz:text-sz-cyan" />
+                        <div className="sz:min-w-0">
+                          <div className="sz:text-[13px] sz:font-medium">{t('chat.browserControlHintTitle')}</div>
+                          <div className="sz:text-xs sz:text-gray-500">{t('chat.browserControlHintBody')}</div>
+                        </div>
+                      </div>
+                      <Button color="cyan" variant="outlined" size="small" onClick={() => onBrowserControl(idx)}>
+                        {t('chat.browserControlHintAction')}
                       </Button>
                     </div>
                   ) : null}

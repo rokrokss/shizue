@@ -58,6 +58,7 @@ const ChatInput = ({
   threadVideo,
   contextUsage,
   previousPrompts,
+  browserAgentTurnedOn,
   onSubmit,
   onCancel,
   onOpenHistory,
@@ -74,6 +75,8 @@ const ChatInput = ({
   contextUsage: number | null;
   // This chat's questions, oldest first, for recalling with the arrow keys.
   previousPrompts: string[];
+  // Bumped when the hint under an answer turns browser control on.
+  browserAgentTurnedOn: number;
   onSubmit: (
     text: string,
     images?: File[],
@@ -104,6 +107,11 @@ const ChatInput = ({
   // The browser agent does the questions in the tab, until it is turned off. Web search is off
   // meanwhile: the agent reads the page itself.
   const [browserAgent, setBrowserAgent] = useState(false);
+  useEffect(() => {
+    if (!browserAgentTurnedOn) return;
+    setBrowserAgent(true);
+    setWebSearch(false);
+  }, [browserAgentTurnedOn]);
   const mentionPicker = useRef<TabMentionPickerHandle>(null);
   const activeTab = useActiveWebTab();
   const suggestedTab =
@@ -256,6 +264,20 @@ const ChatInput = ({
   const handleToggleTab = (tab: chrome.tabs.Tab, attach: boolean) => {
     if (attach) attachTab(tab);
     else setAttached((current) => current.filter((item) => item.tabId !== tab.id));
+  };
+
+  // The paperclip menu's "Select all": the tabs not attached yet, in their order, as many as
+  // still fit; "Clear all" takes every one of them off.
+  const handleToggleAllTabs = (tabs: chrome.tabs.Tab[], attach: boolean) => {
+    if (!attach) {
+      const ids = new Set(tabs.map((tab) => tab.id));
+      setAttached((current) => current.filter((item) => item.tabId === undefined || !ids.has(item.tabId)));
+      return;
+    }
+    tabs
+      .filter((tab) => !attached.some((item) => item.tabId === tab.id))
+      .slice(0, Math.max(0, MAX_ATTACHED_TABS - attached.length))
+      .forEach(attachTab);
   };
 
   const attachFile = async (file: File) => {
@@ -624,6 +646,7 @@ const ChatInput = ({
               imagesSupported={imagesSupported}
               iconColor={iconColor}
               onToggleTab={handleToggleTab}
+              onToggleAllTabs={handleToggleAllTabs}
               onPickFiles={handlePickFiles}
               onCapture={handleCapture}
               onCaptureRegion={handleCaptureRegion}

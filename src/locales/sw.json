@@ -156,7 +156,12 @@
     "contextUsageHint": "Mazungumzo haya yanajaza {{percent}}% ya kile ambacho modeli inaweza kusoma kwa mara moja. Zaidi ya 70%, sehemu ya mwanzo inatumwa kama muhtasari na mazungumzo ya karibuni pekee kama yalivyo.",
     "browserAgent": "Udhibiti wa kivinjari",
     "browserAgentHint": "Shizue hubofya na kuandika kwenye kichupo cha sasa. Huuliza kabla ya kutuma, kufuta au kulipa",
-    "browserAgentPlaceholder": "Nifanye nini kwenye kichupo hiki?"
+    "browserAgentPlaceholder": "Nifanye nini kwenye kichupo hiki?",
+    "selectAllTabs": "Chagua zote",
+    "deselectAllTabs": "Ondoa zote",
+    "browserControlHintTitle": "Shizue inaweza kufanya hivi kwenye kichupo chako",
+    "browserControlHintBody": "Washa Udhibiti wa kivinjari kwenye menyu ya Ambatisha na Shizue itabofya na kuandika kwenye ukurasa huu. Huuliza kabla ya kutuma au kulipa.",
+    "browserControlHintAction": "Washa na ujaribu tena"
   },
   "footer": {
     "joinDiscord": "Jiunge nami kwenye Discord!",

@@ -57,6 +57,7 @@ const AttachMenu = ({
   imagesSupported,
   iconColor,
   onToggleTab,
+  onToggleAllTabs,
   onPickFiles,
   onCapture,
   onCaptureRegion,
@@ -75,6 +76,7 @@ const AttachMenu = ({
   imagesSupported: boolean;
   iconColor: string;
   onToggleTab: (tab: chrome.tabs.Tab, attach: boolean) => void;
+  onToggleAllTabs: (tabs: chrome.tabs.Tab[], attach: boolean) => void;
   onPickFiles: (files: File[]) => void;
   onCapture: () => void;
   onCaptureRegion: () => void;
@@ -99,11 +101,28 @@ const AttachMenu = ({
   };
 
   const rowClass = (disabled: boolean) => attachRowClass(disabled, theme);
+  // "Select all" takes the tabs with a page to read, as many as still fit; once they are all in,
+  // or no more fit, it becomes "Clear all".
+  const readableTabs = tabs.filter((tab) => !tab.discarded);
+  const attachedCount = readableTabs.filter((tab) => attachedTabIds.includes(tab.id!)).length;
+  const clearsAll = attachedCount > 0 && (attachedCount === readableTabs.length || full);
 
   const content = (
     // Narrow enough to stay centered over the paperclip, inside a side panel at its 320px minimum.
     <div className="sz-attach-menu sz:font-ycom sz:w-52 sz:flex sz:flex-col sz:gap-1">
-      <div className="sz:text-xs sz:text-gray-500 sz:px-2">{t('chat.openTabs')}</div>
+      <div className="sz:flex sz:items-center sz:justify-between sz:gap-2 sz:px-2">
+        <div className="sz:min-w-0 sz:truncate sz:text-xs sz:text-gray-500">{t('chat.openTabs')}</div>
+        {readableTabs.length > 1 ? (
+          <button
+            type="button"
+            disabled={!clearsAll && full}
+            onClick={() => onToggleAllTabs(readableTabs, !clearsAll)}
+            className="sz:shrink-0 sz:text-xs sz:text-sz-cyan sz:rounded-sm sz:cursor-pointer sz:hover:underline sz:underline-offset-2 sz:focus-visible:outline-2 sz:focus-visible:outline-sz-cyan sz:disabled:opacity-50 sz:disabled:cursor-not-allowed sz:disabled:no-underline"
+          >
+            {clearsAll ? t('chat.deselectAllTabs') : t('chat.selectAllTabs')}
+          </button>
+        ) : null}
+      </div>
       <div className="sz:max-h-64 sz:overflow-y-auto sz:flex sz:flex-col">
         {tabs.length === 0 ? (
           <div className="sz:text-xs sz:text-gray-500 sz:px-2 sz:py-2">{t('chat.noOpenTabs')}</div>

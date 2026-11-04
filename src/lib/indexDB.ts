@@ -49,6 +49,8 @@ export interface Message {
   // The question asked the browser agent to do it in the tab, and the answer's run of actions.
   browserAgent?: boolean;
   agentRun?: AgentRun;
+  // The question asked to act in the tab with browser control off; the panel offers to turn it on.
+  browserControlHint?: boolean;
   createdAt: number;
   done: boolean;
   onInterrupt: boolean;
@@ -198,6 +200,7 @@ export interface ThreadWithInitialMessages {
 export const db = new DB();
 
 export const addMessage = (m: Message) => db.messages.add(m);
+export const updateMessage = (id: string, changes: Partial<Message>) => db.messages.update(id, changes);
 export const loadThread = (id: string) =>
   db.messages.where('threadId').equals(id).sortBy('createdAt');
 export const listThreads = () => db.threads.orderBy('updatedAt').reverse().toArray();

@@ -156,7 +156,12 @@
     "contextUsageHint": "یہ گفتگو اس مقدار کا {{percent}}% بھر رہی ہے جو ماڈل ایک بار میں پڑھ سکتا ہے۔ 70% کے بعد پہلا حصہ خلاصے کی صورت میں اور صرف حالیہ گفتگو جوں کی توں بھیجی جاتی ہے۔",
     "browserAgent": "براؤزر کنٹرول",
     "browserAgentHint": "Shizue موجودہ ٹیب میں خود کلک اور ٹائپ کرتا ہے۔ بھیجنے، حذف کرنے یا ادائیگی سے پہلے پوچھتا ہے",
-    "browserAgentPlaceholder": "اس ٹیب میں کیا کروں؟"
+    "browserAgentPlaceholder": "اس ٹیب میں کیا کروں؟",
+    "selectAllTabs": "سب منتخب کریں",
+    "deselectAllTabs": "سب ہٹائیں",
+    "browserControlHintTitle": "Shizue یہ آپ کے ٹیب میں خود کر سکتا ہے",
+    "browserControlHintBody": "منسلک کریں مینو میں ‘براؤزر کنٹرول’ آن کریں تو Shizue اس صفحے پر کلک اور ٹائپ کرے گا۔ بھیجنے یا ادائیگی سے پہلے پوچھتا ہے۔",
+    "browserControlHintAction": "آن کریں اور دوبارہ کوشش کریں"
   },
   "footer": {
     "joinDiscord": "Discord پر میرے ساتھ شامل ہوں!",

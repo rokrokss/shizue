@@ -156,7 +156,12 @@
     "contextUsageHint": "บทสนทนานี้ใช้ {{percent}}% ของปริมาณที่โมเดลอ่านได้ในครั้งเดียว เมื่อเกิน 70% ส่วนก่อนหน้าจะถูกส่งเป็นบทสรุป และส่งเฉพาะบทสนทนาล่าสุดตามเดิม",
     "browserAgent": "ควบคุมเบราว์เซอร์",
     "browserAgentHint": "Shizue คลิกและพิมพ์ในแท็บปัจจุบันให้ ถามก่อนส่ง ลบ หรือชำระเงิน",
-    "browserAgentPlaceholder": "ให้ทำอะไรในแท็บนี้"
+    "browserAgentPlaceholder": "ให้ทำอะไรในแท็บนี้",
+    "selectAllTabs": "เลือกทั้งหมด",
+    "deselectAllTabs": "ยกเลิกทั้งหมด",
+    "browserControlHintTitle": "Shizue ทำสิ่งนี้ในแท็บของคุณได้",
+    "browserControlHintBody": "เปิด ‘ควบคุมเบราว์เซอร์’ ในเมนูแนบ แล้ว Shizue จะคลิกและพิมพ์ในหน้านี้ให้ ถามก่อนส่งหรือชำระเงิน",
+    "browserControlHintAction": "เปิดแล้วลองอีกครั้ง"
   },
   "footer": {
     "joinDiscord": "เข้าร่วมกับฉันบน Discord!",

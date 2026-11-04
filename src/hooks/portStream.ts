@@ -25,6 +25,8 @@ interface StreamOptions {
   onContextUsage?: (usage: number, compacted: boolean) => void;
   // The browser agent's actions so far, whole each time one changes.
   onAgent?: (run: AgentRun) => void;
+  // The question asked to act in the tab with browser control off.
+  onBrowserControlHint?: () => void;
 }
 
 export const useChromePortStream = () => {
@@ -62,6 +64,8 @@ export const useChromePortStream = () => {
           port.disconnect();
         } else if (msg.contextTruncated) {
           opts.onContextTruncated?.();
+        } else if (msg.browserControlHint) {
+          opts.onBrowserControlHint?.();
         } else if ('sources' in msg) {
           opts.onSources?.(msg.sources);
         } else if (msg.done) {

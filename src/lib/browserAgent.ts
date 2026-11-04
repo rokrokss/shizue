@@ -80,6 +80,47 @@ export type AgentRun = { host?: string; steps: AgentStep[]; outcome?: AgentOutco
 export type AgentLabels = { working: string; waiting: string; stop: string };
 
 export const BROWSER_AGENT_MAX_STEPS = 25;
+
+// With browser control off, the chat model starts its answer with this line when the user asked
+// it to act in their tab (prompts.ts). The background takes it off and the panel offers to turn
+// browser control on and ask again.
+export const BROWSER_CONTROL_MARK = '[[browser-control]]';
+
+// Takes the mark off the start of a streamed answer. Only text that could still be the mark is
+// held back; flush() gives it back when the answer ends there.
+export const browserControlMarkSplitter = () => {
+  let head: string | null = '';
+  let afterMark = false;
+  return {
+    push(delta: string): { text: string; marked: boolean } {
+      if (head === null) {
+        // The line break after the mark.
+        if (afterMark) {
+          delta = delta.trimStart();
+          if (delta) afterMark = false;
+        }
+        return { text: delta, marked: false };
+      }
+      head += delta;
+      const start = head.trimStart();
+      if (start.length < BROWSER_CONTROL_MARK.length && BROWSER_CONTROL_MARK.startsWith(start)) {
+        return { text: '', marked: false };
+      }
+      const text = head;
+      head = null;
+      if (!start.startsWith(BROWSER_CONTROL_MARK)) return { text, marked: false };
+      const rest = start.slice(BROWSER_CONTROL_MARK.length).trimStart();
+      afterMark = !rest;
+      return { text: rest, marked: true };
+    },
+    flush() {
+      const text = head ?? '';
+      head = null;
+      return text;
+    },
+  };
+};
+
 const MAX_ELEMENTS = 160;
 const MAX_NAME = 80;
 

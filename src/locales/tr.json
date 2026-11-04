@@ -156,7 +156,12 @@
     "contextUsageHint": "Bu sohbet, modelin tek seferde okuyabildiğinin %{{percent}} kadarını dolduruyor. %70'i geçince önceki kısım özet olarak, yalnızca son mesajlar olduğu gibi gönderilir.",
     "browserAgent": "Tarayıcı kontrolü",
     "browserAgentHint": "Shizue mevcut sekmede tıklar ve yazar. Göndermeden, silmeden veya ödemeden önce sorar",
-    "browserAgentPlaceholder": "Bu sekmede ne yapayım?"
+    "browserAgentPlaceholder": "Bu sekmede ne yapayım?",
+    "selectAllTabs": "Tümünü seç",
+    "deselectAllTabs": "Tümünü kaldır",
+    "browserControlHintTitle": "Shizue bunu sekmende yapabilir",
+    "browserControlHintBody": "Ekle menüsünde Tarayıcı kontrolünü aç, Shizue bu sayfada tıklayıp yazsın. Göndermeden veya ödemeden önce sorar.",
+    "browserControlHintAction": "Aç ve yeniden dene"
   },
   "footer": {
     "joinDiscord": "Discord'da bana katılın!",

@@ -156,7 +156,12 @@
     "contextUsageHint": "此对话占用了模型一次可读取量的 {{percent}}%。超过 70% 后，前面的部分会改为摘要，只原样发送最近的对话。",
     "browserAgent": "浏览器操作",
     "browserAgentHint": "Shizue 会直接在当前标签页点击和输入。发送、删除或付款前会先询问",
-    "browserAgentPlaceholder": "要在这个标签页里做什么？"
+    "browserAgentPlaceholder": "要在这个标签页里做什么？",
+    "selectAllTabs": "全选",
+    "deselectAllTabs": "全部取消",
+    "browserControlHintTitle": "Shizue 可以直接在你的标签页里完成",
+    "browserControlHintBody": "在附加菜单中打开“浏览器操作”，Shizue 就会在此页面上点击和输入。发送或付款前会先询问。",
+    "browserControlHintAction": "打开并重试"
   },
   "footer": {
     "joinDiscord": "加入我的 Discord！",

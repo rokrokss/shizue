@@ -156,7 +156,12 @@
     "contextUsageHint": "この会話はモデルが一度に読める量の{{percent}}%を使っています。70%を超えると前半を要約し、最近のやり取りだけをそのまま送ります。",
     "browserAgent": "ブラウザ操作",
     "browserAgentHint": "シズエが今のタブを直接クリック・入力します。送信・削除・支払いの前には確認します",
-    "browserAgentPlaceholder": "このタブで何をしますか？"
+    "browserAgentPlaceholder": "このタブで何をしますか？",
+    "selectAllTabs": "すべて選択",
+    "deselectAllTabs": "すべて解除",
+    "browserControlHintTitle": "シズエがこのタブで直接できます",
+    "browserControlHintBody": "添付メニューの「ブラウザ操作」をオンにすると、このページで直接クリック・入力します。送信・支払いの前には確認します。",
+    "browserControlHintAction": "オンにしてやり直す"
   },
   "footer": {
     "joinDiscord": "Discordに参加してください！",
