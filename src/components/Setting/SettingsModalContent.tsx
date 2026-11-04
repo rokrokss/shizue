@@ -501,11 +501,11 @@ const SettingsModalContent = () => {
                       className: 'sz:font-ycom',
                     }))}
                   />
-                  <div className="sz:w-50 sz:text-center sz:text-xs sz:text-gray-500">
-                    {reasoningSupported
-                      ? t(`chat.reasoningEffortHint_${reasoningEffort}`)
-                      : t('chat.reasoningEffortNotSupported')}
-                  </div>
+                  {reasoningSupported ? null : (
+                    <div className="sz:w-50 sz:text-center sz:text-xs sz:text-gray-500">
+                      {t('chat.reasoningEffortNotSupported')}
+                    </div>
+                  )}
                   <div
                     className={`sz:text-base ${
                       theme == 'dark' ? 'sz:text-gray-200' : 'sz:text-gray-800'

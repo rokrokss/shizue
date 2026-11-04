@@ -673,25 +673,6 @@ const ChatInput = ({
               onPickImages={handlePickImages}
               onCapture={handleCapture}
             />
-            <ToolsMenu
-              iconColor={iconColor}
-              webSearch={webSearch}
-              webSearchSupported={webSearchSupported}
-              onToggleWebSearch={() => {
-                setWebSearch((on) => !on);
-                setBrowserAgent(false);
-              }}
-              browserAgent={browserAgent}
-              onToggleBrowserAgent={() => {
-                setBrowserAgent((on) => !on);
-                setWebSearch(false);
-              }}
-              autoApprove={autoApprove}
-              onToggleAutoApprove={() => setAutoApprove((on) => !on)}
-              reasoningEffort={reasoningEffort}
-              reasoningEfforts={reasoningEfforts}
-              onReasoningEffort={(effort) => void setReasoningEffort(effort)}
-            />
             <Tooltip
               placement="top"
               title={
@@ -781,6 +762,28 @@ const ChatInput = ({
                 style={toolbarButtonStyle}
               ></Button>
             </Tooltip>
+            {/* Set apart at the end: it sets how the next answers are made, the rest act at once. */}
+            <div className="sz:ml-auto">
+              <ToolsMenu
+                iconColor={iconColor}
+                webSearch={webSearch}
+                webSearchSupported={webSearchSupported}
+                onToggleWebSearch={() => {
+                  setWebSearch((on) => !on);
+                  setBrowserAgent(false);
+                }}
+                browserAgent={browserAgent}
+                onToggleBrowserAgent={() => {
+                  setBrowserAgent((on) => !on);
+                  setWebSearch(false);
+                }}
+                autoApprove={autoApprove}
+                onToggleAutoApprove={() => setAutoApprove((on) => !on)}
+                reasoningEffort={reasoningEffort}
+                reasoningEfforts={reasoningEfforts}
+                onReasoningEffort={(effort) => void setReasoningEffort(effort)}
+              />
+            </div>
           </div>
         </div>
         <AttachmentChips

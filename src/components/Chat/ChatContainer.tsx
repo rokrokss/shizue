@@ -139,6 +139,15 @@ const ChatContainer = ({
     messages[idx - 1].actionType === 'askForSummary' &&
     messages[idx - 1].summaryMode !== 'detailed';
 
+  // The buttons under a summary: its detailed analysis and the questions to ask next.
+  const nextStepClass = `sz:group sz:flex sz:items-center sz:gap-2 sz:max-w-full sz:text-left sz:text-[13px] sz:leading-5 sz:font-ycom sz:px-3 sz:py-1.5 sz:rounded-lg sz:border sz:cursor-pointer sz:transition-colors sz:duration-150 sz:hover:border-sz-cyan sz:focus-visible:outline-2 sz:focus-visible:outline-sz-cyan ${
+    theme == 'dark'
+      ? 'sz:border-white/15 sz:text-gray-200 sz:hover:bg-white/5'
+      : 'sz:border-black/10 sz:text-gray-700 sz:hover:bg-black/[0.03]'
+  }`;
+  const nextStepArrowClass =
+    'sz:shrink-0 sz:text-[11px] sz:text-gray-400 sz:transition-transform sz:duration-150 sz:group-hover:translate-x-0.5 sz:group-hover:text-sz-cyan';
+
   return (
     <div
       className="
@@ -166,6 +175,8 @@ const ChatContainer = ({
                 m.content.trim() === '') ||
               (idx > 0 && messages[idx - 1].role === 'ai' && m.content.trim() === '');
             const isRetryButtonVisible = showRetryButton(m);
+            const showSuggestions = idle && idx === messages.length - 1 && m.done && !!m.suggestions?.length;
+            const showDetailedAnalysis = offersDetailedAnalysis(idx);
             return (
               !isDummyMessage && (
                 <div
@@ -291,42 +302,46 @@ const ChatContainer = ({
                       </Button>
                     </div>
                   ) : null}
-                  {idle && idx === messages.length - 1 && m.done && m.suggestions?.length ? (
+                  {/* What to ask next under a summary: the detailed analysis first, since it shows
+                      at once and the questions arrive after it, then the questions, alike. */}
+                  {showDetailedAnalysis || showSuggestions ? (
                     <div className="sz-suggestions sz:flex sz:flex-col sz:items-start sz:gap-1.5 sz:pt-3 sz:animate-[sz-fade-in_0.3s_ease-out] sz:motion-reduce:animate-none">
                       <div className="sz:text-xs sz:text-gray-500">{t('chat.suggestedQuestions')}</div>
-                      {m.suggestions.map((question) => (
+                      {showDetailedAnalysis ? (
                         <button
-                          key={question}
                           type="button"
-                          onClick={() => onAsk(question)}
-                          className={`sz:group sz:flex sz:items-center sz:gap-2 sz:max-w-full sz:text-left sz:text-[13px] sz:leading-5 sz:font-ycom sz:px-3 sz:py-1.5 sz:rounded-lg sz:border sz:cursor-pointer sz:transition-colors sz:duration-150 sz:hover:border-sz-cyan sz:focus-visible:outline-2 sz:focus-visible:outline-sz-cyan ${
-                            theme == 'dark'
-                              ? 'sz:border-white/15 sz:text-gray-200 sz:hover:bg-white/5'
-                              : 'sz:border-black/10 sz:text-gray-700 sz:hover:bg-black/[0.03]'
-                          }`}
+                          onClick={() => {
+                            setDetailedAskedFor(idx);
+                            void onDetailedAnalysis(idx, researchSupported);
+                          }}
+                          className={nextStepClass}
                         >
-                          <span className="sz:min-w-0">{question}</span>
-                          <ArrowRightOutlined className="sz:shrink-0 sz:text-[11px] sz:text-gray-400 sz:transition-transform sz:duration-150 sz:group-hover:translate-x-0.5 sz:group-hover:text-sz-cyan" />
+                          {researchSupported ? (
+                            <GlobalOutlined className="sz:shrink-0 sz:text-sz-cyan" />
+                          ) : (
+                            <FileTextOutlined className="sz:shrink-0 sz:text-sz-cyan" />
+                          )}
+                          <span className="sz:min-w-0">
+                            {researchSupported
+                              ? t('chat.detailedAnalysisWithWebSearch')
+                              : t('chat.detailedAnalysis')}
+                          </span>
+                          <ArrowRightOutlined className={nextStepArrowClass} />
                         </button>
-                      ))}
-                    </div>
-                  ) : null}
-                  {offersDetailedAnalysis(idx) ? (
-                    <div className="sz:pt-2">
-                      <Button
-                        color="cyan"
-                        variant="outlined"
-                        size="small"
-                        icon={researchSupported ? <GlobalOutlined /> : <FileTextOutlined />}
-                        onClick={() => {
-                          setDetailedAskedFor(idx);
-                          void onDetailedAnalysis(idx, researchSupported);
-                        }}
-                      >
-                        {researchSupported
-                          ? t('chat.detailedAnalysisWithWebSearch')
-                          : t('chat.detailedAnalysis')}
-                      </Button>
+                      ) : null}
+                      {showSuggestions
+                        ? m.suggestions!.map((question) => (
+                            <button
+                              key={question}
+                              type="button"
+                              onClick={() => onAsk(question)}
+                              className={`${nextStepClass} sz:animate-[sz-fade-in_0.3s_ease-out] sz:motion-reduce:animate-none`}
+                            >
+                              <span className="sz:min-w-0">{question}</span>
+                              <ArrowRightOutlined className={nextStepArrowClass} />
+                            </button>
+                          ))
+                        : null}
                     </div>
                   ) : null}
                 </div>

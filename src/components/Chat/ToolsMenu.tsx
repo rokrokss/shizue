@@ -40,6 +40,16 @@ const ToolsMenu = ({
   const [open, setOpen] = useState(false);
   const rowClass = (disabled: boolean) => attachRowClass(disabled, theme);
   const reasoningSupported = reasoningEfforts.length > 0;
+  const effortStops = reasoningSupported ? reasoningEfforts : BASE_REASONING_EFFORTS;
+  const effortIndex = Math.max(0, effortStops.indexOf(reasoningEffort));
+  // The stop nearest the pointer, along the track's knob-wide ends.
+  const pickEffortAt = (track: HTMLElement, clientX: number) => {
+    const { left, width } = track.getBoundingClientRect();
+    const knob = track.firstElementChild!.getBoundingClientRect().width;
+    const at = Math.round(((clientX - left - knob / 2) / Math.max(1, width - knob)) * (effortStops.length - 1));
+    const effort = effortStops[Math.min(effortStops.length - 1, Math.max(0, at))];
+    if (effort !== reasoningEffort) onReasoningEffort(effort);
+  };
 
   const content = (
     <div className="sz-tools-menu sz:font-ycom sz:w-52 sz:flex sz:flex-col">
@@ -47,9 +57,9 @@ const ToolsMenu = ({
         <GlobalOutlined className="sz:shrink-0" />
         <div className="sz:min-w-0 sz:flex-1">
           <div className="sz:text-sm">{t('chat.webSearch')}</div>
-          <div className="sz:text-xs sz:text-gray-500">
-            {webSearchSupported ? t('chat.webSearchHint') : t('chat.webSearchNotSupported')}
-          </div>
+          {webSearchSupported ? null : (
+            <div className="sz:text-xs sz:text-gray-500">{t('chat.webSearchNotSupported')}</div>
+          )}
         </div>
         <input
           type="checkbox"
@@ -63,7 +73,6 @@ const ToolsMenu = ({
         <SelectOutlined className="sz:shrink-0" />
         <div className="sz:min-w-0 sz:flex-1">
           <div className="sz:text-sm">{t('chat.browserAgent')}</div>
-          <div className="sz:text-xs sz:text-gray-500">{t('chat.browserAgentHint')}</div>
         </div>
         <input
           type="checkbox"
@@ -90,57 +99,74 @@ const ToolsMenu = ({
         </div>
       ) : null}
       <div
-        className={`sz:flex sz:flex-col sz:gap-1.5 sz:px-2 sz:py-1.5 ${
+        className={`sz:flex sz:flex-col sz:gap-2 sz:px-2 sz:py-1.5 ${
           reasoningSupported ? '' : 'sz:opacity-50'
         }`}
       >
         <div className="sz:flex sz:items-center sz:gap-2">
           <BulbOutlined className="sz:shrink-0" />
           <div className="sz:min-w-0 sz:flex-1">
-            <div className="sz:text-sm">{t('chat.reasoningEffort')}</div>
-            <div className="sz:text-xs sz:text-gray-500">
-              {reasoningSupported
-                ? t(`chat.reasoningEffortHint_${reasoningEffort}`)
-                : t('chat.reasoningEffortNotSupported')}
+            <div className="sz:flex sz:items-baseline sz:justify-between sz:gap-2">
+              <span className="sz:text-sm">{t('chat.reasoningEffort')}</span>
+              {reasoningSupported ? (
+                <span className="sz:text-sm sz:text-sz-cyan">{t(`chat.reasoningEffort_${reasoningEffort}`)}</span>
+              ) : null}
             </div>
+            {reasoningSupported ? null : (
+              <div className="sz:text-xs sz:text-gray-500">{t('chat.reasoningEffortNotSupported')}</div>
+            )}
           </div>
         </div>
+        {/* A slider: a dot for each of the model's efforts and a knob on the chosen one. */}
         <div
           role="radiogroup"
           aria-label={t('chat.reasoningEffort')}
-          className={`sz:flex sz:p-0.5 sz:rounded-md ${theme == 'dark' ? 'sz:bg-white/10' : 'sz:bg-black/5'}`}
+          onKeyDown={(e) => {
+            const step = { ArrowLeft: -1, ArrowDown: -1, ArrowRight: 1, ArrowUp: 1 }[e.key];
+            if (!reasoningSupported || !step) return;
+            e.preventDefault();
+            const effort = effortStops[effortIndex + step];
+            if (effort) onReasoningEffort(effort);
+          }}
+          className={`sz:p-0.5 sz:rounded-full ${theme == 'dark' ? 'sz:bg-white/10' : 'sz:bg-black/5'}`}
         >
-          {(reasoningSupported ? reasoningEfforts : BASE_REASONING_EFFORTS).map((effort) => {
-            const selected = effort === reasoningEffort;
-            return (
+          <div
+            className={`sz:relative sz:flex sz:justify-between sz:touch-none ${
+              reasoningSupported ? 'sz:cursor-pointer' : 'sz:cursor-not-allowed'
+            }`}
+            onPointerDown={(e) => reasoningSupported && pickEffortAt(e.currentTarget, e.clientX)}
+            onPointerMove={(e) => reasoningSupported && e.buttons === 1 && pickEffortAt(e.currentTarget, e.clientX)}
+          >
+            <span
+              aria-hidden
+              className={`sz:absolute sz:top-0 sz:size-5 sz:rounded-full sz:shadow-sm sz:transition-[left] sz:duration-150 ${
+                theme == 'dark' ? 'sz:bg-gray-100' : 'sz:bg-white sz:ring-1 sz:ring-black/10'
+              }`}
+              style={{ left: `calc((100% - 1.25rem) * ${effortStops.length > 1 ? effortIndex / (effortStops.length - 1) : 0})` }}
+            />
+            {effortStops.map((effort) => (
               <button
                 key={effort}
                 type="button"
                 role="radio"
-                aria-checked={selected}
+                aria-checked={effort === reasoningEffort}
+                aria-label={t(`chat.reasoningEffort_${effort}`)}
+                title={t(`chat.reasoningEffort_${effort}`)}
                 disabled={!reasoningSupported}
                 onClick={() => onReasoningEffort(effort)}
-                className={`sz:flex-1 sz:py-0.5 sz:rounded sz:text-xs sz:transition-colors sz:duration-150 sz:focus-visible:outline-2 sz:focus-visible:outline-sz-cyan ${
-                  reasoningSupported ? 'sz:cursor-pointer' : 'sz:cursor-not-allowed'
-                } ${
-                  selected
-                    ? theme == 'dark'
-                      ? 'sz:bg-white/20 sz:text-white'
-                      : 'sz:bg-white sz:text-black sz:shadow-sm'
-                    : 'sz:text-gray-500'
-                }`}
+                className="sz:relative sz:size-5 sz:flex sz:items-center sz:justify-center sz:rounded-full sz:cursor-[inherit] sz:focus-visible:outline-2 sz:focus-visible:outline-sz-cyan"
               >
-                {t(`chat.reasoningEffort_${effort}`)}
+                <span className={`sz:size-1 sz:rounded-full ${theme == 'dark' ? 'sz:bg-white/30' : 'sz:bg-black/25'}`} />
               </button>
-            );
-          })}
+            ))}
+          </div>
         </div>
       </div>
     </div>
   );
 
   return (
-    <Popover content={content} trigger="click" placement="top" open={open} onOpenChange={setOpen}>
+    <Popover content={content} trigger="click" placement="topRight" open={open} onOpenChange={setOpen}>
       <span className="sz:inline-flex">
         <Tooltip
           placement="top"
