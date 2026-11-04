@@ -1,4 +1,5 @@
 import {
+  MESSAGE_AGENT_APPROVAL,
   MESSAGE_RETRY_GRAPH_STREAM,
   MESSAGE_RUN_GRAPH_STREAM,
   PORT_STREAM_MESSAGE,
@@ -7,6 +8,7 @@ import {
 } from '@/config/constants';
 import { whenBackgroundStateReady } from '@/entrypoints/background/states/ready';
 import { debugLog, errorLog } from '@/logs';
+import { answerAgentApproval } from '@/services/background/browserAgentHandler';
 import { getChatModelHandler } from '@/services/background/chatModelHandler';
 
 // Firefox's sidebar (desktop only). Not in Chrome's types.
@@ -171,22 +173,28 @@ export const sidePanelMessageListeners = () => {
     // per world), which ran the model twice into one reply, so only the first is answered.
     let answered = false;
     port.onMessage.addListener(async (msg) => {
+      // The browser agent's approval cards are answered over the answer's own port.
+      if (msg.action === MESSAGE_AGENT_APPROVAL) {
+        answerAgentApproval(msg.stepId, msg.approved === true);
+        return;
+      }
       if (answered) return;
       answered = true;
       await whenBackgroundStateReady();
       if (msg.action === MESSAGE_RUN_GRAPH_STREAM) {
-        const { threadId, actionType } = msg;
+        const { threadId, actionType, agentLabels } = msg;
 
-        await getChatModelHandler().streamChat(threadId, port, abortController, actionType);
+        await getChatModelHandler().streamChat(threadId, port, abortController, actionType, agentLabels);
       } else if (msg.action === MESSAGE_RETRY_GRAPH_STREAM) {
-        const { threadId, messageIdxToRetry, actionType } = msg;
+        const { threadId, messageIdxToRetry, actionType, agentLabels } = msg;
 
         await getChatModelHandler().retryStreamChat(
           threadId,
           messageIdxToRetry,
           port,
           abortController,
-          actionType
+          actionType,
+          agentLabels
         );
       }
     });

@@ -38,6 +38,9 @@ export interface ModelOptions {
   streaming?: boolean;
   // Minimize reasoning for latency-sensitive calls such as translation.
   fast?: boolean;
+  // The chat's thinking effort when it isn't the model's default (lib/reasoning.ts). Only for
+  // models where modelSupportsReasoningEffort; `fast` wins over it.
+  reasoningEffort?: 'low' | 'high';
   // JSON object output. Gemini enforces the schema; OpenAI and OpenRouter use JSON mode;
   // Anthropic relies on the prompt.
   jsonSchema?: Record<string, unknown>;
@@ -63,8 +66,10 @@ const temperatureFor = (spec: ModelSpec, temperature?: number) =>
   spec.supportsTemperature && temperature !== undefined ? { temperature } : {};
 
 function createOpenAI(spec: ModelSpec, opts: ModelOptions) {
-  const { maxTokens, temperature, streaming, fast, jsonSchema, modelPreset } = opts;
+  const { maxTokens, temperature, streaming, fast, reasoningEffort, jsonSchema, modelPreset } = opts;
   throwIfMissing(modelPreset.openaiKey, 'openai-api-key');
+  const lowest = spec.openaiFastEffort ?? 'none';
+  const effort = fast || reasoningEffort === 'low' ? lowest : reasoningEffort;
 
   // @langchain/openai only recognizes o-series/gpt-5 as reasoning models, so it would drop
   // `reasoning` and send the legacy `max_tokens` for gpt-6. Pass the raw API fields instead.
@@ -75,7 +80,7 @@ function createOpenAI(spec: ModelSpec, opts: ModelOptions) {
     ...temperatureFor(spec, temperature),
     modelKwargs: {
       ...(maxTokens ? { max_completion_tokens: maxTokens } : {}),
-      ...(fast ? { reasoning_effort: spec.openaiFastEffort ?? 'none' } : {}),
+      ...(effort ? { reasoning_effort: effort } : {}),
       ...(jsonSchema ? { response_format: { type: 'json_object' } } : {}),
     },
   });
@@ -85,7 +90,9 @@ function createOpenAI(spec: ModelSpec, opts: ModelOptions) {
 }
 
 function createGemini(spec: ModelSpec, opts: ModelOptions) {
-  const { maxTokens, temperature, fast, jsonSchema, modelPreset } = opts;
+  const { maxTokens, temperature, fast, reasoningEffort, jsonSchema, modelPreset } = opts;
+  // A thinking level other than minimal also brings the model's thought summaries.
+  const thinkingLevel = fast || spec.supportsTemperature ? 'minimal' : reasoningEffort;
   throwIfMissing(modelPreset.geminiKey, 'gemini-api-key');
 
   const instance = new ChatGoogle({
@@ -95,7 +102,7 @@ function createGemini(spec: ModelSpec, opts: ModelOptions) {
     ...(maxTokens ? { maxOutputTokens: maxTokens } : {}),
     // Gemma (the only Gemini-key model with temperature support) doesn't think by default, but the
     // Gemini API turns thinking on for it, which once streamed a chat reply with no text. Keep it off.
-    ...(fast || spec.supportsTemperature ? { thinkingLevel: 'minimal' as const } : {}),
+    ...(thinkingLevel ? { thinkingLevel } : {}),
     ...(jsonSchema ? { responseSchema: jsonSchema } : {}),
   });
 
@@ -104,17 +111,22 @@ function createGemini(spec: ModelSpec, opts: ModelOptions) {
 }
 
 function createAnthropic(spec: ModelSpec, opts: ModelOptions) {
-  const { maxTokens, temperature, streaming, fast, modelPreset } = opts;
+  const { maxTokens, temperature, streaming, fast, reasoningEffort, modelPreset } = opts;
   throwIfMissing(modelPreset.anthropicKey, 'anthropic-api-key');
+  // Effort only applies to adaptive-thinking models (those without temperature support). The
+  // highest effort also turns thinking on, with its summary shown, and leaves room for it.
+  const adaptive = !spec.supportsTemperature;
+  const effort = !adaptive ? undefined : fast ? 'low' : reasoningEffort;
+  const thinking = adaptive && !fast && reasoningEffort === 'high';
 
   const instance = new ChatAnthropic({
     model: spec.id,
     apiKey: modelPreset.anthropicKey!,
     streaming: Boolean(streaming),
     ...temperatureFor(spec, temperature),
-    ...(maxTokens ? { maxTokens } : {}),
-    // Effort only applies to adaptive-thinking models (those without temperature support).
-    ...(fast && !spec.supportsTemperature ? { outputConfig: { effort: 'low' as const } } : {}),
+    ...(maxTokens ? { maxTokens } : thinking ? { maxTokens: 32_000 } : {}),
+    ...(effort ? { outputConfig: { effort } } : {}),
+    ...(thinking ? { thinking: { type: 'adaptive' as const, display: 'summarized' as const } } : {}),
   });
 
   debugLog('Anthropic instance created:', { model: spec.id, maxTokens, streaming, fast });
@@ -124,10 +136,15 @@ function createAnthropic(spec: ModelSpec, opts: ModelOptions) {
 // OpenRouter speaks the OpenAI Chat Completions API and takes the image_url format for every model.
 // With web search on, its web plugin searches first; the citations come only in the raw chunks.
 function createOpenRouter(spec: ModelSpec, opts: ModelOptions, webSearch = false) {
-  const { maxTokens, temperature, streaming, fast, jsonSchema, modelPreset } = opts;
+  const { maxTokens, temperature, streaming, fast, reasoningEffort, jsonSchema, modelPreset } = opts;
   throwIfMissing(modelPreset.openrouterKey, 'openrouter-api-key');
 
-  const effort = fast ? spec.openrouter.fastEffort : spec.openrouter.defaultEffort;
+  const effort =
+    fast || reasoningEffort === 'low'
+      ? spec.openrouter.fastEffort
+      : reasoningEffort ?? spec.openrouter.defaultEffort;
+  // The model's thinking comes only in the raw chunks (delta.reasoning), as do web citations.
+  const rawChunks = webSearch || (Boolean(streaming) && !fast);
   const reasoning = effort === 'off' ? { enabled: false } : effort ? { effort } : undefined;
   const instance = new ChatOpenAI({
     model: spec.openrouter.id,
@@ -141,7 +158,7 @@ function createOpenRouter(spec: ModelSpec, opts: ModelOptions, webSearch = false
     streaming: Boolean(streaming),
     ...temperatureFor(spec, temperature),
     ...(maxTokens ? { maxTokens } : {}),
-    ...(webSearch ? { __includeRawResponse: true } : {}),
+    ...(rawChunks ? { __includeRawResponse: true } : {}),
     modelKwargs: {
       ...(reasoning ? { reasoning } : {}),
       ...(jsonSchema ? { response_format: { type: 'json_object' } } : {}),
@@ -167,7 +184,7 @@ export const localContextLength = (local: LocalModelConfig) =>
   Math.min(local.contextLength ?? LOCAL_CONTEXT_LENGTH, LOCAL_CONTEXT_LENGTH);
 
 function createLocal(model: LocalModelRef, opts: ModelOptions) {
-  const { maxTokens, temperature, streaming, jsonSchema, modelPreset } = opts;
+  const { maxTokens, temperature, streaming, fast, reasoningEffort, jsonSchema, modelPreset } = opts;
   const local = modelPreset.localModel;
   if (!local) {
     const msg = `Local model "${localModelId(model)}" is not on the connected server. Connect it again in Settings.`;
@@ -183,7 +200,7 @@ function createLocal(model: LocalModelRef, opts: ModelOptions) {
       ...(temperature !== undefined ? { temperature } : {}),
       ...(maxTokens ? { numPredict: maxTokens } : {}),
       numCtx: localContextLength(local),
-      ...(local.supportsThinking ? { think: false } : {}),
+      ...(local.supportsThinking ? { think: !fast && reasoningEffort === 'high' } : {}),
       ...(jsonSchema ? { format: jsonSchema } : {}),
     });
     debugLog('Ollama instance created:', { model: local.model, maxTokens, streaming });
@@ -215,11 +232,15 @@ function createLocal(model: LocalModelRef, opts: ModelOptions) {
   return instance;
 }
 
+// The lowest effort is the one translation uses, known per model; a model without one gets 'low'.
+const chatGPTEffort = (model: string, { fast, reasoningEffort }: ModelOptions) =>
+  fast ? chatGPTFastEffort(model) : reasoningEffort === 'low' ? chatGPTFastEffort(model) ?? 'low' : reasoningEffort;
+
 export function getModelInstance(opts: ModelOptions) {
   const { modelName } = opts.modelPreset;
   if (isChatGPTModel(modelName)) {
     const model = chatGPTModelId(modelName);
-    return new ChatGPTPlanModel(model, Boolean(opts.jsonSchema), opts.fast ? chatGPTFastEffort(model) : undefined);
+    return new ChatGPTPlanModel(model, Boolean(opts.jsonSchema), chatGPTEffort(model, opts));
   }
   if (isLocalModel(modelName)) return createLocal(modelName, opts);
   const spec = getModelSpec(modelName);
@@ -239,13 +260,15 @@ export function getModelInstance(opts: ModelOptions) {
 export function getWebSearchModelInstance(opts: ModelOptions) {
   const { modelName, connectionMode } = opts.modelPreset;
   if (isChatGPTModel(modelName)) {
-    return new ChatGPTPlanModel(chatGPTModelId(modelName), false, undefined, true);
+    const model = chatGPTModelId(modelName);
+    return new ChatGPTPlanModel(model, false, chatGPTEffort(model, opts), true);
   }
   const spec = isLocalModel(modelName) ? undefined : getModelSpec(modelName);
   if (!spec) throw new Error(`Web search is not available for ${modelName}.`);
   if (connectionMode === 'openrouter') return createOpenRouter(spec, opts, true);
   if (spec.provider === 'openai-api-key') {
-    return createOpenAI(spec, opts).bindTools([{ type: 'web_search' }]);
+    // The search tool moves the request to the Responses API, which has no `reasoning_effort`.
+    return createOpenAI(spec, { ...opts, reasoningEffort: undefined }).bindTools([{ type: 'web_search' }]);
   }
   if (spec.provider === 'gemini-api-key') {
     return createGemini(spec, opts).bindTools([{ googleSearch: {} }]);

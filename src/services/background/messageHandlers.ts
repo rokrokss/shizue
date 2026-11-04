@@ -15,6 +15,9 @@ import {
   MESSAGE_SET_PANEL_OPEN_OR_NOT,
   MESSAGE_TRANSLATE_FRAMES,
   MESSAGE_REMEMBER_THREAD,
+  MESSAGE_SUGGEST_QUESTIONS,
+  MESSAGE_AGENT_STOP,
+  MESSAGE_TRANSLATE_IMAGE,
   MESSAGE_SAVE_WORD,
   MESSAGE_TRANSLATE_HTML_TEXT_BATCH,
   MESSAGE_TRANSLATE_LIVE_CAPTION,
@@ -25,6 +28,8 @@ import { openPanel, togglePanel } from '@/entrypoints/background/sidepanel';
 import { addWord, db, getLatestMessageForThread, loadThread } from '@/lib/indexDB';
 import { parsePlayerResponse } from '@/lib/youtube';
 import { getChatModelHandler } from '@/services/background/chatModelHandler';
+import { translateImage } from '@/services/background/imageTranslationHandler';
+import { stopAgentInTab } from '@/services/background/browserAgentHandler';
 import { getTranslationHandler } from '@/services/background/translationHandler';
 import { openPanelForSummary, waitForPanelSummary } from '@/services/background/panelSummary';
 
@@ -101,8 +106,8 @@ async function handleWaitPanelSummary(_msg: any, sendResponse: (response?: any) 
 }
 
 async function handleTranslateHtmlTextBatch(msg: any, sendResponse: (response?: any) => void) {
-  const { texts } = msg;
-  const translatedTexts = await getTranslationHandler().translateHtmlTextBatch(texts);
+  const { texts, context } = msg;
+  const translatedTexts = await getTranslationHandler().translateHtmlTextBatch(texts, context);
   sendResponse(translatedTexts);
 }
 
@@ -236,8 +241,28 @@ async function handleTranslateFrames(
       action: MESSAGE_FRAME_TRANSLATION_STATE,
       active: msg.active === true,
       targetLanguage: msg.targetLanguage,
+      labels: msg.labels,
     })
     .catch(() => {});
+  sendResponse({ status: 'success' });
+}
+
+async function handleSuggestQuestions(msg: any, sendResponse: (response?: any) => void) {
+  sendResponse(await getChatModelHandler().suggestQuestions(msg.threadId));
+}
+
+// An image on a page (lib/imageTranslator.ts).
+async function handleTranslateImage(msg: any, sendResponse: (response?: any) => void) {
+  sendResponse(await translateImage(msg.srcUrl, msg.dataUrl, msg.targetLanguage, msg.title ?? ''));
+}
+
+// The stop button of the browser agent's pill on the page.
+async function handleAgentStop(
+  msg: any,
+  sendResponse: (response?: any) => void,
+  sender: chrome.runtime.MessageSender
+) {
+  stopAgentInTab(sender.tab?.id);
   sendResponse({ status: 'success' });
 }
 
@@ -287,6 +312,9 @@ export const messageHandlers = {
   [MESSAGE_SCC_SET_HIDDEN]: handleSccSetHidden,
   [MESSAGE_TRANSLATE_FRAMES]: handleTranslateFrames,
   [MESSAGE_REMEMBER_THREAD]: handleRememberThread,
+  [MESSAGE_SUGGEST_QUESTIONS]: handleSuggestQuestions,
+  [MESSAGE_TRANSLATE_IMAGE]: handleTranslateImage,
+  [MESSAGE_AGENT_STOP]: handleAgentStop,
   [MESSAGE_LOOKUP_WORD]: handleLookupWord,
   [MESSAGE_SAVE_WORD]: handleSaveWord,
   [MESSAGE_FETCH_YOUTUBE_PLAYER]: handleFetchYoutubePlayer,

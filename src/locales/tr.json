@@ -34,7 +34,9 @@
     "explainSelection": "Seçili metni açıkla",
     "summarizeSelection": "Seçili metni özetle",
     "fixGrammarSelection": "Seçili metnin dilbilgisini düzelt",
-    "removeTranslation": "Çeviriyi kaldır"
+    "removeTranslation": "Çeviriyi kaldır",
+    "translateImage": "Görseli çevir",
+    "translatePageImages": "Sayfadaki tüm görselleri çevir"
   },
   "onboarding": {
     "greeting_0": "Hoş geldiniz!",
@@ -132,7 +134,29 @@
     "inPage": "Orijinal",
     "webSource": "Kaynak",
     "backToPage": "Sayfaya dön",
-    "deleteMessage": "Mesajı sil"
+    "deleteMessage": "Mesajı sil",
+    "thinking": "Düşünüyor · {{seconds}} sn",
+    "thoughtFor": "{{seconds}} sn düşündü",
+    "thought": "Düşündü",
+    "reasoningEffort": "Düşünme düzeyi",
+    "reasoningEffort_low": "Düşük",
+    "reasoningEffort_medium": "Orta",
+    "reasoningEffort_high": "Yüksek",
+    "reasoningEffortHint_low": "Hızlı yanıtlar",
+    "reasoningEffortHint_medium": "Modelin varsayılan şekliyle düşünür",
+    "reasoningEffortHint_high": "Daha dikkatli yanıt için daha uzun düşünür",
+    "reasoningEffortNotSupported": "Bu modelde değiştirilemez",
+    "reasoningEffortChip": "Düşünme: {{level}}",
+    "suggestedQuestions": "Sıradaki soru",
+    "videoMoment": "Bu an",
+    "videoMomentHint": "Videoda şu an oynayan yere göre yanıtlar",
+    "videoMomentAt": "{{time}} anı",
+    "contextCompacted": "Sohbet uzadı, bu yüzden önceki kısım özet olarak gönderildi.",
+    "contextUsage": "Bağlam %{{percent}}",
+    "contextUsageHint": "Bu sohbet, modelin tek seferde okuyabildiğinin %{{percent}} kadarını dolduruyor. %70'i geçince önceki kısım özet olarak, yalnızca son mesajlar olduğu gibi gönderilir.",
+    "browserAgent": "Tarayıcı kontrolü",
+    "browserAgentHint": "Shizue mevcut sekmede tıklar ve yazar. Göndermeden, silmeden veya ödemeden önce sorar",
+    "browserAgentPlaceholder": "Bu sekmede ne yapayım?"
   },
   "footer": {
     "joinDiscord": "Discord'da bana katılın!",
@@ -169,7 +193,12 @@
     "general": "Genel",
     "models": "Modeller",
     "layout": "Düzen",
-    "registered": "Kayıtlı"
+    "registered": "Kayıtlı",
+    "pageTranslation": "Sayfa çevirisi",
+    "maskPrivateDescription": "E-postalar, telefon numaraları, kart numaraları ve API anahtarları yapay zekâya gönderilmez. Sayfadaki hâliyle görünür.",
+    "maskPrivate": "Kişisel bilgileri gönderme",
+    "savedTranslations": "{{number}} kayıtlı çeviri · 30 gün",
+    "savedTranslationsClear": "Temizle"
   },
   "time": {
     "justNow": "az önce",
@@ -270,7 +299,8 @@
       "original": "Orijinal",
       "translation": "Çeviri",
       "bilingual": "Orijinal + çeviri"
-    }
+    },
+    "turnOnSiteCaptions": "Çevrilmiş halini görmek için videonun altyazılarını açın"
   },
   "usage": {
     "title": "Token Kullanımı",
@@ -340,5 +370,69 @@
     "saved": "Kaydedildi",
     "openList": "Kelime listesini aç",
     "saveFailed": "Kaydedilemedi."
+  },
+  "pageTranslation": {
+    "failed": "Çevrilemedi",
+    "retry": "Tekrar dene"
+  },
+  "meeting": {
+    "liveTranslation": "Shizue toplantı çevirisi",
+    "waiting": "Biri konuştuğunda çeviriler burada görünür",
+    "turnOnCaptions": "Çevrilmiş halini görmek için toplantı altyazılarını (CC) açın",
+    "unreadable": "Bu toplantının altyazıları okunamadı. Site değişmiş olabilir.",
+    "preparing": "Chrome çeviri modeli indiriliyor"
+  },
+  "imageTranslation": {
+    "translating": "Görsel çevriliyor…",
+    "translated": "Çevrildi",
+    "original": "Orijinal",
+    "showOriginal": "Orijinali göster",
+    "showTranslation": "Çeviriyi göster",
+    "noText": "Çevrilecek metin yok",
+    "failed": "Çevrilemedi",
+    "retry": "Tekrar dene",
+    "noImageModel": "Görselleri okuyabilen bir sohbet modeli gerekli",
+    "close": "Kapat",
+    "pageActive": "Sayfadaki görseller çevriliyor",
+    "stop": "Kapat"
+  },
+  "agent": {
+    "working": "{{host}} üzerinde çalışıyor",
+    "stepsDone": "{{host}} üzerinde {{count}} adım",
+    "readPage": "{{host}} sayfası okundu",
+    "step": {
+      "click": "‘{{target}}’ tıkla",
+      "type": "‘{{target}}’ alanına “{{text}}” yaz",
+      "typeSubmit": "‘{{target}}’ alanına “{{text}}” yaz ve Enter’a bas",
+      "select": "‘{{target}}’ içinde “{{text}}” seç",
+      "scrollDown": "Aşağı kaydır",
+      "scrollUp": "Yukarı kaydır",
+      "navigate": "{{host}} aç",
+      "back": "Geri git",
+      "wait": "Sayfayı bekle"
+    },
+    "approvalTitle": "Bu işleme izin verilsin mi?",
+    "approvalHint": "Gönderme, silme veya ödeme yapabilir ve geri alınması zor olabilir",
+    "allow": "İzin ver",
+    "deny": "Reddet",
+    "denied": "Reddedildi",
+    "error": {
+      "not_found": "Bu öğe artık sayfada yok",
+      "secret_field": "Şifreleri ve kart bilgilerini kendiniz girin",
+      "not_select": "Bu bir açılır liste değil",
+      "no_option": "Böyle bir seçenek yok",
+      "bad_url": "Bu adres açılamıyor",
+      "unreachable": "Bu sayfa kontrol edilemiyor",
+      "failed": "Olmadı"
+    },
+    "outcome": {
+      "stopped": "Durduruldu",
+      "max_steps": "Çok fazla adımdan sonra durdu. Daha küçük bir görev deneyin",
+      "unavailable": "Bu sekme kontrol edilemiyor. Bir web sayfası açıp tekrar deneyin",
+      "failed": "Durdu: sonraki adıma karar veremedi"
+    },
+    "overlayWorking": "Shizue bu sekmede çalışıyor",
+    "overlayWaiting": "Panelde onayınızı bekliyor",
+    "overlayStop": "Durdur"
   }
 }

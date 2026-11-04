@@ -10,6 +10,8 @@ import { hashStringToIndex } from '@/lib/hash';
 import { modelSupportsWebSearch } from '@/lib/modelRegistry';
 import { hasPageLines } from '@/lib/pageLines';
 import {
+  ArrowRightOutlined,
+  ClockCircleOutlined,
   DeleteOutlined,
   FileOutlined,
   FilePdfOutlined,
@@ -21,8 +23,11 @@ import {
   SnippetsOutlined,
   YoutubeOutlined,
 } from '@ant-design/icons';
+import AgentRunBlock from '@/components/Chat/AgentRunBlock';
 import MarkdownMessage from '@/components/Chat/MarkdownMessage';
-import { videoKey, youtubeVideoId } from '@/lib/videoTranscript';
+import ThinkingBlock from '@/components/Chat/ThinkingBlock';
+import { formatVideoTime, videoKey, youtubeVideoId } from '@/lib/videoTranscript';
+import { seekVideo } from '@/lib/videoSeek';
 import { Button } from 'antd';
 import { useAtomValue } from 'jotai';
 import { useState } from 'react';
@@ -41,12 +46,18 @@ const ChatContainer = ({
   onRetry,
   onDelete,
   onDetailedAnalysis,
+  onAsk,
+  onAgentApproval,
   scrollToBottom,
 }: {
   messages: Message[];
   onRetry: (messageIdxToRetry: number) => Promise<void>;
   onDelete: (messageIdx: number) => Promise<void>;
   onDetailedAnalysis: (answerIdx: number, research: boolean) => Promise<void>;
+  // Sends a suggested question as the reader's own.
+  onAsk: (question: string) => void;
+  // The user's answer to a browser agent approval card of the answer streaming now.
+  onAgentApproval: (stepId: string, approved: boolean) => void;
   scrollToBottom: () => void;
 }) => {
   const { t } = useTranslation();
@@ -167,6 +178,27 @@ const ChatContainer = ({
                       minHeight: isRetryButtonVisible ? 'auto' : '30px',
                     }}
                   >
+                    {m.agentRun ? (
+                      <AgentRunBlock
+                        run={m.agentRun}
+                        live={idx === messages.length - 1 && !m.done && !m.onInterrupt && !m.stopped}
+                        onApproval={onAgentApproval}
+                      />
+                    ) : null}
+                    {m.reasoning ? (
+                      <ThinkingBlock
+                        reasoning={m.reasoning}
+                        thinkingMs={m.thinkingMs}
+                        thinking={
+                          idx === messages.length - 1 &&
+                          !m.done &&
+                          !m.onInterrupt &&
+                          !m.stopped &&
+                          m.thinkingMs === undefined &&
+                          !m.content.trim()
+                        }
+                      />
+                    ) : null}
                     {m.onInterrupt && !m.stopped ? (
                       <>
                         {t('chat.connectionError')}
@@ -179,7 +211,7 @@ const ChatContainer = ({
                     ) : idx === messages.length - 1 && !m.done ? (
                       m.content.trim() ? (
                         getMarkdownText(animatedText, true, answerContext(idx))
-                      ) : isRetryButtonVisible ? null : (
+                      ) : isRetryButtonVisible || m.reasoning || m.agentRun ? null : (
                         <div className="sz:flex sz:flex-row sz:items-center sz:justify-start sz:pl-3 sz:text-xl">
                           <DotCycle />
                         </div>
@@ -213,6 +245,12 @@ const ChatContainer = ({
                     role: {m.role} <br />
                     actionType: {m.actionType}
                   </div> */}
+                  {m.contextCompacted ? (
+                    <div className="sz:flex sz:flex-row sz:items-start sz:gap-1 sz:text-xs sz:text-gray-500 sz:pt-1">
+                      <InfoCircleOutlined className="sz:pt-[2px]" />
+                      <span>{t('chat.contextCompacted')}</span>
+                    </div>
+                  ) : null}
                   {m.contextTruncated ? (
                     <div className="sz:flex sz:flex-row sz:items-start sz:gap-1 sz:text-xs sz:text-gray-500 sz:pt-1">
                       <InfoCircleOutlined className="sz:pt-[2px]" />
@@ -229,6 +267,26 @@ const ChatContainer = ({
                       >
                         {t('chat.retry')}
                       </Button>
+                    </div>
+                  ) : null}
+                  {idle && idx === messages.length - 1 && m.done && m.suggestions?.length ? (
+                    <div className="sz-suggestions sz:flex sz:flex-col sz:items-start sz:gap-1.5 sz:pt-3 sz:animate-[sz-fade-in_0.3s_ease-out] sz:motion-reduce:animate-none">
+                      <div className="sz:text-xs sz:text-gray-500">{t('chat.suggestedQuestions')}</div>
+                      {m.suggestions.map((question) => (
+                        <button
+                          key={question}
+                          type="button"
+                          onClick={() => onAsk(question)}
+                          className={`sz:group sz:flex sz:items-center sz:gap-2 sz:max-w-full sz:text-left sz:text-[13px] sz:leading-5 sz:font-ycom sz:px-3 sz:py-1.5 sz:rounded-lg sz:border sz:cursor-pointer sz:transition-colors sz:duration-150 sz:hover:border-sz-cyan sz:focus-visible:outline-2 sz:focus-visible:outline-sz-cyan ${
+                            theme == 'dark'
+                              ? 'sz:border-white/15 sz:text-gray-200 sz:hover:bg-white/5'
+                              : 'sz:border-black/10 sz:text-gray-700 sz:hover:bg-black/[0.03]'
+                          }`}
+                        >
+                          <span className="sz:min-w-0">{question}</span>
+                          <ArrowRightOutlined className="sz:shrink-0 sz:text-[11px] sz:text-gray-400 sz:transition-transform sz:duration-150 sz:group-hover:translate-x-0.5 sz:group-hover:text-sz-cyan" />
+                        </button>
+                      ))}
                     </div>
                   ) : null}
                   {offersDetailedAnalysis(idx) ? (
@@ -318,6 +376,16 @@ const ChatContainer = ({
                   m.actionType === 'describeImage') &&
                 !m.translateMode ? (
                   <div className="sz:flex sz:flex-col sz:whitespace-pre-wrap sz:break-keep sz:text-left">
+                    {m.videoMoment ? (
+                      <button
+                        type="button"
+                        onClick={() => void seekVideo(m.videoMoment!.video, m.videoMoment!.seconds)}
+                        className="sz:self-end sz:flex sz:items-center sz:gap-1 sz:pb-1 sz:text-xs sz:text-gray-500 sz:cursor-pointer sz:hover:text-sz-cyan"
+                      >
+                        <ClockCircleOutlined />
+                        {t('chat.videoMomentAt', { time: formatVideoTime(m.videoMoment.seconds) })}
+                      </button>
+                    ) : null}
                     {m.content}
                     {m.webSearch ? (
                       <div className="sz:flex sz:flex-row sz:items-center sz:gap-1 sz:pt-1">

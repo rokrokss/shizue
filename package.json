@@ -23,6 +23,10 @@
     "test:plot-signin": "node --experimental-strip-types --test tests/plot-signin.test.mjs",
     "test:live-caption": "node --experimental-strip-types --test tests/live-caption.test.mjs",
     "test:netflix": "node --experimental-strip-types --test tests/netflix.test.mjs",
+    "test:lecture-captions": "node --experimental-strip-types --test tests/lecture-captions.test.mjs",
+    "test:meeting-captions": "node --experimental-strip-types --test tests/meeting-captions.test.mjs",
+    "test:browser-agent": "node --experimental-strip-types --test tests/browser-agent.test.mjs",
+    "test:image-translation": "node --experimental-strip-types --test tests/image-translation.test.mjs",
     "test:youtube-captions": "node --experimental-strip-types --test tests/youtube-captions.test.mjs",
     "test:page-translation": "node --experimental-strip-types --test tests/page-translation.test.mjs",
     "postinstall": "wxt prepare"

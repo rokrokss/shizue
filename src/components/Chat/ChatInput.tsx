@@ -5,11 +5,15 @@ import Footer from '@/components/Footer';
 import { LONG_PASTE_CHARS, MAX_ATTACHED_TABS, SUMMARY_PAGE_TEXT_MAX_CHARS } from '@/config/constants';
 import { requestPageSummary } from '@/services/pageSummary';
 import { useActiveWebTab } from '@/hooks/activeTab';
-import { ChatStatus, isChatWaiting } from '@/hooks/chat';
+import { ChatStatus, isChatWaiting, useReasoningEffort } from '@/hooks/chat';
 import { useThemeValue } from '@/hooks/layout';
 import { useChatModel, useLocalServerValue } from '@/hooks/models';
 import type { PageAttachment } from '@/lib/indexDB';
-import { modelSupportsImages, modelSupportsWebSearch } from '@/lib/modelRegistry';
+import {
+  modelSupportsImages,
+  modelSupportsReasoningEffort,
+  modelSupportsWebSearch,
+} from '@/lib/modelRegistry';
 import { panelPageTabId, withPageShown } from '@/lib/panelHost';
 import { cropCapture, selectRegion } from '@/lib/regionCapture';
 import {
@@ -23,6 +27,8 @@ import {
   toPageAttachments,
 } from '@/lib/tabText';
 import { videoKey } from '@/lib/videoTranscript';
+import { currentVideoTime } from '@/lib/videoSeek';
+import type { VideoMoment } from '@/components/Chat';
 import { debugLog } from '@/logs';
 import {
   EditOutlined,
@@ -49,6 +55,8 @@ const mentionAt = (value: string, caret: number) => {
 const ChatInput = ({
   chatStatus,
   threadPageUrls,
+  threadVideo,
+  contextUsage,
   previousPrompts,
   onSubmit,
   onCancel,
@@ -60,13 +68,19 @@ const ChatInput = ({
   chatStatus: ChatStatus;
   // Pages already in this chat (attached or summarized), not offered for attaching again.
   threadPageUrls: string[];
+  // The video whose captions this chat has read (a videoKey), for asking about where it is now.
+  threadVideo: string | null;
+  // How full the model's context was for the latest answer (0–1), if known.
+  contextUsage: number | null;
   // This chat's questions, oldest first, for recalling with the arrow keys.
   previousPrompts: string[];
   onSubmit: (
     text: string,
     images?: File[],
     attachments?: PageAttachment[],
-    webSearch?: boolean
+    webSearch?: boolean,
+    videoMoment?: VideoMoment,
+    browserAgent?: boolean
   ) => Promise<void>;
   onCancel: () => Promise<void>;
   onOpenHistory: () => void;
@@ -87,6 +101,9 @@ const ChatInput = ({
   const [mention, setMention] = useState<{ start: number; query: string } | null>(null);
   // Stays on for the questions after it until it is turned off.
   const [webSearch, setWebSearch] = useState(false);
+  // The browser agent does the questions in the tab, until it is turned off. Web search is off
+  // meanwhile: the agent reads the page itself.
+  const [browserAgent, setBrowserAgent] = useState(false);
   const mentionPicker = useRef<TabMentionPickerHandle>(null);
   const activeTab = useActiveWebTab();
   const suggestedTab =
@@ -104,6 +121,8 @@ const ChatInput = ({
   const localServer = useLocalServerValue();
   const imagesSupported = modelSupportsImages(chatModel, localServer);
   const webSearchSupported = modelSupportsWebSearch(chatModel);
+  const reasoningSupported = modelSupportsReasoningEffort(chatModel, localServer);
+  const [reasoningEffort, setReasoningEffort] = useReasoningEffort();
 
   // Drop attached images when the chat model is switched to a text-only one.
   useEffect(() => {
@@ -114,11 +133,39 @@ const ChatInput = ({
     if (!webSearchSupported) setWebSearch(false);
   }, [webSearchSupported]);
 
+  // "Now": questions go with the moment the chat's video is at, read when each is sent. Stays on
+  // for the questions after it, like web search; the chip shows the time while it is on.
+  const [moment, setMoment] = useState(false);
+  const [momentTime, setMomentTime] = useState<number | null>(null);
+  useEffect(() => {
+    if (!threadVideo) setMoment(false);
+  }, [threadVideo]);
+  useEffect(() => {
+    if (!moment || !threadVideo) return;
+    let stopped = false;
+    const read = () =>
+      void currentVideoTime(threadVideo).then((seconds) => {
+        if (!stopped) setMomentTime(seconds);
+      });
+    read();
+    const timer = setInterval(read, 2000);
+    return () => {
+      stopped = true;
+      clearInterval(timer);
+    };
+  }, [moment, threadVideo]);
+  const askedMoment = async (): Promise<VideoMoment | undefined> => {
+    if (!moment || !threadVideo) return undefined;
+    const seconds = await currentVideoTime(threadVideo);
+    return seconds === null ? undefined : { video: threadVideo, seconds };
+  };
+
   // Attached tabs are read as they are now; files and pasted text were read when added. A question
   // is required: a page alone is a summary.
   const handleSubmitWithPages = async (text: string) => {
     if (text === '' || isReadingPages || attached.some((item) => item.loading)) return;
     const items = attached;
+    const videoMoment = askedMoment();
     setIsReadingPages(true);
     const results = await Promise.all(
       items.map((item): PageRead | Promise<PageRead> =>
@@ -143,7 +190,14 @@ const ChatInput = ({
       );
       return;
     }
-    onSubmit(text, uploadedImages, toPageAttachments(pages, SUMMARY_PAGE_TEXT_MAX_CHARS), webSearch);
+    onSubmit(
+      text,
+      uploadedImages,
+      toPageAttachments(pages, SUMMARY_PAGE_TEXT_MAX_CHARS),
+      webSearch,
+      await videoMoment,
+      browserAgent
+    );
     setChatInput('');
     setUploadedImages([]);
     setAttached([]);
@@ -271,9 +325,10 @@ const ChatInput = ({
     setMention(null);
     if (attached.length > 0) return handleSubmitWithPages(text);
     if (text !== '' || uploadedImages.length > 0) {
-      onSubmit(text, uploadedImages, undefined, webSearch);
+      const images = uploadedImages;
       setChatInput('');
       setUploadedImages([]);
+      onSubmit(text, images, undefined, webSearch, await askedMoment(), browserAgent);
     }
   };
 
@@ -574,7 +629,18 @@ const ChatInput = ({
               onCaptureRegion={handleCaptureRegion}
               webSearch={webSearch}
               webSearchSupported={webSearchSupported}
-              onToggleWebSearch={() => setWebSearch((on) => !on)}
+              onToggleWebSearch={() => {
+                setWebSearch((on) => !on);
+                setBrowserAgent(false);
+              }}
+              browserAgent={browserAgent}
+              onToggleBrowserAgent={() => {
+                setBrowserAgent((on) => !on);
+                setWebSearch(false);
+              }}
+              reasoningEffort={reasoningEffort}
+              reasoningSupported={reasoningSupported}
+              onReasoningEffort={(effort) => void setReasoningEffort(effort)}
             />
             <Tooltip
               placement="top"
@@ -669,6 +735,13 @@ const ChatInput = ({
           suggestion={suggestedTab}
           webSearch={webSearch}
           onWebSearchOff={() => setWebSearch(false)}
+          browserAgent={browserAgent}
+          onBrowserAgentOff={() => setBrowserAgent(false)}
+          reasoningEffort={reasoningSupported ? reasoningEffort : undefined}
+          onReasoningEffortReset={() => void setReasoningEffort('medium')}
+          videoMoment={threadVideo ? { on: moment, seconds: momentTime } : undefined}
+          onVideoMoment={setMoment}
+          contextUsage={contextUsage}
           onAttach={attachTab}
           onRemove={(key) => setAttached((current) => current.filter((item) => item.key !== key))}
         />
@@ -735,7 +808,9 @@ const ChatInput = ({
             onDragOver={handleDragOver}
             onDrop={handleDrop}
             placeholder={
-              attached.length === 0
+              browserAgent
+                ? t('chat.browserAgentPlaceholder')
+                : attached.length === 0
                 ? t('chat.askAnything')
                 : attached.every((item) => item.video)
                   ? t('chat.askAboutVideos')

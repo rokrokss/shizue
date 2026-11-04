@@ -5,6 +5,19 @@ const SESSION_RECOVERY_KEY = 'CONTENT_SCRIPTS_RECOVERED';
 const recoveringTabs = new Map<number, Promise<boolean>>();
 let initialRecovery: Promise<void> | undefined;
 
+// The lecture caption script's sites (entrypoints/lecture-caption.content).
+const isLectureSite = (hostname: string) =>
+  ['www.coursera.org', 'www.udemy.com', 'www.ted.com', 'vimeo.com', 'player.vimeo.com'].includes(hostname) ||
+  hostname.endsWith('.udemy.com');
+
+// The streaming caption script's sites (entrypoints/streaming-caption.content).
+const isStreamingSite = (hostname: string, pathname: string) =>
+  hostname.endsWith('.disneyplus.com') ||
+  hostname.endsWith('.primevideo.com') ||
+  ['play.hbomax.com', 'play.max.com'].includes(hostname) ||
+  (['www.amazon.com', 'www.amazon.co.uk', 'www.amazon.de', 'www.amazon.co.jp'].includes(hostname) &&
+    pathname.startsWith('/gp/video/'));
+
 export function scriptsForPage(value: string | undefined): ContentScriptName[] {
   if (!value) return [];
   try {
@@ -23,6 +36,16 @@ export function scriptsForPage(value: string | undefined): ContentScriptName[] {
     }
     if (url.protocol === 'https:' && ['x.com', 'twitter.com'].includes(url.hostname)) {
       return ['toggle', 'x-caption'];
+    }
+    if (url.protocol === 'https:' && isLectureSite(url.hostname)) {
+      return ['toggle', 'lecture-caption'];
+    }
+    if (url.protocol === 'https:' && isStreamingSite(url.hostname, url.pathname)) {
+      return ['toggle', 'streaming-caption'];
+    }
+    // Zoom's meeting runs in a frame, which recovery (top frame only) doesn't reach.
+    if (url.protocol === 'https:' && ['meet.google.com', 'teams.microsoft.com', 'teams.live.com', 'teams.cloud.microsoft'].includes(url.hostname)) {
+      return ['toggle', 'meeting-caption'];
     }
     return ['toggle'];
   } catch { return []; }

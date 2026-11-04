@@ -42,6 +42,49 @@ const TRANSLATION_ONLY_CSS = `
 let translationOnly = false;
 let modeWatched = false;
 
+// The words on a translation that failed, in the reader's language (PageTranslator sets them).
+export type TranslationLabels = { failed: string; retry: string };
+let labels: TranslationLabels = { failed: 'Not translated', retry: 'Try again' };
+export const setTranslationLabels = (next: TranslationLabels | undefined) => {
+  if (next) labels = next;
+};
+
+// The translation-only rules go into each tree holding a translation: shadow roots don't see the
+// document's styles.
+const styledRoots = new WeakSet<Node>();
+const ensureTranslationOnlyStyle = (host: Element) => {
+  const root = host.getRootNode();
+  if (styledRoots.has(root)) return;
+  styledRoots.add(root);
+  const sheet = document.createElement('style');
+  sheet.id = TRANSLATION_ONLY_STYLE_ID;
+  sheet.textContent = TRANSLATION_ONLY_CSS;
+  if (root instanceof ShadowRoot) root.appendChild(sheet);
+  else if (!document.getElementById(TRANSLATION_ONLY_STYLE_ID)) {
+    (document.head ?? document.documentElement).appendChild(sheet);
+  }
+};
+
+const WARNING_ICON =
+  '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5"/><path d="M12 16.2v.3"/></svg>';
+const RETRY_ICON =
+  '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>';
+const ERROR_STYLE = `
+  .shizue-failed {
+    display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    padding: 2px 0; font-size: 12px; line-height: 18px; font-style: normal; font-weight: normal;
+    letter-spacing: normal; text-transform: none; text-decoration: none;
+  }
+  .shizue-failed-text { display: inline-flex; align-items: center; gap: 4px; opacity: 0.6; }
+  .shizue-retry {
+    all: unset; display: inline-flex; align-items: center; gap: 3px; cursor: pointer;
+    color: #1fa898; font-size: 12px; line-height: 18px; border-radius: 4px; padding: 0 2px;
+  }
+  .shizue-retry:hover { text-decoration: underline; text-underline-offset: 2px; }
+  .shizue-retry:focus-visible { outline: 2px solid #32CCBC; outline-offset: 1px; }
+  @media (prefers-color-scheme: dark) { .shizue-retry { color: #32CCBC; } }
+`;
+
 const setTranslationOnly = (mode: unknown) => {
   const next = mode === 'translationOnly';
   if (next === translationOnly) return;
@@ -71,8 +114,9 @@ export class ShizueTranslationOverlay {
   private isLoading = true;
   private hasError = false;
   // The elements the translation's {{n}} placeholders stand for, and whether all came back.
-  private atoms: Element[] = [];
+  private atoms: Node[] = [];
   private atomsRestored = true;
+  private onRetry: (() => void) | null = null;
   // The page element hidden behind this translation.
   private hiddenHost: Element | null = null;
 
@@ -124,12 +168,7 @@ export class ShizueTranslationOverlay {
       const style = window.getComputedStyle(host);
       el.style.setProperty('--shizue-font-size', style.fontSize);
       el.style.setProperty('--shizue-line-height', style.lineHeight);
-      if (!document.getElementById(TRANSLATION_ONLY_STYLE_ID)) {
-        const sheet = document.createElement('style');
-        sheet.id = TRANSLATION_ONLY_STYLE_ID;
-        sheet.textContent = TRANSLATION_ONLY_CSS;
-        (document.head ?? document.documentElement).appendChild(sheet);
-      }
+      ensureTranslationOnlyStyle(host);
       host.setAttribute(TRANSLATION_ONLY_ATTR, '');
       this.hiddenHost = host;
     } else if (!on && this.hiddenHost) {
@@ -196,6 +235,8 @@ export class ShizueTranslationOverlay {
       setTimeout(() => {
         el.style.maxHeight = '20px';
       }, 0);
+    } else if (this.hasError) {
+      this.renderError();
     } else {
       el.style.maxHeight = '20px';
       el.innerHTML = sanitizeTranslation(this.translatedText);
@@ -221,8 +262,44 @@ export class ShizueTranslationOverlay {
     this.applyMode();
   }
 
+  // A small note where the translation would be, with a button that tries again. It stays until
+  // the reader retries or translation stops. Clicks don't reach the page: the paragraph may be a link.
+  private renderError() {
+    const el = this.element;
+    el.innerHTML = `<style>${ERROR_STYLE}</style>`;
+    const note = document.createElement('span');
+    note.className = 'shizue-failed';
+    const text = document.createElement('span');
+    text.className = 'shizue-failed-text';
+    text.innerHTML = WARNING_ICON;
+    text.append(labels.failed);
+    note.append(text);
+    if (this.onRetry) {
+      const retry = document.createElement('button');
+      retry.type = 'button';
+      retry.className = 'shizue-retry';
+      retry.innerHTML = RETRY_ICON;
+      retry.append(labels.retry);
+      const stop = (e: Event) => e.stopPropagation();
+      retry.addEventListener('pointerdown', stop);
+      retry.addEventListener('mousedown', stop);
+      retry.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.onRetry?.();
+      });
+      note.append(retry);
+    }
+    el.append(note);
+    el.style.lineHeight = 'normal';
+    el.style.whiteSpace = 'normal';
+    el.style.opacity = '1';
+    el.style.overflow = 'visible';
+    el.style.maxHeight = 'none';
+  }
+
   // Public methods for external control
-  setTexts(translatedText: string, atoms: Element[] = []) {
+  setTexts(translatedText: string, atoms: Node[] = []) {
     this.translatedText = translatedText;
     this.atoms = atoms;
     this.isLoading = false;
@@ -238,8 +315,9 @@ export class ShizueTranslationOverlay {
     this.render();
   }
 
-  setError(hasError: boolean) {
+  setError(hasError: boolean, onRetry: (() => void) | null = null) {
     this.hasError = hasError;
+    this.onRetry = onRetry;
     if (hasError) {
       this.isLoading = false;
     }

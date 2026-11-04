@@ -34,7 +34,9 @@
     "explainSelection": "解釋所選文字",
     "summarizeSelection": "總結所選文字",
     "fixGrammarSelection": "修正所選文字的文法",
-    "removeTranslation": "移除翻譯"
+    "removeTranslation": "移除翻譯",
+    "translateImage": "翻譯圖片",
+    "translatePageImages": "翻譯頁面上的所有圖片"
   },
   "onboarding": {
     "greeting_0": "歡迎！",
@@ -132,7 +134,29 @@
     "inPage": "原文",
     "webSource": "來源",
     "backToPage": "返回頁面",
-    "deleteMessage": "刪除訊息"
+    "deleteMessage": "刪除訊息",
+    "thinking": "思考中 · {{seconds}} 秒",
+    "thoughtFor": "思考了 {{seconds}} 秒",
+    "thought": "已思考",
+    "reasoningEffort": "思考強度",
+    "reasoningEffort_low": "低",
+    "reasoningEffort_medium": "中",
+    "reasoningEffort_high": "高",
+    "reasoningEffortHint_low": "快速回答",
+    "reasoningEffortHint_medium": "依模型預設方式思考",
+    "reasoningEffortHint_high": "思考更久，回答更周全",
+    "reasoningEffortNotSupported": "此模型無法調整思考強度",
+    "reasoningEffortChip": "思考：{{level}}",
+    "suggestedQuestions": "接著問",
+    "videoMoment": "目前畫面",
+    "videoMomentHint": "依影片目前播放的畫面回答",
+    "videoMomentAt": "{{time}} 的畫面",
+    "contextCompacted": "對話變長了，前面的部分已改為摘要繼續。",
+    "contextUsage": "上下文 {{percent}}%",
+    "contextUsageHint": "此對話占用了模型一次可讀取量的 {{percent}}%。超過 70% 後，前面的部分會改為摘要，只原樣傳送最近的對話。",
+    "browserAgent": "瀏覽器操作",
+    "browserAgentHint": "Shizue 會直接在目前分頁點擊和輸入。傳送、刪除或付款前會先詢問",
+    "browserAgentPlaceholder": "要在這個分頁裡做什麼？"
   },
   "footer": {
     "joinDiscord": "加入我的 Discord！",
@@ -169,7 +193,12 @@
     "general": "一般",
     "models": "模型",
     "layout": "版面配置",
-    "registered": "已註冊"
+    "registered": "已註冊",
+    "pageTranslation": "網頁翻譯",
+    "maskPrivateDescription": "電子郵件、電話號碼、卡號和 API 金鑰不會傳送給 AI，依頁面原樣顯示。",
+    "maskPrivate": "不傳送個人資訊",
+    "savedTranslations": "已儲存 {{number}} 則譯文 · 保留 30 天",
+    "savedTranslationsClear": "清除"
   },
   "time": {
     "justNow": "剛剛",
@@ -270,7 +299,8 @@
       "original": "原文",
       "translation": "譯文",
       "bilingual": "原文 + 譯文"
-    }
+    },
+    "turnOnSiteCaptions": "開啟影片字幕即可看到譯文"
   },
   "usage": {
     "title": "權杖使用量",
@@ -340,5 +370,69 @@
     "saved": "已儲存",
     "openList": "開啟單字本",
     "saveFailed": "儲存失敗。"
+  },
+  "pageTranslation": {
+    "failed": "無法翻譯",
+    "retry": "重試"
+  },
+  "meeting": {
+    "liveTranslation": "Shizue 會議翻譯",
+    "waiting": "有人說話時，譯文會顯示在這裡",
+    "turnOnCaptions": "開啟會議字幕 (CC) 即可看到譯文",
+    "unreadable": "無法讀取此會議的字幕，網站介面可能已變更。",
+    "preparing": "正在下載 Chrome 翻譯模型"
+  },
+  "imageTranslation": {
+    "translating": "正在翻譯圖片…",
+    "translated": "已翻譯",
+    "original": "原圖",
+    "showOriginal": "查看原圖",
+    "showTranslation": "查看譯文",
+    "noText": "沒有可翻譯的文字",
+    "failed": "翻譯失敗",
+    "retry": "重試",
+    "noImageModel": "需要能讀取圖片的聊天模型",
+    "close": "關閉",
+    "pageActive": "正在翻譯本頁圖片",
+    "stop": "關閉"
+  },
+  "agent": {
+    "working": "正在操作 {{host}}",
+    "stepsDone": "在 {{host}} 執行了 {{count}} 步",
+    "readPage": "已讀取 {{host}} 的頁面",
+    "step": {
+      "click": "點擊「{{target}}」",
+      "type": "在「{{target}}」中輸入「{{text}}」",
+      "typeSubmit": "在「{{target}}」中輸入「{{text}}」並按 Enter",
+      "select": "在「{{target}}」中選擇「{{text}}」",
+      "scrollDown": "向下捲動",
+      "scrollUp": "向上捲動",
+      "navigate": "開啟 {{host}}",
+      "back": "返回上一頁",
+      "wait": "等待頁面"
+    },
+    "approvalTitle": "允許執行此操作嗎？",
+    "approvalHint": "這可能是傳送、刪除或付款等難以復原的操作",
+    "allow": "允許",
+    "deny": "拒絕",
+    "denied": "已拒絕",
+    "error": {
+      "not_found": "該元素已不在頁面上",
+      "secret_field": "密碼和信用卡資訊請自行輸入",
+      "not_select": "那不是下拉選單",
+      "no_option": "沒有這個選項",
+      "bad_url": "無法開啟該網址",
+      "unreachable": "無法操作此頁面",
+      "failed": "執行失敗"
+    },
+    "outcome": {
+      "stopped": "已停止",
+      "max_steps": "步驟太多，已停止。請把任務拆小一些",
+      "unavailable": "無法操作此分頁。請開啟網頁後再試",
+      "failed": "無法決定下一步，已停止"
+    },
+    "overlayWorking": "Shizue 正在操作此分頁",
+    "overlayWaiting": "正在面板中等待你的允許",
+    "overlayStop": "停止"
   }
 }

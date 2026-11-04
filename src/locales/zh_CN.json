@@ -34,7 +34,9 @@
     "explainSelection": "解释所选文字",
     "summarizeSelection": "总结所选文字",
     "fixGrammarSelection": "修正所选文字的语法",
-    "removeTranslation": "移除翻译"
+    "removeTranslation": "移除翻译",
+    "translateImage": "翻译图片",
+    "translatePageImages": "翻译页面上的所有图片"
   },
   "onboarding": {
     "greeting_0": "欢迎！",
@@ -132,7 +134,29 @@
     "inPage": "原文",
     "webSource": "来源",
     "backToPage": "返回页面",
-    "deleteMessage": "删除消息"
+    "deleteMessage": "删除消息",
+    "thinking": "思考中 · {{seconds}} 秒",
+    "thoughtFor": "思考了 {{seconds}} 秒",
+    "thought": "已思考",
+    "reasoningEffort": "思考强度",
+    "reasoningEffort_low": "低",
+    "reasoningEffort_medium": "中",
+    "reasoningEffort_high": "高",
+    "reasoningEffortHint_low": "快速回答",
+    "reasoningEffortHint_medium": "按模型默认方式思考",
+    "reasoningEffortHint_high": "思考更久，回答更周到",
+    "reasoningEffortNotSupported": "此模型无法调整思考强度",
+    "reasoningEffortChip": "思考：{{level}}",
+    "suggestedQuestions": "接着问",
+    "videoMoment": "当前画面",
+    "videoMomentHint": "根据视频当前播放的画面回答",
+    "videoMomentAt": "{{time}} 的画面",
+    "contextCompacted": "对话变长了，前面的部分已改为摘要继续。",
+    "contextUsage": "上下文 {{percent}}%",
+    "contextUsageHint": "此对话占用了模型一次可读取量的 {{percent}}%。超过 70% 后，前面的部分会改为摘要，只原样发送最近的对话。",
+    "browserAgent": "浏览器操作",
+    "browserAgentHint": "Shizue 会直接在当前标签页点击和输入。发送、删除或付款前会先询问",
+    "browserAgentPlaceholder": "要在这个标签页里做什么？"
   },
   "footer": {
     "joinDiscord": "加入我的 Discord！",
@@ -169,7 +193,12 @@
     "general": "通用",
     "models": "模型",
     "layout": "布局",
-    "registered": "已注册"
+    "registered": "已注册",
+    "pageTranslation": "网页翻译",
+    "maskPrivateDescription": "电子邮件、电话号码、卡号和 API 密钥不会发送给 AI，按页面原样显示。",
+    "maskPrivate": "不发送个人信息",
+    "savedTranslations": "已保存 {{number}} 条译文 · 保留 30 天",
+    "savedTranslationsClear": "清空"
   },
   "time": {
     "justNow": "刚刚",
@@ -270,7 +299,8 @@
       "original": "原文",
       "translation": "译文",
       "bilingual": "原文 + 译文"
-    }
+    },
+    "turnOnSiteCaptions": "打开视频字幕即可看到译文"
   },
   "usage": {
     "title": "令牌使用量",
@@ -340,5 +370,69 @@
     "saved": "已保存",
     "openList": "打开单词本",
     "saveFailed": "保存失败。"
+  },
+  "pageTranslation": {
+    "failed": "未能翻译",
+    "retry": "重试"
+  },
+  "meeting": {
+    "liveTranslation": "Shizue 会议翻译",
+    "waiting": "有人说话时，译文会显示在这里",
+    "turnOnCaptions": "打开会议字幕 (CC) 即可看到译文",
+    "unreadable": "无法读取此会议的字幕，网站界面可能已更改。",
+    "preparing": "正在下载 Chrome 翻译模型"
+  },
+  "imageTranslation": {
+    "translating": "正在翻译图片…",
+    "translated": "已翻译",
+    "original": "原图",
+    "showOriginal": "查看原图",
+    "showTranslation": "查看译文",
+    "noText": "没有可翻译的文字",
+    "failed": "翻译失败",
+    "retry": "重试",
+    "noImageModel": "需要能读取图片的聊天模型",
+    "close": "关闭",
+    "pageActive": "正在翻译本页图片",
+    "stop": "关闭"
+  },
+  "agent": {
+    "working": "正在操作 {{host}}",
+    "stepsDone": "在 {{host}} 执行了 {{count}} 步",
+    "readPage": "已读取 {{host}} 的页面",
+    "step": {
+      "click": "点击“{{target}}”",
+      "type": "在“{{target}}”中输入“{{text}}”",
+      "typeSubmit": "在“{{target}}”中输入“{{text}}”并按回车",
+      "select": "在“{{target}}”中选择“{{text}}”",
+      "scrollDown": "向下滚动",
+      "scrollUp": "向上滚动",
+      "navigate": "打开 {{host}}",
+      "back": "返回上一页",
+      "wait": "等待页面"
+    },
+    "approvalTitle": "允许执行此操作吗？",
+    "approvalHint": "这可能是发送、删除或付款等难以撤销的操作",
+    "allow": "允许",
+    "deny": "拒绝",
+    "denied": "已拒绝",
+    "error": {
+      "not_found": "该元素已不在页面上",
+      "secret_field": "密码和银行卡信息请自行输入",
+      "not_select": "那不是下拉列表",
+      "no_option": "没有这个选项",
+      "bad_url": "无法打开该地址",
+      "unreachable": "无法操作此页面",
+      "failed": "执行失败"
+    },
+    "outcome": {
+      "stopped": "已停止",
+      "max_steps": "步骤太多，已停止。请把任务拆小一些",
+      "unavailable": "无法操作此标签页。请打开一个网页后重试",
+      "failed": "无法决定下一步，已停止"
+    },
+    "overlayWorking": "Shizue 正在操作此标签页",
+    "overlayWaiting": "正在面板中等待你的允许",
+    "overlayStop": "停止"
   }
 }

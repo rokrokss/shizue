@@ -34,7 +34,9 @@
     "explainSelection": "Ipaliwanag ang napiling teksto",
     "summarizeSelection": "Ibuod ang napiling teksto",
     "fixGrammarSelection": "Ayusin ang grammar ng napiling teksto",
-    "removeTranslation": "Alisin ang pagsasalin"
+    "removeTranslation": "Alisin ang pagsasalin",
+    "translateImage": "Isalin ang larawan",
+    "translatePageImages": "Isalin ang lahat ng larawan sa pahina"
   },
   "onboarding": {
     "greeting_0": "Maligayang pagdating!",
@@ -132,7 +134,29 @@
     "inPage": "Orihinal",
     "webSource": "Pinagmulan",
     "backToPage": "Bumalik sa page",
-    "deleteMessage": "Tanggalin ang mensahe"
+    "deleteMessage": "Tanggalin ang mensahe",
+    "thinking": "Nag-iisip · {{seconds}} seg",
+    "thoughtFor": "Nag-isip nang {{seconds}} seg",
+    "thought": "Nag-isip",
+    "reasoningEffort": "Lalim ng pag-iisip",
+    "reasoningEffort_low": "Mababa",
+    "reasoningEffort_medium": "Katamtaman",
+    "reasoningEffort_high": "Mataas",
+    "reasoningEffortHint_low": "Mabilis sumagot",
+    "reasoningEffortHint_medium": "Nag-iisip sa karaniwang paraan ng model",
+    "reasoningEffortHint_high": "Mas matagal mag-isip para sa mas maingat na sagot",
+    "reasoningEffortNotSupported": "Hindi ito mababago sa model na ito",
+    "reasoningEffortChip": "Pag-iisip: {{level}}",
+    "suggestedQuestions": "Itanong pa",
+    "videoMoment": "Sandaling ito",
+    "videoMomentHint": "Sumasagot tungkol sa bahaging pinapanood ngayon",
+    "videoMomentAt": "Sa {{time}}",
+    "contextCompacted": "Humaba ang usapan, kaya ipinadala ang naunang bahagi bilang buod.",
+    "contextUsage": "Konteksto {{percent}}%",
+    "contextUsageHint": "Napupuno ng usapang ito ang {{percent}}% ng kayang basahin ng model nang minsanan. Lampas 70%, ipinapadala bilang buod ang naunang bahagi at ang pinakabagong palitan lang ang buo.",
+    "browserAgent": "Kontrol ng browser",
+    "browserAgentHint": "Nagki-click at nagta-type si Shizue sa kasalukuyang tab. Nagtatanong muna bago magpadala, magbura o magbayad",
+    "browserAgentPlaceholder": "Ano ang gagawin ko sa tab na ito?"
   },
   "footer": {
     "joinDiscord": "Sumali sa akin sa Discord!",
@@ -169,7 +193,12 @@
     "general": "Pangkalahatan",
     "models": "Mga Model",
     "layout": "Layout",
-    "registered": "Nakarehistro"
+    "registered": "Nakarehistro",
+    "pageTranslation": "Pagsasalin ng page",
+    "maskPrivateDescription": "Hindi ipinapadala sa AI ang mga email, numero ng telepono, numero ng card at API key. Ipinapakita ang mga ito gaya ng nasa page.",
+    "maskPrivate": "Huwag ipadala ang personal na detalye",
+    "savedTranslations": "{{number}} na naka-save na salin · 30 araw",
+    "savedTranslationsClear": "I-clear"
   },
   "time": {
     "justNow": "ngayon lang",
@@ -270,7 +299,8 @@
       "original": "Orihinal",
       "translation": "Salin",
       "bilingual": "Orihinal + salin"
-    }
+    },
+    "turnOnSiteCaptions": "I-on ang subtitle ng video para makita ang salin"
   },
   "usage": {
     "title": "Paggamit ng Token",
@@ -340,5 +370,69 @@
     "saved": "Na-save",
     "openList": "Buksan ang listahan ng salita",
     "saveFailed": "Hindi ma-save."
+  },
+  "pageTranslation": {
+    "failed": "Hindi naisalin",
+    "retry": "Subukan ulit"
+  },
+  "meeting": {
+    "liveTranslation": "Pagsasalin ng pulong ng Shizue",
+    "waiting": "Lalabas dito ang salin kapag may nagsalita",
+    "turnOnCaptions": "I-on ang captions (CC) ng pulong para makita ang salin",
+    "unreadable": "Hindi mabasa ang captions ng pulong na ito. Maaaring nagbago ang site.",
+    "preparing": "Dina-download ang translation model ng Chrome"
+  },
+  "imageTranslation": {
+    "translating": "Isinasalin ang larawan…",
+    "translated": "Naisalin",
+    "original": "Orihinal",
+    "showOriginal": "Ipakita ang orihinal",
+    "showTranslation": "Ipakita ang salin",
+    "noText": "Walang tekstong isasalin",
+    "failed": "Hindi naisalin",
+    "retry": "Subukang muli",
+    "noImageModel": "Kailangan ng chat model na nakakabasa ng larawan",
+    "close": "Isara",
+    "pageActive": "Isinasalin ang mga larawan sa pahina",
+    "stop": "I-off"
+  },
+  "agent": {
+    "working": "Gumagana sa {{host}}",
+    "stepsDone": "Mga hakbang sa {{host}}: {{count}}",
+    "readPage": "Nabasa ang pahina sa {{host}}",
+    "step": {
+      "click": "I-click ang ‘{{target}}’",
+      "type": "I-type ang “{{text}}” sa ‘{{target}}’",
+      "typeSubmit": "I-type ang “{{text}}” sa ‘{{target}}’ at pindutin ang Enter",
+      "select": "Piliin ang “{{text}}” sa ‘{{target}}’",
+      "scrollDown": "Mag-scroll pababa",
+      "scrollUp": "Mag-scroll pataas",
+      "navigate": "Buksan ang {{host}}",
+      "back": "Bumalik",
+      "wait": "Hintayin ang pahina"
+    },
+    "approvalTitle": "Payagan ang aksyong ito?",
+    "approvalHint": "Maaaring magpadala, magbura o magbayad ito at mahirap bawiin",
+    "allow": "Payagan",
+    "deny": "Tanggihan",
+    "denied": "Tinanggihan",
+    "error": {
+      "not_found": "Wala na sa pahina ang elementong iyon",
+      "secret_field": "Ikaw na ang maglagay ng password at detalye ng card",
+      "not_select": "Hindi iyon dropdown",
+      "no_option": "Walang ganoong opsyon",
+      "bad_url": "Hindi mabuksan ang address na iyon",
+      "unreachable": "Hindi makontrol ang pahinang ito",
+      "failed": "Hindi gumana"
+    },
+    "outcome": {
+      "stopped": "Itinigil",
+      "max_steps": "Huminto dahil sa sobrang daming hakbang. Subukan ang mas maliit na gawain",
+      "unavailable": "Hindi makontrol ang tab na ito. Magbukas ng web page at subukang muli",
+      "failed": "Huminto: hindi matukoy ang susunod na gagawin"
+    },
+    "overlayWorking": "Gumagana si Shizue sa tab na ito",
+    "overlayWaiting": "Naghihintay ng pahintulot mo sa panel",
+    "overlayStop": "Itigil"
   }
 }

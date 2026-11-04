@@ -60,6 +60,15 @@ test('only supported web pages receive their matching scripts', async () => {
     assert.deepEqual(scriptsForPage('http://www.youtube.com/'), ['toggle']);
     assert.deepEqual(scriptsForPage('https://www.netflix.com/watch/81234567'), ['toggle', 'netflix-caption']);
     assert.deepEqual(scriptsForPage('https://x.com/NASA/status/1'), ['toggle', 'x-caption']);
+    for (const url of ['https://www.coursera.org/learn/ml/lecture/x', 'https://www.udemy.com/course/c/learn/lecture/1', 'https://acme.udemy.com/course/c', 'https://www.ted.com/talks/a_b', 'https://vimeo.com/76979871']) {
+      assert.deepEqual(scriptsForPage(url), ['toggle', 'lecture-caption']);
+    }
+    assert.deepEqual(scriptsForPage('https://meet.google.com/abc-defg-hij'), ['toggle', 'meeting-caption']);
+    assert.deepEqual(scriptsForPage('https://teams.microsoft.com/v2/'), ['toggle', 'meeting-caption']);
+    for (const url of ['https://www.disneyplus.com/play/1', 'https://www.primevideo.com/detail/x', 'https://www.amazon.com/gp/video/detail/B0', 'https://play.hbomax.com/video/watch/1']) {
+      assert.deepEqual(scriptsForPage(url), ['toggle', 'streaming-caption'], url);
+    }
+    assert.deepEqual(scriptsForPage('https://www.amazon.com/dp/B0'), ['toggle']);
     for (const url of [undefined, '', 'invalid', 'chrome://settings', 'chrome-extension://id/page.html', 'file:///tmp/page.html', 'https://chromewebstore.google.com/detail/example', 'https://chrome.google.com/webstore/detail/example']) assert.deepEqual(scriptsForPage(url), []);
   });
 });

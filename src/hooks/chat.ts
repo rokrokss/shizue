@@ -1,8 +1,11 @@
+import { STORAGE_REASONING_EFFORT } from '@/config/constants';
 import { threadIdAtom } from '@/hooks/global';
+import { atomWithChromeStorage } from '@/lib/atomWithChromeStorage';
+import type { ReasoningEffort } from '@/lib/reasoning';
 import { getInitialMessagesForAllThreads, ThreadWithInitialMessages, db } from '@/lib/indexDB';
 import { chatService } from '@/services/chatService';
 import { liveQuery, Observable } from 'dexie';
-import { atom } from 'jotai';
+import { atom, useAtom } from 'jotai';
 import { atomWithObservable } from 'jotai/utils';
 
 export type ChatStatus = 'idle' | 'waiting';
@@ -10,6 +13,10 @@ export type ChatStatus = 'idle' | 'waiting';
 export const chatStatusAtom = atom<ChatStatus>('idle');
 
 export const isChatIdle = (status: ChatStatus) => status === 'idle';
+
+// The chat model's thinking effort, kept for the chats after it (the background reads it per answer).
+export const reasoningEffortAtom = atomWithChromeStorage<ReasoningEffort>(STORAGE_REASONING_EFFORT, 'medium');
+export const useReasoningEffort = () => useAtom(reasoningEffortAtom);
 export const isChatWaiting = (status: ChatStatus) => status === 'waiting';
 
 // Leaving a thread while it answers stops the answer as the stop button does: with the status

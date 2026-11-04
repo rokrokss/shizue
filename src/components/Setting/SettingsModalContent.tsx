@@ -4,6 +4,7 @@ import ChatGPTSettings from '@/components/Setting/ChatGPTSettings';
 import AutoMemorySettings from '@/components/Setting/AutoMemorySettings';
 import CustomInstructionsSettings from '@/components/Setting/CustomInstructionsSettings';
 import ShortcutSettings from '@/components/Setting/ShortcutSettings';
+import TranslationSettings from '@/components/Setting/TranslationSettings';
 import { Language, useLanguage, useTranslateTargetLanguage } from '@/hooks/language';
 import {
   Theme,
@@ -271,6 +272,7 @@ const SettingsModalContent = () => {
                     }}
                   />
                 </div>
+                <TranslationSettings />
                 <CustomInstructionsSettings />
                 <AutoMemorySettings />
                 <ShortcutSettings />

@@ -1,8 +1,10 @@
 import {
+  MESSAGE_AGENT_APPROVAL,
   MESSAGE_RETRY_GRAPH_STREAM,
   MESSAGE_RUN_GRAPH_STREAM,
   PORT_STREAM_MESSAGE,
 } from '@/config/constants';
+import type { AgentLabels, AgentRun } from '@/lib/browserAgent';
 import type { WebSource } from '@/lib/webSources';
 import { debugLog } from '@/logs';
 import { useCallback, useEffect, useRef } from 'react';
@@ -15,6 +17,14 @@ interface StreamOptions {
   onContextTruncated?: () => void;
   // The pages a web search answer drew on, sent once the answer is complete.
   onSources?: (sources: WebSource[]) => void;
+  // The thinking the model shows before it answers, and how long it thought once it answers.
+  onReasoning?: (delta: string) => void;
+  onThinkingMs?: (ms: number) => void;
+  // How much of the model's context the request fills (0–1), and whether older turns were folded
+  // into the chat's summary for it. Sent before the answer starts.
+  onContextUsage?: (usage: number, compacted: boolean) => void;
+  // The browser agent's actions so far, whole each time one changes.
+  onAgent?: (run: AgentRun) => void;
 }
 
 export const useChromePortStream = () => {
@@ -38,6 +48,14 @@ export const useChromePortStream = () => {
 
         if ('delta' in msg) {
           opts.onDelta(msg.delta);
+        } else if ('reasoning' in msg) {
+          opts.onReasoning?.(msg.reasoning);
+        } else if ('thinkingMs' in msg) {
+          opts.onThinkingMs?.(msg.thinkingMs);
+        } else if ('agent' in msg) {
+          opts.onAgent?.(msg.agent);
+        } else if ('contextUsage' in msg) {
+          opts.onContextUsage?.(msg.contextUsage, !!msg.contextCompacted);
         } else if ('error' in msg) {
           finished = true;
           opts.onError?.(msg.message ?? msg.error);
@@ -79,7 +97,7 @@ export const useChromePortStream = () => {
   );
 
   const startStream = useCallback(
-    (payload: { threadId: string; actionType: ActionType }, opts: StreamOptions) => {
+    (payload: { threadId: string; actionType: ActionType; agentLabels?: AgentLabels }, opts: StreamOptions) => {
       _initiatePortCommunication(MESSAGE_RUN_GRAPH_STREAM, payload, opts);
     },
     [_initiatePortCommunication]
@@ -87,13 +105,18 @@ export const useChromePortStream = () => {
 
   const startRetryStream = useCallback(
     (
-      payload: { threadId: string; actionType: ActionType; messageIdxToRetry: number },
+      payload: { threadId: string; actionType: ActionType; messageIdxToRetry: number; agentLabels?: AgentLabels },
       opts: StreamOptions
     ) => {
       _initiatePortCommunication(MESSAGE_RETRY_GRAPH_STREAM, payload, opts);
     },
     [_initiatePortCommunication]
   );
+
+  // The user's answer to a browser agent approval card, to the answer streaming now.
+  const answerAgentApproval = useCallback((stepId: string, approved: boolean) => {
+    portRef.current?.postMessage({ action: MESSAGE_AGENT_APPROVAL, stepId, approved });
+  }, []);
 
   const cancelStream = useCallback(() => {
     portRef.current?.disconnect();
@@ -102,5 +125,5 @@ export const useChromePortStream = () => {
 
   useEffect(() => () => cancelStream(), [cancelStream]);
 
-  return { startStream, startRetryStream, cancelStream };
+  return { startStream, startRetryStream, cancelStream, answerAgentApproval };
 };

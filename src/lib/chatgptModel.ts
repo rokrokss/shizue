@@ -9,7 +9,7 @@ export class ChatGPTPlanModel extends BaseChatModel {
   constructor(
     private readonly model: string,
     private readonly jsonOutput: boolean,
-    private readonly reasoningEffort?: 'none' | 'low',
+    private readonly reasoningEffort?: 'none' | 'low' | 'high',
     private readonly webSearch = false,
   ) { super({}); }
   _llmType() { return 'chatgpt-plan'; }

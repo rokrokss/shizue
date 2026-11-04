@@ -90,3 +90,46 @@ export const seekVideo = async (video: string, seconds: number) => {
   if (platform === 'youtube') await seekYoutube(id, seconds);
   else if (platform === 'netflix') await seekNetflix(id, seconds);
 };
+
+// Side panel: where a video (a videoKey) is playing now, in seconds, from the tab that shows it;
+// null when no tab shows it or its player can't say.
+export const currentVideoTime = async (video: string): Promise<number | null> => {
+  const [platform, id] = video.split(':');
+  const tab =
+    platform === 'youtube'
+      ? await findVideoTab(
+          ['https://www.youtube.com/watch*', 'https://youtube.com/watch*'],
+          (url) => youtubeVideoId(url) === id
+        )
+      : platform === 'netflix'
+      ? await findVideoTab(['https://www.netflix.com/watch/*'], (url) => netflixVideoId(url) === id)
+      : undefined;
+  if (tab?.id === undefined) return null;
+  const [result] = await chrome.scripting
+    .executeScript({
+      target: { tabId: tab.id },
+      world: 'MAIN',
+      // The players' own clocks: during a YouTube ad the <video> element is the ad's, and Netflix
+      // keeps its time in its player API. The <video> element is the last resort.
+      func: (netflixId: number | null) => {
+        if (netflixId === null) {
+          const time = (document.getElementById('movie_player') as any)?.getCurrentTime?.();
+          if (typeof time === 'number') return time;
+        } else {
+          const videoPlayer = (window as any).netflix?.appContext?.state?.playerApp?.getAPI?.()?.videoPlayer;
+          for (const session of videoPlayer?.getAllPlayerSessionIds?.() ?? []) {
+            const player = videoPlayer.getVideoPlayerBySessionId?.(session);
+            if (player?.getMovieId?.() === netflixId && typeof player.getCurrentTime === 'function') {
+              return player.getCurrentTime() / 1000;
+            }
+          }
+        }
+        const element = document.querySelector('video');
+        return element ? element.currentTime : null;
+      },
+      args: [platform === 'netflix' ? Number(id) : null],
+    })
+    .catch(() => []);
+  const seconds = result?.result;
+  return typeof seconds === 'number' && Number.isFinite(seconds) ? seconds : null;
+};

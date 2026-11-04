@@ -34,7 +34,9 @@
     "explainSelection": "อธิบายข้อความที่เลือก",
     "summarizeSelection": "สรุปข้อความที่เลือก",
     "fixGrammarSelection": "แก้ไวยากรณ์ของข้อความที่เลือก",
-    "removeTranslation": "ลบการแปล"
+    "removeTranslation": "ลบการแปล",
+    "translateImage": "แปลรูปภาพ",
+    "translatePageImages": "แปลรูปภาพทั้งหมดในหน้า"
   },
   "onboarding": {
     "greeting_0": "ยินดีต้อนรับ!",
@@ -132,7 +134,29 @@
     "inPage": "ต้นฉบับ",
     "webSource": "แหล่งที่มา",
     "backToPage": "กลับไปที่หน้าเว็บ",
-    "deleteMessage": "ลบข้อความ"
+    "deleteMessage": "ลบข้อความ",
+    "thinking": "กำลังคิด · {{seconds}} วินาที",
+    "thoughtFor": "คิดอยู่ {{seconds}} วินาที",
+    "thought": "ความคิด",
+    "reasoningEffort": "ระดับการคิด",
+    "reasoningEffort_low": "ต่ำ",
+    "reasoningEffort_medium": "ปานกลาง",
+    "reasoningEffort_high": "สูง",
+    "reasoningEffortHint_low": "ตอบเร็ว",
+    "reasoningEffortHint_medium": "คิดตามค่าเริ่มต้นของโมเดล",
+    "reasoningEffortHint_high": "คิดนานขึ้นเพื่อคำตอบที่รอบคอบกว่า",
+    "reasoningEffortNotSupported": "โมเดลนี้ปรับระดับการคิดไม่ได้",
+    "reasoningEffortChip": "การคิด: {{level}}",
+    "suggestedQuestions": "ถามต่อ",
+    "videoMoment": "ฉากนี้",
+    "videoMomentHint": "ตอบตามฉากที่วิดีโอกำลังเล่นอยู่",
+    "videoMomentAt": "ที่ {{time}}",
+    "contextCompacted": "บทสนทนายาวขึ้น ส่วนก่อนหน้าจึงถูกส่งเป็นบทสรุป",
+    "contextUsage": "บริบท {{percent}}%",
+    "contextUsageHint": "บทสนทนานี้ใช้ {{percent}}% ของปริมาณที่โมเดลอ่านได้ในครั้งเดียว เมื่อเกิน 70% ส่วนก่อนหน้าจะถูกส่งเป็นบทสรุป และส่งเฉพาะบทสนทนาล่าสุดตามเดิม",
+    "browserAgent": "ควบคุมเบราว์เซอร์",
+    "browserAgentHint": "Shizue คลิกและพิมพ์ในแท็บปัจจุบันให้ ถามก่อนส่ง ลบ หรือชำระเงิน",
+    "browserAgentPlaceholder": "ให้ทำอะไรในแท็บนี้"
   },
   "footer": {
     "joinDiscord": "เข้าร่วมกับฉันบน Discord!",
@@ -169,7 +193,12 @@
     "general": "ทั่วไป",
     "models": "โมเดล",
     "layout": "เค้าโครง",
-    "registered": "ลงทะเบียนแล้ว"
+    "registered": "ลงทะเบียนแล้ว",
+    "pageTranslation": "แปลหน้าเว็บ",
+    "maskPrivateDescription": "อีเมล เบอร์โทร เลขบัตร และคีย์ API จะไม่ถูกส่งให้ AI และแสดงตามเดิมบนหน้าเว็บ",
+    "maskPrivate": "ไม่ส่งข้อมูลส่วนตัว",
+    "savedTranslations": "คำแปลที่บันทึก {{number}} รายการ · 30 วัน",
+    "savedTranslationsClear": "ล้าง"
   },
   "time": {
     "justNow": "เมื่อสักครู่",
@@ -270,7 +299,8 @@
       "original": "ต้นฉบับ",
       "translation": "คำแปล",
       "bilingual": "ต้นฉบับ + คำแปล"
-    }
+    },
+    "turnOnSiteCaptions": "เปิดคำบรรยายของวิดีโอเพื่อดูคำแปล"
   },
   "usage": {
     "title": "การใช้โทเค็น",
@@ -340,5 +370,69 @@
     "saved": "บันทึกแล้ว",
     "openList": "เปิดสมุดคำศัพท์",
     "saveFailed": "บันทึกไม่ได้"
+  },
+  "pageTranslation": {
+    "failed": "แปลไม่สำเร็จ",
+    "retry": "ลองอีกครั้ง"
+  },
+  "meeting": {
+    "liveTranslation": "แปลการประชุม Shizue",
+    "waiting": "คำแปลจะแสดงที่นี่เมื่อมีคนพูด",
+    "turnOnCaptions": "เปิดคำบรรยาย (CC) ของการประชุมเพื่อดูคำแปล",
+    "unreadable": "อ่านคำบรรยายของการประชุมนี้ไม่ได้ เว็บไซต์อาจเปลี่ยนไป",
+    "preparing": "กำลังดาวน์โหลดโมเดลแปลภาษาของ Chrome"
+  },
+  "imageTranslation": {
+    "translating": "กำลังแปลรูปภาพ…",
+    "translated": "แปลแล้ว",
+    "original": "ต้นฉบับ",
+    "showOriginal": "ดูต้นฉบับ",
+    "showTranslation": "ดูคำแปล",
+    "noText": "ไม่มีข้อความให้แปล",
+    "failed": "แปลไม่สำเร็จ",
+    "retry": "ลองอีกครั้ง",
+    "noImageModel": "ต้องใช้โมเดลแชตที่อ่านรูปภาพได้",
+    "close": "ปิด",
+    "pageActive": "กำลังแปลรูปภาพในหน้านี้",
+    "stop": "ปิด"
+  },
+  "agent": {
+    "working": "กำลังทำงานบน {{host}}",
+    "stepsDone": "{{count}} ขั้นตอนบน {{host}}",
+    "readPage": "อ่านหน้า {{host}} แล้ว",
+    "step": {
+      "click": "คลิก ‘{{target}}’",
+      "type": "พิมพ์ “{{text}}” ใน ‘{{target}}’",
+      "typeSubmit": "พิมพ์ “{{text}}” ใน ‘{{target}}’ แล้วกด Enter",
+      "select": "เลือก “{{text}}” ใน ‘{{target}}’",
+      "scrollDown": "เลื่อนลง",
+      "scrollUp": "เลื่อนขึ้น",
+      "navigate": "เปิด {{host}}",
+      "back": "ย้อนกลับ",
+      "wait": "รอหน้าเว็บ"
+    },
+    "approvalTitle": "อนุญาตการทำงานนี้ไหม",
+    "approvalHint": "อาจเป็นการส่ง ลบ หรือชำระเงินที่ย้อนกลับได้ยาก",
+    "allow": "อนุญาต",
+    "deny": "ปฏิเสธ",
+    "denied": "ปฏิเสธแล้ว",
+    "error": {
+      "not_found": "องค์ประกอบนั้นไม่อยู่ในหน้าแล้ว",
+      "secret_field": "โปรดกรอกรหัสผ่านและข้อมูลบัตรด้วยตนเอง",
+      "not_select": "นั่นไม่ใช่รายการแบบเลื่อนลง",
+      "no_option": "ไม่มีตัวเลือกนี้",
+      "bad_url": "เปิดที่อยู่นี้ไม่ได้",
+      "unreachable": "ควบคุมหน้านี้ไม่ได้",
+      "failed": "ทำไม่สำเร็จ"
+    },
+    "outcome": {
+      "stopped": "หยุดแล้ว",
+      "max_steps": "หยุดเพราะขั้นตอนมากเกินไป ลองแบ่งงานให้เล็กลง",
+      "unavailable": "ควบคุมแท็บนี้ไม่ได้ เปิดหน้าเว็บแล้วลองอีกครั้ง",
+      "failed": "หยุดเพราะตัดสินใจขั้นต่อไปไม่ได้"
+    },
+    "overlayWorking": "Shizue กำลังทำงานในแท็บนี้",
+    "overlayWaiting": "กำลังรอการอนุญาตในแผง",
+    "overlayStop": "หยุด"
   }
 }

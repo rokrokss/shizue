@@ -5,7 +5,10 @@ export type ContentScriptName =
   | 'youtube-caption-toggle'
   | 'twitch-caption'
   | 'netflix-caption'
-  | 'x-caption';
+  | 'x-caption'
+  | 'lecture-caption'
+  | 'meeting-caption'
+  | 'streaming-caption';
 
 export function registerContentScriptConnection(script: ContentScriptName) {
   const listener = (message: any, _sender: chrome.runtime.MessageSender, sendResponse: (reply: unknown) => void) => {

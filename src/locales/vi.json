@@ -34,7 +34,9 @@
     "explainSelection": "Giải thích văn bản đã chọn",
     "summarizeSelection": "Tóm tắt văn bản đã chọn",
     "fixGrammarSelection": "Sửa ngữ pháp văn bản đã chọn",
-    "removeTranslation": "Xóa bản dịch"
+    "removeTranslation": "Xóa bản dịch",
+    "translateImage": "Dịch hình ảnh",
+    "translatePageImages": "Dịch tất cả hình ảnh trên trang"
   },
   "onboarding": {
     "greeting_0": "Chào mừng!",
@@ -132,7 +134,29 @@
     "inPage": "Bản gốc",
     "webSource": "Nguồn",
     "backToPage": "Quay lại trang",
-    "deleteMessage": "Xóa tin nhắn"
+    "deleteMessage": "Xóa tin nhắn",
+    "thinking": "Đang suy nghĩ · {{seconds}} giây",
+    "thoughtFor": "Đã suy nghĩ {{seconds}} giây",
+    "thought": "Đã suy nghĩ",
+    "reasoningEffort": "Mức suy nghĩ",
+    "reasoningEffort_low": "Thấp",
+    "reasoningEffort_medium": "Vừa",
+    "reasoningEffort_high": "Cao",
+    "reasoningEffortHint_low": "Trả lời nhanh",
+    "reasoningEffortHint_medium": "Suy nghĩ theo mặc định của mô hình",
+    "reasoningEffortHint_high": "Suy nghĩ lâu hơn để trả lời kỹ hơn",
+    "reasoningEffortNotSupported": "Mô hình này không đổi được mức suy nghĩ",
+    "reasoningEffortChip": "Suy nghĩ: {{level}}",
+    "suggestedQuestions": "Hỏi tiếp",
+    "videoMoment": "Cảnh này",
+    "videoMomentHint": "Trả lời theo cảnh video đang phát",
+    "videoMomentAt": "Lúc {{time}}",
+    "contextCompacted": "Cuộc trò chuyện đã dài, nên phần trước được gửi dưới dạng tóm tắt.",
+    "contextUsage": "Ngữ cảnh {{percent}}%",
+    "contextUsageHint": "Cuộc trò chuyện này chiếm {{percent}}% lượng mà mô hình đọc được một lần. Quá 70%, phần trước được gửi dưới dạng tóm tắt và chỉ các lượt gần nhất được giữ nguyên.",
+    "browserAgent": "Điều khiển trình duyệt",
+    "browserAgentHint": "Shizue tự nhấp và nhập trong thẻ hiện tại. Hỏi trước khi gửi, xóa hoặc thanh toán",
+    "browserAgentPlaceholder": "Tôi nên làm gì trong thẻ này?"
   },
   "footer": {
     "joinDiscord": "Tham gia cùng tôi trên Discord!",
@@ -169,7 +193,12 @@
     "general": "Chung",
     "models": "Mô hình",
     "layout": "Bố cục",
-    "registered": "Đã đăng ký"
+    "registered": "Đã đăng ký",
+    "pageTranslation": "Dịch trang",
+    "maskPrivateDescription": "Email, số điện thoại, số thẻ và khóa API không được gửi cho AI mà giữ nguyên như trên trang.",
+    "maskPrivate": "Không gửi thông tin cá nhân",
+    "savedTranslations": "{{number}} bản dịch đã lưu · 30 ngày",
+    "savedTranslationsClear": "Xóa"
   },
   "time": {
     "justNow": "vừa xong",
@@ -270,7 +299,8 @@
       "original": "Bản gốc",
       "translation": "Bản dịch",
       "bilingual": "Bản gốc + bản dịch"
-    }
+    },
+    "turnOnSiteCaptions": "Bật phụ đề của video để xem bản dịch"
   },
   "usage": {
     "title": "Sử dụng Token",
@@ -340,5 +370,69 @@
     "saved": "Đã lưu",
     "openList": "Mở sổ từ vựng",
     "saveFailed": "Không lưu được."
+  },
+  "pageTranslation": {
+    "failed": "Không dịch được",
+    "retry": "Thử lại"
+  },
+  "meeting": {
+    "liveTranslation": "Dịch cuộc họp Shizue",
+    "waiting": "Bản dịch sẽ hiện ở đây khi có người nói",
+    "turnOnCaptions": "Bật phụ đề (CC) của cuộc họp để xem bản dịch",
+    "unreadable": "Không đọc được phụ đề của cuộc họp này. Có thể trang web đã thay đổi.",
+    "preparing": "Đang tải mô hình dịch của Chrome"
+  },
+  "imageTranslation": {
+    "translating": "Đang dịch hình ảnh…",
+    "translated": "Đã dịch",
+    "original": "Bản gốc",
+    "showOriginal": "Xem bản gốc",
+    "showTranslation": "Xem bản dịch",
+    "noText": "Không có chữ để dịch",
+    "failed": "Không dịch được",
+    "retry": "Thử lại",
+    "noImageModel": "Cần mô hình trò chuyện đọc được hình ảnh",
+    "close": "Đóng",
+    "pageActive": "Đang dịch hình ảnh trên trang",
+    "stop": "Tắt"
+  },
+  "agent": {
+    "working": "Đang thao tác trên {{host}}",
+    "stepsDone": "{{count}} bước trên {{host}}",
+    "readPage": "Đã đọc trang {{host}}",
+    "step": {
+      "click": "Nhấp ‘{{target}}’",
+      "type": "Nhập “{{text}}” vào ‘{{target}}’",
+      "typeSubmit": "Nhập “{{text}}” vào ‘{{target}}’ rồi nhấn Enter",
+      "select": "Chọn “{{text}}” trong ‘{{target}}’",
+      "scrollDown": "Cuộn xuống",
+      "scrollUp": "Cuộn lên",
+      "navigate": "Mở {{host}}",
+      "back": "Quay lại",
+      "wait": "Chờ trang"
+    },
+    "approvalTitle": "Cho phép thao tác này?",
+    "approvalHint": "Có thể gửi, xóa hoặc thanh toán và khó hoàn tác",
+    "allow": "Cho phép",
+    "deny": "Từ chối",
+    "denied": "Đã từ chối",
+    "error": {
+      "not_found": "Phần tử đó không còn trên trang",
+      "secret_field": "Vui lòng tự nhập mật khẩu và thông tin thẻ",
+      "not_select": "Đó không phải danh sách thả xuống",
+      "no_option": "Không có lựa chọn đó",
+      "bad_url": "Không mở được địa chỉ này",
+      "unreachable": "Không thể điều khiển trang này",
+      "failed": "Không thực hiện được"
+    },
+    "outcome": {
+      "stopped": "Đã dừng",
+      "max_steps": "Đã dừng vì quá nhiều bước. Hãy chia nhỏ việc cần làm",
+      "unavailable": "Không thể điều khiển thẻ này. Hãy mở một trang web rồi thử lại",
+      "failed": "Đã dừng vì không xác định được bước tiếp theo"
+    },
+    "overlayWorking": "Shizue đang thao tác trong thẻ này",
+    "overlayWaiting": "Đang chờ bạn cho phép trong bảng điều khiển",
+    "overlayStop": "Dừng"
   }
 }

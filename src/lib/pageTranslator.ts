@@ -1,8 +1,14 @@
-import { ShizueTranslationOverlay } from '@/components/Translation/ShizueTranslationOverlay';
-import { MESSAGE_TRANSLATE_FRAMES } from '@/config/constants';
+import {
+  setTranslationLabels,
+  ShizueTranslationOverlay,
+  TranslationLabels,
+} from '@/components/Translation/ShizueTranslationOverlay';
+import { MESSAGE_TRANSLATE_FRAMES, STORAGE_TRANSLATION_MASK_PRIVATE } from '@/config/constants';
 import { Language } from '@/hooks/language';
 import { PRESERVED_SELECTOR, TEXT_ELEMENTS, translatableText, translationSource } from '@/lib/html';
+import type { PageContext } from '@/lib/prompts';
 import { SiteRule, siteRule, UI_SELECTOR } from '@/lib/siteRules';
+import { isInLanguage } from '@/lib/textLanguage';
 import { debugLog, errorLog } from '@/logs';
 import { translationService } from '@/services/translationService';
 
@@ -32,10 +38,19 @@ export class PageTranslator {
   private framesTimeout: ReturnType<typeof setTimeout> | null = null;
 
   private cachedTranslations: Map<string, Map<string, string>> = new Map();
-  // The code and formulas each element's {{n}} placeholders stand for.
-  private atoms: WeakMap<Element, Element[]> = new WeakMap();
+  // The code, formulas and private values each element's {{n}} placeholders stand for.
+  private atoms: WeakMap<Element, Node[]> = new WeakMap();
+  // Elements whose translation failed, with the text sent: the reader can try them again.
+  private failedElements: Map<Element, string> = new Map();
+  // Elements already in the target language, told on the device and never sent.
+  private sameLanguageElements: Set<Element> = new Set();
+  // Open shadow roots found on the page: their text is translated and their changes watched.
+  private observedRoots: WeakSet<ShadowRoot> = new WeakSet();
 
   private targetLanguage: Language | null = null;
+  private labels: TranslationLabels | undefined;
+  private maskPrivate = true;
+  private settingsLoaded: Promise<void> = Promise.resolve();
 
   // This site's own rule (lib/siteRules.ts). What it and every site leave out is preserved like code.
   private readonly rule: SiteRule | null;
@@ -46,10 +61,18 @@ export class PageTranslator {
     this.preserved = [PRESERVED_SELECTOR, UI_SELECTOR, rule?.exclude].filter(Boolean).join(', ');
   }
 
-  // Activate translation
-  public activate(targetLanguage: Language) {
+  // Activate translation. The labels are the words on a failed translation, in Shizue's language.
+  public activate(targetLanguage: Language, labels?: TranslationLabels) {
     this.isActive = true;
     this.targetLanguage = targetLanguage;
+    this.labels = labels;
+    setTranslationLabels(labels);
+    this.settingsLoaded = chrome.storage.local
+      .get(STORAGE_TRANSLATION_MASK_PRIVATE)
+      .then((stored) => {
+        this.maskPrivate = stored[STORAGE_TRANSLATION_MASK_PRIVATE] !== false;
+      })
+      .catch(() => {});
     if (!this.cachedTranslations.has(targetLanguage)) {
       this.cachedTranslations.set(targetLanguage, new Map());
     }
@@ -74,6 +97,8 @@ export class PageTranslator {
     this.queuedElements = new Set();
     this.visitedElements = new Set();
     this.changedElements = new Set();
+    this.failedElements = new Map();
+    this.sameLanguageElements = new Set();
     if (window === window.top) this.syncFrames();
     debugLog('Page translation deactivated');
   }
@@ -83,15 +108,24 @@ export class PageTranslator {
     // Add scroll event listener
     this.addScrollListener();
     this.mutationObserver = new MutationObserver(this.handleMutations);
-    this.mutationObserver.observe(document.body, {
-      childList: true,
-      subtree: true,
-      characterData: true,
-      attributes: true,
-      attributeFilter: ['style', 'class', 'hidden', 'open'],
-    });
+    this.mutationObserver.observe(document.body, PageTranslator.OBSERVED_CHANGES);
     // Load events don't bubble, but a capturing listener sees every frame that loads.
     document.addEventListener('load', this.handleFrameLoad, true);
+  }
+
+  private static readonly OBSERVED_CHANGES: MutationObserverInit = {
+    childList: true,
+    subtree: true,
+    characterData: true,
+    attributes: true,
+    attributeFilter: ['style', 'class', 'hidden', 'open'],
+  };
+
+  // The document's observer doesn't see into shadow roots, so each one found is observed too.
+  private observeRoot(root: ShadowRoot) {
+    if (!this.mutationObserver || this.observedRoots.has(root)) return;
+    this.observedRoots.add(root);
+    this.mutationObserver.observe(root, PageTranslator.OBSERVED_CHANGES);
   }
 
   // Stop observing DOM
@@ -100,6 +134,7 @@ export class PageTranslator {
     this.removeScrollListener();
     this.mutationObserver?.disconnect();
     this.mutationObserver = null;
+    this.observedRoots = new WeakSet();
     if (this.mutationTimeout) clearTimeout(this.mutationTimeout);
     this.mutationTimeout = null;
     this.firstMutationTime = null;
@@ -114,6 +149,7 @@ export class PageTranslator {
     for (const mutation of mutations) {
       // A translation the page took away (a re-render) leaves its original showing.
       if (
+        mutation.target.nodeType === Node.ELEMENT_NODE &&
         Array.from(mutation.removedNodes).some((node) => node.nodeName === 'SHIZUE-TRANSLATION-OVERLAY') &&
         !ShizueTranslationOverlay.find(mutation.target as Element)
       ) {
@@ -143,12 +179,19 @@ export class PageTranslator {
   }
 
   private translatedAncestor(node: Node): Element | null {
-    for (let element = node.nodeType === Node.ELEMENT_NODE ? (node as Element) : node.parentElement;
+    for (let element = node.nodeType === Node.ELEMENT_NODE ? (node as Element) : this.parentOf(node);
       element && element !== document.body;
-      element = element.parentElement) {
+      element = this.parentOf(element)) {
       if (this.visitedElements.has(element) || this.queuedElements.has(element)) return element;
     }
     return null;
+  }
+
+  // The parent element, or the host at the top of a shadow root.
+  private parentOf(node: Node): Element | null {
+    if (node.parentElement) return node.parentElement;
+    const root = node.getRootNode();
+    return root instanceof ShadowRoot ? root.host : null;
   }
 
   private scheduleMutationScan() {
@@ -182,6 +225,8 @@ export class PageTranslator {
       this.visitedElements.delete(element);
       this.queuedElements.delete(element);
       this.sourceTexts.delete(element);
+      this.failedElements.delete(element);
+      this.sameLanguageElements.delete(element);
     }
   }
 
@@ -202,6 +247,7 @@ export class PageTranslator {
         action: MESSAGE_TRANSLATE_FRAMES,
         active: this.isActive,
         targetLanguage: this.targetLanguage,
+        labels: this.labels,
       })
       .catch((error) => debugLog('Frame translation sync failed', error));
   }
@@ -279,6 +325,41 @@ export class PageTranslator {
         }
       }
     }
+  }
+
+  // The translation stays as a note with a button that tries again, until the reader does.
+  private markFailed(element: Element, overlay: ShizueTranslationOverlay, text: string) {
+    this.failedElements.set(element, text);
+    this.queuedElements.delete(element);
+    overlay.setError(true, this.retryFailed);
+  }
+
+  // Every translation that failed goes back first in the queue, not only the one clicked: they
+  // usually failed together.
+  private retryFailed = () => {
+    if (!this.isActive) return;
+    const items = Array.from(this.failedElements, ([element, text]) => ({ element, text })).filter(
+      ({ element }) => element.isConnected
+    );
+    this.failedElements.clear();
+    for (const { element } of items) {
+      this.queuedElements.add(element);
+      ShizueTranslationOverlay.find(element)?.setLoading(true);
+    }
+    this.translationQueue.unshift(...this.createTranslationBatches(items));
+    this.processTranslationQueue();
+  };
+
+  // What the page is about, for the prompt: read for each batch, since a single-page app changes it.
+  private pageContext(): PageContext {
+    const description = document
+      .querySelector<HTMLMetaElement>('meta[name="description"], meta[property="og:description"]')
+      ?.content?.trim();
+    return {
+      title: document.title.trim().slice(0, 200),
+      description: description ? description.slice(0, 300) : undefined,
+      site: location.hostname,
+    };
   }
 
   private createTranslationBatches(
@@ -424,7 +505,8 @@ export class PageTranslator {
 
     try {
       const translatedTextResult = await translationService.translateHtmlTextBatch(
-        validTextsForApi
+        validTextsForApi,
+        this.pageContext()
       );
 
       if (!this.isActive) {
@@ -445,12 +527,8 @@ export class PageTranslator {
       if (!translatedTextResult.success || !translatedTextResult.translatedTexts) {
         errorLog('Error translating elements:', translatedTextResult.error);
 
-        for (let i = 0; i < overlaysInBatch.length; i++) {
-          overlaysInBatch[i].overlay.setError(true);
-
-          setTimeout(() => {
-            this.removeOverlayFromElement(overlaysInBatch[i].element, overlaysInBatch[i].overlay);
-          }, 3000);
+        for (const { element, overlay, text } of overlaysInBatch) {
+          this.markFailed(element, overlay, text);
         }
 
         this.isProcessingBatch = false;
@@ -459,13 +537,13 @@ export class PageTranslator {
       }
 
       for (let i = 0; i < overlaysInBatch.length; i++) {
-        this.cachedTranslations
-          .get(this.targetLanguage as string)
-          ?.set(validTextsForApi[i], translatedTextResult.translatedTexts[i]);
-        if (
-          validTextsForApi[i] === translatedTextResult.translatedTexts[i] ||
-          translatedTextResult.translatedTexts[i].trim() === ''
-        ) {
+        const translated = translatedTextResult.translatedTexts[i];
+        if (translated === null || translated === undefined) {
+          this.markFailed(overlaysInBatch[i].element, overlaysInBatch[i].overlay, validTextsForApi[i]);
+          continue;
+        }
+        this.cachedTranslations.get(this.targetLanguage as string)?.set(validTextsForApi[i], translated);
+        if (validTextsForApi[i] === translated || translated.trim() === '') {
           overlaysInBatch[i].overlay.setLoading(false);
           setTimeout(() => {
             this.removeOverlayFromElement(
@@ -475,10 +553,7 @@ export class PageTranslator {
             );
           }, 3000);
         } else {
-          overlaysInBatch[i].overlay.setTexts(
-            translatedTextResult.translatedTexts[i],
-            this.atoms.get(overlaysInBatch[i].element)
-          );
+          overlaysInBatch[i].overlay.setTexts(translated, this.atoms.get(overlaysInBatch[i].element));
           if (this.queuedElements.has(overlaysInBatch[i].element)) {
             this.queuedElements.delete(overlaysInBatch[i].element);
           }
@@ -486,12 +561,7 @@ export class PageTranslator {
       }
     } catch (err) {
       errorLog('Error in batch translation API call:', err);
-      overlaysInBatch.forEach(({ element, overlay }) => {
-        overlay.setError(true);
-        setTimeout(() => {
-          this.removeOverlayFromElement(element, overlay, true);
-        }, 3000);
-      });
+      overlaysInBatch.forEach(({ element, overlay, text }) => this.markFailed(element, overlay, text));
     } finally {
       debugLog('this.cachedTranslations', this.cachedTranslations);
       this.isProcessingBatch = false;
@@ -505,9 +575,14 @@ export class PageTranslator {
   private async translateVisibleElements() {
     debugLog('translateVisibleElements called, isActive:', this.isActive);
     if (!this.isActive) return;
+    await this.settingsLoaded;
+    if (!this.isActive) return;
     try {
       const elements = this.findTranslatableElements().filter(
-        (element) => !this.queuedElements.has(element)
+        (element) =>
+          !this.queuedElements.has(element) &&
+          !this.sameLanguageElements.has(element) &&
+          !this.failedElements.has(element)
       );
 
       if (elements.length === 0) {
@@ -521,7 +596,7 @@ export class PageTranslator {
 
       for (let i = 0; i < elements.length; i++) {
         const element = elements[i];
-        const { html: text, atoms } = translationSource(element, this.preserved);
+        const { html: text, atoms } = translationSource(element, this.preserved, this.maskPrivate);
         this.atoms.set(element, atoms);
         this.sourceTexts.set(element, this.ownText(element));
         if (this.cachedTranslations.get(this.targetLanguage as string)?.has(text)) {
@@ -551,7 +626,27 @@ export class PageTranslator {
         this.queuedElements.add(element);
       });
 
-      const batches = this.createTranslationBatches(queueAbleItems);
+      // Text already in the target language isn't sent. Marked queued above, so a scan while
+      // this runs leaves them alone.
+      const language = this.targetLanguage as Language;
+      const sameLanguage = await Promise.all(
+        queueAbleItems.map(({ element }) =>
+          isInLanguage(translatableText(element, this.preserved).trim(), language)
+        )
+      );
+      if (!this.isActive || this.targetLanguage !== language) return;
+      const toTranslate = queueAbleItems.filter(({ element }, i) => {
+        if (!sameLanguage[i]) return true;
+        this.queuedElements.delete(element);
+        this.visitedElements.add(element);
+        this.sameLanguageElements.add(element);
+        return false;
+      });
+      if (toTranslate.length < queueAbleItems.length) {
+        debugLog(`${queueAbleItems.length - toTranslate.length} element(s) already in ${language}`);
+      }
+
+      const batches = this.createTranslationBatches(toTranslate);
 
       if (batches.length > 0) {
         this.translationQueue.push(...batches);
@@ -562,44 +657,58 @@ export class PageTranslator {
     }
   }
 
-  // Find translatable elements
+  // Find translatable elements, in the document and in the open shadow roots of web components.
   private findTranslatableElements(): Element[] {
     const elements: Element[] = [];
     // On a page with the site's content, nothing else is translated.
     const content =
       this.rule?.content && document.querySelector(this.rule.content) ? this.rule.content : null;
-    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT, {
-      acceptNode: (node) => {
-        const element = node as Element;
+    const walk = (root: Node, inContent: boolean) => {
+      const hosts: Element[] = [];
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, {
+        acceptNode: (node) => {
+          const element = node as Element;
 
-        if (element.matches(this.preserved)) {
-          return NodeFilter.FILTER_REJECT;
-        }
+          if (element.matches(this.preserved)) {
+            return NodeFilter.FILTER_REJECT;
+          }
 
-        if (content && !element.closest(content)) {
-          return element.querySelector(content) ? NodeFilter.FILTER_SKIP : NodeFilter.FILTER_REJECT;
-        }
+          if (content && !inContent && !element.closest(content)) {
+            return element.querySelector(content) ? NodeFilter.FILTER_SKIP : NodeFilter.FILTER_REJECT;
+          }
 
-        if (this.isElementHidden(element)) {
-          return NodeFilter.FILTER_REJECT;
-        }
+          if (this.isElementHidden(element)) {
+            return NodeFilter.FILTER_REJECT;
+          }
 
-        if (!this.isElementVisible(element)) {
+          if (element.shadowRoot && !this.isShizueElement(element)) {
+            hosts.push(element);
+          }
+
+          if (!this.isElementVisible(element)) {
+            return NodeFilter.FILTER_SKIP;
+          }
+
+          if (this.isTranslatableElement(element)) {
+            return NodeFilter.FILTER_ACCEPT;
+          }
+
           return NodeFilter.FILTER_SKIP;
-        }
+        },
+      });
 
-        if (this.isTranslatableElement(element)) {
-          return NodeFilter.FILTER_ACCEPT;
-        }
+      let node;
+      while ((node = walker.nextNode())) {
+        elements.push(node as Element);
+      }
 
-        return NodeFilter.FILTER_SKIP;
-      },
-    });
-
-    let node;
-    while ((node = walker.nextNode())) {
-      elements.push(node as Element);
-    }
+      for (const host of hosts) {
+        const shadowRoot = host.shadowRoot as ShadowRoot;
+        this.observeRoot(shadowRoot);
+        walk(shadowRoot, inContent || !content || !!host.closest(content));
+      }
+    };
+    walk(document.body, false);
 
     return elements;
   }
@@ -681,6 +790,12 @@ export class PageTranslator {
 
     // Check if element is editable
     if ((element as HTMLElement).isContentEditable) {
+      return false;
+    }
+
+    // A web component's own text shows only through a default slot; without one, a translation
+    // put inside it wouldn't show. What its shadow root holds is translated on its own.
+    if (element.shadowRoot && !element.shadowRoot.querySelector('slot:not([name])')) {
       return false;
     }
 

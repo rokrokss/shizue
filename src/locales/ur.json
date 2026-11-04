@@ -34,7 +34,9 @@
     "explainSelection": "منتخب متن کی وضاحت کریں",
     "summarizeSelection": "منتخب متن کا خلاصہ کریں",
     "fixGrammarSelection": "منتخب متن کی گرامر درست کریں",
-    "removeTranslation": "ترجمہ ہٹائیں"
+    "removeTranslation": "ترجمہ ہٹائیں",
+    "translateImage": "تصویر کا ترجمہ کریں",
+    "translatePageImages": "صفحے کی تمام تصاویر کا ترجمہ کریں"
   },
   "onboarding": {
     "greeting_0": "خوش آمدید!",
@@ -132,7 +134,29 @@
     "inPage": "اصل متن",
     "webSource": "ماخذ",
     "backToPage": "صفحے پر واپس جائیں",
-    "deleteMessage": "پیغام حذف کریں"
+    "deleteMessage": "پیغام حذف کریں",
+    "thinking": "سوچ رہا ہے · {{seconds}} سیکنڈ",
+    "thoughtFor": "{{seconds}} سیکنڈ تک سوچا",
+    "thought": "سوچا",
+    "reasoningEffort": "سوچنے کی سطح",
+    "reasoningEffort_low": "کم",
+    "reasoningEffort_medium": "درمیانی",
+    "reasoningEffort_high": "زیادہ",
+    "reasoningEffortHint_low": "جلدی جواب دیتا ہے",
+    "reasoningEffortHint_medium": "ماڈل کے معمول کے مطابق سوچتا ہے",
+    "reasoningEffortHint_high": "زیادہ سوچ کر احتیاط سے جواب دیتا ہے",
+    "reasoningEffortNotSupported": "اس ماڈل میں اسے بدلا نہیں جا سکتا",
+    "reasoningEffortChip": "سوچ: {{level}}",
+    "suggestedQuestions": "آگے پوچھیں",
+    "videoMoment": "یہ لمحہ",
+    "videoMomentHint": "ویڈیو میں ابھی چلنے والے حصے کے بارے میں جواب دیتا ہے",
+    "videoMomentAt": "{{time}} پر",
+    "contextCompacted": "گفتگو لمبی ہو گئی، اس لیے پہلا حصہ خلاصے کی صورت میں بھیجا گیا۔",
+    "contextUsage": "سیاق {{percent}}%",
+    "contextUsageHint": "یہ گفتگو اس مقدار کا {{percent}}% بھر رہی ہے جو ماڈل ایک بار میں پڑھ سکتا ہے۔ 70% کے بعد پہلا حصہ خلاصے کی صورت میں اور صرف حالیہ گفتگو جوں کی توں بھیجی جاتی ہے۔",
+    "browserAgent": "براؤزر کنٹرول",
+    "browserAgentHint": "Shizue موجودہ ٹیب میں خود کلک اور ٹائپ کرتا ہے۔ بھیجنے، حذف کرنے یا ادائیگی سے پہلے پوچھتا ہے",
+    "browserAgentPlaceholder": "اس ٹیب میں کیا کروں؟"
   },
   "footer": {
     "joinDiscord": "Discord پر میرے ساتھ شامل ہوں!",
@@ -169,7 +193,12 @@
     "general": "عام",
     "models": "ماڈلز",
     "layout": "ترتیب",
-    "registered": "رجسٹرڈ"
+    "registered": "رجسٹرڈ",
+    "pageTranslation": "صفحے کا ترجمہ",
+    "maskPrivateDescription": "ای میل، فون نمبر، کارڈ نمبر اور API کلیدیں AI کو نہیں بھیجی جاتیں، اور صفحے پر جیسی تھیں ویسی ہی دکھتی ہیں۔",
+    "maskPrivate": "ذاتی معلومات نہ بھیجیں",
+    "savedTranslations": "{{number}} محفوظ ترجمے · 30 دن",
+    "savedTranslationsClear": "صاف کریں"
   },
   "time": {
     "justNow": "ابھی ابھی",
@@ -270,7 +299,8 @@
       "original": "اصل",
       "translation": "ترجمہ",
       "bilingual": "اصل + ترجمہ"
-    }
+    },
+    "turnOnSiteCaptions": "ترجمہ دیکھنے کے لیے ویڈیو کے سب ٹائٹل آن کریں"
   },
   "usage": {
     "title": "ٹوکن کا استعمال",
@@ -340,5 +370,69 @@
     "saved": "محفوظ ہو گیا",
     "openList": "الفاظ کی فہرست کھولیں",
     "saveFailed": "محفوظ نہیں ہو سکا۔"
+  },
+  "pageTranslation": {
+    "failed": "ترجمہ نہیں ہو سکا",
+    "retry": "دوبارہ کوشش کریں"
+  },
+  "meeting": {
+    "liveTranslation": "Shizue میٹنگ ترجمہ",
+    "waiting": "کسی کے بولنے پر ترجمہ یہاں دکھائی دے گا",
+    "turnOnCaptions": "ترجمہ دیکھنے کے لیے میٹنگ کے کیپشن (CC) آن کریں",
+    "unreadable": "اس میٹنگ کے کیپشن نہیں پڑھے جا سکے۔ شاید سائٹ بدل گئی ہے۔",
+    "preparing": "Chrome کا ترجمہ ماڈل ڈاؤن لوڈ ہو رہا ہے"
+  },
+  "imageTranslation": {
+    "translating": "تصویر کا ترجمہ ہو رہا ہے…",
+    "translated": "ترجمہ شدہ",
+    "original": "اصل",
+    "showOriginal": "اصل دیکھیں",
+    "showTranslation": "ترجمہ دیکھیں",
+    "noText": "ترجمے کے لیے کوئی متن نہیں",
+    "failed": "ترجمہ نہیں ہو سکا",
+    "retry": "دوبارہ کوشش کریں",
+    "noImageModel": "تصاویر پڑھ سکنے والا چیٹ ماڈل درکار ہے",
+    "close": "بند کریں",
+    "pageActive": "صفحے کی تصاویر کا ترجمہ ہو رہا ہے",
+    "stop": "بند کریں"
+  },
+  "agent": {
+    "working": "{{host}} پر کام جاری ہے",
+    "stepsDone": "{{host}} پر مراحل: {{count}}",
+    "readPage": "{{host}} کا صفحہ پڑھا",
+    "step": {
+      "click": "‘{{target}}’ پر کلک",
+      "type": "‘{{target}}’ میں “{{text}}” لکھیں",
+      "typeSubmit": "‘{{target}}’ میں “{{text}}” لکھ کر Enter دبائیں",
+      "select": "‘{{target}}’ میں “{{text}}” منتخب کریں",
+      "scrollDown": "نیچے اسکرول",
+      "scrollUp": "اوپر اسکرول",
+      "navigate": "{{host}} کھولیں",
+      "back": "واپس جائیں",
+      "wait": "صفحے کا انتظار"
+    },
+    "approvalTitle": "کیا یہ کام کرنے دیں؟",
+    "approvalHint": "یہ بھیجنا، حذف کرنا یا ادائیگی ہو سکتی ہے جسے واپس لینا مشکل ہو",
+    "allow": "اجازت دیں",
+    "deny": "انکار",
+    "denied": "انکار کیا",
+    "error": {
+      "not_found": "وہ عنصر اب صفحے پر نہیں ہے",
+      "secret_field": "پاس ورڈ اور کارڈ کی معلومات خود درج کریں",
+      "not_select": "یہ ڈراپ ڈاؤن نہیں ہے",
+      "no_option": "ایسا کوئی آپشن نہیں",
+      "bad_url": "یہ پتہ نہیں کھل سکتا",
+      "unreachable": "اس صفحے کو کنٹرول نہیں کیا جا سکتا",
+      "failed": "نہیں ہو سکا"
+    },
+    "outcome": {
+      "stopped": "روک دیا گیا",
+      "max_steps": "بہت زیادہ مراحل کے بعد رک گیا۔ چھوٹا کام دیں",
+      "unavailable": "یہ ٹیب کنٹرول نہیں ہو سکتا۔ کوئی ویب صفحہ کھول کر دوبارہ کوشش کریں",
+      "failed": "رک گیا: اگلا قدم طے نہیں ہو سکا"
+    },
+    "overlayWorking": "Shizue اس ٹیب میں کام کر رہا ہے",
+    "overlayWaiting": "پینل میں آپ کی اجازت کا انتظار",
+    "overlayStop": "روکیں"
   }
 }

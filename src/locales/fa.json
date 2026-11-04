@@ -34,7 +34,9 @@
     "explainSelection": "متن انتخاب‌شده را توضیح دهید",
     "summarizeSelection": "متن انتخاب‌شده را خلاصه کنید",
     "fixGrammarSelection": "دستور زبان متن انتخاب‌شده را اصلاح کنید",
-    "removeTranslation": "ترجمه را حذف کنید"
+    "removeTranslation": "ترجمه را حذف کنید",
+    "translateImage": "ترجمه تصویر",
+    "translatePageImages": "ترجمه همه تصاویر صفحه"
   },
   "onboarding": {
     "greeting_0": "خوش آمدید!",
@@ -132,7 +134,29 @@
     "inPage": "متن اصلی",
     "webSource": "منبع",
     "backToPage": "بازگشت به صفحه",
-    "deleteMessage": "حذف پیام"
+    "deleteMessage": "حذف پیام",
+    "thinking": "در حال فکر کردن · {{seconds}} ثانیه",
+    "thoughtFor": "{{seconds}} ثانیه فکر کرد",
+    "thought": "فکر کرد",
+    "reasoningEffort": "میزان فکر کردن",
+    "reasoningEffort_low": "کم",
+    "reasoningEffort_medium": "متوسط",
+    "reasoningEffort_high": "زیاد",
+    "reasoningEffortHint_low": "سریع جواب می‌دهد",
+    "reasoningEffortHint_medium": "به روش پیش‌فرض مدل فکر می‌کند",
+    "reasoningEffortHint_high": "بیشتر فکر می‌کند تا دقیق‌تر جواب دهد",
+    "reasoningEffortNotSupported": "در این مدل قابل تغییر نیست",
+    "reasoningEffortChip": "فکر: {{level}}",
+    "suggestedQuestions": "سؤال بعدی",
+    "videoMoment": "این لحظه",
+    "videoMomentHint": "درباره بخشی که الان پخش می‌شود جواب می‌دهد",
+    "videoMomentAt": "در {{time}}",
+    "contextCompacted": "گفتگو طولانی شد، بنابراین بخش ابتدایی به‌صورت خلاصه فرستاده شد.",
+    "contextUsage": "زمینه {{percent}}٪",
+    "contextUsageHint": "این گفتگو {{percent}}٪ از مقداری را که مدل یک‌جا می‌خواند پر کرده است. بعد از ۷۰٪، بخش ابتدایی به‌صورت خلاصه و فقط پیام‌های اخیر همان‌طور که هستند فرستاده می‌شوند.",
+    "browserAgent": "کنترل مرورگر",
+    "browserAgentHint": "Shizue در زبانهٔ فعلی کلیک و تایپ می‌کند و پیش از ارسال، حذف یا پرداخت می‌پرسد",
+    "browserAgentPlaceholder": "در این زبانه چه کنم؟"
   },
   "footer": {
     "joinDiscord": "به من در Discord بپیوندید!",
@@ -169,7 +193,12 @@
     "general": "عمومی",
     "models": "مدل‌ها",
     "layout": "طرح",
-    "registered": "ثبت شده"
+    "registered": "ثبت شده",
+    "pageTranslation": "ترجمه صفحه",
+    "maskPrivateDescription": "ایمیل، شماره تلفن، شماره کارت و کلیدهای API به هوش مصنوعی فرستاده نمی‌شوند و همان‌طور که در صفحه بودند نمایش داده می‌شوند.",
+    "maskPrivate": "اطلاعات شخصی فرستاده نشود",
+    "savedTranslations": "{{number}} ترجمه ذخیره‌شده · ۳۰ روز",
+    "savedTranslationsClear": "پاک کردن"
   },
   "time": {
     "justNow": "همین الان",
@@ -270,7 +299,8 @@
       "original": "اصل",
       "translation": "ترجمه",
       "bilingual": "اصل + ترجمه"
-    }
+    },
+    "turnOnSiteCaptions": "زیرنویس ویدیو را روشن کنید تا ترجمه را ببینید"
   },
   "usage": {
     "title": "استفاده از توکن",
@@ -340,5 +370,69 @@
     "saved": "ذخیره شد",
     "openList": "باز کردن فهرست واژه‌ها",
     "saveFailed": "ذخیره نشد."
+  },
+  "pageTranslation": {
+    "failed": "ترجمه نشد",
+    "retry": "تلاش دوباره"
+  },
+  "meeting": {
+    "liveTranslation": "ترجمه جلسه Shizue",
+    "waiting": "وقتی کسی صحبت کند، ترجمه اینجا نمایش داده می‌شود",
+    "turnOnCaptions": "زیرنویس جلسه (CC) را روشن کنید تا ترجمه را ببینید",
+    "unreadable": "زیرنویس این جلسه خوانده نشد. شاید سایت تغییر کرده باشد.",
+    "preparing": "در حال دریافت مدل ترجمه Chrome"
+  },
+  "imageTranslation": {
+    "translating": "در حال ترجمه تصویر…",
+    "translated": "ترجمه شد",
+    "original": "اصلی",
+    "showOriginal": "نمایش اصلی",
+    "showTranslation": "نمایش ترجمه",
+    "noText": "متنی برای ترجمه نیست",
+    "failed": "ترجمه نشد",
+    "retry": "تلاش دوباره",
+    "noImageModel": "به مدل گفت‌وگویی نیاز است که تصویر را بخواند",
+    "close": "بستن",
+    "pageActive": "در حال ترجمه تصاویر صفحه",
+    "stop": "خاموش"
+  },
+  "agent": {
+    "working": "در حال کار روی {{host}}",
+    "stepsDone": "گام‌ها در {{host}}: {{count}}",
+    "readPage": "صفحهٔ {{host}} خوانده شد",
+    "step": {
+      "click": "کلیک روی «{{target}}»",
+      "type": "نوشتن «{{text}}» در «{{target}}»",
+      "typeSubmit": "نوشتن «{{text}}» در «{{target}}» و زدن Enter",
+      "select": "انتخاب «{{text}}» در «{{target}}»",
+      "scrollDown": "پیمایش به پایین",
+      "scrollUp": "پیمایش به بالا",
+      "navigate": "باز کردن {{host}}",
+      "back": "بازگشت",
+      "wait": "منتظر صفحه"
+    },
+    "approvalTitle": "این کار انجام شود؟",
+    "approvalHint": "ممکن است چیزی بفرستد، حذف کند یا پرداخت کند و برگرداندنش سخت باشد",
+    "allow": "اجازه",
+    "deny": "رد",
+    "denied": "رد شد",
+    "error": {
+      "not_found": "آن عنصر دیگر در صفحه نیست",
+      "secret_field": "رمز عبور و اطلاعات کارت را خودتان وارد کنید",
+      "not_select": "این فهرست کشویی نیست",
+      "no_option": "چنین گزینه‌ای نیست",
+      "bad_url": "این نشانی باز نمی‌شود",
+      "unreachable": "این صفحه قابل کنترل نیست",
+      "failed": "انجام نشد"
+    },
+    "outcome": {
+      "stopped": "متوقف شد",
+      "max_steps": "پس از گام‌های زیاد متوقف شد. کار کوچک‌تری بدهید",
+      "unavailable": "این زبانه قابل کنترل نیست. یک صفحهٔ وب باز کنید و دوباره امتحان کنید",
+      "failed": "متوقف شد: گام بعدی مشخص نشد"
+    },
+    "overlayWorking": "Shizue در این زبانه کار می‌کند",
+    "overlayWaiting": "در انتظار اجازهٔ شما در پنل",
+    "overlayStop": "توقف"
   }
 }

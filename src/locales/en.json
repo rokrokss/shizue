@@ -34,7 +34,9 @@
     "explainSelection": "Explain selected text",
     "summarizeSelection": "Summarize selected text",
     "fixGrammarSelection": "Fix grammar in selected text",
-    "removeTranslation": "Remove translation"
+    "removeTranslation": "Remove translation",
+    "translateImage": "Translate image",
+    "translatePageImages": "Translate all images on page"
   },
   "onboarding": {
     "greeting_0": "Welcome!",
@@ -132,7 +134,29 @@
     "inPage": "Original",
     "webSource": "Source",
     "backToPage": "Back to page",
-    "deleteMessage": "Delete message"
+    "deleteMessage": "Delete message",
+    "thinking": "Thinking · {{seconds}}s",
+    "thoughtFor": "Thought for {{seconds}}s",
+    "thought": "Thought",
+    "reasoningEffort": "Thinking effort",
+    "reasoningEffort_low": "Low",
+    "reasoningEffort_medium": "Medium",
+    "reasoningEffort_high": "High",
+    "reasoningEffortHint_low": "Answers quickly",
+    "reasoningEffortHint_medium": "Thinks the model's usual way",
+    "reasoningEffortHint_high": "Thinks longer for a more careful answer",
+    "reasoningEffortNotSupported": "This model's thinking effort can't be changed",
+    "reasoningEffortChip": "Thinking: {{level}}",
+    "suggestedQuestions": "Ask next",
+    "videoMoment": "This moment",
+    "videoMomentHint": "Answers about where the video is playing now",
+    "videoMomentAt": "At {{time}}",
+    "contextCompacted": "This chat got long, so the earlier part went as a summary.",
+    "contextUsage": "Context {{percent}}%",
+    "contextUsageHint": "This chat fills {{percent}}% of what the model can read at once. Past 70%, the earlier part goes as a summary and only the latest turns as they are.",
+    "browserAgent": "Browser control",
+    "browserAgentHint": "Shizue clicks and types in the current tab. It asks before sending, deleting or paying",
+    "browserAgentPlaceholder": "What should I do in this tab?"
   },
   "footer": {
     "joinDiscord": "Join me on Discord!",
@@ -169,7 +193,12 @@
     "general": "General",
     "models": "Models",
     "layout": "Layout",
-    "registered": "Registered"
+    "registered": "Registered",
+    "pageTranslation": "Page translation",
+    "maskPrivateDescription": "Emails, phone numbers, card numbers and API keys aren't sent to the AI. They show just as they were on the page.",
+    "maskPrivate": "Don't send private details",
+    "savedTranslations": "{{number}} saved translations · kept 30 days",
+    "savedTranslationsClear": "Clear"
   },
   "usage": {
     "title": "Token Usage",
@@ -278,7 +307,8 @@
       "original": "Original",
       "translation": "Translation",
       "bilingual": "Original + translation"
-    }
+    },
+    "turnOnSiteCaptions": "Turn on the video’s subtitles to see them translated"
   },
   "home": {
     "title": "Go to Home"
@@ -340,5 +370,69 @@
     "saved": "Saved",
     "openList": "Open word list",
     "saveFailed": "Couldn't save it."
+  },
+  "pageTranslation": {
+    "failed": "Couldn't translate",
+    "retry": "Try again"
+  },
+  "meeting": {
+    "liveTranslation": "Shizue meeting translation",
+    "waiting": "Translations show here as people speak",
+    "turnOnCaptions": "Turn on the meeting’s captions (CC) to see them translated",
+    "unreadable": "Couldn’t read this meeting’s captions. The site may have changed.",
+    "preparing": "Downloading Chrome’s translation model"
+  },
+  "imageTranslation": {
+    "translating": "Translating image…",
+    "translated": "Translated",
+    "original": "Original",
+    "showOriginal": "Show original",
+    "showTranslation": "Show translation",
+    "noText": "No text to translate",
+    "failed": "Couldn’t translate",
+    "retry": "Retry",
+    "noImageModel": "Pick a chat model that can read images",
+    "close": "Close",
+    "pageActive": "Translating images on this page",
+    "stop": "Turn off"
+  },
+  "agent": {
+    "working": "Working on {{host}}",
+    "stepsDone": "Steps on {{host}}: {{count}}",
+    "readPage": "Read the page on {{host}}",
+    "step": {
+      "click": "Click ‘{{target}}’",
+      "type": "Type “{{text}}” in ‘{{target}}’",
+      "typeSubmit": "Type “{{text}}” in ‘{{target}}’ and press Enter",
+      "select": "Choose “{{text}}” in ‘{{target}}’",
+      "scrollDown": "Scroll down",
+      "scrollUp": "Scroll up",
+      "navigate": "Open {{host}}",
+      "back": "Go back",
+      "wait": "Wait for the page"
+    },
+    "approvalTitle": "Allow this action?",
+    "approvalHint": "It may send, delete or pay, and be hard to undo",
+    "allow": "Allow",
+    "deny": "Decline",
+    "denied": "Declined",
+    "error": {
+      "not_found": "That element is no longer on the page",
+      "secret_field": "Please enter passwords and card details yourself",
+      "not_select": "That isn’t a dropdown",
+      "no_option": "No such option",
+      "bad_url": "That address can’t be opened",
+      "unreachable": "This page can’t be controlled",
+      "failed": "Didn’t work"
+    },
+    "outcome": {
+      "stopped": "Stopped",
+      "max_steps": "Stopped after too many steps. Try a smaller task",
+      "unavailable": "This tab can’t be controlled. Open a web page and try again",
+      "failed": "Stopped: couldn’t decide what to do next"
+    },
+    "overlayWorking": "Shizue is working in this tab",
+    "overlayWaiting": "Waiting for your OK in the panel",
+    "overlayStop": "Stop"
   }
 }

@@ -24,9 +24,11 @@ import { hasPageLines } from '@/lib/pageLines';
 import { getDetailedAnalysisPrompt } from '@/lib/prompts';
 import { throttleTrailing } from '@/lib/throttleTrailing';
 import { createThreadLoader } from '@/lib/threadLoader';
+import type { AgentRun } from '@/lib/browserAgent';
 import type { WebSource } from '@/lib/webSources';
 import { debugLog, errorLog } from '@/logs';
 import { chatService } from '@/services/chatService';
+import { videoKey } from '@/lib/videoTranscript';
 import { useAtom, useAtomValue, useSetAtom, useStore } from 'jotai';
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -58,7 +60,18 @@ export interface Message {
   stopped: boolean;
   errorMessage?: string;
   contextTruncated?: boolean;
+  reasoning?: string;
+  thinkingMs?: number;
+  suggestions?: string[];
+  videoMoment?: { video: string; seconds: number };
+  contextUsage?: number;
+  contextCompacted?: boolean;
+  browserAgent?: boolean;
+  agentRun?: AgentRun;
 }
+
+// The asking moment of a video, kept with a question (see ChatInput).
+export type VideoMoment = { video: string; seconds: number };
 
 const Chat = () => {
   const theme = useThemeValue();
@@ -78,7 +91,7 @@ const Chat = () => {
   const messageCountAtom = useMemo(() => createThreadMessageCountAtom(threadId), [threadId]);
   const messageCount = useAtomValue(messageCountAtom);
   const prevMessageCountRef = useRef(messageCount);
-  const { startStream, startRetryStream, cancelStream } = useChromePortStream();
+  const { startStream, startRetryStream, cancelStream, answerAgentApproval } = useChromePortStream();
   const autoMemoryEnabled = useAutoMemoryValue().enabled;
 
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -172,6 +185,43 @@ const Chat = () => {
   const showSources = (sources: WebSource[]) =>
     setMessages((cur) => updateAIMessage(cur, { sources }));
 
+  const appendReasoning = (delta: string) => {
+    setMessages((cur) =>
+      updateAIMessage(cur, { reasoning: (cur[aiIndexRef.current]?.reasoning ?? '') + delta })
+    );
+    scrollToBottomThrottled();
+  };
+
+  const markThinkingMs = (thinkingMs: number) =>
+    setMessages((cur) => updateAIMessage(cur, { thinkingMs }));
+
+  const showAgentRun = (agentRun: AgentRun) => {
+    setMessages((cur) => updateAIMessage(cur, { agentRun }));
+    scrollToBottomThrottled();
+  };
+
+  // What the browser agent's pill on the page says.
+  const agentLabels = () => ({
+    working: t('agent.overlayWorking'),
+    waiting: t('agent.overlayWaiting'),
+    stop: t('agent.overlayStop'),
+  });
+
+  const markContextUsage = (contextUsage: number, compacted: boolean) =>
+    setMessages((cur) =>
+      updateAIMessage(cur, { contextUsage, ...(compacted ? { contextCompacted: true } : {}) })
+    );
+
+  // A summary that just finished offers questions to ask next, a moment later.
+  const requestSuggestions = async (tId: string) => {
+    const index = aiIndexRef.current;
+    const suggestions = await chatService.suggestQuestions(tId).catch(() => []);
+    if (suggestions.length === 0 || store.get(threadIdAtom) !== tId) return;
+    setMessages((cur) =>
+      cur[index]?.role === 'ai' && cur[index].done ? updateAIMessage(cur, { suggestions }) : cur
+    );
+  };
+
   const handleRequestFromContextMenu = useCallback(
     async (tId: string, requestedActionType: ActionType) => {
       debugLog('handleRequestFromContextMenu called');
@@ -189,6 +239,9 @@ const Chat = () => {
         { threadId: tId, actionType: actionType.current },
         {
           onContextTruncated: markContextTruncated,
+          onReasoning: appendReasoning,
+          onThinkingMs: markThinkingMs,
+          onContextUsage: markContextUsage,
           onSources: showSources,
           onDelta: (delta) => {
             setMessages((cur) => {
@@ -211,6 +264,7 @@ const Chat = () => {
             touchThread(tId);
             setChatStatus('idle');
             scrollToBottomThrottled();
+            if (requestedActionType === 'askForSummary') void requestSuggestions(tId);
           },
           onError: (err) => {
             errorLog('Chat Stream error:', err);
@@ -344,7 +398,9 @@ const Chat = () => {
     text: string,
     images?: File[],
     attachments?: PageAttachment[],
-    webSearch?: boolean
+    webSearch?: boolean,
+    videoMoment?: VideoMoment,
+    browserAgent?: boolean
   ) => {
     const imageBase64Array =
       images && images.length > 0 ? await convertFilesToBase64Array(images) : undefined;
@@ -366,6 +422,8 @@ const Chat = () => {
           images: imageBase64Array,
           attachments,
           ...(webSearch ? { webSearch } : {}),
+          ...(videoMoment ? { videoMoment } : {}),
+          ...(browserAgent ? { browserAgent } : {}),
           done: true,
           onInterrupt: false,
           stopped: false,
@@ -390,6 +448,8 @@ const Chat = () => {
       images: imageBase64Array,
       attachments,
       ...(webSearch ? { webSearch } : {}),
+      ...(videoMoment ? { videoMoment } : {}),
+      ...(browserAgent ? { browserAgent } : {}),
       createdAt: Date.now(),
       done: true,
       onInterrupt: false,
@@ -446,6 +506,27 @@ const Chat = () => {
     prevMessageCountRef.current = messageCount;
   }, [messageCount, threadId]);
 
+  // The video whose captions the chat last read (a summary of it, or it alone attached), for asking
+  // about the moment it is at.
+  const threadVideo = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const m = messages[i];
+      if (m.role !== 'human') continue;
+      if (m.actionType === 'askForSummary' && m.summaryCaptions) return videoKey(m.summaryPageLink);
+      const videos = (m.attachments ?? []).filter((page) => page.captions);
+      if (videos.length === 1) return videoKey(videos[0].url);
+    }
+    return null;
+  }, [messages]);
+
+  // How full the model's context was for the latest answer.
+  const contextUsage = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === 'ai') return messages[i].contextUsage ?? null;
+    }
+    return null;
+  }, [messages]);
+
   const threadPageUrls = useMemo(
     () =>
       messages.flatMap((m) => [
@@ -470,21 +551,27 @@ const Chat = () => {
     text: string,
     images?: File[],
     attachments?: PageAttachment[],
-    webSearch?: boolean
+    webSearch?: boolean,
+    videoMoment?: VideoMoment,
+    browserAgent?: boolean
   ) => {
     threadLoader.invalidate();
     setChatStatus('waiting');
 
     const tId = await checkIfThreadExists(text);
 
-    await addHumanMessage(tId, text, images, attachments, webSearch);
+    await addHumanMessage(tId, text, images, attachments, webSearch, videoMoment, browserAgent);
     followRef.current = true;
     scrollToBottomThrottled();
 
     startStream(
-      { threadId: tId, actionType: actionType.current },
+      { threadId: tId, actionType: actionType.current, ...(browserAgent ? { agentLabels: agentLabels() } : {}) },
       {
+        onAgent: showAgentRun,
         onContextTruncated: markContextTruncated,
+        onReasoning: appendReasoning,
+        onThinkingMs: markThinkingMs,
+        onContextUsage: markContextUsage,
         onSources: showSources,
         onDelta: (delta) =>
           setMessages((cur) => {
@@ -537,15 +624,25 @@ const Chat = () => {
       errorMessage: undefined,
       contextTruncated: undefined,
       sources: undefined,
+      reasoning: undefined,
+      thinkingMs: undefined,
+      contextUsage: undefined,
+      contextCompacted: undefined,
+      agentRun: undefined,
     })),
       startRetryStream(
         {
           threadId,
           messageIdxToRetry: messageIdxToRetry,
           actionType: actionType.current,
+          ...(messages[messageIdxToRetry - 1]?.browserAgent ? { agentLabels: agentLabels() } : {}),
         },
         {
+          onAgent: showAgentRun,
           onContextTruncated: markContextTruncated,
+          onReasoning: appendReasoning,
+          onThinkingMs: markThinkingMs,
+          onContextUsage: markContextUsage,
           onSources: showSources,
           onDelta: (delta) =>
             setMessages((cur) => {
@@ -660,6 +757,9 @@ const Chat = () => {
       { threadId: tId, actionType: actionType.current },
       {
         onContextTruncated: markContextTruncated,
+        onReasoning: appendReasoning,
+        onThinkingMs: markThinkingMs,
+        onContextUsage: markContextUsage,
         onDelta: (delta) =>
           setMessages((cur) => {
             const updatedMessages = updateAIMessage(cur, {
@@ -726,6 +826,8 @@ const Chat = () => {
               onRetry={handleRetry}
               onDelete={handleDeleteFrom}
               onDetailedAnalysis={handleDetailedAnalysis}
+              onAsk={(question) => void handleSubmit(question)}
+              onAgentApproval={answerAgentApproval}
               scrollToBottom={scrollToBottomThrottled}
             />
           </Suspense>
@@ -738,6 +840,8 @@ const Chat = () => {
         <ChatInput
           chatStatus={chatStatus}
           threadPageUrls={threadPageUrls}
+          threadVideo={threadVideo}
+          contextUsage={contextUsage}
           previousPrompts={previousPrompts}
           onSubmit={handleSubmit}
           onCancel={handleCancel}

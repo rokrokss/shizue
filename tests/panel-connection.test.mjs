@@ -152,6 +152,8 @@ test('background routes summary opens and panel readiness through the same hando
     '@/lib/indexDB': 'export const db = {}; export const addWord = async () => {}; export const getLatestMessageForThread = async () => null; export const loadThread = async () => [];',
     '@/services/background/translationHandler': 'export const getTranslationHandler = () => ({});',
     '@/services/background/chatModelHandler': 'export const getChatModelHandler = () => ({});',
+    '@/services/background/imageTranslationHandler': 'export const translateImage = async () => ({});',
+    '@/services/background/browserAgentHandler': 'export const stopAgentInTab = () => {};',
   });
 });
 
@@ -287,6 +289,8 @@ test('background relays a tab\'s own transcript request to that tab\'s top frame
     '@/lib/indexDB': 'export const db = {}; export const addWord = async () => {}; export const getLatestMessageForThread = async () => null; export const loadThread = async () => [];',
     '@/services/background/translationHandler': 'export const getTranslationHandler = () => ({});',
     '@/services/background/chatModelHandler': 'export const getChatModelHandler = () => ({});',
+    '@/services/background/imageTranslationHandler': 'export const translateImage = async () => ({});',
+    '@/services/background/browserAgentHandler': 'export const stopAgentInTab = () => {};',
   });
 });
 

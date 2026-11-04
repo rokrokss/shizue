@@ -3,7 +3,9 @@ import {
   MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE,
   MESSAGE_CONTEXT_MENU_EXTRACT_IMAGE_TEXT,
   MESSAGE_CONTEXT_MENU_SELECTION_ACTION,
+  MESSAGE_CONTEXT_MENU_TRANSLATE_IMAGE,
   MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
+  MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE_IMAGES,
 } from '@/config/constants';
 import { openPanel, panelHost } from '@/entrypoints/background/sidepanel';
 import { getCurrentChatModel, getCurrentLocalServer } from '@/entrypoints/background/states/models';
@@ -21,7 +23,7 @@ import { i18n } from '#i18n';
 // Image actions run on the chat model, so they are greyed out for text-only models.
 const updateImageMenuItems = (model: ChatModel, localServer?: LocalServerConfig | null) => {
   const enabled = modelSupportsImages(model, localServer);
-  for (const id of ['describeImage', 'extractImageText']) {
+  for (const id of ['describeImage', 'extractImageText', 'translateImage', 'translatePageImages']) {
     // Callback form: the promise form needs Chrome 123+.
     chrome.contextMenus.update(id, { enabled }, () => {
       if (chrome.runtime.lastError) {
@@ -58,6 +60,14 @@ export const createContextMenu = async () => {
       } else if (info.menuItemId === 'describeImage') {
         void chrome.tabs.sendMessage(tab.id, {
           action: MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE,
+          srcUrl: info.srcUrl,
+        }).catch((error) => errorLog('Page action receiver unavailable; reload the page', error));
+      } else if (info.menuItemId === 'translateImage' || info.menuItemId === 'translatePageImages') {
+        void chrome.tabs.sendMessage(tab.id, {
+          action:
+            info.menuItemId === 'translateImage'
+              ? MESSAGE_CONTEXT_MENU_TRANSLATE_IMAGE
+              : MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE_IMAGES,
           srcUrl: info.srcUrl,
         }).catch((error) => errorLog('Page action receiver unavailable; reload the page', error));
       } else if (info.menuItemId === 'extractImageText') {
@@ -123,6 +133,18 @@ export const createContextMenu = async () => {
       parentId: 'shizue-parent',
       title: i18n.t('overlayMenu.fixGrammarSelection'),
       contexts: ['selection'],
+    },
+    {
+      id: 'translateImage',
+      parentId: 'shizue-parent',
+      title: i18n.t('overlayMenu.translateImage'),
+      contexts: ['image'],
+    },
+    {
+      id: 'translatePageImages',
+      parentId: 'shizue-parent',
+      title: i18n.t('overlayMenu.translatePageImages'),
+      contexts: ['page', 'image'],
     },
     {
       id: 'describeImage',

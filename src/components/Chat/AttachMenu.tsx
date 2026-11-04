@@ -1,13 +1,16 @@
 import { MAX_ATTACHED_TABS } from '@/config/constants';
 import { useThemeValue } from '@/hooks/layout';
+import { REASONING_EFFORTS, type ReasoningEffort } from '@/lib/reasoning';
 import { TEXT_FILE_ACCEPT } from '@/lib/tabText';
 import {
+  BulbOutlined,
   CameraOutlined,
   ExpandOutlined,
   FileAddOutlined,
   FileTextOutlined,
   GlobalOutlined,
   PaperClipOutlined,
+  SelectOutlined,
 } from '@ant-design/icons';
 import { Button, Popover, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
@@ -46,7 +49,8 @@ export const attachRowClass = (disabled: boolean, theme: string, active = false)
 
 // The paperclip button: the web tabs open in this window to attach or take off, PDF and text
 // files from the computer, a capture of what the current tab shows, whole or a dragged part,
-// for models that read images, and web search for the questions that follow.
+// for models that read images, web search or the browser agent for the questions that follow,
+// and how hard the model thinks.
 const AttachMenu = ({
   attachedTabIds,
   full,
@@ -59,6 +63,11 @@ const AttachMenu = ({
   webSearch,
   webSearchSupported,
   onToggleWebSearch,
+  browserAgent,
+  onToggleBrowserAgent,
+  reasoningEffort,
+  reasoningSupported,
+  onReasoningEffort,
 }: {
   attachedTabIds: number[];
   // The next message already has MAX_ATTACHED_TABS tabs and files.
@@ -72,6 +81,11 @@ const AttachMenu = ({
   webSearch: boolean;
   webSearchSupported: boolean;
   onToggleWebSearch: () => void;
+  browserAgent: boolean;
+  onToggleBrowserAgent: () => void;
+  reasoningEffort: ReasoningEffort;
+  reasoningSupported: boolean;
+  onReasoningEffort: (effort: ReasoningEffort) => void;
 }) => {
   const { t } = useTranslation();
   const theme = useThemeValue();
@@ -205,6 +219,66 @@ const AttachMenu = ({
             className="sz:w-4 sz:h-4 sz:shrink-0 sz:accent-sz-cyan sz:cursor-[inherit]"
           />
         </label>
+        <label className={rowClass(false)}>
+          <SelectOutlined className="sz:shrink-0" />
+          <div className="sz:min-w-0 sz:flex-1">
+            <div className="sz:text-sm">{t('chat.browserAgent')}</div>
+            <div className="sz:text-xs sz:text-gray-500">{t('chat.browserAgentHint')}</div>
+          </div>
+          <input
+            type="checkbox"
+            checked={browserAgent}
+            onChange={onToggleBrowserAgent}
+            className="sz:w-4 sz:h-4 sz:shrink-0 sz:accent-sz-cyan sz:cursor-[inherit]"
+          />
+        </label>
+        <div
+          className={`sz:flex sz:flex-col sz:gap-1.5 sz:px-2 sz:py-1.5 ${
+            reasoningSupported ? '' : 'sz:opacity-50'
+          }`}
+        >
+          <div className="sz:flex sz:items-center sz:gap-2">
+            <BulbOutlined className="sz:shrink-0" />
+            <div className="sz:min-w-0 sz:flex-1">
+              <div className="sz:text-sm">{t('chat.reasoningEffort')}</div>
+              <div className="sz:text-xs sz:text-gray-500">
+                {reasoningSupported
+                  ? t(`chat.reasoningEffortHint_${reasoningEffort}`)
+                  : t('chat.reasoningEffortNotSupported')}
+              </div>
+            </div>
+          </div>
+          <div
+            role="radiogroup"
+            aria-label={t('chat.reasoningEffort')}
+            className={`sz:flex sz:p-0.5 sz:rounded-md ${theme == 'dark' ? 'sz:bg-white/10' : 'sz:bg-black/5'}`}
+          >
+            {REASONING_EFFORTS.map((effort) => {
+              const selected = effort === reasoningEffort;
+              return (
+                <button
+                  key={effort}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  disabled={!reasoningSupported}
+                  onClick={() => onReasoningEffort(effort)}
+                  className={`sz:flex-1 sz:py-0.5 sz:rounded sz:text-xs sz:transition-colors sz:duration-150 sz:focus-visible:outline-2 sz:focus-visible:outline-sz-cyan ${
+                    reasoningSupported ? 'sz:cursor-pointer' : 'sz:cursor-not-allowed'
+                  } ${
+                    selected
+                      ? theme == 'dark'
+                        ? 'sz:bg-white/20 sz:text-white'
+                        : 'sz:bg-white sz:text-black sz:shadow-sm'
+                      : 'sz:text-gray-500'
+                  }`}
+                >
+                  {t(`chat.reasoningEffort_${effort}`)}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

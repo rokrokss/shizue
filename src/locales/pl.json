@@ -34,7 +34,9 @@
     "explainSelection": "Wyjaśnij zaznaczony tekst",
     "summarizeSelection": "Podsumuj zaznaczony tekst",
     "fixGrammarSelection": "Popraw gramatykę zaznaczonego tekstu",
-    "removeTranslation": "Usuń tłumaczenie"
+    "removeTranslation": "Usuń tłumaczenie",
+    "translateImage": "Przetłumacz obraz",
+    "translatePageImages": "Przetłumacz wszystkie obrazy na stronie"
   },
   "onboarding": {
     "greeting_0": "Witaj!",
@@ -132,7 +134,29 @@
     "inPage": "Oryginał",
     "webSource": "Źródło",
     "backToPage": "Wróć do strony",
-    "deleteMessage": "Usuń wiadomość"
+    "deleteMessage": "Usuń wiadomość",
+    "thinking": "Myśli · {{seconds}} s",
+    "thoughtFor": "Myślał przez {{seconds}} s",
+    "thought": "Przemyślenia",
+    "reasoningEffort": "Intensywność myślenia",
+    "reasoningEffort_low": "Niska",
+    "reasoningEffort_medium": "Średnia",
+    "reasoningEffort_high": "Wysoka",
+    "reasoningEffortHint_low": "Odpowiada szybko",
+    "reasoningEffortHint_medium": "Myśli tak, jak model domyślnie",
+    "reasoningEffortHint_high": "Myśli dłużej, by odpowiedzieć staranniej",
+    "reasoningEffortNotSupported": "W tym modelu nie można tego zmienić",
+    "reasoningEffortChip": "Myślenie: {{level}}",
+    "suggestedQuestions": "Zapytaj dalej",
+    "videoMoment": "Ta chwila",
+    "videoMomentHint": "Odpowiada o fragmencie, który właśnie leci",
+    "videoMomentAt": "W {{time}}",
+    "contextCompacted": "Rozmowa się wydłużyła, więc wcześniejsza część poszła jako podsumowanie.",
+    "contextUsage": "Kontekst {{percent}}%",
+    "contextUsageHint": "Ta rozmowa zajmuje {{percent}}% tego, co model może przeczytać naraz. Powyżej 70% wcześniejsza część idzie jako podsumowanie, a tylko ostatnie wymiany bez zmian.",
+    "browserAgent": "Sterowanie przeglądarką",
+    "browserAgentHint": "Shizue klika i pisze w bieżącej karcie. Pyta przed wysłaniem, usunięciem lub płatnością",
+    "browserAgentPlaceholder": "Co mam zrobić w tej karcie?"
   },
   "footer": {
     "joinDiscord": "Dołącz do mnie na Discordzie!",
@@ -169,7 +193,12 @@
     "general": "Ogólne",
     "models": "Modele",
     "layout": "Układ",
-    "registered": "Zarejestrowany"
+    "registered": "Zarejestrowany",
+    "pageTranslation": "Tłumaczenie stron",
+    "maskPrivateDescription": "Adresy e-mail, numery telefonów i kart oraz klucze API nie trafiają do AI. Zostają takie, jak na stronie.",
+    "maskPrivate": "Nie wysyłaj danych osobowych",
+    "savedTranslations": "Zapisane tłumaczenia: {{number}} · 30 dni",
+    "savedTranslationsClear": "Wyczyść"
   },
   "time": {
     "justNow": "przed chwilą",
@@ -270,7 +299,8 @@
       "original": "Oryginał",
       "translation": "Tłumaczenie",
       "bilingual": "Oryginał + tłumaczenie"
-    }
+    },
+    "turnOnSiteCaptions": "Włącz napisy w filmie, aby zobaczyć ich tłumaczenie"
   },
   "usage": {
     "title": "Wykorzystanie Tokenów",
@@ -340,5 +370,69 @@
     "saved": "Zapisano",
     "openList": "Otwórz listę słówek",
     "saveFailed": "Nie udało się zapisać."
+  },
+  "pageTranslation": {
+    "failed": "Nie udało się przetłumaczyć",
+    "retry": "Spróbuj ponownie"
+  },
+  "meeting": {
+    "liveTranslation": "Tłumaczenie spotkań Shizue",
+    "waiting": "Tłumaczenia pojawią się tutaj, gdy ktoś zacznie mówić",
+    "turnOnCaptions": "Włącz napisy (CC) spotkania, aby zobaczyć ich tłumaczenie",
+    "unreadable": "Nie udało się odczytać napisów tego spotkania. Strona mogła się zmienić.",
+    "preparing": "Pobieranie modelu tłumaczenia Chrome"
+  },
+  "imageTranslation": {
+    "translating": "Tłumaczenie obrazu…",
+    "translated": "Przetłumaczono",
+    "original": "Oryginał",
+    "showOriginal": "Pokaż oryginał",
+    "showTranslation": "Pokaż tłumaczenie",
+    "noText": "Brak tekstu do przetłumaczenia",
+    "failed": "Nie udało się przetłumaczyć",
+    "retry": "Ponów",
+    "noImageModel": "Potrzebny jest model czatu obsługujący obrazy",
+    "close": "Zamknij",
+    "pageActive": "Tłumaczenie obrazów na stronie",
+    "stop": "Wyłącz"
+  },
+  "agent": {
+    "working": "Działam na {{host}}",
+    "stepsDone": "Kroki na {{host}}: {{count}}",
+    "readPage": "Odczytano stronę {{host}}",
+    "step": {
+      "click": "Kliknij „{{target}}”",
+      "type": "Wpisz „{{text}}” w „{{target}}”",
+      "typeSubmit": "Wpisz „{{text}}” w „{{target}}” i naciśnij Enter",
+      "select": "Wybierz „{{text}}” w „{{target}}”",
+      "scrollDown": "Przewiń w dół",
+      "scrollUp": "Przewiń w górę",
+      "navigate": "Otwórz {{host}}",
+      "back": "Wstecz",
+      "wait": "Poczekaj na stronę"
+    },
+    "approvalTitle": "Zezwolić na tę czynność?",
+    "approvalHint": "Może coś wysłać, usunąć lub opłacić i być trudne do cofnięcia",
+    "allow": "Zezwól",
+    "deny": "Odmów",
+    "denied": "Odrzucono",
+    "error": {
+      "not_found": "Tego elementu nie ma już na stronie",
+      "secret_field": "Hasła i dane karty wpisz samodzielnie",
+      "not_select": "To nie jest lista rozwijana",
+      "no_option": "Nie ma takiej opcji",
+      "bad_url": "Nie można otworzyć tego adresu",
+      "unreachable": "Tej strony nie można sterować",
+      "failed": "Nie udało się"
+    },
+    "outcome": {
+      "stopped": "Zatrzymano",
+      "max_steps": "Zatrzymano po zbyt wielu krokach. Spróbuj mniejszego zadania",
+      "unavailable": "Tej karty nie można sterować. Otwórz stronę internetową i spróbuj ponownie",
+      "failed": "Zatrzymano: nie wiadomo, co dalej"
+    },
+    "overlayWorking": "Shizue działa w tej karcie",
+    "overlayWaiting": "Czeka na zgodę w panelu",
+    "overlayStop": "Zatrzymaj"
   }
 }

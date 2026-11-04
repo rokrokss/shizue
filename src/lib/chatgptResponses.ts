@@ -30,13 +30,13 @@ export function responseRequestBody({ model, input, instructions, reasoning, web
   const effort = (reasoning as { effort?: unknown } | undefined)?.effort;
   if (reasoning !== undefined && (
     !reasoning || typeof reasoning !== 'object' || Array.isArray(reasoning) ||
-    typeof effort !== 'string' || !['low', 'none'].includes(effort)
+    typeof effort !== 'string' || !['low', 'none', 'high'].includes(effort)
   )) throw new Error('Invalid ChatGPT reasoning effort.');
   // Construct only supported fields; never forward arbitrary options.
   return {
     model, input,
     ...(instructions ? { instructions } : {}),
-    ...(reasoning ? { reasoning: { effort: effort as 'low' | 'none' } } : {}),
+    ...(reasoning ? { reasoning: { effort: effort as 'low' | 'none' | 'high' } } : {}),
     ...(webSearch === true ? { tools: [{ type: 'web_search' }] } : {}),
     store: false, stream: true,
   };

@@ -34,7 +34,9 @@
     "explainSelection": "चयनित टेक्स्ट समझाएँ",
     "summarizeSelection": "चयनित टेक्स्ट का सारांश करें",
     "fixGrammarSelection": "चयनित टेक्स्ट का व्याकरण सुधारें",
-    "removeTranslation": "अनुवाद हटाएं"
+    "removeTranslation": "अनुवाद हटाएं",
+    "translateImage": "छवि का अनुवाद करें",
+    "translatePageImages": "पेज की सभी छवियों का अनुवाद करें"
   },
   "onboarding": {
     "greeting_0": "आपका स्वागत है!",
@@ -132,7 +134,29 @@
     "inPage": "मूल",
     "webSource": "स्रोत",
     "backToPage": "पेज पर वापस जाएँ",
-    "deleteMessage": "संदेश हटाएं"
+    "deleteMessage": "संदेश हटाएं",
+    "thinking": "सोच रहा है · {{seconds}} से.",
+    "thoughtFor": "{{seconds}} से. तक सोचा",
+    "thought": "सोचा",
+    "reasoningEffort": "सोचने का स्तर",
+    "reasoningEffort_low": "कम",
+    "reasoningEffort_medium": "मध्यम",
+    "reasoningEffort_high": "अधिक",
+    "reasoningEffortHint_low": "जल्दी जवाब देता है",
+    "reasoningEffortHint_medium": "मॉडल के सामान्य तरीके से सोचता है",
+    "reasoningEffortHint_high": "ज़्यादा सोचकर ध्यान से जवाब देता है",
+    "reasoningEffortNotSupported": "इस मॉडल में इसे बदला नहीं जा सकता",
+    "reasoningEffortChip": "सोच: {{level}}",
+    "suggestedQuestions": "आगे पूछें",
+    "videoMoment": "यह पल",
+    "videoMomentHint": "वीडियो में अभी चल रहे हिस्से के बारे में जवाब देता है",
+    "videoMomentAt": "{{time}} पर",
+    "contextCompacted": "बातचीत लंबी हो गई, इसलिए पहले का हिस्सा सारांश के रूप में भेजा गया।",
+    "contextUsage": "संदर्भ {{percent}}%",
+    "contextUsageHint": "यह बातचीत मॉडल द्वारा एक बार में पढ़ी जा सकने वाली मात्रा का {{percent}}% भर रही है। 70% के बाद पहले का हिस्सा सारांश के रूप में और केवल हाल की बातचीत जैसी है वैसी भेजी जाती है।",
+    "browserAgent": "ब्राउज़र नियंत्रण",
+    "browserAgentHint": "Shizue मौजूदा टैब में खुद क्लिक और टाइप करता है। भेजने, हटाने या भुगतान से पहले पूछता है",
+    "browserAgentPlaceholder": "इस टैब में क्या करूँ?"
   },
   "footer": {
     "joinDiscord": "Discord पर मुझसे जुड़ें!",
@@ -169,7 +193,12 @@
     "general": "सामान्य",
     "models": "मॉडल",
     "layout": "लेआउट",
-    "registered": "रजिस्टर्ड"
+    "registered": "रजिस्टर्ड",
+    "pageTranslation": "पेज अनुवाद",
+    "maskPrivateDescription": "ईमेल, फ़ोन नंबर, कार्ड नंबर और API कुंजियाँ AI को नहीं भेजी जातीं। वे पेज पर जैसी थीं वैसी ही दिखती हैं।",
+    "maskPrivate": "निजी जानकारी न भेजें",
+    "savedTranslations": "{{number}} सहेजे गए अनुवाद · 30 दिन",
+    "savedTranslationsClear": "साफ़ करें"
   },
   "time": {
     "justNow": "अभी-अभी",
@@ -270,7 +299,8 @@
       "original": "मूल",
       "translation": "अनुवाद",
       "bilingual": "मूल + अनुवाद"
-    }
+    },
+    "turnOnSiteCaptions": "अनुवाद देखने के लिए वीडियो के सबटाइटल चालू करें"
   },
   "usage": {
     "title": "टोकन उपयोग",
@@ -340,5 +370,69 @@
     "saved": "सहेजा गया",
     "openList": "शब्द सूची खोलें",
     "saveFailed": "सहेजा नहीं जा सका।"
+  },
+  "pageTranslation": {
+    "failed": "अनुवाद नहीं हो सका",
+    "retry": "फिर से कोशिश करें"
+  },
+  "meeting": {
+    "liveTranslation": "Shizue मीटिंग अनुवाद",
+    "waiting": "किसी के बोलने पर अनुवाद यहाँ दिखेगा",
+    "turnOnCaptions": "अनुवाद देखने के लिए मीटिंग के कैप्शन (CC) चालू करें",
+    "unreadable": "इस मीटिंग के कैप्शन नहीं पढ़े जा सके। साइट शायद बदल गई है।",
+    "preparing": "Chrome का अनुवाद मॉडल डाउनलोड हो रहा है"
+  },
+  "imageTranslation": {
+    "translating": "छवि का अनुवाद हो रहा है…",
+    "translated": "अनुवादित",
+    "original": "मूल",
+    "showOriginal": "मूल देखें",
+    "showTranslation": "अनुवाद देखें",
+    "noText": "अनुवाद के लिए कोई पाठ नहीं",
+    "failed": "अनुवाद नहीं हो सका",
+    "retry": "फिर से कोशिश करें",
+    "noImageModel": "ऐसा चैट मॉडल चाहिए जो छवियाँ पढ़ सके",
+    "close": "बंद करें",
+    "pageActive": "इस पेज की छवियों का अनुवाद हो रहा है",
+    "stop": "बंद करें"
+  },
+  "agent": {
+    "working": "{{host}} पर काम हो रहा है",
+    "stepsDone": "{{host}} पर {{count}} चरण",
+    "readPage": "{{host}} का पेज पढ़ा",
+    "step": {
+      "click": "‘{{target}}’ पर क्लिक",
+      "type": "‘{{target}}’ में “{{text}}” लिखें",
+      "typeSubmit": "‘{{target}}’ में “{{text}}” लिखकर Enter दबाएँ",
+      "select": "‘{{target}}’ में “{{text}}” चुनें",
+      "scrollDown": "नीचे स्क्रॉल",
+      "scrollUp": "ऊपर स्क्रॉल",
+      "navigate": "{{host}} खोलें",
+      "back": "वापस जाएँ",
+      "wait": "पेज का इंतज़ार"
+    },
+    "approvalTitle": "क्या यह काम करने दें?",
+    "approvalHint": "यह भेजना, हटाना या भुगतान हो सकता है, जिसे पलटना मुश्किल है",
+    "allow": "अनुमति दें",
+    "deny": "मना करें",
+    "denied": "मना किया",
+    "error": {
+      "not_found": "वह तत्व अब पेज पर नहीं है",
+      "secret_field": "पासवर्ड और कार्ड की जानकारी खुद भरें",
+      "not_select": "यह ड्रॉपडाउन नहीं है",
+      "no_option": "ऐसा कोई विकल्प नहीं",
+      "bad_url": "यह पता नहीं खुल सकता",
+      "unreachable": "इस पेज को नियंत्रित नहीं किया जा सकता",
+      "failed": "नहीं हो सका"
+    },
+    "outcome": {
+      "stopped": "रोका गया",
+      "max_steps": "बहुत चरणों के बाद रुका। छोटा काम दें",
+      "unavailable": "यह टैब नियंत्रित नहीं हो सकता। कोई वेब पेज खोलकर फिर कोशिश करें",
+      "failed": "रुका: आगे क्या करना है तय नहीं हो सका"
+    },
+    "overlayWorking": "Shizue इस टैब में काम कर रहा है",
+    "overlayWaiting": "पैनल में आपकी अनुमति का इंतज़ार",
+    "overlayStop": "रोकें"
   }
 }

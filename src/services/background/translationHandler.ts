@@ -18,8 +18,10 @@ import {
   getWordMeaningPrompt,
   getYoutubeCaptionTranslationPrompt,
   LiveCaptionMetadata,
+  PageContext,
   SubtitleMetadata,
 } from '@/lib/prompts';
+import { cacheTranslations, getCachedTranslations } from '@/lib/indexDB';
 import { rateLimitWaitMs } from '@/lib/rateLimit';
 import { trackTokenUsage } from '@/lib/tokenUsageTracker';
 import { parseWordMeaning, WORD_MEANING_JSON_SCHEMA, WordMeaning } from '@/lib/wordLookup';
@@ -33,11 +35,25 @@ export interface TranslationResult {
   error?: string;
 }
 
+// An empty translation means the snippet needs none; null, that it couldn't be translated.
 export interface BatchTranslationResult {
+  success: boolean;
+  translatedTexts?: (string | null)[];
+  error?: string;
+}
+
+interface HtmlTranslationsResult {
   success: boolean;
   translatedTexts?: string[];
   error?: string;
 }
+
+// Saved translations are found by model, target language and snippet, never by the page.
+const translationCacheKey = async (model: string, language: string, text: string) => {
+  const bytes = new TextEncoder().encode(`${model}\u0000${language}\u0000${text}`);
+  const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', bytes));
+  return Array.from(digest, (byte) => byte.toString(16).padStart(2, '0')).join('');
+};
 
 export interface YoutubeCaptionTranslationResult {
   success: boolean;
@@ -452,7 +468,10 @@ export class TranslationHandler {
     }
   }
 
-  public async translateHtmlTextBatch(textBatch: string[]): Promise<BatchTranslationResult> {
+  public async translateHtmlTextBatch(
+    textBatch: string[],
+    context?: PageContext
+  ): Promise<BatchTranslationResult> {
     if (!textBatch || textBatch.length === 0) {
       debugLog('TranslationHandler [translateHtmlTextBatch] received empty batch.');
       return { success: false, error: 'Empty batch provided.' };
@@ -460,10 +479,33 @@ export class TranslationHandler {
 
     try {
       const modelPreset = getTranslationModelPreset();
-      if (isLocalModel(modelPreset.modelName)) {
-        return await this.translateHtmlTextBatchLocally(textBatch, modelPreset);
+      const targetLanguage = getTranslationTargetLanguage();
+      const keys = await Promise.all(
+        textBatch.map((text) => translationCacheKey(modelPreset.modelName, targetLanguage, text))
+      );
+      const translatedTexts: (string | null | undefined)[] = await getCachedTranslations(keys).catch(
+        (error) => {
+          errorLog('TranslationHandler [translateHtmlTextBatch] cache read failed:', error);
+          return keys.map(() => undefined);
+        }
+      );
+      const missing = textBatch.flatMap((_, i) => (translatedTexts[i] === undefined ? [i] : []));
+      if (missing.length > 0) {
+        const texts = missing.map((i) => textBatch[i]);
+        const fresh = isLocalModel(modelPreset.modelName)
+          ? await this.translateHtmlTextBatchLocally(texts, modelPreset, context)
+          : await this.translateHtmlInHalves(texts, modelPreset, context);
+        missing.forEach((index, j) => (translatedTexts[index] = fresh[j]));
+        void cacheTranslations(
+          missing.flatMap((index, j) =>
+            fresh[j] === null ? [] : [{ key: keys[index], translation: fresh[j] as string }]
+          )
+        ).catch((error) => errorLog('TranslationHandler [translateHtmlTextBatch] cache write failed:', error));
       }
-      return await this.requestHtmlTranslations(textBatch, modelPreset);
+      debugLog(
+        `TranslationHandler [translateHtmlTextBatch] ${textBatch.length - missing.length} of ${textBatch.length} from saved translations`
+      );
+      return { success: true, translatedTexts: translatedTexts as (string | null)[] };
     } catch (err) {
       errorLog('TranslationHandler [translateHtmlTextBatch] general error:', err);
       return {
@@ -475,36 +517,59 @@ export class TranslationHandler {
     }
   }
 
+  // A response whose JSON is broken or whose count is wrong is retried in halves, down to single
+  // snippets. One that still fails on its own comes back as null, and the page offers to try it
+  // again. An error from the request itself (network, key, quota) fails the whole batch at once.
+  private async translateHtmlInHalves(
+    texts: string[],
+    modelPreset: ModelPreset,
+    context?: PageContext
+  ): Promise<(string | null)[]> {
+    const result = await this.requestHtmlTranslations(texts, modelPreset, context);
+    if (result.success && result.translatedTexts) return result.translatedTexts;
+    if (texts.length === 1) return [null];
+    debugLog('TranslationHandler [translateHtmlTextBatch] retrying in halves:', texts.length);
+    const middle = Math.ceil(texts.length / 2);
+    const parts = await Promise.all(
+      [texts.slice(0, middle), texts.slice(middle)].map((part) =>
+        this.translateHtmlInHalves(part, modelPreset, context)
+      )
+    );
+    return parts.flat();
+  }
+
   // A request whose JSON is broken or whose count is wrong is retried one snippet at a time; a
-  // snippet that still fails stays untranslated ('').
+  // snippet that still fails comes back as null.
   private async translateHtmlTextBatchLocally(
     textBatch: string[],
-    modelPreset: ModelPreset
-  ): Promise<BatchTranslationResult> {
-    const translatedTexts: string[] = [];
+    modelPreset: ModelPreset,
+    context?: PageContext
+  ): Promise<(string | null)[]> {
+    const translatedTexts: (string | null)[] = [];
     for (let i = 0; i < textBatch.length; i += LOCAL_TRANSLATION_BATCH_SIZE) {
       const chunk = textBatch.slice(i, i + LOCAL_TRANSLATION_BATCH_SIZE);
-      const result = await this.requestHtmlTranslations(chunk, modelPreset);
+      const result = await this.requestHtmlTranslations(chunk, modelPreset, context);
       if (result.success && result.translatedTexts) {
         translatedTexts.push(...result.translatedTexts);
         continue;
       }
       for (const text of chunk) {
-        const single = await this.requestHtmlTranslations([text], modelPreset);
-        translatedTexts.push(single.translatedTexts?.[0] ?? '');
+        const single = await this.requestHtmlTranslations([text], modelPreset, context);
+        translatedTexts.push(single.translatedTexts?.[0] ?? null);
       }
     }
-    return { success: true, translatedTexts };
+    return translatedTexts;
   }
 
   private async requestHtmlTranslations(
     textBatch: string[],
-    modelPreset: ModelPreset
-  ): Promise<BatchTranslationResult> {
+    modelPreset: ModelPreset,
+    context?: PageContext
+  ): Promise<HtmlTranslationsResult> {
     const targetLanguage = getTranslationTargetLanguage();
     const serializedTextBatch = JSON.stringify(textBatch, null, 2);
 
-    const batchPrompt = getHtmlTranslationBatchPrompt(serializedTextBatch, targetLanguage);
+    const batchPrompt = getHtmlTranslationBatchPrompt(serializedTextBatch, targetLanguage, context);
 
     const llm = getModelInstance({
       temperature: 0.1,

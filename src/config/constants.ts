@@ -18,6 +18,15 @@ export const MESSAGE_INJECT_NETFLIX_BRIDGE = 'inject_netflix_bridge';
 export const MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE = 'context_menu_translate_page';
 export const MESSAGE_TRANSLATE_FRAMES = 'translate_frames';
 export const MESSAGE_REMEMBER_THREAD = 'action_remember_thread';
+// Questions to ask next, offered under a finished summary (ChatModelHandler.suggestQuestions).
+export const MESSAGE_SUGGEST_QUESTIONS = 'action_suggest_questions';
+export const MESSAGE_TRANSLATE_IMAGE = 'action_translate_image';
+// The browser agent (lib/browserAgent.ts): the panel's answer to an approval card, over the
+// answer's port, and the stop button of the agent's pill on the page.
+export const MESSAGE_AGENT_APPROVAL = 'action_agent_approval';
+export const MESSAGE_AGENT_STOP = 'action_agent_stop';
+export const MESSAGE_CONTEXT_MENU_TRANSLATE_IMAGE = 'action_context_menu_translate_image';
+export const MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE_IMAGES = 'action_context_menu_translate_page_images';
 export const MESSAGE_FRAME_TRANSLATION_STATE = 'frame_translation_state';
 export const MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE = 'context_menu_summarize_page';
 export const MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE = 'context_menu_describe_image';
@@ -61,6 +70,8 @@ export const STORAGE_CHATGPT_CONNECTION = 'CHATGPT_CONNECTION';
 // OAuth tokens. Read only by the background (services/background/chatgpt.ts), never by the UI.
 export const STORAGE_CHATGPT_CREDENTIALS = 'CHATGPT_CREDENTIALS';
 export const STORAGE_USER_MEMORY = 'USER_MEMORY';
+// How hard the chat model thinks: 'low', 'medium' (the model's default) or 'high' (lib/reasoning.ts).
+export const STORAGE_REASONING_EFFORT = 'REASONING_EFFORT';
 export const STORAGE_AUTO_MEMORY = 'AUTO_MEMORY';
 export const STORAGE_GLOBAL_STATE = 'GLOBAL_STATE';
 export const STORAGE_THEME = 'THEME';
@@ -83,6 +94,8 @@ export const STORAGE_NETFLIX_CAPTION_DISPLAY = 'NETFLIX_CAPTION_DISPLAY';
 export const STORAGE_NETFLIX_AUTO_ACTIVATE = 'NETFLIX_AUTO_ACTIVATE';
 export const STORAGE_TOGGLE_HIDDEN_SITE_LIST = 'TOGGLE_HIDDEN_SITE_LIST';
 export const STORAGE_PAGE_TRANSLATION_MODE = 'PAGE_TRANSLATION_MODE';
+// Page translation sends emails, phone numbers, card numbers and API keys as placeholders (on unless false).
+export const STORAGE_TRANSLATION_MASK_PRIVATE = 'TRANSLATION_MASK_PRIVATE';
 // chrome.storage.session: the tab showing the panel page where there is no side panel, and the page
 // tab it was last opened from.
 export const STORAGE_PANEL_TAB = 'PANEL_TAB';

@@ -142,6 +142,18 @@ export const modelSupportsImages = (model: ChatModel, localServer?: LocalServerC
     ? Boolean(resolveLocalModel(model, localServer)?.supportsImages)
     : Boolean(getModelSpec(model)?.supportsImages);
 
+// Reasoning models take a thinking effort (lib/reasoning.ts): cloud models without temperature
+// support, every ChatGPT plan model, and local Ollama models that can think.
+export const modelSupportsReasoningEffort = (model: ChatModel, localServer?: LocalServerConfig | null) =>
+  isChatGPTModel(model)
+    ? true
+    : isLocalModel(model)
+    ? (() => {
+        const local = resolveLocalModel(model, localServer);
+        return local?.kind === 'ollama' && local.supportsThinking;
+      })()
+    : getModelSpec(model)?.supportsTemperature === false;
+
 // Web search uses each provider's own search tool (OpenAI's and ChatGPT's web_search, Anthropic's
 // web search, Gemini's Google Search, OpenRouter's web plugin). Local servers have none.
 export const modelSupportsWebSearch = (model: ChatModel) => !isLocalModel(model);

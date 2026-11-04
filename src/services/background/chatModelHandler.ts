@@ -1,6 +1,7 @@
 import {
   isSelectionActionType,
   STORAGE_AUTO_MEMORY,
+  STORAGE_REASONING_EFFORT,
   STORAGE_USER_MEMORY,
   STREAM_FLUSH_THRESHOLD_0,
   STREAM_FLUSH_THRESHOLD_1,
@@ -36,19 +37,30 @@ import {
   isLocalModel,
   localContextLength,
   LocalServerConfig,
+  modelSupportsReasoningEffort,
   modelSupportsWebSearch,
   ModelPreset,
   providerFromName,
 } from '@/lib/models';
 import {
+  FOLLOW_UP_QUESTIONS_JSON_SCHEMA,
   getAttachedPagesPrompt,
+  getConversationSummaryPrompt,
+  getFollowUpQuestionsPrompt,
   getInitialAIMessage,
   getInitialSystemMessage,
   getMemoryExtractionPrompt,
+  getVideoMomentPrompt,
+  withConversationSummary,
 } from '@/lib/prompts';
+import { formatVideoTime } from '@/lib/videoTranscript';
+import { chunkParts, isReasoningEffort, ReasoningEffort, thinkTagSplitter } from '@/lib/reasoning';
+import { CLOUD_CONTEXT_TOKENS, planCompaction } from '@/lib/chatCompaction';
 import { readStorage, setStorage } from '@/lib/storageBackend';
 import { trackStreamingTokenUsage, trackTokenUsage } from '@/lib/tokenUsageTracker';
 import { collectWebSources, orderedWebSources, WebSource } from '@/lib/webSources';
+import type { AgentLabels } from '@/lib/browserAgent';
+import { runBrowserAgent } from '@/services/background/browserAgentHandler';
 import { debugLog, errorLog } from '@/logs';
 import {
   AIMessage,
@@ -58,7 +70,7 @@ import {
   SystemMessage,
 } from '@langchain/core/messages';
 
-function getChatModelPreset(): ModelPreset {
+export function getChatModelPreset(): ModelPreset {
   const openaiKey = getCurrentOpenaiKey();
   const geminiKey = getCurrentGeminiKey();
   const anthropicKey = getCurrentAnthropicKey();
@@ -77,33 +89,28 @@ function getChatModelPreset(): ModelPreset {
   };
 }
 
-// Some local models (qwen3.5 on Ollama with thinking off) still open their reply with an empty
-// <think></think> block, which arrives as plain text. Returns a filter for the streamed deltas that
-// drops a think block at the start of the reply, and the whitespace after it.
-const leadingThinkBlockFilter = () => {
-  const open = '<think>';
-  const close = '</think>';
-  let head = '';
-  let state: 'head' | 'afterBlock' | 'passing' = 'head';
-  return (delta: string): string => {
-    if (state === 'passing') return delta;
-    if (state === 'afterBlock') {
-      const text = delta.trimStart();
-      if (text) state = 'passing';
-      return text;
-    }
-    head += delta;
-    const trimmed = head.trimStart();
-    if (!open.startsWith(trimmed.slice(0, open.length))) {
-      state = 'passing';
-      return head;
-    }
-    const end = trimmed.indexOf(close);
-    if (end === -1) return '';
-    const rest = trimmed.slice(end + close.length).trimStart();
-    state = rest ? 'passing' : 'afterBlock';
-    return rest;
-  };
+// The chat's thinking effort, for a model that takes one; undefined is the model's default.
+const reasoningEffortFor = async (modelName: ChatModel) => {
+  const stored = await readStorage<ReasoningEffort>(STORAGE_REASONING_EFFORT);
+  if (!isReasoningEffort(stored) || stored === 'medium') return undefined;
+  return modelSupportsReasoningEffort(modelName, getCurrentLocalServer()) ? stored : undefined;
+};
+
+// The model's suggested questions: at most three, each short, none twice.
+const parseQuestions = (text: string): string[] => {
+  try {
+    const json = text.trim().replace(/^```(?:json)?\s*|\s*```$/g, '');
+    const questions = JSON.parse(json)?.questions;
+    if (!Array.isArray(questions)) return [];
+    const seen = new Set<string>();
+    return questions
+      .filter((q): q is string => typeof q === 'string')
+      .map((q) => q.replace(/\s+/g, ' ').trim())
+      .filter((q) => q && q.length <= 150 && !seen.has(q) && seen.add(q))
+      .slice(0, 3);
+  } catch {
+    return [];
+  }
 };
 
 // Room kept for the reply when fitting a local model's context.
@@ -196,6 +203,12 @@ const rememberedFacts = async () => {
   return memory?.enabled ? memory.facts.map((fact) => fact.text) : [];
 };
 
+// The question being answered, when it asked the browser agent to do it in the tab.
+const agentTask = (history: Message[]) => {
+  const question = [...history].reverse().find((m) => m.role === 'human');
+  return question?.browserAgent ? question : null;
+};
+
 // Whether the question being answered asked for a web search.
 const asksForWebSearch = (history: Message[]) =>
   Boolean([...history].reverse().find((m) => m.role === 'human')?.webSearch);
@@ -207,7 +220,10 @@ const toModelMessage = (
   localServer?: LocalServerConfig
 ) => {
   if (m.role !== 'human') return new AIMessage(m.content);
-  const text = m.attachments?.length ? getAttachedPagesPrompt(m.content, m.attachments) : m.content;
+  const question = m.videoMoment
+    ? getVideoMomentPrompt(formatVideoTime(m.videoMoment.seconds), m.content)
+    : m.content;
+  const text = m.attachments?.length ? getAttachedPagesPrompt(question, m.attachments) : question;
   if (!m.images?.length) return new HumanMessage(text);
   return new HumanMessage({
     content: [
@@ -219,6 +235,59 @@ const toModelMessage = (
 
 export class ChatModelHandler {
   constructor() {}
+
+  // An answer by the browser agent (services/background/browserAgentHandler.ts): the chat before
+  // the task goes with it, a question and its answer at a time.
+  private async runAgentAnswer(
+    messageId: string,
+    history: Message[],
+    task: Message,
+    port: chrome.runtime.Port,
+    abortController: AbortController,
+    labels?: AgentLabels
+  ) {
+    try {
+      const modelPreset = getChatModelPreset();
+      const { connectionMode, modelName } = modelPreset;
+      const localServer = getCurrentLocalServer() ?? undefined;
+      const earlier: BaseMessage[] = [];
+      const before = history.slice(0, history.indexOf(task)).filter((m) => m.content.trim()).slice(-6);
+      for (const m of before) {
+        const role = m.role === 'human' ? 'human' : 'ai';
+        // Providers want the turns to alternate, starting with a question.
+        if (earlier.length === 0 && role === 'ai') continue;
+        if (earlier.length > 0 && (earlier[earlier.length - 1] instanceof HumanMessage) === (role === 'human')) {
+          earlier.pop();
+        }
+        earlier.push(toModelMessage({ ...m, attachments: undefined, images: undefined }, modelName, connectionMode, localServer));
+      }
+      if (earlier.length > 0 && earlier[earlier.length - 1] instanceof HumanMessage) earlier.pop();
+      await runBrowserAgent({
+        messageId,
+        task: task.content,
+        history: earlier,
+        lang: getCurrentLanguage(),
+        labels,
+        reasoningEffort: await reasoningEffortFor(modelName),
+        modelPreset,
+        port,
+        signal: abortController.signal,
+      });
+      if (!abortController.signal.aborted) port.postMessage({ done: true });
+    } catch (err) {
+      if (abortController.signal.aborted) return;
+      errorLog('ChatModelHandler [runAgentAnswer] failed:', err);
+      const errorMessage = (err as Error).message ?? String(err);
+      try {
+        port.postMessage({ error: 'stream_error', message: errorMessage });
+      } catch {
+        // The panel is gone.
+      }
+      await db.messages.update(messageId, { onInterrupt: true, errorMessage });
+    } finally {
+      await db.messages.update(messageId, abortController.signal.aborted ? { stopped: true } : { done: true });
+    }
+  }
 
   private async _executeStreamAndUpdate(
     messageId: string,
@@ -237,6 +306,7 @@ export class ChatModelHandler {
       const webSearch = webSearchRequested && modelSupportsWebSearch(modelPreset.modelName);
       const modelOptions = {
         streaming: true,
+        reasoningEffort: await reasoningEffortFor(modelPreset.modelName),
         temperature:
           actionType === 'askForSummary' ||
           actionType === 'describeImage' ||
@@ -272,8 +342,22 @@ export class ChatModelHandler {
       let buffer = '';
       let aggregatedChunk: AIMessageChunk | undefined;
       const sources = new Map<string, WebSource & { cited: boolean }>();
-      const visibleText =
-        isLocalModel(modelPreset.modelName) ? leadingThinkBlockFilter() : (text: string) => text;
+      const splitThinkTag = isLocalModel(modelPreset.modelName) ? thinkTagSplitter() : null;
+      // The thinking the model shows before it answers goes to the panel as it comes, and how
+      // long it thought once the answer starts.
+      let reasoning = '';
+      let reasoningBuffer = '';
+      let thinkingStartedAt: number | undefined;
+      let thinkingMs: number | undefined;
+      const sendReasoning = (force = false) => {
+        if (!reasoningBuffer || (!force && reasoningBuffer.length < STREAM_FLUSH_THRESHOLD_0)) return;
+        reasoning += reasoningBuffer;
+        port.postMessage({ reasoning: reasoningBuffer });
+        reasoningBuffer = '';
+        db.messages.update(messageId, { reasoning }).catch((err) => {
+          errorLog('Failed to update message reasoning in DB:', err);
+        });
+      };
 
       const sendBufferToPort = () => {
         const threshold = fullResponseContent ? STREAM_FLUSH_THRESHOLD_1 : STREAM_FLUSH_THRESHOLD_0;
@@ -292,19 +376,33 @@ export class ChatModelHandler {
       for await (const chunk of stream) {
         if (webSearch) {
           collectWebSources([chunk.content, chunk.response_metadata, chunk.additional_kwargs], sources);
-          // OpenRouter's raw chunks carry its citations; merged together they'd only be noise.
-          delete chunk.additional_kwargs.__raw_response;
         }
+        const parts = chunkParts(chunk);
+        // OpenRouter's raw chunks were only needed for the thinking and the citations.
+        delete chunk.additional_kwargs.__raw_response;
         aggregatedChunk = aggregatedChunk ? aggregatedChunk.concat(chunk) : chunk;
-        // `text` skips non-text blocks such as reasoning/thinking content.
-        const delta = visibleText(chunk.text);
-        
+        const tagged = splitThinkTag ? splitThinkTag(parts.text) : { text: parts.text, reasoning: '' };
+        const thought = parts.reasoning + tagged.reasoning;
+        const delta = tagged.text;
+        if (thought && !fullResponseContent && !buffer) {
+          thinkingStartedAt ??= Date.now();
+          reasoningBuffer += thought;
+          sendReasoning();
+        }
+
         // 빈 델타는 무시
         if (!delta) continue;
-        
+
+        if (thinkingStartedAt !== undefined && thinkingMs === undefined) {
+          sendReasoning(true);
+          thinkingMs = Date.now() - thinkingStartedAt;
+          port.postMessage({ thinkingMs });
+          await db.messages.update(messageId, { reasoning, thinkingMs });
+        }
         buffer += delta;
         sendBufferToPort();
       }
+      sendReasoning(true);
 
       if (buffer) {
         fullResponseContent += buffer;
@@ -359,7 +457,8 @@ export class ChatModelHandler {
     threadId: string,
     port: chrome.runtime.Port,
     abortController: AbortController,
-    actionType: ActionType
+    actionType: ActionType,
+    agentLabels?: AgentLabels
   ) {
     const messageId = crypto.randomUUID();
 
@@ -377,6 +476,11 @@ export class ChatModelHandler {
       });
 
       const threadHistory = await loadThread(threadId);
+      const task = agentTask(threadHistory);
+      if (task) {
+        await this.runAgentAnswer(messageId, threadHistory, task, port, abortController, agentLabels);
+        return;
+      }
 
       const customInstructions = (await readStorage<UserMemory>(STORAGE_USER_MEMORY))?.text;
 
@@ -387,14 +491,15 @@ export class ChatModelHandler {
         await rememberedFacts()
       );
       const initialAIMessage = getInitialAIMessage(currentLang);
-      const modelName = getCurrentChatModel();
-      const connectionMode = getConnectionModeFor(modelName);
-      const localServer = getCurrentLocalServer();
 
-      const messages = [
-        ...initialMessagesFor(modelName, initialSystemMessage, initialAIMessage),
-        ...threadHistory.map((m) => toModelMessage(m, modelName, connectionMode, localServer)),
-      ];
+      const messages = await this.compactedMessages(
+        threadId,
+        messageId,
+        threadHistory,
+        initialSystemMessage,
+        initialAIMessage,
+        port
+      );
 
       await this._executeStreamAndUpdate(
         messageId,
@@ -486,12 +591,160 @@ export class ChatModelHandler {
     }
   }
 
+  // The request for an answer: the system message, then the thread as the model reads it. A long
+  // thread's older turns go as a summary in the system message (lib/chatCompaction.ts). Tells the
+  // panel how much of the context it fills, and whether this answer folded turns into the summary.
+  private async compactedMessages(
+    threadId: string,
+    answerId: string,
+    history: Message[],
+    systemMessage: string,
+    greeting: string,
+    port: chrome.runtime.Port
+  ): Promise<BaseMessage[]> {
+    const modelName = getCurrentChatModel();
+    const connectionMode = getConnectionModeFor(modelName);
+    const localServer = getCurrentLocalServer();
+    const local = getLocalModelFor(modelName);
+    const budget = local ? localContextLength(local) : CLOUD_CONTEXT_TOKENS;
+    const modelMessages = history.map((m) => toModelMessage(m, modelName, connectionMode, localServer));
+    const fixed = estimateTextTokens(systemMessage) + estimateTextTokens(greeting);
+    const thread = await db.threads.get(threadId);
+    let plan = planCompaction(
+      history,
+      modelMessages.map(estimateMessageTokens),
+      fixed,
+      thread?.contextSummary,
+      budget,
+      estimateTextTokens
+    );
+    let compacted = false;
+    if (plan.fold) {
+      const { from, to } = plan.fold;
+      const text = await this.summarizeTurns(plan.summary, history.slice(from, to));
+      if (text) {
+        const until = history[to - 1].createdAt;
+        await db.threads.update(threadId, { contextSummary: { text, until, count: to } });
+        const tokens =
+          fixed +
+          estimateTextTokens(text) +
+          modelMessages.slice(to).reduce((sum, m) => sum + estimateMessageTokens(m), 0);
+        plan = { keepFrom: to, summary: text, tokens };
+        compacted = true;
+      }
+    }
+    const contextUsage = Math.min(1, plan.tokens / budget);
+    try {
+      port.postMessage({ contextUsage, contextCompacted: compacted });
+    } catch {
+      // The panel went away; the answer is still saved.
+    }
+    await db.messages.update(answerId, { contextUsage, ...(compacted ? { contextCompacted: true } : {}) });
+    const system = plan.summary ? withConversationSummary(systemMessage, plan.summary) : systemMessage;
+    return [...initialMessagesFor(modelName, system, greeting), ...modelMessages.slice(plan.keepFrom)];
+  }
+
+  // The turns folded into a long chat's summary, with the summary before them. Each message is cut
+  // to a few thousand characters, so the request stays small however long the pages attached were.
+  private async summarizeTurns(previous: string | undefined, turns: Message[]): Promise<string | null> {
+    try {
+      const modelPreset = getChatModelPreset();
+      const local = isLocalModel(modelPreset.modelName);
+      const llm = getModelInstance({
+        temperature: 0.2,
+        maxTokens: 1500,
+        streaming: local,
+        fast: true,
+        modelPreset,
+      });
+      const prompt = [
+        new HumanMessage(
+          getConversationSummaryPrompt(
+            getCurrentLanguage(),
+            previous,
+            turns.map((m) => ({
+              role: m.role,
+              text: (m.attachments?.length
+                ? `${m.content}\n(attached: ${m.attachments.map((page) => page.title || page.url).join(', ')})\n${m.attachments.map((page) => page.text).join('\n')}`
+                : m.content
+              ).slice(0, 3000),
+            }))
+          )
+        ),
+      ];
+      let response: AIMessage | AIMessageChunk | undefined;
+      if (local) {
+        for await (const chunk of await llm.stream(prompt)) {
+          response = response ? (response as AIMessageChunk).concat(chunk) : chunk;
+        }
+      } else {
+        response = await llm.invoke(prompt);
+      }
+      if (!response) return null;
+      await trackTokenUsage(modelPreset, response);
+      return response.text.trim() || null;
+    } catch (err) {
+      errorLog('ChatModelHandler [summarizeTurns] failed:', err);
+      return null;
+    }
+  }
+
+  // Up to three questions to ask next, under a summary that just finished; saved with the summary
+  // so the chat shows them again. Nothing for any other answer, or when the model can't say.
+  public async suggestQuestions(threadId: string): Promise<string[]> {
+    const thread = await loadThread(threadId);
+    const answer = thread[thread.length - 1];
+    const request = thread[thread.length - 2];
+    if (answer?.role !== 'ai' || !answer.done || answer.onInterrupt || !answer.content.trim()) return [];
+    if (request?.role !== 'human' || request.actionType !== 'askForSummary') return [];
+    if (answer.suggestions) return answer.suggestions;
+    try {
+      const modelPreset = getChatModelPreset();
+      const local = isLocalModel(modelPreset.modelName);
+      const llm = getModelInstance({
+        temperature: 0.3,
+        maxTokens: 400,
+        streaming: local,
+        fast: true,
+        modelPreset,
+        jsonSchema: FOLLOW_UP_QUESTIONS_JSON_SCHEMA,
+      });
+      const prompt = [
+        new HumanMessage(
+          getFollowUpQuestionsPrompt(
+            getCurrentLanguage(),
+            request.summaryTitle ?? '',
+            answer.content.slice(0, 8000)
+          )
+        ),
+      ];
+      // A slow local model's single response can outlast the service worker's fetch limit.
+      let response: AIMessage | AIMessageChunk | undefined;
+      if (local) {
+        for await (const chunk of await llm.stream(prompt)) {
+          response = response ? (response as AIMessageChunk).concat(chunk) : chunk;
+        }
+      } else {
+        response = await llm.invoke(prompt);
+      }
+      if (!response) return [];
+      await trackTokenUsage(modelPreset, response);
+      const suggestions = parseQuestions(response.text);
+      await db.messages.update(answer.id, { suggestions });
+      return suggestions;
+    } catch (err) {
+      errorLog('ChatModelHandler [suggestQuestions] failed:', err);
+      return [];
+    }
+  }
+
   public async retryStreamChat(
     threadId: string,
     messageIdxToRetry: number,
     port: chrome.runtime.Port,
     abortController: AbortController,
-    actionType: ActionType
+    actionType: ActionType,
+    agentLabels?: AgentLabels
   ) {
     try {
       const fullThreadHistory = await loadThread(threadId);
@@ -523,7 +776,20 @@ export class ChatModelHandler {
         errorMessage: undefined,
         contextTruncated: undefined,
         sources: undefined,
+        reasoning: undefined,
+        thinkingMs: undefined,
+        suggestions: undefined,
+        contextUsage: undefined,
+        contextCompacted: undefined,
+        agentRun: undefined,
       });
+
+      const historyForModelInput = fullThreadHistory.slice(0, messageIdxToRetry);
+      const task = agentTask(historyForModelInput);
+      if (task) {
+        await this.runAgentAnswer(messageIdToRetry, historyForModelInput, task, port, abortController, agentLabels);
+        return;
+      }
 
       const customInstructions = (await readStorage<UserMemory>(STORAGE_USER_MEMORY))?.text;
 
@@ -534,18 +800,15 @@ export class ChatModelHandler {
         await rememberedFacts()
       );
       const initialAIMessage = getInitialAIMessage(currentLang);
-      const modelName = getCurrentChatModel();
-      const connectionMode = getConnectionModeFor(modelName);
-      const localServer = getCurrentLocalServer();
 
-      const historyForModelInput = fullThreadHistory.slice(0, messageIdxToRetry);
-
-      const messagesForModel: BaseMessage[] = [
-        ...initialMessagesFor(modelName, initialSystemMessage, initialAIMessage),
-        ...historyForModelInput.map((m) =>
-          toModelMessage(m, modelName, connectionMode, localServer)
-        ),
-      ];
+      const messagesForModel = await this.compactedMessages(
+        threadId,
+        messageIdToRetry,
+        historyForModelInput,
+        initialSystemMessage,
+        initialAIMessage,
+        port
+      );
 
       await this._executeStreamAndUpdate(
         messageIdToRetry,

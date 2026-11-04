@@ -1,7 +1,11 @@
 import { useThemeValue } from '@/hooks/layout';
+import type { ReasoningEffort } from '@/lib/reasoning';
+import { formatVideoTime } from '@/lib/videoTranscript';
 import type { PageReadError, PageText } from '@/lib/tabText';
 import { videoKey, youtubeVideoId } from '@/lib/videoTranscript';
 import {
+  BulbOutlined,
+  ClockCircleOutlined,
   FileOutlined,
   FilePdfOutlined,
   FileTextOutlined,
@@ -9,6 +13,7 @@ import {
   LoadingOutlined,
   PlaySquareOutlined,
   PlusOutlined,
+  SelectOutlined,
   SnippetsOutlined,
   YoutubeOutlined,
 } from '@ant-design/icons';
@@ -38,13 +43,48 @@ export interface AttachedItem {
   error?: PageReadError;
 }
 
-// Above the chat box: web search while it is on, the tabs, files and pasted text attached to the
+// Shown once a chat fills this much of the model's context.
+const CONTEXT_USAGE_SHOWN = 0.5;
+// From here older turns are folded into a summary (lib/chatCompaction.ts).
+const CONTEXT_USAGE_FULL = 0.7;
+
+// A small ring filled to `value` (0–1), in the text's color.
+const UsageRing = ({ value }: { value: number }) => {
+  const r = 5;
+  const length = 2 * Math.PI * r;
+  return (
+    <svg width="12" height="12" viewBox="0 0 14 14" aria-hidden className="sz:-rotate-90 sz:shrink-0">
+      <circle cx="7" cy="7" r={r} fill="none" stroke="currentColor" strokeOpacity="0.25" strokeWidth="2" />
+      <circle
+        cx="7"
+        cy="7"
+        r={r}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeDasharray={`${length * Math.min(1, value)} ${length}`}
+        className="sz:transition-[stroke-dasharray] sz:duration-500 sz:motion-reduce:transition-none"
+      />
+    </svg>
+  );
+};
+
+// Above the chat box: web search or the browser agent while it is on, a thinking effort other than the default, how
+// full a long chat has made the model's context, the tabs, files and pasted text attached to the
 // next message, and the current tab offered as a dashed chip until it is attached.
 const AttachmentChips = ({
   attached,
   suggestion,
   webSearch,
   onWebSearchOff,
+  browserAgent,
+  onBrowserAgentOff,
+  reasoningEffort,
+  onReasoningEffortReset,
+  videoMoment,
+  onVideoMoment,
+  contextUsage,
   onAttach,
   onRemove,
 }: {
@@ -52,13 +92,35 @@ const AttachmentChips = ({
   suggestion?: chrome.tabs.Tab;
   webSearch: boolean;
   onWebSearchOff: () => void;
+  browserAgent: boolean;
+  onBrowserAgentOff: () => void;
+  // Shown when it isn't 'medium' and the model takes one.
+  reasoningEffort?: ReasoningEffort;
+  onReasoningEffortReset: () => void;
+  // The chat's video: asking about the moment it is at, while `on`, and where it is now.
+  videoMoment?: { on: boolean; seconds: number | null };
+  onVideoMoment: (on: boolean) => void;
+  // How full the model's context was for the latest answer (0–1), if known.
+  contextUsage?: number | null;
   onAttach: (tab: chrome.tabs.Tab) => void;
   onRemove: (key: string) => void;
 }) => {
   const { t } = useTranslation();
   const theme = useThemeValue();
 
-  if (attached.length === 0 && !suggestion && !webSearch) return null;
+  const effortChip = reasoningEffort && reasoningEffort !== 'medium';
+  const usage = contextUsage != null && contextUsage >= CONTEXT_USAGE_SHOWN ? contextUsage : null;
+  if (
+    attached.length === 0 &&
+    !suggestion &&
+    !webSearch &&
+    !browserAgent &&
+    !effortChip &&
+    !videoMoment &&
+    usage === null
+  )
+    return null;
+  const percent = usage === null ? 0 : Math.round(usage * 100);
   const attachLabel = t(videoKey(suggestion?.url) ? 'chat.attachVideo' : 'chat.attachPage');
 
   return (
@@ -76,6 +138,100 @@ const AttachmentChips = ({
         >
           {t('chat.webSearch')}
         </Tag>
+      ) : null}
+      {browserAgent ? (
+        <Tooltip title={t('chat.browserAgentHint')}>
+          <Tag
+            icon={<SelectOutlined />}
+            color="cyan"
+            closable
+            onClose={(e) => {
+              e.preventDefault();
+              onBrowserAgentOff();
+            }}
+            className="sz:font-ycom sz:m-0 sz:flex sz:items-center"
+          >
+            {t('chat.browserAgent')}
+          </Tag>
+        </Tooltip>
+      ) : null}
+      {effortChip ? (
+        <Tag
+          icon={<BulbOutlined />}
+          color="cyan"
+          closable
+          onClose={(e) => {
+            e.preventDefault();
+            onReasoningEffortReset();
+          }}
+          className="sz:font-ycom sz:m-0 sz:flex sz:items-center"
+        >
+          {t('chat.reasoningEffortChip', { level: t(`chat.reasoningEffort_${reasoningEffort}`) })}
+        </Tag>
+      ) : null}
+      {videoMoment?.on ? (
+        <Tag
+          icon={<ClockCircleOutlined />}
+          color="cyan"
+          closable
+          onClose={(e) => {
+            e.preventDefault();
+            onVideoMoment(false);
+          }}
+          className="sz:font-ycom sz:m-0 sz:flex sz:items-center"
+        >
+          {t('chat.videoMoment')}
+          {videoMoment.seconds !== null ? (
+            <span className="sz:ml-1 sz:tabular-nums">· {formatVideoTime(videoMoment.seconds)}</span>
+          ) : null}
+        </Tag>
+      ) : videoMoment ? (
+        <Tooltip
+          placement="top"
+          title={
+            <div
+              className={`sz:font-ycom sz:z-2147483647 ${
+                theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
+              }`}
+            >
+              {t('chat.videoMomentHint')}
+            </div>
+          }
+          color={theme == 'dark' ? '#505362' : 'white'}
+        >
+          <Button
+            type="dashed"
+            size="small"
+            icon={<ClockCircleOutlined />}
+            onClick={() => onVideoMoment(true)}
+            className="sz:font-ycom"
+          >
+            {t('chat.videoMoment')}
+          </Button>
+        </Tooltip>
+      ) : null}
+      {usage !== null ? (
+        <Tooltip
+          placement="top"
+          title={
+            <div
+              className={`sz:font-ycom sz:z-2147483647 ${
+                theme == 'dark' ? 'sz:text-white' : 'sz:text-black'
+              }`}
+            >
+              {t('chat.contextUsageHint', { percent })}
+            </div>
+          }
+          color={theme == 'dark' ? '#505362' : 'white'}
+        >
+          <Tag
+            color={usage >= CONTEXT_USAGE_FULL ? 'warning' : undefined}
+            className="sz:font-ycom sz:m-0 sz:flex sz:items-center sz:gap-1.5 sz:cursor-default"
+          >
+            <UsageRing value={usage} />
+            <span className="sz:tabular-nums">{t('chat.contextUsage', { percent })}</span>
+          </Tag>
+        </Tooltip>
       ) : null}
       {attached.map((item) => (
         <Tag

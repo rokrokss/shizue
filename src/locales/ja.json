@@ -34,7 +34,9 @@
     "explainSelection": "選択したテキストを説明",
     "summarizeSelection": "選択したテキストを要約",
     "fixGrammarSelection": "選択したテキストの文法を修正",
-    "removeTranslation": "翻訳を削除"
+    "removeTranslation": "翻訳を削除",
+    "translateImage": "画像を翻訳",
+    "translatePageImages": "ページの画像をすべて翻訳"
   },
   "onboarding": {
     "greeting_0": "ようこそ！",
@@ -132,7 +134,29 @@
     "inPage": "原文",
     "webSource": "出典",
     "backToPage": "ページに戻る",
-    "deleteMessage": "メッセージを削除"
+    "deleteMessage": "メッセージを削除",
+    "thinking": "考え中・{{seconds}}秒",
+    "thoughtFor": "{{seconds}}秒考えました",
+    "thought": "考えました",
+    "reasoningEffort": "思考の深さ",
+    "reasoningEffort_low": "低",
+    "reasoningEffort_medium": "中",
+    "reasoningEffort_high": "高",
+    "reasoningEffortHint_low": "すばやく答えます",
+    "reasoningEffortHint_medium": "モデルの標準どおりに考えます",
+    "reasoningEffortHint_high": "長く考えて丁寧に答えます",
+    "reasoningEffortNotSupported": "このモデルは思考の深さを変えられません",
+    "reasoningEffortChip": "思考: {{level}}",
+    "suggestedQuestions": "続けて質問",
+    "videoMoment": "今のシーン",
+    "videoMomentHint": "動画で今再生中の場面をもとに答えます",
+    "videoMomentAt": "{{time}}の場面",
+    "contextCompacted": "会話が長くなったため、前半は要約して続けました。",
+    "contextUsage": "コンテキスト {{percent}}%",
+    "contextUsageHint": "この会話はモデルが一度に読める量の{{percent}}%を使っています。70%を超えると前半を要約し、最近のやり取りだけをそのまま送ります。",
+    "browserAgent": "ブラウザ操作",
+    "browserAgentHint": "シズエが今のタブを直接クリック・入力します。送信・削除・支払いの前には確認します",
+    "browserAgentPlaceholder": "このタブで何をしますか？"
   },
   "footer": {
     "joinDiscord": "Discordに参加してください！",
@@ -169,7 +193,12 @@
     "general": "一般",
     "models": "モデル",
     "layout": "レイアウト",
-    "registered": "登録済み"
+    "registered": "登録済み",
+    "pageTranslation": "ページ翻訳",
+    "maskPrivateDescription": "メールアドレス、電話番号、カード番号、APIキーはAIに送らず、ページのまま表示します。",
+    "maskPrivate": "個人情報を送らない",
+    "savedTranslations": "保存した翻訳 {{number}}件・30日間保存",
+    "savedTranslationsClear": "削除"
   },
   "time": {
     "justNow": "たった今",
@@ -270,7 +299,8 @@
       "original": "原文",
       "translation": "翻訳",
       "bilingual": "原文 + 翻訳"
-    }
+    },
+    "turnOnSiteCaptions": "動画の字幕をオンにすると翻訳して表示します"
   },
   "usage": {
     "title": "トークン使用量",
@@ -340,5 +370,69 @@
     "saved": "保存しました",
     "openList": "単語帳を開く",
     "saveFailed": "保存できませんでした。"
+  },
+  "pageTranslation": {
+    "failed": "翻訳できませんでした",
+    "retry": "再試行"
+  },
+  "meeting": {
+    "liveTranslation": "Shizue 会議翻訳",
+    "waiting": "話し始めると翻訳がここに表示されます",
+    "turnOnCaptions": "会議の字幕（CC）をオンにすると翻訳して表示します",
+    "unreadable": "この会議の字幕を読み取れませんでした。サイトの画面が変わった可能性があります。",
+    "preparing": "Chrome の翻訳モデルをダウンロードしています"
+  },
+  "imageTranslation": {
+    "translating": "画像を翻訳中…",
+    "translated": "翻訳済み",
+    "original": "原文",
+    "showOriginal": "原文を表示",
+    "showTranslation": "翻訳を表示",
+    "noText": "翻訳する文字がありません",
+    "failed": "翻訳できませんでした",
+    "retry": "再試行",
+    "noImageModel": "画像を読めるチャットモデルが必要です",
+    "close": "閉じる",
+    "pageActive": "ページの画像を翻訳中",
+    "stop": "オフ"
+  },
+  "agent": {
+    "working": "{{host}} を操作中",
+    "stepsDone": "{{host}} で {{count}} ステップ実行",
+    "readPage": "{{host}} のページを読みました",
+    "step": {
+      "click": "「{{target}}」をクリック",
+      "type": "「{{target}}」に「{{text}}」を入力",
+      "typeSubmit": "「{{target}}」に「{{text}}」を入力して Enter",
+      "select": "「{{target}}」で「{{text}}」を選択",
+      "scrollDown": "下にスクロール",
+      "scrollUp": "上にスクロール",
+      "navigate": "{{host}} を開く",
+      "back": "戻る",
+      "wait": "ページを待つ"
+    },
+    "approvalTitle": "この操作を行ってもいいですか？",
+    "approvalHint": "送信・削除・支払いなど、取り消しにくい操作かもしれません",
+    "allow": "許可",
+    "deny": "拒否",
+    "denied": "拒否しました",
+    "error": {
+      "not_found": "その要素はページから消えました",
+      "secret_field": "パスワードやカード情報はご自身で入力してください",
+      "not_select": "選択リストではありません",
+      "no_option": "その項目はありません",
+      "bad_url": "開けないアドレスです",
+      "unreachable": "このページは操作できません",
+      "failed": "実行できませんでした"
+    },
+    "outcome": {
+      "stopped": "停止しました",
+      "max_steps": "ステップが多すぎるため停止しました。作業を小さく分けてください",
+      "unavailable": "このタブは操作できません。Web ページを開いてから再試行してください",
+      "failed": "次の操作を決められず停止しました"
+    },
+    "overlayWorking": "シズエがこのタブを操作中",
+    "overlayWaiting": "パネルで許可を待っています",
+    "overlayStop": "停止"
   }
 }

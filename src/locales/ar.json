@@ -34,7 +34,9 @@
     "explainSelection": "شرح النص المحدد",
     "summarizeSelection": "تلخيص النص المحدد",
     "fixGrammarSelection": "تصحيح قواعد النص المحدد",
-    "removeTranslation": "إزالة الترجمة"
+    "removeTranslation": "إزالة الترجمة",
+    "translateImage": "ترجمة الصورة",
+    "translatePageImages": "ترجمة كل صور الصفحة"
   },
   "onboarding": {
     "greeting_0": "مرحبًا!",
@@ -132,7 +134,29 @@
     "inPage": "الأصل",
     "webSource": "المصدر",
     "backToPage": "العودة إلى الصفحة",
-    "deleteMessage": "حذف الرسالة"
+    "deleteMessage": "حذف الرسالة",
+    "thinking": "يفكّر · {{seconds}} ث",
+    "thoughtFor": "فكّر لمدة {{seconds}} ث",
+    "thought": "التفكير",
+    "reasoningEffort": "مستوى التفكير",
+    "reasoningEffort_low": "منخفض",
+    "reasoningEffort_medium": "متوسط",
+    "reasoningEffort_high": "مرتفع",
+    "reasoningEffortHint_low": "يجيب بسرعة",
+    "reasoningEffortHint_medium": "يفكّر بطريقة النموذج المعتادة",
+    "reasoningEffortHint_high": "يفكّر أطول ليجيب بعناية أكبر",
+    "reasoningEffortNotSupported": "لا يمكن تغييره في هذا النموذج",
+    "reasoningEffortChip": "التفكير: {{level}}",
+    "suggestedQuestions": "اسأل بعد ذلك",
+    "videoMoment": "هذه اللحظة",
+    "videoMomentHint": "يجيب عمّا يُعرض في الفيديو الآن",
+    "videoMomentAt": "عند {{time}}",
+    "contextCompacted": "أصبحت المحادثة طويلة، لذا أُرسل الجزء الأول كملخص.",
+    "contextUsage": "السياق {{percent}}٪",
+    "contextUsageHint": "تشغل هذه المحادثة {{percent}}٪ مما يستطيع النموذج قراءته دفعة واحدة. بعد 70٪ يُرسل الجزء الأول كملخص، وتُرسل آخر الرسائل فقط كما هي.",
+    "browserAgent": "التحكم في المتصفح",
+    "browserAgentHint": "ينقر Shizue ويكتب في علامة التبويب الحالية، ويسأل قبل الإرسال أو الحذف أو الدفع",
+    "browserAgentPlaceholder": "ماذا أفعل في علامة التبويب هذه؟"
   },
   "footer": {
     "joinDiscord": "انضم إلي على Discord!",
@@ -169,7 +193,12 @@
     "general": "عام",
     "models": "النماذج",
     "layout": "التخطيط",
-    "registered": "مسجل"
+    "registered": "مسجل",
+    "pageTranslation": "ترجمة الصفحة",
+    "maskPrivateDescription": "لا تُرسَل عناوين البريد وأرقام الهواتف والبطاقات ومفاتيح API إلى الذكاء الاصطناعي، وتظهر كما كانت في الصفحة.",
+    "maskPrivate": "عدم إرسال البيانات الشخصية",
+    "savedTranslations": "{{number}} ترجمة محفوظة · 30 يومًا",
+    "savedTranslationsClear": "مسح"
   },
   "time": {
     "justNow": "الآن",
@@ -270,7 +299,8 @@
       "original": "الأصل",
       "translation": "الترجمة",
       "bilingual": "الأصل + الترجمة"
-    }
+    },
+    "turnOnSiteCaptions": "شغّل ترجمة الفيديو لتراها مترجمة"
   },
   "usage": {
     "title": "استخدام الرموز",
@@ -340,5 +370,69 @@
     "saved": "تم الحفظ",
     "openList": "فتح قائمة الكلمات",
     "saveFailed": "تعذّر الحفظ."
+  },
+  "pageTranslation": {
+    "failed": "تعذّرت الترجمة",
+    "retry": "إعادة المحاولة"
+  },
+  "meeting": {
+    "liveTranslation": "ترجمة الاجتماعات من Shizue",
+    "waiting": "تظهر الترجمة هنا عندما يتحدث أحد",
+    "turnOnCaptions": "شغّل ترجمة الاجتماع المكتوبة (CC) لتراها مترجمة",
+    "unreadable": "تعذّرت قراءة ترجمة هذا الاجتماع. ربما تغيّر الموقع.",
+    "preparing": "جارٍ تنزيل نموذج الترجمة في Chrome"
+  },
+  "imageTranslation": {
+    "translating": "جارٍ ترجمة الصورة…",
+    "translated": "مترجمة",
+    "original": "الأصل",
+    "showOriginal": "عرض الأصل",
+    "showTranslation": "عرض الترجمة",
+    "noText": "لا يوجد نص للترجمة",
+    "failed": "تعذّرت الترجمة",
+    "retry": "إعادة المحاولة",
+    "noImageModel": "يلزم نموذج دردشة يقرأ الصور",
+    "close": "إغلاق",
+    "pageActive": "جارٍ ترجمة صور الصفحة",
+    "stop": "إيقاف"
+  },
+  "agent": {
+    "working": "يعمل على {{host}}",
+    "stepsDone": "الخطوات على {{host}}: {{count}}",
+    "readPage": "تمت قراءة صفحة {{host}}",
+    "step": {
+      "click": "النقر على «{{target}}»",
+      "type": "كتابة «{{text}}» في «{{target}}»",
+      "typeSubmit": "كتابة «{{text}}» في «{{target}}» ثم الضغط على Enter",
+      "select": "اختيار «{{text}}» في «{{target}}»",
+      "scrollDown": "التمرير للأسفل",
+      "scrollUp": "التمرير للأعلى",
+      "navigate": "فتح {{host}}",
+      "back": "الرجوع",
+      "wait": "انتظار الصفحة"
+    },
+    "approvalTitle": "السماح بهذا الإجراء؟",
+    "approvalHint": "قد يرسل أو يحذف أو يدفع، ويصعب التراجع عنه",
+    "allow": "سماح",
+    "deny": "رفض",
+    "denied": "مرفوض",
+    "error": {
+      "not_found": "لم يعد هذا العنصر في الصفحة",
+      "secret_field": "أدخل كلمات المرور وبيانات البطاقة بنفسك",
+      "not_select": "هذه ليست قائمة منسدلة",
+      "no_option": "لا يوجد هذا الخيار",
+      "bad_url": "لا يمكن فتح هذا العنوان",
+      "unreachable": "لا يمكن التحكم في هذه الصفحة",
+      "failed": "لم ينجح"
+    },
+    "outcome": {
+      "stopped": "تم الإيقاف",
+      "max_steps": "توقف بعد خطوات كثيرة. جرّب مهمة أصغر",
+      "unavailable": "لا يمكن التحكم في علامة التبويب هذه. افتح صفحة ويب وحاول مجددًا",
+      "failed": "توقف: تعذّر تحديد الخطوة التالية"
+    },
+    "overlayWorking": "يعمل Shizue في علامة التبويب هذه",
+    "overlayWaiting": "بانتظار موافقتك في اللوحة",
+    "overlayStop": "إيقاف"
   }
 }

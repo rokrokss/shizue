@@ -1,3 +1,4 @@
+import type { TranslationLabels } from '@/components/Translation/ShizueTranslationOverlay';
 import { MESSAGE_FRAME_TRANSLATION_STATE } from '@/config/constants';
 import type { Language } from '@/hooks/language';
 import { getPageTranslator } from '@/lib/pageTranslator';
@@ -16,7 +17,10 @@ export default defineContentScript({
     if (innerWidth < 150 || innerHeight < 50) return;
 
     const translator = getPageTranslator();
-    let wanted: { active: boolean; language: Language | null } = { active: false, language: null };
+    let wanted: { active: boolean; language: Language | null; labels?: TranslationLabels } = {
+      active: false,
+      language: null,
+    };
     let translating: Language | null = null;
     // A frame starts translating once it first shows on screen, so ads and other frames far
     // down the page cost nothing until the reader gets there.
@@ -26,7 +30,7 @@ export default defineContentScript({
       const language = wanted.active && seen ? wanted.language : null;
       if (language === translating) return;
       if (translating) translator.deactivate();
-      if (language) translator.activate(language);
+      if (language) translator.activate(language, wanted.labels);
       translating = language;
     };
 
@@ -38,7 +42,11 @@ export default defineContentScript({
 
     chrome.runtime.onMessage.addListener((message) => {
       if (message?.action !== MESSAGE_FRAME_TRANSLATION_STATE) return;
-      wanted = { active: Boolean(message.active), language: message.targetLanguage ?? null };
+      wanted = {
+        active: Boolean(message.active),
+        language: message.targetLanguage ?? null,
+        labels: message.labels,
+      };
       apply();
     });
   },

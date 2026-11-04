@@ -15,6 +15,7 @@ import {
   STORAGE_THEME,
   STORAGE_TOGGLE_HIDDEN_SITE_LIST,
   STORAGE_TOGGLE_Y_POSITION,
+  STORAGE_TRANSLATION_MASK_PRIVATE,
   STORAGE_USE_YOUTUBE_KEYBOARD_NAVIGATE,
   STORAGE_YOUTUBE_AUTO_ACTIVATE,
   STORAGE_YOUTUBE_CAPTION_SIZE_RATIO,
@@ -152,6 +153,13 @@ export const pageTranslationModeAtom = atomWithChromeStorage<PageTranslationMode
   'bilingual'
 );
 
+// Page translation sends private values as placeholders (lib/sensitiveText.ts). PageTranslator
+// reads it itself when translation starts.
+export const translationMaskPrivateAtom = atomWithChromeStorage<boolean>(
+  STORAGE_TRANSLATION_MASK_PRIVATE,
+  true
+);
+
 export const useTheme = () => useAtom(themeAtom);
 export const useThemeValue = () => useAtomValue(themeAtom);
 export const useShowToggle = () => useAtom(showToggleAtom);
@@ -177,3 +185,4 @@ export const useYoutubeAutoActivate = () => useAtom(youtubeAutoActivateAtom);
 export const useNetflixAutoActivate = () => useAtom(netflixAutoActivateAtom);
 export const useToggleHiddenSiteList = () => useAtom(toggleHiddenSiteListAtom);
 export const usePageTranslationMode = () => useAtom(pageTranslationModeAtom);
+export const useTranslationMaskPrivate = () => useAtom(translationMaskPrivateAtom);

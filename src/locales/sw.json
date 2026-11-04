@@ -34,7 +34,9 @@
     "explainSelection": "Eleza maandishi yaliyochaguliwa",
     "summarizeSelection": "Fupisha maandishi yaliyochaguliwa",
     "fixGrammarSelection": "Rekebisha sarufi ya maandishi yaliyochaguliwa",
-    "removeTranslation": "Ondoa tafsiri"
+    "removeTranslation": "Ondoa tafsiri",
+    "translateImage": "Tafsiri picha",
+    "translatePageImages": "Tafsiri picha zote za ukurasa"
   },
   "onboarding": {
     "greeting_0": "Karibu!",
@@ -132,7 +134,29 @@
     "inPage": "Asili",
     "webSource": "Chanzo",
     "backToPage": "Rudi kwenye ukurasa",
-    "deleteMessage": "Futa ujumbe"
+    "deleteMessage": "Futa ujumbe",
+    "thinking": "Inafikiri · sekunde {{seconds}}",
+    "thoughtFor": "Ilifikiri kwa sekunde {{seconds}}",
+    "thought": "Ilifikiri",
+    "reasoningEffort": "Kiwango cha kufikiri",
+    "reasoningEffort_low": "Chini",
+    "reasoningEffort_medium": "Wastani",
+    "reasoningEffort_high": "Juu",
+    "reasoningEffortHint_low": "Hujibu haraka",
+    "reasoningEffortHint_medium": "Hufikiri kwa njia ya kawaida ya modeli",
+    "reasoningEffortHint_high": "Hufikiri zaidi ili kujibu kwa makini",
+    "reasoningEffortNotSupported": "Modeli hii haiwezi kubadilishwa",
+    "reasoningEffortChip": "Kufikiri: {{level}}",
+    "suggestedQuestions": "Uliza zaidi",
+    "videoMoment": "Wakati huu",
+    "videoMomentHint": "Hujibu kuhusu sehemu inayochezwa sasa",
+    "videoMomentAt": "Saa {{time}}",
+    "contextCompacted": "Mazungumzo yamekuwa marefu, kwa hiyo sehemu ya mwanzo imetumwa kama muhtasari.",
+    "contextUsage": "Muktadha {{percent}}%",
+    "contextUsageHint": "Mazungumzo haya yanajaza {{percent}}% ya kile ambacho modeli inaweza kusoma kwa mara moja. Zaidi ya 70%, sehemu ya mwanzo inatumwa kama muhtasari na mazungumzo ya karibuni pekee kama yalivyo.",
+    "browserAgent": "Udhibiti wa kivinjari",
+    "browserAgentHint": "Shizue hubofya na kuandika kwenye kichupo cha sasa. Huuliza kabla ya kutuma, kufuta au kulipa",
+    "browserAgentPlaceholder": "Nifanye nini kwenye kichupo hiki?"
   },
   "footer": {
     "joinDiscord": "Jiunge nami kwenye Discord!",
@@ -169,7 +193,12 @@
     "general": "Jumla",
     "models": "Miundo",
     "layout": "Muundo",
-    "registered": "Imeandikishwa"
+    "registered": "Imeandikishwa",
+    "pageTranslation": "Tafsiri ya ukurasa",
+    "maskPrivateDescription": "Barua pepe, nambari za simu, nambari za kadi na funguo za API hazitumwi kwa AI. Zinaonekana kama zilivyokuwa kwenye ukurasa.",
+    "maskPrivate": "Usitume taarifa binafsi",
+    "savedTranslations": "Tafsiri {{number}} zilizohifadhiwa · siku 30",
+    "savedTranslationsClear": "Futa"
   },
   "time": {
     "justNow": "sasa hivi",
@@ -270,7 +299,8 @@
       "original": "Asili",
       "translation": "Tafsiri",
       "bilingual": "Asili + tafsiri"
-    }
+    },
+    "turnOnSiteCaptions": "Washa manukuu ya video ili uone tafsiri"
   },
   "usage": {
     "title": "Matumizi ya Token",
@@ -340,5 +370,69 @@
     "saved": "Imehifadhiwa",
     "openList": "Fungua orodha ya maneno",
     "saveFailed": "Imeshindwa kuhifadhi."
+  },
+  "pageTranslation": {
+    "failed": "Imeshindwa kutafsiri",
+    "retry": "Jaribu tena"
+  },
+  "meeting": {
+    "liveTranslation": "Tafsiri ya mikutano ya Shizue",
+    "waiting": "Tafsiri zitaonekana hapa mtu akizungumza",
+    "turnOnCaptions": "Washa manukuu (CC) ya mkutano ili uone tafsiri",
+    "unreadable": "Imeshindwa kusoma manukuu ya mkutano huu. Huenda tovuti imebadilika.",
+    "preparing": "Inapakua modeli ya tafsiri ya Chrome"
+  },
+  "imageTranslation": {
+    "translating": "Inatafsiri picha…",
+    "translated": "Imetafsiriwa",
+    "original": "Asili",
+    "showOriginal": "Onyesha asili",
+    "showTranslation": "Onyesha tafsiri",
+    "noText": "Hakuna maandishi ya kutafsiri",
+    "failed": "Imeshindwa kutafsiri",
+    "retry": "Jaribu tena",
+    "noImageModel": "Inahitaji modeli ya gumzo inayosoma picha",
+    "close": "Funga",
+    "pageActive": "Inatafsiri picha za ukurasa",
+    "stop": "Zima"
+  },
+  "agent": {
+    "working": "Inafanya kazi kwenye {{host}}",
+    "stepsDone": "Hatua kwenye {{host}}: {{count}}",
+    "readPage": "Ukurasa wa {{host}} umesomwa",
+    "step": {
+      "click": "Bofya ‘{{target}}’",
+      "type": "Andika “{{text}}” kwenye ‘{{target}}’",
+      "typeSubmit": "Andika “{{text}}” kwenye ‘{{target}}’ kisha bonyeza Enter",
+      "select": "Chagua “{{text}}” kwenye ‘{{target}}’",
+      "scrollDown": "Sogeza chini",
+      "scrollUp": "Sogeza juu",
+      "navigate": "Fungua {{host}}",
+      "back": "Rudi nyuma",
+      "wait": "Subiri ukurasa"
+    },
+    "approvalTitle": "Ruhusu kitendo hiki?",
+    "approvalHint": "Huenda ikatuma, kufuta au kulipa, na kuwa vigumu kutengua",
+    "allow": "Ruhusu",
+    "deny": "Kataa",
+    "denied": "Imekataliwa",
+    "error": {
+      "not_found": "Kipengele hicho hakipo tena kwenye ukurasa",
+      "secret_field": "Tafadhali weka nenosiri na maelezo ya kadi mwenyewe",
+      "not_select": "Hiyo si orodha kunjuzi",
+      "no_option": "Hakuna chaguo hilo",
+      "bad_url": "Anwani hiyo haiwezi kufunguliwa",
+      "unreachable": "Ukurasa huu hauwezi kudhibitiwa",
+      "failed": "Haikufanikiwa"
+    },
+    "outcome": {
+      "stopped": "Imesimamishwa",
+      "max_steps": "Imesimama baada ya hatua nyingi mno. Jaribu kazi ndogo zaidi",
+      "unavailable": "Kichupo hiki hakiwezi kudhibitiwa. Fungua ukurasa wa wavuti kisha ujaribu tena",
+      "failed": "Imesimama: haikuweza kuamua hatua inayofuata"
+    },
+    "overlayWorking": "Shizue inafanya kazi kwenye kichupo hiki",
+    "overlayWaiting": "Inasubiri ruhusa yako kwenye paneli",
+    "overlayStop": "Simamisha"
   }
 }

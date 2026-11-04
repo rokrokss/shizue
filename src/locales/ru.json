@@ -34,7 +34,9 @@
     "explainSelection": "Объяснить выделенный текст",
     "summarizeSelection": "Кратко изложить выделенный текст",
     "fixGrammarSelection": "Исправить грамматику в выделенном тексте",
-    "removeTranslation": "Удалить перевод"
+    "removeTranslation": "Удалить перевод",
+    "translateImage": "Перевести изображение",
+    "translatePageImages": "Перевести все изображения на странице"
   },
   "onboarding": {
     "greeting_0": "Добро пожаловать!",
@@ -132,7 +134,29 @@
     "inPage": "Оригинал",
     "webSource": "Источник",
     "backToPage": "Вернуться на страницу",
-    "deleteMessage": "Удалить сообщение"
+    "deleteMessage": "Удалить сообщение",
+    "thinking": "Думает · {{seconds}} с",
+    "thoughtFor": "Думал {{seconds}} с",
+    "thought": "Размышления",
+    "reasoningEffort": "Глубина размышлений",
+    "reasoningEffort_low": "Низкая",
+    "reasoningEffort_medium": "Средняя",
+    "reasoningEffort_high": "Высокая",
+    "reasoningEffortHint_low": "Отвечает быстро",
+    "reasoningEffortHint_medium": "Думает как обычно для модели",
+    "reasoningEffortHint_high": "Думает дольше и отвечает тщательнее",
+    "reasoningEffortNotSupported": "У этой модели это нельзя изменить",
+    "reasoningEffortChip": "Размышления: {{level}}",
+    "suggestedQuestions": "Спросить дальше",
+    "videoMoment": "Этот момент",
+    "videoMomentHint": "Отвечает о том, что идёт в видео сейчас",
+    "videoMomentAt": "На {{time}}",
+    "contextCompacted": "Чат стал длинным, поэтому начало передано в виде краткого изложения.",
+    "contextUsage": "Контекст {{percent}}%",
+    "contextUsageHint": "Этот чат занимает {{percent}}% того, что модель может прочитать за раз. После 70% начало передаётся кратким изложением, а последние реплики — как есть.",
+    "browserAgent": "Управление браузером",
+    "browserAgentHint": "Shizue сам нажимает и вводит текст в текущей вкладке. Перед отправкой, удалением или оплатой спрашивает",
+    "browserAgentPlaceholder": "Что сделать в этой вкладке?"
   },
   "footer": {
     "joinDiscord": "Присоединяйтесь ко мне в Discord!",
@@ -169,7 +193,12 @@
     "general": "Общие",
     "models": "Модели",
     "layout": "Макет",
-    "registered": "Зарегистрирован"
+    "registered": "Зарегистрирован",
+    "pageTranslation": "Перевод страниц",
+    "maskPrivateDescription": "Адреса почты, номера телефонов и карт, ключи API не отправляются ИИ и остаются такими, как на странице.",
+    "maskPrivate": "Не отправлять личные данные",
+    "savedTranslations": "Сохранено переводов: {{number}} · 30 дней",
+    "savedTranslationsClear": "Очистить"
   },
   "time": {
     "justNow": "только что",
@@ -270,7 +299,8 @@
       "original": "Оригинал",
       "translation": "Перевод",
       "bilingual": "Оригинал + перевод"
-    }
+    },
+    "turnOnSiteCaptions": "Включите субтитры видео, чтобы видеть их перевод"
   },
   "usage": {
     "title": "Использование токенов",
@@ -340,5 +370,69 @@
     "saved": "Сохранено",
     "openList": "Открыть словарь",
     "saveFailed": "Не удалось сохранить."
+  },
+  "pageTranslation": {
+    "failed": "Не удалось перевести",
+    "retry": "Повторить"
+  },
+  "meeting": {
+    "liveTranslation": "Перевод встреч Shizue",
+    "waiting": "Перевод появится здесь, когда кто-нибудь заговорит",
+    "turnOnCaptions": "Включите субтитры встречи (CC), чтобы видеть их перевод",
+    "unreadable": "Не удалось прочитать субтитры этой встречи. Возможно, сайт изменился.",
+    "preparing": "Загружается модель перевода Chrome"
+  },
+  "imageTranslation": {
+    "translating": "Перевод изображения…",
+    "translated": "Переведено",
+    "original": "Оригинал",
+    "showOriginal": "Показать оригинал",
+    "showTranslation": "Показать перевод",
+    "noText": "Нет текста для перевода",
+    "failed": "Не удалось перевести",
+    "retry": "Повторить",
+    "noImageModel": "Нужна чат-модель, которая понимает изображения",
+    "close": "Закрыть",
+    "pageActive": "Перевод изображений на странице",
+    "stop": "Выключить"
+  },
+  "agent": {
+    "working": "Работаю на {{host}}",
+    "stepsDone": "Шагов на {{host}}: {{count}}",
+    "readPage": "Страница {{host}} прочитана",
+    "step": {
+      "click": "Нажать «{{target}}»",
+      "type": "Ввести «{{text}}» в «{{target}}»",
+      "typeSubmit": "Ввести «{{text}}» в «{{target}}» и нажать Enter",
+      "select": "Выбрать «{{text}}» в «{{target}}»",
+      "scrollDown": "Прокрутить вниз",
+      "scrollUp": "Прокрутить вверх",
+      "navigate": "Открыть {{host}}",
+      "back": "Назад",
+      "wait": "Подождать страницу"
+    },
+    "approvalTitle": "Разрешить это действие?",
+    "approvalHint": "Это может что-то отправить, удалить или оплатить, и отменить будет трудно",
+    "allow": "Разрешить",
+    "deny": "Отклонить",
+    "denied": "Отклонено",
+    "error": {
+      "not_found": "Этого элемента больше нет на странице",
+      "secret_field": "Пароли и данные карты введите сами",
+      "not_select": "Это не раскрывающийся список",
+      "no_option": "Такого варианта нет",
+      "bad_url": "Этот адрес нельзя открыть",
+      "unreachable": "Этой страницей нельзя управлять",
+      "failed": "Не получилось"
+    },
+    "outcome": {
+      "stopped": "Остановлено",
+      "max_steps": "Остановлено: слишком много шагов. Попробуйте задачу поменьше",
+      "unavailable": "Этой вкладкой нельзя управлять. Откройте веб-страницу и попробуйте снова",
+      "failed": "Остановлено: не удалось выбрать следующее действие"
+    },
+    "overlayWorking": "Shizue работает в этой вкладке",
+    "overlayWaiting": "Ждёт вашего разрешения в панели",
+    "overlayStop": "Стоп"
   }
 }

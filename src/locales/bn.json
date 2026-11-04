@@ -34,7 +34,9 @@
     "explainSelection": "নির্বাচিত টেক্সট ব্যাখ্যা করুন",
     "summarizeSelection": "নির্বাচিত টেক্সট সংক্ষেপ করুন",
     "fixGrammarSelection": "নির্বাচিত টেক্সটের ব্যাকরণ ঠিক করুন",
-    "removeTranslation": "অনুবাদ সরান"
+    "removeTranslation": "অনুবাদ সরান",
+    "translateImage": "ছবি অনুবাদ করুন",
+    "translatePageImages": "পৃষ্ঠার সব ছবি অনুবাদ করুন"
   },
   "onboarding": {
     "greeting_0": "স্বাগতম!",
@@ -132,7 +134,29 @@
     "inPage": "মূল লেখা",
     "webSource": "সূত্র",
     "backToPage": "পৃষ্ঠায় ফিরে যান",
-    "deleteMessage": "বার্তা মুছুন"
+    "deleteMessage": "বার্তা মুছুন",
+    "thinking": "ভাবছে · {{seconds}} সে.",
+    "thoughtFor": "{{seconds}} সে. ভেবেছে",
+    "thought": "ভেবেছে",
+    "reasoningEffort": "ভাবনার মাত্রা",
+    "reasoningEffort_low": "কম",
+    "reasoningEffort_medium": "মাঝারি",
+    "reasoningEffort_high": "বেশি",
+    "reasoningEffortHint_low": "দ্রুত উত্তর দেয়",
+    "reasoningEffortHint_medium": "মডেলের স্বাভাবিক উপায়ে ভাবে",
+    "reasoningEffortHint_high": "আরও ভেবে যত্ন করে উত্তর দেয়",
+    "reasoningEffortNotSupported": "এই মডেলে এটি বদলানো যায় না",
+    "reasoningEffortChip": "ভাবনা: {{level}}",
+    "suggestedQuestions": "এরপর জিজ্ঞেস করুন",
+    "videoMoment": "এই মুহূর্ত",
+    "videoMomentHint": "ভিডিওতে এখন যা চলছে তা নিয়ে উত্তর দেয়",
+    "videoMomentAt": "{{time}}-এ",
+    "contextCompacted": "কথোপকথন দীর্ঘ হয়ে যাওয়ায় আগের অংশ সারাংশ হিসেবে পাঠানো হয়েছে।",
+    "contextUsage": "প্রসঙ্গ {{percent}}%",
+    "contextUsageHint": "এই কথোপকথন মডেল একবারে যতটা পড়তে পারে তার {{percent}}% নিচ্ছে। 70% পেরোলে আগের অংশ সারাংশ হিসেবে, আর শুধু সাম্প্রতিক কথাগুলো যেমন আছে তেমন পাঠানো হয়।",
+    "browserAgent": "ব্রাউজার নিয়ন্ত্রণ",
+    "browserAgentHint": "Shizue বর্তমান ট্যাবে নিজেই ক্লিক ও টাইপ করে। পাঠানো, মোছা বা পেমেন্টের আগে জিজ্ঞেস করে",
+    "browserAgentPlaceholder": "এই ট্যাবে কী করব?"
   },
   "footer": {
     "joinDiscord": "Discord-এ আমার সাথে যোগ দিন!",
@@ -169,7 +193,12 @@
     "general": "সাধারণ",
     "models": "মডেল",
     "layout": "লেআউট",
-    "registered": "নিবন্ধিত"
+    "registered": "নিবন্ধিত",
+    "pageTranslation": "পেজ অনুবাদ",
+    "maskPrivateDescription": "ইমেল, ফোন নম্বর, কার্ড নম্বর আর API কী AI-কে পাঠানো হয় না। পেজে যেমন ছিল তেমনই দেখায়।",
+    "maskPrivate": "ব্যক্তিগত তথ্য পাঠাবেন না",
+    "savedTranslations": "{{number}}টি সংরক্ষিত অনুবাদ · ৩০ দিন",
+    "savedTranslationsClear": "মুছুন"
   },
   "time": {
     "justNow": "এইমাত্র",
@@ -270,7 +299,8 @@
       "original": "মূল",
       "translation": "অনুবাদ",
       "bilingual": "মূল + অনুবাদ"
-    }
+    },
+    "turnOnSiteCaptions": "অনুবাদ দেখতে ভিডিওর সাবটাইটেল চালু করুন"
   },
   "usage": {
     "title": "টোকেন ব্যবহার",
@@ -340,5 +370,69 @@
     "saved": "সংরক্ষিত",
     "openList": "শব্দ তালিকা খুলুন",
     "saveFailed": "সংরক্ষণ করা যায়নি।"
+  },
+  "pageTranslation": {
+    "failed": "অনুবাদ করা যায়নি",
+    "retry": "আবার চেষ্টা করুন"
+  },
+  "meeting": {
+    "liveTranslation": "Shizue মিটিং অনুবাদ",
+    "waiting": "কেউ কথা বললে অনুবাদ এখানে দেখাবে",
+    "turnOnCaptions": "অনুবাদ দেখতে মিটিংয়ের ক্যাপশন (CC) চালু করুন",
+    "unreadable": "এই মিটিংয়ের ক্যাপশন পড়া যায়নি। সাইটটি হয়তো বদলে গেছে।",
+    "preparing": "Chrome-এর অনুবাদ মডেল ডাউনলোড হচ্ছে"
+  },
+  "imageTranslation": {
+    "translating": "ছবি অনুবাদ হচ্ছে…",
+    "translated": "অনূদিত",
+    "original": "মূল",
+    "showOriginal": "মূল দেখুন",
+    "showTranslation": "অনুবাদ দেখুন",
+    "noText": "অনুবাদ করার মতো লেখা নেই",
+    "failed": "অনুবাদ করা যায়নি",
+    "retry": "আবার চেষ্টা করুন",
+    "noImageModel": "ছবি পড়তে পারে এমন চ্যাট মডেল দরকার",
+    "close": "বন্ধ করুন",
+    "pageActive": "এই পৃষ্ঠার ছবি অনুবাদ হচ্ছে",
+    "stop": "বন্ধ করুন"
+  },
+  "agent": {
+    "working": "{{host}}-এ কাজ চলছে",
+    "stepsDone": "{{host}}-এ ধাপ: {{count}}",
+    "readPage": "{{host}}-এর পৃষ্ঠা পড়া হয়েছে",
+    "step": {
+      "click": "‘{{target}}’ ক্লিক",
+      "type": "‘{{target}}’-এ “{{text}}” লেখা",
+      "typeSubmit": "‘{{target}}’-এ “{{text}}” লিখে Enter",
+      "select": "‘{{target}}’-এ “{{text}}” বেছে নেওয়া",
+      "scrollDown": "নিচে স্ক্রল",
+      "scrollUp": "উপরে স্ক্রল",
+      "navigate": "{{host}} খোলা",
+      "back": "পেছনে যাওয়া",
+      "wait": "পৃষ্ঠার জন্য অপেক্ষা"
+    },
+    "approvalTitle": "এই কাজটি করতে দেবেন?",
+    "approvalHint": "এটি পাঠানো, মোছা বা পেমেন্ট হতে পারে, যা ফেরানো কঠিন",
+    "allow": "অনুমতি দিন",
+    "deny": "প্রত্যাখ্যান",
+    "denied": "প্রত্যাখ্যাত",
+    "error": {
+      "not_found": "সেই উপাদানটি আর পৃষ্ঠায় নেই",
+      "secret_field": "পাসওয়ার্ড ও কার্ডের তথ্য নিজে লিখুন",
+      "not_select": "এটি ড্রপডাউন নয়",
+      "no_option": "এমন কোনো বিকল্প নেই",
+      "bad_url": "এই ঠিকানা খোলা যায় না",
+      "unreachable": "এই পৃষ্ঠা নিয়ন্ত্রণ করা যায় না",
+      "failed": "করা যায়নি"
+    },
+    "outcome": {
+      "stopped": "থামানো হয়েছে",
+      "max_steps": "অনেক ধাপের পর থেমেছে। ছোট কাজ দিন",
+      "unavailable": "এই ট্যাব নিয়ন্ত্রণ করা যায় না। একটি ওয়েব পৃষ্ঠা খুলে আবার চেষ্টা করুন",
+      "failed": "থেমেছে: পরের ধাপ ঠিক করা যায়নি"
+    },
+    "overlayWorking": "Shizue এই ট্যাবে কাজ করছে",
+    "overlayWaiting": "প্যানেলে আপনার অনুমতির অপেক্ষা",
+    "overlayStop": "থামান"
   }
 }

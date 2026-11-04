@@ -1,5 +1,7 @@
 import { isSelectionActionType } from '@/config/constants';
 import { ActionType } from '@/hooks/global';
+import type { AgentRun } from '@/lib/browserAgent';
+import type { ContextSummary } from '@/lib/chatCompaction';
 import type { WebSource } from '@/lib/webSources';
 import Dexie, { Table } from 'dexie';
 
@@ -44,6 +46,9 @@ export interface Message {
   webSearch?: boolean;
   // The pages a web search answer drew on.
   sources?: WebSource[];
+  // The question asked the browser agent to do it in the tab, and the answer's run of actions.
+  browserAgent?: boolean;
+  agentRun?: AgentRun;
   createdAt: number;
   done: boolean;
   onInterrupt: boolean;
@@ -51,6 +56,17 @@ export interface Message {
   errorMessage?: string;
   // A long message was cut to fit the local model's context before this reply.
   contextTruncated?: boolean;
+  // What the model showed of its thinking before it answered, and for how long it thought.
+  reasoning?: string;
+  thinkingMs?: number;
+  // Questions the reader may ask next, offered under a summary.
+  suggestions?: string[];
+  // The question is about the moment the video (a videoKey) was at when it was asked.
+  videoMoment?: { video: string; seconds: number };
+  // How much of the model's context the request for this answer filled (0–1), and whether older
+  // turns were folded into the chat's summary for it.
+  contextUsage?: number;
+  contextCompacted?: boolean;
 }
 
 export interface ThreadMeta {
@@ -59,6 +75,8 @@ export interface ThreadMeta {
   updatedAt: number;
   // Auto memory has read the questions up to this message's createdAt.
   memoryReadAt?: number;
+  // The earlier turns of a long chat, as the chat model reads them (lib/chatCompaction.ts).
+  contextSummary?: ContextSummary;
 }
 
 export interface TokenUsage {
@@ -101,12 +119,21 @@ export interface SavedWord {
   createdAt: number;
 }
 
+// A page translation kept so a page read again costs nothing (services/background/translationHandler.ts).
+export interface CachedTranslation {
+  // SHA-256 of the model, the target language and the snippet sent.
+  key: string;
+  translation: string;
+  createdAt: number;
+}
+
 class DB extends Dexie {
   messages!: Table<Message, string>;
   threads!: Table<ThreadMeta, string>;
   tokenUsage!: Table<TokenUsage, string>;
   memos!: Table<Memo, string>;
   words!: Table<SavedWord, string>;
+  translations!: Table<CachedTranslation, string>;
 
   constructor() {
     super('ShizueDB');
@@ -147,6 +174,15 @@ class DB extends Dexie {
       tokenUsage: 'id, date, model, provider, createdAt',
       memos: 'id, folder, isPinned, createdAt, updatedAt',
       words: 'id, createdAt',
+    });
+    this.version(7).stores({
+      // 'pk, ...indexes'
+      messages: 'id, threadId, createdAt',
+      threads: 'id, updatedAt',
+      tokenUsage: 'id, date, model, provider, createdAt',
+      memos: 'id, folder, isPinned, createdAt, updatedAt',
+      words: 'id, createdAt',
+      translations: 'key, createdAt',
     });
   }
 }
@@ -349,3 +385,32 @@ export const addWord = (word: SavedWord) => db.words.add(word);
 export const listWords = () => db.words.orderBy('createdAt').reverse().toArray();
 
 export const deleteWord = (id: string) => db.words.delete(id);
+
+// Saved page translations: 30 days each, and at most 10,000, the oldest going first.
+const TRANSLATION_CACHE_MS = 30 * 24 * 60 * 60 * 1000;
+const TRANSLATION_CACHE_LIMIT = 10_000;
+const TRANSLATION_PRUNE_INTERVAL_MS = 60 * 60 * 1000;
+let translationsPrunedAt = 0;
+
+export const getCachedTranslations = async (keys: string[]) => {
+  const cutoff = Date.now() - TRANSLATION_CACHE_MS;
+  const rows = await db.translations.bulkGet(keys);
+  return rows.map((row) => (row && row.createdAt >= cutoff ? row.translation : undefined));
+};
+
+export const cacheTranslations = async (rows: Omit<CachedTranslation, 'createdAt'>[]) => {
+  if (rows.length === 0) return;
+  const now = Date.now();
+  await db.translations.bulkPut(rows.map((row) => ({ ...row, createdAt: now })));
+  if (now - translationsPrunedAt < TRANSLATION_PRUNE_INTERVAL_MS) return;
+  translationsPrunedAt = now;
+  await db.translations.where('createdAt').below(now - TRANSLATION_CACHE_MS).delete();
+  const extra = (await db.translations.count()) - TRANSLATION_CACHE_LIMIT;
+  if (extra > 0) {
+    await db.translations.bulkDelete(await db.translations.orderBy('createdAt').limit(extra).primaryKeys());
+  }
+};
+
+export const countCachedTranslations = () => db.translations.count();
+
+export const clearCachedTranslations = () => db.translations.clear();

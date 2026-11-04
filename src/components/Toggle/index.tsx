@@ -15,7 +15,9 @@ import {
   MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE,
   MESSAGE_CONTEXT_MENU_EXTRACT_IMAGE_TEXT,
   MESSAGE_CONTEXT_MENU_SELECTION_ACTION,
+  MESSAGE_CONTEXT_MENU_TRANSLATE_IMAGE,
   MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE,
+  MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE_IMAGES,
   MESSAGE_UPDATE_PANEL_INIT_DATA,
   SelectionActionType,
   SUMMARY_PAGE_TEXT_MAX_CHARS,
@@ -35,6 +37,7 @@ import {
   useTranslateModel,
 } from '@/hooks/models';
 import { hashStringToIndex } from '@/lib/hash';
+import { getImageTranslator, ImageTranslationLabels } from '@/lib/imageTranslator';
 import { videoKey } from '@/lib/videoTranscript';
 import {
   initDescribeImageContent,
@@ -346,15 +349,52 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
     if (isTranslationActive) {
       getPageTranslator().deactivate();
     } else {
-      getPageTranslator().activate(targetLanguage as Language);
+      getPageTranslator().activate(targetLanguage as Language, {
+        failed: t('pageTranslation.failed'),
+        retry: t('pageTranslation.retry'),
+      });
     }
 
     setIsTranslationActive(!isTranslationActive);
-  }, [isDragging, isTranslationActive, targetLanguage, anyModelAvailable]);
+  }, [isDragging, isTranslationActive, targetLanguage, anyModelAvailable, t]);
+
+  // From the page's load, so it knows which image a context menu opens on.
+  useEffect(() => void getImageTranslator(), []);
+
+  const handleTranslateImage = useCallback(
+    (srcUrl: string | undefined, wholePage: boolean) => {
+      if (!anyModelAvailable) {
+        setPanelOpen();
+        return;
+      }
+      const labels: ImageTranslationLabels = {
+        translating: t('imageTranslation.translating'),
+        translated: t('imageTranslation.translated'),
+        original: t('imageTranslation.original'),
+        showOriginal: t('imageTranslation.showOriginal'),
+        showTranslation: t('imageTranslation.showTranslation'),
+        noText: t('imageTranslation.noText'),
+        failed: t('imageTranslation.failed'),
+        retry: t('imageTranslation.retry'),
+        noImageModel: t('imageTranslation.noImageModel'),
+        close: t('imageTranslation.close'),
+        pageActive: t('imageTranslation.pageActive'),
+        stop: t('imageTranslation.stop'),
+      };
+      const translator = getImageTranslator();
+      if (wholePage) translator.togglePage(targetLanguage as Language, labels);
+      else if (srcUrl) translator.translateImageAt(srcUrl, targetLanguage as Language, labels);
+    },
+    [anyModelAvailable, targetLanguage, t]
+  );
 
   useEffect(() => {
     const messageListener = (message: any) => {
-      if (message.action === MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE) {
+      if (message.action === MESSAGE_CONTEXT_MENU_TRANSLATE_IMAGE) {
+        handleTranslateImage(message.srcUrl, false);
+      } else if (message.action === MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE_IMAGES) {
+        handleTranslateImage(message.srcUrl, true);
+      } else if (message.action === MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE) {
         if (!isTranslationActiveRef.current) handleTranslatePage();
       } else if (message.action === MESSAGE_CONTEXT_MENU_DESCRIBE_IMAGE) {
         handleDescribeImage(message.srcUrl);
@@ -369,7 +409,7 @@ const Toggle = ({ portalContainer }: { portalContainer: HTMLElement }) => {
     return () => {
       chrome.runtime.onMessage.removeListener(messageListener);
     };
-  }, [handleTranslatePage, handleDescribeImage, handleExtractImageText, handleSelectionAction]);
+  }, [handleTranslatePage, handleDescribeImage, handleExtractImageText, handleSelectionAction, handleTranslateImage]);
 
   return (
     !isCurrentSiteHidden && (

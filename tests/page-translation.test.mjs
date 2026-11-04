@@ -16,9 +16,10 @@ for (const path of candidates) {
   try { await access(path); chrome = path; break; } catch { /* Try the next install. */ }
 }
 
-// The translator answers every snippet with "KO:" before it, except one that drops its placeholder.
+// The translator answers every snippet with "KO:" before it, except one that drops its placeholder
+// and, until fixture.fixed, one it can't translate (null).
 const prelude = `
-globalThis.fixture = { mode: 'bilingual', batches: [], listeners: new Set() };
+globalThis.fixture = { mode: 'bilingual', batches: [], contexts: [], listeners: new Set(), storage: {}, fixed: false };
 fixture.setMode = (mode) => {
   const oldValue = fixture.mode;
   fixture.mode = mode;
@@ -26,16 +27,18 @@ fixture.setMode = (mode) => {
 };
 globalThis.chrome = {
   storage: {
-    local: { get: async (key) => ({ [key]: fixture.mode }) },
+    local: { get: async (key) => ({ [key]: key === 'PAGE_TRANSLATION_MODE' ? fixture.mode : fixture.storage[key] }) },
     onChanged: { addListener: (fn) => fixture.listeners.add(fn) },
   },
   runtime: {
     sendMessage: async (message) => {
       if (message.action !== 'translate_html_text_batch') return undefined;
       fixture.batches.push(message.texts);
+      fixture.contexts.push(message.context);
       return {
         success: true,
-        translatedTexts: message.texts.map((text) => text.startsWith('Lose') ? 'KO: lost it' : 'KO: ' + text),
+        translatedTexts: message.texts.map((text) =>
+          text.startsWith('Lose') ? 'KO: lost it' : text.startsWith('Fail') && !fixture.fixed ? null : 'KO: ' + text),
       };
     },
   },
@@ -211,6 +214,99 @@ run().then(() => { document.body.dataset.result = 'passed'; }, (error) => {
 });
 `;
 
+// A paragraph that fails can be tried again; text already in the target language, private values
+// and the page's context; text inside web components.
+const recoveryTest = `
+import { PageTranslator } from './src/lib/pageTranslator';
+
+const check = (ok, message) => { if (!ok) throw new Error(message); };
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const labels = { failed: '번역하지 못했습니다', retry: '다시 시도' };
+
+customElements.define('my-card', class extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' }).innerHTML = '<p id="inside">Text inside a web component.</p>';
+  }
+});
+
+async function run() {
+  document.title = 'Shizue test page';
+  document.head.insertAdjacentHTML('beforeend', '<meta name="description" content="A page for testing translation.">');
+  document.getElementById('page').innerHTML = \`
+    <p id="ok">Plain English paragraph to translate.</p>
+    <p id="fail">Fail this paragraph at first.</p>
+    <p id="korean">이 문단은 이미 한국어로 쓰여 있어서 보내지 않아도 됩니다.</p>
+    <p id="private">Write to jane.doe@example.com or call +1 (415) 555-0100, card 4242 4242 4242 4242, key sk-proj-abcdefghijklmnopqrstuvwx1234.</p>
+    <p id="link">Read <a href="mailto:jane.doe@example.com" title="Mail jane.doe@example.com" data-user="jane.doe@example.com">the docs</a> now.</p>
+    <p id="numbers">Released 2026-11-04 as version 1.2.3 for 1234567890123 users.</p>
+    <my-card id="card"></my-card>
+  \`;
+  fixture.batches = [];
+  fixture.contexts = [];
+  const translator = new PageTranslator(null);
+  translator.activate('Korean', labels);
+  await wait(800);
+  let sent = fixture.batches.flat();
+
+  check(sent.includes('Plain English paragraph to translate.'), 'A paragraph was not sent: ' + JSON.stringify(sent));
+  check(!sent.some((text) => text.includes('한국어')), 'Korean text was sent for a Korean translation');
+  check(!document.querySelector('#korean > shizue-translation-overlay'), 'Korean text got a translation');
+
+  const context = fixture.contexts[0];
+  check(context?.title === 'Shizue test page' && context.description === 'A page for testing translation.',
+    'Page context not sent: ' + JSON.stringify(context));
+
+  check(!sent.some((text) => /@|4242|555-0100|sk-proj/.test(text)), 'A private value was sent: ' + JSON.stringify(sent));
+  check(sent.includes('Write to {{0}} or call {{1}}, card {{2}}, key {{3}}.'), 'Private values not sent as placeholders: ' + JSON.stringify(sent));
+  check(sent.includes('Released 2026-11-04 as version 1.2.3 for 1234567890123 users.'), 'Dates or numbers were masked: ' + JSON.stringify(sent));
+  const shown = document.querySelector('#private > shizue-translation-overlay')?.textContent ?? '';
+  check(shown.includes('jane.doe@example.com') && shown.includes('+1 (415) 555-0100') && shown.includes('4242 4242 4242 4242')
+    && shown.includes('sk-proj-abcdefghijklmnopqrstuvwx1234'), 'Private values not put back: ' + shown);
+  const link = document.querySelector('#link > shizue-translation-overlay a');
+  check(link?.getAttribute('href') === 'mailto:jane.doe@example.com' && link.title === 'Mail jane.doe@example.com',
+    'Link lost its address: ' + link?.outerHTML);
+  check(!link.hasAttribute('data-user'), 'An attribute that never comes back was sent');
+
+  // Text in an open shadow root is translated, and so is text added there later.
+  const card = document.getElementById('card');
+  check(sent.includes('Text inside a web component.'), 'Shadow DOM text not sent: ' + JSON.stringify(sent));
+  check(card.shadowRoot.querySelector('#inside > shizue-translation-overlay')?.textContent === 'KO: Text inside a web component.',
+    'Shadow DOM translation not shown');
+  card.shadowRoot.insertAdjacentHTML('beforeend', '<p>Added later inside the component.</p>');
+  await wait(1500);
+  check(fixture.batches.flat().includes('Added later inside the component.'), 'Text added to a shadow root was not translated');
+
+  // The failed paragraph shows a note with a button; trying again translates it.
+  const failed = document.querySelector('#fail > shizue-translation-overlay');
+  const retry = failed?.querySelector('button.shizue-retry');
+  check(failed?.textContent.includes(labels.failed) && retry?.textContent === labels.retry, 'No retry note: ' + failed?.innerHTML);
+  let pageClicks = 0;
+  document.getElementById('fail').addEventListener('click', () => pageClicks++);
+  fixture.fixed = true;
+  retry.click();
+  await wait(800);
+  check(pageClicks === 0, 'The retry click reached the page');
+  check(document.querySelector('#fail > shizue-translation-overlay')?.textContent === 'KO: Fail this paragraph at first.',
+    'Trying again did not translate: ' + document.querySelector('#fail > shizue-translation-overlay')?.innerHTML);
+  translator.deactivate();
+
+  // With masking off, the values go as they are.
+  fixture.storage.TRANSLATION_MASK_PRIVATE = false;
+  fixture.batches = [];
+  translator.activate('Korean', labels);
+  await wait(800);
+  sent = fixture.batches.flat();
+  check(sent.some((text) => text.includes('jane.doe@example.com')), 'Masking off still masked: ' + JSON.stringify(sent));
+  translator.deactivate();
+  fixture.storage = {};
+}
+run().then(() => { document.body.dataset.result = 'passed'; }, (error) => {
+  document.body.dataset.result = 'failed';
+  document.getElementById('result').textContent = error.stack;
+});
+`;
+
 // Bundles a test script with the stubbed extension APIs and runs it on a page in headless Chrome.
 async function runInChrome(script) {
   const directory = await mkdtemp(join(tmpdir(), 'shizue-page-translation-'));
@@ -235,3 +331,18 @@ test('Page translation keeps code and formulas, shows the translation alone when
 
 test('Menus, buttons and dates stay on every site; site rules keep to the content and translate a comment whole',
   { skip: !chrome && 'Chrome unavailable; set CHROME_BIN', timeout: 60000 }, () => runInChrome(rulesTest));
+
+test('A failed paragraph can be tried again; same-language text and private values stay; shadow DOM is translated',
+  { skip: !chrome && 'Chrome unavailable; set CHROME_BIN', timeout: 60000 }, () => runInChrome(recoveryTest));
+
+test('Private values are found without catching dates, versions or plain numbers', async () => {
+  const { splitSensitive } = await import('../src/lib/sensitiveText.ts');
+  const values = (text) => splitSensitive(text).filter((_, i) => i % 2 === 1);
+  assert.deepEqual(values('Mail a.b+c@mail.example.co.kr today'), ['a.b+c@mail.example.co.kr']);
+  assert.deepEqual(values('전화 010-1234-5678, 02-123-4567'), ['010-1234-5678', '02-123-4567']);
+  assert.deepEqual(values('Card 4111-1111-1111-1111 and 1234 5678 9012 3456'), ['4111-1111-1111-1111']);
+  assert.deepEqual(values('Key AKIAIOSFODNN7EXAMPLE and ghp_abcdefghijklmnopqrstuvwxyz0123456789'),
+    ['AKIAIOSFODNN7EXAMPLE', 'ghp_abcdefghijklmnopqrstuvwxyz0123456789']);
+  assert.deepEqual(values('RRN 900101-1234567'), ['900101-1234567']);
+  assert.deepEqual(values('On 2026-11-04, v1.2.3 cost $1,234.56 for 0000000000000 rows.'), []);
+});
