@@ -43,7 +43,7 @@ const STYLE = `
 .root { position: absolute; inset: 0; pointer-events: none; font-family: system-ui, -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Noto Sans JP', sans-serif; }
 .block {
   position: absolute; box-sizing: border-box; display: flex; align-items: center; justify-content: center;
-  padding: 1px 3px; border-radius: 6px; background: rgba(255, 255, 255, 0.96); color: #111;
+  padding: 1px 3px; border-radius: 6px; background: #fff; color: #111;
   font-weight: 600; line-height: 1.15; text-align: center; overflow: hidden;
   word-break: keep-all; overflow-wrap: anywhere; white-space: pre-wrap;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);

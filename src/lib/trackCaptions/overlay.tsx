@@ -28,6 +28,8 @@ export const createCaptionOverlay = (site: Pick<TrackCaptionSite, 'name' | 'play
         width: 'max-content',
         maxWidth: '90%',
         textAlign: 'center',
+        // Players may set their own (TED's is 0, which draws wrapped lines over each other).
+        lineHeight: 'normal',
         pointerEvents: 'none',
         zIndex: String(site.zIndex ?? 1),
       });

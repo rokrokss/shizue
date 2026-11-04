@@ -245,7 +245,7 @@ async function run() {
   fixture.batches = [];
   fixture.contexts = [];
   const translator = new PageTranslator(null);
-  translator.activate('Korean', labels);
+  translator.activate('Korean_한국어', labels);
   await wait(800);
   let sent = fixture.batches.flat();
 
@@ -273,7 +273,7 @@ async function run() {
   check(sent.includes('Text inside a web component.'), 'Shadow DOM text not sent: ' + JSON.stringify(sent));
   check(card.shadowRoot.querySelector('#inside > shizue-translation-overlay')?.textContent === 'KO: Text inside a web component.',
     'Shadow DOM translation not shown');
-  card.shadowRoot.insertAdjacentHTML('beforeend', '<p>Added later inside the component.</p>');
+  card.shadowRoot.append(Object.assign(document.createElement('p'), { textContent: 'Added later inside the component.' }));
   await wait(1500);
   check(fixture.batches.flat().includes('Added later inside the component.'), 'Text added to a shadow root was not translated');
 
@@ -294,7 +294,7 @@ async function run() {
   // With masking off, the values go as they are.
   fixture.storage.TRANSLATION_MASK_PRIVATE = false;
   fixture.batches = [];
-  translator.activate('Korean', labels);
+  translator.activate('Korean_한국어', labels);
   await wait(800);
   sent = fixture.batches.flat();
   check(sent.some((text) => text.includes('jane.doe@example.com')), 'Masking off still masked: ' + JSON.stringify(sent));

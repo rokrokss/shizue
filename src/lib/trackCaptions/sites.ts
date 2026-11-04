@@ -161,6 +161,8 @@ const ted: TrackCaptionSite = {
   load: async (video, target) => (await loadTedCaptions(target).catch(() => null)) ?? loadTrackCaptions(video, target),
   title: () => pageTitle().replace(/\s*\|\s*TED Talk\s*$/i, ''),
   overlayBottom: 72,
+  // TED may start a talk with its own subtitles on, drawn where ours go.
+  ownCaptions: '#subtitles-container',
   zIndex: 10,
 };
 

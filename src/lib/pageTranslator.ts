@@ -673,6 +673,11 @@ export class PageTranslator {
             return NodeFilter.FILTER_REJECT;
           }
 
+          // Shizue's own overlays: a failed paragraph's note isn't text of the page.
+          if (this.isShizueElement(element)) {
+            return NodeFilter.FILTER_REJECT;
+          }
+
           if (content && !inContent && !element.closest(content)) {
             return element.querySelector(content) ? NodeFilter.FILTER_SKIP : NodeFilter.FILTER_REJECT;
           }
