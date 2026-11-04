@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.3.24
+## v0.3.25
 
 - Browser control: turn on "Browser control" in the paperclip menu and Shizue does what you ask in the current tab, clicking, typing, choosing, scrolling and opening pages one step at a time. The steps show above the answer as it works, and a frame and a pill on the page say it's at work, with a button to stop. Before anything that sends, deletes, pays or can't be undone, it asks you on a card in the panel first. It never types into password or card fields, and treats what the page says as content, not instructions
 - Translate images on a page: right-click an image and choose "Translate image", or "Translate all images on page" for a manga chapter or webtoon, and the translation is drawn over each bubble and caption. Hover an image for a button that shows the original. It uses your chat model, so it needs one that reads images, and translated images are kept for 30 days
@@ -18,6 +18,9 @@
 - Private details stay on the page: emails, phone numbers, card numbers and API keys aren't sent to the AI when a page is translated. It's on by default, in page translation's settings
 - A paragraph whose translation failed gets a retry button; one click tries again every paragraph that failed
 - Page translation reaches into web components (open shadow roots), so their text is translated too
+
+## v0.3.24
+
 - Translation only: in page translation's settings, set Display to "Translation only" to hide the original text and read just the translation. Switching back shows the original again without translating anew
 - Code and math stay as they are: code, keyboard keys and formulas inside a translated paragraph keep their original form
 - YouTube's auto-generated captions are translated sentence by sentence: the recognizer's broken lines are joined into whole sentences, and long ones split where the speaker pauses
