@@ -2,14 +2,17 @@
 
 ## v0.3.25
 
-- Browser control: turn on "Browser control" in the paperclip menu and Shizue does what you ask in the current tab, clicking, typing, choosing, scrolling and opening pages one step at a time. The steps show above the answer as it works, and a frame and a pill on the page say it's at work, with a button to stop. Before anything that sends, deletes, pays or can't be undone, it asks you on a card in the panel first. It never types into password or card fields, and treats what the page says as content, not instructions
+- Browser control: turn on "Browser control" in the Tools menu and Shizue does what you ask in the current tab, clicking, typing, choosing, scrolling and opening pages one step at a time. The steps show above the answer as it works, and a frame and a pill on the page say it's at work, with a button to stop. Before anything that sends, deletes, pays or can't be undone, it asks you on a card in the panel first. It never types into password or card fields, and treats what the page says as content, not instructions
+- Ask Shizue to do something in your tab with browser control off, and a card under the answer offers to turn it on and do it, in one click
+- Tools button: web search, browser control and thinking effort have their own button beside the paperclip, which now holds what goes with a question: open tabs, files, images and a screen capture. Capturing a part of the page has its own button (the scissors)
+- Select all open tabs: the open tabs list in the paperclip menu has "Select all" and "Clear all" at its top right
 - Translate images on a page: right-click an image and choose "Translate image", or "Translate all images on page" for a manga chapter or webtoon, and the translation is drawn over each bubble and caption. Hover an image for a button that shows the original. It uses your chat model, so it needs one that reads images, and translated images are kept for 30 days
 - Lecture captions: on Coursera, Udemy, TED and Vimeo, hover a video and click the captions button at its top right to read its captions translated, in the caption styles of the other sites. On Udemy, turn on its captions first
 - Meeting captions: in Google Meet, Microsoft Teams and Zoom in the browser, turn on the meeting's captions and Shizue's button at the bottom left translates them live, under each speaker's name. Turn on Chrome's on-device translator in the button's menu to keep what is said on your computer; otherwise your translation model translates
 - Disney+, Prime Video and Max: turn on the site's captions and click Shizue's button on the player to read them translated
 - Long chats keep going: once a chat fills most of the model's context, its older turns are folded into a summary the model reads instead, and the newest stay whole. A chip by the chat box shows how full the context is from half way
 - See the model think: models that show their thinking show it above the answer as it comes, folding into "Thought for 12s" once the answer starts
-- Thinking effort: in the paperclip menu, choose how hard the model thinks (low, medium or high) for models that take one
+- Thinking effort: in the Tools menu, choose how hard the model thinks (low, medium or high) for models that take one
 - Questions to ask next: under a summary, Shizue suggests a few questions to ask about it; click one to ask it
 - Ask about the moment: in a chat about a video, the "This moment" chip sends your question with the time the video is at, so "what is this?" is about what's on screen
 - Page translation remembers: translations are kept for 30 days, so a page you come back to shows its translation at once, without asking the model again
