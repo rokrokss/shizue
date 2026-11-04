@@ -180,8 +180,9 @@ const TabMentionPicker = forwardRef<
 
   return (
     <Popover content={content} open={open} placement="topLeft" arrow={false} trigger={[]}>
-      {/* The list is placed against a DOM element; the chat box's ref is not one. */}
-      <div className="sz:flex sz:flex-col sz:flex-1 sz:min-h-0 sz:w-full">{children}</div>
+      {/* The list is placed against a DOM element; the chat box's ref is not one. The chat box
+          keeps room for a couple of lines however much sits above it. */}
+      <div className="sz:flex sz:flex-col sz:flex-1 sz:min-h-15 sz:w-full">{children}</div>
     </Popover>
   );
 });

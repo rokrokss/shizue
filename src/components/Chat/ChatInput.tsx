@@ -489,7 +489,9 @@ const ChatInput = ({
         className="sz:w-full sz:mb-2 sz:font-ycom" message={t('chat.pageUnavailable')} />}
       {captureFailed && <Alert type="warning" showIcon closable onClose={() => setCaptureFailed(false)}
         className="sz:w-full sz:mb-2 sz:font-ycom" message={t('chat.captureFailed')} />}
-      <div className="sz:flex sz:flex-col sz:w-full sz:h-45 sz:px-2">
+      {/* Grows past its usual height when chips and images take room, rather than push the chat box
+          into the footer. */}
+      <div className="sz:flex sz:flex-col sz:w-full sz:min-h-45 sz:px-2">
         <div className="sz:flex sz:items-center sz:justify-center">
           <div className="sz:flex sz:w-full sz:items-center sz:justify-start">
             <Tooltip
@@ -847,7 +849,7 @@ const ChatInput = ({
             autoSize
             className="
               sz:w-full
-              sz:h-full
+              sz:flex-1
               sz:font-ycom
               sz:flex
               sz:flex-col
