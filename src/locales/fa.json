@@ -162,7 +162,10 @@
     "browserControlHintTitle": "Shizue می‌تواند این کار را در زبانهٔ شما انجام دهد",
     "browserControlHintBody": "«کنترل مرورگر» را در منوی ابزارها روشن کنید تا Shizue در این صفحه کلیک و تایپ کند. پیش از ارسال یا پرداخت می‌پرسد.",
     "browserControlHintAction": "روشن کن و دوباره امتحان کن",
-    "tools": "ابزارها"
+    "tools": "ابزارها",
+    "autoApprove": "بدون پرسیدن انجام بده",
+    "autoApproveHint": "در این گفتگو بدون پرسیدن ارسال، پرداخت و حذف می‌کند. با این حال رمز عبور یا شماره کارت را وارد نمی‌کند",
+    "browserAgentAutoApprove": "کنترل مرورگر · بدون پرسیدن"
   },
   "footer": {
     "joinDiscord": "به من در Discord بپیوندید!",
@@ -439,6 +442,7 @@
     },
     "overlayWorking": "Shizue در این زبانه کار می‌کند",
     "overlayWaiting": "در انتظار اجازهٔ شما در پنل",
-    "overlayStop": "توقف"
+    "overlayStop": "توقف",
+    "autoApproved": "بدون پرسیدن انجام شد"
   }
 }

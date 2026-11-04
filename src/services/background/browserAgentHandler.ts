@@ -174,6 +174,7 @@ export async function runBrowserAgent({
   history,
   lang,
   labels,
+  autoApprove,
   reasoningEffort,
   modelPreset,
   port,
@@ -185,6 +186,8 @@ export async function runBrowserAgent({
   history: BaseMessage[];
   lang: Language;
   labels?: AgentLabels;
+  // Act without the approval card (a password or card field is still refused).
+  autoApprove?: boolean;
   reasoningEffort?: ModelOptions['reasoningEffort'];
   modelPreset: ModelPreset;
   port: chrome.runtime.Port;
@@ -272,6 +275,8 @@ export async function runBrowserAgent({
         Object.assign(step, { status: 'failed', error: 'not_found' });
       } else if (action.kind === 'type' && element?.secret) {
         Object.assign(step, { status: 'failed', error: 'secret_field' });
+      } else if (needsApproval(action, element, reply.sensitive) && autoApprove) {
+        step.autoApproved = true;
       } else if (needsApproval(action, element, reply.sensitive)) {
         Object.assign(step, { status: 'awaiting', approval: true });
         publish();

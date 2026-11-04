@@ -268,6 +268,7 @@ export class ChatModelHandler {
         history: earlier,
         lang: getCurrentLanguage(),
         labels,
+        autoApprove: task.autoApprove,
         reasoningEffort: await reasoningEffortFor(modelName),
         modelPreset,
         port,

@@ -162,7 +162,10 @@
     "browserControlHintTitle": "O Shizue pode fazer isto no seu separador",
     "browserControlHintBody": "Ative “Controlo do navegador” no menu Ferramentas e o Shizue clica e escreve nesta página. Pergunta antes de enviar ou pagar.",
     "browserControlHintAction": "Ativar e tentar novamente",
-    "tools": "Ferramentas"
+    "tools": "Ferramentas",
+    "autoApprove": "Sem perguntar",
+    "autoApproveHint": "Nesta conversa, envia, paga e elimina sem perguntar. Continua a não escrever palavras-passe nem números de cartão",
+    "browserAgentAutoApprove": "Controlo do navegador · sem perguntar"
   },
   "footer": {
     "joinDiscord": "Junta-te a mim no Discord!",
@@ -439,6 +442,7 @@
     },
     "overlayWorking": "O Shizue está a trabalhar neste separador",
     "overlayWaiting": "A aguardar a sua permissão no painel",
-    "overlayStop": "Parar"
+    "overlayStop": "Parar",
+    "autoApproved": "Feito sem perguntar"
   }
 }

@@ -162,7 +162,10 @@
     "browserControlHintTitle": "Shizue kann das in deinem Tab erledigen",
     "browserControlHintBody": "Schalte im Werkzeuge-Menü „Browsersteuerung“ ein, dann klickt und tippt Shizue auf dieser Seite. Vor Senden oder Bezahlen fragt es nach.",
     "browserControlHintAction": "Einschalten und erneut versuchen",
-    "tools": "Werkzeuge"
+    "tools": "Werkzeuge",
+    "autoApprove": "Ohne Nachfrage ausführen",
+    "autoApproveHint": "In diesem Chat sendet, bezahlt und löscht es ohne Nachfrage. Passwörter und Kartennummern tippt es weiterhin nicht",
+    "browserAgentAutoApprove": "Browsersteuerung · ohne Nachfrage"
   },
   "footer": {
     "joinDiscord": "Tritt mir auf Discord bei!",
@@ -439,6 +442,7 @@
     },
     "overlayWorking": "Shizue arbeitet in diesem Tab",
     "overlayWaiting": "Wartet im Panel auf deine Zustimmung",
-    "overlayStop": "Stopp"
+    "overlayStop": "Stopp",
+    "autoApproved": "Ohne Nachfrage ausgeführt"
   }
 }

@@ -162,7 +162,10 @@
     "browserControlHintTitle": "Shizue bunu sekmende yapabilir",
     "browserControlHintBody": "Araçlar menüsünde Tarayıcı kontrolünü aç, Shizue bu sayfada tıklayıp yazsın. Göndermeden veya ödemeden önce sorar.",
     "browserControlHintAction": "Aç ve yeniden dene",
-    "tools": "Araçlar"
+    "tools": "Araçlar",
+    "autoApprove": "Sormadan yap",
+    "autoApproveHint": "Bu sohbette sormadan gönderir, öder ve siler. Şifre ve kart numarasını yine de yazmaz",
+    "browserAgentAutoApprove": "Tarayıcı kontrolü · sormadan"
   },
   "footer": {
     "joinDiscord": "Discord'da bana katılın!",
@@ -439,6 +442,7 @@
     },
     "overlayWorking": "Shizue bu sekmede çalışıyor",
     "overlayWaiting": "Panelde onayınızı bekliyor",
-    "overlayStop": "Durdur"
+    "overlayStop": "Durdur",
+    "autoApproved": "Sormadan yapıldı"
   }
 }

@@ -162,7 +162,10 @@
     "browserControlHintTitle": "シズエがこのタブで直接できます",
     "browserControlHintBody": "ツールメニューの「ブラウザ操作」をオンにすると、このページで直接クリック・入力します。送信・支払いの前には確認します。",
     "browserControlHintAction": "オンにしてやり直す",
-    "tools": "ツール"
+    "tools": "ツール",
+    "autoApprove": "確認せずに実行",
+    "autoApproveHint": "この会話では送信・支払い・削除も確認せずに実行します。パスワードやカード番号は入力しません",
+    "browserAgentAutoApprove": "ブラウザ操作 · 確認なし"
   },
   "footer": {
     "joinDiscord": "Discordに参加してください！",
@@ -439,6 +442,7 @@
     },
     "overlayWorking": "シズエがこのタブを操作中",
     "overlayWaiting": "パネルで許可を待っています",
-    "overlayStop": "停止"
+    "overlayStop": "停止",
+    "autoApproved": "確認せずに実行"
   }
 }

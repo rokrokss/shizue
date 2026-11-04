@@ -162,7 +162,10 @@
     "browserControlHintTitle": "Kaya itong gawin ni Shizue sa tab mo",
     "browserControlHintBody": "I-on ang Kontrol ng browser sa menu na Mga tool at magki-click at magta-type si Shizue sa page na ito. Nagtatanong muna bago magpadala o magbayad.",
     "browserControlHintAction": "I-on at subukan ulit",
-    "tools": "Mga tool"
+    "tools": "Mga tool",
+    "autoApprove": "Huwag nang magtanong",
+    "autoApproveHint": "Sa chat na ito, nagpapadala, nagbabayad at nagbubura nang hindi nagtatanong. Hindi pa rin nagta-type ng password o numero ng card",
+    "browserAgentAutoApprove": "Kontrol ng browser · walang tanong"
   },
   "footer": {
     "joinDiscord": "Sumali sa akin sa Discord!",
@@ -439,6 +442,7 @@
     },
     "overlayWorking": "Gumagana si Shizue sa tab na ito",
     "overlayWaiting": "Naghihintay ng pahintulot mo sa panel",
-    "overlayStop": "Itigil"
+    "overlayStop": "Itigil",
+    "autoApproved": "Ginawa nang hindi nagtatanong"
   }
 }

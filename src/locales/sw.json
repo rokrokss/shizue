@@ -162,7 +162,10 @@
     "browserControlHintTitle": "Shizue inaweza kufanya hivi kwenye kichupo chako",
     "browserControlHintBody": "Washa Udhibiti wa kivinjari kwenye menyu ya Zana na Shizue itabofya na kuandika kwenye ukurasa huu. Huuliza kabla ya kutuma au kulipa.",
     "browserControlHintAction": "Washa na ujaribu tena",
-    "tools": "Zana"
+    "tools": "Zana",
+    "autoApprove": "Bila kuuliza",
+    "autoApproveHint": "Katika gumzo hili hutuma, hulipa na kufuta bila kuuliza. Bado haiandiki nenosiri wala nambari za kadi",
+    "browserAgentAutoApprove": "Udhibiti wa kivinjari · bila kuuliza"
   },
   "footer": {
     "joinDiscord": "Jiunge nami kwenye Discord!",
@@ -439,6 +442,7 @@
     },
     "overlayWorking": "Shizue inafanya kazi kwenye kichupo hiki",
     "overlayWaiting": "Inasubiri ruhusa yako kwenye paneli",
-    "overlayStop": "Simamisha"
+    "overlayStop": "Simamisha",
+    "autoApproved": "Imefanywa bila kuuliza"
   }
 }

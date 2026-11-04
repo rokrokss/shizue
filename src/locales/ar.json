@@ -162,7 +162,10 @@
     "browserControlHintTitle": "يستطيع Shizue فعل ذلك في علامة التبويب",
     "browserControlHintBody": "شغّل «التحكم في المتصفح» من قائمة الأدوات لينقر Shizue ويكتب في هذه الصفحة. يسأل قبل الإرسال أو الدفع.",
     "browserControlHintAction": "تشغيل وإعادة المحاولة",
-    "tools": "الأدوات"
+    "tools": "الأدوات",
+    "autoApprove": "التنفيذ دون سؤال",
+    "autoApproveHint": "في هذه المحادثة يرسل ويدفع ويحذف دون أن يسأل. ولا يكتب كلمات المرور أو أرقام البطاقات مع ذلك",
+    "browserAgentAutoApprove": "التحكم في المتصفح · دون سؤال"
   },
   "footer": {
     "joinDiscord": "انضم إلي على Discord!",
@@ -439,6 +442,7 @@
     },
     "overlayWorking": "يعمل Shizue في علامة التبويب هذه",
     "overlayWaiting": "بانتظار موافقتك في اللوحة",
-    "overlayStop": "إيقاف"
+    "overlayStop": "إيقاف",
+    "autoApproved": "نُفّذ دون سؤال"
   }
 }

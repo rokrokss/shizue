@@ -162,7 +162,10 @@
     "browserControlHintTitle": "Shizue może zrobić to w Twojej karcie",
     "browserControlHintBody": "Włącz „Sterowanie przeglądarką” w menu Narzędzia, a Shizue będzie klikać i pisać na tej stronie. Pyta przed wysłaniem lub płatnością.",
     "browserControlHintAction": "Włącz i spróbuj ponownie",
-    "tools": "Narzędzia"
+    "tools": "Narzędzia",
+    "autoApprove": "Bez pytania",
+    "autoApproveHint": "W tym czacie wysyła, płaci i usuwa bez pytania. Nadal nie wpisuje haseł ani numerów kart",
+    "browserAgentAutoApprove": "Sterowanie przeglądarką · bez pytania"
   },
   "footer": {
     "joinDiscord": "Dołącz do mnie na Discordzie!",
@@ -439,6 +442,7 @@
     },
     "overlayWorking": "Shizue działa w tej karcie",
     "overlayWaiting": "Czeka na zgodę w panelu",
-    "overlayStop": "Zatrzymaj"
+    "overlayStop": "Zatrzymaj",
+    "autoApproved": "Wykonano bez pytania"
   }
 }

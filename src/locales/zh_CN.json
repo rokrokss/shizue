@@ -162,7 +162,10 @@
     "browserControlHintTitle": "Shizue 可以直接在你的标签页里完成",
     "browserControlHintBody": "在工具菜单中打开“浏览器操作”，Shizue 就会在此页面上点击和输入。发送或付款前会先询问。",
     "browserControlHintAction": "打开并重试",
-    "tools": "工具"
+    "tools": "工具",
+    "autoApprove": "不再询问",
+    "autoApproveHint": "在此对话中，发送、付款、删除也不再询问，直接执行。仍不会输入密码或卡号",
+    "browserAgentAutoApprove": "浏览器操作 · 不询问"
   },
   "footer": {
     "joinDiscord": "加入我的 Discord！",
@@ -439,6 +442,7 @@
     },
     "overlayWorking": "Shizue 正在操作此标签页",
     "overlayWaiting": "正在面板中等待你的允许",
-    "overlayStop": "停止"
+    "overlayStop": "停止",
+    "autoApproved": "未询问直接执行"
   }
 }

@@ -68,6 +68,8 @@ export type AgentStep = {
   status: AgentStepStatus;
   // It waits, or waited, for the user's go-ahead.
   approval?: boolean;
+  // It would have waited for the go-ahead, but the user turned asking off for the question.
+  autoApproved?: boolean;
   error?: AgentStepError;
 };
 

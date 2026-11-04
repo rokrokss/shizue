@@ -161,6 +161,9 @@ const AgentRunBlock = ({
                     >
                       {agentStepLabel(step, t)}
                     </div>
+                    {step.autoApproved ? (
+                      <div className="sz:text-[11px] sz:text-amber-500">{t('agent.autoApproved')}</div>
+                    ) : null}
                     {step.status === 'failed' ? (
                       <div className="sz:text-[11px] sz:text-red-400">{t(`agent.error.${step.error ?? 'failed'}`)}</div>
                     ) : step.status === 'denied' ? (

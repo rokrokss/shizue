@@ -162,7 +162,10 @@
     "browserControlHintTitle": "Shizue یہ آپ کے ٹیب میں خود کر سکتا ہے",
     "browserControlHintBody": "ٹولز مینو میں ‘براؤزر کنٹرول’ آن کریں تو Shizue اس صفحے پر کلک اور ٹائپ کرے گا۔ بھیجنے یا ادائیگی سے پہلے پوچھتا ہے۔",
     "browserControlHintAction": "آن کریں اور دوبارہ کوشش کریں",
-    "tools": "ٹولز"
+    "tools": "ٹولز",
+    "autoApprove": "پوچھے بغیر کریں",
+    "autoApproveHint": "اس چیٹ میں بھیجنا، ادائیگی اور حذف کرنا بغیر پوچھے کرتا ہے۔ پھر بھی پاس ورڈ یا کارڈ نمبر نہیں لکھتا",
+    "browserAgentAutoApprove": "براؤزر کنٹرول · بغیر پوچھے"
   },
   "footer": {
     "joinDiscord": "Discord پر میرے ساتھ شامل ہوں!",
@@ -439,6 +442,7 @@
     },
     "overlayWorking": "Shizue اس ٹیب میں کام کر رہا ہے",
     "overlayWaiting": "پینل میں آپ کی اجازت کا انتظار",
-    "overlayStop": "روکیں"
+    "overlayStop": "روکیں",
+    "autoApproved": "بغیر پوچھے کیا گیا"
   }
 }

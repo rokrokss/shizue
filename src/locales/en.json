@@ -162,7 +162,10 @@
     "browserControlHintTitle": "Shizue can do this in your tab",
     "browserControlHintBody": "Turn on Browser control in the Tools menu and Shizue clicks and types on this page. It asks before sending or paying.",
     "browserControlHintAction": "Turn on and try again",
-    "tools": "Tools"
+    "tools": "Tools",
+    "autoApprove": "Don't ask first",
+    "autoApproveHint": "In this chat it sends, pays and deletes without asking. It still won't type passwords or card numbers",
+    "browserAgentAutoApprove": "Browser control · no asking"
   },
   "footer": {
     "joinDiscord": "Join me on Discord!",
@@ -439,6 +442,7 @@
     },
     "overlayWorking": "Shizue is working in this tab",
     "overlayWaiting": "Waiting for your OK in the panel",
-    "overlayStop": "Stop"
+    "overlayStop": "Stop",
+    "autoApproved": "Done without asking"
   }
 }

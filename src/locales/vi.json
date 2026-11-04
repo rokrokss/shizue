@@ -162,7 +162,10 @@
     "browserControlHintTitle": "Shizue có thể làm việc này trong thẻ của bạn",
     "browserControlHintBody": "Bật “Điều khiển trình duyệt” trong menu Công cụ để Shizue nhấp và nhập trên trang này. Hỏi trước khi gửi hoặc thanh toán.",
     "browserControlHintAction": "Bật và thử lại",
-    "tools": "Công cụ"
+    "tools": "Công cụ",
+    "autoApprove": "Không hỏi trước",
+    "autoApproveHint": "Trong cuộc trò chuyện này, gửi, thanh toán và xóa mà không hỏi. Vẫn không nhập mật khẩu hay số thẻ",
+    "browserAgentAutoApprove": "Điều khiển trình duyệt · không hỏi"
   },
   "footer": {
     "joinDiscord": "Tham gia cùng tôi trên Discord!",
@@ -439,6 +442,7 @@
     },
     "overlayWorking": "Shizue đang thao tác trong thẻ này",
     "overlayWaiting": "Đang chờ bạn cho phép trong bảng điều khiển",
-    "overlayStop": "Dừng"
+    "overlayStop": "Dừng",
+    "autoApproved": "Đã làm mà không hỏi"
   }
 }

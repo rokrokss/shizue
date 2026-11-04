@@ -162,7 +162,10 @@
     "browserControlHintTitle": "Shizue ทำสิ่งนี้ในแท็บของคุณได้",
     "browserControlHintBody": "เปิด ‘ควบคุมเบราว์เซอร์’ ในเมนูเครื่องมือ แล้ว Shizue จะคลิกและพิมพ์ในหน้านี้ให้ ถามก่อนส่งหรือชำระเงิน",
     "browserControlHintAction": "เปิดแล้วลองอีกครั้ง",
-    "tools": "เครื่องมือ"
+    "tools": "เครื่องมือ",
+    "autoApprove": "ทำโดยไม่ถาม",
+    "autoApproveHint": "ในแชทนี้จะส่ง ชำระเงิน และลบโดยไม่ถาม แต่ยังไม่พิมพ์รหัสผ่านหรือเลขบัตร",
+    "browserAgentAutoApprove": "ควบคุมเบราว์เซอร์ · ไม่ถาม"
   },
   "footer": {
     "joinDiscord": "เข้าร่วมกับฉันบน Discord!",
@@ -439,6 +442,7 @@
     },
     "overlayWorking": "Shizue กำลังทำงานในแท็บนี้",
     "overlayWaiting": "กำลังรอการอนุญาตในแผง",
-    "overlayStop": "หยุด"
+    "overlayStop": "หยุด",
+    "autoApproved": "ทำโดยไม่ถาม"
   }
 }

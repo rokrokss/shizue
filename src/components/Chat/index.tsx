@@ -68,6 +68,7 @@ export interface Message {
   contextUsage?: number;
   contextCompacted?: boolean;
   browserAgent?: boolean;
+  autoApprove?: boolean;
   agentRun?: AgentRun;
   browserControlHint?: boolean;
 }
@@ -405,7 +406,8 @@ const Chat = () => {
     attachments?: PageAttachment[],
     webSearch?: boolean,
     videoMoment?: VideoMoment,
-    browserAgent?: boolean
+    browserAgent?: boolean,
+    autoApprove?: boolean
   ) => {
     const imageBase64Array =
       images && images.length > 0 ? await convertFilesToBase64Array(images) : undefined;
@@ -429,6 +431,7 @@ const Chat = () => {
           ...(webSearch ? { webSearch } : {}),
           ...(videoMoment ? { videoMoment } : {}),
           ...(browserAgent ? { browserAgent } : {}),
+          ...(autoApprove ? { autoApprove } : {}),
           done: true,
           onInterrupt: false,
           stopped: false,
@@ -455,6 +458,7 @@ const Chat = () => {
       ...(webSearch ? { webSearch } : {}),
       ...(videoMoment ? { videoMoment } : {}),
       ...(browserAgent ? { browserAgent } : {}),
+      ...(autoApprove ? { autoApprove } : {}),
       createdAt: Date.now(),
       done: true,
       onInterrupt: false,
@@ -558,14 +562,15 @@ const Chat = () => {
     attachments?: PageAttachment[],
     webSearch?: boolean,
     videoMoment?: VideoMoment,
-    browserAgent?: boolean
+    browserAgent?: boolean,
+    autoApprove?: boolean
   ) => {
     threadLoader.invalidate();
     setChatStatus('waiting');
 
     const tId = await checkIfThreadExists(text);
 
-    await addHumanMessage(tId, text, images, attachments, webSearch, videoMoment, browserAgent);
+    await addHumanMessage(tId, text, images, attachments, webSearch, videoMoment, browserAgent, autoApprove);
     followRef.current = true;
     scrollToBottomThrottled();
 

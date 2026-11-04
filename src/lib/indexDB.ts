@@ -48,6 +48,8 @@ export interface Message {
   sources?: WebSource[];
   // The question asked the browser agent to do it in the tab, and the answer's run of actions.
   browserAgent?: boolean;
+  // The browser agent doesn't ask before sending, deleting or paying for this question.
+  autoApprove?: boolean;
   agentRun?: AgentRun;
   // The question asked to act in the tab with browser control off; the panel offers to turn it on.
   browserControlHint?: boolean;

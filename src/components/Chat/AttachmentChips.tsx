@@ -15,6 +15,7 @@ import {
   PlusOutlined,
   SelectOutlined,
   SnippetsOutlined,
+  ThunderboltOutlined,
   YoutubeOutlined,
 } from '@ant-design/icons';
 import { Button, Tag, Tooltip } from 'antd';
@@ -79,6 +80,7 @@ const AttachmentChips = ({
   webSearch,
   onWebSearchOff,
   browserAgent,
+  autoApprove,
   onBrowserAgentOff,
   reasoningEffort,
   onReasoningEffortReset,
@@ -93,6 +95,8 @@ const AttachmentChips = ({
   webSearch: boolean;
   onWebSearchOff: () => void;
   browserAgent: boolean;
+  // The browser agent doesn't ask before it sends, deletes or pays: the chip warns of it.
+  autoApprove: boolean;
   onBrowserAgentOff: () => void;
   // Shown when it isn't 'medium' and the model takes one.
   reasoningEffort?: ReasoningEffort;
@@ -140,10 +144,10 @@ const AttachmentChips = ({
         </Tag>
       ) : null}
       {browserAgent ? (
-        <Tooltip title={t('chat.browserAgentHint')}>
+        <Tooltip title={autoApprove ? t('chat.autoApproveHint') : t('chat.browserAgentHint')}>
           <Tag
-            icon={<SelectOutlined />}
-            color="cyan"
+            icon={autoApprove ? <ThunderboltOutlined /> : <SelectOutlined />}
+            color={autoApprove ? 'orange' : 'cyan'}
             closable
             onClose={(e) => {
               e.preventDefault();
@@ -151,7 +155,7 @@ const AttachmentChips = ({
             }}
             className="sz:font-ycom sz:m-0 sz:flex sz:items-center"
           >
-            {t('chat.browserAgent')}
+            {autoApprove ? t('chat.browserAgentAutoApprove') : t('chat.browserAgent')}
           </Tag>
         </Tooltip>
       ) : null}

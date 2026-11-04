@@ -1,13 +1,14 @@
 import { attachRowClass, toolbarButtonStyle } from '@/components/Chat/AttachMenu';
 import { useThemeValue } from '@/hooks/layout';
 import { REASONING_EFFORTS, type ReasoningEffort } from '@/lib/reasoning';
-import { BulbOutlined, ControlOutlined, GlobalOutlined, SelectOutlined } from '@ant-design/icons';
+import { BulbOutlined, ControlOutlined, GlobalOutlined, SelectOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { Button, Popover, Tooltip } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // The tools button: how Shizue answers the questions that follow, with web search or the browser
-// agent, and how hard the model thinks. What goes with a question is the paperclip's (AttachMenu).
+// agent (asking before it sends, deletes or pays, or not), and how hard the model thinks. What goes
+// with a question is the paperclip's (AttachMenu).
 const ToolsMenu = ({
   iconColor,
   webSearch,
@@ -15,6 +16,8 @@ const ToolsMenu = ({
   onToggleWebSearch,
   browserAgent,
   onToggleBrowserAgent,
+  autoApprove,
+  onToggleAutoApprove,
   reasoningEffort,
   reasoningSupported,
   onReasoningEffort,
@@ -25,6 +28,8 @@ const ToolsMenu = ({
   onToggleWebSearch: () => void;
   browserAgent: boolean;
   onToggleBrowserAgent: () => void;
+  autoApprove: boolean;
+  onToggleAutoApprove: () => void;
   reasoningEffort: ReasoningEffort;
   reasoningSupported: boolean;
   onReasoningEffort: (effort: ReasoningEffort) => void;
@@ -65,6 +70,23 @@ const ToolsMenu = ({
           className="sz:w-4 sz:h-4 sz:shrink-0 sz:accent-sz-cyan sz:cursor-[inherit]"
         />
       </label>
+      {browserAgent ? (
+        <div className="sz:pl-6">
+          <label className={rowClass(false)}>
+            <ThunderboltOutlined className="sz:shrink-0 sz:text-amber-500" />
+            <div className="sz:min-w-0 sz:flex-1">
+              <div className="sz:text-sm">{t('chat.autoApprove')}</div>
+              <div className="sz:text-xs sz:text-gray-500">{t('chat.autoApproveHint')}</div>
+            </div>
+            <input
+              type="checkbox"
+              checked={autoApprove}
+              onChange={onToggleAutoApprove}
+              className="sz:w-4 sz:h-4 sz:shrink-0 sz:accent-amber-500 sz:cursor-[inherit]"
+            />
+          </label>
+        </div>
+      ) : null}
       <div
         className={`sz:flex sz:flex-col sz:gap-1.5 sz:px-2 sz:py-1.5 ${
           reasoningSupported ? '' : 'sz:opacity-50'

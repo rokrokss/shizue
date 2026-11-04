@@ -8,6 +8,7 @@ import { requestPageSummary } from '@/services/pageSummary';
 import { useActiveWebTab } from '@/hooks/activeTab';
 import { ChatStatus, isChatWaiting, useReasoningEffort } from '@/hooks/chat';
 import { useThemeValue } from '@/hooks/layout';
+import { threadIdAtom } from '@/hooks/global';
 import { useChatModel, useLocalServerValue } from '@/hooks/models';
 import type { PageAttachment } from '@/lib/indexDB';
 import {
@@ -42,6 +43,7 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons';
 import { Alert, Button, Input, Tooltip } from 'antd';
+import { useAtomValue } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -84,7 +86,8 @@ const ChatInput = ({
     attachments?: PageAttachment[],
     webSearch?: boolean,
     videoMoment?: VideoMoment,
-    browserAgent?: boolean
+    browserAgent?: boolean,
+    autoApprove?: boolean
   ) => Promise<void>;
   onCancel: () => Promise<void>;
   onOpenHistory: () => void;
@@ -113,6 +116,19 @@ const ChatInput = ({
     setBrowserAgent(true);
     setWebSearch(false);
   }, [browserAgentTurnedOn]);
+  // The browser agent sends, deletes and pays without asking first. Only with browser control on,
+  // and only in this chat: another chat, a new one or the panel opened again starts with it off.
+  const [autoApprove, setAutoApprove] = useState(false);
+  useEffect(() => {
+    if (!browserAgent) setAutoApprove(false);
+  }, [browserAgent]);
+  const threadId = useAtomValue(threadIdAtom);
+  const chatOfAutoApprove = useRef(threadId);
+  useEffect(() => {
+    // The chat a first question starts keeps it.
+    if (chatOfAutoApprove.current !== undefined && chatOfAutoApprove.current !== threadId) setAutoApprove(false);
+    chatOfAutoApprove.current = threadId;
+  }, [threadId]);
   const mentionPicker = useRef<TabMentionPickerHandle>(null);
   const activeTab = useActiveWebTab();
   const suggestedTab =
@@ -205,7 +221,8 @@ const ChatInput = ({
       toPageAttachments(pages, SUMMARY_PAGE_TEXT_MAX_CHARS),
       webSearch,
       await videoMoment,
-      browserAgent
+      browserAgent,
+      browserAgent && autoApprove
     );
     setChatInput('');
     setUploadedImages([]);
@@ -351,7 +368,7 @@ const ChatInput = ({
       const images = uploadedImages;
       setChatInput('');
       setUploadedImages([]);
-      onSubmit(text, images, undefined, webSearch, await askedMoment(), browserAgent);
+      onSubmit(text, images, undefined, webSearch, await askedMoment(), browserAgent, browserAgent && autoApprove);
     }
   };
 
@@ -665,6 +682,8 @@ const ChatInput = ({
                 setBrowserAgent((on) => !on);
                 setWebSearch(false);
               }}
+              autoApprove={autoApprove}
+              onToggleAutoApprove={() => setAutoApprove((on) => !on)}
               reasoningEffort={reasoningEffort}
               reasoningSupported={reasoningSupported}
               onReasoningEffort={(effort) => void setReasoningEffort(effort)}
@@ -766,6 +785,7 @@ const ChatInput = ({
           webSearch={webSearch}
           onWebSearchOff={() => setWebSearch(false)}
           browserAgent={browserAgent}
+          autoApprove={autoApprove}
           onBrowserAgentOff={() => setBrowserAgent(false)}
           reasoningEffort={reasoningSupported ? reasoningEffort : undefined}
           onReasoningEffortReset={() => void setReasoningEffort('medium')}

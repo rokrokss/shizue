@@ -162,7 +162,10 @@
     "browserControlHintTitle": "이 탭에서 직접 해 드릴 수 있어요",
     "browserControlHintBody": "도구 메뉴의 ‘브라우저 조작’을 켜면 이 페이지에서 직접 누르고 입력합니다. 보내기·결제 전에는 먼저 묻습니다.",
     "browserControlHintAction": "켜고 다시 하기",
-    "tools": "도구"
+    "tools": "도구",
+    "autoApprove": "묻지 않고 실행",
+    "autoApproveHint": "이 대화에서는 보내기·결제·삭제도 묻지 않고 바로 합니다. 비밀번호·카드 칸은 그래도 입력하지 않습니다",
+    "browserAgentAutoApprove": "브라우저 조작 · 묻지 않음"
   },
   "footer": {
     "joinDiscord": "디스코드로 놀러 오세요!",
@@ -439,6 +442,7 @@
     },
     "overlayWorking": "시즈에가 이 탭을 조작하는 중",
     "overlayWaiting": "패널에서 허용을 기다리는 중",
-    "overlayStop": "중지"
+    "overlayStop": "중지",
+    "autoApproved": "묻지 않고 실행함"
   }
 }

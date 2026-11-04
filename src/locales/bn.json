@@ -162,7 +162,10 @@
     "browserControlHintTitle": "Shizue এটি আপনার ট্যাবে নিজেই করতে পারে",
     "browserControlHintBody": "টুলস মেনুতে ‘ব্রাউজার নিয়ন্ত্রণ’ চালু করলে Shizue এই পৃষ্ঠায় ক্লিক ও টাইপ করবে। পাঠানো বা পেমেন্টের আগে জিজ্ঞেস করে।",
     "browserControlHintAction": "চালু করে আবার চেষ্টা করুন",
-    "tools": "টুলস"
+    "tools": "টুলস",
+    "autoApprove": "না জিজ্ঞেস করে করুন",
+    "autoApproveHint": "এই চ্যাটে পাঠানো, পেমেন্ট ও মোছা না জিজ্ঞেস করেই করে। তবু পাসওয়ার্ড বা কার্ড নম্বর লেখে না",
+    "browserAgentAutoApprove": "ব্রাউজার নিয়ন্ত্রণ · না জিজ্ঞেস করে"
   },
   "footer": {
     "joinDiscord": "Discord-এ আমার সাথে যোগ দিন!",
@@ -439,6 +442,7 @@
     },
     "overlayWorking": "Shizue এই ট্যাবে কাজ করছে",
     "overlayWaiting": "প্যানেলে আপনার অনুমতির অপেক্ষা",
-    "overlayStop": "থামান"
+    "overlayStop": "থামান",
+    "autoApproved": "না জিজ্ঞেস করে করা হয়েছে"
   }
 }
