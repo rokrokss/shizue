@@ -88,7 +88,7 @@ export type AgentRun = { host?: string; steps: AgentStep[]; outcome?: AgentOutco
 // What the agent's pill on the page says, in the panel's language.
 export type AgentLabels = { working: string; waiting: string; stop: string };
 
-export const BROWSER_AGENT_MAX_STEPS = 25;
+export const BROWSER_AGENT_MAX_STEPS = 100;
 
 // With browser control off, the chat model starts its answer with this line when the user asked
 // it to act in their tab (prompts.ts). The background takes it off and the panel offers to turn

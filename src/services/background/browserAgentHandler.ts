@@ -161,7 +161,7 @@ const askModel = async (
   reasoningEffort?: ModelOptions['reasoningEffort']
 ) => {
   const local = isLocalModel(modelPreset.modelName);
-  // Each step is one small choice, made up to 25 times: High at most. A model that thinks first
+  // Each step is one small choice, made up to 100 times: High at most. A model that thinks first
   // gets the room the chat gives its thinking (lib/models.ts); the JSON alone fits in 4000.
   const effort = reasoningEffort && effortWithin(reasoningEffort, BASE_REASONING_EFFORTS);
   const thinks = effort !== undefined && effort !== 'low';
