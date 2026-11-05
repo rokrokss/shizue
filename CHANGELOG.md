@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.4.0
+
+- Browser control from the page: the top item of Shizue's menu on the page is now Browser control, in place of Memo. It opens the side panel on a new chat with browser control on, even when the panel is closed or showing the memo or word list; a chat that is still answering finishes first. Memo still opens from the memo button in the chat
+- Browser control works in embedded forms: contact, booking, sign-up and checkout forms that a page embeds from another site are read, filled in and clicked like the rest of the page. The same rules hold there: it never types into password or card fields, and asks before sending or paying unless "Don't ask first" is on. Frames you can't see are left out, and a CAPTCHA is left for you to solve
+- Browser control thinks at High at most: with thinking effort at Extra or Max, each step thinks at High, so steps come sooner, while chat answers keep the level you chose
+- Fix browser control stopping partway with a model that thinks, when a step's thinking ran out of room (with an API key or OpenRouter)
+
 ## v0.3.25
 
 - Browser control: turn on "Browser control" in the Tools menu and Shizue does what you ask in the current tab, clicking, typing, choosing, scrolling and opening pages one step at a time. The steps show above the answer as it works, and a frame and a pill on the page say it's at work, with a button to stop. Before anything that sends, deletes, pays or can't be undone, it asks you on a card in the panel first. It never types into password or card fields, and treats what the page says as content, not instructions
