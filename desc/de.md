@@ -1,4 +1,4 @@
-🌸 Shizue bringt einen KI-Assistenten in die Seitenleiste von Chrome. Du kannst chatten, ohne den Tab zu wechseln, mit einem Klick zusammenfassen lassen, was du gerade liest, und bei Webseiten und Videos Original und Übersetzung gleichzeitig sehen.
+🌸 Shizue bringt einen KI-Assistenten in die Seitenleiste von Chrome. Du kannst bei Videos und Webseiten Original und Übersetzung gleichzeitig sehen, Shizue Klick für Klick eine Aufgabe in deinem Tab erledigen lassen, chatten, ohne den Tab zu wechseln, und mit einem Klick zusammenfassen lassen, was du gerade liest.
 
 Shizue ist kostenlos und Open Source (MIT). Melde dich mit ChatGPT an und nutze deinen Plan, oder verwende deinen eigenen API-Schlüssel von dem KI-Anbieter deiner Wahl und bezahle nur, was du verbrauchst. Du kannst auch ein Modell nutzen, das auf deinem eigenen Computer läuft – ohne Schlüssel und ohne Kosten. Shizue selbst hat kein Konto, kein Abo und keinen Server.
 
@@ -7,6 +7,18 @@ Shizue ist kostenlos und Open Source (MIT). Melde dich mit ChatGPT an und nutze 
 
 🔐 Mit ChatGPT anmelden
 - Einfach anmelden und den Plan nutzen, den du schon hast, ganz ohne API-Schlüssel
+
+🎬 Zweisprachige Video-Untertitel
+- YouTube: Beim Ansehen erscheint deine Sprache direkt unter der Originalzeile. Mit A oder D springst du eine Zeile zurück oder vor
+- Twitch: Livestreams und VODs, aus den Untertiteln des Streamers oder per Spracherkennung. Die integrierte Chrome-Übersetzung läuft kostenlos direkt auf deinem Gerät
+- Netflix: Hat ein Titel Untertitel in deiner Sprache, erscheinen sie unter dem Original. Sonst überträgt Shizue den Text vorab in deine Sprache
+- Auch Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED und Vimeo sowie Live-Untertitel in Meetings mit Google Meet, Microsoft Teams und Zoom
+
+🕹️ Browsersteuerung
+- Sag, was zu tun ist, und Shizue klickt, tippt, wählt aus und scrollt in deinem Tab, Schritt für Schritt. Jeder Schritt erscheint in der Seitenleiste
+- Shizue fragt dich, bevor etwas gesendet, gelöscht oder bezahlt wird, und tippt nie in Passwort- oder Kartenfelder
+- Buchungs-, Kontakt- und Bezahlformulare, die eine Seite von einer anderen Website einbettet, funktionieren auch
+- Starte sie ganz oben in Shizues Menü auf der Seite
 
 💬 Chat in der Seitenleiste
 - Überall mit Ctrl+Shift+E öffnen (Cmd+Shift+E am Mac)
@@ -18,14 +30,9 @@ Shizue ist kostenlos und Open Source (MIT). Melde dich mit ChatGPT an und nutze 
 🌐 Zweisprachige Webseiten
 - Die Übersetzung erscheint unter jedem Absatz, das Original bleibt, wo es ist
 
-🎬 Zweisprachige Video-Untertitel
-- YouTube: Beim Ansehen erscheint deine Sprache direkt unter der Originalzeile. Mit A oder D springst du eine Zeile zurück oder vor
-- Twitch: Livestreams und VODs, aus den Untertiteln des Streamers oder per Spracherkennung. Die integrierte Chrome-Übersetzung läuft kostenlos direkt auf deinem Gerät
-- Netflix: Hat ein Titel Untertitel in deiner Sprache, erscheinen sie unter dem Original. Sonst überträgt Shizue den Text vorab in deine Sprache
-
 🎯 Rechtsklickmenü
 - Ausgewählter Text: übersetzen, erklären, zusammenfassen oder Grammatik korrigieren
-- Bilder: beschreiben oder den Text darin extrahieren
+- Bilder: beschreiben, den Text darin extrahieren oder übersetzen. Für Manga und Webtoons alle Bilder einer Seite auf einmal übersetzen
 - Ganze Seite: übersetzen oder zusammenfassen
 
 📝 Memos
@@ -40,6 +47,7 @@ Shizue ist kostenlos und Open Source (MIT). Melde dich mit ChatGPT an und nutze 
 🔒 Datenschutz
 - Anmeldedaten, Schlüssel, Chatverlauf und Memos bleiben in deinem Browser
 - Wenn du eine Funktion nutzt, geht nur der Inhalt, den sie braucht, direkt von deinem Browser an den KI-Anbieter, den du gewählt hast
+- Die Browsersteuerung liest den Tab, in dem sie arbeitet, nur als Text: nie Passwort- oder Kartenfelder und keine Screenshots
 - Mit einem lokalen Modell verlässt nichts deinen Computer
 - Keine Nutzungsanalyse, kein Tracking
 - Quellcode: https://github.com/rokrokss/shizue

@@ -48,11 +48,12 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   <img src="store/out/screenshot-4-translate.png" alt="Bilingual page translation" width="640" />
 </p>
 
-### 📺 Bilingual Captions on YouTube, Twitch, and Netflix:
+### 📺 Bilingual Captions on YouTube, Twitch, Netflix, and More:
   - Watch with the original line on screen and your language right under it.
   - **YouTube**: your AI model translates the captions as you watch. Press A or D to jump to the previous or next line.
   - **Twitch**: live streams and VODs, in theatre mode and fullscreen too. Captions come from the streamer, from Stream Closed Captioner, or from speech recognition on streams without them. Chrome's built-in translator works on your device by default, with no API key; turn off "Chrome built-in translation" in the caption menu to use your AI model, which reads the streamer's captions a few seconds ahead so translations are ready when the line appears.
   - **Netflix**: the original is the subtitle track in the language being spoken (closed captions first, even on a dub). When Netflix has subtitles in your language, Shizue pairs them with the original, with no AI request or API key; otherwise your AI model translates ahead of playback, using the surrounding lines as context. Captions carry on into the next episode.
+  - **More sites**: Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED, and Vimeo, and live captions in Google Meet, Microsoft Teams, and Zoom meetings in the browser.
 
 <p align="center">
   <img src="store/out/screenshot-6-youtube.png" alt="Bilingual YouTube captions" width="640" />
@@ -64,6 +65,15 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   <img src="store/out/screenshot-1-netflix.png" alt="Bilingual Netflix captions" width="640" />
 </p>
 
+### 🕹️ Browser Control:
+  - Tell Shizue what to do in your tab and it clicks, types, chooses, scrolls, and opens pages one step at a time, with each step shown in the side panel. Start it from the top of Shizue's menu on the page, or turn on "Browser control" in the chat box's Tools menu.
+  - Before anything that sends, deletes, pays, or can't be undone, it asks you on a card in the panel, unless you turn on "Don't ask first" for that chat. It never types into password or card fields, and treats what the page says as content, not instructions.
+  - Forms that a page embeds from another site, such as booking and checkout forms, are read and filled in like the rest of the page. A CAPTCHA is left for you.
+
+<p align="center">
+  <img src="store/out/screenshot-2-browser-control.png" alt="Browser control filling in a booking form and asking before it sends" width="640" />
+</p>
+
 ### 📝 Memo & Note-taking:
   - Create, edit, and manage personal notes directly within the extension. Features auto-save, pinning important memos, and organized note management.
 
@@ -73,6 +83,7 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
 ### 🖱️ Context Menu Actions:
   - Right-click on any page to translate or summarize it instantly
   - Right-click on images to describe their content or extract text (OCR) using AI
+  - Right-click on an image to translate it, or translate every image on the page for a manga chapter or webtoon: the translation is drawn over each speech bubble and caption
 
 <p align="center">
   <img src="store/out/screenshot-5-context-menu.png" alt="Extracting text from an image via the context menu" width="640" />
@@ -82,9 +93,9 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   - Available in 23 languages including English, Spanish, French, German, Japanese, Chinese, Korean, Arabic, Hindi, and more.
 
 ### 🤖 Multiple AI Model Support:
-  - **OpenAI**: GPT-6.1 Sol, GPT-6.1 Terra, GPT-6 Luna
-  - **Google**: Gemini 3.8 Flash, Gemini 3.5 Flash-Lite, Gemma 4 31B
-  - **Anthropic**: Claude Sonnet 5, Claude Haiku 4.5
+  - **OpenAI**: GPT-6.1 Sol, GPT-6 Astra, GPT-6.1 Terra, GPT-6 Luna
+  - **Google**: Gemini 4 Argon, Gemini 3.8 Flash, Gemini 3.5 Flash-Lite, Gemma 4 31B
+  - **Anthropic**: Claude Fable 5.1, Claude Opus 5.5, Claude Sonnet 5.5, Claude Haiku 5.5
   - **DeepSeek** (OpenRouter only): DeepSeek V4 Pro, DeepSeek V4.1 Flash
   - **OpenRouter**: all of the above with a single API key
   - **Local models**: any model you run with Ollama, LM Studio, or llama.cpp, with no API key
@@ -130,12 +141,12 @@ Requests to OpenRouter carry `HTTP-Referer: https://shizue.net` and `X-OpenRoute
 
 **Why these permissions?**
 - `storage`: keep your keys, settings, and history locally
-- `scripting` and HTTP/HTTPS host access: reconnect Shizue in already-open web pages after an extension update or reload, without refreshing the pages
+- `scripting` and HTTP/HTTPS host access: reconnect Shizue in already-open web pages after an extension update or reload, without refreshing the pages, and let browser control read and act on the tab it works in, forms the page embeds from other sites included
 - `sidePanel`: the chat side panel
 - `activeTab`: work with the tab you're on when you open Shizue or use a right-click action
 - `contextMenus`: the right-click actions
 - `tabGroups` (optional, asked only when you click "Show tab groups" after typing @ in the chat box): list the names and colors of this window's tab groups so you can attach a whole group. They are only shown in that list, never stored or sent anywhere
-- Content scripts on all sites: the floating toggle button and page translation; on YouTube, Twitch, and Netflix, the caption button and bilingual captions
+- Content scripts on all sites: the floating toggle button, page translation, and image translation; on YouTube, Twitch, Netflix, and the other video and meeting sites above, the caption button and bilingual captions
 - `declarativeNetRequestWithHostAccess` and access to `localhost`: reach a model server on your computer. Ollama rejects requests from browser extensions, so Shizue sets the `Origin` header of its own requests to Ollama to Ollama's address. During Sign in with ChatGPT, it also sends the browser's return to `127.0.0.1` to Shizue's own sign-in page. No other requests are changed.
 
 **Do existing pages need a refresh after an update?**
@@ -145,7 +156,7 @@ Shizue automatically reconnects its page scripts after extension updates, reload
 Yes. In Settings → Models, choose "Use a Local Model". Shizue finds Ollama, LM Studio, or llama.cpp on their default ports, or you can enter an address. Pages and chats then stay on your computer. Translation quality depends on the model: in our tests, `gemma4:12b` translated a test page accurately, while `qwen3.5:9b` left some lines untranslated.
 
 **Firefox?**
-Not yet.
+Yes: install Shizue from [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/shizue-ai-translator-assistant/). It opens in the sidebar beside the page, with the same Ctrl+Shift+E (Cmd+Shift+E on Mac); on Firefox for Android, it opens in a tab.
 
 <br/>
 

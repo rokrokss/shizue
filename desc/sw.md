@@ -1,4 +1,4 @@
-🌸 Shizue ni msaidizi wa AI aliye kwenye paneli ya upande ya Chrome. Unaweza kupiga gumzo na AI bila kubadilisha kichupo, kufupisha unachosoma kwa kubofya mara moja, na kusoma kurasa za wavuti na kutazama video huku ukiona maandishi ya asili na tafsiri kwa pamoja.
+🌸 Shizue ni msaidizi wa AI aliye kwenye paneli ya upande ya Chrome. Unaweza kutazama video na kusoma kurasa za wavuti huku ukiona maandishi ya asili na tafsiri kwa pamoja, kuiachia Shizue ibofye na kumaliza kazi kwenye kichupo chako, kupiga gumzo na AI bila kubadilisha kichupo, na kufupisha unachosoma kwa kubofya mara moja.
 
 Shizue ni bure na ni programu huria (MIT). Ingia kwa ChatGPT ili utumie mpango wako, au tumia ufunguo wako mwenyewe wa API kutoka kwa mtoa huduma wa AI unayemchagua na ulipe kwa kiasi unachotumia tu. Unaweza pia kuendesha modeli kwenye kompyuta yako mwenyewe, bila ufunguo na bila gharama. Shizue yenyewe haina akaunti, usajili wa kulipia, wala seva.
 
@@ -7,6 +7,18 @@ Shizue ni bure na ni programu huria (MIT). Ingia kwa ChatGPT ili utumie mpango w
 
 🔐 Ingia kwa ChatGPT
 - Ingia tu ili utumie mpango ulio nao tayari, bila ufunguo wa API
+
+🎬 Manukuu ya video kwa lugha mbili
+- YouTube: lugha yako huonekana chini ya mstari wa asili unapotazama. Bonyeza A au D kwenda kwenye mstari uliotangulia au unaofuata
+- Twitch: matangazo ya moja kwa moja na marudio yake, kutoka kwa manukuu ya mtiririshaji au utambuzi wa sauti. Chrome hutafsiri papo hapo kwenye kifaa chako bila gharama
+- Netflix: filamu au kipindi kikiwa na manukuu ya lugha yako, yanaonyeshwa chini ya maandishi ya asili. Vinginevyo, yanaandaliwa mapema kabla ya kuchezwa
+- Pia Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED na Vimeo, pamoja na manukuu ya moja kwa moja kwenye mikutano ya Google Meet, Microsoft Teams na Zoom
+
+🕹️ Udhibiti wa kivinjari
+- Iambie Shizue cha kufanya, nayo hubofya, huandika, huchagua na kusogeza kwenye kichupo chako hatua kwa hatua, huku kila hatua ikionyeshwa kwenye paneli
+- Huuliza kwanza kabla ya kitendo chochote cha kutuma, kufuta au kulipa, na kamwe haiandiki kwenye sehemu za nenosiri au kadi
+- Fomu za kuweka nafasi, mawasiliano na malipo ambazo ukurasa huzipachika kutoka tovuti nyingine nazo hufanya kazi
+- Anza kutoka juu kabisa ya menyu ya Shizue kwenye ukurasa
 
 💬 Gumzo kwenye paneli ya upande
 - Fungua popote kwa Ctrl+Shift+E (Cmd+Shift+E kwenye Mac)
@@ -18,14 +30,9 @@ Shizue ni bure na ni programu huria (MIT). Ingia kwa ChatGPT ili utumie mpango w
 🌐 Kurasa za wavuti kwa lugha mbili
 - Tafsiri huonekana chini ya kila aya, kwa hiyo maandishi ya asili hubaki pale pale
 
-🎬 Manukuu ya video kwa lugha mbili
-- YouTube: lugha yako huonekana chini ya mstari wa asili unapotazama. Bonyeza A au D kwenda kwenye mstari uliotangulia au unaofuata
-- Twitch: matangazo ya moja kwa moja na marudio yake, kutoka kwa manukuu ya mtiririshaji au utambuzi wa sauti. Chrome hutafsiri papo hapo kwenye kifaa chako bila gharama
-- Netflix: filamu au kipindi kikiwa na manukuu ya lugha yako, yanaonyeshwa chini ya maandishi ya asili. Vinginevyo, yanaandaliwa mapema kabla ya kuchezwa
-
 🎯 Menyu ya kubofya kulia
 - Maandishi yaliyochaguliwa: tafsiri, eleza, fupisha, au rekebisha sarufi
-- Picha: eleza picha au toa maandishi yaliyomo
+- Picha: eleza picha, toa maandishi yaliyomo, au tafsiri picha. Tafsiri picha zote za ukurasa kwa mara moja kwa ajili ya manga na webtoon
 - Ukurasa mzima: tafsiri au fupisha
 
 📝 Memo
@@ -40,6 +47,7 @@ Shizue ni bure na ni programu huria (MIT). Ingia kwa ChatGPT ili utumie mpango w
 🔒 Faragha
 - Taarifa za kuingia, funguo, historia ya gumzo, na memo hubaki kwenye kivinjari chako
 - Unapotumia kipengele, maudhui yanayohitajika na kipengele hicho pekee ndiyo hutumwa moja kwa moja kutoka kwenye kivinjari chako hadi kwa mtoa huduma wa AI uliyemchagua
+- Udhibiti wa kivinjari husoma kichupo kinachodhibitiwa kama maandishi tu: kamwe si sehemu za nenosiri au kadi, na hakuna picha za skrini
 - Ukitumia modeli ya ndani, hakuna kinachotoka nje ya kompyuta yako
 - Hakuna zana za takwimu wala ufuatiliaji
 - Msimbo chanzo: https://github.com/rokrokss/shizue

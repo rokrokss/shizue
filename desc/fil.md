@@ -1,4 +1,4 @@
-🌸 Ang Shizue ay AI assistant sa side panel ng Chrome. Makipag-chat sa AI nang hindi lumilipat ng tab, ibuod ang binabasa sa isang click, at magbasa ng web page o manood ng video nang sabay na nakikita ang orihinal at ang salin.
+🌸 Ang Shizue ay AI assistant sa side panel ng Chrome. Manood ng video o magbasa ng web page nang sabay na nakikita ang orihinal at ang salin, ipaubaya sa Shizue ang pag-click para matapos ang isang gawain sa tab mo, makipag-chat sa AI nang hindi lumilipat ng tab, at ibuod ang binabasa sa isang click.
 
 Libre at open source (MIT) ang Shizue. Mag-sign in gamit ang ChatGPT para magamit ang iyong plan, o gamitin ang sarili mong API key mula sa AI provider na pipiliin mo at bayaran lang ang nagamit mo. Puwede ka ring gumamit ng model na tumatakbo sa sarili mong computer, nang walang key at walang bayad. Walang sariling account, subscription, o server ang Shizue.
 
@@ -7,6 +7,18 @@ Libre at open source (MIT) ang Shizue. Mag-sign in gamit ang ChatGPT para magami
 
 🔐 Mag-sign in gamit ang ChatGPT
 - Mag-sign in lang para magamit ang plan na mayroon ka na, walang kailangang API key
+
+🎬 Bilingual na caption sa video
+- YouTube: makikita mo nang sabay ang orihinal at ang wika mo habang nanonood. Pindutin ang A o D para lumipat sa nakaraan o susunod na linya
+- Twitch: live stream at VOD, mula sa caption ng streamer o speech recognition. Libreng isinasalin ito ng Chrome sa mismong device mo
+- Netflix: kapag may subtitle ang palabas sa wika mo, lalabas ito sa ilalim ng orihinal. Kung wala, inihahanda ito nang maaga, bago pa ito i-play
+- Gumagana rin sa Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED, at Vimeo, at sa live caption ng mga meeting sa Google Meet, Microsoft Teams, at Zoom
+
+🕹️ Kontrol ng browser
+- Sabihin sa Shizue ang gagawin, at hakbang-hakbang itong nagki-click, nagta-type, pumipili, at nag-i-scroll sa tab mo. Makikita sa panel ang bawat hakbang
+- Nagtatanong muna ito bago ang anumang magpapadala, magbubura, o magbabayad, at hindi ito kailanman nagta-type sa field ng password o card
+- Gumagana rin sa mga booking, contact, at checkout form na naka-embed sa pahina mula sa ibang site
+- Simulan ito sa pinakaitaas ng menu ng Shizue sa pahina
 
 💬 Chat sa side panel
 - Buksan kahit saan gamit ang Ctrl+Shift+E (Cmd+Shift+E sa Mac)
@@ -18,14 +30,9 @@ Libre at open source (MIT) ang Shizue. Mag-sign in gamit ang ChatGPT para magami
 🌐 Bilingual na web page
 - Lumalabas ang salin sa ilalim ng bawat talata, kaya nananatili sa puwesto ang orihinal
 
-🎬 Bilingual na caption sa video
-- YouTube: makikita mo nang sabay ang orihinal at ang wika mo habang nanonood. Pindutin ang A o D para lumipat sa nakaraan o susunod na linya
-- Twitch: live stream at VOD, mula sa caption ng streamer o speech recognition. Libreng isinasalin ito ng Chrome sa mismong device mo
-- Netflix: kapag may subtitle ang palabas sa wika mo, lalabas ito sa ilalim ng orihinal. Kung wala, inihahanda ito nang maaga, bago pa ito i-play
-
 🎯 Right-click menu
 - Napiling teksto: isalin, ipaliwanag, ibuod, o ayusin ang grammar
-- Mga larawan: ilarawan o kunin ang teksto
+- Mga larawan: ilarawan, kunin ang teksto, o isalin. Isalin nang sabay-sabay ang lahat ng larawan sa pahina para sa manga at webtoon
 - Buong pahina: isalin o ibuod
 
 📝 Memo
@@ -40,6 +47,7 @@ Libre at open source (MIT) ang Shizue. Mag-sign in gamit ang ChatGPT para magami
 🔒 Privacy
 - Nasa browser mo lang ang sign-in, mga key, kasaysayan ng chat, at memo
 - Kapag gumamit ng isang feature, ang nilalaman lang na kailangan nito ang direktang ipinapadala mula sa browser mo papunta sa AI provider na pinili mo
+- Binabasa ng kontrol ng browser bilang teksto ang tab na kinokontrol nito: hindi kailanman ang field ng password o card, at walang screenshot
 - Kapag local model ang gamit, walang lumalabas sa computer mo
 - Walang analytics o tracking
 - Source code: https://github.com/rokrokss/shizue

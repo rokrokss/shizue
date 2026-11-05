@@ -136,11 +136,18 @@
   .screen h3 { display: flex; align-items: center; gap: 10px; font: 700 22px/1.2 var(--head); margin-bottom: 10px; }
   .screen h3::before { content: ''; border-block: 6px solid transparent; border-inline-start: 10px solid var(--mint); }
   .screen p { font-size: 15px; color: rgba(233, 255, 251, .82); }
+  .captions .more { margin-top: 22px; font-size: 15px; color: var(--ink-2); }
   .screen::after {
     content: ''; position: absolute; inset-inline: 0; bottom: 0; height: 5px;
     background: linear-gradient(to right, var(--mint) var(--played), rgba(233, 255, 251, .16) var(--played));
   }
   [dir="rtl"] .screen::after { transform: scaleX(-1); }
+
+  /* Browser control: the screenshot beside what keeps it safe. */
+  .control h2 { margin-bottom: 10px; }
+  .control .sub { font-size: 19px; color: var(--ink-2); max-width: 620px; margin-bottom: 28px; }
+  .split { display: grid; grid-template-columns: 1.6fr 1fr; gap: 28px; align-items: center; padding-bottom: 88px; }
+  .points { display: grid; gap: 16px; }
 
   .faq { max-width: 760px; padding-bottom: 88px; }
   .faq details { background: #fff; border: 1.5px solid rgba(16, 48, 43, .2); border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; }
@@ -167,6 +174,7 @@
     .pillars { grid-template-columns: 1fr 1fr; }
     .gallery { grid-template-columns: 1fr; }
     .screens { grid-template-columns: 1fr; }
+    .split { grid-template-columns: 1fr; }
   }
   @media (max-width: 520px) {
     .pillars { grid-template-columns: 1fr; }
@@ -220,16 +228,6 @@
     <div class="pillar"><h3>{{models_title}}</h3><p>{{models_body}}</p></div>
   </section>
 
-  <section id="features">
-    <h2>{{features_title}}</h2>
-    <div class="gallery">
-      <img class="shot" src="/img/screenshot-3-hero.png" width="1280" height="800" loading="lazy" alt="{{alt_summary}}">
-      <img class="shot" src="/img/screenshot-4-translate.png" width="1280" height="800" loading="lazy" alt="{{alt_translate}}">
-      <img class="shot" src="/img/screenshot-5-context-menu.png" width="1280" height="800" loading="lazy" alt="{{alt_image_text}}">
-      <img class="shot" src="/img/screenshot-8-models.png" width="1280" height="800" loading="lazy" alt="{{alt_models}}">
-    </div>
-  </section>
-
   <section id="captions" class="captions">
     <h2>{{captions_title}}</h2>
     <p class="sub">{{captions_body}}</p>
@@ -241,6 +239,30 @@
       <div class="screen" style="--played: 34%"><h3>YouTube</h3><p>{{captions_youtube}}</p></div>
       <div class="screen" style="--played: 100%"><h3>Twitch</h3><p>{{captions_twitch}}</p></div>
       <div class="screen" style="--played: 62%"><h3>Netflix</h3><p>{{captions_netflix}}</p></div>
+    </div>
+    <p class="more">{{captions_more}}</p>
+  </section>
+
+  <section id="control" class="control">
+    <h2>{{control_title}}</h2>
+    <p class="sub">{{control_body}}</p>
+    <div class="split">
+      <img class="shot" src="/img/screenshot-2-browser-control.png" width="1280" height="800" loading="lazy" alt="{{alt_control}}">
+      <div class="points">
+        <div class="pillar"><h3>{{control_ask_title}}</h3><p>{{control_ask_body}}</p></div>
+        <div class="pillar"><h3>{{control_secret_title}}</h3><p>{{control_secret_body}}</p></div>
+        <div class="pillar"><h3>{{control_forms_title}}</h3><p>{{control_forms_body}}</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <h2>{{features_title}}</h2>
+    <div class="gallery">
+      <img class="shot" src="/img/screenshot-3-hero.png" width="1280" height="800" loading="lazy" alt="{{alt_summary}}">
+      <img class="shot" src="/img/screenshot-4-translate.png" width="1280" height="800" loading="lazy" alt="{{alt_translate}}">
+      <img class="shot" src="/img/screenshot-5-context-menu.png" width="1280" height="800" loading="lazy" alt="{{alt_image_text}}">
+      <img class="shot" src="/img/screenshot-8-models.png" width="1280" height="800" loading="lazy" alt="{{alt_models}}">
     </div>
   </section>
 
