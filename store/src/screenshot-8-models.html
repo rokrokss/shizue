@@ -44,6 +44,7 @@
   .tag.ok { color: #49aa19; border-color: #274916; background: #162312; }
   .dd { position: absolute; left: 212px; width: 210px; top: 248px; background: #1f1f1f; border-radius: 8px; padding: 4px; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5); font: 400 13px var(--ycom); }
   .dd div { height: 24px; display: flex; align-items: center; padding: 0 10px; border-radius: 4px; color: #e5e7eb; }
+  .dd .bar { position: absolute; right: 3px; top: 6px; width: 4px; height: 170px; border-radius: 2px; background: #4b4f5c; }
   .dd div.on { background: rgba(50, 204, 188, 0.22); color: #fff; }
   .dd div i { margin-left: auto; font-style: normal; font: 400 10px var(--pixel); color: #7b8a87; }
 
@@ -81,25 +82,26 @@
   <div class="bento">
     <div class="tile A">
       <div class="head">
-        <div class="lbl">10 models · 4 providers</div>
+        <div class="lbl">14 models · 4 providers</div>
         <h3>Pick any model, switch anytime</h3>
       </div>
       <div class="settings">
         <div class="tabs"><span>General</span><span class="on">Models</span><span>Layout</span></div>
         <div class="srow">AI Provider<span class="sel">Use OpenRouter API Key <small>▾</small></span></div>
         <div class="srow">Registered<span class="tags"><span class="tag ok">OpenAI</span><span class="tag">Gemini</span><span class="tag ok">Anthropic</span><span class="tag ok">OpenRouter</span></span></div>
-        <div class="srow">Chat Model<span class="sel focus">Claude Sonnet 5 <small>▴</small></span></div>
+        <div class="srow">Chat Model<span class="sel focus">Claude Opus 5.5 <small>▴</small></span></div>
         <div class="dd">
           <div>GPT-6.1 Sol</div>
+          <div>GPT-6 Astra</div>
           <div>GPT-6.1 Terra</div>
           <div>GPT-6 Luna</div>
+          <div>Gemini 4 Argon</div>
           <div>Gemini 3.8 Flash</div>
           <div>Gemini 3.5 Flash-Lite</div>
           <div>Gemma 4 31B</div>
-          <div class="on">Claude Sonnet 5</div>
-          <div>Claude Haiku 4.5</div>
-          <div>DeepSeek V4 Pro</div>
-          <div>DeepSeek V4.1 Flash</div>
+          <div>Claude Fable 5.1</div>
+          <div class="on">Claude Opus 5.5</div>
+          <span class="bar"></span>
         </div>
       </div>
     </div>

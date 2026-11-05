@@ -38,14 +38,14 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   - Quickly launch the sidebar using a keyboard shortcut (default: Ctrl/Cmd+Shift+E) to interact with LLMs via a side panel for queries, brainstorming, or information retrieval without navigating away from the current page.
 
 <p align="center">
-  <img src="store/out/screenshot-1-hero.png" alt="Summarizing a page in the Shizue side panel" width="640" />
+  <img src="store/out/screenshot-3-hero.png" alt="Summarizing a page in the Shizue side panel" width="640" />
 </p>
 
 ### 🌐 Bilingual Reading:
   - View web content in two languages side-by-side, aiding in language learning or comprehension of foreign-language texts.
 
 <p align="center">
-  <img src="store/out/screenshot-2-translate.png" alt="Bilingual page translation" width="640" />
+  <img src="store/out/screenshot-4-translate.png" alt="Bilingual page translation" width="640" />
 </p>
 
 ### 📺 Bilingual Captions on YouTube, Twitch, and Netflix:
@@ -55,13 +55,13 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   - **Netflix**: the original is the subtitle track in the language being spoken (closed captions first, even on a dub). When Netflix has subtitles in your language, Shizue pairs them with the original, with no AI request or API key; otherwise your AI model translates ahead of playback, using the surrounding lines as context. Captions carry on into the next episode.
 
 <p align="center">
-  <img src="store/out/screenshot-3-youtube.png" alt="Bilingual YouTube captions" width="640" />
+  <img src="store/out/screenshot-6-youtube.png" alt="Bilingual YouTube captions" width="640" />
 </p>
 <p align="center">
-  <img src="store/out/screenshot-6-twitch.png" alt="Bilingual Twitch captions" width="640" />
+  <img src="store/out/screenshot-7-twitch.png" alt="Bilingual Twitch captions" width="640" />
 </p>
 <p align="center">
-  <img src="store/out/screenshot-7-netflix.png" alt="Bilingual Netflix captions" width="640" />
+  <img src="store/out/screenshot-1-netflix.png" alt="Bilingual Netflix captions" width="640" />
 </p>
 
 ### 📝 Memo & Note-taking:
@@ -75,7 +75,7 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   - Right-click on images to describe their content or extract text (OCR) using AI
 
 <p align="center">
-  <img src="store/out/screenshot-4-context-menu.png" alt="Extracting text from an image via the context menu" width="640" />
+  <img src="store/out/screenshot-5-context-menu.png" alt="Extracting text from an image via the context menu" width="640" />
 </p>
 
 ### 🌍 Multi-language Support:
@@ -95,7 +95,7 @@ Shizue provides a free, open-source alternative to commercial services (e.g., [S
   - Or use one OpenRouter API key for every model, billed by OpenRouter.
 
 <p align="center">
-  <img src="store/out/screenshot-5-models.png" alt="Model selection, token usage, and local storage" width="640" />
+  <img src="store/out/screenshot-8-models.png" alt="Model selection, token usage, and local storage" width="640" />
 </p>
 
 ### 🎨 Color Themes:

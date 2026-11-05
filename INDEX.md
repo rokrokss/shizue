@@ -242,7 +242,7 @@ pnpm compile
 ### Chrome Web Store Images
 ```bash
 store/render.sh                    # Render every image in store/src to store/out
-store/render.sh screenshot-1-hero  # Or only the named ones
+store/render.sh screenshot-3-hero  # Or only the named ones
 ```
 
 ## ⚙️ Configuration
