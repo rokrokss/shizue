@@ -11,7 +11,7 @@ window.STORE_I18N = {
   "bc.datesValue": "Сб, 15 ноября – Пн, 17 ноября",
   "bc.guests": "Гости",
   "bc.guestsValue": "2 взрослых",
-  "bc.headline": "Shizue <span class=\"mark\">кликает за вас</span>",
+  "bc.headline": "Вы говорите. <span class=\"mark\">Shizue делает.</span>",
   "bc.kicker": "Бронирование",
   "bc.name": "Имя и фамилия",
   "bc.nav": "Домики · Тропы · Контакты",

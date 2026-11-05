@@ -15,7 +15,7 @@ window.STORE_I18N = {
   "nf.capTr": "Cuando pare de llover, vamos al mercado.",
   "nf.origTrack": "Coreano [CC]",
   "nf.title": "Mercado nocturno<span>E3 Después de la lluvia</span>",
-  "bc.headline": "Shizue <span class=\"mark\">hace clic por ti</span>",
+  "bc.headline": "Tú lo dices. <span class=\"mark\">Shizue lo hace.</span>",
   "bc.sub": "Dile qué hacer: rellena formularios y hace clic de página en página.",
   "bc.chipAsk": "Pregunta antes de enviar",
   "bc.chipPasswords": "Nunca escribe contraseñas",

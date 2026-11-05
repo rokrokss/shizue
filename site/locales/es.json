@@ -27,7 +27,7 @@
   "captions_twitch": "Directos y VODs, a partir de los subtítulos del streamer o del reconocimiento de voz. La traducción integrada de Chrome funciona en tu dispositivo, sin clave de API, o puedes cambiar a tu modelo de IA.",
   "captions_netflix": "Combina el original con los propios subtítulos de Netflix en tu idioma, sin clave de API. Si el título no los tiene, tu modelo de IA traduce adelantándose a la reproducción.",
   "captions_more": "También en Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED y Vimeo, y en reuniones de Google Meet, Microsoft Teams y Zoom.",
-  "control_title": "Deja los clics a Shizue",
+  "control_title": "Tú lo dices, Shizue lo hace",
   "control_body": "Dile la tarea. Rellena formularios, elige opciones y hace clic de página en página en tu pestaña, paso a paso, y cada paso se ve en el panel.",
   "alt_control": "El control del navegador rellena un formulario de reserva de una cabaña y pregunta antes de enviar la solicitud",
   "control_ask_title": "Pregunta antes de actuar",

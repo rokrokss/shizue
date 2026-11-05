@@ -27,7 +27,7 @@
   "captions_twitch": "Live streams and VODs, from the streamer's captions or speech recognition. Chrome's built-in translator works on your device with no API key, or switch to your AI model.",
   "captions_netflix": "Pairs the original with Netflix's own subtitles in your language, with no API key. When a title has none, your AI model translates ahead of playback.",
   "captions_more": "Also on Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED, and Vimeo, and in Google Meet, Microsoft Teams, and Zoom meetings.",
-  "control_title": "Let Shizue do the clicking",
+  "control_title": "Say it, and Shizue does it",
   "control_body": "Tell it the task. It fills in forms, chooses options, and clicks through pages in your tab, one step at a time, with every step shown in the panel.",
   "alt_control": "Browser control filling in a cabin booking form and asking before it sends the request",
   "control_ask_title": "Asks before it acts",

@@ -27,7 +27,7 @@
   "captions_twitch": "ライブ配信もアーカイブも、配信者の字幕か音声認識をもとに表示します。Chrome内蔵翻訳ならAPIキーなしで端末上で動き、AIモデルに切り替えることもできます。",
   "captions_netflix": "ご希望の言語のNetflix字幕があれば、APIキーなしで原文と並べて表示します。字幕がない作品では、AIモデルが再生に先回りして翻訳します。",
   "captions_more": "Disney+、Prime Video、HBO Max、X、Udemy、Coursera、TED、Vimeoのほか、Google Meet、Microsoft Teams、Zoomの会議にも対応しています。",
-  "control_title": "クリックはShizueにおまかせ",
+  "control_title": "伝えるだけで、あとはShizueが",
   "control_body": "やりたいことを伝えるだけ。タブの中でフォームに入力し、項目を選び、ページをクリックで進めながら1ステップずつ実行します。各ステップはパネルに表示されます。",
   "alt_control": "ブラウザ操作でキャビンの予約フォームに入力し、リクエストを送信する前に許可を求めているところ",
   "control_ask_title": "操作の前に確認",

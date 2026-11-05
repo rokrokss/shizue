@@ -27,7 +27,7 @@
   "captions_twitch": "Streamy na żywo i VOD-y, na podstawie napisów streamera lub rozpoznawania mowy. Wbudowane tłumaczenie Chrome działa na Twoim urządzeniu bez klucza API. Możesz też przełączyć się na swój model AI.",
   "captions_netflix": "Łączy oryginał z napisami w Twoim języku, które oferuje sam Netflix, bez klucza API. Jeśli tytuł ich nie ma, Twój model AI tłumaczy z wyprzedzeniem.",
   "captions_more": "Także w serwisach Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED i Vimeo oraz na spotkaniach w Google Meet, Microsoft Teams i Zoom.",
-  "control_title": "Shizue klika za Ciebie",
+  "control_title": "Wystarczy powiedzieć, a Shizue zrobi resztę",
   "control_body": "Opisz zadanie, a Shizue wypełni formularze, wybierze opcje i przejdzie przez kolejne strony w Twojej karcie, krok po kroku. Każdy krok zobaczysz w panelu.",
   "alt_control": "Sterowanie przeglądarką wypełnia formularz rezerwacji domku i pyta o zgodę przed wysłaniem zapytania",
   "control_ask_title": "Najpierw pyta",

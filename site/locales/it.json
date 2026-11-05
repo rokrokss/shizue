@@ -27,7 +27,7 @@
   "captions_twitch": "Dirette e VOD, dai sottotitoli dello streamer o dal riconoscimento vocale. La traduzione integrata di Chrome funziona sul tuo dispositivo senza chiave API, oppure puoi passare al tuo modello AI.",
   "captions_netflix": "Abbina l'originale ai sottotitoli di Netflix nella tua lingua, senza chiave API. Se un titolo non li ha, il tuo modello AI traduce in anticipo rispetto alla riproduzione.",
   "captions_more": "Anche su Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED e Vimeo, e nelle riunioni di Google Meet, Microsoft Teams e Zoom.",
-  "control_title": "Shizue clicca per te",
+  "control_title": "Tu lo dici, Shizue lo fa",
   "control_body": "Descrivi il compito. Shizue compila i moduli, sceglie le opzioni e passa da una pagina all'altra nella tua scheda, un passo alla volta, mostrando ogni passo nel pannello.",
   "alt_control": "Il controllo del browser compila un modulo di prenotazione per una baita e chiede il consenso prima di inviare la richiesta",
   "control_ask_title": "Chiede prima di agire",

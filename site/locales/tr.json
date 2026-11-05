@@ -27,7 +27,7 @@
   "captions_twitch": "Canlı yayınlar ve VOD'lar; orijinal metin yayıncı altyazılarından ya da konuşma tanımadan gelir. Chrome yerleşik çevirisi API anahtarı olmadan cihazınızda çalışır, dilerseniz yapay zeka modelinize geçebilirsiniz.",
   "captions_netflix": "Orijinali, Netflix'in sizin dilinizdeki kendi altyazılarıyla eşleştirir; API anahtarı gerekmez. Bir yapımda böyle altyazı yoksa yapay zeka modeliniz oynatmanın bir adım önünde çevirir.",
   "captions_more": "Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED ve Vimeo'da, Google Meet, Microsoft Teams ve Zoom toplantılarında da çalışır.",
-  "control_title": "Tıklamaları Shizue'ye bırakın",
+  "control_title": "Siz söyleyin, Shizue yapsın",
   "control_body": "Ne yapılacağını söyleyin. Sekmenizde formları doldurur, seçenekleri belirler ve sayfadan sayfaya tıklayarak adım adım ilerler; her adım panelde görünür.",
   "alt_control": "Tarayıcı kontrolünün bir kulübe rezervasyon formunu doldurması ve talebi göndermeden önce izin istemesi",
   "control_ask_title": "Yapmadan önce sorar",

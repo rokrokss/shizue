@@ -15,7 +15,7 @@ window.STORE_I18N = {
   "nf.capTr": "لنذهب إلى السوق حين يتوقف المطر.",
   "nf.origTrack": "الكورية [CC]",
   "nf.title": "السوق الليلي <span>الحلقة 3: بعد المطر</span>",
-  "bc.headline": "Shizue <span class=\"mark\">ينقر بدلًا منك</span>",
+  "bc.headline": "اطلب فقط. <span class=\"mark\">Shizue ينفّذ.</span>",
   "bc.sub": "أخبره بالمهمة، فيملأ النماذج وينقر عبر الصفحات.",
   "bc.chipAsk": "يسألك قبل الإرسال",
   "bc.chipPasswords": "لا يكتب كلمات المرور أبدًا",

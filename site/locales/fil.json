@@ -27,7 +27,7 @@
   "captions_twitch": "Live stream at VOD, mula sa caption ng streamer o speech recognition. Gumagana ang built-in na pagsasalin ng Chrome sa mismong device mo nang walang API key, o lumipat sa iyong AI model.",
   "captions_netflix": "Ipinapares ang orihinal sa sariling subtitle ng Netflix sa wika mo, nang walang API key. Kapag walang ganito ang isang palabas, isinasalin ito ng iyong AI model bago pa ito i-play.",
   "captions_more": "Pati sa Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED, at Vimeo, at sa mga meeting sa Google Meet, Microsoft Teams, at Zoom.",
-  "control_title": "Ipaubaya sa Shizue ang pag-click",
+  "control_title": "Sabihin mo lang, at gagawin ng Shizue",
   "control_body": "Sabihin lang ang gawain. Pinupunan nito ang mga form, pumipili ng mga opsyon, at nagki-click sa mga pahina sa tab mo nang hakbang-hakbang, at makikita sa panel ang bawat hakbang.",
   "alt_control": "Pinupunan ng kontrol ng browser ang booking form ng isang kubo at nagtatanong muna bago ipadala ang hiling",
   "control_ask_title": "Nagtatanong bago kumilos",

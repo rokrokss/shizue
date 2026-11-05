@@ -15,7 +15,7 @@ window.STORE_I18N = {
   "nf.capTr": "Mvua ikikatika, twende sokoni.",
   "nf.origTrack": "Kikorea [CC]",
   "nf.title": "Soko la Usiku<span>Sehemu ya 3: Baada ya Mvua</span>",
-  "bc.headline": "Shizue <span class=\"mark\">hubofya badala yako</span>",
+  "bc.headline": "Sema tu. <span class=\"mark\">Shizue itafanya.</span>",
   "bc.sub": "Iambie kazi. Hujaza fomu na kubofya ukurasa hadi ukurasa.",
   "bc.chipAsk": "Huuliza kabla ya kutuma",
   "bc.chipPasswords": "Haiandiki nenosiri kamwe",

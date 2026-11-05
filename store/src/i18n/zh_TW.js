@@ -15,7 +15,7 @@ window.STORE_I18N = {
   "nf.capTr": "等雨停了，我們去市場逛逛吧。",
   "nf.origTrack": "韓文 [CC]",
   "nf.title": "夜市<span>第 3 集 雨停之後</span>",
-  "bc.headline": "點擊操作，<span class=\"mark\">交給 Shizue</span>",
+  "bc.headline": "你動嘴，<span class=\"mark\">Shizue 動手</span>",
   "bc.sub": "說出要做的事，它會填寫表單，在頁面間一步步點擊完成。",
   "bc.chipAsk": "送出前會先問過你",
   "bc.chipPasswords": "絕不輸入密碼",

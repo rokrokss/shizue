@@ -15,7 +15,7 @@ window.STORE_I18N = {
   "nf.capTr": "بارش رکے تو بازار چلتے ہیں۔",
   "nf.origTrack": "کوریائی [CC]",
   "nf.title": "رات کا بازار <span>قسط 3: بارش کے بعد</span>",
-  "bc.headline": "Shizue <span class=\"mark\">خود کلک کرتا ہے</span>",
+  "bc.headline": "بس کہیے۔ <span class=\"mark\">Shizue کر دے گا۔</span>",
   "bc.sub": "بس کام بتائیں۔ یہ فارم بھرتا ہے اور صفحوں پر کلک کرتا جاتا ہے۔",
   "bc.chipAsk": "بھیجنے سے پہلے پوچھتا ہے",
   "bc.chipPasswords": "پاس ورڈ کبھی نہیں لکھتا",

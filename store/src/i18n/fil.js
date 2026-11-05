@@ -11,7 +11,7 @@ window.STORE_I18N = {
   "bc.datesValue": "Sab, Nob 15 – Lun, Nob 17",
   "bc.guests": "Bisita",
   "bc.guestsValue": "2 adulto",
-  "bc.headline": "Shizue na ang <span class=\"mark\">magki-click</span>",
+  "bc.headline": "Sabihin mo. <span class=\"mark\">Gagawin ng Shizue.</span>",
   "bc.kicker": "Mag-book ng tuluyan",
   "bc.name": "Buong pangalan",
   "bc.nav": "Tuluyan · Trail · Kontak",

@@ -27,7 +27,7 @@
   "captions_twitch": "Livestreams und VODs, aus den Untertiteln des Streamers oder per Spracherkennung. Die integrierte Chrome-Übersetzung arbeitet direkt auf deinem Gerät, ohne API-Schlüssel. Du kannst auch zu deinem KI-Modell wechseln.",
   "captions_netflix": "Kombiniert das Original mit den eigenen Untertiteln von Netflix in deiner Sprache, ganz ohne API-Schlüssel. Hat ein Titel keine, übersetzt dein KI-Modell im Voraus.",
   "captions_more": "Auch auf Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED und Vimeo sowie in Meetings mit Google Meet, Microsoft Teams und Zoom.",
-  "control_title": "Shizue klickt für dich",
+  "control_title": "Sag’s einfach, Shizue erledigt’s",
   "control_body": "Nenne die Aufgabe. Shizue füllt Formulare aus, wählt Optionen und klickt sich durch die Seiten in deinem Tab, Schritt für Schritt. Jeder Schritt erscheint in der Seitenleiste.",
   "alt_control": "Die Browsersteuerung füllt ein Buchungsformular für eine Hütte aus und fragt, bevor sie die Anfrage sendet",
   "control_ask_title": "Fragt zuerst",

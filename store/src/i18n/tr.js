@@ -15,7 +15,7 @@ window.STORE_I18N = {
   "nf.capTr": "Yağmur dinince pazara gidelim.",
   "nf.origTrack": "Korece [CC]",
   "nf.title": "Gece Pazarı<span>B3 Yağmurdan Sonra</span>",
-  "bc.headline": "Shizue <span class=\"mark\">sizin yerinize tıklar</span>",
+  "bc.headline": "Siz söyleyin, <span class=\"mark\">Shizue yapsın.</span>",
   "bc.sub": "Görevi söyleyin; formları doldurur, sayfalar arasında gezinir.",
   "bc.chipAsk": "Göndermeden önce sorar",
   "bc.chipPasswords": "Asla şifre yazmaz",

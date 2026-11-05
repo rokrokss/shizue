@@ -15,7 +15,7 @@ window.STORE_I18N = {
   "nf.capTr": "雨がやんだら市場に行ってみよう。",
   "nf.origTrack": "韓国語 [CC]",
   "nf.title": "ナイトマーケット<span>第3話 雨上がり</span>",
-  "bc.headline": "クリックは<span class=\"mark\">Shizueにおまかせ</span>",
+  "bc.headline": "伝えるだけ。<span class=\"mark\">あとはShizueが。</span>",
   "bc.sub": "やりたいことを伝えれば、フォームを埋めてページを進めます。",
   "bc.chipAsk": "送信の前に必ず確認",
   "bc.chipPasswords": "パスワードは入力しません",

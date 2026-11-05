@@ -27,7 +27,7 @@
   "captions_twitch": "直播和回放都支持，原文来自主播字幕或语音识别。Chrome 内置翻译在本机运行，无需 API 密钥，也可以换成你的 AI 模型。",
   "captions_netflix": "有你所用语言的 Netflix 官方字幕时，直接与原文对照显示，无需 API 密钥；没有的话，由 AI 模型在播放前提前翻译。",
   "captions_more": "还支持 Disney+、Prime Video、HBO Max、X、Udemy、Coursera、TED 和 Vimeo，以及 Google Meet、Microsoft Teams 和 Zoom 会议。",
-  "control_title": "点击交给 Shizue",
+  "control_title": "你只管说，Shizue 来动手",
   "control_body": "告诉它要做什么。它会在标签页中填写表单、选择选项、逐页点击，一步一步完成，每一步都显示在侧边栏中。",
   "alt_control": "浏览器操作正在填写小屋预订表单，并在发送请求前征求同意",
   "control_ask_title": "操作前先询问",

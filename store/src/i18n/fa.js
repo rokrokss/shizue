@@ -15,7 +15,7 @@ window.STORE_I18N = {
   "nf.capTr": "باران که بند آمد، برویم بازار.",
   "nf.origTrack": "کره‌ای [CC]",
   "nf.title": "بازار شب <span>قسمت ۳: بعد از باران</span>",
-  "bc.headline": "Shizue <span class=\"mark\">برایتان کلیک می‌کند</span>",
+  "bc.headline": "فقط بگویید. <span class=\"mark\">Shizue انجامش می‌دهد.</span>",
   "bc.sub": "کار را بگویید؛ فرم‌ها را پر می‌کند و صفحه به صفحه پیش می‌رود.",
   "bc.chipAsk": "پیش از ارسال می‌پرسد",
   "bc.chipPasswords": "هرگز رمز عبور وارد نمی‌کند",

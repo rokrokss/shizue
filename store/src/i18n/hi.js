@@ -15,7 +15,7 @@ window.STORE_I18N = {
   "nf.capTr": "बारिश रुकते ही बाज़ार चलते हैं।",
   "nf.origTrack": "कोरियाई [CC]",
   "nf.title": "रात का बाज़ार<span>एपिसोड 3 बारिश के बाद</span>",
-  "bc.headline": "Shizue <span class=\"mark\">आपके लिए क्लिक करे</span>",
+  "bc.headline": "बस कहिए। <span class=\"mark\">Shizue कर देगा।</span>",
   "bc.sub": "काम बताइए। यह फ़ॉर्म भरता है और पेज-दर-पेज क्लिक करता है।",
   "bc.chipAsk": "भेजने से पहले पूछता है",
   "bc.chipPasswords": "पासवर्ड कभी नहीं भरता",

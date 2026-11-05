@@ -11,7 +11,7 @@ window.STORE_I18N = {
   "bc.datesValue": "ส. 15 พ.ย. – จ. 17 พ.ย.",
   "bc.guests": "ผู้เข้าพัก",
   "bc.guestsValue": "ผู้ใหญ่ 2 คน",
-  "bc.headline": "Shizue <span class=\"mark\">คลิกให้คุณ</span>",
+  "bc.headline": "แค่บอก <span class=\"mark\">Shizue จัดให้</span>",
   "bc.kicker": "จองที่พัก",
   "bc.name": "ชื่อ-นามสกุล",
   "bc.nav": "ที่พัก · เส้นทางเดิน · ติดต่อ",

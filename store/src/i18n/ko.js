@@ -15,7 +15,7 @@ window.STORE_I18N = {
   "nf.capTr": "비가 그치면 시장에 가 보자.",
   "nf.origTrack": "영어 [CC]",
   "nf.title": "야시장<span>3화 비 그친 뒤</span>",
-  "bc.headline": "Shizue가 <span class=\"mark\">대신 클릭합니다</span>",
+  "bc.headline": "말만 하세요. <span class=\"mark\">Shizue가 합니다.</span>",
   "bc.sub": "할 일을 말하면 양식을 채우고 페이지를 넘나들며 누릅니다.",
   "bc.chipAsk": "보내기 전에 먼저 물어봐요",
   "bc.chipPasswords": "비밀번호는 입력하지 않아요",

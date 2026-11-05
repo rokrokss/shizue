@@ -27,7 +27,7 @@
   "captions_twitch": "Cả livestream lẫn VOD, từ phụ đề của streamer hoặc nhận dạng giọng nói. Dịch tích hợp của Chrome chạy ngay trên thiết bị, không cần khóa API, hoặc bạn có thể chuyển sang mô hình AI của mình.",
   "captions_netflix": "Ghép bản gốc với phụ đề của chính Netflix bằng ngôn ngữ của bạn, không cần khóa API. Phim nào không có, mô hình AI của bạn sẽ dịch trước khi phát tới.",
   "captions_more": "Ngoài ra còn dùng được trên Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED và Vimeo, cũng như trong các cuộc họp Google Meet, Microsoft Teams và Zoom.",
-  "control_title": "Để Shizue nhấp giúp bạn",
+  "control_title": "Bạn chỉ cần nói, Shizue sẽ làm",
   "control_body": "Chỉ cần nói việc cần làm. Shizue điền biểu mẫu, chọn các mục và nhấp qua các trang trong tab theo từng bước, và mọi bước đều hiện trong bảng điều khiển.",
   "alt_control": "Điều khiển trình duyệt điền biểu mẫu đặt nhà gỗ và xin phép trước khi gửi yêu cầu",
   "control_ask_title": "Hỏi trước khi làm",
