@@ -12,7 +12,6 @@ Shizue est une extension gratuite et open source (MIT). Connectez-vous avec Chat
 - YouTube : votre langue s'affiche sous la ligne d'origine pendant que vous regardez. Passez à la ligne précédente ou suivante avec A ou D
 - Twitch : lives et VOD, à partir des sous-titres du streamer ou de la reconnaissance vocale. La traduction intégrée de Chrome fonctionne sur votre appareil, sans frais
 - Netflix : si un titre propose des sous-titres dans votre langue, ils s'affichent sous l'original. Sinon, Shizue transpose le texte dans votre langue en avance sur la lecture
-- Également Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED et Vimeo, ainsi que les sous-titres en direct des réunions Google Meet, Microsoft Teams et Zoom
 
 🕹️ Contrôle du navigateur
 - Dites ce qu'il faut faire, et Shizue clique, saisit, choisit et fait défiler la page dans votre onglet, étape par étape, en affichant chaque étape dans le panneau

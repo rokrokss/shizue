@@ -12,7 +12,6 @@ Shizue ni bure na ni programu huria (MIT). Ingia kwa ChatGPT ili utumie mpango w
 - YouTube: lugha yako huonekana chini ya mstari wa asili unapotazama. Bonyeza A au D kwenda kwenye mstari uliotangulia au unaofuata
 - Twitch: matangazo ya moja kwa moja na marudio yake, kutoka kwa manukuu ya mtiririshaji au utambuzi wa sauti. Chrome hutafsiri papo hapo kwenye kifaa chako bila gharama
 - Netflix: filamu au kipindi kikiwa na manukuu ya lugha yako, yanaonyeshwa chini ya maandishi ya asili. Vinginevyo, yanaandaliwa mapema kabla ya kuchezwa
-- Pia Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED na Vimeo, pamoja na manukuu ya moja kwa moja kwenye mikutano ya Google Meet, Microsoft Teams na Zoom
 
 🕹️ Udhibiti wa kivinjari
 - Iambie Shizue cha kufanya, nayo hubofya, huandika, huchagua na kusogeza kwenye kichupo chako hatua kwa hatua, huku kila hatua ikionyeshwa kwenye paneli

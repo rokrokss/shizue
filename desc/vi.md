@@ -12,7 +12,6 @@ Shizue miễn phí và là phần mềm mã nguồn mở (MIT). Bạn có thể 
 - YouTube: ngôn ngữ của bạn hiện ngay dưới dòng gốc trong lúc xem. Nhấn A hoặc D để chuyển đến dòng trước hoặc sau
 - Twitch: cả livestream lẫn VOD, từ phụ đề của streamer hoặc nhận dạng giọng nói. Chrome dịch ngay trên thiết bị, miễn phí
 - Netflix: nếu phim có phụ đề bằng ngôn ngữ của bạn, chúng hiện ngay dưới bản gốc. Nếu không, chúng được chuẩn bị sẵn trước khi phát tới
-- Ngoài ra còn có Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED và Vimeo, cùng phụ đề trực tiếp trong các cuộc họp Google Meet, Microsoft Teams và Zoom
 
 🕹️ Điều khiển trình duyệt
 - Nói việc cần làm, Shizue sẽ nhấp, nhập, chọn và cuộn trong tab theo từng bước, mỗi bước đều hiện trong bảng điều khiển

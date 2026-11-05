@@ -12,7 +12,6 @@ Libre at open source (MIT) ang Shizue. Mag-sign in gamit ang ChatGPT para magami
 - YouTube: makikita mo nang sabay ang orihinal at ang wika mo habang nanonood. Pindutin ang A o D para lumipat sa nakaraan o susunod na linya
 - Twitch: live stream at VOD, mula sa caption ng streamer o speech recognition. Libreng isinasalin ito ng Chrome sa mismong device mo
 - Netflix: kapag may subtitle ang palabas sa wika mo, lalabas ito sa ilalim ng orihinal. Kung wala, inihahanda ito nang maaga, bago pa ito i-play
-- Gumagana rin sa Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED, at Vimeo, at sa live caption ng mga meeting sa Google Meet, Microsoft Teams, at Zoom
 
 🕹️ Kontrol ng browser
 - Sabihin sa Shizue ang gagawin, at hakbang-hakbang itong nagki-click, nagta-type, pumipili, at nag-i-scroll sa tab mo. Makikita sa panel ang bawat hakbang

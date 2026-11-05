@@ -12,7 +12,6 @@ Shizue 是免费的开源软件（MIT）。你可以使用 ChatGPT 登录，用�
 - YouTube：边看边在原文下方显示你的语言字幕，按 A 或 D 键跳到上一句或下一句
 - Twitch：直播和回放都支持，基于主播字幕或语音识别，由 Chrome 在本机免费翻译
 - Netflix：作品带有你所用语言的字幕时，直接显示在原文下方；没有的话，会在播放前提前准备好
-- 还支持 Disney+、Prime Video、HBO Max、X、Udemy、Coursera、TED 和 Vimeo，以及 Google Meet、Microsoft Teams 和 Zoom 会议的实时字幕
 
 🕹️ 浏览器操作
 - 告诉 Shizue 要做什么，它会在标签页中点击、输入、选择和滚动，一步一步完成，每一步都显示在侧边栏中

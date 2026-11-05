@@ -12,7 +12,6 @@ Shizue ücretsiz ve açık kaynaklıdır (MIT). ChatGPT ile giriş yapıp planı
 - YouTube: siz izlerken orijinal satırın hemen altında kendi dilinizdeki altyazı belirir. A ve D tuşlarıyla önceki ya da sonraki satıra geçebilirsiniz
 - Twitch: canlı yayınlarda ve VOD'larda yayıncı altyazılarını ya da konuşma tanımayı kullanır. Chrome yerleşik çevirisi cihazınızda ücretsiz çalışır
 - Netflix: bir yapımın sizin dilinizde altyazısı varsa orijinalin altında gösterilir. Yoksa Shizue onu oynatmanın bir adım önünde hazırlar
-- Ayrıca Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED ve Vimeo'da, Google Meet, Microsoft Teams ve Zoom toplantılarının canlı altyazılarında da çalışır
 
 🕹️ Tarayıcı kontrolü
 - Shizue'ye ne yapacağını söyleyin; sekmenizde tıklar, yazar, seçer ve kaydırır, adım adım ilerleyip her adımı panelde gösterir

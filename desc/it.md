@@ -12,7 +12,6 @@ Shizue è gratis e open source (MIT). Accedi con ChatGPT per usare il tuo piano,
 - YouTube: mentre guardi, la tua lingua compare sotto la riga originale. Usa A o D per passare alla riga precedente o successiva
 - Twitch: dirette e VOD, dai sottotitoli dello streamer o dal riconoscimento vocale. La traduzione integrata di Chrome funziona sul tuo dispositivo, senza costi
 - Netflix: se un titolo ha i sottotitoli nella tua lingua, compaiono sotto l'originale. Altrimenti Shizue rende il testo nella tua lingua in anticipo rispetto alla riproduzione
-- Anche su Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED e Vimeo, oltre ai sottotitoli in tempo reale nelle riunioni di Google Meet, Microsoft Teams e Zoom
 
 🕹️ Controllo del browser
 - Di' a Shizue cosa fare: fa clic, scrive, sceglie e scorre la pagina nella tua scheda, un passo alla volta, e mostra ogni passo nel pannello

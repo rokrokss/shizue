@@ -12,7 +12,6 @@ Shizue is free and open source (MIT). Sign in with ChatGPT to use your plan, or 
 - YouTube: captions are translated as you watch and shown under the original line. Press A or D to jump to the previous or next one
 - Twitch: live streams and VODs, from the streamer's captions or speech recognition. Chrome's built-in translation runs on your device at no cost
 - Netflix: when a title has subtitles in your language, they appear under the original. Otherwise they're translated ahead of playback
-- Also Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED and Vimeo, and live captions in Google Meet, Microsoft Teams and Zoom meetings
 
 🕹️ Browser control
 - Tell Shizue what to do and it clicks, types, chooses and scrolls in your tab, one step at a time, with each step shown in the panel

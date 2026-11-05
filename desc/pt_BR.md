@@ -12,7 +12,6 @@ Shizue é grátis e de código aberto (MIT). Entre com o ChatGPT para usar o seu
 - YouTube: enquanto você assiste, o seu idioma aparece embaixo da linha original. Use A ou D para ir para a linha anterior ou a próxima
 - Twitch: lives e VODs, a partir das legendas do streamer ou do reconhecimento de voz. A tradução integrada do Chrome roda no seu dispositivo, sem custo
 - Netflix: quando o título tem legendas no seu idioma, elas aparecem embaixo do original. Se não tiver, Shizue passa o texto para o seu idioma com antecedência
-- Também Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED e Vimeo, e legendas em tempo real em reuniões do Google Meet, Microsoft Teams e Zoom
 
 🕹️ Controle do navegador
 - Diga o que fazer, e Shizue clica, digita, escolhe opções e rola a página na sua aba, uma etapa por vez, mostrando cada etapa no painel

@@ -12,7 +12,6 @@ Shizue to darmowe rozszerzenie open source (MIT). Zaloguj się przez ChatGPT, ab
 - YouTube: podczas oglądania Twój język pojawia się pod oryginalnym wierszem. Klawiszami A i D przejdziesz do poprzedniego lub następnego wiersza
 - Twitch: streamy na żywo i VOD-y, na podstawie napisów streamera lub rozpoznawania mowy. Wbudowane tłumaczenie Chrome działa na Twoim urządzeniu i nic nie kosztuje
 - Netflix: jeśli tytuł ma napisy w Twoim języku, pojawiają się pod oryginałem. W przeciwnym razie Shizue z wyprzedzeniem przekłada tekst na Twój język
-- Także Disney+, Prime Video, HBO Max, X, Udemy, Coursera, TED i Vimeo, a do tego napisy na żywo podczas spotkań w Google Meet, Microsoft Teams i Zoom
 
 🕹️ Sterowanie przeglądarką
 - Powiedz, co trzeba zrobić, a Shizue krok po kroku klika, wpisuje, wybiera i przewija stronę w Twojej karcie, pokazując każdy krok w panelu
