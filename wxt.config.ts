@@ -159,9 +159,11 @@ export default defineConfig({
   },
   // The sources zip that addons.mozilla.org asks for, whose build must match ours file for file.
   // Tailwind scans every file .gitignore leaves in, so without it a rebuild took classes from dist/.
-  // doc/ holds only the README's GIFs (~97 MB).
+  // doc/ holds only the README's GIFs (~97 MB), and store/out/<code> the store images in other
+  // languages. '**/*' also takes in what .gitignore leaves out, so the private notes and the site
+  // build are left out by name.
   zip: {
     includeSources: ['**/*', '.gitignore'],
-    excludeSources: ['doc/**'],
+    excludeSources: ['doc/**', 'research_notes/**', 'reports/**', '_site/**', 'store/out/*/**', 'store/src/i18n/ui-*.js'],
   },
 });
