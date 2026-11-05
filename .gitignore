@@ -48,6 +48,7 @@ reports/
 # shizue.net landing page build output (site/build.sh)
 _site/
 
-# Store images in other languages: made by store/render.sh --lang
-store/out/*/
+# Store images in other languages: made by store/render.sh --lang. The screenshots are kept for
+# shizue.net; the Chrome Web Store takes promo tiles in English only.
+store/out/*/promo-*
 store/src/i18n/ui-*.js

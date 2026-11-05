@@ -1,7 +1,7 @@
 // Renders the site/index.html template once per site/locales/<lang>.json into _site/:
 // English at /, every other language at /<lang>/, plus sitemap.xml and robots.txt listing them.
 // Run from the repo root by site/build.sh.
-import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 
 const ORIGIN = 'https://shizue.net';
 const STORE_URL = 'https://chromewebstore.google.com/detail/mpcbgfkoholfgapcgcmfjobnfcbnfanm?utm_source=shizue.net';
@@ -25,6 +25,11 @@ for (const { lang, strings } of locales) {
     if (tags(strings[key]) !== tags(en[key])) throw new Error(`site/locales/${lang}.json: "${key}" changes the tags of en.json`);
   }
 }
+// The store images in each language, in store/out/<code> under the extension's codes (pt_BR).
+const storeCode = (lang) => lang.replace('-', '_');
+for (const { lang } of locales) {
+  if (lang !== 'en' && !existsSync(`store/out/${storeCode(lang)}`)) throw new Error(`no store/out/${storeCode(lang)}: run store/render.sh --lang all`);
+}
 
 const alternates = [
   ...locales.map(({ lang, path }) => `<link rel="alternate" hreflang="${lang}" href="${ORIGIN}${path}">`),
@@ -45,6 +50,7 @@ for (const { lang, path, strings } of locales) {
     dir: RTL.includes(lang) ? 'rtl' : 'ltr',
     code: lang.toUpperCase(),
     home: path,
+    img: lang === 'en' ? '/img' : `/img/${storeCode(lang)}`,
     url: ORIGIN + path,
     alternates,
     lang_menu: menu,

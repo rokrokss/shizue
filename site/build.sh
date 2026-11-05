@@ -10,3 +10,9 @@ cp src/public/icon.svg _site/
 # The model list the extension fetches (src/lib/modelList.ts).
 cp -R site/models _site/
 cp store/out/screenshot-*.png store/out/github-social-1280x640.png _site/img/
+# The screenshots in every other language, which each page shows (site/render.mjs).
+for dir in store/out/*/; do
+  code=$(basename "$dir")
+  mkdir -p "_site/img/$code"
+  cp "$dir"screenshot-*.png "_site/img/$code/"
+done

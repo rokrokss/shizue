@@ -89,7 +89,7 @@ site/build.sh            # shizue.net landing page into _site/
 
 ## Store images, landing page and sprites
 
-- `store/src/*.html` recreate the extension UI with styles from the components and strings from `src/locales/en.json`. When UI text, model names or the features they show change, update them and run `store/render.sh`. The landing page reuses `store/out`.
+- `store/src/*.html` recreate the extension UI with styles from the components and strings from `src/locales/en.json`. When UI text, model names or the features they show change, update them and run `store/render.sh`. The landing page reuses `store/out`, and each of its languages the screenshots in `store/out/<code>` (`store/render.sh --lang all`), so re-render every language when an image changes.
 - `store/out/store-icon-128.png` (the store listing icon) and `github-social-1280x640.png` (the repo's social preview) are uploaded by hand. Neither is a manifest icon; those are in `src/public/icon/`.
 - `site/index.html` is a template that `site/render.mjs` fills from `site/locales/<lang>.json` (English at `/`, other languages at `/<lang>/`). Strings are HTML fragments. Change copy in every locale file; the build fails when a locale misses a key or changes the tags of `en.json`. Asset paths in the template are root-absolute (`/img/...`).
 - `/` redirects to the language last picked in the header menu, or else to the browser's language. To see `/` in English locally, pick English in the menu. `.github/workflows/pages.yml` deploys the site on push to `main`.
