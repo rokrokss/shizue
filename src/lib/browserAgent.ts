@@ -37,6 +37,9 @@ export type PageElement = {
   secret?: boolean;
   // Below the part of the page on screen.
   below?: boolean;
+  // In one of the page's frames (PageSnapshot.frames): the frame, and the element's number there.
+  frameId?: number;
+  frameRef?: number;
 };
 
 export type PageSnapshot = {
@@ -45,6 +48,10 @@ export type PageSnapshot = {
   text: string;
   elements: PageElement[];
   scroll: { y: number; height: number; viewport: number };
+  // The page's frames with something in them, their elements after the page's own.
+  frames?: { frameId: number; url: string; text: string }[];
+  // A CAPTCHA's frame is on the page, left out for the user to solve.
+  challenge?: boolean;
 };
 
 export type AgentStepStatus = 'running' | 'done' | 'failed' | 'awaiting' | 'denied';
@@ -125,6 +132,8 @@ export const browserControlMarkSplitter = () => {
 
 const MAX_ELEMENTS = 160;
 const MAX_NAME = 80;
+const MAX_FRAME_ELEMENTS = 40;
+const MAX_FRAME_TEXT = 1500;
 
 const KINDS: AgentActionKind[] = ['click', 'type', 'select', 'scroll', 'navigate', 'back', 'wait', 'finish'];
 
@@ -288,6 +297,53 @@ const elementLine = (element: PageElement) => {
   return parts.join(' ');
 };
 
+// A CAPTCHA's frame (reCAPTCHA, hCaptcha, Turnstile, Arkose): the agent never works it.
+export const isChallengeFrame = (address: string) => {
+  try {
+    const { hostname, pathname } = new URL(address);
+    const under = (domain: string) => hostname === domain || hostname.endsWith(`.${domain}`);
+    return (
+      ((under('google.com') || under('recaptcha.net')) && pathname.startsWith('/recaptcha/')) ||
+      under('hcaptcha.com') ||
+      hostname === 'challenges.cloudflare.com' ||
+      under('arkoselabs.com') ||
+      under('funcaptcha.com')
+    );
+  } catch {
+    return false;
+  }
+};
+
+// The page with what its frames hold: their elements numbered after the page's, each keeping its
+// frame and its number there. A CAPTCHA's frame is left out, and only noted.
+export const withFrames = (page: PageSnapshot, frames: { frameId: number; snapshot: PageSnapshot }[]): PageSnapshot => {
+  const elements = [...page.elements];
+  let next = elements.reduce((max, element) => Math.max(max, element.ref), 0) + 1;
+  const kept: NonNullable<PageSnapshot['frames']> = [];
+  let challenge = false;
+  for (const { frameId, snapshot } of frames) {
+    if (isChallengeFrame(snapshot.url)) {
+      challenge = true;
+      continue;
+    }
+    if (!snapshot.elements.length && !snapshot.text.trim()) continue;
+    kept.push({ frameId, url: snapshot.url, text: snapshot.text });
+    for (const element of snapshot.elements.slice(0, MAX_FRAME_ELEMENTS)) {
+      elements.push({ ...element, ref: next++, frameId, frameRef: element.ref });
+    }
+  }
+  return { ...page, elements, ...(kept.length ? { frames: kept } : {}), ...(challenge ? { challenge } : {}) };
+};
+
+// Where a frame comes from: none for one written into the page (srcdoc, data:), whose address can be long.
+const hostOf = (address: string) => {
+  try {
+    return new URL(address).host;
+  } catch {
+    return '';
+  }
+};
+
 // The page as the model reads it each turn.
 export const formatSnapshot = (snapshot: PageSnapshot) => {
   const { y, height, viewport } = snapshot.scroll;
@@ -295,8 +351,15 @@ export const formatSnapshot = (snapshot: PageSnapshot) => {
   const position = scrollable
     ? `${Math.round((y / Math.max(1, height - viewport)) * 100)}% down${y + viewport < height - 4 ? ', more below' : ', at the end'}`
     : 'the whole page is on screen';
-  const shown = snapshot.elements.filter((element) => !element.below).slice(0, MAX_ELEMENTS);
-  const below = snapshot.elements.filter((element) => element.below).slice(0, Math.max(0, MAX_ELEMENTS - shown.length));
+  const own = snapshot.elements.filter((element) => element.frameId === undefined);
+  const shown = own.filter((element) => !element.below).slice(0, MAX_ELEMENTS);
+  const below = own.filter((element) => element.below).slice(0, Math.max(0, MAX_ELEMENTS - shown.length));
+  const frames = (snapshot.frames ?? []).flatMap((frame) => {
+    const text = clip(frame.text.trim(), MAX_FRAME_TEXT);
+    const elements = snapshot.elements.filter((element) => element.frameId === frame.frameId);
+    const host = hostOf(frame.url);
+    return ['', host ? `In a frame from ${host}:` : 'In a frame:', ...(text ? [text] : []), ...elements.map(elementLine)];
+  });
   return [
     `URL: ${snapshot.url}`,
     `Title: ${snapshot.title}`,
@@ -309,6 +372,8 @@ export const formatSnapshot = (snapshot: PageSnapshot) => {
     'Elements on screen:',
     ...(shown.length ? shown.map(elementLine) : ['(none)']),
     ...(below.length ? ['', 'Elements further down:', ...below.map(elementLine)] : []),
+    ...frames,
+    ...(snapshot.challenge ? ['', 'A CAPTCHA is on this page, in a frame: only the user can solve it.'] : []),
   ].join('\n');
 };
 

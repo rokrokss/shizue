@@ -11,12 +11,14 @@ import {
   elementLabel,
   formatSnapshot,
   needsApproval,
+  PageElement,
   PageSnapshot,
   parseAgentReply,
+  withFrames,
 } from '@/lib/browserAgent';
 import { performAction, showAgentOverlay, snapshotPage } from '@/lib/browserAgentPage';
 import { db } from '@/lib/indexDB';
-import { chunkParts } from '@/lib/reasoning';
+import { BASE_REASONING_EFFORTS, chunkParts, effortWithin } from '@/lib/reasoning';
 import { getModelInstance, isLocalModel, ModelOptions, ModelPreset } from '@/lib/models';
 import { BROWSER_AGENT_JSON_SCHEMA, getBrowserAgentPrompt } from '@/lib/prompts';
 import { trackTokenUsage } from '@/lib/tokenUsageTracker';
@@ -62,14 +64,20 @@ const activeWebTab = async () => {
   return tab?.id !== undefined && /^https?:/.test(tab.url ?? '') ? (tab as chrome.tabs.Tab & { id: number }) : null;
 };
 
+// The page and its frames (a form or a document embedded from elsewhere), read together.
 const snapshotOf = async (tabId: number): Promise<PageSnapshot | null> => {
+  const read = (target: chrome.scripting.InjectionTarget) =>
+    chrome.scripting.executeScript({ target, func: snapshotPage, args: [PAGE_TEXT_CHARS] });
   try {
-    const [injection] = await chrome.scripting.executeScript({
-      target: { tabId, frameIds: [0] },
-      func: snapshotPage,
-      args: [PAGE_TEXT_CHARS],
-    });
-    return (injection?.result as PageSnapshot | undefined) ?? null;
+    // A frame that can't be read leaves the page itself.
+    const injections = await read({ tabId, allFrames: true }).catch(() => read({ tabId, frameIds: [0] }));
+    const page = injections.find((injection) => injection.frameId === 0)?.result as PageSnapshot | undefined;
+    if (!page) return null;
+    const frames = injections
+      .filter((injection) => injection.frameId !== 0 && injection.result)
+      .sort((a, b) => a.frameId - b.frameId)
+      .map((injection) => ({ frameId: injection.frameId, snapshot: injection.result as PageSnapshot }));
+    return withFrames(page, frames);
   } catch (error) {
     debugLog('Browser agent: snapshot failed', error);
     return null;
@@ -99,7 +107,12 @@ const settle = async (tabId: number, signal: AbortSignal) => {
   await sleep(300, signal);
 };
 
-const execute = async (tabId: number, action: AgentAction): Promise<Pick<AgentStep, 'status' | 'error'>> => {
+// The action, in the frame its element is in.
+const execute = async (
+  tabId: number,
+  action: AgentAction,
+  element: PageElement | undefined
+): Promise<Pick<AgentStep, 'status' | 'error'>> => {
   try {
     if (action.kind === 'navigate') {
       await chrome.tabs.update(tabId, { url: action.url! });
@@ -114,16 +127,17 @@ const execute = async (tabId: number, action: AgentAction): Promise<Pick<AgentSt
       return { status: 'done' };
     }
     const [injection] = await chrome.scripting.executeScript({
-      target: { tabId, frameIds: [0] },
+      target: { tabId, frameIds: [element?.frameId ?? 0] },
       func: performAction,
-      args: [action],
+      args: [element?.frameRef !== undefined ? { ...action, ref: element.frameRef } : action],
     });
     const result = injection?.result as { ok: boolean; error?: AgentStep['error'] } | undefined;
     if (!result) return { status: 'failed', error: 'failed' };
     return result.ok ? { status: 'done' } : { status: 'failed', error: result.error ?? 'failed' };
   } catch (error) {
     debugLog('Browser agent: action failed', error);
-    return { status: 'failed', error: 'unreachable' };
+    // A frame that went away since the page was read.
+    return { status: 'failed', error: element?.frameId ? 'not_found' : 'unreachable' };
   }
 };
 
@@ -147,12 +161,15 @@ const askModel = async (
   reasoningEffort?: ModelOptions['reasoningEffort']
 ) => {
   const local = isLocalModel(modelPreset.modelName);
+  // Each step is one small choice, made up to 25 times: High at most. A model that thinks first
+  // gets the room the chat gives its thinking (lib/models.ts); the JSON alone fits in 4000.
+  const effort = reasoningEffort && effortWithin(reasoningEffort, BASE_REASONING_EFFORTS);
+  const thinks = effort !== undefined && effort !== 'low';
   const llm = getModelInstance({
     temperature: 0.2,
-    // Room for a reasoning model's thinking before its JSON.
-    maxTokens: 4000,
+    ...(thinks ? {} : { maxTokens: 4000 }),
     streaming: local,
-    reasoningEffort,
+    reasoningEffort: effort,
     modelPreset,
     jsonSchema: BROWSER_AGENT_JSON_SCHEMA,
   });
@@ -300,7 +317,7 @@ export async function runBrowserAgent({
 
       if (step.status === 'running') {
         openedTabId = null;
-        Object.assign(step, await execute(tabId, action));
+        Object.assign(step, await execute(tabId, action, element));
         publish();
         await settle(tabId, signal);
         if (openedTabId !== null) {

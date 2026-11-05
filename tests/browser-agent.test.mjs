@@ -6,9 +6,11 @@ import {
   browserControlMarkSplitter,
   elementLabel,
   formatSnapshot,
+  isChallengeFrame,
   looksCommitting,
   needsApproval,
   parseAgentReply,
+  withFrames,
 } from '../src/lib/browserAgent.ts';
 
 test('A reply is read flat or nested, fenced or not, and bad ones are refused', () => {
@@ -86,6 +88,55 @@ test('The page reads as its place, text and numbered controls; secrets are flagg
   assert.match(text, /\[3\] select "Size" value="M" options: "S", "M", "L"/);
   assert.match(text, /Elements further down:\n\[4\] a "Help" → \/help/);
   assert.equal(elementLabel({ ref: 9, tag: 'button', name: '' , role: 'button' }), 'button');
+});
+
+const snapshotOf = (url, text, elements) => ({ url, title: '', text, elements, scroll: { y: 0, height: 800, viewport: 800 } });
+
+test("A frame's elements are numbered after the page's and keep their frame; a CAPTCHA's frame is only noted", () => {
+  const page = snapshotOf('https://shop.test/checkout', 'Checkout', [
+    { ref: 1, tag: 'button', name: 'Back' },
+    { ref: 2, tag: 'a', name: 'Help', below: true },
+  ]);
+  const merged = withFrames(page, [
+    { frameId: 7, snapshot: snapshotOf('https://pay.test/form', 'Card details', [
+      { ref: 1, tag: 'input', type: 'text', name: 'Card number', secret: true },
+      { ref: 2, tag: 'button', name: 'Pay $20' },
+    ]) },
+    { frameId: 8, snapshot: snapshotOf('data:text/html,<p>Inline note</p>', 'Inline note', []) },
+    { frameId: 9, snapshot: snapshotOf('https://www.google.com/recaptcha/api2/anchor?k=x', '', [{ ref: 1, tag: 'span', role: 'checkbox', name: "I'm not a robot" }]) },
+    { frameId: 11, snapshot: snapshotOf('https://ads.test/slot', '  ', []) },
+  ]);
+  assert.deepEqual(merged.elements.slice(2), [
+    { ref: 3, tag: 'input', type: 'text', name: 'Card number', secret: true, frameId: 7, frameRef: 1 },
+    { ref: 4, tag: 'button', name: 'Pay $20', frameId: 7, frameRef: 2 },
+  ]);
+  assert.deepEqual(merged.frames, [
+    { frameId: 7, url: 'https://pay.test/form', text: 'Card details' },
+    { frameId: 8, url: 'data:text/html,<p>Inline note</p>', text: 'Inline note' },
+  ]);
+  assert.equal(merged.challenge, true);
+  // A page without frames reads as it did.
+  assert.deepEqual(withFrames(page, []), page);
+
+  const text = formatSnapshot(merged);
+  assert.match(text, /Elements on screen:\n\[1\] button "Back"\n\nElements further down:\n\[2\] a "Help"\n\nIn a frame from pay\.test:\nCard details\n\[3\] input type=text "Card number" \(sensitive field: never type here\)\n\[4\] button "Pay \$20"\n\nIn a frame:\nInline note\n/);
+  assert.match(text, /A CAPTCHA is on this page, in a frame: only the user can solve it\.$/);
+  assert.doesNotMatch(text, /not a robot/);
+});
+
+test('CAPTCHA frames are known by their address', () => {
+  for (const url of [
+    'https://www.google.com/recaptcha/api2/anchor?ar=1',
+    'https://www.recaptcha.net/recaptcha/enterprise/bframe',
+    'https://newassets.hcaptcha.com/captcha/v1/abc/static/hcaptcha.html',
+    'https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/if/ov2/av0/rcv0/0/abc',
+    'https://client-api.arkoselabs.com/fc/gc/',
+  ]) {
+    assert.equal(isChallengeFrame(url), true, url);
+  }
+  for (const url of ['https://www.google.com/maps/embed?pb=1', 'https://notgoogle.com/recaptcha/x', 'https://pay.test/form', 'about:blank', '']) {
+    assert.equal(isChallengeFrame(url), false, url);
+  }
 });
 
 test('The model hears what happened, and a declined action is not to be tried again', () => {

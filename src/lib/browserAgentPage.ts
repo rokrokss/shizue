@@ -3,7 +3,8 @@ import type { AgentAction, AgentStepError, PageElement, PageSnapshot } from '@/l
 // What the browser agent (lib/browserAgent.ts) runs in its tab, each function injected on its own
 // with chrome.scripting.executeScript, so none uses anything outside itself. They share the
 // page's elements through a global of the extension's isolated world, which lasts until the
-// page is left: a snapshot numbers them, and an action finds its element by that number.
+// page is left: a snapshot numbers them, and an action finds its element by that number. The
+// snapshot runs in each of the page's frames too, and an action in the frame its element is in.
 
 type AgentGlobals = {
   __shizueAgentRefs?: Map<number, Element>;
