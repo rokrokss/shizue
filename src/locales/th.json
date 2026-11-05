@@ -300,7 +300,7 @@
       "default": "ค่าเริ่มต้น",
       "translucent": "โปร่งแสง",
       "outline": "ขอบตัวอักษร",
-      "yellow": "คำแปลสีเหลือง"
+      "yellow": "คำแปลสีมิ้นต์"
     },
     "download": "บันทึกคำบรรยาย",
     "translating": "กำลังแปล {{percent}}%",

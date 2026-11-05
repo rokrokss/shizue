@@ -308,7 +308,7 @@
       "default": "기본",
       "translucent": "반투명",
       "outline": "외곽선",
-      "yellow": "노란색 번역"
+      "yellow": "민트색 번역"
     },
     "download": "자막 저장",
     "translating": "번역 중 {{percent}}%",

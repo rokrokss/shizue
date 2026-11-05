@@ -300,7 +300,7 @@
       "default": "標準",
       "translucent": "半透明",
       "outline": "縁取り",
-      "yellow": "黄色の翻訳"
+      "yellow": "ミント色の翻訳"
     },
     "download": "字幕を保存",
     "translating": "翻訳中 {{percent}}%",

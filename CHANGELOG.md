@@ -10,6 +10,7 @@
 - YouTube captions start sooner and cost less: translation keeps up to 5 minutes ahead of where you are, even while paused, instead of the whole video. Jump to a part not translated yet and it starts there at once. Each line shows as soon as the model writes it, and a line the model skipped is asked for again. During an ad, the video's captions are loaded and the connection to the model opened, so translation starts as soon as it ends. Downloading a subtitle file translates the rest first, with its progress shown
 - Translated captions are kept: YouTube, Netflix and other sites' subtitles you've watched show their translation at once for 30 days, without asking the model again
 - Highlight spoken words: in the YouTube caption menu, turn on "Highlight spoken words" to color each word of auto-generated captions as it's said. It's off unless you turn it on
+- Mint captions: the caption style that showed the translation in yellow now shows it in Shizue's mint
 - Move YouTube captions: drag them anywhere in the player, and they stay there for every video. Drag their top right corner to make them larger or smaller, and double-click them to put them back at the bottom
 - Captions on more sites: a video with its own caption track on any other site (video.js, Plyr, JW Player and plain HTML players) gets Shizue's captions button at its top right, like lecture videos
 - Live captions hear names better: on-device speech recognition listens for the names in the stream's title, channel and category, so a game or a person is written as they are

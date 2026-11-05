@@ -29,8 +29,10 @@ type CaptionDisplayProps = {
   spoken?: { line: number; start: number; end: number } | null;
 };
 
-// The word being said, in the brand's teal over the caption's white.
-const SPOKEN = { color: '#32CCBC' };
+// Shizue's own mint (--color-sz-cyan).
+const MINT = '#32CCBC';
+// The word being said, in the brand's mint over the caption's white.
+const SPOKEN = { color: MINT };
 
 const POPUP_WIDTH = 300;
 // The popup's distance from the video's sides.
@@ -45,7 +47,8 @@ const CAPTION_STYLES: Record<CaptionStyle, { box: React.CSSProperties; translati
   outline: {
     box: { color: '#fff', textShadow: '0 0 0.08em #000, 0 0 0.08em #000, 0 0 0.12em #000, 0 0 0.12em #000' },
   },
-  yellow: { box: BOX, translation: { color: '#ffe14d' } },
+  // Saved as 'yellow', its color before the brand's mint.
+  yellow: { box: BOX, translation: { color: MINT } },
 };
 
 export const CaptionDisplay = ({

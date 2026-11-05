@@ -81,7 +81,8 @@ export const netflixCaptionDisplayAtom = atomWithChromeStorage<CaptionDisplayMod
   'bilingual'
 );
 
-// How captions look on every site (components/Youtube/CaptionDisplay.tsx).
+// How captions look on every site (components/Youtube/CaptionDisplay.tsx). 'yellow' is the mint
+// translation, keeping the name it was saved under when it was yellow.
 export type CaptionStyle = 'default' | 'translucent' | 'outline' | 'yellow';
 
 export const captionStyleAtom = atomWithChromeStorage<CaptionStyle>(STORAGE_CAPTION_STYLE, 'default');
