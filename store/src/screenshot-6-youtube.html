@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" href="base.css">
+<script src="i18n.js"></script>
 <style>
   .canvas { width: 1280px; height: 800px; }
   .top { position: absolute; left: 64px; top: 52px; }
@@ -70,14 +71,14 @@
   <div class="glow" style="left:860px;top:-160px;width:560px;height:420px;background:rgba(144,247,236,.5)"></div>
 
   <div class="top">
-    <span class="eyebrow"><span class="dot"></span>YouTube captions</span>
-    <h1 class="headline">Understand <span class="mark">any video</span></h1>
-    <p class="sub">Real-time AI subtitles, shown in both languages.</p>
+    <span class="eyebrow"><span class="dot"></span><span data-t="yt.eyebrow">YouTube captions</span></span>
+    <h1 class="headline" data-t="yt.headline">Understand <span class="mark">any video</span></h1>
+    <p class="sub" data-t="yt.sub">Real-time AI subtitles, shown in both languages.</p>
   </div>
 
   <div class="badge">
-    <span class="chip">Spanish → English</span>
-    <span class="chip">23 languages</span>
+    <span class="chip" data-t="yt.chipPair">Spanish → English</span>
+    <span class="chip" data-t="langs23">23 languages</span>
   </div>
 
   <div class="player">
@@ -97,18 +98,18 @@
     </div>
 
     <div class="caps">
-      <div class="orig"><span>Las vacas pasan el verano en la montaña.</span></div>
-      <div><span>The cows spend the summer in the mountains.</span></div>
+      <div class="orig"><span data-t="yt.capOrig">Las vacas pasan el verano en la montaña.</span></div>
+      <div><span data-t="yt.capTr">The cows spend the summer in the mountains.</span></div>
     </div>
 
     <div class="menu">
-      <div class="row">Shizue AI Caption</div>
-      <div class="row">Target Language <span class="v">English ›</span></div>
-      <div class="row">Display <span class="v">Original + translation ›</span></div>
-      <div class="row">Style <span class="v">Default ›</span></div>
-      <div class="row">Navigate Subtitles with A/D <span class="sw"></span></div>
-      <div class="row">Number of Lines <span class="num">2</span></div>
-      <div class="btns"><span class="p">Activate</span><span class="d">Deactivate</span></div>
+      <div class="row"><span data-ui="youtube.aiCaption">Shizue AI Caption</span></div>
+      <div class="row"><span data-ui="settings.targetLanguage">Target Language</span> <span class="v"><span data-t="lang.self">English</span> ›</span></div>
+      <div class="row"><span data-ui="caption.displayLabel">Display</span> <span class="v"><span data-ui="caption.display.bilingual">Original + translation</span> ›</span></div>
+      <div class="row"><span data-ui="caption.styleLabel">Style</span> <span class="v"><span data-ui="caption.style.default">Default</span> ›</span></div>
+      <div class="row"><span data-ui="youtube.useKeyboardNavigate">Navigate Subtitles with A/D</span> <span class="sw"></span></div>
+      <div class="row"><span data-ui="youtube.numCaptLines">Number of Lines</span> <span class="num">2</span></div>
+      <div class="btns"><span class="p" data-ui="youtube.activate">Activate</span><span class="d" data-ui="youtube.deactivate">Deactivate</span></div>
     </div>
 
     <div class="progress"><b></b><i></i></div>

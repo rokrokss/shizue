@@ -29,7 +29,7 @@
   --mint-deep: #13a596;
   --blush: #e8b5ac;
   --peach: #f3d8c5;
-  --pixel: 'Silkscreen', monospace;
+  --pixel: 'Silkscreen', -apple-system, system-ui, sans-serif;
   --head: 'Bricolage Grotesque', system-ui, sans-serif;
   --ui: 'D-DIN', system-ui, sans-serif;
   --ycom: 'Ycomputer', system-ui, sans-serif;
@@ -39,6 +39,17 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { background: var(--cream); }
 body { -webkit-font-smoothing: antialiased; overflow: hidden; }
+/* Korean breaks lines between words, not inside them (store/src/i18n.js sets the language). */
+:lang(ko) { word-break: keep-all; }
+/* Japanese breaks between phrases (Chrome's BudouX), not inside a word. */
+:lang(ja) { word-break: auto-phrase; }
+/* Chrome knows neither -apple-system nor SF Pro Text by name, so --sys draws Latin with Apple SD
+   Gothic Neo, whose « » look like ≪ ≫: other languages (i18n.js sets lang) take the system font.
+   D-DIN has no proper Polish, Turkish or Vietnamese accents. */
+:root[lang] { --sys: system-ui, sans-serif; }
+:root:is(:lang(pl), :lang(tr), :lang(vi)) { --ui: system-ui, sans-serif; }
+/* Silkscreen has Latin letters only; wide tracking breaks up joined scripts. */
+:is(:lang(ar), :lang(fa), :lang(ur), :lang(hi), :lang(bn), :lang(th)) :is(.eyebrow, .lbl) { letter-spacing: 0; }
 
 .canvas {
   position: relative;

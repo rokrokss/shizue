@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" href="base.css">
+<script src="i18n.js"></script>
 <style>
   .canvas { width: 1280px; height: 800px; }
   .top { position: absolute; left: 64px; top: 52px; }
@@ -83,14 +84,14 @@
   <div class="glow" style="left:860px;top:-160px;width:560px;height:420px;background:rgba(144,247,236,.5)"></div>
 
   <div class="top">
-    <span class="eyebrow"><span class="dot"></span>Netflix captions</span>
-    <h1 class="headline">Binge in <span class="mark">two languages</span></h1>
-    <p class="sub">Official subtitles in your language when there are any, AI when there aren't.</p>
+    <span class="eyebrow"><span class="dot"></span><span data-t="nf.eyebrow">Netflix captions</span></span>
+    <h1 class="headline" data-t="nf.headline">Binge in <span class="mark">two languages</span></h1>
+    <p class="sub" data-t="nf.sub">Official subtitles in your language when there are any, AI when there aren't.</p>
   </div>
 
   <div class="badge">
-    <span class="chip">Korean → English</span>
-    <span class="chip">Next episode too</span>
+    <span class="chip" data-t="nf.chipPair">Korean → English</span>
+    <span class="chip" data-t="nf.chipNext">Next episode too</span>
   </div>
 
   <div class="player">
@@ -114,19 +115,19 @@
     <div class="back"><svg viewBox="0 0 24 24"><path d="M20 11H7.8l5.6-5.6L12 4l-8 8 8 8 1.4-1.4L7.8 13H20z"/></svg></div>
 
     <div class="caps">
-      <div class="orig"><span>비가 그치면 시장에 가 보자.</span></div>
-      <div><span>Let's go to the market once the rain stops.</span></div>
+      <div class="orig"><span data-t="nf.capOrig">비가 그치면 시장에 가 보자.</span></div>
+      <div><span data-t="nf.capTr">Let's go to the market once the rain stops.</span></div>
     </div>
 
     <div class="menu">
-      <div class="row">Shizue AI Caption</div>
-      <div class="row">Target Language <span class="v">English ›</span></div>
-      <div class="row">Original subtitles <span class="v">Korean [CC] ›</span></div>
-      <div class="row">Display <span class="v">Original + translation ›</span></div>
-      <div class="row">Style <span class="v">Default ›</span></div>
-      <div class="row">Number of Lines <span class="num">2</span></div>
-      <div class="row">Caption Size <span class="num">100%</span></div>
-      <div class="btns"><span class="p">Activate</span><span class="d">Deactivate</span></div>
+      <div class="row"><span data-ui="youtube.aiCaption">Shizue AI Caption</span></div>
+      <div class="row"><span data-ui="settings.targetLanguage">Target Language</span> <span class="v"><span data-t="lang.self">English</span> ›</span></div>
+      <div class="row"><span data-ui="netflix.originalSubtitles">Original subtitles</span> <span class="v"><span data-t="nf.origTrack">Korean [CC]</span> ›</span></div>
+      <div class="row"><span data-ui="caption.displayLabel">Display</span> <span class="v"><span data-ui="caption.display.bilingual">Original + translation</span> ›</span></div>
+      <div class="row"><span data-ui="caption.styleLabel">Style</span> <span class="v"><span data-ui="caption.style.default">Default</span> ›</span></div>
+      <div class="row"><span data-ui="youtube.numCaptLines">Number of Lines</span> <span class="num">2</span></div>
+      <div class="row"><span data-ui="youtube.captionSizeRatio">Caption Size</span> <span class="num">100%</span></div>
+      <div class="btns"><span class="p" data-ui="youtube.activate">Activate</span><span class="d" data-ui="youtube.deactivate">Deactivate</span></div>
     </div>
 
     <div class="progress"><b></b><i></i></div>
@@ -137,7 +138,7 @@
       <svg viewBox="0 0 24 24"><path d="M12 5V2l5 4-5 4V7a6 6 0 1 0 6 6h2a8 8 0 1 1-8-8z"/><text x="12" y="16" font-size="6.5" text-anchor="middle" font-family="Arial" font-weight="700">10</text></svg>
       <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.47 4.47 0 0 0 2.5-4z"/></svg>
       <span class="sp"></span>
-      <span class="title">Night Market<span>E3 After the Rain</span></span>
+      <span class="title" data-t="nf.title">Night Market<span>E3 After the Rain</span></span>
       <span class="sp"></span>
       <span class="sz"><svg viewBox="64 64 896 896"><path d="M928 161H699.2c-49.1 0-97.1 14.1-138.4 40.7L512 233l-48.8-31.3A255.2 255.2 0 00324.8 161H96c-17.7 0-32 14.3-32 32v568c0 17.7 14.3 32 32 32h228.8c49.1 0 97.1 14.1 138.4 40.7l44.4 28.6c1.3.8 2.8 1.3 4.3 1.3s3-.4 4.3-1.3l44.4-28.6C602 807.1 650.1 793 699.2 793H928c17.7 0 32-14.3 32-32V193c0-17.7-14.3-32-32-32zM404 553.5c0 4.1-3.2 7.5-7.1 7.5H211.1c-3.9 0-7.1-3.4-7.1-7.5v-45c0-4.1 3.2-7.5 7.1-7.5h185.7c3.9 0 7.1 3.4 7.1 7.5v45zm0-140c0 4.1-3.2 7.5-7.1 7.5H211.1c-3.9 0-7.1-3.4-7.1-7.5v-45c0-4.1 3.2-7.5 7.1-7.5h185.7c3.9 0 7.1 3.4 7.1 7.5v45zm416 140c0 4.1-3.2 7.5-7.1 7.5H627.1c-3.9 0-7.1-3.4-7.1-7.5v-45c0-4.1 3.2-7.5 7.1-7.5h185.7c3.9 0 7.1 3.4 7.1 7.5v45zm0-140c0 4.1-3.2 7.5-7.1 7.5H627.1c-3.9 0-7.1-3.4-7.1-7.5v-45c0-4.1 3.2-7.5 7.1-7.5h185.7c3.9 0 7.1 3.4 7.1 7.5v45z"/></svg></span>
       <svg viewBox="0 0 24 24"><path d="M5 5l9 7-9 7zm11 0h3v14h-3z"/></svg>

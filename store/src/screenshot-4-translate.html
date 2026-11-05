@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" href="base.css">
+<script src="i18n.js"></script>
 <link rel="stylesheet" href="article.css">
 <style>
   .canvas { width: 1280px; height: 800px; }
@@ -47,12 +48,12 @@
   <div class="glow" style="left:-200px;top:460px;width:520px;height:420px;background:rgba(232,181,172,.3)"></div>
 
   <div class="top">
-    <span class="eyebrow"><span class="dot"></span>Bilingual reading</span>
-    <h1 class="headline">Read any page in <span class="mark">two languages</span></h1>
-    <p class="sub">Translations appear under each paragraph. The layout stays intact.</p>
+    <span class="eyebrow"><span class="dot"></span><span data-t="tr.eyebrow">Bilingual reading</span></span>
+    <h1 class="headline" data-t="tr.headline">Read any page in <span class="mark">two languages</span></h1>
+    <p class="sub" data-t="tr.sub">Translations appear under each paragraph. The layout stays intact.</p>
   </div>
 
-  <div class="lang"><span class="pill">English</span><span class="arrow">→</span><span class="pill">한국어</span></div>
+  <div class="lang"><span class="pill" data-t="tr.srcName">English</span><span class="arrow">→</span><span class="pill" data-t="lang.self">한국어</span></div>
 
   <div class="perch sprite sp-chicken-eat" style="--s:4;left:150px"></div>
   <div class="perch sprite sp-bluechicken" style="--s:4;left:220px;--f:3"></div>
@@ -66,22 +67,22 @@
     <div class="body">
       <div class="page article">
         <div class="masthead"><b>Field</b> Notes <span>Biology · Oceans · Behavior</span></div>
-        <div class="kicker">Science</div>
+        <div class="kicker" lang="en">Science</div>
         <h2>Do octopuses dream?</h2>
-        <h2 class="tr">문어도 꿈을 꿀까?</h2>
+        <h2 class="tr" data-t="oct.title">문어도 꿈을 꿀까?</h2>
         <p>When octopuses sleep, their skin flickers through colors and textures, replaying patterns they used while awake.</p>
-        <p class="tr">문어가 잠들면 피부가 여러 색과 질감으로 깜빡이며, 깨어 있을 때 썼던 무늬를 다시 재생합니다.</p>
+        <p class="tr" data-t="oct.p1">문어가 잠들면 피부가 여러 색과 질감으로 깜빡이며, 깨어 있을 때 썼던 무늬를 다시 재생합니다.</p>
         <p>Researchers recorded short bursts of “active sleep” about once an hour — a rhythm strikingly similar to REM sleep in mammals.</p>
-        <p class="tr">연구진은 약 한 시간마다 짧은 ‘활동성 수면’을 기록했습니다. 포유류의 렘수면과 놀랄 만큼 닮은 리듬입니다.</p>
+        <p class="tr" data-t="oct.p2">연구진은 약 한 시간마다 짧은 ‘활동성 수면’을 기록했습니다. 포유류의 렘수면과 놀랄 만큼 닮은 리듬입니다.</p>
         <p>The finding hints that dreaming may have evolved more than once, in brains built along entirely different lines.</p>
-        <p class="tr">이 발견은 꿈이 전혀 다른 구조의 뇌에서 한 번 이상 진화했을 가능성을 시사합니다.</p>
+        <p class="tr" data-t="oct.p3">이 발견은 꿈이 전혀 다른 구조의 뇌에서 한 번 이상 진화했을 가능성을 시사합니다.</p>
       </div>
 
       <div class="popover">
-        <div class="t">Translate settings</div>
-        <div class="row">Translation Model<span class="sel">Gemini 3.5 Flash-Lite <small>▾</small></span></div>
-        <div class="row">Target Language<span class="sel active">한국어 <small>Korean ▾</small></span></div>
-        <div class="row">Display<span class="sel">Original + translation <small>▾</small></span></div>
+        <div class="t" data-ui="overlayMenu.translateSettings">Translate settings</div>
+        <div class="row"><span data-ui="settings.translateModel">Translation Model</span><span class="sel">Gemini 3.5 Flash-Lite <small>▾</small></span></div>
+        <div class="row"><span data-ui="settings.targetLanguage">Target Language</span><span class="sel active"><span data-t="lang.self">한국어</span> <small><span data-t="lang.selfEnglish">Korean</span> ▾</small></span></div>
+        <div class="row"><span data-ui="settings.translationDisplay">Display</span><span class="sel"><span data-ui="settings.translationDisplayBilingual">Original + translation</span> <small>▾</small></span></div>
       </div>
 
       <div class="toggle-menu" style="top:40px">

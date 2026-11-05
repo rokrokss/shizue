@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" href="base.css">
+<script src="i18n.js"></script>
 <link rel="stylesheet" href="article.css">
 <style>
   .canvas { width: 1280px; height: 800px; }
@@ -37,6 +38,8 @@
   .cm .hl2 { background: var(--mint); color: #fff; }
   .cm img { position: absolute; left: 10px; width: 16px; height: 16px; image-rendering: pixelated; }
   .cm .arr { margin-left: auto; color: #666; }
+  .cms { position: absolute; display: flex; align-items: flex-start; white-space: nowrap; }
+  .cms .cm { position: relative; width: auto; }
   .cursor { position: absolute; width: 22px; height: 22px; }
 
   .panel .msgs { gap: 10px; }
@@ -50,9 +53,9 @@
   <div class="glow" style="left:-200px;top:460px;width:520px;height:420px;background:rgba(232,181,172,.3)"></div>
 
   <div class="top">
-    <span class="eyebrow"><span class="dot"></span>Context menu</span>
-    <h1 class="headline">Right-click. <span class="mark">Ask Shizue.</span></h1>
-    <p class="sub">Translate images, describe them, pull out their text, or summarize the page.</p>
+    <span class="eyebrow"><span class="dot"></span><span data-t="cm.eyebrow">Context menu</span></span>
+    <h1 class="headline" data-t="cm.headline">Right-click. <span class="mark">Ask Shizue.</span></h1>
+    <p class="sub" data-t="cm.sub">Translate images, describe them, pull out their text, or summarize the page.</p>
   </div>
 
   <div class="perch sprite sp-walk" style="--s:5;left:1010px;--f:2"></div>
@@ -78,18 +81,21 @@
         </div>
         <p style="margin-top:16px;font-size:16px">The chalkboard outside was hand-written, so I just right-clicked it…</p>
 
-        <div class="cm" style="left:344px;top:272px;width:214px">
-          <div>Open image in new tab</div>
-          <div>Save image as…</div>
-          <div>Copy image</div>
+        <!-- The menu and its submenu end at the page's right edge and grow leftward to fit their words, as Chrome opens them. -->
+        <div class="cms" style="right:0;top:272px">
+        <div class="cm" style="min-width:214px">
+          <div data-t="cm.openImage">Open image in new tab</div>
+          <div data-t="cm.saveImage">Save image as…</div>
+          <div data-t="cm.copyImage">Copy image</div>
           <hr>
           <div class="hl"><img src="../../src/public/icon.svg">Shizue<span class="arr">▸</span></div>
         </div>
-        <div class="cm" style="left:554px;top:320px;width:236px">
-          <div>Translate image</div>
-          <div>Translate all images on page</div>
-          <div>Describe this image</div>
-          <div class="hl2">Extract text from image</div>
+        <div class="cm" style="min-width:236px;margin:48px 0 0 -4px">
+          <div data-ui="overlayMenu.translateImage">Translate image</div>
+          <div data-ui="overlayMenu.translatePageImages">Translate all images on page</div>
+          <div data-ui="overlayMenu.describeImage">Describe this image</div>
+          <div class="hl2" data-ui="overlayMenu.extractImageText">Extract text from image</div>
+        </div>
         </div>
         <svg class="cursor" style="left:752px;top:420px" viewBox="0 0 24 24"><path d="M5 2l14 11-6.2 1.1 3.8 7.4-2.8 1.4-3.7-7.5L5 19.5z" fill="#111" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
       </div>
@@ -101,7 +107,7 @@
             <div class="sprite sp-chicken" style="--s:2.5;margin:2px 0 0 4px"></div>
             <div class="bubble">
               <div style="width:128px;height:80px;margin:4px 0 8px auto;border-radius:4px;background:#2c3b36;border:4px solid #a9784f;color:#f4f2e6;font:11px 'Hiragino Sans';padding:6px 8px;text-align:left;line-height:1.5">本日のおすすめ<br>抹茶ラテ　550円<br>ほうじ茶ラテ 520円</div>
-              Please extract text from this image.
+              <span data-ui="chat.extractImageTextRequest">Please extract text from this image.</span>
             </div>
           </div>
           <div class="ai">
@@ -109,10 +115,10 @@
           </div>
           <div class="human">
             <div class="sprite sp-babycow" style="--s:2.15;margin:2px 0 0 4px"></div>
-            <div class="bubble">What does it say in English?</div>
+            <div class="bubble" data-t="cm.ask">What does it say in English?</div>
           </div>
           <div class="ai">
-            <p><b>Today’s specials:</b> matcha latte ¥550, hojicha latte ¥520 and seasonal cake ¥600.</p>
+            <p data-t="cm.answer"><b>Today’s specials:</b> matcha latte ¥550, hojicha latte ¥520 and seasonal cake ¥600.</p>
           </div>
         </div>
         </div>

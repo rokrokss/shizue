@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" href="base.css">
+<script src="i18n.js"></script>
 <style>
   .canvas { width: 1280px; height: 800px; }
   .top { position: absolute; left: 64px; top: 52px; }
@@ -59,6 +60,8 @@
   .menu { position: absolute; right: 84px; bottom: 66px; width: 312px; background: rgba(0, 0, 0, 0.8); border-radius: 8px; color: #fff; font-size: 13px; overflow: hidden; backdrop-filter: blur(6px); }
   .menu .row { height: 36px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; }
   .menu .row span.v { color: #9ca3af; }
+  .menu .row > span { white-space: nowrap; }
+  .menu .row > span.v { min-width: 0; margin-left: 12px; overflow: hidden; text-overflow: ellipsis; }
   .menu .sw { width: 28px; height: 16px; border-radius: 8px; background: var(--mint); position: relative; }
   .menu .sw::after { content: ''; position: absolute; right: 2px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; }
   .menu .num { min-width: 46px; height: 22px; border: 1px solid #424242; border-radius: 4px; text-align: right; padding: 2px 6px; font-size: 12px; }
@@ -75,14 +78,14 @@
   <div class="glow" style="left:860px;top:-160px;width:560px;height:420px;background:rgba(144,247,236,.5)"></div>
 
   <div class="top">
-    <span class="eyebrow"><span class="dot"></span>Twitch captions</span>
-    <h1 class="headline">Keep up with <span class="mark">live streams</span></h1>
-    <p class="sub">Live captions in two languages, translated on your device.</p>
+    <span class="eyebrow"><span class="dot"></span><span data-t="tw.eyebrow">Twitch captions</span></span>
+    <h1 class="headline" data-t="tw.headline">Keep up with <span class="mark">live streams</span></h1>
+    <p class="sub" data-t="tw.sub">Live captions in two languages, translated on your device.</p>
   </div>
 
   <div class="badge">
-    <span class="chip">Japanese → English</span>
-    <span class="chip">No API key</span>
+    <span class="chip" data-t="tw.chipPair">Japanese → English</span>
+    <span class="chip" data-t="tw.chipNoKey">No API key</span>
   </div>
 
   <div class="player">
@@ -107,21 +110,21 @@
     <div class="hud"><span><i>♥♥♥</i></span><span>004200</span><span>WORLD 3-2</span></div>
 
     <div class="caps">
-      <div class="orig"><span>よし、このボスは三回目で倒す！</span></div>
-      <div><span>Okay, third try, this boss is going down!</span></div>
+      <div class="orig"><span data-t="tw.capOrig">よし、このボスは三回目で倒す！</span></div>
+      <div><span data-t="tw.capTr">Okay, third try, this boss is going down!</span></div>
     </div>
 
     <div class="menu">
-      <div class="row">Shizue AI Caption</div>
-      <div class="row">Target Language <span class="v">English ›</span></div>
-      <div class="row">Caption source <span class="v">Auto · Streamer captions ›</span></div>
-      <div class="row">Spoken language <span class="v">Japanese ›</span></div>
-      <div class="row">Chrome built-in translation <span class="sw"></span></div>
-      <div class="row">Display <span class="v">Original + translation ›</span></div>
-      <div class="row">Style <span class="v">Default ›</span></div>
-      <div class="row">Number of Lines <span class="num">2</span></div>
-      <div class="row">Caption Size <span class="num">100%</span></div>
-      <div class="btns"><span class="p">Activate</span><span class="d">Deactivate</span></div>
+      <div class="row"><span data-ui="youtube.aiCaption">Shizue AI Caption</span></div>
+      <div class="row"><span data-ui="settings.targetLanguage">Target Language</span> <span class="v"><span data-t="lang.self">English</span> ›</span></div>
+      <div class="row"><span data-ui="twitch.source">Caption source</span> <span class="v" data-clip-ok><span data-ui="twitch.sourceAuto">Auto</span> · <span data-ui="twitch.sourceCaptions">Streamer captions</span> ›</span></div>
+      <div class="row"><span data-ui="youtube.spokenLanguage">Spoken language</span> <span class="v"><span data-t="tw.spoken">Japanese</span> ›</span></div>
+      <div class="row"><span data-ui="twitch.chromeTranslation">Chrome built-in translation</span> <span class="sw"></span></div>
+      <div class="row"><span data-ui="caption.displayLabel">Display</span> <span class="v"><span data-ui="caption.display.bilingual">Original + translation</span> ›</span></div>
+      <div class="row"><span data-ui="caption.styleLabel">Style</span> <span class="v"><span data-ui="caption.style.default">Default</span> ›</span></div>
+      <div class="row"><span data-ui="youtube.numCaptLines">Number of Lines</span> <span class="num">2</span></div>
+      <div class="row"><span data-ui="youtube.captionSizeRatio">Caption Size</span> <span class="num">100%</span></div>
+      <div class="btns"><span class="p" data-ui="youtube.activate">Activate</span><span class="d" data-ui="youtube.deactivate">Deactivate</span></div>
     </div>
 
     <div class="controls">

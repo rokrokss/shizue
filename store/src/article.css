@@ -10,7 +10,7 @@
   background: #fffdf8;
 }
 .article .masthead {
-  font: 400 20px 'Newsreader', serif;
+  font: 400 20px 'Newsreader', Georgia, serif;
   letter-spacing: -0.01em;
   border-bottom: 1px solid #e8e3d6;
   padding-bottom: 12px;
@@ -21,9 +21,9 @@
 }
 .article .masthead span { margin-left: auto; font: 400 12px var(--sys); color: #8a877d; letter-spacing: 0.02em; }
 .article .kicker { font: 600 12px var(--sys); text-transform: uppercase; letter-spacing: 0.12em; color: #b2604f; }
-.article h2 { font: 700 34px/1.08 'Newsreader', serif; letter-spacing: -0.02em; margin: 6px 0 8px; max-width: 620px; }
+.article h2 { font: 700 34px/1.08 'Newsreader', Georgia, serif; letter-spacing: -0.02em; margin: 6px 0 8px; max-width: 620px; }
 .article .byline { font: 400 13px var(--sys); color: #8a877d; margin-bottom: 16px; }
-.article p { font: 400 17px/1.55 'Newsreader', serif; margin: 0 0 12px; max-width: 680px; }
+.article p { font: 400 17px/1.55 'Newsreader', Georgia, serif; margin: 0 0 12px; max-width: 680px; }
 .article p.tr { color: rgba(29, 29, 27, 0.5); font-family: var(--sys); font-size: 15.5px; line-height: 1.6; }
 
 /* little CSS-drawn illustration: sunset, hills, train */

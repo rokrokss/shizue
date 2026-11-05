@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" href="base.css">
+<script src="i18n.js"></script>
 <link rel="stylesheet" href="article.css">
 <style>
   .canvas {
@@ -49,30 +50,30 @@
 <div class="canvas">
   <div class="left">
     <div class="brand"><img src="../../src/public/icon.svg"><span>Shizue</span></div>
-    <h1 class="headline">Your AI sidekick<br>on <span class="w">every page</span></h1>
-    <p class="sub">Chat, summarize and translate with your own API key.</p>
+    <h1 class="headline" data-t="pm.headline">Your AI sidekick<br>on <span class="w">every page</span></h1>
+    <p class="sub" data-t="pm.sub">Chat, summarize and translate with your own API key.</p>
   </div>
 
   <div class="card art">
     <div class="article">
-      <div class="kicker">Science</div>
+      <div class="kicker" lang="en">Science</div>
       <h2>Do octopuses dream?</h2>
-      <h2 class="tr">문어도 꿈을 꿀까?</h2>
+      <h2 class="tr" data-t="oct.title">문어도 꿈을 꿀까?</h2>
       <p>When octopuses sleep, their skin flickers through colors and textures, replaying patterns they used while awake.</p>
-      <p class="tr">문어가 잠들면 피부가 여러 색과 질감으로 깜빡이며, 깨어 있을 때 썼던 무늬를 다시 재생합니다.</p>
+      <p class="tr" data-t="oct.p1">문어가 잠들면 피부가 여러 색과 질감으로 깜빡이며, 깨어 있을 때 썼던 무늬를 다시 재생합니다.</p>
       <p>Researchers recorded short bursts of “active sleep” about once an hour.</p>
-      <p class="tr">연구진은 약 한 시간마다 짧은 ‘활동성 수면’을 기록했습니다.</p>
+      <p class="tr" data-t="oct.p2short">연구진은 약 한 시간마다 짧은 ‘활동성 수면’을 기록했습니다.</p>
     </div>
   </div>
 
-  <div class="card side panel">
+  <div class="card side panel" data-overlap-ok>
     <div class="ph"><img src="../../src/public/icon.svg">Shizue</div>
     <div class="msgs">
       <div class="human">
         <div class="sprite sp-babycow-walk" style="--s:2.1;margin:2px 0 0 2px"></div>
-        <div class="bubble">Summarize this page! Shizue!</div>
+        <div class="bubble" data-ui="chat.summaryRequestText">Summarize this page! Shizue!</div>
       </div>
-      <div class="ai">
+      <div class="ai" data-t="pm.answer">
         <p><b>Octopuses may dream.</b> Their sleep has REM-like phases.</p>
         <ul>
           <li><b>Skin patterns</b> replay while asleep.</li>
