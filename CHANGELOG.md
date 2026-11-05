@@ -5,16 +5,18 @@
 - Browser control: turn on "Browser control" in the Tools menu and Shizue does what you ask in the current tab, clicking, typing, choosing, scrolling and opening pages one step at a time. The steps show above the answer as it works, and a frame and a pill on the page say it's at work, with a button to stop. Before anything that sends, deletes, pays or can't be undone, it asks you on a card in the panel first. It never types into password or card fields, and treats what the page says as content, not instructions
 - Ask Shizue to do something in your tab with browser control off, and a card under the answer offers to turn it on and do it, in one click
 - Don't ask first: under browser control in the Tools menu, turn on "Don't ask first" and Shizue sends, deletes and pays in that chat without the approval card. It still never types into password or card fields, and the steps it did without asking are marked. A new chat turns it off
-- Tools button: web search, browser control and thinking effort have their own button beside the paperclip, which now holds what goes with a question: open tabs, files, images and a screen capture. Capturing a part of the page has its own button (the scissors)
+- Tools button: the chat model, web search, browser control and thinking effort have their own button at the right end of the chat box's toolbar. The paperclip now holds what goes with a question: open tabs, files, images and a screen capture. Capturing a part of the page has its own button (the scissors)
+- Change the chat model from the Tools menu: it lists the models you can use with the provider you're on (the ChatGPT sign-in models, or those of your API keys and local server). Picking one changes the chat model in Settings too, and thinking effort shows the levels that model takes
 - Select all open tabs: the open tabs list in the paperclip menu has "Select all" and "Clear all" at its top right
 - Translate images on a page: right-click an image and choose "Translate image", or "Translate all images on page" for a manga chapter or webtoon, and the translation is drawn over each bubble and caption. Hover an image for a button that shows the original. It uses your chat model, so it needs one that reads images, and translated images are kept for 30 days
 - Lecture captions: on Coursera, Udemy, TED and Vimeo, hover a video and click the captions button at its top right to read its captions translated, in the caption styles of the other sites. On Udemy, turn on its captions first
 - Meeting captions: in Google Meet, Microsoft Teams and Zoom in the browser, turn on the meeting's captions and Shizue's button at the bottom left translates them live, under each speaker's name. Turn on Chrome's on-device translator in the button's menu to keep what is said on your computer; otherwise your translation model translates
 - Disney+, Prime Video and Max: turn on the site's captions and click Shizue's button on the player to read them translated
 - Long chats keep going: once a chat fills most of the model's context, its older turns are folded into a summary the model reads instead, and the newest stay whole. A chip by the chat box shows how full the context is from half way
-- See the model think: models that show their thinking show it above the answer as it comes, folding into "Thought for 12s" once the answer starts
-- Thinking effort: in the Tools menu, choose how hard the model thinks (low, medium or high) for models that take one
-- Questions to ask next: under a summary, Shizue suggests a few questions to ask about it; click one to ask it
+- See the model think: models that show their thinking show it above the answer as it comes, folding into "Thought for 12s" once the answer starts, and ChatGPT sign-in models show theirs too
+- Thinking effort: in the Tools menu, or in Settings → Models under the chat model, slide to choose how hard the model thinks: Low, Medium or High, and Extra and Max for the GPT-6 and Claude models (Max for DeepSeek). Only the levels the chosen model takes are shown, and a level it doesn't take is sent as its highest. Models that think by default, such as GPT-6.1 Sol, Gemini 4 Argon, Claude Opus 5.5 and Claude Fable 5.1, think at Medium too and show their thinking
+- New models: GPT-6 Astra, Gemini 4 Argon, Claude Fable 5.1 and Claude Opus 5.5. Claude Sonnet 5 and Claude Haiku 4.5 make way for Claude Sonnet 5.5 and Claude Haiku 5.5, and DeepSeek V4.1 Flash moves to its 1017 release
+- Questions to ask next: under a summary, Shizue suggests a few questions to ask about it; click one to ask it, and the Detailed analysis button follows them
 - Ask about the moment: in a chat about a video, the "This moment" chip sends your question with the time the video is at, so "what is this?" is about what's on screen
 - Page translation remembers: translations are kept for 30 days, so a page you come back to shows its translation at once, without asking the model again
 - Text already in your language isn't sent for translation
@@ -22,6 +24,8 @@
 - Private details stay on the page: emails, phone numbers, card numbers and API keys aren't sent to the AI when a page is translated. It's on by default, in page translation's settings
 - A paragraph whose translation failed gets a retry button; one click tries again every paragraph that failed
 - Page translation reaches into web components (open shadow roots), so their text is translated too
+- Translation with Gemini 3.8 Flash on a Gemini API key asks for the lowest thinking level the model has, as it has no "minimal"
+- Fix the Display row spilling out of the page's translation settings popup
 
 ## v0.3.24
 
