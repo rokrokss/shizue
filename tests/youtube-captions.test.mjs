@@ -145,3 +145,36 @@ test('Captions save as a SubRip file', () => {
   assert.equal(srtFileName('What: a "video"?/part 1', 'English-Korean'), 'What a video part 1.English-Korean.srt');
   assert.equal(srtFileName('  ', 'Korean'), 'captions.Korean.srt');
 });
+
+test('Each sentence keeps where its words start and when they are said, for the word being spoken', () => {
+  const [first, second] = groupAsrSentences([
+    { tStartMs: 1000, dDurationMs: 3000, segs: [{ utf8: 'Hello' }, { utf8: ' world.', tOffsetMs: 500 }, { utf8: ' How', tOffsetMs: 1200 }, { utf8: ' are', tOffsetMs: 1500 }, { utf8: ' you?', tOffsetMs: 1800 }] },
+    { tStartMs: 4000, aAppend: 1, segs: [{ utf8: '\n' }] },
+  ]);
+  assert.equal(first.text, 'Hello world.');
+  assert.deepEqual(first.words, [{ offset: 0, time: 1 }, { offset: 6, time: 1.5 }]);
+  assert.equal(second.text, 'How are you?');
+  assert.deepEqual(second.words, [{ offset: 0, time: 2.2 }, { offset: 4, time: 2.5 }, { offset: 8, time: 2.8 }]);
+  for (const sentence of [first, second]) {
+    for (const word of sentence.words) assert.notEqual(sentence.text[word.offset], ' ');
+  }
+});
+
+const { movedPosition, resizedRatio, isCaptionPosition, DEFAULT_CAPTION_POSITION } = await load('captionMove');
+
+test('Captions dragged across the player stay inside it, and the corner handle scales them', () => {
+  const box = { width: 200, height: 40 };
+  const player = { width: 1000, height: 500 };
+  // 100 px right and 50 px up from the bottom center.
+  const moved = movedPosition(DEFAULT_CAPTION_POSITION, 100, -50, box, player);
+  assert.deepEqual([moved.x, Math.round(moved.y * 1000) / 1000], [0.6, 0.12]);
+  // Far past the bottom right corner: the box's edge stops at the player's.
+  assert.deepEqual(movedPosition(DEFAULT_CAPTION_POSITION, 900, 900, box, player), { x: 0.9, y: 0 });
+  assert.deepEqual(movedPosition(DEFAULT_CAPTION_POSITION, -900, -900, box, player), { x: 0.1, y: 0.92 });
+  // The box is centered, so its right edge moving 50 px of its 100 px half makes it 1.5 times as large.
+  assert.equal(resizedRatio(1, 50, 200), 1.5);
+  assert.equal(resizedRatio(1, -500, 200), 0.3);
+  assert.equal(resizedRatio(4, 500, 200), 5);
+  assert.equal(isCaptionPosition({ x: 0.4, y: 0.1 }), true);
+  for (const value of [null, { x: 1 }, { x: 1, y: Number.NaN }, { x: '0.5', y: 0 }]) assert.equal(isCaptionPosition(value), false);
+});

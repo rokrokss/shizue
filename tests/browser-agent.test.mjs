@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   actionResult,
+  actionSignature,
   agentUrl,
   browserControlMarkSplitter,
   elementLabel,
@@ -10,6 +11,7 @@ import {
   looksCommitting,
   needsApproval,
   parseAgentReply,
+  timesTried,
   withFrames,
 } from '../src/lib/browserAgent.ts';
 
@@ -175,4 +177,80 @@ test('An answer without the mark streams as it is, held back only while it could
   assert.deepEqual(splitter.push(' [[browser-control]]'), { text: ' [[browser-control]]', marked: false });
   assert.deepEqual(splitStream(['[', 'link](https://a.test)']), { text: '[link](https://a.test)', marks: 0 });
   assert.deepEqual(splitStream(['[[bro']), { text: '[[bro', marks: 0 });
+});
+
+test('Questions, looks, points, tabs and site tools are read, and incomplete ones refused', () => {
+  const action = (json) => parseAgentReply(json)?.action ?? null;
+  assert.deepEqual(action('{"thought":"","action":"ask","text":" Which size? "}'), { kind: 'ask', text: 'Which size?' });
+  assert.equal(action('{"thought":"","action":"ask","text":"  "}'), null);
+  assert.deepEqual(action('{"thought":"","action":"look"}'), { kind: 'look' });
+  assert.deepEqual(action('{"thought":"","action":"click_at","x":120.6,"y":"40"}'), { kind: 'click_at', x: 121, y: 40 });
+  assert.equal(action('{"thought":"","action":"click_at","x":120}'), null);
+  // Coordinates and a tab number belong only to their actions.
+  assert.deepEqual(action('{"thought":"","action":"click","ref":2,"x":5,"y":5,"tab":2}'), { kind: 'click', ref: 2 });
+  assert.deepEqual(action('{"thought":"","action":"open_tab","url":"example.com"}'), { kind: 'open_tab', url: 'https://example.com/' });
+  assert.equal(action('{"thought":"","action":"open_tab","url":"javascript:alert(1)"}'), null);
+  assert.deepEqual(action('{"thought":"","action":"switch_tab","tab":2}'), { kind: 'switch_tab', tab: 2 });
+  assert.equal(action('{"thought":"","action":"switch_tab","tab":0}'), null);
+  // A tool's input comes as a JSON string (the schema can't say "any object"), or as an object.
+  assert.deepEqual(action('{"thought":"","action":"tool","name":"search_flights","input":"{\\"to\\":\\"ICN\\"}"}'), {
+    kind: 'tool',
+    name: 'search_flights',
+    input: { to: 'ICN' },
+  });
+  assert.deepEqual(action('{"thought":"","action":{"type":"tool","name":"cart","input":{"id":3}}}'), { kind: 'tool', name: 'cart', input: { id: 3 } });
+  assert.deepEqual(action('{"thought":"","action":"tool","name":"list"}'), { kind: 'tool', name: 'list', input: {} });
+  assert.equal(action('{"thought":"","action":"tool","name":"list","input":"{not json"}'), null);
+  assert.equal(action('{"thought":"","action":"tool","input":"{}"}'), null);
+  // The user's own words are never the model's to send.
+  assert.equal(action('{"thought":"","action":"steer","text":"go"}'), null);
+});
+
+test('A site tool waits for the go-ahead when the site says it has consequences, or its name sends or pays', () => {
+  const tool = (name, flags = {}) => ({ name, description: '', schema: '{}', frameId: 0, ...flags });
+  const run = (name) => ({ kind: 'tool', name, input: {} });
+  assert.equal(needsApproval(run('search_flights'), undefined, false, tool('search_flights')), false);
+  assert.equal(needsApproval(run('add_note'), undefined, false, tool('add_note', { consequential: true })), true);
+  assert.equal(needsApproval(run('place_order'), undefined, false, tool('place_order')), true);
+  assert.equal(needsApproval(run('delete-item'), undefined, false, tool('delete-item')), true);
+  // A tool that only reads never waits, whatever it is called.
+  assert.equal(needsApproval(run('order_status'), undefined, false, tool('order_status', { readOnly: true })), false);
+  for (const kind of ['ask', 'look', 'switch_tab', 'steer']) {
+    assert.equal(needsApproval({ kind }, undefined, true), false);
+  }
+  assert.equal(needsApproval({ kind: 'open_tab', url: 'https://example.com/' }, undefined, true), true);
+});
+
+test('The same action on a page that did not change counts as tried again; a changed page starts over', () => {
+  const page = { url: 'https://example.com/', title: 'Shop', text: 'Items', elements: [{ ref: 1, tag: 'button', name: 'More' }], scroll: { y: 0, height: 900, viewport: 900 } };
+  const click = { kind: 'click', ref: 1 };
+  const tried = [actionSignature(click, page), actionSignature({ kind: 'scroll', direction: 'down' }, page), actionSignature(click, page)];
+  assert.equal(timesTried(tried, actionSignature(click, page)), 2);
+  assert.equal(timesTried(tried, actionSignature(click, { ...page, text: 'Items and more items' })), 0);
+  assert.equal(timesTried(tried, actionSignature(click, { ...page, scroll: { ...page.scroll, y: 300 } })), 0);
+  // Only the last few actions count.
+  const old = [actionSignature(click, page), ...Array.from({ length: 6 }, (_, i) => actionSignature({ kind: 'wait', text: String(i) }, page))];
+  assert.equal(timesTried(old, actionSignature(click, page)), 0);
+});
+
+test('The page the model reads lists its tabs and the site\'s tools, and new failures say what to do', () => {
+  const text = formatSnapshot({
+    url: 'https://example.com/',
+    title: 'Shop',
+    text: 'Items',
+    elements: [],
+    scroll: { y: 0, height: 900, viewport: 900 },
+    tabs: [
+      { number: 1, title: 'Shop', url: 'https://example.com/', current: true },
+      { number: 2, title: 'Reviews', url: 'https://reviews.example.org/x', current: false },
+    ],
+    tools: [{ name: 'search', description: 'Searches\nthe shop', schema: '{"type":"object"}', readOnly: true, frameId: 0 }],
+  });
+  assert.match(text, /Your tabs: \(1\) example\.com — Shop \[this one\]; \(2\) reviews\.example\.org — Reviews/);
+  assert.match(text, /- search \(only reads\): Searches the shop input schema: \{"type":"object"\}/);
+  // One tab isn't listed.
+  assert.doesNotMatch(formatSnapshot({ url: 'https://example.com/', title: '', text: '', elements: [], scroll: { y: 0, height: 1, viewport: 1 }, tabs: [{ number: 1, title: '', url: 'https://example.com/', current: true }] }), /Your tabs/);
+  for (const error of ['not_visible', 'no_screenshot', 'no_tab', 'no_tool', 'repeated']) {
+    assert.doesNotMatch(actionResult({ id: 'x', action: { kind: 'look' }, status: 'failed', error }), /Try another way/);
+  }
 });

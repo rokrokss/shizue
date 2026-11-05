@@ -4,17 +4,46 @@
 // or can't be undone waits for the user's go-ahead in the panel; a password or card field is
 // never typed in. Pure, for the background, the panel and the tests.
 
-export type AgentActionKind = 'click' | 'type' | 'select' | 'scroll' | 'navigate' | 'back' | 'wait' | 'finish';
+export type AgentActionKind =
+  | 'click'
+  | 'type'
+  | 'select'
+  | 'scroll'
+  | 'navigate'
+  | 'back'
+  | 'wait'
+  | 'finish'
+  // A question to the user, who answers in the chat box.
+  | 'ask'
+  // A screenshot of the tab, its controls marked with their numbers, for models that see images.
+  | 'look'
+  // A click at a point of the last screenshot, for what has no number.
+  | 'click_at'
+  | 'open_tab'
+  | 'switch_tab'
+  // A tool the site offers through WebMCP (PageSnapshot.tools).
+  | 'tool'
+  // Not the model's: what the user said while the agent worked, shown among the steps.
+  | 'steer';
 
 export type AgentAction = {
   kind: AgentActionKind;
   ref?: number;
-  // What to type, the option to pick, or the answer to the user (finish).
+  // What to type, the option to pick, the answer to the user (finish), the question (ask) or what
+  // the user said (steer).
   text?: string;
   url?: string;
   direction?: 'up' | 'down';
   // Press Enter after typing.
   submit?: boolean;
+  // click_at: the point in the screenshot, in its pixels.
+  x?: number;
+  y?: number;
+  // switch_tab: the tab's number in the list of the agent's tabs.
+  tab?: number;
+  // tool: the tool's name, and its input as its schema asks.
+  name?: string;
+  input?: Record<string, unknown>;
 };
 
 export type AgentReply = { thought: string; action: AgentAction; sensitive: boolean };
@@ -42,6 +71,21 @@ export type PageElement = {
   frameRef?: number;
 };
 
+// A tool the page registered with WebMCP (document.modelContext), in one of its frames.
+export type WebMcpTool = {
+  name: string;
+  description: string;
+  // Its input's JSON schema, as a string.
+  schema: string;
+  // The site says it only reads, or that it has consequences (which need the user's go-ahead).
+  readOnly?: boolean;
+  consequential?: boolean;
+  frameId: number;
+};
+
+// A tab the agent works in: the one it started in, and those it opened.
+export type AgentTab = { number: number; title: string; url: string; current: boolean };
+
 export type PageSnapshot = {
   url: string;
   title: string;
@@ -52,6 +96,8 @@ export type PageSnapshot = {
   frames?: { frameId: number; url: string; text: string }[];
   // A CAPTCHA's frame is on the page, left out for the user to solve.
   challenge?: boolean;
+  tools?: WebMcpTool[];
+  tabs?: AgentTab[];
 };
 
 export type AgentStepStatus = 'running' | 'done' | 'failed' | 'awaiting' | 'denied';
@@ -63,6 +109,13 @@ export type AgentStepError =
   | 'no_option'
   | 'bad_url'
   | 'unreachable'
+  // look, click_at: the tab isn't the one on screen, or there is no screenshot to point in.
+  | 'not_visible'
+  | 'no_screenshot'
+  | 'no_tab'
+  | 'no_tool'
+  // It was done the same way on the same page twice already.
+  | 'repeated'
   | 'failed';
 
 // One action as the panel shows it.
@@ -78,15 +131,20 @@ export type AgentStep = {
   // It would have waited for the go-ahead, but the user turned asking off for the question.
   autoApproved?: boolean;
   error?: AgentStepError;
+  // ask: the user's answer.
+  reply?: string;
 };
 
-export type AgentOutcome = 'finished' | 'stopped' | 'max_steps' | 'unavailable' | 'failed';
+// looping: it kept doing the same thing on a page that didn't change. unanswered: its question
+// waited too long.
+export type AgentOutcome = 'finished' | 'stopped' | 'max_steps' | 'unavailable' | 'failed' | 'looping' | 'unanswered';
 
 // A browser agent answer's record, kept with the message.
 export type AgentRun = { host?: string; steps: AgentStep[]; outcome?: AgentOutcome };
 
 // What the agent's pill on the page says, in the panel's language.
-export type AgentLabels = { working: string; waiting: string; stop: string };
+// waiting: for the go-ahead; asking: for the answer to its question.
+export type AgentLabels = { working: string; waiting: string; asking: string; stop: string };
 
 export const BROWSER_AGENT_MAX_STEPS = 100;
 
@@ -135,7 +193,26 @@ const MAX_NAME = 80;
 const MAX_FRAME_ELEMENTS = 40;
 const MAX_FRAME_TEXT = 1500;
 
-const KINDS: AgentActionKind[] = ['click', 'type', 'select', 'scroll', 'navigate', 'back', 'wait', 'finish'];
+const MAX_TOOLS = 20;
+const MAX_SCHEMA = 600;
+
+// What the model may answer with ('steer' is the user's).
+const KINDS: AgentActionKind[] = [
+  'click',
+  'type',
+  'select',
+  'scroll',
+  'navigate',
+  'back',
+  'wait',
+  'finish',
+  'ask',
+  'look',
+  'click_at',
+  'open_tab',
+  'switch_tab',
+  'tool',
+];
 
 // A web address as the model wrote it, made whole; anything but http(s) is refused.
 export const agentUrl = (value: string): string | null => {
@@ -175,14 +252,47 @@ export const parseAgentReply = (answer: string): AgentReply | null => {
   action.direction = direction === 'up' ? 'up' : 'down';
   if (field('submit') === true) action.submit = true;
 
+  for (const axis of ['x', 'y'] as const) {
+    const value = Number(field(axis));
+    if (field(axis) !== undefined && Number.isFinite(value)) action[axis] = Math.round(value);
+  }
+  const tab = Number(field('tab'));
+  if (Number.isInteger(tab) && tab >= 1) action.tab = tab;
+  const name = field('name');
+  if (typeof name === 'string' && name.trim()) action.name = name.trim();
+  const input = field('input');
+  if (input && typeof input === 'object' && !Array.isArray(input)) action.input = input as Record<string, unknown>;
+  else if (typeof input === 'string' && input.trim()) {
+    try {
+      const parsedInput = JSON.parse(input);
+      if (parsedInput && typeof parsedInput === 'object' && !Array.isArray(parsedInput)) action.input = parsedInput;
+    } catch {
+      return null;
+    }
+  }
+
   if ((kind === 'click' || kind === 'type' || kind === 'select') && action.ref === undefined) return null;
   if ((kind === 'type' || kind === 'select') && action.text === undefined) return null;
-  if (kind === 'navigate') {
+  if (kind === 'navigate' || kind === 'open_tab') {
     const whole = agentUrl(action.url ?? action.text ?? '');
     if (!whole) return null;
     action.url = whole;
   }
-  if (kind === 'finish') action.text = (action.text ?? '').trim();
+  if (kind === 'ask' && !action.text?.trim()) return null;
+  if (kind === 'click_at' && (action.x === undefined || action.y === undefined)) return null;
+  if (kind === 'switch_tab' && action.tab === undefined) return null;
+  if (kind === 'tool' && !action.name) return null;
+  if (kind === 'tool') action.input ??= {};
+  if (kind === 'finish' || kind === 'ask') action.text = (action.text ?? '').trim();
+  if (kind !== 'click_at') {
+    delete action.x;
+    delete action.y;
+  }
+  if (kind !== 'switch_tab') delete action.tab;
+  if (kind !== 'tool') {
+    delete action.name;
+    delete action.input;
+  }
   if (kind !== 'scroll') delete action.direction;
   const thought = typeof parsed.thought === 'string' ? parsed.thought.trim() : '';
   return { thought, action, sensitive: parsed.sensitive === true || field('sensitive') === true };
@@ -270,13 +380,48 @@ export const looksCommitting = (label: string) => COMMIT_WORDS.test(label);
 
 // Whether an action waits for the user's go-ahead: the model says it can't be undone, a button
 // reads like one that sends, deletes or pays, or typed text is submitted anywhere but a search box.
-export const needsApproval = (action: AgentAction, element: PageElement | undefined, sensitive: boolean) => {
-  if (action.kind === 'scroll' || action.kind === 'wait' || action.kind === 'finish') return false;
+// A site's own tool waits when the site says it has consequences, or, saying neither that nor
+// that it only reads, when its name reads like one that sends, deletes or pays.
+export const needsApproval = (
+  action: AgentAction,
+  element: PageElement | undefined,
+  sensitive: boolean,
+  tool?: WebMcpTool
+) => {
+  if (['scroll', 'wait', 'finish', 'ask', 'look', 'switch_tab', 'steer'].includes(action.kind)) return false;
   if (sensitive) return true;
   if (action.kind === 'click') return looksCommitting(`${element?.name ?? ''} ${element?.value ?? ''}`);
   if (action.kind === 'type') return Boolean(action.submit) && !element?.search;
+  if (action.kind === 'tool') {
+    if (tool?.consequential) return true;
+    return !tool?.readOnly && looksCommitting(`${tool?.name.replace(/[_-]+/g, ' ') ?? ''} ${action.name ?? ''}`);
+  }
   return false;
 };
+
+// The same action on the same page: a page that changed (scrolled, loaded more, typed into) makes
+// it another.
+export const actionSignature = (action: AgentAction, snapshot: PageSnapshot) =>
+  JSON.stringify([
+    action.kind,
+    action.ref,
+    action.text,
+    action.url,
+    action.x,
+    action.y,
+    action.tab,
+    action.name,
+    action.input,
+    snapshot.url,
+    snapshot.scroll.y,
+    snapshot.text.length,
+    snapshot.elements.map((element) => `${element.name}=${element.value ?? ''}`).join('|'),
+  ]);
+
+// How many times the agent tried this already, among its last few actions.
+export const REPEAT_WINDOW = 6;
+export const timesTried = (signatures: string[], signature: string) =>
+  signatures.slice(-REPEAT_WINDOW).filter((tried) => tried === signature).length;
 
 const clip = (text: string, max: number) => (text.length > max ? `${text.slice(0, max - 1)}…` : text);
 
@@ -360,10 +505,19 @@ export const formatSnapshot = (snapshot: PageSnapshot) => {
     const host = hostOf(frame.url);
     return ['', host ? `In a frame from ${host}:` : 'In a frame:', ...(text ? [text] : []), ...elements.map(elementLine)];
   });
+  const tools = (snapshot.tools ?? []).slice(0, MAX_TOOLS);
+  const tabs = snapshot.tabs ?? [];
   return [
     `URL: ${snapshot.url}`,
     `Title: ${snapshot.title}`,
     `Scroll: ${position}`,
+    ...(tabs.length > 1
+      ? [
+          `Your tabs: ${tabs
+            .map((tab) => `(${tab.number}) ${hostOf(tab.url)} — ${clip(tab.title, 60)}${tab.current ? ' [this one]' : ''}`)
+            .join('; ')}`,
+        ]
+      : []),
     '',
     '===visible text===',
     snapshot.text.trim() || '(none)',
@@ -373,6 +527,16 @@ export const formatSnapshot = (snapshot: PageSnapshot) => {
     ...(shown.length ? shown.map(elementLine) : ['(none)']),
     ...(below.length ? ['', 'Elements further down:', ...below.map(elementLine)] : []),
     ...frames,
+    ...(tools.length
+      ? [
+          '',
+          'Tools this site offers (WebMCP), called with the "tool" action:',
+          ...tools.map(
+            (tool) =>
+              `- ${tool.name}${tool.readOnly ? ' (only reads)' : ''}: ${clip(tool.description.replace(/\s+/g, ' '), 200)} input schema: ${clip(tool.schema, MAX_SCHEMA)}`
+          ),
+        ]
+      : []),
     ...(snapshot.challenge ? ['', 'A CAPTCHA is on this page, in a frame: only the user can solve it.'] : []),
   ].join('\n');
 };
@@ -394,6 +558,16 @@ export const actionResult = (step: AgentStep) => {
         return 'Result: refused, only http and https addresses can be opened.';
       case 'unreachable':
         return 'Result: failed, this page cannot be controlled (a browser page or a site Shizue may not access).';
+      case 'not_visible':
+        return 'Result: failed, this tab is not the one on screen now, so it cannot be seen. Work from the text.';
+      case 'no_screenshot':
+        return 'Result: failed, there is no screenshot to point in. Look first.';
+      case 'no_tab':
+        return 'Result: failed, there is no tab with that number.';
+      case 'no_tool':
+        return 'Result: failed, the site offers no tool by that name now.';
+      case 'repeated':
+        return 'Result: not done. You already did exactly this twice on this same page, and it did not change. Do something different, or finish and tell the user where you are stuck.';
       default:
         return 'Result: failed. Try another way.';
     }

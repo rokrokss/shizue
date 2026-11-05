@@ -1,5 +1,6 @@
 import {
   MESSAGE_AGENT_APPROVAL,
+  MESSAGE_AGENT_STEER,
   MESSAGE_RETRY_GRAPH_STREAM,
   MESSAGE_RUN_GRAPH_STREAM,
   PORT_STREAM_MESSAGE,
@@ -122,6 +123,11 @@ export const useChromePortStream = () => {
     portRef.current?.postMessage({ action: MESSAGE_AGENT_APPROVAL, stepId, approved });
   }, []);
 
+  // What the user typed while the browser agent works on the answer streaming now.
+  const steerAgent = useCallback((text: string) => {
+    portRef.current?.postMessage({ action: MESSAGE_AGENT_STEER, text });
+  }, []);
+
   const cancelStream = useCallback(() => {
     portRef.current?.disconnect();
     portRef.current = null;
@@ -129,5 +135,5 @@ export const useChromePortStream = () => {
 
   useEffect(() => () => cancelStream(), [cancelStream]);
 
-  return { startStream, startRetryStream, cancelStream, answerAgentApproval };
+  return { startStream, startRetryStream, cancelStream, answerAgentApproval, steerAgent };
 };

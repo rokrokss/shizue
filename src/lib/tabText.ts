@@ -1,6 +1,7 @@
 import { MESSAGE_READ_VIDEO_TRANSCRIPT, SUMMARY_PAGE_TEXT_MAX_CHARS } from '@/config/constants';
 import { RECOVER_CONTENT_SCRIPTS } from '@/lib/contentScriptConnection';
 import type { PageAttachment } from '@/lib/indexDB';
+import { MAIN_TEXT_EXCLUDE, readPageContent } from '@/lib/mainText';
 import { readPdfText } from '@/lib/pdfText';
 import { transcriptText, type VideoTranscript } from '@/lib/videoTranscript';
 
@@ -71,12 +72,8 @@ export const readTabPage = async (tabId: number): Promise<PageRead> => {
   try {
     const [injection] = await chrome.scripting.executeScript({
       target: { tabId },
-      func: () => ({
-        title: document.title,
-        url: location.href,
-        text: document.body?.innerText ?? '',
-        pdf: document.contentType === 'application/pdf',
-      }),
+      func: readPageContent,
+      args: [MAIN_TEXT_EXCLUDE],
     });
     if (!injection?.result) return { error: 'unreadable' };
     const { pdf, ...page } = injection.result;

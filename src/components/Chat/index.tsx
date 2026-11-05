@@ -7,7 +7,7 @@ import SidePanelFullModal from '@/components/Modal/SidePanelFullModal';
 import SettingsModal from '@/components/Setting/SettingsModal';
 import { isSelectionActionType, MESSAGE_LOAD_THREAD, MESSAGE_REMEMBER_THREAD } from '@/config/constants';
 import { useAutoMemoryValue } from '@/hooks/autoMemory';
-import { chatStatusAtom, createThreadMessageCountAtom, isChatIdle, switchThreadAtom } from '@/hooks/chat';
+import { chatStatusAtom, createThreadMessageCountAtom, isChatIdle, isChatWaiting, switchThreadAtom } from '@/hooks/chat';
 import { ActionType, browserControlRequestedAtom, threadIdAtom } from '@/hooks/global';
 import { useThemeValue } from '@/hooks/layout';
 import { useChromePortStream } from '@/hooks/portStream';
@@ -94,7 +94,7 @@ const Chat = () => {
   const messageCountAtom = useMemo(() => createThreadMessageCountAtom(threadId), [threadId]);
   const messageCount = useAtomValue(messageCountAtom);
   const prevMessageCountRef = useRef(messageCount);
-  const { startStream, startRetryStream, cancelStream, answerAgentApproval } = useChromePortStream();
+  const { startStream, startRetryStream, cancelStream, answerAgentApproval, steerAgent } = useChromePortStream();
   const autoMemoryEnabled = useAutoMemoryValue().enabled;
 
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -210,6 +210,7 @@ const Chat = () => {
   const agentLabels = () => ({
     working: t('agent.overlayWorking'),
     waiting: t('agent.overlayWaiting'),
+    asking: t('agent.overlayAsking'),
     stop: t('agent.overlayStop'),
   });
 
@@ -527,6 +528,12 @@ const Chat = () => {
     }
     return null;
   }, [messages]);
+
+  // The browser agent is working on the latest answer: what the user types goes to it.
+  const agentWorking = useMemo(() => {
+    const last = messages[messages.length - 1];
+    return isChatWaiting(chatStatus) && last?.role === 'ai' && !!last.agentRun && !last.agentRun.outcome;
+  }, [messages, chatStatus]);
 
   // How full the model's context was for the latest answer.
   const contextUsage = useMemo(() => {
@@ -882,6 +889,8 @@ const Chat = () => {
           contextUsage={contextUsage}
           previousPrompts={previousPrompts}
           browserAgentTurnedOn={browserAgentTurnedOn}
+          agentWorking={agentWorking}
+          onSteerAgent={steerAgent}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           onOpenHistory={handleOpenHistory}

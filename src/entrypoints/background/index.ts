@@ -9,6 +9,7 @@ import { languageListeners } from '@/entrypoints/background/states/language';
 import { modelListeners } from '@/entrypoints/background/states/models';
 import { whenBackgroundStateReady } from '@/entrypoints/background/states/ready';
 import { backgroundLog, errorLog } from '@/logs';
+import { captionPortListeners } from '@/services/background/captionPort';
 import { messageHandlers } from '@/services/background/messageHandlers';
 import { CHATGPT_CALLBACK_MESSAGE, CHATGPT_SETTINGS_MESSAGE } from '@/lib/chatgpt';
 import { handleChatGPTCallback, handleChatGPTSettings } from '@/services/background/chatgpt';
@@ -25,6 +26,7 @@ export default defineBackground(() => {
   sidebarToggleListeners();
   languageListeners();
   sidePanelMessageListeners();
+  captionPortListeners();
   modelListeners();
   createContextMenu();
   // The worker wakes for every panel open and message, so this runs about once a day.

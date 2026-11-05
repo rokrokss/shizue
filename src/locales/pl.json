@@ -155,6 +155,7 @@
     "browserAgent": "Sterowanie przeglądarką",
     "browserAgentHint": "Shizue klika i pisze w bieżącej karcie",
     "browserAgentPlaceholder": "Co mam zrobić w tej karcie?",
+    "agentSteerPlaceholder": "Uzupełnij zadanie lub odpowiedz na pytanie",
     "selectAllTabs": "Zaznacz wszystkie",
     "deselectAllTabs": "Odznacz wszystkie",
     "browserControlHintTitle": "Shizue może zrobić to w Twojej karcie",
@@ -258,6 +259,7 @@
     "youtubeCaptionButton": "Przycisk napisów YouTube",
     "captionSizeRatio": "Rozmiar napisów",
     "useKeyboardNavigate": "Nawigacja po napisach (A/D)",
+    "wordHighlight": "Wyróżniaj wypowiadane słowa",
     "sourceTrack": "Napisy YouTube",
     "spokenLanguage": "Język mówiony",
     "speechUnavailable": "To urządzenie nie rozpoznaje mowy w tym języku",
@@ -416,13 +418,23 @@
       "scrollUp": "Przewiń w górę",
       "navigate": "Otwórz {{host}}",
       "back": "Wstecz",
-      "wait": "Poczekaj na stronę"
+      "wait": "Poczekaj na stronę",
+      "ask": "Pytanie: {{text}}",
+      "steer": "Napisano: „{{text}}”",
+      "look": "Spójrz na ekran",
+      "clickAt": "Kliknij miejsce na ekranie",
+      "openTab": "Otwórz {{host}} w nowej karcie",
+      "switchTab": "Przejdź do karty {{tab}}",
+      "tool": "Użyj narzędzia strony „{{target}}”"
     },
     "approvalTitle": "Zezwolić na tę czynność?",
     "approvalHint": "Może coś wysłać, usunąć lub opłacić i być trudne do cofnięcia",
     "allow": "Zezwól",
     "deny": "Odmów",
     "denied": "Odrzucono",
+    "replied": "Odpowiedź: {{text}}",
+    "questionTitle": "Shizue ma pytanie",
+    "questionHint": "Odpowiedz w polu poniżej",
     "error": {
       "not_found": "Tego elementu nie ma już na stronie",
       "secret_field": "Hasła i dane karty wpisz samodzielnie",
@@ -430,16 +442,24 @@
       "no_option": "Nie ma takiej opcji",
       "bad_url": "Nie można otworzyć tego adresu",
       "unreachable": "Tej strony nie można sterować",
+      "not_visible": "Ta karta nie jest widoczna",
+      "no_screenshot": "Najpierw trzeba spojrzeć na ekran",
+      "no_tab": "Nie ma takiej karty",
+      "no_tool": "Strona nie ma takiego narzędzia",
+      "repeated": "Ta sama czynność na niezmienionej stronie",
       "failed": "Nie udało się"
     },
     "outcome": {
       "stopped": "Zatrzymano",
       "max_steps": "Zatrzymano po zbyt wielu krokach. Spróbuj mniejszego zadania",
       "unavailable": "Tej karty nie można sterować. Otwórz stronę internetową i spróbuj ponownie",
-      "failed": "Zatrzymano: nie wiadomo, co dalej"
+      "failed": "Zatrzymano: nie wiadomo, co dalej",
+      "looping": "Zatrzymano: powtarzał tę samą czynność",
+      "unanswered": "Zatrzymano: brak odpowiedzi na pytanie"
     },
     "overlayWorking": "Shizue działa w tej karcie",
     "overlayWaiting": "Czeka na zgodę w panelu",
+    "overlayAsking": "Czeka na odpowiedź w panelu",
     "overlayStop": "Zatrzymaj",
     "autoApproved": "Wykonano bez pytania"
   }

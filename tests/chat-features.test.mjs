@@ -394,3 +394,80 @@ test('a detailed analysis keeps the references and works web research into its s
   assert.doesNotMatch(page, /search the web/i);
   assert.doesNotMatch(getDetailedAnalysisPrompt(false, null, false), /\[12:34\]|\[¶12\]/);
 });
+
+// A page as readPageContent sees it: tags, roles, text and inline styles. An element hidden by
+// display: none has no text, as innerText gives.
+class FakeElement {
+  constructor(tag, options = {}, children = []) {
+    Object.assign(this, { tagName: tag.toUpperCase(), role: options.role, text: options.text ?? '', children, attrs: {}, parentElement: null });
+    if (options.style) this.attrs.style = options.style;
+    for (const child of children) child.parentElement = this;
+  }
+  get hidden() { return /display:\s*none/.test(this.attrs.style ?? ''); }
+  get innerText() { return this.hidden ? '' : [this.text, ...this.children.map((child) => child.innerText)].filter(Boolean).join('\n'); }
+  checkVisibility() { for (let e = this; e; e = e.parentElement) if (e.hidden) return false; return true; }
+  matches(selector) {
+    return selector.split(',').map((part) => part.trim()).some((part) => {
+      const role = part.match(/^\[role="(\w+)"\]$/);
+      return role ? this.role === role[1] : this.tagName === part.toUpperCase();
+    });
+  }
+  closest(selector) { for (let e = this; e; e = e.parentElement) if (e.matches(selector)) return e; return null; }
+  querySelectorAll(selector) {
+    const found = [];
+    const walk = (element) => element.children.forEach((child) => { if (child.matches(selector)) found.push(child); walk(child); });
+    walk(this);
+    return found;
+  }
+  getAttribute(name) { return this.attrs[name] ?? null; }
+  setAttribute(name, value) { this.attrs[name] = value; }
+  removeAttribute(name) { delete this.attrs[name]; }
+}
+const el = (tag, options, children) => new FakeElement(tag, options, children);
+const { readPageContent } = await load('../src/lib/mainText.ts');
+const readFakePage = (body) => {
+  const saved = { document: globalThis.document, window: globalThis.window };
+  globalThis.document = { title: 'Fake', contentType: 'text/html', body, querySelectorAll: (selector) => body.querySelectorAll(selector) };
+  globalThis.window = { location: { href: 'https://example.test/post' } };
+  try {
+    return readPageContent('nav, aside, button');
+  } finally {
+    Object.assign(globalThis, saved);
+  }
+};
+const long = (word) => `${word} `.repeat(60).trim();
+
+test('A summary reads the one article holding most of the page, without its menus, and leaves the page as it was', () => {
+  const menu = el('nav', { text: 'Home About Shop' });
+  const share = el('button', { text: 'Share', style: 'color: red;' });
+  const related = el('aside', { text: long('related') });
+  const body = el('body', {}, [
+    menu,
+    el('main', {}, [
+      el('article', {}, [el('h1', { text: 'The title' }), el('p', { text: long('story') }), share]),
+      related,
+      el('article', { text: 'Another story teaser' }),
+    ]),
+    el('footer', { text: 'Copyright' }),
+  ]);
+  const page = readFakePage(body);
+  assert.equal(page.text, `The title\n${long('story')}`);
+  assert.deepEqual([page.title, page.url, page.pdf], ['Fake', 'https://example.test/post', false]);
+  assert.equal(share.getAttribute('style'), 'color: red;');
+  assert.equal(menu.getAttribute('style'), null);
+  assert.equal(related.getAttribute('style'), null);
+});
+
+test('A feed is read from its main content; a page whose main has little text, from all of it', () => {
+  const feed = el('body', {}, [
+    el('nav', { text: 'Menu' }),
+    el('div', { role: 'main' }, [el('article', { text: long('first') }), el('article', { text: long('second') }), el('aside', { text: 'Trends' })]),
+  ]);
+  assert.equal(readFakePage(feed).text, `${long('first')}\n${long('second')}`);
+
+  const app = el('body', {}, [el('main', { text: 'Loading' }), el('div', { text: long('canvas') }), el('nav', { text: 'Menu' })]);
+  assert.equal(readFakePage(app).text, `Loading\n${long('canvas')}`);
+  // Nothing but menus: all of it, as before.
+  const links = el('body', {}, [el('nav', { text: long('link') })]);
+  assert.equal(readFakePage(links).text, long('link'));
+});

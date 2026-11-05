@@ -155,6 +155,7 @@
     "browserAgent": "Browsersteuerung",
     "browserAgentHint": "Shizue klickt und tippt im aktuellen Tab",
     "browserAgentPlaceholder": "Was soll ich in diesem Tab tun?",
+    "agentSteerPlaceholder": "Aufgabe ergänzen oder die Frage beantworten",
     "selectAllTabs": "Alle auswählen",
     "deselectAllTabs": "Alle abwählen",
     "browserControlHintTitle": "Shizue kann das in deinem Tab erledigen",
@@ -258,6 +259,7 @@
     "youtubeCaptionButton": "YouTube-Untertitel-Schaltfläche",
     "captionSizeRatio": "Untertitelgröße",
     "useKeyboardNavigate": "Untertitel mit A/D navigieren",
+    "wordHighlight": "Gesprochene Wörter hervorheben",
     "sourceTrack": "YouTube-Untertitel",
     "spokenLanguage": "Gesprochene Sprache",
     "speechUnavailable": "Dieses Gerät kann Sprache in dieser Sprache nicht erkennen",
@@ -416,13 +418,23 @@
       "scrollUp": "Nach oben scrollen",
       "navigate": "{{host}} öffnen",
       "back": "Zurück",
-      "wait": "Auf die Seite warten"
+      "wait": "Auf die Seite warten",
+      "ask": "Frage: {{text}}",
+      "steer": "Ergänzt: „{{text}}“",
+      "look": "Bildschirm ansehen",
+      "clickAt": "Auf eine Stelle im Bild klicken",
+      "openTab": "{{host}} in neuem Tab öffnen",
+      "switchTab": "Zu Tab {{tab}} wechseln",
+      "tool": "Werkzeug der Website ‚{{target}}‘ verwenden"
     },
     "approvalTitle": "Diese Aktion erlauben?",
     "approvalHint": "Es könnte etwas senden, löschen oder bezahlen und schwer rückgängig zu machen sein",
     "allow": "Erlauben",
     "deny": "Ablehnen",
     "denied": "Abgelehnt",
+    "replied": "Antwort: {{text}}",
+    "questionTitle": "Shizue hat eine Frage",
+    "questionHint": "Antworte unten im Eingabefeld",
     "error": {
       "not_found": "Das Element ist nicht mehr auf der Seite",
       "secret_field": "Passwörter und Kartendaten bitte selbst eingeben",
@@ -430,16 +442,24 @@
       "no_option": "Diese Option gibt es nicht",
       "bad_url": "Diese Adresse kann nicht geöffnet werden",
       "unreachable": "Diese Seite kann nicht gesteuert werden",
+      "not_visible": "Dieser Tab ist nicht sichtbar",
+      "no_screenshot": "Zuerst den Bildschirm ansehen",
+      "no_tab": "Diesen Tab gibt es nicht",
+      "no_tool": "Die Website bietet dieses Werkzeug nicht",
+      "repeated": "Gleiche Aktion erneut auf unveränderter Seite",
       "failed": "Hat nicht geklappt"
     },
     "outcome": {
       "stopped": "Gestoppt",
       "max_steps": "Nach zu vielen Schritten gestoppt. Versuche eine kleinere Aufgabe",
       "unavailable": "Dieser Tab kann nicht gesteuert werden. Öffne eine Webseite und versuche es erneut",
-      "failed": "Gestoppt: nächster Schritt unklar"
+      "failed": "Gestoppt: nächster Schritt unklar",
+      "looping": "Gestoppt: wiederholte immer dieselbe Aktion",
+      "unanswered": "Gestoppt: Frage blieb unbeantwortet"
     },
     "overlayWorking": "Shizue arbeitet in diesem Tab",
     "overlayWaiting": "Wartet im Panel auf deine Zustimmung",
+    "overlayAsking": "Wartet im Panel auf deine Antwort",
     "overlayStop": "Stopp",
     "autoApproved": "Ohne Nachfrage ausgeführt"
   }

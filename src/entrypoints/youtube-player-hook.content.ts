@@ -11,7 +11,8 @@ import { createUmpCaptionReader } from '@/lib/youtubeCaption/sabr';
 // responses it fetches. This wraps `fetch` before YouTube's scripts run and, only while live captions
 // ask for it, reads a copy of those responses for the caption segments, so translation can start
 // before the captions are on screen. It reads only what the player itself downloaded. If anything
-// here fails, the player runs untouched and captions come from the screen alone.
+// here fails, the player runs untouched and captions come from the screen alone. Asked, it also
+// hands over the player's data for the video (lib/youtube.ts getPlayerData).
 
 export default defineContentScript({
   matches: ['https://youtube.com/*', 'https://www.youtube.com/*'],
@@ -27,6 +28,7 @@ export default defineContentScript({
       const request = parseHookDetail<HookRequest>((event as CustomEvent).detail);
       if (request?.type === 'captions') reading = request.on;
       if (request?.type === 'audioTrack') post({ type: 'audioTrack', id: playingAudioTrack() });
+      if (request?.type === 'playerResponse') post({ type: 'playerResponse', response: playerResponse() });
     });
 
     const post = (message: HookMessage) => {
@@ -42,6 +44,15 @@ export default defineContentScript({
           (value: any) => typeof value?.id === 'string' && /^[\w-]+\.\d+$/.test(value.id)
         ) as { id: string } | undefined;
         return named?.id ?? null;
+      } catch {
+        return null;
+      }
+    };
+
+    // The video's data, which the caption toggle would otherwise fetch the watch page again for.
+    const playerResponse = () => {
+      try {
+        return (document.getElementById('movie_player') as any)?.getPlayerResponse?.() ?? null;
       } catch {
         return null;
       }

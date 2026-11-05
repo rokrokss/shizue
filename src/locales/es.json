@@ -155,6 +155,7 @@
     "browserAgent": "Control del navegador",
     "browserAgentHint": "Shizue hace clic y escribe en la pestaña actual",
     "browserAgentPlaceholder": "¿Qué hago en esta pestaña?",
+    "agentSteerPlaceholder": "Añade algo a la tarea o responde su pregunta",
     "selectAllTabs": "Seleccionar todo",
     "deselectAllTabs": "Quitar todo",
     "browserControlHintTitle": "Shizue puede hacerlo en tu pestaña",
@@ -258,6 +259,7 @@
     "youtubeCaptionButton": "Botón de subtítulos de YouTube",
     "captionSizeRatio": "Tamaño de subtítulos",
     "useKeyboardNavigate": "Navegar subtítulos con A/D",
+    "wordHighlight": "Resaltar las palabras habladas",
     "sourceTrack": "Subtítulos de YouTube",
     "spokenLanguage": "Idioma hablado",
     "speechUnavailable": "Este dispositivo no puede reconocer la voz en este idioma",
@@ -416,13 +418,23 @@
       "scrollUp": "Desplazar hacia arriba",
       "navigate": "Abrir {{host}}",
       "back": "Volver atrás",
-      "wait": "Esperar a la página"
+      "wait": "Esperar a la página",
+      "ask": "Pregunta: {{text}}",
+      "steer": "Dijiste: «{{text}}»",
+      "look": "Mirar la pantalla",
+      "clickAt": "Clic en un punto de la pantalla",
+      "openTab": "Abrir {{host}} en una pestaña nueva",
+      "switchTab": "Ir a la pestaña {{tab}}",
+      "tool": "Usar la herramienta del sitio «{{target}}»"
     },
     "approvalTitle": "¿Permitir esta acción?",
     "approvalHint": "Puede enviar, eliminar o pagar y ser difícil de deshacer",
     "allow": "Permitir",
     "deny": "Rechazar",
     "denied": "Rechazada",
+    "replied": "Tu respuesta: {{text}}",
+    "questionTitle": "Shizue tiene una pregunta",
+    "questionHint": "Responde en el cuadro de abajo",
     "error": {
       "not_found": "Ese elemento ya no está en la página",
       "secret_field": "Introduce tú mismo las contraseñas y los datos de la tarjeta",
@@ -430,16 +442,24 @@
       "no_option": "No existe esa opción",
       "bad_url": "No se puede abrir esa dirección",
       "unreachable": "Esta página no se puede controlar",
+      "not_visible": "Esta pestaña no está en pantalla",
+      "no_screenshot": "Primero tiene que mirar la pantalla",
+      "no_tab": "No existe esa pestaña",
+      "no_tool": "El sitio no tiene esa herramienta",
+      "repeated": "La misma acción otra vez en una página sin cambios",
       "failed": "No funcionó"
     },
     "outcome": {
       "stopped": "Detenido",
       "max_steps": "Se detuvo tras demasiados pasos. Prueba una tarea más pequeña",
       "unavailable": "Esta pestaña no se puede controlar. Abre una página web e inténtalo de nuevo",
-      "failed": "Se detuvo: no supo qué hacer a continuación"
+      "failed": "Se detuvo: no supo qué hacer a continuación",
+      "looping": "Se detuvo: repetía la misma acción",
+      "unanswered": "Se detuvo: la pregunta no tuvo respuesta"
     },
     "overlayWorking": "Shizue está trabajando en esta pestaña",
     "overlayWaiting": "Esperando tu permiso en el panel",
+    "overlayAsking": "Esperando tu respuesta en el panel",
     "overlayStop": "Detener",
     "autoApproved": "Hecho sin preguntar"
   }

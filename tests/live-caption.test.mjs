@@ -735,3 +735,23 @@ test('the word prompt asks for JSON in the target language, with the translation
   assert.match(prompt, /===The line's translation into Korean===\n그는 달아났다/);
   assert.doesNotMatch(getWordMeaningPrompt('ran', 'He ran away', '', 'Korean'), /translation into/);
 });
+
+const { speechPhrases } = await load('liveCaption/speechPhrases');
+
+test('Speech recognition listens for the names in a stream title, its channel and category', () => {
+  const phrases = speechPhrases({
+    title: "The Witcher 3 first playthrough!! #EldenRing LIVE STREAM with McDonald's 原神 カタカナゲーム",
+    channel: 'GameChan',
+    category: 'Elden Ring',
+  });
+  assert.deepEqual(phrases.slice(0, 3), ['GameChan', 'Elden Ring', 'EldenRing']);
+  for (const name of ['Witcher', "McDonald's", '原神', 'カタカナゲーム']) {
+    assert.ok(phrases.some((phrase) => phrase.startsWith(name)), name);
+  }
+  // Shouting and words that start any title are no names.
+  for (const word of ['LIVE STREAM', 'The', 'The Witcher 3']) assert.ok(!phrases.includes(word), word);
+  assert.equal(new Set(phrases.map((phrase) => phrase.toLowerCase())).size, phrases.length);
+  assert.deepEqual(speechPhrases({}), []);
+  const many = Array.from({ length: 30 }, (_, i) => `Name${String.fromCharCode(65 + (i % 26))}${i}`).join(' and ');
+  assert.equal(speechPhrases({ title: many }).length, 20);
+});

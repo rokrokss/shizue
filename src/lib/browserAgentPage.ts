@@ -1,15 +1,17 @@
-import type { AgentAction, AgentStepError, PageElement, PageSnapshot } from '@/lib/browserAgent';
+import type { AgentAction, AgentStepError, PageElement, PageSnapshot, WebMcpTool } from '@/lib/browserAgent';
 
 // What the browser agent (lib/browserAgent.ts) runs in its tab, each function injected on its own
 // with chrome.scripting.executeScript, so none uses anything outside itself. They share the
 // page's elements through a global of the extension's isolated world, which lasts until the
 // page is left: a snapshot numbers them, and an action finds its element by that number. The
 // snapshot runs in each of the page's frames too, and an action in the frame its element is in.
+// The WebMCP functions alone run in the page's own world, where its tools are registered.
 
 type AgentGlobals = {
   __shizueAgentRefs?: Map<number, Element>;
   __shizueAgentOverlay?: { host: HTMLElement; dot: HTMLElement; label: HTMLElement; button: HTMLElement };
   __shizueAgentRing?: (element: Element | null) => void;
+  __shizueAgentMarks?: HTMLElement;
 };
 
 // The page as the agent reads it: the text on screen, and the controls on screen and a little
@@ -316,6 +318,123 @@ export async function performAction(action: AgentAction): Promise<{ ok: boolean;
   }
 
   return { ok: false, error: 'failed' };
+}
+
+// Before a screenshot: each numbered control on screen gets a badge with its number, and the
+// agent's own frame and pill step aside. `false` puts things back. Gives the viewport's size in CSS
+// pixels, which the screenshot is scaled to.
+export function markElements(on: boolean): { width: number; height: number } {
+  const globals = globalThis as unknown as AgentGlobals;
+  globals.__shizueAgentMarks?.remove();
+  globals.__shizueAgentMarks = undefined;
+  const overlay = globals.__shizueAgentOverlay?.host;
+  if (overlay) overlay.style.visibility = on ? 'hidden' : '';
+  const size = { width: window.innerWidth, height: window.innerHeight };
+  if (!on) return size;
+  const host = document.createElement('div');
+  Object.assign(host.style, { position: 'fixed', inset: '0', zIndex: '2147483647', pointerEvents: 'none' });
+  const shadow = host.attachShadow({ mode: 'closed' });
+  for (const [ref, element] of globals.__shizueAgentRefs ?? []) {
+    if (!element.isConnected) continue;
+    const rect = element.getBoundingClientRect();
+    if (rect.width < 1 || rect.bottom < 0 || rect.top > size.height || rect.right < 0 || rect.left > size.width) continue;
+    const box = document.createElement('div');
+    Object.assign(box.style, {
+      position: 'fixed',
+      left: `${rect.left}px`,
+      top: `${rect.top}px`,
+      width: `${rect.width}px`,
+      height: `${rect.height}px`,
+      outline: '2px solid rgba(255, 0, 110, 0.9)',
+      boxSizing: 'border-box',
+    });
+    const badge = document.createElement('div');
+    badge.textContent = String(ref);
+    Object.assign(badge.style, {
+      position: 'fixed',
+      left: `${Math.max(0, rect.left)}px`,
+      top: `${Math.max(0, rect.top - 14)}px`,
+      padding: '0 3px',
+      background: 'rgba(255, 0, 110, 0.95)',
+      color: '#fff',
+      font: '700 11px/14px system-ui, sans-serif',
+      borderRadius: '3px',
+    });
+    shadow.append(box, badge);
+  }
+  document.documentElement.append(host);
+  globals.__shizueAgentMarks = host;
+  return size;
+}
+
+// A click at a point of the viewport, on whatever is there, as a pointer would.
+export async function clickAt(point: { x: number; y: number }): Promise<{ ok: boolean; error?: AgentStepError }> {
+  const globals = globalThis as unknown as AgentGlobals;
+  const element = document.elementFromPoint(point.x, point.y);
+  if (!element) return { ok: false, error: 'not_found' };
+  globals.__shizueAgentRing?.(element);
+  await new Promise((resolve) => setTimeout(resolve, 450));
+  const at = { bubbles: true, cancelable: true, composed: true, clientX: point.x, clientY: point.y, button: 0 };
+  const pointer = { ...at, pointerId: 1, pointerType: 'mouse', isPrimary: true };
+  element.dispatchEvent(new PointerEvent('pointerover', pointer));
+  element.dispatchEvent(new MouseEvent('mouseover', at));
+  element.dispatchEvent(new PointerEvent('pointerdown', pointer));
+  element.dispatchEvent(new MouseEvent('mousedown', at));
+  (element as HTMLElement).focus?.({ preventScroll: true });
+  element.dispatchEvent(new PointerEvent('pointerup', pointer));
+  element.dispatchEvent(new MouseEvent('mouseup', at));
+  element.dispatchEvent(new MouseEvent('click', at));
+  return { ok: true };
+}
+
+// The tools this frame's page registered with WebMCP (the page's world). The page's own, not its
+// frames': each frame answers for itself.
+export async function readWebMcpTools(): Promise<Omit<WebMcpTool, 'frameId'>[]> {
+  try {
+    const context = (document as any).modelContext ?? (navigator as any).modelContext;
+    if (typeof context?.getTools !== 'function') return [];
+    const tools: any[] = (await context.getTools()) ?? [];
+    return tools
+      .filter((tool) => typeof tool?.name === 'string' && (!tool.window || tool.window === window))
+      .map((tool) => ({
+        name: tool.name,
+        description: typeof tool.description === 'string' ? tool.description : '',
+        schema:
+          typeof tool.inputSchema === 'string' ? tool.inputSchema : JSON.stringify(tool.inputSchema ?? { type: 'object' }),
+        ...(tool.annotations?.readOnlyHint === true ? { readOnly: true } : {}),
+        ...(tool.annotations?.consequentialHint === true ? { consequential: true } : {}),
+      }));
+  } catch {
+    return [];
+  }
+}
+
+// Calls a WebMCP tool of this frame (the page's world) with its input as JSON, and gives back what
+// it returned as text. Nothing back usually means the tool moved the page on.
+export async function runWebMcpTool(name: string, input: string): Promise<{ ok: boolean; output?: string; error?: string }> {
+  try {
+    const context = (document as any).modelContext ?? (navigator as any).modelContext;
+    const tools: any[] = (await context?.getTools?.()) ?? [];
+    const tool = tools.find((candidate) => candidate?.name === name && (!candidate.window || candidate.window === window));
+    if (!tool) return { ok: false, error: 'no_tool' };
+    let result: unknown;
+    try {
+      result = await context.executeTool(tool, JSON.parse(input));
+    } catch (error) {
+      // Builds of the origin trial took the input as JSON text.
+      if (!String((error as Error)?.message ?? '').startsWith('Failed to parse input')) throw error;
+      result = await context.executeTool(tool, input);
+    }
+    if (result === null || result === undefined) return { ok: true, output: '(nothing returned; the page may have changed)' };
+    if (typeof result === 'string') return { ok: true, output: result };
+    try {
+      return { ok: true, output: JSON.stringify(result) };
+    } catch {
+      return { ok: true, output: String(result) };
+    }
+  } catch (error) {
+    return { ok: false, error: String((error as Error)?.message ?? error).slice(0, 300) };
+  }
 }
 
 // While the agent works the tab: a soft frame around the page, a pill at the top saying so with a

@@ -145,3 +145,34 @@ test('Extra and Max are offered only for the models that take them, and a choice
   const xhigh = params('claude-haiku', 'xhigh');
   assert.deepEqual([xhigh.output_config?.effort ?? xhigh.outputConfig?.effort, xhigh.max_tokens], ['xhigh', 64_000]);
 });
+
+test('A chat with a Claude API key caches its turns; one-off requests and other providers send no cache_control', () => {
+  const keys = { openaiKey: 'k', openrouterKey: 'k', anthropicKey: 'k', geminiKey: 'k' };
+  const model = (modelName, options = {}, connectionMode = 'direct') =>
+    getModelInstance({ modelPreset: { modelName, connectionMode, ...keys }, streaming: true, ...options });
+  // The breakpoint is a call option, which the chat's binding hands to every request.
+  const chat = model('claude-opus', { promptCache: true });
+  assert.deepEqual(chat.bound.invocationParams(chat.config).cache_control, { type: 'ephemeral' });
+  assert.equal(model('claude-opus', { fast: true }).invocationParams({}).cache_control, undefined);
+  assert.equal(model('gpt-astra', { promptCache: true }).invocationParams({}).cache_control, undefined);
+  assert.equal(model('claude-opus', { promptCache: true }, 'openrouter').invocationParams({}).cache_control, undefined);
+});
+
+test('The cache breakpoint reaches the streamed request the chat sends', async () => {
+  const chat = getModelInstance({
+    modelPreset: { modelName: 'claude-opus', connectionMode: 'direct', anthropicKey: 'k' },
+    streaming: true,
+    promptCache: true,
+  });
+  let sent;
+  chat.bound.createStreamWithRetry = async (request) => {
+    sent = request;
+    throw new Error('not sent');
+  };
+  await assert.rejects(async () => {
+    for await (const _ of await chat.stream('Hello', { signal: new AbortController().signal })) {
+      // Nothing streams.
+    }
+  }, /not sent/);
+  assert.deepEqual(sent.cache_control, { type: 'ephemeral' });
+});

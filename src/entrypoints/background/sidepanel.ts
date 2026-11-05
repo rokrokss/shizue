@@ -1,5 +1,6 @@
 import {
   MESSAGE_AGENT_APPROVAL,
+  MESSAGE_AGENT_STEER,
   MESSAGE_RETRY_GRAPH_STREAM,
   MESSAGE_RUN_GRAPH_STREAM,
   PORT_STREAM_MESSAGE,
@@ -8,7 +9,7 @@ import {
 } from '@/config/constants';
 import { whenBackgroundStateReady } from '@/entrypoints/background/states/ready';
 import { debugLog, errorLog } from '@/logs';
-import { answerAgentApproval } from '@/services/background/browserAgentHandler';
+import { answerAgentApproval, steerAgent } from '@/services/background/browserAgentHandler';
 import { getChatModelHandler } from '@/services/background/chatModelHandler';
 
 // Firefox's sidebar (desktop only). Not in Chrome's types.
@@ -176,6 +177,10 @@ export const sidePanelMessageListeners = () => {
       // The browser agent's approval cards are answered over the answer's own port.
       if (msg.action === MESSAGE_AGENT_APPROVAL) {
         answerAgentApproval(msg.stepId, msg.approved === true);
+        return;
+      }
+      if (msg.action === MESSAGE_AGENT_STEER) {
+        steerAgent(port, String(msg.text ?? ''));
         return;
       }
       if (answered) return;

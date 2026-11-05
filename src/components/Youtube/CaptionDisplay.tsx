@@ -25,7 +25,12 @@ type CaptionDisplayProps = {
   fontSize?: string;
   // With it, the words of the original lines open their meaning.
   lookup?: WordLookup;
+  // The word being said: characters start to end of originalLines[line].
+  spoken?: { line: number; start: number; end: number } | null;
 };
+
+// The word being said, in the brand's teal over the caption's white.
+const SPOKEN = { color: '#32CCBC' };
 
 const POPUP_WIDTH = 300;
 // The popup's distance from the video's sides.
@@ -52,6 +57,7 @@ export const CaptionDisplay = ({
   captionSizeRatio,
   fontSize: fixedFontSize,
   lookup,
+  spoken,
 }: CaptionDisplayProps) => {
   const [fontSize, setFontSize] = useState(`${2.4 * captionSizeRatio}vw`);
   const [open, setOpen] = useState<OpenWord | null>(null);
@@ -141,13 +147,22 @@ export const CaptionDisplay = ({
 
   const originalLine = (index: number) => {
     const original = originalLines[index];
-    if (!lookup) return original;
-    return captionPieces(original).map((piece, i) =>
-      piece.word ? (
+    const said = spoken?.line === index ? spoken : null;
+    if (!lookup && !said) return original;
+    let offset = 0;
+    return captionPieces(original).map((piece, i) => {
+      const start = offset;
+      offset += piece.text.length;
+      const style = said && piece.word && start < said.end && offset > said.start ? SPOKEN : undefined;
+      if (!lookup || !piece.word) {
+        return style ? <span key={i} style={style}>{piece.text}</span> : <Fragment key={i}>{piece.text}</Fragment>;
+      }
+      return (
         <span
           key={i}
           {...stopPlayerEvents}
           onClick={(e) => openWord(e, piece.text, index, i)}
+          style={style}
           className={`sz:pointer-events-auto sz:cursor-pointer sz:rounded-[3px] ${
             open?.line === index && open.piece === i && open.sentence === original
               ? 'sz:underline sz:decoration-dotted sz:decoration-[#32CCBC] sz:decoration-[length:0.1em] sz:underline-offset-[0.2em]'
@@ -156,10 +171,8 @@ export const CaptionDisplay = ({
         >
           {piece.text}
         </span>
-      ) : (
-        <Fragment key={i}>{piece.text}</Fragment>
-      )
-    );
+      );
+    });
   };
 
   return (

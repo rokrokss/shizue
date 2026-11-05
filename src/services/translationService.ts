@@ -3,16 +3,17 @@ import {
   MESSAGE_TRANSLATE_IMAGE,
   MESSAGE_TRANSLATE_LIVE_CAPTION,
   MESSAGE_TRANSLATE_SUBTITLES,
-  MESSAGE_TRANSLATE_YOUTUBE_CAPTION,
+  MESSAGE_WARM_UP_TRANSLATION,
+  PORT_YOUTUBE_CAPTION,
 } from '@/config/constants';
 import type { TranslationContext } from '@/lib/liveCaption/types';
 import type { LiveCaptionMetadata, PageContext, SubtitleMetadata } from '@/lib/prompts';
-import { Caption, VideoMetadata } from '@/lib/youtube';
+import { errorLog } from '@/logs';
 import type { ImageTranslationResult } from '@/services/background/imageTranslationHandler';
-import {
+import type {
   BatchTranslationResult,
   LiveCaptionTranslationResult,
-  YoutubeCaptionTranslationResult,
+  YoutubeCaptionRequest,
 } from '@/services/background/translationHandler';
 
 async function translateHtmlTextBatch(texts: string[], context?: PageContext) {
@@ -24,22 +25,51 @@ async function translateHtmlTextBatch(texts: string[], context?: PageContext) {
   return result;
 }
 
-async function translateYoutubeCaption(
-  captions: Caption[],
-  context: TranslationContext[],
-  following: string[],
-  targetLanguage: Language,
-  metadata: VideoMetadata
+// A chunk of YouTube captions over its own port (services/background/captionPort.ts): each line
+// goes to `onLine` as it is translated. Resolves to every line's translation, or null on failure
+// or once `signal` aborts, which also stops the model.
+function streamYoutubeCaption(
+  request: YoutubeCaptionRequest,
+  onLine: (index: number, text: string) => void,
+  signal: AbortSignal
 ) {
-  const result: YoutubeCaptionTranslationResult = await chrome.runtime.sendMessage({
-    action: MESSAGE_TRANSLATE_YOUTUBE_CAPTION,
-    captions,
-    context,
-    following,
-    targetLanguage,
-    metadata,
+  return new Promise<string[] | null>((resolve) => {
+    if (signal.aborted) return resolve(null);
+    let port: chrome.runtime.Port;
+    try {
+      port = chrome.runtime.connect({ name: PORT_YOUTUBE_CAPTION });
+    } catch {
+      return resolve(null);
+    }
+    let settled = false;
+    const finish = (translations: string[] | null) => {
+      if (settled) return;
+      settled = true;
+      signal.removeEventListener('abort', abort);
+      resolve(translations);
+      port.disconnect();
+    };
+    const abort = () => finish(null);
+    signal.addEventListener('abort', abort, { once: true });
+    port.onMessage.addListener((msg) => {
+      if (Array.isArray(msg?.line)) onLine(msg.line[0], msg.line[1]);
+      else if (Array.isArray(msg?.done)) finish(msg.done);
+      else if (msg?.error) {
+        errorLog('[YouTube] Caption translation failed:', msg.error);
+        finish(null);
+      }
+    });
+    port.onDisconnect.addListener(() => {
+      void chrome.runtime.lastError;
+      finish(null);
+    });
+    port.postMessage(request);
   });
-  return result;
+}
+
+// Captions are about to be translated: the model's connection opens meanwhile.
+function warmUp() {
+  chrome.runtime.sendMessage({ action: MESSAGE_WARM_UP_TRANSLATION }).catch(() => {});
 }
 
 async function translateLiveCaption(
@@ -91,7 +121,8 @@ async function translateImage(srcUrl: string, dataUrl: string | undefined, targe
 export const translationService = {
   translateHtmlTextBatch,
   translateImage,
-  translateYoutubeCaption,
+  streamYoutubeCaption,
   translateLiveCaption,
   translateSubtitles,
+  warmUp,
 };

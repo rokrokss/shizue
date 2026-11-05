@@ -155,6 +155,7 @@
     "browserAgent": "Controllo del browser",
     "browserAgentHint": "Shizue fa clic e scrive nella scheda attuale",
     "browserAgentPlaceholder": "Cosa devo fare in questa scheda?",
+    "agentSteerPlaceholder": "Aggiungi qualcosa al compito o rispondi alla domanda",
     "selectAllTabs": "Seleziona tutto",
     "deselectAllTabs": "Deseleziona tutto",
     "browserControlHintTitle": "Shizue può farlo nella tua scheda",
@@ -258,6 +259,7 @@
     "youtubeCaptionButton": "Pulsante sottotitoli YouTube",
     "captionSizeRatio": "Dimensione sottotitoli",
     "useKeyboardNavigate": "Naviga sottotitoli con A/D",
+    "wordHighlight": "Evidenzia le parole pronunciate",
     "sourceTrack": "Sottotitoli di YouTube",
     "spokenLanguage": "Lingua parlata",
     "speechUnavailable": "Questo dispositivo non può riconoscere il parlato in questa lingua",
@@ -416,13 +418,23 @@
       "scrollUp": "Scorrere in alto",
       "navigate": "Aprire {{host}}",
       "back": "Tornare indietro",
-      "wait": "Attendere la pagina"
+      "wait": "Attendere la pagina",
+      "ask": "Domanda: {{text}}",
+      "steer": "Hai detto: «{{text}}»",
+      "look": "Guardare lo schermo",
+      "clickAt": "Clic su un punto dello schermo",
+      "openTab": "Aprire {{host}} in una nuova scheda",
+      "switchTab": "Passare alla scheda {{tab}}",
+      "tool": "Usare lo strumento del sito «{{target}}»"
     },
     "approvalTitle": "Consentire questa azione?",
     "approvalHint": "Potrebbe inviare, eliminare o pagare ed essere difficile da annullare",
     "allow": "Consenti",
     "deny": "Rifiuta",
     "denied": "Rifiutata",
+    "replied": "La tua risposta: {{text}}",
+    "questionTitle": "Shizue ha una domanda",
+    "questionHint": "Rispondi nella casella qui sotto",
     "error": {
       "not_found": "L’elemento non è più nella pagina",
       "secret_field": "Inserisci tu password e dati della carta",
@@ -430,16 +442,24 @@
       "no_option": "Opzione inesistente",
       "bad_url": "Impossibile aprire l’indirizzo",
       "unreachable": "Questa pagina non può essere controllata",
+      "not_visible": "Questa scheda non è sullo schermo",
+      "no_screenshot": "Prima deve guardare lo schermo",
+      "no_tab": "Questa scheda non esiste",
+      "no_tool": "Il sito non offre questo strumento",
+      "repeated": "Stessa azione di nuovo su una pagina invariata",
       "failed": "Non riuscito"
     },
     "outcome": {
       "stopped": "Interrotto",
       "max_steps": "Interrotto dopo troppi passaggi. Prova un compito più piccolo",
       "unavailable": "Questa scheda non può essere controllata. Apri una pagina web e riprova",
-      "failed": "Interrotto: non sapeva cosa fare dopo"
+      "failed": "Interrotto: non sapeva cosa fare dopo",
+      "looping": "Interrotto: ripeteva sempre la stessa azione",
+      "unanswered": "Interrotto: la domanda è rimasta senza risposta"
     },
     "overlayWorking": "Shizue sta lavorando in questa scheda",
     "overlayWaiting": "In attesa del tuo consenso nel pannello",
+    "overlayAsking": "In attesa della tua risposta nel pannello",
     "overlayStop": "Interrompi",
     "autoApproved": "Fatto senza chiedere"
   }

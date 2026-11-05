@@ -1,6 +1,15 @@
 import tailwindRaw from '@/assets/tailwind.css?inline';
+import { STORAGE_YOUTUBE_CAPTION_POSITION, STORAGE_YOUTUBE_CAPTION_SIZE_RATIO } from '@/config/constants';
 import { CaptionDisplay } from '@/components/Youtube/CaptionDisplay';
 import { Language } from '@/hooks/language';
+import {
+  CaptionPosition,
+  DEFAULT_CAPTION_POSITION,
+  isCaptionPosition,
+  makeCaptionMovable,
+  placeCaption,
+} from '@/lib/captionMove';
+import { createCueTranslator, CueTranslator } from '@/lib/netflix/cueTranslator';
 import { alignCues } from '@/lib/netflix/subtitles';
 import type { CaptionDisplayMode, CaptionStyle } from '@/hooks/layout';
 import { srtFileName, toSrt } from '@/lib/srt';
@@ -18,6 +27,11 @@ const CUSTOM_CAPTION_ID = 'shizue-custom-caption';
 const CAPTION_CHUNK_SIZE = 10;
 const CONTEXT_BEFORE = 3;
 const CONTEXT_AFTER = 2;
+// Captions are translated from the line playing to 5 minutes past it (paused too), not to the
+// video's end: a video left halfway costs half. Saving the translations asks for the rest.
+const LOOKAHEAD_SECONDS = 300;
+// Playback moves the translator on once a second of the video.
+const POSITION_STEP_SECONDS = 1;
 
 // A subtitle file holds the originals, the translations, or each original over its translation.
 export type SubtitleKind = 'original' | 'translation' | 'bilingual';
@@ -27,6 +41,8 @@ export type CaptionLook = {
   display: CaptionDisplayMode;
   captionStyle: CaptionStyle;
   captionSizeRatio: number;
+  // Speech recognition times its words: the one being said shows in color in the original.
+  wordHighlight: boolean;
 };
 
 export class CaptionInjector {
@@ -34,13 +50,25 @@ export class CaptionInjector {
   private videoElement: HTMLVideoElement | null = null;
   private targetLanguage: Language = 'English';
   private baseLanguage: Language = 'English';
-  private captionCache: Map<Language, Caption[]> = new Map();
+  // The tracks fetched for this video, by language.
+  private tracks: Map<Language, Caption[]> = new Map();
+  // The captions shown: the target language's own track, or the original's being translated.
+  private lines: Caption[] = [];
+  private native = false;
+  private translator: CueTranslator | null = null;
+  private positionSentAt = -Infinity;
+  // Bumped by each start and stop, so a track that arrives late belongs to nothing.
+  private session = 0;
   private currentTime: number = 0;
   private numLines = 1;
   private display: CaptionDisplayMode = 'translation';
   private captionStyle: CaptionStyle = 'default';
   private captionSizeRatio = 1.0;
+  private wordHighlight = false;
   private currentCaptionLines: string[] = [];
+  private currentSpoken = '';
+  private position: CaptionPosition = DEFAULT_CAPTION_POSITION;
+  private stopMoving: (() => void) | null = null;
   private lastFoundCaptionIndex: number | null = null;
   private shadowRoot: ShadowRoot | null = null;
   private transcriptMetadata: TranscriptMetadata[] = [];
@@ -48,10 +76,6 @@ export class CaptionInjector {
   private originalTrack: TranscriptMetadata | undefined;
   // With the target language's own track, the original captions spoken over each of its captions.
   private nativeOriginalLines: string[] = [];
-  private isTranslating = false;
-  private translatedChunks = new Set<number>();
-  private priorityChunkQueue = new Set<number>();
-  private sequentialChunkIndex = 0;
 
   constructor() {
     this.handleVideoSeeked = this.handleVideoSeeked.bind(this);
@@ -75,43 +99,10 @@ export class CaptionInjector {
     this.videoElement.addEventListener('seeked', this.handleVideoSeeked);
   };
 
-  private _getChunkIndexFromTime(time: number): number | null {
-    const baseLanguage = this.transcriptMetadata[0]?.language;
-    if (!baseLanguage) return null;
-
-    const baseCaptions = this.captionCache.get(baseLanguage);
-    if (!baseCaptions) return null;
-
-    const targetCaptionIndex = baseCaptions.findIndex(
-      (c) => time >= c.startTime && time < c.endTime
-    );
-
-    if (targetCaptionIndex === -1) {
-      if (time > baseCaptions[baseCaptions.length - 1].endTime) {
-        return Math.floor((baseCaptions.length - 1) / CAPTION_CHUNK_SIZE);
-      }
-      return null;
-    }
-
-    return Math.floor(targetCaptionIndex / CAPTION_CHUNK_SIZE);
-  }
-
   private handleVideoSeeked() {
-    if (!this.isTranslating || !this.videoElement) return;
-
-    const seekedTime = this.videoElement.currentTime;
-
-    const chunkIndex = this._getChunkIndexFromTime(seekedTime);
-    if (chunkIndex === null) return;
-
-    const chunkStartIndex = chunkIndex * CAPTION_CHUNK_SIZE;
-
-    if (!this.translatedChunks.has(chunkStartIndex)) {
-      debugLog(`[YouTube] Seek detected. Prioritizing chunk starting at index ${chunkStartIndex}`);
-      this.priorityChunkQueue.add(chunkStartIndex);
-      this.sequentialChunkIndex = chunkIndex;
-      debugLog(`[YouTube] Sequential translation index reset to ${chunkIndex}`);
-    }
+    if (!this.translator || !this.videoElement) return;
+    this.positionSentAt = this.videoElement.currentTime;
+    this.translator.setPosition(this.positionSentAt);
   }
 
   public handlePressKeyToNextChunk = (backward: boolean) => {
@@ -120,15 +111,9 @@ export class CaptionInjector {
       return;
     }
 
-    const baseLanguage = this.transcriptMetadata[0]?.language;
-    if (!baseLanguage) {
-      debugLog('[YouTube] handlePressKeyToNextChunk, no base language');
-      return;
-    }
-
-    const baseCaptions = this.captionCache.get(baseLanguage);
-    if (!baseCaptions) {
-      debugLog('[YouTube] handlePressKeyToNextChunk, no base captions');
+    const baseCaptions = this.lines;
+    if (!baseCaptions.length) {
+      debugLog('[YouTube] handlePressKeyToNextChunk, no captions');
       return;
     }
 
@@ -166,7 +151,7 @@ export class CaptionInjector {
   };
 
   private findCaptionIndex = (time: number): number | null => {
-    const allCaptions = this.captionCache.get(this.targetLanguage) ?? [];
+    const allCaptions = this.lines;
     if (allCaptions.length === 0) return null;
 
     if (this.lastFoundCaptionIndex !== null) {
@@ -201,39 +186,51 @@ export class CaptionInjector {
     if (!this.videoElement || !this.customCaptionRoot) return true;
 
     this.currentTime = this.videoElement.currentTime;
-    const allCaptions = this.captionCache.get(this.targetLanguage) ?? [];
+    if (this.translator && Math.abs(this.currentTime - this.positionSentAt) >= POSITION_STEP_SECONDS) {
+      this.positionSentAt = this.currentTime;
+      this.translator.setPosition(this.currentTime);
+    }
 
     const currentIndex = this.findCaptionIndex(this.currentTime);
 
     let isCurrentCaptionTranslated = true;
-
-    if (currentIndex !== null && this.isTranslating) {
-      const chunkStartIndex = Math.floor(currentIndex / CAPTION_CHUNK_SIZE) * CAPTION_CHUNK_SIZE;
-      if (!this.translatedChunks.has(chunkStartIndex)) {
-        isCurrentCaptionTranslated = false;
-      }
-    }
-
     let newLines: string[] = [];
     let originalLines: string[] = [];
+    let spoken: { line: number; start: number; end: number } | null = null;
     if (currentIndex !== null) {
       const startIndex = Math.max(0, currentIndex - this.numLines + 1);
-      newLines = allCaptions.slice(startIndex, currentIndex + 1).map((c) => c.text);
-      originalLines =
-        this.baseLanguage === this.targetLanguage
-          ? this.nativeOriginalLines.slice(startIndex, currentIndex + 1)
-          : this.captionCache
-              .get(this.baseLanguage)!
-              .slice(startIndex, currentIndex + 1)
-              .map((c) => c.text);
+      const shown = this.lines.slice(startIndex, currentIndex + 1);
+      if (this.native) {
+        newLines = shown.map((c) => c.text);
+        originalLines = this.nativeOriginalLines.slice(startIndex, currentIndex + 1);
+      } else {
+        // Untranslated, the lines are the originals.
+        originalLines = shown.map((c) => c.text);
+        newLines = shown.map((c, i) => this.translator?.translation(startIndex + i) ?? c.text);
+        isCurrentCaptionTranslated = this.translator?.translation(currentIndex) !== undefined;
+      }
       // A line the model left empty shows its original, as on Netflix, and a line that is its
       // original (its chunk failed) shows it once.
       newLines = newLines.map((line, i) => (line.trim() ? line : (originalLines[i] ?? line)));
       originalLines = originalLines.map((original, i) => (original === newLines[i] ? '' : original));
+
+      // The word being said in the line playing, from speech recognition's own timings.
+      const caption = this.lines[currentIndex];
+      const line = currentIndex - startIndex;
+      if (this.wordHighlight && !this.native && caption.words?.length && originalLines[line]) {
+        const words = caption.words;
+        let word = words.length - 1;
+        while (word > 0 && words[word].time > this.currentTime) word--;
+        if (words[word].time <= this.currentTime) {
+          spoken = { line, start: words[word].offset, end: words[word + 1]?.offset ?? caption.text.length };
+        }
+      }
     }
 
-    if (JSON.stringify(newLines) !== JSON.stringify(this.currentCaptionLines)) {
+    const spokenKey = spoken && isCurrentCaptionTranslated ? `${spoken.line}:${spoken.start}` : '';
+    if (JSON.stringify(newLines) !== JSON.stringify(this.currentCaptionLines) || spokenKey !== this.currentSpoken) {
       this.currentCaptionLines = newLines;
+      this.currentSpoken = spokenKey;
 
       this.customCaptionRoot!.render(
         <StrictMode>
@@ -249,6 +246,7 @@ export class CaptionInjector {
                     targetLanguage={this.targetLanguage}
                     captionStyle={this.captionStyle}
                     captionSizeRatio={this.captionSizeRatio}
+                    spoken={isCurrentCaptionTranslated ? spoken : null}
                     lookup={{
                       video: this.videoElement,
                       live: false,
@@ -267,162 +265,85 @@ export class CaptionInjector {
     return isCurrentCaptionTranslated;
   };
 
-  private async fetchNativeCaptions(language: Language): Promise<Caption[] | null> {
+  private async fetchTrack(language: Language): Promise<Caption[] | null> {
+    const fetched = this.tracks.get(language);
+    if (fetched) return fetched;
     const metadata = this.transcriptMetadata.find((m) => m.language === language);
     if (!metadata) return null;
-    return this.fetchCaptions(metadata);
+    const captions = await fetchCaptionTrack(metadata, true);
+    if (captions) this.tracks.set(language, captions);
+    return captions;
   }
 
-  private fetchCaptions(metadata: TranscriptMetadata): Promise<Caption[] | null> {
-    return fetchCaptionTrack(metadata);
-  }
+  private async startCaptions() {
+    const session = this.session;
+    const targetLanguage = this.targetLanguage;
 
-  private async startStreamingTranslation() {
-    if (this.isTranslating) return;
+    const nativeCaptions = await this.fetchTrack(targetLanguage);
+    if (session !== this.session) return;
+    if (nativeCaptions) {
+      debugLog('[YouTube] Using native captions for', targetLanguage);
+      this.lines = nativeCaptions;
+      this.native = true;
+      this.baseLanguage = targetLanguage;
+      this.nativeOriginalLines = [];
 
-    this.isTranslating = true;
-    this.priorityChunkQueue.clear();
-
-    try {
-      const nativeCaptions = await this.fetchNativeCaptions(this.targetLanguage);
-      if (nativeCaptions) {
-        debugLog('[YouTube] nativeCaptions', nativeCaptions);
-        this.captionCache.set(this.targetLanguage, nativeCaptions);
-        debugLog('[YouTube] Using native captions for', this.targetLanguage);
-        this.isTranslating = false;
-        this.baseLanguage = this.targetLanguage;
-        this.nativeOriginalLines = [];
-
-        const original = this.originalTrack;
-        if (original && original.language !== this.targetLanguage) {
-          const originalCaptions = await this.fetchCaptions(original);
-          // Unless another video or language took over meanwhile.
-          if (originalCaptions && this.captionCache.get(this.targetLanguage) === nativeCaptions) {
-            // Netflix's pairing with the target track's captions as the lines: each gets every
-            // original caption it substantially overlaps, so a long speech recognition caption
-            // shows under each line it spans. Original captions overlapping none come back as
-            // lines without text, left out.
-            const { cues, translations } = alignCues(nativeCaptions, originalCaptions);
-            this.nativeOriginalLines = translations.filter((_, i) => cues[i].text);
-          }
+      const original = this.originalTrack;
+      if (original && original.language !== targetLanguage) {
+        const originalCaptions = await fetchCaptionTrack(original);
+        if (originalCaptions && session === this.session) {
+          // Netflix's pairing with the target track's captions as the lines: each gets every
+          // original caption it substantially overlaps, so a long speech recognition caption
+          // shows under each line it spans. Original captions overlapping none come back as
+          // lines without text, left out.
+          const { cues, translations } = alignCues(nativeCaptions, originalCaptions);
+          this.nativeOriginalLines = translations.filter((_, i) => cues[i].text);
         }
-        return;
       }
+      return;
+    }
 
-      if (!this.captionCache.has(this.targetLanguage)) {
-        debugLog(`[YouTube] No cache for ${this.targetLanguage}. Initializing new translation.`);
+    const baseLanguage = this.transcriptMetadata[0]?.language;
+    const baseCaptions = await this.fetchTrack(baseLanguage);
+    if (session !== this.session) return;
+    if (!baseCaptions) {
+      debugLog('[YouTube] transcriptMetadata', this.transcriptMetadata);
+      throw new Error(`Could not fetch base captions for ${baseLanguage}`);
+    }
+    this.baseLanguage = baseLanguage;
+    this.lines = baseCaptions;
+    this.native = false;
 
-        const baseLanguage = this.transcriptMetadata[0]?.language;
-        const baseCaptions = await this.fetchNativeCaptions(baseLanguage);
-        if (!baseCaptions) {
-          debugLog('[YouTube] transcriptMetadata', this.transcriptMetadata);
-          debugLog(`[YouTube] Could not fetch base captions for ${baseLanguage}`);
-          throw new Error(`Could not fetch base captions for ${baseLanguage}`);
-        }
-        this.baseLanguage = baseLanguage;
-        this.captionCache.set(baseLanguage, baseCaptions);
-
-        const currentTime = this.videoElement?.currentTime ?? 0;
-        const currentChunkIndex = this._getChunkIndexFromTime(currentTime) ?? 0;
-
-        this.sequentialChunkIndex = currentChunkIndex;
-        debugLog(
-          `[YouTube] Initializing sequential index to ${currentChunkIndex} based on current time.`
-        );
-
-        this.translatedChunks.clear();
-        this.priorityChunkQueue.clear();
-        this.captionCache.set(this.targetLanguage, [...baseCaptions]);
-      }
-
-      const baseCaptions = this.captionCache.get(this.transcriptMetadata[0]?.language)!;
-      const totalChunks = Math.ceil(baseCaptions.length / CAPTION_CHUNK_SIZE);
-
-      if (this.translatedChunks.size >= totalChunks) {
-        debugLog('[YouTube] All chunks already translated.');
-        this.isTranslating = false;
-        return;
-      }
-
-      debugLog(`[YouTube] Starting or resuming chunk translation to ${this.targetLanguage}`);
-
-      while (this.translatedChunks.size < totalChunks) {
-        if (!this.isTranslating) {
-          debugLog('[YouTube] Translation cancelled.');
-          break;
-        }
-
-        let chunkStartIndex: number | undefined = undefined;
-
-        if (this.priorityChunkQueue.size > 0) {
-          chunkStartIndex = this.priorityChunkQueue.values().next().value!;
-          this.priorityChunkQueue.delete(chunkStartIndex);
-        } else {
-          const nextIndex = this.sequentialChunkIndex * CAPTION_CHUNK_SIZE;
-          if (nextIndex < baseCaptions.length && !this.translatedChunks.has(nextIndex)) {
-            chunkStartIndex = nextIndex;
-          }
-          this.sequentialChunkIndex++;
-        }
-
-        if (chunkStartIndex === undefined) {
-          // wait for queued chunks to resolve
-          if (this.translatedChunks.size < totalChunks) {
-            await new Promise((resolve) => setTimeout(resolve, 100));
-            continue;
-          } else {
-            break;
-          }
-        }
-
-        if (this.translatedChunks.has(chunkStartIndex)) {
-          continue;
-        }
-
-        const chunk = baseCaptions.slice(chunkStartIndex, chunkStartIndex + CAPTION_CHUNK_SIZE);
-        // The lines around the chunk, as on Netflix. A line before it still holding its original
-        // isn't translated yet (after a seek) or its chunk failed: it goes without a translation.
-        const translated = this.captionCache.get(this.targetLanguage);
+    debugLog(`[YouTube] Translating captions to ${targetLanguage}`);
+    const metadata = this.videoMetadata!;
+    const translator: CueTranslator = createCueTranslator({
+      cues: baseCaptions,
+      chunkSize: CAPTION_CHUNK_SIZE,
+      lookaheadSeconds: LOOKAHEAD_SECONDS,
+      // The next frame shows what arrived.
+      onUpdate: () => {},
+      translate: (part, start, onLine, signal) => {
+        // The lines around the chunk, as on Netflix. A line before it without a translation isn't
+        // translated yet (after a seek) or its chunk failed: it goes without one.
         const context = baseCaptions
-          .slice(Math.max(0, chunkStartIndex - CONTEXT_BEFORE), chunkStartIndex)
+          .slice(Math.max(0, start - CONTEXT_BEFORE), start)
           .map((caption, i, before) => {
-            const translation = translated?.[chunkStartIndex! - before.length + i]?.text ?? '';
+            const translation = translator.translation(start - before.length + i) ?? '';
             return { source: caption.text, translation: translation === caption.text ? '' : translation };
           });
         const following = baseCaptions
-          .slice(chunkStartIndex + CAPTION_CHUNK_SIZE, chunkStartIndex + CAPTION_CHUNK_SIZE + CONTEXT_AFTER)
+          .slice(start + part.length, start + part.length + CONTEXT_AFTER)
           .map((caption) => caption.text);
-
-        const result = await translationService.translateYoutubeCaption(
-          chunk,
-          context,
-          following,
-          this.targetLanguage,
-          this.videoMetadata!
+        return translationService.streamYoutubeCaption(
+          { lines: part.map((caption) => caption.text), context, following, targetLanguage, metadata },
+          onLine,
+          signal
         );
-
-        if (result.success && result.captions) {
-          const targetCache = this.captionCache.get(this.targetLanguage);
-          if (targetCache) {
-            result.captions.forEach((caption, i) => {
-              targetCache[chunkStartIndex! + i] = caption;
-            });
-          }
-        } else {
-          errorLog(
-            `[YouTube] Failed to translate chunk at index ${chunkStartIndex}:`,
-            result.error
-          );
-        }
-
-        this.translatedChunks.add(chunkStartIndex);
-      }
-
-      debugLog('[YouTube] Finished all translation chunks.');
-    } finally {
-      debugLog('[YouTube] Streaming translation finished.');
-      this.isTranslating = false;
-    }
+      },
+    });
+    this.translator = translator;
+    this.positionSentAt = this.videoElement?.currentTime ?? 0;
+    translator.setPosition(this.positionSentAt);
   }
 
   // How the captions show, applied from the next frame on.
@@ -431,6 +352,7 @@ export class CaptionInjector {
     this.display = settings.display;
     this.captionStyle = settings.captionStyle;
     this.captionSizeRatio = settings.captionSizeRatio;
+    this.wordHighlight = settings.wordHighlight;
     this.currentCaptionLines = [];
   };
 
@@ -454,12 +376,34 @@ export class CaptionInjector {
 
     const windowBottom = document.createElement('div');
     windowBottom.className = 'caption-window ytp-caption-window-bottom';
-    windowBottom.style.bottom = '2%';
     windowBottom.style.textAlign = 'center';
-    windowBottom.style.left = '50%';
     windowBottom.style.transform = 'translateX(-50%)';
     windowBottom.style.width = 'max-content';
     windowBottom.style.maxWidth = '90%';
+    placeCaption(windowBottom, this.position);
+    // Where they were dragged to last, on any video.
+    void chrome.storage.local.get(STORAGE_YOUTUBE_CAPTION_POSITION).then((stored) => {
+      const position = stored[STORAGE_YOUTUBE_CAPTION_POSITION];
+      if (!isCaptionPosition(position) || !windowBottom.isConnected) return;
+      this.position = position;
+      placeCaption(windowBottom, position);
+    });
+    this.stopMoving = makeCaptionMovable(windowBottom, {
+      area: container,
+      position: () => this.position,
+      sizeRatio: () => this.captionSizeRatio,
+      onMove: (position, done) => {
+        this.position = position;
+        placeCaption(windowBottom, position);
+        if (done) void chrome.storage.local.set({ [STORAGE_YOUTUBE_CAPTION_POSITION]: position });
+      },
+      onResize: (ratio, done) => {
+        this.captionSizeRatio = ratio;
+        this.currentCaptionLines = [];
+        // The menu's size setting follows, and comes back here through updateSettings.
+        if (done) void chrome.storage.local.set({ [STORAGE_YOUTUBE_CAPTION_SIZE_RATIO]: ratio });
+      },
+    });
 
     const shadowHost = document.createElement('div');
     shadowHost.dir = 'ltr';
@@ -498,17 +442,25 @@ export class CaptionInjector {
       </StrictMode>
     );
 
-    this.startStreamingTranslation().catch((err) => {
-      errorLog('[YouTube] Streaming translation failed:', err);
+    this.session++;
+    this.startCaptions().catch((err) => {
+      errorLog('[YouTube] Caption translation failed:', err);
       this.deactivate(); // Clean up on failure
     });
   };
 
   public deactivate = () => {
     debugLog('[YouTube] deactivate');
-    this.isTranslating = false;
+    this.session++;
+    this.translator?.stop();
+    this.translator = null;
+    this.lines = [];
+    this.native = false;
+    this.lastFoundCaptionIndex = null;
     const host = document.getElementById(CUSTOM_CAPTION_ID);
 
+    this.stopMoving?.();
+    this.stopMoving = null;
     this.customCaptionRoot?.unmount();
     this.customCaptionRoot = null;
     this.shadowRoot = null;
@@ -525,22 +477,24 @@ export class CaptionInjector {
 
   // How much of the video is translated, from 0 to 1. The target language's own track is all there.
   public translationProgress = () => {
-    const lines = this.captionCache.get(this.targetLanguage);
-    if (!lines?.length) return 0;
-    if (this.baseLanguage === this.targetLanguage) return 1;
-    return Math.min(1, this.translatedChunks.size / Math.ceil(lines.length / CAPTION_CHUNK_SIZE));
+    if (!this.lines.length) return 0;
+    if (this.native) return 1;
+    return this.translator?.progress() ?? 0;
+  };
+
+  // Translation normally stays a few minutes ahead; a subtitle file wants the whole video.
+  public translateAll = () => {
+    this.translator?.translateAll();
   };
 
   // The captions shown, as a subtitle file, named after the video and its languages.
   public subtitleFile = (kind: SubtitleKind) => {
-    const lines = this.captionCache.get(this.targetLanguage);
-    if (!lines?.length) return null;
-    const native = this.baseLanguage === this.targetLanguage;
-    const base = this.captionCache.get(this.baseLanguage);
-    const captions = lines.map((caption, index) => {
-      const original = (native ? this.nativeOriginalLines[index] : base?.[index]?.text) || caption.text;
+    if (!this.lines.length) return null;
+    const captions = this.lines.map((caption, index) => {
+      const original = (this.native ? this.nativeOriginalLines[index] : caption.text) || caption.text;
+      const translated = this.native ? caption.text : (this.translator?.translation(index) ?? '');
       // A line the model left empty keeps its original, as on screen.
-      const translation = caption.text.trim() ? caption.text : original;
+      const translation = translated.trim() ? translated : original;
       const text =
         kind === 'original'
           ? original
@@ -565,11 +519,8 @@ export class CaptionInjector {
     this.videoMetadata = null;
     this.originalTrack = undefined;
     this.nativeOriginalLines = [];
-    this.captionCache.clear();
+    this.tracks.clear();
     this.targetLanguage = 'English';
-    this.lastFoundCaptionIndex = null;
-    this.translatedChunks.clear();
-    this.priorityChunkQueue.clear();
     if (this.videoElement) {
       this.videoElement.removeEventListener('seeked', this.handleVideoSeeked);
     }

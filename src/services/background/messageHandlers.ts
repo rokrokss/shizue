@@ -3,6 +3,7 @@ import {
   MESSAGE_FETCH_YOUTUBE_PLAYER,
   MESSAGE_FRAME_TRANSLATION_STATE,
   MESSAGE_INJECT_NETFLIX_BRIDGE,
+  MESSAGE_INJECT_TRACK_CAPTIONS,
   MESSAGE_INJECT_TWITCH_BRIDGE,
   MESSAGE_SCC_CAPTION_SNAPSHOT,
   MESSAGE_SCC_SET_HIDDEN,
@@ -22,7 +23,7 @@ import {
   MESSAGE_TRANSLATE_HTML_TEXT_BATCH,
   MESSAGE_TRANSLATE_LIVE_CAPTION,
   MESSAGE_TRANSLATE_SUBTITLES,
-  MESSAGE_TRANSLATE_YOUTUBE_CAPTION,
+  MESSAGE_WARM_UP_TRANSLATION,
 } from '@/config/constants';
 import { openPanel, togglePanel } from '@/entrypoints/background/sidepanel';
 import { addWord, db, getLatestMessageForThread, loadThread } from '@/lib/indexDB';
@@ -111,16 +112,10 @@ async function handleTranslateHtmlTextBatch(msg: any, sendResponse: (response?: 
   sendResponse(translatedTexts);
 }
 
-async function handleTranslateYoutubeCaption(msg: any, sendResponse: (response?: any) => void) {
-  const { captions, context, following, targetLanguage, metadata } = msg;
-  const translatedCaptions = await getTranslationHandler().translateYoutubeCaption(
-    captions,
-    context,
-    following,
-    targetLanguage,
-    metadata
-  );
-  sendResponse(translatedCaptions);
+// Answered at once: the warming goes on by itself.
+async function handleWarmUpTranslation(_msg: any, sendResponse: (response?: any) => void) {
+  sendResponse({ success: true });
+  await getTranslationHandler().warmUp();
 }
 
 async function handleTranslateLiveCaption(msg: any, sendResponse: (response?: any) => void) {
@@ -150,6 +145,24 @@ async function handleInjectTwitchBridge(
     world: 'MAIN',
     files: ['content-scripts/twitch-player-bridge.js'],
   });
+  sendResponse({ status: 'success' });
+}
+
+// The caption script for a frame whose <video> has a caption track, with the fonts it draws in.
+async function handleInjectTrackCaptions(
+  _msg: any,
+  sendResponse: (response?: any) => void,
+  sender: chrome.runtime.MessageSender
+) {
+  if (sender.tab?.id === undefined) return sendResponse({ status: 'error' });
+  const target = sender.documentId
+    ? { tabId: sender.tab.id, documentIds: [sender.documentId] }
+    : { tabId: sender.tab.id, frameIds: [sender.frameId ?? 0] };
+  // The top frame has the fonts from the manifest, and Firefox refuses a stylesheet twice.
+  if (sender.frameId) {
+    await chrome.scripting.insertCSS({ target, files: ['fonts/fonts.css'] }).catch(() => {});
+  }
+  await chrome.scripting.executeScript({ target, files: ['content-scripts/track-caption.js'] });
   sendResponse({ status: 'success' });
 }
 
@@ -302,10 +315,11 @@ export const messageHandlers = {
   [MESSAGE_OPEN_PANEL]: handleOpenPanel,
   [MESSAGE_WAIT_PANEL_SUMMARY]: handleWaitPanelSummary,
   [MESSAGE_TRANSLATE_HTML_TEXT_BATCH]: handleTranslateHtmlTextBatch,
-  [MESSAGE_TRANSLATE_YOUTUBE_CAPTION]: handleTranslateYoutubeCaption,
+  [MESSAGE_WARM_UP_TRANSLATION]: handleWarmUpTranslation,
   [MESSAGE_TRANSLATE_LIVE_CAPTION]: handleTranslateLiveCaption,
   [MESSAGE_TRANSLATE_SUBTITLES]: handleTranslateSubtitles,
   [MESSAGE_INJECT_TWITCH_BRIDGE]: handleInjectTwitchBridge,
+  [MESSAGE_INJECT_TRACK_CAPTIONS]: handleInjectTrackCaptions,
   [MESSAGE_INJECT_NETFLIX_BRIDGE]: handleInjectNetflixBridge,
   [MESSAGE_READ_TAB_VIDEO_TRANSCRIPT]: handleReadTabVideoTranscript,
   [MESSAGE_SCC_CAPTION_SNAPSHOT]: handleSccCaptionSnapshot,

@@ -155,6 +155,7 @@
     "browserAgent": "Controle do navegador",
     "browserAgentHint": "O Shizue clica e digita na aba atual",
     "browserAgentPlaceholder": "O que devo fazer nesta aba?",
+    "agentSteerPlaceholder": "Acrescente algo à tarefa ou responda à pergunta",
     "selectAllTabs": "Selecionar tudo",
     "deselectAllTabs": "Desmarcar tudo",
     "browserControlHintTitle": "O Shizue pode fazer isso na sua aba",
@@ -258,6 +259,7 @@
     "youtubeCaptionButton": "Botão de legenda YouTube",
     "captionSizeRatio": "Tamanho da legenda",
     "useKeyboardNavigate": "Navegar legendas com A/D",
+    "wordHighlight": "Destacar as palavras faladas",
     "sourceTrack": "Legendas do YouTube",
     "spokenLanguage": "Idioma falado",
     "speechUnavailable": "Este dispositivo não consegue reconhecer fala neste idioma",
@@ -416,13 +418,23 @@
       "scrollUp": "Rolar para cima",
       "navigate": "Abrir {{host}}",
       "back": "Voltar",
-      "wait": "Aguardar a página"
+      "wait": "Aguardar a página",
+      "ask": "Pergunta: {{text}}",
+      "steer": "Você disse: “{{text}}”",
+      "look": "Olhar a tela",
+      "clickAt": "Clicar em um ponto da tela",
+      "openTab": "Abrir {{host}} em uma nova aba",
+      "switchTab": "Ir para a aba {{tab}}",
+      "tool": "Usar a ferramenta do site “{{target}}”"
     },
     "approvalTitle": "Permitir esta ação?",
     "approvalHint": "Pode enviar, excluir ou pagar e ser difícil de desfazer",
     "allow": "Permitir",
     "deny": "Recusar",
     "denied": "Recusada",
+    "replied": "Sua resposta: {{text}}",
+    "questionTitle": "O Shizue tem uma pergunta",
+    "questionHint": "Responda na caixa abaixo",
     "error": {
       "not_found": "Esse elemento não está mais na página",
       "secret_field": "Digite senhas e dados do cartão você mesmo",
@@ -430,16 +442,24 @@
       "no_option": "Essa opção não existe",
       "bad_url": "Não é possível abrir esse endereço",
       "unreachable": "Esta página não pode ser controlada",
+      "not_visible": "Esta aba não está na tela",
+      "no_screenshot": "Precisa olhar a tela primeiro",
+      "no_tab": "Essa aba não existe",
+      "no_tool": "O site não tem essa ferramenta",
+      "repeated": "A mesma ação de novo numa página que não mudou",
       "failed": "Não funcionou"
     },
     "outcome": {
       "stopped": "Interrompido",
       "max_steps": "Parou após etapas demais. Tente uma tarefa menor",
       "unavailable": "Esta aba não pode ser controlada. Abra uma página da web e tente novamente",
-      "failed": "Parou: não soube o que fazer em seguida"
+      "failed": "Parou: não soube o que fazer em seguida",
+      "looping": "Parou: repetia sempre a mesma ação",
+      "unanswered": "Parou: a pergunta ficou sem resposta"
     },
     "overlayWorking": "O Shizue está trabalhando nesta aba",
     "overlayWaiting": "Aguardando sua permissão no painel",
+    "overlayAsking": "Aguardando sua resposta no painel",
     "overlayStop": "Parar",
     "autoApproved": "Feito sem perguntar"
   }

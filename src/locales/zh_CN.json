@@ -155,6 +155,7 @@
     "browserAgent": "浏览器操作",
     "browserAgentHint": "Shizue 会直接在当前标签页点击和输入",
     "browserAgentPlaceholder": "要在这个标签页里做什么？",
+    "agentSteerPlaceholder": "补充任务或回答它的问题",
     "selectAllTabs": "全选",
     "deselectAllTabs": "全部取消",
     "browserControlHintTitle": "Shizue 可以直接在你的标签页里完成",
@@ -258,6 +259,7 @@
     "youtubeCaptionButton": "YouTube 字幕按钮",
     "captionSizeRatio": "字幕大小",
     "useKeyboardNavigate": "使用A/D键导航字幕",
+    "wordHighlight": "高亮正在说的词",
     "sourceTrack": "YouTube 字幕",
     "spokenLanguage": "所说语言",
     "speechUnavailable": "此设备无法识别这种语言的语音",
@@ -416,13 +418,23 @@
       "scrollUp": "向上滚动",
       "navigate": "打开 {{host}}",
       "back": "返回上一页",
-      "wait": "等待页面"
+      "wait": "等待页面",
+      "ask": "提问：{{text}}",
+      "steer": "你说：“{{text}}”",
+      "look": "查看屏幕",
+      "clickAt": "点击屏幕上的某处",
+      "openTab": "在新标签页中打开 {{host}}",
+      "switchTab": "切换到标签页 {{tab}}",
+      "tool": "使用网站工具“{{target}}”"
     },
     "approvalTitle": "允许执行此操作吗？",
     "approvalHint": "这可能是发送、删除或付款等难以撤销的操作",
     "allow": "允许",
     "deny": "拒绝",
     "denied": "已拒绝",
+    "replied": "你的回答：{{text}}",
+    "questionTitle": "Shizue 有个问题",
+    "questionHint": "请在下方输入框中回答",
     "error": {
       "not_found": "该元素已不在页面上",
       "secret_field": "密码和银行卡信息请自行输入",
@@ -430,16 +442,24 @@
       "no_option": "没有这个选项",
       "bad_url": "无法打开该地址",
       "unreachable": "无法操作此页面",
+      "not_visible": "此标签页不在屏幕上",
+      "no_screenshot": "需要先查看屏幕",
+      "no_tab": "没有这个标签页",
+      "no_tool": "网站没有这个工具",
+      "repeated": "页面未变化，又重复了同一操作",
       "failed": "执行失败"
     },
     "outcome": {
       "stopped": "已停止",
       "max_steps": "步骤太多，已停止。请把任务拆小一些",
       "unavailable": "无法操作此标签页。请打开一个网页后重试",
-      "failed": "无法决定下一步，已停止"
+      "failed": "无法决定下一步，已停止",
+      "looping": "一直重复同一操作，已停止",
+      "unanswered": "问题没有得到回答，已停止"
     },
     "overlayWorking": "Shizue 正在操作此标签页",
     "overlayWaiting": "正在面板中等待你的允许",
+    "overlayAsking": "正在面板中等待你的回答",
     "overlayStop": "停止",
     "autoApproved": "未询问直接执行"
   }

@@ -155,6 +155,7 @@
     "browserAgent": "Tarayıcı kontrolü",
     "browserAgentHint": "Shizue mevcut sekmede tıklar ve yazar",
     "browserAgentPlaceholder": "Bu sekmede ne yapayım?",
+    "agentSteerPlaceholder": "Göreve ekleme yapın ya da sorusunu yanıtlayın",
     "selectAllTabs": "Tümünü seç",
     "deselectAllTabs": "Tümünü kaldır",
     "browserControlHintTitle": "Shizue bunu sekmende yapabilir",
@@ -258,6 +259,7 @@
     "youtubeCaptionButton": "YouTube Altyazı Düğmesi",
     "captionSizeRatio": "Altyazı Boyutu",
     "useKeyboardNavigate": "A/D ile Altyazı Gezinme",
+    "wordHighlight": "Söylenen kelimeleri vurgula",
     "sourceTrack": "YouTube altyazıları",
     "spokenLanguage": "Konuşulan dil",
     "speechUnavailable": "Bu cihaz bu dildeki konuşmayı tanıyamıyor",
@@ -416,13 +418,23 @@
       "scrollUp": "Yukarı kaydır",
       "navigate": "{{host}} aç",
       "back": "Geri git",
-      "wait": "Sayfayı bekle"
+      "wait": "Sayfayı bekle",
+      "ask": "Soru: {{text}}",
+      "steer": "Sizin mesajınız: “{{text}}”",
+      "look": "Ekrana bak",
+      "clickAt": "Ekranda bir noktaya tıkla",
+      "openTab": "{{host}} yeni sekmede aç",
+      "switchTab": "{{tab}} numaralı sekmeye geç",
+      "tool": "Sitenin ‘{{target}}’ aracını kullan"
     },
     "approvalTitle": "Bu işleme izin verilsin mi?",
     "approvalHint": "Gönderme, silme veya ödeme yapabilir ve geri alınması zor olabilir",
     "allow": "İzin ver",
     "deny": "Reddet",
     "denied": "Reddedildi",
+    "replied": "Yanıtınız: {{text}}",
+    "questionTitle": "Shizue’nin bir sorusu var",
+    "questionHint": "Aşağıdaki kutuya yanıt verin",
     "error": {
       "not_found": "Bu öğe artık sayfada yok",
       "secret_field": "Şifreleri ve kart bilgilerini kendiniz girin",
@@ -430,16 +442,24 @@
       "no_option": "Böyle bir seçenek yok",
       "bad_url": "Bu adres açılamıyor",
       "unreachable": "Bu sayfa kontrol edilemiyor",
+      "not_visible": "Bu sekme ekranda değil",
+      "no_screenshot": "Önce ekrana bakması gerekiyor",
+      "no_tab": "Böyle bir sekme yok",
+      "no_tool": "Sitede böyle bir araç yok",
+      "repeated": "Değişmeyen sayfada aynı işlem tekrar",
       "failed": "Olmadı"
     },
     "outcome": {
       "stopped": "Durduruldu",
       "max_steps": "Çok fazla adımdan sonra durdu. Daha küçük bir görev deneyin",
       "unavailable": "Bu sekme kontrol edilemiyor. Bir web sayfası açıp tekrar deneyin",
-      "failed": "Durdu: sonraki adıma karar veremedi"
+      "failed": "Durdu: sonraki adıma karar veremedi",
+      "looping": "Durdu: aynı işlemi tekrarlayıp durdu",
+      "unanswered": "Durdu: soru yanıtlanmadı"
     },
     "overlayWorking": "Shizue bu sekmede çalışıyor",
     "overlayWaiting": "Panelde onayınızı bekliyor",
+    "overlayAsking": "Panelde yanıtınızı bekliyor",
     "overlayStop": "Durdur",
     "autoApproved": "Sormadan yapıldı"
   }

@@ -155,6 +155,7 @@
     "browserAgent": "瀏覽器操作",
     "browserAgentHint": "Shizue 會直接在目前分頁點擊和輸入",
     "browserAgentPlaceholder": "要在這個分頁裡做什麼？",
+    "agentSteerPlaceholder": "補充任務或回答它的問題",
     "selectAllTabs": "全選",
     "deselectAllTabs": "全部取消",
     "browserControlHintTitle": "Shizue 可以直接在你的分頁裡完成",
@@ -258,6 +259,7 @@
     "youtubeCaptionButton": "YouTube 字幕按鈕",
     "captionSizeRatio": "字幕大小",
     "useKeyboardNavigate": "使用A/D鍵導航字幕",
+    "wordHighlight": "醒目標示正在說的詞",
     "sourceTrack": "YouTube 字幕",
     "spokenLanguage": "所說語言",
     "speechUnavailable": "此裝置無法辨識這種語言的語音",
@@ -416,13 +418,23 @@
       "scrollUp": "向上捲動",
       "navigate": "開啟 {{host}}",
       "back": "返回上一頁",
-      "wait": "等待頁面"
+      "wait": "等待頁面",
+      "ask": "提問：{{text}}",
+      "steer": "你說：「{{text}}」",
+      "look": "查看螢幕",
+      "clickAt": "點擊螢幕上的某處",
+      "openTab": "在新分頁中開啟 {{host}}",
+      "switchTab": "切換到分頁 {{tab}}",
+      "tool": "使用網站工具「{{target}}」"
     },
     "approvalTitle": "允許執行此操作嗎？",
     "approvalHint": "這可能是傳送、刪除或付款等難以復原的操作",
     "allow": "允許",
     "deny": "拒絕",
     "denied": "已拒絕",
+    "replied": "你的回答：{{text}}",
+    "questionTitle": "Shizue 有個問題",
+    "questionHint": "請在下方輸入框中回答",
     "error": {
       "not_found": "該元素已不在頁面上",
       "secret_field": "密碼和信用卡資訊請自行輸入",
@@ -430,16 +442,24 @@
       "no_option": "沒有這個選項",
       "bad_url": "無法開啟該網址",
       "unreachable": "無法操作此頁面",
+      "not_visible": "此分頁不在螢幕上",
+      "no_screenshot": "需要先查看螢幕",
+      "no_tab": "沒有這個分頁",
+      "no_tool": "網站沒有這個工具",
+      "repeated": "頁面未變化，又重複了同一操作",
       "failed": "執行失敗"
     },
     "outcome": {
       "stopped": "已停止",
       "max_steps": "步驟太多，已停止。請把任務拆小一些",
       "unavailable": "無法操作此分頁。請開啟網頁後再試",
-      "failed": "無法決定下一步，已停止"
+      "failed": "無法決定下一步，已停止",
+      "looping": "一直重複同一操作，已停止",
+      "unanswered": "問題沒有得到回答，已停止"
     },
     "overlayWorking": "Shizue 正在操作此分頁",
     "overlayWaiting": "正在面板中等待你的允許",
+    "overlayAsking": "正在面板中等待你的回答",
     "overlayStop": "停止",
     "autoApproved": "未詢問直接執行"
   }

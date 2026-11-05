@@ -155,6 +155,7 @@
     "browserAgent": "ブラウザ操作",
     "browserAgentHint": "シズエが今のタブを直接クリック・入力します",
     "browserAgentPlaceholder": "このタブで何をしますか？",
+    "agentSteerPlaceholder": "追加の指示や質問への答えを入力",
     "selectAllTabs": "すべて選択",
     "deselectAllTabs": "すべて解除",
     "browserControlHintTitle": "シズエがこのタブで直接できます",
@@ -258,6 +259,7 @@
     "youtubeCaptionButton": "YouTube 字幕ボタン",
     "captionSizeRatio": "字幕サイズ",
     "useKeyboardNavigate": "A/D キーで字幕ナビゲーション",
+    "wordHighlight": "話している単語を強調",
     "sourceTrack": "YouTube 字幕",
     "spokenLanguage": "話されている言語",
     "speechUnavailable": "この端末ではこの言語の音声を認識できません",
@@ -416,13 +418,23 @@
       "scrollUp": "上にスクロール",
       "navigate": "{{host}} を開く",
       "back": "戻る",
-      "wait": "ページを待つ"
+      "wait": "ページを待つ",
+      "ask": "質問：{{text}}",
+      "steer": "追加の指示：「{{text}}」",
+      "look": "画面を見る",
+      "clickAt": "画面の一点をクリック",
+      "openTab": "新しいタブで {{host}} を開く",
+      "switchTab": "タブ {{tab}} に切り替え",
+      "tool": "サイトのツール「{{target}}」を使う"
     },
     "approvalTitle": "この操作を行ってもいいですか？",
     "approvalHint": "送信・削除・支払いなど、取り消しにくい操作かもしれません",
     "allow": "許可",
     "deny": "拒否",
     "denied": "拒否しました",
+    "replied": "回答：{{text}}",
+    "questionTitle": "シズエからの質問",
+    "questionHint": "下の入力欄で答えてください",
     "error": {
       "not_found": "その要素はページから消えました",
       "secret_field": "パスワードやカード情報はご自身で入力してください",
@@ -430,16 +442,24 @@
       "no_option": "その項目はありません",
       "bad_url": "開けないアドレスです",
       "unreachable": "このページは操作できません",
+      "not_visible": "このタブは画面に表示されていません",
+      "no_screenshot": "先に画面を見る必要があります",
+      "no_tab": "そのタブはありません",
+      "no_tool": "サイトにそのツールはありません",
+      "repeated": "変わらないページで同じ操作を繰り返しました",
       "failed": "実行できませんでした"
     },
     "outcome": {
       "stopped": "停止しました",
       "max_steps": "ステップが多すぎるため停止しました。作業を小さく分けてください",
       "unavailable": "このタブは操作できません。Web ページを開いてから再試行してください",
-      "failed": "次の操作を決められず停止しました"
+      "failed": "次の操作を決められず停止しました",
+      "looping": "同じ操作を繰り返したため停止しました",
+      "unanswered": "質問に回答がなかったため停止しました"
     },
     "overlayWorking": "シズエがこのタブを操作中",
     "overlayWaiting": "パネルで許可を待っています",
+    "overlayAsking": "パネルで回答を待っています",
     "overlayStop": "停止",
     "autoApproved": "確認せずに実行"
   }

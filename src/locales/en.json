@@ -155,6 +155,7 @@
     "browserAgent": "Browser control",
     "browserAgentHint": "Shizue clicks and types in the current tab",
     "browserAgentPlaceholder": "What should I do in this tab?",
+    "agentSteerPlaceholder": "Add to the task or answer its question",
     "selectAllTabs": "Select all",
     "deselectAllTabs": "Clear all",
     "browserControlHintTitle": "Shizue can do this in your tab",
@@ -266,6 +267,7 @@
     "youtubeCaptionButton": "Youtube Caption Button",
     "captionSizeRatio": "Caption Size",
     "useKeyboardNavigate": "Navigate Subtitles with A/D",
+    "wordHighlight": "Highlight spoken words",
     "sourceTrack": "YouTube captions",
     "spokenLanguage": "Spoken language",
     "speechUnavailable": "This device can't recognize speech in this language",
@@ -416,13 +418,23 @@
       "scrollUp": "Scroll up",
       "navigate": "Open {{host}}",
       "back": "Go back",
-      "wait": "Wait for the page"
+      "wait": "Wait for the page",
+      "ask": "Asked: {{text}}",
+      "steer": "You said: “{{text}}”",
+      "look": "Look at the screen",
+      "clickAt": "Click a spot on the screen",
+      "openTab": "Open {{host}} in a new tab",
+      "switchTab": "Go to tab {{tab}}",
+      "tool": "Use the site’s tool ‘{{target}}’"
     },
     "approvalTitle": "Allow this action?",
     "approvalHint": "It may send, delete or pay, and be hard to undo",
     "allow": "Allow",
     "deny": "Decline",
     "denied": "Declined",
+    "replied": "Your answer: {{text}}",
+    "questionTitle": "Shizue has a question",
+    "questionHint": "Answer in the box below",
     "error": {
       "not_found": "That element is no longer on the page",
       "secret_field": "Please enter passwords and card details yourself",
@@ -430,16 +442,24 @@
       "no_option": "No such option",
       "bad_url": "That address can’t be opened",
       "unreachable": "This page can’t be controlled",
+      "not_visible": "This tab isn’t on screen",
+      "no_screenshot": "It has to look at the screen first",
+      "no_tab": "No such tab",
+      "no_tool": "The site has no such tool",
+      "repeated": "Same action again on a page that didn’t change",
       "failed": "Didn’t work"
     },
     "outcome": {
       "stopped": "Stopped",
       "max_steps": "Stopped after too many steps. Try a smaller task",
       "unavailable": "This tab can’t be controlled. Open a web page and try again",
-      "failed": "Stopped: couldn’t decide what to do next"
+      "failed": "Stopped: couldn’t decide what to do next",
+      "looping": "Stopped: it kept repeating the same action",
+      "unanswered": "Stopped: the question wasn’t answered"
     },
     "overlayWorking": "Shizue is working in this tab",
     "overlayWaiting": "Waiting for your OK in the panel",
+    "overlayAsking": "Waiting for your answer in the panel",
     "overlayStop": "Stop",
     "autoApproved": "Done without asking"
   }

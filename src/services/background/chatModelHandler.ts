@@ -38,6 +38,7 @@ import {
   isLocalModel,
   localContextLength,
   LocalServerConfig,
+  modelSupportsImages,
   modelSupportsWebSearch,
   ModelPreset,
   providerFromName,
@@ -276,6 +277,7 @@ export class ChatModelHandler {
         autoApprove: task.autoApprove,
         reasoningEffort: await reasoningEffortFor(modelName),
         modelPreset,
+        canSee: modelSupportsImages(modelName, localServer),
         port,
         signal: abortController.signal,
       });
@@ -320,6 +322,7 @@ export class ChatModelHandler {
           isSelectionActionType(actionType)
             ? 0.3
             : 0.7,
+        promptCache: true,
         modelPreset,
       };
       const llm = webSearch

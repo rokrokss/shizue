@@ -155,6 +155,7 @@
     "browserAgent": "Contrôle du navigateur",
     "browserAgentHint": "Shizue clique et tape dans l’onglet actuel",
     "browserAgentPlaceholder": "Que dois-je faire dans cet onglet ?",
+    "agentSteerPlaceholder": "Complétez la tâche ou répondez à sa question",
     "selectAllTabs": "Tout sélectionner",
     "deselectAllTabs": "Tout retirer",
     "browserControlHintTitle": "Shizue peut le faire dans votre onglet",
@@ -258,6 +259,7 @@
     "youtubeCaptionButton": "Bouton de sous-titres de YouTube",
     "captionSizeRatio": "Taille des sous-titres",
     "useKeyboardNavigate": "Naviguer dans les sous-titres avec A/D",
+    "wordHighlight": "Surligner les mots prononcés",
     "sourceTrack": "Sous-titres YouTube",
     "spokenLanguage": "Langue parlée",
     "speechUnavailable": "Cet appareil ne peut pas reconnaître la parole dans cette langue",
@@ -416,13 +418,23 @@
       "scrollUp": "Faire défiler vers le haut",
       "navigate": "Ouvrir {{host}}",
       "back": "Revenir en arrière",
-      "wait": "Attendre la page"
+      "wait": "Attendre la page",
+      "ask": "Question : {{text}}",
+      "steer": "Vous avez dit : « {{text}} »",
+      "look": "Regarder l’écran",
+      "clickAt": "Cliquer à un endroit de l’écran",
+      "openTab": "Ouvrir {{host}} dans un nouvel onglet",
+      "switchTab": "Aller à l’onglet {{tab}}",
+      "tool": "Utiliser l’outil du site « {{target}} »"
     },
     "approvalTitle": "Autoriser cette action ?",
     "approvalHint": "Cela peut envoyer, supprimer ou payer, et être difficile à annuler",
     "allow": "Autoriser",
     "deny": "Refuser",
     "denied": "Refusée",
+    "replied": "Votre réponse : {{text}}",
+    "questionTitle": "Shizue a une question",
+    "questionHint": "Répondez dans le champ ci-dessous",
     "error": {
       "not_found": "Cet élément n’est plus sur la page",
       "secret_field": "Saisissez vous-même les mots de passe et les données de carte",
@@ -430,16 +442,24 @@
       "no_option": "Cette option n’existe pas",
       "bad_url": "Impossible d’ouvrir cette adresse",
       "unreachable": "Cette page ne peut pas être contrôlée",
+      "not_visible": "Cet onglet n’est pas à l’écran",
+      "no_screenshot": "Il faut d’abord regarder l’écran",
+      "no_tab": "Cet onglet n’existe pas",
+      "no_tool": "Le site ne propose pas cet outil",
+      "repeated": "Même action sur une page inchangée",
       "failed": "Échec"
     },
     "outcome": {
       "stopped": "Arrêté",
       "max_steps": "Arrêté après trop d’étapes. Essayez une tâche plus petite",
       "unavailable": "Cet onglet ne peut pas être contrôlé. Ouvrez une page web et réessayez",
-      "failed": "Arrêté : impossible de choisir l’étape suivante"
+      "failed": "Arrêté : impossible de choisir l’étape suivante",
+      "looping": "Arrêté : répétait sans cesse la même action",
+      "unanswered": "Arrêté : la question est restée sans réponse"
     },
     "overlayWorking": "Shizue travaille dans cet onglet",
     "overlayWaiting": "En attente de votre accord dans le panneau",
+    "overlayAsking": "En attente de votre réponse dans le panneau",
     "overlayStop": "Arrêter",
     "autoApproved": "Fait sans demander"
   }

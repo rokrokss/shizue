@@ -64,6 +64,8 @@ const ChatInput = ({
   contextUsage,
   previousPrompts,
   browserAgentTurnedOn,
+  agentWorking,
+  onSteerAgent,
   onSubmit,
   onCancel,
   onOpenHistory,
@@ -82,6 +84,10 @@ const ChatInput = ({
   previousPrompts: string[];
   // Bumped when the hint under an answer turns browser control on.
   browserAgentTurnedOn: number;
+  // The browser agent is working on the answer: Enter sends it what is typed, as a change to the
+  // task or the answer to its question, instead of stopping it.
+  agentWorking: boolean;
+  onSteerAgent: (text: string) => void;
   onSubmit: (
     text: string,
     images?: File[],
@@ -416,6 +422,12 @@ const ChatInput = ({
 
       e.preventDefault();
       const currentValue = e.currentTarget.value.trim();
+      if (agentWorking && currentValue && uploadedImages.length === 0 && attached.length === 0) {
+        onSteerAgent(currentValue);
+        setChatInput('');
+        setRecallIndex(null);
+        return;
+      }
       if (isChatWaiting(chatStatus)) {
         // A new question while an answer is still coming stops that answer and goes out instead.
         if (currentValue === '' && uploadedImages.length === 0) return;
@@ -874,7 +886,9 @@ const ChatInput = ({
             onDragOver={handleDragOver}
             onDrop={handleDrop}
             placeholder={
-              browserAgent
+              agentWorking
+                ? t('chat.agentSteerPlaceholder')
+                : browserAgent
                 ? t('chat.browserAgentPlaceholder')
                 : attached.length === 0
                 ? t('chat.askAnything')

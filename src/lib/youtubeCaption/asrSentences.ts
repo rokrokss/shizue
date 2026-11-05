@@ -8,7 +8,13 @@ import { textWidth, tokenize } from '@/lib/liveCaption/segmenter';
 
 export type AsrSegment = { utf8?: string; tOffsetMs?: number };
 export type AsrEvent = { tStartMs: number; dDurationMs?: number; aAppend?: number; segs?: AsrSegment[] };
-export type AsrSentence = { startTime: number; endTime: number; text: string };
+// `words`: where each word starts in `text` and when it is said (s), for showing the word spoken.
+export type AsrSentence = {
+  startTime: number;
+  endTime: number;
+  text: string;
+  words: { offset: number; time: number }[];
+};
 
 type Word = { text: string; start: number; end: number };
 
@@ -48,7 +54,20 @@ const LINGER_MS = 1000;
 // Columns on screen, with the space before the word.
 const width = (word: Word) => textWidth(tokenize(word.text)) + (/^\s/.test(word.text) ? 1 : 0);
 
-const joinWords = (words: Word[]) => words.map((word) => word.text).join('').replace(/\s+/g, ' ').trim();
+// The words' text with single spaces, and where each word starts in it.
+const joinWords = (words: Word[]) => {
+  let text = '';
+  const marks: AsrSentence['words'] = [];
+  for (const word of words) {
+    let piece = word.text.replace(/\s+/g, ' ');
+    // A space never leads the text nor doubles up.
+    if (!text || text.endsWith(' ')) piece = piece.trimStart();
+    if (!piece) continue;
+    marks.push({ offset: text.length + (piece.startsWith(' ') ? 1 : 0), time: word.start / 1000 });
+    text += piece;
+  }
+  return { text: text.trimEnd(), words: marks };
+};
 
 const endsSentence = (text: string) =>
   SENTENCE_END.test(text) && !ABBREVIATION.test(text.trim()) && !INITIAL.test(text.trim());
@@ -135,6 +154,6 @@ export const groupAsrSentences = (events: AsrEvent[]): AsrSentence[] => {
     const start = group[0].start;
     const next = groups[index + 1]?.[0].start ?? Infinity;
     const end = Math.min(next, group[group.length - 1].end + LINGER_MS);
-    return { startTime: start / 1000, endTime: end / 1000, text: joinWords(group) };
+    return { startTime: start / 1000, endTime: end / 1000, ...joinWords(group) };
   });
 };

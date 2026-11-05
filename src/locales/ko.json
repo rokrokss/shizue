@@ -155,6 +155,7 @@
     "browserAgent": "브라우저 조작",
     "browserAgentHint": "시즈에가 지금 탭을 직접 누르고 입력합니다",
     "browserAgentPlaceholder": "이 탭에서 할 일을 적어 주세요",
+    "agentSteerPlaceholder": "덧붙일 말이나 질문의 답을 적어 주세요",
     "selectAllTabs": "전체 선택",
     "deselectAllTabs": "전체 해제",
     "browserControlHintTitle": "이 탭에서 직접 해 드릴 수 있어요",
@@ -266,6 +267,7 @@
     "youtubeCaptionButton": "유튜브 자막 버튼",
     "captionSizeRatio": "자막 크기",
     "useKeyboardNavigate": "A/D 자막 이동",
+    "wordHighlight": "말하는 단어 강조",
     "sourceTrack": "유튜브 자막",
     "spokenLanguage": "원본 언어",
     "speechUnavailable": "이 언어는 이 기기에서 음성 인식을 할 수 없어요",
@@ -416,13 +418,23 @@
       "scrollUp": "위로 스크롤",
       "navigate": "{{host}} 열기",
       "back": "뒤로 가기",
-      "wait": "페이지 기다리기"
+      "wait": "페이지 기다리기",
+      "ask": "질문: {{text}}",
+      "steer": "덧붙인 말: “{{text}}”",
+      "look": "화면 보기",
+      "clickAt": "화면의 한 곳 클릭",
+      "openTab": "새 탭에서 {{host}} 열기",
+      "switchTab": "{{tab}}번 탭으로 이동",
+      "tool": "사이트 도구 ‘{{target}}’ 사용"
     },
     "approvalTitle": "이 작업을 해도 될까요?",
     "approvalHint": "보내기, 삭제, 결제처럼 되돌리기 어려울 수 있습니다",
     "allow": "허용",
     "deny": "거부",
     "denied": "거부함",
+    "replied": "답: {{text}}",
+    "questionTitle": "시즈에가 묻습니다",
+    "questionHint": "아래 입력창에 답해 주세요",
     "error": {
       "not_found": "그 요소가 페이지에서 사라졌습니다",
       "secret_field": "비밀번호·카드 정보는 직접 입력해 주세요",
@@ -430,16 +442,24 @@
       "no_option": "그런 항목이 없습니다",
       "bad_url": "열 수 없는 주소입니다",
       "unreachable": "이 페이지는 조작할 수 없습니다",
+      "not_visible": "이 탭이 화면에 보이지 않습니다",
+      "no_screenshot": "화면을 먼저 봐야 합니다",
+      "no_tab": "그런 탭이 없습니다",
+      "no_tool": "사이트에 그런 도구가 없습니다",
+      "repeated": "바뀌지 않은 페이지에서 같은 동작을 되풀이했습니다",
       "failed": "실행하지 못했습니다"
     },
     "outcome": {
       "stopped": "중지했습니다",
       "max_steps": "단계가 너무 많아 멈췄습니다. 할 일을 더 작게 나눠 주세요",
       "unavailable": "이 탭은 조작할 수 없습니다. 웹 페이지를 연 뒤 다시 시도하세요",
-      "failed": "다음에 할 일을 정하지 못해 멈췄습니다"
+      "failed": "다음에 할 일을 정하지 못해 멈췄습니다",
+      "looping": "같은 동작을 되풀이해서 멈췄습니다",
+      "unanswered": "질문에 답이 없어 멈췄습니다"
     },
     "overlayWorking": "시즈에가 이 탭을 조작하는 중",
     "overlayWaiting": "패널에서 허용을 기다리는 중",
+    "overlayAsking": "패널에서 답을 기다리는 중",
     "overlayStop": "중지",
     "autoApproved": "묻지 않고 실행함"
   }

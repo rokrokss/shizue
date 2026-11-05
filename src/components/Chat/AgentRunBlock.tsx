@@ -3,6 +3,8 @@ import type { AgentRun, AgentStep } from '@/lib/browserAgent';
 import {
   CheckOutlined,
   CloseOutlined,
+  MessageOutlined,
+  QuestionCircleOutlined,
   InfoCircleOutlined,
   LoadingOutlined,
   RightOutlined,
@@ -46,6 +48,20 @@ export const agentStepLabel = (step: AgentStep, t: TFunction) => {
       return t('agent.step.navigate', { host: hostOf(action.url) });
     case 'back':
       return t('agent.step.back');
+    case 'ask':
+      return t('agent.step.ask', { text: clip(action.text, 80) });
+    case 'steer':
+      return t('agent.step.steer', { text: clip(action.text, 80) });
+    case 'look':
+      return t('agent.step.look');
+    case 'click_at':
+      return t('agent.step.clickAt');
+    case 'open_tab':
+      return t('agent.step.openTab', { host: hostOf(action.url) });
+    case 'switch_tab':
+      return t('agent.step.switchTab', { tab: action.tab });
+    case 'tool':
+      return t('agent.step.tool', { target });
     default:
       return t('agent.step.wait');
   }
@@ -53,6 +69,10 @@ export const agentStepLabel = (step: AgentStep, t: TFunction) => {
 
 const StepIcon = ({ step }: { step: AgentStep }) => {
   const className = 'sz:text-[11px] sz:shrink-0 sz:mt-[3px]';
+  if (step.action.kind === 'steer') return <MessageOutlined className={`${className} sz:text-gray-400`} />;
+  if (step.action.kind === 'ask' && step.status === 'awaiting') {
+    return <QuestionCircleOutlined className={`${className} sz:text-sz-cyan`} />;
+  }
   switch (step.status) {
     case 'running':
       return <LoadingOutlined className={`${className} sz:text-sz-cyan`} />;
@@ -86,7 +106,10 @@ const AgentRunBlock = ({
   const [open, setOpen] = useState(false);
   // The card answered, until the agent moves on.
   const [answered, setAnswered] = useState<string | null>(null);
-  const awaiting = live ? run.steps.find((step) => step.status === 'awaiting') : undefined;
+  const waiting = live ? run.steps.find((step) => step.status === 'awaiting') : undefined;
+  // A question is answered from the chat box; only an approval gets the card's buttons.
+  const question = waiting?.action.kind === 'ask' ? waiting : undefined;
+  const awaiting = question ? undefined : waiting;
   useEffect(() => {
     if (!awaiting) setAnswered(null);
   }, [awaiting]);
@@ -164,6 +187,11 @@ const AgentRunBlock = ({
                     {step.autoApproved ? (
                       <div className="sz:text-[11px] sz:text-amber-500">{t('agent.autoApproved')}</div>
                     ) : null}
+                    {step.reply ? (
+                      <div className="sz:text-[11px] sz:text-gray-500 sz:break-words">
+                        {t('agent.replied', { text: clip(step.reply, 120) })}
+                      </div>
+                    ) : null}
                     {step.status === 'failed' ? (
                       <div className="sz:text-[11px] sz:text-red-400">{t(`agent.error.${step.error ?? 'failed'}`)}</div>
                     ) : step.status === 'denied' ? (
@@ -215,6 +243,23 @@ const AgentRunBlock = ({
               {t('agent.deny')}
             </Button>
           </div>
+        </div>
+      ) : null}
+      {question ? (
+        <div
+          role="status"
+          className={`sz:mt-2 sz:w-full sz:rounded-xl sz:border sz:p-3 sz:animate-[sz-fade-in_0.25s_ease-out] sz:motion-reduce:animate-none ${
+            dark ? 'sz:border-sz-cyan/40 sz:bg-sz-cyan/10' : 'sz:border-sz-cyan/40 sz:bg-cyan-50'
+          }`}
+        >
+          <div className="sz:flex sz:items-center sz:gap-1.5 sz:text-[13px] sz:font-semibold">
+            <QuestionCircleOutlined className="sz:text-sz-cyan" />
+            {t('agent.questionTitle')}
+          </div>
+          <div className={`sz:mt-1.5 sz:text-[13px] sz:break-words ${dark ? 'sz:text-gray-100' : 'sz:text-gray-800'}`}>
+            {question.action.text}
+          </div>
+          <div className="sz:mt-0.5 sz:text-xs sz:text-gray-500">{t('agent.questionHint')}</div>
         </div>
       ) : null}
       {outcome ? (

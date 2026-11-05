@@ -8,7 +8,8 @@ import {
   getCurrentOpenrouterKey,
   getCurrentTranslateModel,
 } from '@/entrypoints/background/states/models';
-import { ModelPreset, getModelInstance, isLocalModel } from '@/lib/models';
+import { ModelPreset, getModelInstance, getModelSpec, isChatGPTModel, isLocalModel } from '@/lib/models';
+import { createNumberedLineReader } from '@/lib/numberedLines';
 import type { TranslationContext } from '@/lib/liveCaption/types';
 import {
   getHtmlTranslationBatchPrompt,
@@ -22,10 +23,11 @@ import {
   SubtitleMetadata,
 } from '@/lib/prompts';
 import { cacheTranslations, getCachedTranslations } from '@/lib/indexDB';
+import { warmUpChatGPT } from '@/services/background/chatgpt';
 import { rateLimitWaitMs } from '@/lib/rateLimit';
 import { trackTokenUsage } from '@/lib/tokenUsageTracker';
 import { parseWordMeaning, WORD_MEANING_JSON_SCHEMA, WordMeaning } from '@/lib/wordLookup';
-import { Caption, VideoMetadata } from '@/lib/youtube';
+import { VideoMetadata } from '@/lib/youtube';
 import { debugLog, errorLog } from '@/logs';
 import { AIMessage, AIMessageChunk, HumanMessage } from '@langchain/core/messages';
 
@@ -55,20 +57,18 @@ const translationCacheKey = async (model: string, language: string, text: string
   return Array.from(digest, (byte) => byte.toString(16).padStart(2, '0')).join('');
 };
 
-export interface YoutubeCaptionTranslationResult {
-  success: boolean;
-  captions?: Caption[];
-  error?: string;
+export interface YoutubeCaptionRequest {
+  lines: string[];
+  context: TranslationContext[];
+  following: string[];
+  targetLanguage: Language;
+  metadata: VideoMetadata;
 }
 
 export interface LiveCaptionTranslationResult {
   success: boolean;
   translations?: string[];
   error?: string;
-}
-
-interface YoutubeCaptionTranslationJsonResponseFormat {
-  translations: string[];
 }
 
 interface BatchTranslationJsonResponseFormat {
@@ -188,135 +188,159 @@ async function invokeTranslation(
   }
 }
 
+// A saved chunk of caption translations, when it has one per line.
+const savedLines = (saved: string | undefined, count: number): string[] | null => {
+  if (saved === undefined) return null;
+  try {
+    const lines = JSON.parse(saved);
+    return Array.isArray(lines) && lines.length === count && lines.every((line) => typeof line === 'string')
+      ? lines
+      : null;
+  } catch {
+    return null;
+  }
+};
+
+// Streams an answer of numbered lines (lib/numberedLines.ts), each going to `onLine` once it is
+// complete. A rate limit before the first line waits and asks again, as invokeTranslation does; an
+// error after some lines ends the answer there, and the lines missing are asked again.
+async function streamNumberedLines(
+  prompt: string,
+  count: number,
+  modelPreset: ModelPreset,
+  signal: AbortSignal,
+  onLine: (index: number, text: string) => void
+) {
+  const llm = getModelInstance({
+    temperature: 0.1,
+    // The ChatGPT plan model always streams, and with `streaming` it would also ask for its thinking.
+    streaming: !isChatGPTModel(modelPreset.modelName),
+    fast: true,
+    modelPreset,
+  });
+  for (let retry = 0; ; retry++) {
+    await waitForRateLimit();
+    signal.throwIfAborted();
+    const reader = createNumberedLineReader(count, onLine);
+    let aggregated: AIMessageChunk | undefined;
+    let heard = false;
+    try {
+      for await (const chunk of await llm.stream([new HumanMessage(prompt)], { signal })) {
+        aggregated = aggregated ? aggregated.concat(chunk) : chunk;
+        if (chunk.text) {
+          heard = true;
+          reader.push(chunk.text);
+        }
+      }
+      reader.end();
+      if (aggregated) await trackTokenUsage(modelPreset, aggregated);
+      return;
+    } catch (error) {
+      if (aggregated) await trackTokenUsage(modelPreset, aggregated);
+      if (signal.aborted) throw error;
+      if (heard) {
+        errorLog('TranslationHandler [streamNumberedLines] answer cut short:', error);
+        reader.end();
+        return;
+      }
+      const wait = rateLimitWaitMs(error, retry);
+      if (wait === undefined) throw error;
+      debugLog(`TranslationHandler rate limited, retrying in ${wait} ms`);
+      rateLimitedUntil = Math.max(rateLimitedUntil, Date.now() + wait);
+    }
+  }
+}
+
+// Where each provider's API answers. Local servers are near enough to need no warming.
+const API_ORIGINS = {
+  'openai-api-key': 'https://api.openai.com',
+  'gemini-api-key': 'https://generativelanguage.googleapis.com',
+  'anthropic-api-key': 'https://api.anthropic.com',
+  'openrouter-api-key': 'https://openrouter.ai',
+} as const;
+
+const WARM_UP_INTERVAL_MS = 30_000;
+let warmedUpAt = 0;
+
 export class TranslationHandler {
   constructor() {}
 
-  public async translateYoutubeCaption(
-    captions: Caption[],
-    context: TranslationContext[],
-    following: string[],
-    targetLanguage: Language,
-    metadata: VideoMetadata
-  ): Promise<YoutubeCaptionTranslationResult> {
+  // Before a video's first caption chunk. The message asking for this already woke the worker and
+  // loaded its state; a ChatGPT sign-in also gets a fresh token and its model list, and a connection
+  // to the model's server opens, so the first request skips the TLS handshake. Only a HEAD is sent.
+  public async warmUp() {
+    if (Date.now() - warmedUpAt < WARM_UP_INTERVAL_MS) return;
+    warmedUpAt = Date.now();
+    const { modelName, connectionMode } = getTranslationModelPreset();
+    if (isLocalModel(modelName)) return;
+    const chatGPT = isChatGPTModel(modelName);
+    const provider = chatGPT
+      ? 'openai-api-key'
+      : connectionMode === 'openrouter'
+        ? 'openrouter-api-key'
+        : getModelSpec(modelName)?.provider;
     try {
-      const prompt = getYoutubeCaptionTranslationPrompt(captions, context, following, targetLanguage, metadata);
-      const modelPreset = getTranslationModelPreset();
-
-      const llm = getModelInstance({
-        temperature: 0.1,
-        streaming: isLocalModel(modelPreset.modelName),
-        fast: true,
-        modelPreset: modelPreset,
-        jsonSchema: translationsSchemaFor(modelPreset, captions.length),
-      });
-
-      debugLog('TranslationHandler [translateYoutubeCaption] modelPreset:', modelPreset);
-      debugLog('TranslationHandler [translateYoutubeCaption] llm:', llm);
-
-      debugLog('TranslationHandler [translateYoutubeCaption] prompt:', prompt);
-      const response = await invokeTranslation(llm, prompt, modelPreset);
-      await trackTokenUsage(modelPreset, response);
-
-      const rawResponseContent = response.text.trim();
-
-      debugLog(
-        'TranslationHandler [translateYoutubeCaption] raw response from AI:',
-        rawResponseContent
-      );
-
-      let parsedResponse: YoutubeCaptionTranslationJsonResponseFormat;
-      try {
-        const cleanedContent = stripMarkdownCodeFence(rawResponseContent);
-        parsedResponse = JSON.parse(cleanedContent);
-      } catch (parseError) {
-        errorLog(
-          'TranslationHandler [translateYoutubeCaption] JSON parsing error:',
-          (parseError as Error).message,
-          'Raw response:',
-          rawResponseContent
-        );
-        return {
-          success: false,
-          error: `Failed to parse model response. Error: ${(parseError as Error).message}`,
-        };
-      }
-
-      if (
-        !parsedResponse ||
-        !parsedResponse.translations ||
-        !Array.isArray(parsedResponse.translations) ||
-        !parsedResponse.translations.every((item) => typeof item === 'string')
-      ) {
-        const validationErrorMsg =
-          "AI response is not a valid JSON object with a 'translations' array of strings.";
-        errorLog(
-          'TranslationHandler [translateYoutubeCaption] JSON validation error:',
-          validationErrorMsg,
-          'Parsed response:',
-          parsedResponse
-        );
-        return {
-          success: false,
-          error: `Invalid JSON structure in AI response. Details: ${validationErrorMsg}`,
-        };
-      }
-
-      const translatedTextsArray = parsedResponse.translations;
-
-      if (translatedTextsArray.length !== captions.length) {
-        const countMismatchErrorMsg = `Number of translated texts (${translatedTextsArray.length}) does not match input size (${captions.length}).`;
-        errorLog(
-          'ChatModelHandler [translateYoutubeCaption] Item count mismatch error:',
-          countMismatchErrorMsg
-        );
-        if (captions.length > 1) {
-          debugLog('TranslationHandler [translateYoutubeCaption] retrying in halves:', captions.length);
-          return this.translateYoutubeCaptionInHalves(captions, context, following, targetLanguage, metadata);
-        }
-        return {
-          success: false,
-          error: `Item count mismatch in AI response. Details: ${countMismatchErrorMsg}`,
-        };
-      }
-
-      return {
-        success: true,
-        captions: captions.map((c, index) => ({
-          ...c,
-          text: translatedTextsArray[index],
-        })),
-      };
-    } catch (err) {
-      errorLog('TranslationHandler [translateYoutubeCaption] general error:', err);
-      return {
-        success: false,
-        error: `General error during Youtube Caption translation. Error: ${
-          (err as Error).message ?? String(err)
-        }`,
-      };
+      await Promise.all([
+        chatGPT ? warmUpChatGPT() : undefined,
+        provider ? fetch(API_ORIGINS[provider], { method: 'HEAD', cache: 'no-store' }) : undefined,
+      ]);
+    } catch (error) {
+      debugLog('TranslationHandler [warmUp] failed:', error);
     }
   }
 
-  // The model sometimes merges two fragmentary caption lines into one, so a chunk whose line
-  // count comes back wrong is retried in halves. Parts that still fail keep their original text.
-  private async translateYoutubeCaptionInHalves(
-    captions: Caption[],
-    context: TranslationContext[],
-    following: string[],
-    targetLanguage: Language,
-    metadata: VideoMetadata
-  ): Promise<YoutubeCaptionTranslationResult> {
-    const middle = Math.ceil(captions.length / 2);
-    const parts = [captions.slice(0, middle), captions.slice(middle)];
-    const results = await Promise.all(
-      parts.map((part) => this.translateYoutubeCaption(part, context, following, targetLanguage, metadata))
+  // One chunk of YouTube captions, each line handed to `onLine` as the model writes it (by its
+  // index in the chunk). Lines the answer skipped are asked once more on their own; one still
+  // missing comes back ''. A chunk translated before, by the same model into the same language,
+  // comes from the saved translations.
+  public async streamYoutubeCaption(
+    { lines, context, following, targetLanguage, metadata }: YoutubeCaptionRequest,
+    onLine: (index: number, text: string) => void,
+    signal: AbortSignal
+  ): Promise<string[]> {
+    const modelPreset = getTranslationModelPreset();
+    const key = await translationCacheKey(
+      modelPreset.modelName,
+      targetLanguage,
+      `youtube-caption\u0000${JSON.stringify(lines)}`
     );
-    return {
-      success: true,
-      captions: results.flatMap((result, i) =>
-        result.success && result.captions ? result.captions : parts[i]
-      ),
+    const saved = savedLines(await getCachedTranslations([key]).then(([row]) => row), lines.length);
+    if (saved) {
+      saved.forEach((text, index) => onLine(index, text));
+      return saved;
+    }
+
+    const translations: (string | undefined)[] = new Array(lines.length).fill(undefined);
+    const ask = (indexes: number[]) => {
+      const first = indexes[0];
+      const last = indexes[indexes.length - 1];
+      // Asked again, a line keeps the ones the answer did give around it as context.
+      const before = lines.slice(0, first).map((source, i) => ({ source, translation: translations[i] ?? '' }));
+      const prompt = getYoutubeCaptionTranslationPrompt(
+        indexes.map((index) => lines[index]),
+        [...context, ...before],
+        [...lines.slice(last + 1), ...following],
+        targetLanguage,
+        metadata
+      );
+      debugLog('TranslationHandler [streamYoutubeCaption] prompt:', prompt);
+      return streamNumberedLines(prompt, indexes.length, modelPreset, signal, (i, text) => {
+        translations[indexes[i]] = text;
+        onLine(indexes[i], text);
+      });
     };
+
+    await ask(lines.map((_, index) => index));
+    const missing = lines.map((_, index) => index).filter((index) => translations[index] === undefined);
+    if (missing.length && !signal.aborted) {
+      debugLog('TranslationHandler [streamYoutubeCaption] asking again for lines:', missing);
+      await ask(missing);
+    }
+    const result = translations.map((text) => text ?? '');
+    if (translations.every((text) => text !== undefined)) {
+      await cacheTranslations([{ key, translation: JSON.stringify(result) }]);
+    }
+    return result;
   }
 
   public async translateLiveCaption(
@@ -340,11 +364,24 @@ export class TranslationHandler {
     targetLanguage: Language,
     metadata: SubtitleMetadata
   ): Promise<LiveCaptionTranslationResult> {
-    return this.translateLines(
+    // Saved like YouTube captions: a title watched again costs nothing.
+    const key = await translationCacheKey(
+      getCurrentTranslateModel(),
+      targetLanguage,
+      `subtitles\u0000${JSON.stringify(lines)}`
+    );
+    const saved = savedLines(await getCachedTranslations([key]).then(([row]) => row), lines.length);
+    if (saved) return { success: true, translations: saved };
+    const result = await this.translateLines(
       lines,
       (part) => getSubtitleTranslationPrompt(part, context, following, targetLanguage, metadata),
       'translateSubtitles'
     );
+    // A part the halves retry gave up on comes back '' and is asked again next time.
+    if (result.success && result.translations?.every((text, i) => text.trim() || !lines[i].trim())) {
+      await cacheTranslations([{ key, translation: JSON.stringify(result.translations) }]);
+    }
+    return result;
   }
 
   // A word clicked in a caption line, explained by the translation model; null when it can't say.

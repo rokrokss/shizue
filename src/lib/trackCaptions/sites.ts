@@ -166,6 +166,16 @@ const ted: TrackCaptionSite = {
   zIndex: 10,
 };
 
+// Any other page whose video has a caption <track> (entrypoints/track-caption.content). The
+// browser draws a track that is showing; ours replace it while on (trackCaptions.tsx hides it).
+export const anyTrackSite: TrackCaptionSite = {
+  name: 'video',
+  playerOf: positionedAround,
+  hasCaptions: hasTrack,
+  title: pageTitle,
+  zIndex: 10,
+};
+
 // The streaming service this page is on, if any.
 export const streamingSiteFor = (hostname: string, pathname: string): DomCaptionSite | null => {
   const host = hostname.replace(/^www\./, '');

@@ -1,5 +1,6 @@
 import { MESSAGE_CONTEXT_MENU_SUMMARIZE_PAGE, MESSAGE_READ_TAB_VIDEO_TRANSCRIPT, MESSAGE_UPDATE_PANEL_INIT_DATA, SUMMARY_PAGE_TEXT_MAX_CHARS } from '@/config/constants';
 import { initSummarizePageContent } from '@/lib/initPanelData';
+import { MAIN_TEXT_EXCLUDE, readPageContent } from '@/lib/mainText';
 import { netflixVideoId, transcriptText, videoKey, youtubeVideoId, type VideoTranscript } from '@/lib/videoTranscript';
 import { readYoutubeTranscript } from '@/lib/youtubeTranscript';
 import { debugLog } from '@/logs';
@@ -19,7 +20,7 @@ export async function summarizeCurrentPage() {
   const isVideo = videoKey(url) !== null;
   const video = isVideo ? await readVideoTranscript(url) : null;
   const text = (
-    video?.captions ? transcriptText(video) : document.body?.innerText ?? ''
+    video?.captions ? transcriptText(video) : readPageContent(MAIN_TEXT_EXCLUDE).text
   ).slice(0, SUMMARY_PAGE_TEXT_MAX_CHARS);
   // Netflix's page title is just "Netflix"; the player names the title.
   const title = netflixVideoId(url) && video ? video.title : document.title;

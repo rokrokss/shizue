@@ -155,6 +155,7 @@
     "browserAgent": "Điều khiển trình duyệt",
     "browserAgentHint": "Shizue tự nhấp và nhập trong thẻ hiện tại",
     "browserAgentPlaceholder": "Tôi nên làm gì trong thẻ này?",
+    "agentSteerPlaceholder": "Bổ sung nhiệm vụ hoặc trả lời câu hỏi",
     "selectAllTabs": "Chọn tất cả",
     "deselectAllTabs": "Bỏ chọn tất cả",
     "browserControlHintTitle": "Shizue có thể làm việc này trong thẻ của bạn",
@@ -258,6 +259,7 @@
     "youtubeCaptionButton": "Nút Chú thích Youtube",
     "captionSizeRatio": "Kích thước chú thích",
     "useKeyboardNavigate": "Điều hướng phụ đề bằng A/D",
+    "wordHighlight": "Tô sáng từ đang được nói",
     "sourceTrack": "Phụ đề YouTube",
     "spokenLanguage": "Ngôn ngữ nói",
     "speechUnavailable": "Thiết bị này không thể nhận dạng giọng nói bằng ngôn ngữ này",
@@ -416,13 +418,23 @@
       "scrollUp": "Cuộn lên",
       "navigate": "Mở {{host}}",
       "back": "Quay lại",
-      "wait": "Chờ trang"
+      "wait": "Chờ trang",
+      "ask": "Câu hỏi: {{text}}",
+      "steer": "Bạn nói: “{{text}}”",
+      "look": "Xem màn hình",
+      "clickAt": "Nhấp một điểm trên màn hình",
+      "openTab": "Mở {{host}} trong thẻ mới",
+      "switchTab": "Chuyển sang thẻ {{tab}}",
+      "tool": "Dùng công cụ của trang ‘{{target}}’"
     },
     "approvalTitle": "Cho phép thao tác này?",
     "approvalHint": "Có thể gửi, xóa hoặc thanh toán và khó hoàn tác",
     "allow": "Cho phép",
     "deny": "Từ chối",
     "denied": "Đã từ chối",
+    "replied": "Câu trả lời của bạn: {{text}}",
+    "questionTitle": "Shizue có một câu hỏi",
+    "questionHint": "Trả lời trong ô bên dưới",
     "error": {
       "not_found": "Phần tử đó không còn trên trang",
       "secret_field": "Vui lòng tự nhập mật khẩu và thông tin thẻ",
@@ -430,16 +442,24 @@
       "no_option": "Không có lựa chọn đó",
       "bad_url": "Không mở được địa chỉ này",
       "unreachable": "Không thể điều khiển trang này",
+      "not_visible": "Thẻ này không hiển thị trên màn hình",
+      "no_screenshot": "Cần xem màn hình trước",
+      "no_tab": "Không có thẻ đó",
+      "no_tool": "Trang không có công cụ đó",
+      "repeated": "Lặp lại cùng thao tác trên trang không thay đổi",
       "failed": "Không thực hiện được"
     },
     "outcome": {
       "stopped": "Đã dừng",
       "max_steps": "Đã dừng vì quá nhiều bước. Hãy chia nhỏ việc cần làm",
       "unavailable": "Không thể điều khiển thẻ này. Hãy mở một trang web rồi thử lại",
-      "failed": "Đã dừng vì không xác định được bước tiếp theo"
+      "failed": "Đã dừng vì không xác định được bước tiếp theo",
+      "looping": "Đã dừng vì cứ lặp lại cùng một thao tác",
+      "unanswered": "Đã dừng vì câu hỏi không được trả lời"
     },
     "overlayWorking": "Shizue đang thao tác trong thẻ này",
     "overlayWaiting": "Đang chờ bạn cho phép trong bảng điều khiển",
+    "overlayAsking": "Đang chờ câu trả lời của bạn trong bảng điều khiển",
     "overlayStop": "Dừng",
     "autoApproved": "Đã làm mà không hỏi"
   }

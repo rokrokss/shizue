@@ -46,8 +46,16 @@ export interface ModelOptions {
   // JSON object output. Gemini enforces the schema; OpenAI and OpenRouter use JSON mode;
   // Anthropic relies on the prompt.
   jsonSchema?: Record<string, unknown>;
+  // A chat, whose turns all go again with each question: Anthropic caches them (prompt caching),
+  // so a long attached page or transcript costs a tenth from the next question on. Not for one-off
+  // requests, since writing the cache costs a quarter more than reading the prompt once.
+  promptCache?: boolean;
   modelPreset: ModelPreset;
 }
+
+// The cache breakpoint goes on the request's last block and moves with the conversation, so each
+// turn reads the turns before it. Prompts under the model's minimum length are just not cached.
+const PROMPT_CACHE = { cache_control: { type: 'ephemeral' as const } };
 
 const providerNames: Record<ApiKeyProvider, string> = {
   'openai-api-key': 'OpenAI',
@@ -265,7 +273,8 @@ export function getModelInstance(opts: ModelOptions) {
   if (opts.modelPreset.connectionMode === 'openrouter') return createOpenRouter(spec, opts);
   if (spec.provider === 'openai-api-key') return createOpenAI(spec, opts);
   if (spec.provider === 'gemini-api-key') return createGemini(spec, opts);
-  return createAnthropic(spec, opts);
+  const anthropic = createAnthropic(spec, opts);
+  return opts.promptCache ? anthropic.withConfig(PROMPT_CACHE) : anthropic;
 }
 
 // The chat model with its provider's own web search tool (see modelSupportsWebSearch). The OpenAI
@@ -287,7 +296,8 @@ export function getWebSearchModelInstance(opts: ModelOptions) {
   if (spec.provider === 'gemini-api-key') {
     return createGemini(spec, opts).bindTools([{ googleSearch: {} }]);
   }
-  return createAnthropic(spec, opts).bindTools([
+  const anthropic = createAnthropic(spec, opts).bindTools([
     { type: 'web_search_20250305', name: 'web_search', max_uses: 5 },
   ]);
+  return opts.promptCache ? anthropic.withConfig(PROMPT_CACHE) : anthropic;
 }

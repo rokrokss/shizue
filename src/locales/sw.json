@@ -155,6 +155,7 @@
     "browserAgent": "Udhibiti wa kivinjari",
     "browserAgentHint": "Shizue hubofya na kuandika kwenye kichupo cha sasa",
     "browserAgentPlaceholder": "Nifanye nini kwenye kichupo hiki?",
+    "agentSteerPlaceholder": "Ongeza kwenye kazi au jibu swali lake",
     "selectAllTabs": "Chagua zote",
     "deselectAllTabs": "Ondoa zote",
     "browserControlHintTitle": "Shizue inaweza kufanya hivi kwenye kichupo chako",
@@ -258,6 +259,7 @@
     "youtubeCaptionButton": "Kitufe cha Caption ya Youtube",
     "captionSizeRatio": "Kichwa cha Caption",
     "useKeyboardNavigate": "Abiri Manukuu kwa A/D",
+    "wordHighlight": "Angazia maneno yanayotamkwa",
     "sourceTrack": "Manukuu ya YouTube",
     "spokenLanguage": "Lugha inayozungumzwa",
     "speechUnavailable": "Kifaa hiki hakiwezi kutambua sauti katika lugha hii",
@@ -416,13 +418,23 @@
       "scrollUp": "Sogeza juu",
       "navigate": "Fungua {{host}}",
       "back": "Rudi nyuma",
-      "wait": "Subiri ukurasa"
+      "wait": "Subiri ukurasa",
+      "ask": "Swali: {{text}}",
+      "steer": "Ulisema: “{{text}}”",
+      "look": "Tazama skrini",
+      "clickAt": "Bofya sehemu fulani ya skrini",
+      "openTab": "Fungua {{host}} kwenye kichupo kipya",
+      "switchTab": "Nenda kwenye kichupo {{tab}}",
+      "tool": "Tumia zana ya tovuti ‘{{target}}’"
     },
     "approvalTitle": "Ruhusu kitendo hiki?",
     "approvalHint": "Huenda ikatuma, kufuta au kulipa, na kuwa vigumu kutengua",
     "allow": "Ruhusu",
     "deny": "Kataa",
     "denied": "Imekataliwa",
+    "replied": "Jibu lako: {{text}}",
+    "questionTitle": "Shizue ina swali",
+    "questionHint": "Jibu kwenye kisanduku hapa chini",
     "error": {
       "not_found": "Kipengele hicho hakipo tena kwenye ukurasa",
       "secret_field": "Tafadhali weka nenosiri na maelezo ya kadi mwenyewe",
@@ -430,16 +442,24 @@
       "no_option": "Hakuna chaguo hilo",
       "bad_url": "Anwani hiyo haiwezi kufunguliwa",
       "unreachable": "Ukurasa huu hauwezi kudhibitiwa",
+      "not_visible": "Kichupo hiki hakionekani kwenye skrini",
+      "no_screenshot": "Inabidi itazame skrini kwanza",
+      "no_tab": "Hakuna kichupo hicho",
+      "no_tool": "Tovuti haina zana hiyo",
+      "repeated": "Kitendo kilekile tena kwenye ukurasa usiobadilika",
       "failed": "Haikufanikiwa"
     },
     "outcome": {
       "stopped": "Imesimamishwa",
       "max_steps": "Imesimama baada ya hatua nyingi mno. Jaribu kazi ndogo zaidi",
       "unavailable": "Kichupo hiki hakiwezi kudhibitiwa. Fungua ukurasa wa wavuti kisha ujaribu tena",
-      "failed": "Imesimama: haikuweza kuamua hatua inayofuata"
+      "failed": "Imesimama: haikuweza kuamua hatua inayofuata",
+      "looping": "Imesimama: ilirudia kitendo kilekile",
+      "unanswered": "Imesimama: swali halikujibiwa"
     },
     "overlayWorking": "Shizue inafanya kazi kwenye kichupo hiki",
     "overlayWaiting": "Inasubiri ruhusa yako kwenye paneli",
+    "overlayAsking": "Inasubiri jibu lako kwenye paneli",
     "overlayStop": "Simamisha",
     "autoApproved": "Imefanywa bila kuuliza"
   }

@@ -155,6 +155,7 @@
     "browserAgent": "ควบคุมเบราว์เซอร์",
     "browserAgentHint": "Shizue คลิกและพิมพ์ในแท็บปัจจุบันให้",
     "browserAgentPlaceholder": "ให้ทำอะไรในแท็บนี้",
+    "agentSteerPlaceholder": "เพิ่มเติมงานหรือตอบคำถาม",
     "selectAllTabs": "เลือกทั้งหมด",
     "deselectAllTabs": "ยกเลิกทั้งหมด",
     "browserControlHintTitle": "Shizue ทำสิ่งนี้ในแท็บของคุณได้",
@@ -258,6 +259,7 @@
     "youtubeCaptionButton": "ปุ่มคำบรรยาย Youtube",
     "captionSizeRatio": "ขนาดคำบรรยาย",
     "useKeyboardNavigate": "นำทางคำบรรยายด้วย A/D",
+    "wordHighlight": "ไฮไลต์คำที่กำลังพูด",
     "sourceTrack": "คำบรรยาย YouTube",
     "spokenLanguage": "ภาษาที่พูด",
     "speechUnavailable": "อุปกรณ์นี้ไม่สามารถรู้จำเสียงพูดในภาษานี้ได้",
@@ -416,13 +418,23 @@
       "scrollUp": "เลื่อนขึ้น",
       "navigate": "เปิด {{host}}",
       "back": "ย้อนกลับ",
-      "wait": "รอหน้าเว็บ"
+      "wait": "รอหน้าเว็บ",
+      "ask": "คำถาม: {{text}}",
+      "steer": "คุณบอกว่า: “{{text}}”",
+      "look": "ดูหน้าจอ",
+      "clickAt": "คลิกจุดหนึ่งบนหน้าจอ",
+      "openTab": "เปิด {{host}} ในแท็บใหม่",
+      "switchTab": "ไปที่แท็บ {{tab}}",
+      "tool": "ใช้เครื่องมือของเว็บไซต์ ‘{{target}}’"
     },
     "approvalTitle": "อนุญาตการทำงานนี้ไหม",
     "approvalHint": "อาจเป็นการส่ง ลบ หรือชำระเงินที่ย้อนกลับได้ยาก",
     "allow": "อนุญาต",
     "deny": "ปฏิเสธ",
     "denied": "ปฏิเสธแล้ว",
+    "replied": "คำตอบของคุณ: {{text}}",
+    "questionTitle": "Shizue มีคำถาม",
+    "questionHint": "ตอบในช่องด้านล่าง",
     "error": {
       "not_found": "องค์ประกอบนั้นไม่อยู่ในหน้าแล้ว",
       "secret_field": "โปรดกรอกรหัสผ่านและข้อมูลบัตรด้วยตนเอง",
@@ -430,16 +442,24 @@
       "no_option": "ไม่มีตัวเลือกนี้",
       "bad_url": "เปิดที่อยู่นี้ไม่ได้",
       "unreachable": "ควบคุมหน้านี้ไม่ได้",
+      "not_visible": "แท็บนี้ไม่ได้แสดงบนหน้าจอ",
+      "no_screenshot": "ต้องดูหน้าจอก่อน",
+      "no_tab": "ไม่มีแท็บนี้",
+      "no_tool": "เว็บไซต์ไม่มีเครื่องมือนี้",
+      "repeated": "ทำแบบเดิมซ้ำบนหน้าที่ไม่เปลี่ยน",
       "failed": "ทำไม่สำเร็จ"
     },
     "outcome": {
       "stopped": "หยุดแล้ว",
       "max_steps": "หยุดเพราะขั้นตอนมากเกินไป ลองแบ่งงานให้เล็กลง",
       "unavailable": "ควบคุมแท็บนี้ไม่ได้ เปิดหน้าเว็บแล้วลองอีกครั้ง",
-      "failed": "หยุดเพราะตัดสินใจขั้นต่อไปไม่ได้"
+      "failed": "หยุดเพราะตัดสินใจขั้นต่อไปไม่ได้",
+      "looping": "หยุดเพราะทำแบบเดิมซ้ำไปมา",
+      "unanswered": "หยุดเพราะไม่มีคำตอบสำหรับคำถาม"
     },
     "overlayWorking": "Shizue กำลังทำงานในแท็บนี้",
     "overlayWaiting": "กำลังรอการอนุญาตในแผง",
+    "overlayAsking": "กำลังรอคำตอบของคุณในแผง",
     "overlayStop": "หยุด",
     "autoApproved": "ทำโดยไม่ถาม"
   }

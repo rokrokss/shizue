@@ -175,7 +175,11 @@ function summaryFixture() {
     } },
   };
   return { chrome, listeners, data, writes, sent, globals: {
-    chrome, document: { title: 'Fixture page', body: { innerText: 'Page content '.repeat(10_000) } },
+    chrome, document: {
+      title: 'Fixture page',
+      querySelectorAll: () => [],
+      body: { innerText: 'Page content '.repeat(10_000), querySelectorAll: () => [] },
+    },
     window: { location: { href: 'https://example.test/page' } },
   } };
 }

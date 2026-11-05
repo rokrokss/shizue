@@ -22,6 +22,7 @@ import {
   speechAvailability,
 } from '@/lib/liveCaption/webSpeechSource';
 import type { LiveCaptionMetadata } from '@/lib/prompts';
+import { speechPhrases } from '@/lib/liveCaption/speechPhrases';
 import { debugLog } from '@/logs';
 import { translationService } from '@/services/translationService';
 import { StrictMode } from 'react';
@@ -512,7 +513,8 @@ export class LiveCaptionController<S extends string> {
             this.emit();
           },
         },
-        () => this.platform.video()
+        () => this.platform.video(),
+        speechPhrases(this.platform.metadata())
       )
       // Starting during an ad or a pause (navigation, language change) starts paused.
       .then(() => {

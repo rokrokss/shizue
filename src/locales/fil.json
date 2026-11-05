@@ -155,6 +155,7 @@
     "browserAgent": "Kontrol ng browser",
     "browserAgentHint": "Nagki-click at nagta-type si Shizue sa kasalukuyang tab",
     "browserAgentPlaceholder": "Ano ang gagawin ko sa tab na ito?",
+    "agentSteerPlaceholder": "Magdagdag sa gawain o sagutin ang tanong",
     "selectAllTabs": "Piliin lahat",
     "deselectAllTabs": "Alisin lahat",
     "browserControlHintTitle": "Kaya itong gawin ni Shizue sa tab mo",
@@ -258,6 +259,7 @@
     "youtubeCaptionButton": "Button ng Caption sa YouTube",
     "captionSizeRatio": "Laki ng Caption",
     "useKeyboardNavigate": "I-navigate ang Subtitles gamit ang A/D",
+    "wordHighlight": "I-highlight ang mga salitang binibigkas",
     "sourceTrack": "Mga caption ng YouTube",
     "spokenLanguage": "Wikang sinasalita",
     "speechUnavailable": "Hindi kayang kilalanin ng device na ito ang pananalita sa wikang ito",
@@ -416,13 +418,23 @@
       "scrollUp": "Mag-scroll pataas",
       "navigate": "Buksan ang {{host}}",
       "back": "Bumalik",
-      "wait": "Hintayin ang pahina"
+      "wait": "Hintayin ang pahina",
+      "ask": "Tanong: {{text}}",
+      "steer": "Sinabi mo: “{{text}}”",
+      "look": "Tingnan ang screen",
+      "clickAt": "I-click ang isang bahagi ng screen",
+      "openTab": "Buksan ang {{host}} sa bagong tab",
+      "switchTab": "Pumunta sa tab {{tab}}",
+      "tool": "Gamitin ang tool ng site na ‘{{target}}’"
     },
     "approvalTitle": "Payagan ang aksyong ito?",
     "approvalHint": "Maaaring magpadala, magbura o magbayad ito at mahirap bawiin",
     "allow": "Payagan",
     "deny": "Tanggihan",
     "denied": "Tinanggihan",
+    "replied": "Sagot mo: {{text}}",
+    "questionTitle": "May tanong si Shizue",
+    "questionHint": "Sumagot sa kahon sa ibaba",
     "error": {
       "not_found": "Wala na sa pahina ang elementong iyon",
       "secret_field": "Ikaw na ang maglagay ng password at detalye ng card",
@@ -430,16 +442,24 @@
       "no_option": "Walang ganoong opsyon",
       "bad_url": "Hindi mabuksan ang address na iyon",
       "unreachable": "Hindi makontrol ang pahinang ito",
+      "not_visible": "Wala sa screen ang tab na ito",
+      "no_screenshot": "Kailangan munang tingnan ang screen",
+      "no_tab": "Walang ganoong tab",
+      "no_tool": "Walang ganoong tool ang site",
+      "repeated": "Parehong aksyon ulit sa pahinang hindi nagbago",
       "failed": "Hindi gumana"
     },
     "outcome": {
       "stopped": "Itinigil",
       "max_steps": "Huminto dahil sa sobrang daming hakbang. Subukan ang mas maliit na gawain",
       "unavailable": "Hindi makontrol ang tab na ito. Magbukas ng web page at subukang muli",
-      "failed": "Huminto: hindi matukoy ang susunod na gagawin"
+      "failed": "Huminto: hindi matukoy ang susunod na gagawin",
+      "looping": "Huminto: inuulit-ulit ang parehong aksyon",
+      "unanswered": "Huminto: hindi nasagot ang tanong"
     },
     "overlayWorking": "Gumagana si Shizue sa tab na ito",
     "overlayWaiting": "Naghihintay ng pahintulot mo sa panel",
+    "overlayAsking": "Naghihintay ng sagot mo sa panel",
     "overlayStop": "Itigil",
     "autoApproved": "Ginawa nang hindi nagtatanong"
   }

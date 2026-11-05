@@ -8,7 +8,7 @@ export const MESSAGE_RUN_GRAPH_STREAM = 'run_graph_stream';
 export const MESSAGE_RETRY_GRAPH_STREAM = 'retry_graph_stream';
 export const MESSAGE_CANCEL_NOT_STARTED_MESSAGE = 'cancel_not_started_message';
 export const MESSAGE_TRANSLATE_HTML_TEXT_BATCH = 'translate_html_text_batch';
-export const MESSAGE_TRANSLATE_YOUTUBE_CAPTION = 'translate_youtube_caption';
+export const MESSAGE_WARM_UP_TRANSLATION = 'warm_up_translation';
 export const MESSAGE_TRANSLATE_LIVE_CAPTION = 'translate_live_caption';
 export const MESSAGE_TRANSLATE_SUBTITLES = 'translate_subtitles';
 export const MESSAGE_INJECT_TWITCH_BRIDGE = 'inject_twitch_bridge';
@@ -24,6 +24,8 @@ export const MESSAGE_TRANSLATE_IMAGE = 'action_translate_image';
 // The browser agent (lib/browserAgent.ts): the panel's answer to an approval card, over the
 // answer's port, and the stop button of the agent's pill on the page.
 export const MESSAGE_AGENT_APPROVAL = 'action_agent_approval';
+// What the user types while the browser agent works: a change to the task, or the answer it asked for.
+export const MESSAGE_AGENT_STEER = 'action_agent_steer';
 export const MESSAGE_AGENT_STOP = 'action_agent_stop';
 export const MESSAGE_CONTEXT_MENU_TRANSLATE_IMAGE = 'action_context_menu_translate_image';
 export const MESSAGE_CONTEXT_MENU_TRANSLATE_PAGE_IMAGES = 'action_context_menu_translate_page_images';
@@ -43,9 +45,13 @@ export const MESSAGE_LOOKUP_WORD = 'lookup_word';
 export const MESSAGE_SAVE_WORD = 'save_word';
 // A youtube-nocookie.com embed → background: the video's player data from its youtube.com watch page.
 export const MESSAGE_FETCH_YOUTUBE_PLAYER = 'fetch_youtube_player';
+// A frame with a captioned <video> asks for the caption script (entrypoints/track-detector.content).
+export const MESSAGE_INJECT_TRACK_CAPTIONS = 'inject_track_captions';
 
 /* port */
 export const PORT_STREAM_MESSAGE = 'stream_message_key';
+// A chunk of YouTube captions, translated a line at a time (services/background/captionPort.ts).
+export const PORT_YOUTUBE_CAPTION = 'youtube_caption';
 
 /* storage */
 export const STORAGE_LANGUAGE = 'LANGUAGE';
@@ -80,8 +86,11 @@ export const STORAGE_TOGGLE_Y_POSITION = 'TOGGLE_Y_POSITION';
 export const STORAGE_SHOW_YOUTUBE_CAPTION_TOGGLE = 'SHOW_YOUTUBE_CAPTION_TOGGLE';
 export const STORAGE_CAPTION_DISPLAY = 'CAPTION_DISPLAY';
 export const STORAGE_CAPTION_STYLE = 'CAPTION_STYLE';
+export const STORAGE_CAPTION_WORD_HIGHLIGHT = 'CAPTION_WORD_HIGHLIGHT';
 export const STORAGE_USE_YOUTUBE_KEYBOARD_NAVIGATE = 'USE_YOUTUBE_KEYBOARD_NAVIGATE';
 export const STORAGE_YOUTUBE_CAPTION_SIZE_RATIO = 'YOUTUBE_CAPTION_SIZE_RATIO';
+// Where YouTube captions were dragged to (lib/captionMove.ts), for every video.
+export const STORAGE_YOUTUBE_CAPTION_POSITION = 'YOUTUBE_CAPTION_POSITION';
 export const STORAGE_YOUTUBE_AUTO_ACTIVATE = 'YOUTUBE_AUTO_ACTIVATE';
 export const STORAGE_SHOW_TWITCH_CAPTION_TOGGLE = 'SHOW_TWITCH_CAPTION_TOGGLE';
 export const STORAGE_TWITCH_CAPTION_SOURCE = 'TWITCH_CAPTION_SOURCE';

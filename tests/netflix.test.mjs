@@ -175,6 +175,83 @@ test('cue translator retries a failed chunk once, then leaves its originals', as
   assert.equal(translator.translation(0), '');
 });
 
+test('cue translator shows streamed lines, drops the request under way on a seek, and translates everything on request', async () => {
+  const requested = [];
+  const pending = [];
+  const translator = createCueTranslator({
+    cues: cuesEvery(60, 10),
+    chunkSize: 10,
+    lookaheadSeconds: 50,
+    onUpdate: () => {},
+    translate: (part, start, onLine, signal) =>
+      new Promise((resolve) => {
+        requested.push(start);
+        onLine(0, `streamed ${start}`);
+        pending.push({ start, signal, finish: () => resolve(part.map((cue) => `T ${cue.text}`)) });
+      }),
+  });
+  translator.setPosition(0);
+  await settle();
+  assert.deepEqual(requested, [0]);
+  assert.equal(translator.translation(0), 'streamed 0');
+  assert.equal(translator.translation(1), undefined);
+  // A seek to lines not translated yet: the first chunk's request is dropped.
+  translator.setPosition(305);
+  assert.equal(pending[0].signal.aborted, true);
+  for (let i = 0; i < 5; i++) await settle();
+  assert.deepEqual(requested, [0, 30]);
+  pending[1].finish();
+  for (let i = 0; i < 5; i++) await settle();
+  assert.equal(translator.translation(35), 'T line 35');
+  // Chunk 4 starts at 400 s, past 305 + 50 s.
+  assert.deepEqual(requested, [0, 30]);
+  assert.ok(translator.progress() > 0 && translator.progress() < 1);
+  translator.translateAll();
+  for (let round = 0; round < 6; round++) {
+    for (let i = 0; i < 5; i++) await settle();
+    pending.at(-1).finish();
+  }
+  for (let i = 0; i < 5; i++) await settle();
+  // The rest after the position, then what is before it, the dropped chunk again among them.
+  assert.deepEqual(requested, [0, 30, 40, 50, 0, 10, 20]);
+  assert.equal(translator.progress(), 1);
+  assert.equal(translator.translation(0), 'T line 0');
+});
+
+test('cue translator keeps playing through a chunk under way', async () => {
+  const pending = [];
+  const translator = createCueTranslator({
+    cues: cuesEvery(30, 1),
+    chunkSize: 10,
+    onUpdate: () => {},
+    translate: (part, start, onLine, signal) => new Promise(() => pending.push(signal)),
+  });
+  translator.setPosition(0);
+  await settle();
+  // Playback within the chunk being translated leaves it alone.
+  translator.setPosition(5);
+  assert.equal(pending[0].aborted, false);
+  translator.stop();
+  assert.equal(pending[0].aborted, true);
+});
+
+const { createNumberedLineReader, numberLines } = await load('numberedLines');
+
+test('numbered caption lines are read as they stream, in the forms models drift into', () => {
+  const seen = [];
+  const reader = createNumberedLineReader(6, (index, text) => seen.push([index, text]));
+  reader.push('```\n1\tHel');
+  assert.deepEqual(seen, []);
+  reader.push('lo there\n2. Second\n3: third\n[4] fourth\n');
+  assert.deepEqual(seen, [[0, 'Hello there'], [1, 'Second'], [2, 'third'], [3, 'fourth']]);
+  // A repeated number keeps the first; out of range and unnumbered lines are skipped.
+  reader.push('2\tagain\n9\tnine\nA note\n2024년에\n6\t');
+  const lines = reader.end();
+  assert.deepEqual(seen.slice(4), [[5, '']]);
+  assert.deepEqual(lines, ['Hello there', 'Second', 'third', 'fourth', undefined, '']);
+  assert.equal(numberLines(['a', 'two\nlines']), '1\ta\n2\ttwo lines');
+});
+
 const { pickOriginalTrack, pickTargetTrack } = await load('netflix/tracks');
 const track = (trackId, language, closedCaptions = false) => ({ trackId, language, label: language, closedCaptions });
 

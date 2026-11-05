@@ -9,6 +9,8 @@ type SpeechRecognitionLike = {
   continuous: boolean;
   interimResults: boolean;
   processLocally?: boolean;
+  // Chrome's contextual biasing, on-device only (speechPhrases.ts).
+  phrases?: unknown[];
   start: (track?: MediaStreamTrack) => void;
   stop: () => void;
   abort: () => void;
@@ -68,6 +70,8 @@ export const installOnDeviceSpeech = async (lang: string) => {
 
 // Errors that restarting will not fix.
 const FATAL_ERRORS = new Set(['not-allowed', 'service-not-allowed', 'language-not-supported']);
+// How strongly the stream's names are listened for, of 10: enough to beat a near sound-alike.
+const PHRASE_BOOST = 3;
 // A cloud session can stop returning results without ending; restart it after this long.
 const STALL_MS = 20_000;
 // Keep the snapshot short: the segmenter only needs the part that is still changing.
@@ -78,6 +82,7 @@ class WebSpeechSource {
   private findVideo: () => HTMLVideoElement | null = () => null;
   private lang = 'en-US';
   private processLocally = false;
+  private phrases: string[] = [];
   private recognition: SpeechRecognitionLike | null = null;
   private video: HTMLVideoElement | null = null;
   private stream: MediaStream | null = null;
@@ -89,12 +94,18 @@ class WebSpeechSource {
   private restartTimer: ReturnType<typeof setTimeout> | null = null;
   private watchdog: ReturnType<typeof setInterval> | null = null;
 
-  // findVideo returns the site's player <video>.
-  async start(lang: string, callbacks: WebSpeechCallbacks, findVideo: () => HTMLVideoElement | null) {
+  // findVideo returns the site's player <video>. `phrases` are names to listen for.
+  async start(
+    lang: string,
+    callbacks: WebSpeechCallbacks,
+    findVideo: () => HTMLVideoElement | null,
+    phrases: string[] = []
+  ) {
     this.stop();
     this.callbacks = callbacks;
     this.findVideo = findVideo;
     this.lang = lang;
+    this.phrases = phrases;
     this.processLocally = (await speechAvailability(lang, true)) === 'available';
     this.running = true;
     this.paused = false;
@@ -174,6 +185,14 @@ class WebSpeechSource {
     recognition.continuous = true;
     recognition.interimResults = true;
     if ('processLocally' in recognition) recognition.processLocally = this.processLocally;
+    const Phrase = (window as any).SpeechRecognitionPhrase;
+    if (this.processLocally && Phrase && this.phrases.length && 'phrases' in recognition) {
+      try {
+        recognition.phrases = this.phrases.map((phrase) => new Phrase(phrase, PHRASE_BOOST));
+      } catch (error) {
+        debugLog('[LiveCaption] speech phrases not taken', error);
+      }
+    }
     recognition.onresult = (event) => {
       this.lastResultAt = Date.now();
       this.failures = 0;
@@ -194,6 +213,11 @@ class WebSpeechSource {
       if (FATAL_ERRORS.has(error)) {
         this.callbacks?.onError(error);
         this.stop();
+        return;
+      }
+      // This recognizer takes no phrases: the next session goes without.
+      if (error === 'phrases-not-supported') {
+        this.phrases = [];
         return;
       }
       if (error !== 'no-speech' && error !== 'aborted') this.failures++;

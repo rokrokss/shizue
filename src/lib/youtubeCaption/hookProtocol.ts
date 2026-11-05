@@ -5,13 +5,15 @@ export const HOOK_TO_CONTENT_EVENT = 'shizue:youtube-hook';
 export const CONTENT_TO_HOOK_EVENT = 'shizue:youtube-hook-request';
 
 // Caption lines read from the player's responses: [start s, end s, text] in media time. Or, when
-// asked, the audio track playing ('ko.4'; null without a choice of tracks).
+// asked, the audio track playing ('ko.4'; null without a choice of tracks), or the player's data
+// for the video it holds (its player response, as the watch page has it; null without one).
 export type HookMessage =
   | { type: 'captions'; cues: [number, number, string][] }
-  | { type: 'audioTrack'; id: string | null };
+  | { type: 'audioTrack'; id: string | null }
+  | { type: 'playerResponse'; response: unknown };
 
 // Reading costs a copy of every media response, so it runs only while live captions want it.
-export type HookRequest = { type: 'captions'; on: boolean } | { type: 'audioTrack' };
+export type HookRequest = { type: 'captions'; on: boolean } | { type: 'audioTrack' } | { type: 'playerResponse' };
 
 export const parseHookDetail = <T extends { type: string }>(detail: unknown): T | null => {
   if (typeof detail !== 'string') return null;

@@ -133,6 +133,11 @@ export function chatGPTSettingsHandler(accounts: () => ChatGPTAccounts) {
 
 export const handleChatGPTSettings = chatGPTSettingsHandler(chatGPTAuth);
 
+// A token refreshed ahead of a request that is about to come (translationHandler warmUp).
+export async function warmUpChatGPT() {
+  await chatGPTAuth().access();
+}
+
 export async function* chatGPTResponseStream(payload: ResponseRequest, signal?: AbortSignal) {
   try {
     const body = responseRequestBody(payload);

@@ -1,6 +1,7 @@
 import {
   STORAGE_CAPTION_DISPLAY,
   STORAGE_CAPTION_STYLE,
+  STORAGE_CAPTION_WORD_HIGHLIGHT,
   STORAGE_NETFLIX_AUTO_ACTIVATE,
   STORAGE_NETFLIX_CAPTION_DISPLAY,
   STORAGE_PAGE_TRANSLATION_MODE,
@@ -84,6 +85,9 @@ export const netflixCaptionDisplayAtom = atomWithChromeStorage<CaptionDisplayMod
 export type CaptionStyle = 'default' | 'translucent' | 'outline' | 'yellow';
 
 export const captionStyleAtom = atomWithChromeStorage<CaptionStyle>(STORAGE_CAPTION_STYLE, 'default');
+
+// The word being said shows in color, where speech recognition timed its words. Off unless chosen.
+export const captionWordHighlightAtom = atomWithChromeStorage<boolean>(STORAGE_CAPTION_WORD_HIGHLIGHT, false);
 
 // 'auto' picks the streamer's captions, then Stream Closed Captioner, then speech recognition.
 export type TwitchCaptionSourceMode = 'auto' | 'cea608' | 'scc' | 'stt';
@@ -174,6 +178,7 @@ export const useShowNetflixCaptionToggleValue = () => useAtomValue(netflixShowCa
 export const useCaptionDisplay = () => useAtom(captionDisplayAtom);
 export const useNetflixCaptionDisplay = () => useAtom(netflixCaptionDisplayAtom);
 export const useCaptionStyle = () => useAtom(captionStyleAtom);
+export const useCaptionWordHighlight = () => useAtom(captionWordHighlightAtom);
 export const useTwitchCaptionSource = () => useAtom(twitchCaptionSourceAtom);
 export const useTwitchChannelLanguage = () => useAtom(twitchChannelLanguageAtom);
 export const useSpeechRecognitionConsent = () => useAtom(speechRecognitionConsentAtom);
