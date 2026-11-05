@@ -19,11 +19,11 @@
     "gotIt": "OK",
     "accountUnavailable": "保存されたChatGPT接続が変更されました。設定を開き直してください。"
   },
-  "extension_name": "しずえ: AI翻訳者 + LLMスーパーパワーアシスタント",
+  "extension_name": "シズエ: AI翻訳者 + LLMスーパーパワーアシスタント",
   "extension_description": "AI翻訳者 + LLMスーパーパワーアシスタント",
-  "toggle_description": "しずえを切り替え",
+  "toggle_description": "シズエを切り替え",
   "overlayMenu": {
-    "shizue": "しずえ",
+    "shizue": "シズエ",
     "translateSettings": "翻訳設定",
     "translatePage": "このページを翻訳",
     "summarizePage": "このページを要約",
@@ -40,7 +40,7 @@
   },
   "onboarding": {
     "greeting_0": "ようこそ！",
-    "greeting_1": "私はしずえです。",
+    "greeting_1": "私はシズエです。",
     "greeting_2": "まずいくつかのステップが必要です。",
     "answer_0": "こんにちは！",
     "continue": "続ける",
@@ -78,8 +78,8 @@
     "history": "履歴",
     "empty": "まだメッセージはありません",
     "newChat": "新しいチャット",
-    "summaryRequestText": "このページを要約して！しずえ！",
-    "summaryVideoRequestText": "この動画を要約して！しずえ！",
+    "summaryRequestText": "このページを要約して！シズエ！",
+    "summaryVideoRequestText": "この動画を要約して！シズエ！",
     "translateMode": "翻訳モード",
     "describeImageRequest": "この画像について説明してください。",
     "extractImageTextRequest": "この画像からテキストを抽出してください。",
@@ -129,7 +129,7 @@
     "playFromTime": "{{time}}から再生",
     "detailedAnalysis": "詳しく分析",
     "detailedAnalysisWithWebSearch": "詳しく分析 + ウェブ検索",
-    "detailedAnalysisRequestText": "詳しく分析して！しずえ！",
+    "detailedAnalysisRequestText": "詳しく分析して！シズエ！",
     "inPage": "原文",
     "webSource": "出典",
     "backToPage": "ページに戻る",
@@ -251,7 +251,7 @@
     "Thai": "タイ語"
   },
   "youtube": {
-    "aiCaption": "しずえ AI 字幕",
+    "aiCaption": "シズエ AI 字幕",
     "numCaptLines": "行数",
     "activate": "有効",
     "deactivate": "無効",
@@ -383,7 +383,7 @@
     "retry": "再試行"
   },
   "meeting": {
-    "liveTranslation": "Shizue 会議翻訳",
+    "liveTranslation": "シズエ 会議翻訳",
     "waiting": "話し始めると翻訳がここに表示されます",
     "turnOnCaptions": "会議の字幕（CC）をオンにすると翻訳して表示します",
     "unreadable": "この会議の字幕を読み取れませんでした。サイトの画面が変わった可能性があります。",
