@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.4.2
+
+- Browser control moves faster: it no longer sits through the same pause after every action. It reads the page again as soon as the page has answered, about half a second after a click that changes it instead of more than a second, and waits longer when a new spinner shows more is coming
+- Mint captions: the "Yellow translation" caption style is now "Mint translation", in Shizue's color. If you picked it before, you get the new color
+
 ## v0.4.1
 
 - Talk to browser control while it works: type in the chat box and press Enter to change or add to the task, and it takes that up at its next step. When it needs something only you know, it asks on a card in the panel and waits for your answer in the chat box
