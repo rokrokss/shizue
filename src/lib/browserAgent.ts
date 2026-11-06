@@ -133,6 +133,9 @@ export type AgentStep = {
   error?: AgentStepError;
   // ask: the user's answer.
   reply?: string;
+  // How long it took, in ms: the model's answer (with its retries), the action, the wait for the
+  // page, and reading the page after. Kept for looking into a slow run; the panel doesn't show it.
+  timing?: { model: number; act?: number; settle?: number; read?: number };
 };
 
 // looping: it kept doing the same thing on a page that didn't change. unanswered: its question
@@ -147,6 +150,22 @@ export type AgentRun = { host?: string; steps: AgentStep[]; outcome?: AgentOutco
 export type AgentLabels = { working: string; waiting: string; asking: string; stop: string };
 
 export const BROWSER_AGENT_MAX_STEPS = 100;
+
+// What the page has done since an action, in ms. sinceChange is null while it hasn't changed.
+export type PageActivity = { elapsed: number; sinceChange: number | null; busy: boolean };
+
+// Whether the page can be read again after an action. One that changed and went quiet has answered.
+// One that shows no change may still be fetching, so it gets the time actions always got. A spinner
+// is waited for, and one that keeps moving (a ticker) or never stops spinning is read anyway.
+export const pageSettled = (kind: AgentActionKind, { elapsed, sinceChange, busy }: PageActivity) => {
+  const unchanged = kind === 'scroll' ? 500 : kind === 'wait' ? 2000 : 700;
+  // A search box fetches its suggestions a moment after the box itself changed.
+  if (kind === 'type' && elapsed < unchanged) return false;
+  // A page that just loaded mostly came with what it shows; what moves on it after is its ads.
+  if (elapsed >= (kind === 'navigate' ? 700 : Math.max(unchanged, 1000))) return true;
+  if (busy) return false;
+  return sinceChange === null ? elapsed >= unchanged : sinceChange >= 300;
+};
 
 // With browser control off, the chat model starts its answer with this line when the user asked
 // it to act in their tab (prompts.ts). The background takes it off and the panel offers to turn

@@ -12,7 +12,53 @@ type AgentGlobals = {
   __shizueAgentOverlay?: { host: HTMLElement; dot: HTMLElement; label: HTMLElement; button: HTMLElement };
   __shizueAgentRing?: (element: Element | null) => void;
   __shizueAgentMarks?: HTMLElement;
+  __shizueAgentWatch?: { changedAt: number | null; acted?: Element; busyBefore: Set<Element>; stop: () => void };
 };
+
+// When this frame's page last changed, and whether it shows it is still working. Only text coming
+// and going outside the element acted on counts: attributes, a button's own label and ripple and
+// injected styles are how a page reacts before its answer comes. `begin`, before an action, starts
+// over. A call that finds no watch is on a new document, which has just changed. A watch ends by
+// itself, so it doesn't stay after the run.
+// A spinner on screen before the action isn't its answer on the way, and often isn't a spinner: a
+// class named "loading" stays on many a page.
+export function pageActivity(begin: boolean): { changedAt: number | null; busy: boolean; newDocument: boolean } {
+  const globals = globalThis as unknown as AgentGlobals;
+  const spinners = () =>
+    [
+      ...document.querySelectorAll(
+        '[aria-busy="true"], [role="progressbar"], [class*="spinner" i], [class*="skeleton" i], [class*="loading" i]'
+      ),
+    ].filter((element) => element.checkVisibility?.({ opacityProperty: true, visibilityProperty: true }) ?? true);
+  const newDocument = !globals.__shizueAgentWatch;
+  if (begin || newDocument) {
+    globals.__shizueAgentWatch?.stop();
+    const bringsText = (node: Node) =>
+      node.nodeName !== 'SCRIPT' && node.nodeName !== 'STYLE' && Boolean(node.textContent?.trim());
+    const observer = new MutationObserver((records) => {
+      const changed = records.some(
+        (record) =>
+          !watch.acted?.contains(record.target) &&
+          (record.type === 'characterData' || [...record.addedNodes, ...record.removedNodes].some(bringsText))
+      );
+      if (changed) watch.changedAt = Date.now();
+    });
+    observer.observe(document, { subtree: true, childList: true, characterData: true });
+    const timer = setTimeout(() => watch.stop(), 15_000);
+    const watch: NonNullable<AgentGlobals['__shizueAgentWatch']> = {
+      changedAt: begin ? null : Date.now(),
+      busyBefore: new Set(begin ? spinners() : []),
+      stop: () => {
+        clearTimeout(timer);
+        observer.disconnect();
+        globals.__shizueAgentWatch = undefined;
+      },
+    };
+    globals.__shizueAgentWatch = watch;
+  }
+  const { changedAt, busyBefore } = globals.__shizueAgentWatch!;
+  return { changedAt, busy: spinners().some((element) => !busyBefore.has(element)), newDocument };
+}
 
 // The page as the agent reads it: the text on screen, and the controls on screen and a little
 // below, numbered. Inputs give their value, except passwords and card fields.
@@ -241,7 +287,9 @@ export async function performAction(action: AgentAction): Promise<{ ok: boolean;
   const html = element as HTMLElement;
   html.scrollIntoView?.({ block: 'center', inline: 'nearest', behavior: instant });
   globals.__shizueAgentRing?.(element);
-  await sleep(450);
+  await sleep(150);
+  // What the page does from here on is its answer.
+  if (globals.__shizueAgentWatch) Object.assign(globals.__shizueAgentWatch, { changedAt: null, acted: element });
 
   if (action.kind === 'click') {
     const rect = element.getBoundingClientRect();
@@ -373,7 +421,9 @@ export async function clickAt(point: { x: number; y: number }): Promise<{ ok: bo
   const element = document.elementFromPoint(point.x, point.y);
   if (!element) return { ok: false, error: 'not_found' };
   globals.__shizueAgentRing?.(element);
-  await new Promise((resolve) => setTimeout(resolve, 450));
+  await new Promise((resolve) => setTimeout(resolve, 150));
+  // What the page does from here on is its answer.
+  if (globals.__shizueAgentWatch) Object.assign(globals.__shizueAgentWatch, { changedAt: null, acted: element });
   const at = { bubbles: true, cancelable: true, composed: true, clientX: point.x, clientY: point.y, button: 0 };
   const pointer = { ...at, pointerId: 1, pointerType: 'mouse', isPrimary: true };
   element.dispatchEvent(new PointerEvent('pointerover', pointer));

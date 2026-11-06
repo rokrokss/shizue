@@ -4,6 +4,7 @@ import {
   actionResult,
   actionSignature,
   AgentAction,
+  AgentActionKind,
   AgentLabels,
   AgentOutcome,
   AgentRun,
@@ -14,6 +15,7 @@ import {
   formatSnapshot,
   needsApproval,
   PageElement,
+  pageSettled,
   PageSnapshot,
   parseAgentReply,
   timesTried,
@@ -23,6 +25,7 @@ import {
 import {
   clickAt,
   markElements,
+  pageActivity,
   performAction,
   readWebMcpTools,
   runWebMcpTool,
@@ -47,6 +50,7 @@ import { AIMessage, AIMessageChunk, BaseMessage, HumanMessage, SystemMessage } f
 const PAGE_TEXT_CHARS = 5000;
 const LEFT_OUT = '(page details left out)';
 const SETTLE_TIMEOUT_MS = 10_000;
+const SETTLE_POLL_MS = 100;
 
 const approvals = new Map<string, (approved: boolean) => void>();
 const runs = new Map<number, AbortController>();
@@ -90,7 +94,7 @@ const sleep = (ms: number, signal?: AbortSignal) =>
   });
 
 // The tab the user is looking at, beside the panel.
-const activeWebTab = async () => {
+export const activeWebTab = async () => {
   const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
   return tab?.id !== undefined && /^https?:/.test(tab.url ?? '') ? (tab as chrome.tabs.Tab & { id: number }) : null;
 };
@@ -120,7 +124,7 @@ const webMcpToolsOf = async (tabId: number): Promise<WebMcpTool[]> => {
 
 // The page and its frames (a form or a document embedded from elsewhere), read together, with the
 // tools the site offers.
-const snapshotOf = async (tabId: number): Promise<PageSnapshot | null> => {
+export const snapshotOf = async (tabId: number): Promise<PageSnapshot | null> => {
   const read = (target: chrome.scripting.InjectionTarget) =>
     chrome.scripting.executeScript({ target, func: snapshotPage, args: [PAGE_TEXT_CHARS] });
   try {
@@ -151,7 +155,7 @@ const toDataUrl = async (blob: Blob) => {
 
 // The tab on screen as a JPEG, its controls marked with their numbers, at most SHOT_WIDTH wide.
 // `scale` turns the image's pixels back into the page's. Only the tab showing can be captured.
-const screenshot = async (tabId: number): Promise<{ dataUrl: string; scale: number; width: number; height: number } | null> => {
+export const screenshot = async (tabId: number): Promise<{ dataUrl: string; scale: number; width: number; height: number } | null> => {
   const tab = await chrome.tabs.get(tabId).catch(() => null);
   if (!tab?.active || tab.windowId === undefined) return null;
   const mark = async (on: boolean) =>
@@ -188,21 +192,42 @@ const overlay = async (tabId: number, labels: AgentLabels | undefined, waitingNo
     .catch(() => {});
 };
 
-// Until the tab has loaded what the action started, if anything.
-const settle = async (tabId: number, signal: AbortSignal) => {
-  await sleep(400, signal);
-  const until = Date.now() + SETTLE_TIMEOUT_MS;
+export const activityOf = async (tabId: number, frameId: number, begin: boolean) => {
+  const [injection] = await chrome.scripting
+    .executeScript({ target: { tabId, frameIds: [frameId] }, func: pageActivity, args: [begin] })
+    .catch(() => []);
+  return injection?.result as ReturnType<typeof pageActivity> | undefined;
+};
+
+// Until the tab has loaded what the action started, if anything, and the frame acted in has
+// answered (pageSettled). A frame that can't be asked counts as one that shows no change.
+export const settle = async (tabId: number, frameId: number, kind: AgentActionKind, signal: AbortSignal) => {
+  let since = Date.now();
+  const until = since + SETTLE_TIMEOUT_MS;
   while (!signal.aborted && Date.now() < until) {
     const tab = await chrome.tabs.get(tabId).catch(() => null);
-    if (!tab || tab.status === 'complete') break;
-    await sleep(250, signal);
+    if (!tab) return;
+    if (tab.status === 'complete') {
+      const activity = await activityOf(tabId, frameId, false);
+      // The action took it to a new page, whose time starts now.
+      if (activity?.newDocument) {
+        since = Date.now();
+        kind = 'navigate';
+      }
+      const now = Date.now();
+      const changedAt = activity?.changedAt ?? null;
+      const sinceChange = changedAt === null ? null : now - changedAt;
+      if (pageSettled(kind, { elapsed: now - since, sinceChange, busy: activity?.busy ?? false })) return;
+    } else {
+      since = Date.now();
+    }
+    await sleep(SETTLE_POLL_MS, signal);
   }
-  await sleep(300, signal);
 };
 
 // The action, in the frame its element is in. Tabs, screenshots and the site's tools are the
 // loop's own (runBrowserAgent).
-const execute = async (
+export const execute = async (
   tabId: number,
   action: AgentAction,
   element: PageElement | undefined
@@ -216,10 +241,8 @@ const execute = async (
       await chrome.tabs.goBack(tabId);
       return { status: 'done' };
     }
-    if (action.kind === 'wait') {
-      await sleep(1500);
-      return { status: 'done' };
-    }
+    // The time is settle's, which ends it early if the page answers.
+    if (action.kind === 'wait') return { status: 'done' };
     const [injection] = await chrome.scripting.executeScript({
       target: { tabId, frameIds: [element?.frameId ?? 0] },
       func: performAction,
@@ -392,7 +415,7 @@ export async function runBrowserAgent({
     tabId = next;
     runs.set(tabId, controller);
     if (!tabs.includes(next)) tabs.push(next);
-    await settle(tabId, signal);
+    await settle(tabId, 0, 'switch_tab', signal);
     const moved = await chrome.tabs.get(tabId).catch(() => null);
     if (moved?.url) run.host = new URL(moved.url).host;
   };
@@ -425,6 +448,7 @@ export async function runBrowserAgent({
       new HumanMessage(`Task: ${task}\n\nThe page now:\n${formatSnapshot(snapshot)}`),
     ];
     let unreadable = 0;
+    let modelMs = 0;
     for (let turn = 0; turn < BROWSER_AGENT_MAX_STEPS; turn++) {
       if (signal.aborted) return end('stopped');
       // What the user typed meanwhile, for this turn on.
@@ -435,7 +459,9 @@ export async function runBrowserAgent({
       }
       if (added.length) publish();
 
+      const asked = Date.now();
       const answer = await askModel(modelPreset, messages, signal, reasoningEffort);
+      modelMs += Date.now() - asked;
       if (signal.aborted) return end('stopped');
       const reply = parseAgentReply(answer);
       if (!reply) {
@@ -459,12 +485,15 @@ export async function runBrowserAgent({
 
       const element = action.ref !== undefined ? snapshot.elements.find((e) => e.ref === action.ref) : undefined;
       const tool = action.kind === 'tool' ? snapshot.tools?.find((t) => t.name === action.name) : undefined;
+      const timing: NonNullable<AgentStep['timing']> = { model: modelMs };
+      modelMs = 0;
       const step: AgentStep = {
         id: crypto.randomUUID(),
         action,
         target: action.kind === 'tool' ? action.name : elementLabel(element),
         ...(reply.thought ? { thought: reply.thought } : {}),
         status: 'running',
+        timing,
       };
       run.steps.push(step);
 
@@ -536,6 +565,9 @@ export async function runBrowserAgent({
       let shot: Awaited<ReturnType<typeof screenshot>> = null;
       if (step.status === 'running') {
         openedTabId = null;
+        const acting = Date.now();
+        const frameId = tool?.frameId ?? element?.frameId ?? 0;
+        await activityOf(tabId, frameId, true);
         if (action.kind === 'look') {
           shot = await screenshot(tabId);
           shotScale = shot?.scale ?? shotScale;
@@ -599,13 +631,19 @@ export async function runBrowserAgent({
           Object.assign(step, await execute(tabId, action, element));
         }
         publish();
-        if (action.kind !== 'look') await settle(tabId, signal);
+        const settling = Date.now();
+        timing.act = settling - acting;
+        // Moving to a tab has settled already.
+        if (!['look', 'open_tab', 'switch_tab'].includes(action.kind)) await settle(tabId, frameId, action.kind, signal);
         if (openedTabId !== null) await moveTo(openedTabId);
+        timing.settle = Date.now() - settling;
       }
       if (signal.aborted) return end('stopped');
 
       // A page that is still being replaced has nothing to read for a moment.
+      const reading = Date.now();
       snapshot = (await read()) ?? (await sleep(1000, signal), await read());
+      timing.read = Date.now() - reading;
       if (!snapshot) return end('unavailable');
       await overlay(tabId, labels, false);
       forgetOlderPages(messages);

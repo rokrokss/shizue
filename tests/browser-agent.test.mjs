@@ -10,10 +10,46 @@ import {
   isChallengeFrame,
   looksCommitting,
   needsApproval,
+  pageSettled,
   parseAgentReply,
   timesTried,
   withFrames,
 } from '../src/lib/browserAgent.ts';
+
+test('A page that answered an action and went quiet is ready; one that kept moving is cut off', () => {
+  // A click: it changed, then stayed quiet long enough.
+  assert.equal(pageSettled('click', { elapsed: 200, sinceChange: 100, busy: false }), false);
+  assert.equal(pageSettled('click', { elapsed: 320, sinceChange: 300, busy: false }), true);
+  // A spinner is still on screen, so the answer is on its way.
+  assert.equal(pageSettled('click', { elapsed: 600, sinceChange: 500, busy: true }), false);
+  // A ticker never goes quiet, and a spinner may never leave.
+  assert.equal(pageSettled('click', { elapsed: 1000, sinceChange: 50, busy: false }), true);
+  assert.equal(pageSettled('click', { elapsed: 1000, sinceChange: 900, busy: true }), true);
+  // A page that just loaded gets less of that.
+  assert.equal(pageSettled('navigate', { elapsed: 600, sinceChange: 50, busy: false }), false);
+  assert.equal(pageSettled('navigate', { elapsed: 700, sinceChange: 50, busy: false }), true);
+});
+
+test('A page that shows no change may still be fetching, so it gets the time it always had', () => {
+  assert.equal(pageSettled('click', { elapsed: 600, sinceChange: null, busy: false }), false);
+  assert.equal(pageSettled('click', { elapsed: 700, sinceChange: null, busy: false }), true);
+  // A spinner shows that it is, for a while.
+  assert.equal(pageSettled('click', { elapsed: 800, sinceChange: null, busy: true }), false);
+  assert.equal(pageSettled('click', { elapsed: 1000, sinceChange: null, busy: true }), true);
+  // What a scroll loads is mostly on its way sooner.
+  assert.equal(pageSettled('scroll', { elapsed: 400, sinceChange: null, busy: false }), false);
+  assert.equal(pageSettled('scroll', { elapsed: 500, sinceChange: null, busy: false }), true);
+  // The model waits because something is coming: long enough not to ask again, less if it comes.
+  assert.equal(pageSettled('wait', { elapsed: 1900, sinceChange: null, busy: false }), false);
+  assert.equal(pageSettled('wait', { elapsed: 2000, sinceChange: null, busy: false }), true);
+  assert.equal(pageSettled('wait', { elapsed: 500, sinceChange: 300, busy: false }), true);
+});
+
+test('Typing waits for the suggestions a search box fetches, even after the box itself changed', () => {
+  assert.equal(pageSettled('type', { elapsed: 400, sinceChange: 350, busy: false }), false);
+  assert.equal(pageSettled('type', { elapsed: 700, sinceChange: 650, busy: false }), true);
+  assert.equal(pageSettled('type', { elapsed: 700, sinceChange: null, busy: false }), true);
+});
 
 test('A reply is read flat or nested, fenced or not, and bad ones are refused', () => {
   assert.deepEqual(parseAgentReply('{"thought":"검색창에 입력","action":"type","ref":3,"text":"shoes","submit":true}'), {
